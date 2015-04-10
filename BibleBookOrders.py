@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-08' # by RJH
+LastModifiedDate = '2015-04-09' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -40,7 +40,6 @@ debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 #from singleton import singleton
 
 import BibleOrgSysGlobals

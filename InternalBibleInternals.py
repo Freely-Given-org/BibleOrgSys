@@ -38,7 +38,7 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-01' # by RJH
+LastModifiedDate = '2015-04-09' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.58'
@@ -935,11 +935,11 @@ class InternalBibleIndex:
                     if self.BBB=='ACT' and C=='8':
                         if 'p' in foundMarkers:
                             logging.critical( "InternalBibleIndex.checkIndex: Check that text in {} Acts 8:0 gets processed correctly!".format( self.name ) )
-                        else:
-                            if 's1'  in foundMarkers or 'r' in foundMarkers or 'p' in foundMarkers or 'q1' in foundMarkers:
-                                print( "xyz", key, entries )
-                            if self.name != '1974_TB':
-                                assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
+                        #else:
+                            #if 's1'  in foundMarkers or 'r' in foundMarkers or 'p' in foundMarkers or 'q1' in foundMarkers:
+                                #print( "xyz", key, entries )
+                            #if self.name != '1974_TB':
+                                #assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
 
             # Check that C,V entries match
             for entry in entries:
