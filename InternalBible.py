@@ -44,10 +44,10 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-24' # by RJH
+LastModifiedDate = '2015-04-12' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.60'
+ProgVersion = '0.61'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1605,7 +1605,7 @@ class InternalBible:
     # end of InternalBible.getVerseData
 
 
-    def getVerseText( self, BCVReference ):
+    def getVerseText( self, BCVReference, fullTextFlag=False ):
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
 
@@ -1621,7 +1621,7 @@ class InternalBible:
             #if BibleOrgSysGlobals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText, firstWord = '', False
             for entry in verseData:
-                marker, cleanText = entry.getMarker(), entry.getCleanText()
+                marker, cleanText = entry.getMarker(), entry.getOriginalText() if fullTextFlag else entry.getCleanText()
                 if marker[0] == '¬': pass # Ignore end markers
                 elif marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker

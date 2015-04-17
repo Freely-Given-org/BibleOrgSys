@@ -5,7 +5,7 @@
 #
 # Module handling Sword resources using the Sword engine
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,10 +30,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-18' # by RJH
+LastModifiedDate = '2015-04-14' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.12"
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -55,8 +55,8 @@ try:
     SwordType = "CrosswireLibrary"
 except ImportError: # Sword library (dll and python bindings) seem to be not available
     if 0: # Warn the user that this won't work
-        logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
-        logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
+        logging.critical( _("You need to install the Sword library with Python3 bindings on your computer in order to use this module.") )
+        logging.info( _("Alternatively, you can try the unfinished all-Python SwordModules module.") )
         #sys.exit( 1 )
     else: # Use our own Python3 code instead
         try:

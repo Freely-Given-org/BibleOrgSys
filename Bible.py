@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2014-10-11 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,15 +28,19 @@ Module handling an internal Bible object.
 A class which extends BibleWriter (which itself extends InternalBible).
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-16' # by RJH
+ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
-ProgVersion = "0.08"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.09'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path
-from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
@@ -123,10 +126,10 @@ class BibleBook ( InternalBibleBook ):
         InternalBibleBook.__init__( self, containerBibleObject, BBB )
 
         # Define our added data stores
-        self.shortName, self.longName = '', ''
-        self.inputAbbreviations = []
-        self.text = []
-        self.index = {}
+        #self.shortName, self.longName = '', ''
+        #self.inputAbbreviations = []
+        #self.text = []
+        #self.index = {}
         #self.textCodes = ( "ID", "RH1", "MT1", "MT2", "MS1", "MS2", "IOT", "IO1", "IO2", "IS1", "IS2", "InP", "SH1", "SH2", "SXR", "Pgr", "Chp", "Vrs", "Txt", "Qu1", "Qu2", "Qu3", "Qu4", "Blk", "Mar", "FNt", "XRf", "MR" )
     # end of __init__
 
@@ -138,8 +141,8 @@ class BibleBook ( InternalBibleBook ):
         @rtype: string
         """
         result = _("BibleBook object")
-        result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
-        for line in self.text: result += ('\n' if result else '') + "  {}".format(repr(line) )
+        #result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
+        #for line in self.text: result += ('\n' if result else '') + "  {}".format(repr(line) )
         return result
     # end of __str__
 

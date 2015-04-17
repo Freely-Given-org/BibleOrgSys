@@ -37,10 +37,10 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-21' # by RJH
+LastModifiedDate = '2015-04-13' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -893,16 +893,13 @@ def demo():
     #testFolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/"
     testFolder = "Tests/DataFilesForTests/PDBTest/"
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PalmDBBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA1", result1 )
-        result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+        result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA2", result2 )
-        #testSubfolder = os.path.join( testFolder, 'kjv/' )
-        #result3 = PalmDBBibleFileCheck( testSubfolder )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestB1", result3 )
-        #result4 = PalmDBBibleFileCheck( testSubfolder, autoLoad=True )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestB2", result4 )
+        result3 = PalmDBBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA3", result3 )
 
 
     if 1: # specified modules

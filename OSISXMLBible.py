@@ -36,10 +36,10 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-04-17' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.46'
+ProgVersion = '0.47'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2875,7 +2875,7 @@ class OSISXMLBible( Bible ):
                     #self.thisBook.addLine( 'v~', '' ) # Start our line
                     for subelement in element:
                         if subelement.tag == OSISXMLBible.OSISNameSpace+'p': # Most scripture data occurs in here
-                            if sentence: self.thisBook.appendToLastLine( sentence ); sentence = ""
+                            #if sentence: self.thisBook.appendToLastLine( sentence ); sentence = ""
                             sublocation = "p of " + location
                             verseMilestone = validateParagraph( subelement, sublocation, verseMilestone )
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+'title':  # section heading
@@ -2889,12 +2889,12 @@ class OSISXMLBible( Bible ):
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+'divineName':
                             validateDivineName( subelement, location, verseMilestone )
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+"milestone":
-                            if sentence: self.thisBook.appendToLastLine( sentence ); sentence = ""
+                            #if sentence: self.thisBook.appendToLastLine( sentence ); sentence = ""
                             validateMilestone( subelement, location, verseMilestone )
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                             sublocation = "q of " + location
                             #words = ""
-                            if subelement.text: words += subelement.text
+                            #if subelement.text: words += subelement.text
                             trailingPunctuation = subelement.tail if subelement.tail else ''
                             # Process the attributes
                             qWho = qMarker = None
@@ -2930,7 +2930,7 @@ class OSISXMLBible( Bible ):
                                     logging.error( "d33s Unprocessed {!r} sub-element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                     loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (d33s)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                     if BibleOrgSysGlobals.debugFlag: halt
-                            if qWho=="Jesus": sentence += "\\wj {}\\wj*{}".format( words, trailingPunctuation )
+                            if 0 and qWho=="Jesus": sentence += "\\wj {}\\wj*{}".format( words, trailingPunctuation )
                             else:
                                 logging.info( "qWho of {} unused".format( repr(qWho) ) )
                                 #sentence += words + trailingPunctuation

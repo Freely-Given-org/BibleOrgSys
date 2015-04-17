@@ -3,7 +3,7 @@
 #
 # InternalBibleInternals.py
 #
-# Module handling the internal markers for Bible books
+# Module handling the internal objects for Bible books
 #
 # Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,25 +23,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for defining and manipulating Bible books in our internal USFM-based 'lines' format.
+Module for defining and manipulating internal Bible objects including:
 
-The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (with "OSIS", "USFM", "USX" or "XML", etc.)
-    self.objectNameString (with a description of the type of BibleBook object)
-It also needs to provide a "load" routine that sets one or more of:
-    self.sourceFolder
-    self.sourceFilename
-    self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
-and then calls
-    self.addLine (in order to fill self._rawLines)
+    InternalBibleExtra
+    InternalBibleExtraList
+        A list of InternalBibleExtras
+            with internal data validation functions
+            and with a str() function useful for debugging.
+
+    InternalBibleEntry
+    InternalBibleEntryList
+        A list of InternalBibleEntries
+            with internal data validation functions
+            and with a str() function useful for debugging.
+
+    InternalBibleIndexEntry
+    InternalBibleIndex
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-09' # by RJH
+LastModifiedDate = '2015-04-16' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.58'
+ProgVersion = '0.59'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
