@@ -30,11 +30,11 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-14' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.13'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = True

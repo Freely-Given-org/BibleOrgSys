@@ -30,11 +30,11 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-16' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
 ProgVersion = '0.09'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

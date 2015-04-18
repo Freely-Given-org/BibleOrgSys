@@ -42,11 +42,11 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-04' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 BCV_VERSION = '1.0'

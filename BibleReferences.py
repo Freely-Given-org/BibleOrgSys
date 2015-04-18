@@ -82,11 +82,11 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-25' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.32'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

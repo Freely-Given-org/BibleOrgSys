@@ -5,7 +5,7 @@
 #
 # Module handling "MySword" Bible module files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,11 +51,11 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.15'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

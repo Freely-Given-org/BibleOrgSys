@@ -34,11 +34,11 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-17' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.17'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.18'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = True
@@ -65,6 +65,7 @@ compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'n
 # Sword enums
 DIRECTION_LTR = 0; DIRECTION_RTL = 1; DIRECTION_BIDI = 2
 FMT_UNKNOWN = 0; FMT_PLAIN = 1; FMT_THML = 2; FMT_GBF = 3; FMT_HTML = 4; FMT_HTMLHREF = 5; FMT_RTF = 6; FMT_OSIS = 7; FMT_WEBIF = 8; FMT_TEI = 9; FMT_XHTML = 10
+FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML' }
 ENC_UNKNOWN = 0; ENC_LATIN1 = 1; ENC_UTF8 = 2; ENC_UTF16 = 3; ENC_RTF = 4; ENC_HTML = 5
 
 
@@ -227,13 +228,13 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
 
 
-def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
+def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     """
     Given a verse entry string made up of OSIS segments,
         convert it into our internal format
         and add the line(s) to thisBook.
 
-    BBB, C, V are just used for more helpful error/information messages.
+    moduleName, BBB, C, V are just used for more helpful error/information messages.
 
     OSIS is a pig to extract the information out of,
         but we use it nevertheless because it's the native format
@@ -245,7 +246,7 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "importOSISVerseLine( {} {}:{} ... {!r} )".format( BBB, C, V, osisVerseString ) )
+        print( "importOSISVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
     #osisVerseString = osisVerseString.strip()
     verseLine = osisVerseString
     writtenV = False
@@ -310,36 +311,15 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
     for old, new in ( ( '<milestone marker="¶" type="x-p"/>', '\\NL**\\p\\NL**' ),
                       ( '<milestone marker="¶" subType="x-added" type="x-p"/>', '\\NL**\\p\\NL**' ),
                       ( '<milestone type="x-extra-p"/>', '\\NL**\\p\\NL**' ),
+                      ( '<titlePage>', '\\NL**' ), ( '</titlePage>', '\\NL**' ),
+                      ( '<lb type="x-begin-paragraph"/>', '\\NL**\\p\\NL**' ), # in ESV
+                      ( '<lb type="x-end-paragraph"/>', '\\NL**' ), # in ESV
+                      ( '<lb subType="x-same-paragraph" type="x-begin-paragraph"/>', '\\NL**' ), # in ESV
+                      ( '<lb subType="x-extra-space" type="x-begin-paragraph"/>', '\\NL**\\b\\NL**' ), # in ESV
                       ( '<lb/>', '\\NL**' ),
                       ( '<list>', '\\NL**' ), ( '</list>', '\\NL**' ),
                       ):
         verseLine = verseLine.replace( old, new )
-
-    # Now scan for fixed open and close fields
-    for openCode,newOpenCode,closeCode,newCloseCode in ( ('<transChange type="added">','\\add ','</transChange>','\\add*'),
-                                                        ('<seg><divineName>','\\nd ','</divineName></seg>','\\nd*'),
-                                                        ('<divineName>','\\nd ','</divineName>','\\nd*'),
-                                                        ('<speaker>','\\sp ','</speaker>','\\sp*'),
-                                                        ('<inscription>','\\bdit ','</inscription>','\\bdit*'), # What should this really be?
-                                                        #('<foreign>','\\tl ','</foreign>','\\tl*'),
-                                                        #('\x1f','STARTF','\x1f','ENDF'),
-                                                        #('[','\\add',']','\\add*'),
-                                                        #('\\\\  #','\\xt','\\\\',''),
-                                                        ):
-        ix = verseLine.find( openCode )
-        while ix != -1:
-            #print( '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, verseLine ) )
-            verseLine = verseLine.replace( openCode, newOpenCode, 1 )
-            ixEnd = verseLine.find( closeCode, ix )
-            if ixEnd == -1:
-                logging.error( 'Missing {!r} close code to match {!r}'.format( closeCode, openCode ) )
-                verseLine = verseLine + newCloseCode # Try to fix it by adding a closing code at the end
-            else:
-                verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
-            ix = verseLine.find( openCode, ix )
-        if verseLine.find( closeCode ) != -1:
-            logging.error( 'Unexpected {!r} close code without any previous {!r}'.format( closeCode, openCode )  )
-            verseLine = newOpenCode + verseLine.replace( closeCode, newCloseCode, 1 ) # Try to fix it by adding an opening code at the beginning
 
     # Delete end book and chapter (self-closing) markers (we'll add our own later)
     while True: # Delete end book markers (should only be maximum of one theoretically but not always so)
@@ -367,7 +347,6 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         match = re.search( '<lg [^/>]+?/>', verseLine )
         if not match: break
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
-    # Regular expression replacements
 
     # Other regular expression data extractions
     match = re.search( '<chapter ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>', verseLine )
@@ -376,12 +355,8 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         #print( 'Chapter sID {!r} attributes={!r} @ {} {}:{}'.format( sID, attributes, BBB, C, V ) )
         assert( C and C != '0' )
         assert( V == '0' )
-        #assert( osisVerseString.startswith( '<chapter ' ) # It's right at the beginning
-               #or osisVerseString.startswith( '<title> <chapter ' ) ) # or nearby
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
-        thisBook.addLine( 'c', C )
-        #replacement = '\\NL**\\c {}\\NL**'.format( C )
-        #print( 'replacement', repr(replacement) )
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
+        #thisBook.addLine( 'c', C ) # Don't need this coz it's done by the calling routine
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     while True:
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/><title>(.+?)</title>', verseLine )
@@ -427,9 +402,12 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         if divType == 'x-p': replacement = '\\NL**\\p\\NL**'
         elif divType == 'glossary': replacement = '\\NL**\\id GLO\\NL**' #### WEIRD -- appended to 3 John
         elif divType == 'book': replacement = '' # We don't need this
-        elif divType == 'outline': replacement = '\\NL**\\iot\\NL**'
+        elif divType == 'outline': replacement = '\\NL**\\iot '
         elif divType == 'paragraph': replacement = '\\NL**\\p\\NL**'
         elif divType == 'majorSection': replacement = '\\NL**\\ms\\NL**'
+        elif divType == 'section': replacement = '\\NL**\\s1 '
+        elif divType == 'preface': replacement = '\\NL**\\ip '
+        elif divType in ( 'x-license', 'x-trademark', ): replacement = '\\NL**\\rem '
         else: halt
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -483,7 +461,7 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         if 'who="Jesus"' in attributes:
             if 'marker="' in attributes and 'marker=""' not in attributes:
                 print( 'AttributesQM={!r} Words={!r}'.format( attributes, words ) )
-                halt
+                if BibleOrgSysGlobals.debugFlag: halt
             replacement = '\\wj {}\\wj*'.format( words )
         else:
             print( 'AttributesQ={!r} Words={!r}'.format( attributes, words ) )
@@ -491,17 +469,76 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
+        match = re.search( '<q ([^/>]+?)>', verseLine ) # Leftovers (no </q>)
+        if not match: break
+        attributes = match.group(1)
+        if 'who="Jesus"' in attributes:
+            if 'marker="' in attributes and 'marker=""' not in attributes:
+                print( 'AttributesQM={!r} Words={!r}'.format( attributes, words ) )
+                if BibleOrgSysGlobals.debugFlag: halt
+            replacement = '\\wj '
+        else:
+            print( 'AttributesQ={!r} Words={!r}'.format( attributes, words ) )
+            if BibleOrgSysGlobals.debugFlag: halt
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<q ([^/>]*?)sID="(.+?)"(.*?)/>', verseLine )
+        if not match: break
+        attributes, sID = match.group(1) + match.group(3), match.group(2)
+        #print( 'Q attributesC={!r} sID={!r}'.format( attributes, sID ) )
+        match2 = re.search( 'level="(.+?)"', attributes )
+        level = match2.group(1) if match2 else ''
+        match2 = re.search( 'marker="(.+?)"', attributes )
+        quoteSign = match2.group(1) if match2 else ''
+        replacement = '\\NL**\\q{} {}'.format( level, quoteSign )
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<q ([^/>]*?)eID="(.+?)"(.*?)/>', verseLine )
+        if not match: break
+        attributes, eID = match.group(1) + match.group(3), match.group(2)
+        #print( 'Q attributesC={!r} eID={!r}'.format( attributes, eID ) )
+        match2 = re.search( 'marker="(.+?)"', attributes )
+        quoteSign = match2.group(1) if match2 else ''
+        replacement = '{}\\NL**'.format( quoteSign )
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<q ([^/>]*?)type="block"(.*?)/>', verseLine )
+        if not match: break
+        attributes = match.group(1) + match.group(2)
+        replacement == '\\NL**\\pc '
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
         match = re.search( '<l ([^/>]*?)level="(.+?)"([^/>]*?)/>', verseLine )
         if not match: break
         attributes, level = match.group(1)+match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'AttributesL={!r} Level={!r}'.format( attributes, level ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'AttributesL={!r} Level={!r}'.format( attributes, level ) )
         assert( level in '1234' )
         if 'sID="' in attributes:
             replacement = '\\NL**\\q{} '.format( level )
         elif 'eID="' in attributes:
             replacement = '' # Remove eIDs completely
         else:
-            print( 'AttributesLeID={!r} Level={!r}'.format( attributes, level ) )
+            print( 'Level attributesLl2={!r} Level={!r}'.format( attributes, level ) )
+            halt
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<l ([^/>]+?)/>', verseLine )
+        if not match: break
+        attributes = match.group(1)
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Level Attributes={!r}'.format( attributes ) )
+        if 'sID="' in attributes:
+            replacement = '\\NL**\\q1 '
+        elif 'eID="' in attributes:
+            replacement = '\\NL**' # Remove eIDs completely
+        else:
+            print( 'AttributesL2={!r} Level={!r}'.format( attributes, level ) )
             halt
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -570,9 +607,11 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         match = re.search( '<hi ([^/>]+?)>(.+?)</hi>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
         if '"italic"' in attributes: marker = 'it'
-        else: halt
+        elif '"small-caps"' in attributes: marker = 'sc'
+        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -581,7 +620,8 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         match = re.search( '<milestone ([^/>]*?)type="x-usfm-(.+?)"([^/>]*?)/>', verseLine )
         if not match: break
         attributes, marker = match.group(1)+match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Milestone attributes={!r} marker={!r}'.format( attributes, marker ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Milestone attributes={!r} marker={!r}'.format( attributes, marker ) )
         match2 = re.search( 'n="(.+?)"', attributes )
         if match2:
             replacement = '\\NL**\\{} {}\\NL**'.format( marker, match2.group(1) )
@@ -597,38 +637,101 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
         #print( "verseLineC", repr(verseLine) )
     while True:
+        match = re.search( '<milestone ([^/>]*?)type="cQuote"([^/>]*?)/>', verseLine )
+        if not match: break
+        attributes = match.group(1)+match.group(2)
+        match2 = re.search( 'marker="(.+?)"', attributes )
+        quoteSign = match2.group(1) if match2 else ''
+        replacement = quoteSign
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
         match = re.search( '<note ([^/>]*?)swordFootnote="([^/>]+?)"([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
         attributes, number, noteContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Note={!r} Number={!r}'.format( attributes, number ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Note attributes={!r} Number={!r}'.format( attributes, number ) )
         if 'crossReference' in attributes:
             assert( noteContents == '' )
             replacement = '\\x {}\\x*'.format( number )
         else: halt
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
+        if not match: break
+        attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        replacement = linkContents
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+
+    # Now scan for remaining fixed open and close fields
+    for openCode,newOpenCode,closeCode,newCloseCode in (('<seg><divineName>','\\nd ','</divineName></seg>','\\nd*'),
+                                                        ('<seg><transChange type="added">','\\add ','</transChange></seg>','\\add*'),
+                                                        ('<transChange type="added">','\\add ','</transChange>','\\add*'),
+                                                        ('<divineName>','\\nd ','</divineName>','\\nd*'),
+                                                        ('<speaker>','\\sp ','</speaker>','\\sp*'),
+                                                        ('<inscription>','\\bdit ','</inscription>','\\bdit*'), # What should this really be?
+                                                        ('<milestone type="x-idiom-start"/>','\\bdit ','<milestone type="x-idiom-end"/>','\\bdit*'), # What should this really be?
+                                                        #('<foreign>','\\tl ','</foreign>','\\tl*'),
+                                                        #('\x1f','STARTF','\x1f','ENDF'),
+                                                        #('[','\\add',']','\\add*'),
+                                                        #('\\\\  #','\\xt','\\\\',''),
+                                                        ):
+        ix = verseLine.find( openCode )
+        while ix != -1:
+            #print( '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, verseLine ) )
+            verseLine = verseLine.replace( openCode, newOpenCode, 1 )
+            ixEnd = verseLine.find( closeCode, ix )
+            if ixEnd == -1:
+                logging.error( 'Missing {!r} close code to match {!r}'.format( closeCode, openCode ) )
+                verseLine = verseLine + newCloseCode # Try to fix it by adding a closing code at the end
+            else:
+                verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
+            ix = verseLine.find( openCode, ix )
+        if verseLine.find( closeCode ) != -1:
+            logging.error( 'Unexpected {!r} close code without any previous {!r}'.format( closeCode, openCode )  )
+            verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
+            # Try to fix it by adding an opening code at or near the beginning of the line
+            #   but we have to skip past any paragraph markers
+            insertIndex = 0
+            while verseLine[insertIndex] == '\\':
+                insertIndex += 1
+                while insertIndex < len(verseLine)-1:
+                    if verseLine[insertIndex] == ' ': break
+                    insertIndex += 1
+            if insertIndex != 0: print( "insertIndex={} vL={!r}".format( insertIndex, verseLine ) )
+            verseLine = verseLine[:insertIndex] + ' '+newOpenCode + verseLine[insertIndex:]
+            if insertIndex != 0: print( "new vL={!r}".format( verseLine ) )
 
     if '<' in verseLine or '>' in verseLine or '=' in verseLine or '"' in verseLine:
-        print( "verseLine", repr(verseLine) )
+        print( "{} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.debugFlag:
-            if BBB!='PSA' or V not in ('1','5',): halt
+            if BBB!='PSA' or V not in ('1','5',): print( moduleName, BBB, C, V ); halt
     #if V == '3': halt
 
     #print( "FFFFFFFFFFF", repr(verseLine) )
-    while '  ' in verseLine: verseLine = verseLine.replace( '  ', ' ' ) # Reduce double spaces
-    while '\\NL** ' in verseLine: verseLine = verseLine.replace( '\\NL** ', '\\NL**' ) # Remove spaces before newlines
-    while ' \\NL**' in verseLine: verseLine = verseLine.replace( ' \\NL**', '\\NL**' ) # Remove spaces after newlines
-    while '\\NL**\\NL**' in verseLine: verseLine = verseLine.replace( '\\NL**\\NL**', '\\NL**' ) # Don't need double-ups
-    if verseLine.startswith( '\\NL**' ): verseLine = verseLine[5:] # Don't need nl at start of verseLine
-    if verseLine.endswith( '\\p \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
-    if verseLine.endswith( '\\q1 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
-    if verseLine.endswith( '\\q2 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
-    if verseLine.endswith( '\\q3 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
-    if verseLine.endswith( '\\q4 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
-    if verseLine.endswith( '\\NL**' ): verseLine = verseLine[:-5] # Don't need nl at end of verseLine
-    verseLine = verseLine.replace( '\\s1 \\p', '\\p' ) # Delete useless s1 heading marker
-    verseLine = verseLine.replace( '\\wj\\NL**\\p\\NL**', '\\NL**\\p\\NL**\\wj ' ) # Start wj after paragraph marker
+    for kk in range( 0, 1+1 ): # Do this a couple of times to iron every thing out
+        while '  ' in verseLine: verseLine = verseLine.replace( '  ', ' ' ) # Reduce double spaces
+        while '\\NL** ' in verseLine: verseLine = verseLine.replace( '\\NL** ', '\\NL**' ) # Remove spaces before newlines
+        while ' \\NL**' in verseLine: verseLine = verseLine.replace( ' \\NL**', '\\NL**' ) # Remove spaces after newlines
+        while '\\NL**\\NL**' in verseLine: verseLine = verseLine.replace( '\\NL**\\NL**', '\\NL**' ) # Don't need double-ups
+        if verseLine.startswith( '\\NL**' ): verseLine = verseLine[5:] # Don't need nl at start of verseLine
+        if verseLine.endswith( '\\p \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
+        if verseLine.endswith( '\\q1 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
+        if verseLine.endswith( '\\q2 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
+        if verseLine.endswith( '\\q3 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
+        if verseLine.endswith( '\\q4 \\NL**'): verseLine = verseLine[:-6] # Don't need nl and then space at end of verseLine
+        if verseLine.endswith( '\\NL**' ): verseLine = verseLine[:-5] # Don't need nl at end of verseLine
+        verseLine = verseLine.replace( '\\s1 \\p', '\\p' ) # Delete useless s1 heading marker
+        verseLine = verseLine.replace( '\\wj\\NL**\\p\\NL**', '\\NL**\\p\\NL**\\wj ' ) # Start wj AFTER paragraph marker
+        verseLine = verseLine.replace( '\\wj\\NL**\\q1 ', '\\NL**\\q1 \\wj ' ) # Start wj AFTER paragraph marker
+        verseLine = verseLine.replace( '\\wj\\NL**\\q2 ', '\\NL**\\q2 \\wj ' ) # Start wj AFTER paragraph marker
+        verseLine = verseLine.replace( '\\NL**\\wj*', '\\wj\\NL**' )
+        #print( "GGGGGGGGGG", repr(verseLine) )
     verseLine = verseLine.strip()
+    #print( "HHHHHHHH", repr(verseLine) )
     if '\\NL**' in verseLine: # We need to break the original line into different USFM markers
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, verseLine ) )
@@ -660,9 +763,10 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
                         print( "bits", bits )
                         print( "marker", marker )
                         print( "leftovers", repr(leftovers) )
-                        assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'iot','io1','io2','io3',
-                                           's1','s2','s3', 'r','sr','sp', 'q1','q2','q3', 'v', 'li1','li2','li2', )
-                               or marker in ( 'x', 'bk', 'wj', 'nd', 'add', 'k', 'bd','bdit','it', 'str', ) ) # These ones are character markers which can start a new line
+                        #if marker[-1] == '*': marker = marker[:-1]
+                        assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'iot','io1','io2','io3','io4',
+                                           's1','s2','s3','s4', 'r','sr','sp', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', )
+                               or marker in ( 'x', 'bk', 'wj', 'nd', 'add', 'k','tl', 'bd','bdit','it','sc', 'str', ) ) # These ones are character markers which can start a new line
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                         thisBook.addLine( marker, bits[1] )
                     elif not writtenV:
@@ -692,7 +796,7 @@ def importOSISVerseLine( osisVerseString, thisBook, BBB, C, V ):
 
 
 
-def importGBFVerseLine( gbfVerseString, thisBook, BBB, C, V ):
+def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
     """
     Given a verse entry string made up of GBF segments,
         convert it into our internal format
@@ -706,8 +810,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, BBB, C, V ):
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "importGBFVerseLine( {} {}:{} ... {!r} )".format( BBB, C, V, gbfVerseString ) )
-    #osisVerseString = osisVerseString.strip()
+        print( "importGBFVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, gbfVerseString ) )
     verseLine = gbfVerseString
     writtenV = False
 
@@ -723,6 +826,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, BBB, C, V ):
 
     # Now scan for fixed open and close fields
     for openCode,newOpenCode,closeCode,newCloseCode in ( ('<FI>','\\it ','<Fi>','\\it*'),
+                                                        ('<FO><FO>','\\NL**\\d ','<Fo><Fo>','\\NL**'),
                                                         #('<seg><divineName>','\\nd ','</divineName></seg>','\\nd*'),
                                                         #('<divineName>','\\nd ','</divineName>','\\nd*'),
                                                         #('<speaker>','\\sp ','</speaker>','\\sp*'),
@@ -745,16 +849,106 @@ def importGBFVerseLine( gbfVerseString, thisBook, BBB, C, V ):
             ix = verseLine.find( openCode, ix )
         if verseLine.find( closeCode ) != -1:
             logging.error( 'Unexpected {!r} close code without any previous {!r}'.format( closeCode, openCode )  )
-            verseLine = newOpenCode + verseLine.replace( closeCode, newCloseCode, 1 ) # Try to fix it by adding an opening code at the beginning
+            verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
+            # Try to fix it by adding an opening code at or near the beginning of the line
+            #   but we have to skip past any paragraph markers
+            insertIndex = 0
+            while verseLine[insertIndex] == '\\':
+                insertIndex += 1
+                while insertIndex < len(verseLine)-1:
+                    if verseLine[insertIndex] == ' ': break
+                    insertIndex += 1
+            if insertIndex != 0: print( "insertIndex={} vL={!r}".format( insertIndex, verseLine ) )
+            verseLine = verseLine[:insertIndex] + ' '+newOpenCode + verseLine[insertIndex:]
+            if insertIndex != 0: print( "new vL={!r}".format( verseLine ) )
 
 
     if '<' in verseLine or '>' in verseLine or '=' in verseLine or '"' in verseLine:
-        print( "verseLine", repr(verseLine) )
-        if BibleOrgSysGlobals.debugFlag: halt
+        print( "{} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        if BibleOrgSysGlobals.debugFlag: print( moduleName, BBB, C, V ); halt
 
-    print( "Got vL: {}".format( verseLine ) )
-    thisBook.addLine( 'v', V + ' ' + verseLine )
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "Got GBF vL: {!r}".format( verseLine ) )
+    if verseLine: thisBook.addLine( 'v', V + ' ' + verseLine )
 # end of importGBFVerseLine
+
+
+
+def importTHMLVerseLine( thmlVerseString, thisBook, moduleName, BBB, C, V ):
+    """
+    Given a verse entry string made up of THML segments,
+        convert it into our internal format
+        and add the line(s) to thisBook.
+
+    BBB, C, V are just used for more helpful error/information messages.
+
+    We use \\NL** as an internal code for a newline
+        to show where a verse line needs to be broken into internal chunks.
+
+    Adds the line(s) to thisBook. No return value.
+    """
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        print( "importTHMLVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
+    verseLine = thmlVerseString
+    writtenV = False
+
+    # Start of main code for importTHMLVerseLine
+    # Straight substitutions
+    for old, new in ( ( '<br />', '\\NL**' ),
+                      #( '<font color="#ff0000">', '\\wj ' ), ( '</font>', '\\wj*' ),
+                      ( '<small>', '\\sc ' ), ( '</small>', '\\sc*' ),
+                      #( '<milestone marker="¶" subType="x-added" type="x-p"/>', '\\NL**\\p\\NL**' ),
+                      #( '<milestone type="x-extra-p"/>', '\\NL**\\p\\NL**' ),
+                      #( '<lb/>', '\\NL**' ),
+                      #( '<list>', '\\NL**' ), ( '</list>', '\\NL**' ),
+                      ):
+        verseLine = verseLine.replace( old, new )
+
+    # Now scan for fixed open and close fields
+    for openCode,newOpenCode,closeCode,newCloseCode in ( ('<font color="#ff0000">','\\wj ','</font>','\\wj*'),
+                                                        #('<FO><FO>','\\NL**\\d ','<Fo><Fo>','\\NL**'),
+                                                        #('<seg><divineName>','\\nd ','</divineName></seg>','\\nd*'),
+                                                        #('<divineName>','\\nd ','</divineName>','\\nd*'),
+                                                        #('<speaker>','\\sp ','</speaker>','\\sp*'),
+                                                        #('<inscription>','\\bdit ','</inscription>','\\bdit*'), # What should this really be?
+                                                        #('<foreign>','\\tl ','</foreign>','\\tl*'),
+                                                        #('\x1f','STARTF','\x1f','ENDF'),
+                                                        #('[','\\add',']','\\add*'),
+                                                        #('\\\\  #','\\xt','\\\\',''),
+                                                        ):
+        ix = verseLine.find( openCode )
+        while ix != -1:
+            #print( '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, verseLine ) )
+            verseLine = verseLine.replace( openCode, newOpenCode, 1 )
+            ixEnd = verseLine.find( closeCode, ix )
+            if ixEnd == -1:
+                logging.error( 'Missing {!r} close code to match {!r}'.format( closeCode, openCode ) )
+                verseLine = verseLine + newCloseCode # Try to fix it by adding a closing code at the end
+            else:
+                verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
+            ix = verseLine.find( openCode, ix )
+        if verseLine.find( closeCode ) != -1:
+            logging.error( 'Unexpected {!r} close code without any previous {!r}'.format( closeCode, openCode )  )
+            verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
+            # Try to fix it by adding an opening code at or near the beginning of the line
+            #   but we have to skip past any paragraph markers
+            insertIndex = 0
+            while verseLine[insertIndex] == '\\':
+                insertIndex += 1
+                while insertIndex < len(verseLine)-1:
+                    if verseLine[insertIndex] == ' ': break
+                    insertIndex += 1
+            if insertIndex != 0: print( "insertIndex={} vL={!r}".format( insertIndex, verseLine ) )
+            verseLine = verseLine[:insertIndex] + ' '+newOpenCode + verseLine[insertIndex:]
+            if insertIndex != 0: print( "new vL={!r}".format( verseLine ) )
+
+
+    if '<' in verseLine or '>' in verseLine or '=' in verseLine or '"' in verseLine:
+        print( "{} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        if BibleOrgSysGlobals.debugFlag: print( moduleName, BBB, C, V ); halt
+
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "Got THML vL: {!r}".format( verseLine ) )
+    if verseLine: thisBook.addLine( 'v', V + ' ' + verseLine )
+# end of importTHMLVerseLine
 
 
 
@@ -814,6 +1008,7 @@ class SwordBible( Bible ):
                 #except UnicodeDecodeError: print( "   Description is not Unicode!" )
             #print( "moduleID", repr(moduleID) )
             availableModuleCodes.append( moduleID )
+        #print( "Available module codes:", availableModuleCodes )
         if self.moduleName not in availableModuleCodes:
             logging.critical( "Unable to find {!r} Sword module".format( self.moduleName ) )
             if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -834,13 +1029,20 @@ class SwordBible( Bible ):
             logging.critical( "Unable to load {!r} module -- not known by Sword".format( self.moduleName ) )
             return
 
+        markupCode = ord( module.getMarkup() )
+        encoding = ord( module.getEncoding() )
+        if encoding == ENC_LATIN1: self.encoding = 'latin-1'
+        elif encoding == ENC_UTF8: self.encoding = 'utf-8'
+        elif encoding == ENC_UTF16: self.encoding = 'utf-16'
+        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( 'Description: {!r}'.format( module.getDescription() ) )
             print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
-            print( 'Encoding: {!r}'.format( ord(module.getEncoding()) ) )
+            print( 'Encoding: {!r}'.format( encoding ) )
             print( 'KeyText: {!r}'.format( module.getKeyText() ) )
             print( 'Language: {!r}'.format( module.getLanguage() ) )
-            print( 'Markup: {!r}'.format( ord(module.getMarkup()) ) )
+            print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
             print( 'Name: {!r}'.format( module.getName() ) )
             print( 'RawEntry: {!r}'.format( module.getRawEntry() ) )
             print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
@@ -848,28 +1050,7 @@ class SwordBible( Bible ):
             print( 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
             print( 'IsUnicode: {!r}'.format( module.isUnicode() ) )
             print( 'IsWritable: {!r}'.format( module.isWritable() ) )
-            #print( 'Name: {!r}'.format( module.getName() ) )
             #return
-
-        #BBB, C, V = 'GEN', '1', '1'
-        #B = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
-        #refString = "{} {}:{}".format( B, C, V )
-        #print( 'refString', refString )
-        #verseKey = Sword.VerseKey( refString )
-        #print( verseKey.getShortText() )
-        #module.setKey( verseKey )
-        #for j in range ( 0, 31102 ):
-            #print( module.getName(), module.getKey().getShortText(), module.renderText() )
-            #print( module.getName(), module.getKey().getShortText(), module.stripText() )
-            #module.increment()
-
-        # Main code for load()
-        markupCode = ord( module.getMarkup() )
-        encoding = ord( module.getEncoding() )
-        if encoding == ENC_LATIN1: self.encoding = 'latin-1'
-        elif encoding == ENC_UTF8: self.encoding = 'utf-8'
-        elif encoding == ENC_UTF16: self.encoding = 'utf-16'
-        elif BibleOrgSysGlobals.debugFlag: halt
 
         bookCount = 0
         currentBBB = None
@@ -889,7 +1070,8 @@ class SwordBible( Bible ):
             except UnicodeDecodeError: nativeVerseText = ''
 
             if ':' not in verseKeyText:
-                print( "Unusual key: {!r} gave {!r}".format( verseKeyText, nativeVerseText ) )
+                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "Unusual Sword verse key: {!r} (gave {!r})".format( verseKeyText, nativeVerseText ) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert( verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', ) )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -917,7 +1099,7 @@ class SwordBible( Bible ):
 
             # Start a new book if necessary
             if BBB != currentBBB:
-                if currentBBB is not None: # Save the previous book
+                if currentBBB is not None and haveText: # Save the previous book
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
                     self.saveBook( thisBook )
                 # Create the new book
@@ -925,18 +1107,22 @@ class SwordBible( Bible ):
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = "Sword Bible Book object"
                 thisBook.objectTypeString = "Sword Bible"
-                currentBBB, currentC = BBB, '0'
+                currentBBB, currentC, haveText = BBB, '0', False
                 bookCount += 1
-            #if C != currentC:
-                #thisBook.addLine( 'c', C )
-                #currentC = C
 
-            if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, BBB, C, V )
-            elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, BBB, C, V )
-            else:
-                print( 'markupCode', repr(markupCode) )
-                if BibleOrgSysGlobals.debugFlag: halt
-                return
+            if C != currentC:
+                thisBook.addLine( 'c', C )
+                currentC = C
+
+            if nativeVerseText:
+                haveText = True
+                if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                else:
+                    print( 'markupCode', repr(markupCode) )
+                    if BibleOrgSysGlobals.debugFlag: halt
+                    return
 
         if currentBBB is not None: # Save the very last book
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", self.moduleName, currentBBB, bookCount )
@@ -1005,7 +1191,7 @@ def demo():
 
     testFolder = '/home/robert/.sword/'
     # Matigsalug_Test module
-    #testFolder = '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
+    #testFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
 
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -1017,15 +1203,20 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Sword TestA3", result3 )
 
 
-    if 0: # specified module
-        singleModule = 'LEB' # Can be blank if a specific test folder is given containing only one module
+    if 1: # specified module
+        singleModule = 'ABP' # Can be blank if a specific test folder is given containing only one module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword B/ Trying {}".format( singleModule ) )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testSwB( testFolder, singleModule )
 
     if 1: # specified modules
-        good = ('KJV','WEB','KJVA','YLT','ASV','LEB','OEB',)
+        good = ('KJV','WEB','KJVA','YLT','ASV','LEB','ESV','ISV','NET','OEB',
+                'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
+                'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',
+                'MKJV','Montgomery','Murdock','NETfree','NETtext','NHEB','NHEBJE','NHEBME','Noyes',
+                'OEBcth','OrthJBC','RKJNT','RNKJV','RWebster','RecVer','Rotherham',
+                'SPE','TS1998','Twenty','Tyndale','UKJV','WEBBE','WEBME','Webster','Weymouth','Worsley',)
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad

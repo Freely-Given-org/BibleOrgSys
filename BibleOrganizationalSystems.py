@@ -28,11 +28,11 @@ Module handling BibleOrganizationalSystems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-08' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

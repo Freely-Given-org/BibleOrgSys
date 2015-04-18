@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
@@ -73,15 +72,19 @@ Limitations:
     Need to do Bible books codes properly -- current implementation is just a hack
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-18' # by RJH
+ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = "0.07"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.07'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, struct
-from gettext import gettext as _
 import multiprocessing
 from collections import OrderedDict
 

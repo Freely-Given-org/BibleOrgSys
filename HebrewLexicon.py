@@ -5,7 +5,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,11 +34,11 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = "0.16"
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

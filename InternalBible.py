@@ -44,11 +44,11 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-12' # by RJH
+LastModifiedDate = '2015-04-18' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.61'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
