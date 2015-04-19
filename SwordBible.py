@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-19' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -246,7 +246,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "importOSISVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
+        print( "\nimportOSISVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
     #osisVerseString = osisVerseString.strip()
     verseLine = osisVerseString
     writtenV = False
@@ -445,7 +445,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #print( "verseLineB", repr(verseLine) )
     while True:
-        match = re.search( '<w ([^/>]+?)>(.+?)</w>', verseLine )
+        match = re.search( '<w ([^/>]+?)>(.*?)</w>', verseLine ) # Can have no words inside
         if not match: break
         attributes, words = match.group(1), match.group(2)
         #print( 'AttributesC={!r} Words={!r}'.format( attributes, words ) )
@@ -453,7 +453,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         replacement += handleWordAttributes( attributes )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
-        #print( "verseLineC", repr(verseLine) )
+        #print( "\nverseLineW", repr(verseLine) )
     while True:
         match = re.search( '<q ([^/>]+?)>(.+?)</q>', verseLine )
         if not match: break
@@ -611,6 +611,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
             print( 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
         if '"italic"' in attributes: marker = 'it'
         elif '"small-caps"' in attributes: marker = 'sc'
+        elif '"super"' in attributes: marker = 'ord' # We don't have anything exact for this XXXXXXXXXXXXXXXX
+        elif '"acrostic"' in attributes: marker = 'tl'
         elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
         #print( 'replacement', repr(replacement) )
@@ -674,10 +676,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
                                                         ('<speaker>','\\sp ','</speaker>','\\sp*'),
                                                         ('<inscription>','\\bdit ','</inscription>','\\bdit*'), # What should this really be?
                                                         ('<milestone type="x-idiom-start"/>','\\bdit ','<milestone type="x-idiom-end"/>','\\bdit*'), # What should this really be?
-                                                        #('<foreign>','\\tl ','</foreign>','\\tl*'),
-                                                        #('\x1f','STARTF','\x1f','ENDF'),
-                                                        #('[','\\add',']','\\add*'),
-                                                        #('\\\\  #','\\xt','\\\\',''),
+                                                        ('<seg>','','</seg>',''), # Just remove these left-overs
+                                                        ('<foreign>','\\tl ','</foreign>','\\tl*'),
                                                         ):
         ix = verseLine.find( openCode )
         while ix != -1:
@@ -729,6 +729,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         verseLine = verseLine.replace( '\\wj\\NL**\\q1 ', '\\NL**\\q1 \\wj ' ) # Start wj AFTER paragraph marker
         verseLine = verseLine.replace( '\\wj\\NL**\\q2 ', '\\NL**\\q2 \\wj ' ) # Start wj AFTER paragraph marker
         verseLine = verseLine.replace( '\\NL**\\wj*', '\\wj\\NL**' )
+        verseLine = verseLine.replace( '\\tl \\tl ','\\tl ' ).replace( '\\tl*\\tl*','\\tl*' ) # From both highlight and foreign fields
         #print( "GGGGGGGGGG", repr(verseLine) )
     verseLine = verseLine.strip()
     #print( "HHHHHHHH", repr(verseLine) )
@@ -1124,7 +1125,7 @@ class SwordBible( Bible ):
                     if BibleOrgSysGlobals.debugFlag: halt
                     return
 
-        if currentBBB is not None: # Save the very last book
+        if currentBBB is not None and haveText: # Save the very last book
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", self.moduleName, currentBBB, bookCount )
             self.saveBook( thisBook )
 
