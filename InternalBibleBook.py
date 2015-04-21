@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-21' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -262,7 +262,7 @@ class InternalBibleBook:
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
             print( " InternalBibleBook.appendToLastLine( {!r}, {!r} )".format( additionalText, expectedLastMarker ) )
             assert( not self._processedFlag )
-            assert( self._rawLines )
+            assert( self._rawLines ) # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
             logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
         if BibleOrgSysGlobals.debugFlag:
@@ -281,6 +281,127 @@ class InternalBibleBook:
         if forceDebugHere: print( "  newText for {} is {}".format( repr(marker), repr(text) ) )
         self._rawLines[-1] = (marker, text,)
     # end of InternalBibleBook.appendToLastLine
+
+
+    def addVerseSegments( self, V, text, location=None ):
+        """
+        Takes a text line that might optionally include
+            \\NL** markers to indicate a new line.
+        Splits the line at those markers, and adds the individual lines to the book.
+
+        The optional location parameter is for better error messages.
+
+        No return value.
+        """
+        forceDebugHere = False
+        if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
+            print( "\nInternalBibleBook.addVerseSegments( {!r}, {!r}, {!r} )".format( V, text, location ) )
+            assert( not self._processedFlag )
+        ourText = text # Work on a copy so we can still print the original for error messages
+
+        for loopCounter in range( 0, 10 ): # Do this a few times to iron every thing out
+            if forceDebugHere: print( loopCounter, "LOOPSTART", repr(ourText) )
+            savedText = ourText
+
+            while '  ' in ourText: ourText = ourText.replace( '  ', ' ' ) # Reduce double spaces
+            while '\\NL** ' in ourText: ourText = ourText.replace( '\\NL** ', '\\NL**' ) # Remove spaces after newlines
+            #while ' \\NL**' in ourText: ourText = ourText.replace( ' \\NL**', '\\NL**' ) # Remove spaces before newlines
+            while '\\NL**\\NL**' in ourText: ourText = ourText.replace( '\\NL**\\NL**', '\\NL**' ) # Don't need double-ups
+            if ourText.startswith( '\\NL**' ): ourText = ourText[5:] # Don't need nl at start of ourText
+            if ourText.endswith( '\\p \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
+            if ourText.endswith( '\\q1 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
+            if ourText.endswith( '\\q2 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
+            if ourText.endswith( '\\q3 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
+            if ourText.endswith( '\\q4 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
+            if ourText.endswith( '\\NL**' ): ourText = ourText[:-5] # Don't need nl at end of ourText
+
+            for marker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True ):
+                if '\\{}'.format(marker) in ourText:
+                    ourText = ourText.replace( '\\{} \\{} '.format(marker,marker),'\\{} '.format(marker) ) # Remove double start markers
+                    ourText = ourText.replace( '\\{} \\NL**'.format(marker), '\\NL**\\{} '.format(marker) ) # Put character start markers after NL
+                    ourText = ourText.replace( '\\{}*\\{}*'.format(marker,marker),'\\{}*'.format(marker) ) # Remove double end markers
+                    ourText = ourText.replace( '\\NL**\\{}*'.format(marker), '\\{}*\\NL**'.format(marker) ) # Put character end markers before NL
+                    ourText = ourText.replace( '\\p\\{}*'.format(marker), '\\{}*\\p'.format(marker) ) # Put character end markers before NL
+
+            for marker in BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList( 'Combined' ):
+                if '\\{}'.format(marker) in ourText:
+                    #ourText = ourText.replace( ' \\{}'.format(marker), '\\{}'.format(marker) ) # Delete useless spaces at ends of lines
+                    ourText = ourText.replace( '\\{} \\p'.format(marker), '\\p' ) # Delete useless markers
+                    ourText = ourText.replace( '\\{}\\p'.format(marker), '\\p' ) # Delete useless markers
+
+            #ourText = ourText.replace( '\\s1 \\p', '\\p' ) # Delete useless s1 heading marker
+            ourText = ourText.replace( '\\wj\\NL**\\p\\NL**', '\\NL**\\p\\NL**\\wj ' ) # Start wj AFTER paragraph marker
+            ourText = ourText.replace( '\\wj\\NL**\\q1 ', '\\NL**\\q1 \\wj ' ) # Start wj AFTER paragraph marker
+            ourText = ourText.replace( '\\wj\\NL**\\q2 ', '\\NL**\\q2 \\wj ' ) # Start wj AFTER paragraph marker
+            #ourText = ourText.replace( '\\NL**\\wj*', '\\wj*\\NL**' )
+            #ourText = ourText.replace( '\\tl \\tl ','\\tl ' ).replace( '\\tl*\\tl*','\\tl*' ) # From both highlight and foreign fields
+            if forceDebugHere: print( "GGGGGGGGGG", repr(ourText) )
+            ourText = ourText.strip()
+            if ourText == savedText: break # we didn't change anything
+        if forceDebugHere: print( "HHHHHHHH", repr(ourText) )
+
+        writtenV = False
+        if '\\NL**' in ourText: # We need to break the original line into different USFM markers
+            if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
+                print( "\nMessing with segments: {!r}\n  from {!r}{}".format( ourText, text, ('\n  from '+location) if location else '' ) )
+            segments = ourText.split( '\\NL**' )
+            if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
+                assert( len(segments) >= 2 )
+                print( "\nSegments (split by \\NL**):", segments )
+
+            leftovers = ''
+            for segment in segments:
+                if segment and segment[0] == '\\':
+                    bits = segment.split( None, 1 )
+                    #print( " bits", bits )
+                    marker = bits[0][1:]
+                    if len(bits) == 1:
+                        #if bits[0] in ('\\p','\\b'):
+                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                            #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
+                            self.addLine( marker, '' )
+                        else:
+                            logging.error( "It seems that we had a blank {!r} field \nin {!r}".format( bits[0], ourText ) )
+                            if BibleOrgSysGlobals.debugFlag: halt
+                    else:
+                        assert( len(bits) == 2 )
+                        if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
+                            if location: print( "\nHere @ {}".format( location ) )
+                            print( "ourText", repr(ourText) )
+                            print( "seg", repr(segment) )
+                            print( "segments:", segments )
+                            print( "bits", bits )
+                            print( "marker", marker )
+                            print( "leftovers", repr(leftovers) )
+                            #if marker[-1] == '*': marker = marker[:-1]
+                            assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'iot','io1','io2','io3','io4',
+                                            's1','s2','s3','s4', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', )
+                                or marker in ( 'x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','sc', 'str', ) ) # These ones are character markers which can start a new line
+                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                            self.addLine( marker, bits[1] )
+                        elif not writtenV:
+                            self.addLine( 'v', '{} {}'.format( V, segment ) )
+                            writtenV = True
+                        else: leftovers += segment
+                else: # What is segment is blank (\\NL** at end of ourText)???
+                    #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
+                    if not writtenV:
+                        self.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                        writtenV = True
+                    else:
+                        self.addLine( 'v~', leftovers+segment )
+                    leftovers = ''
+
+            if leftovers:
+                if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
+                    print( "\nOriginalText", repr(text) )
+                    print( "\nourText", repr(ourText) )
+                #logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
+                self.appendToLastLine( leftovers )
+
+        elif ourText: # No newlines in result -- just add the simple line
+            self.addLine( 'v', V + ' ' + ourText )
+    # end of InternalBibleBook.addVerseSegments
 
 
     def processLineFix( self, C, V, originalMarker, text, fixErrors ):

@@ -28,10 +28,10 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-20' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
-ProgVersion = '0.77'
+ProgVersion = '0.78'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -218,38 +218,45 @@ class BibleBooksCodes:
 
     def getUSXNumber( self, BBB ):
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USXNumberString"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['USXNumberString']
 
 
     def getUnboundBibleCode( self, BBB ):
         """ Return the three character (two-digits and one uppercase letter) Unbound Bible code for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["UnboundCodeString"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['UnboundCodeString']
 
 
     def getBibleditNumber( self, BBB ):
         """ Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["BibleditNumberString"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['BibleditNumberString']
 
 
     def getNETBibleAbbreviation( self, BBB ):
         """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["NETBibleAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['NETBibleAbbreviation']
 
 
     def getDrupalBibleAbbreviation( self, BBB ):
         """ Return the DrupalBible abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["DrupalBibleAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['DrupalBibleAbbreviation']
 
 
     def getByzantineAbbreviation( self, BBB ):
         """ Return the Byzantine abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["ByzantineAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
-    def getBBBFromOSIS( self, osisAbbreviation ):
-        """ Return the reference abbreviation string for the given OSIS book code string. """
-        return self.__DataDicts["OSISAbbreviationDict"][osisAbbreviation.upper()][1]
+    def getBBBFromOSIS( self, osisAbbreviation, strict=False ):
+        """
+        Return the reference abbreviation string for the given OSIS book code string.
 
+        Also tries the Sword book codes unless strict is set to True.
+        """
+        if strict: return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
+        else:
+            try: return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
+            except KeyError: # Maybe Sword has an informal abbreviation???
+                return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
 
     def getBBBFromUSFM( self, USFMAbbreviation, strict=False ):
         """ Return the reference abbreviation string for the given USFM book code string. """
@@ -591,7 +598,10 @@ def demo():
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
-        print( something, bbc.getBBB( something ) )
+        print( '{!r} -> {}'.format( something, bbc.getBBB( something ) ) )
+    myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
+    for osisCode in myOSIS:
+        print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSIS( osisCode ) ) )
 
     sections = {}
     for BBB in bbc:

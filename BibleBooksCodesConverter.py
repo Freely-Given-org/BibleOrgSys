@@ -28,11 +28,11 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-04-20' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = '0.76'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.77'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -569,13 +569,13 @@ class BibleBooksCodesConverter:
                 logging.critical( _("Special code {} has been used!").format( repr(specialCode) ) )
                 if BibleOrgSysGlobals.debugFlag: halt
 
-        self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRefAbbrDict, "sequenceList":sequenceList,
-                        "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
-                        "CCELDict":myCCELDict, "USFMAbbreviationDict":myUSFMAbbrDict, "USFMNumberDict":myUSFMNDict,
-                        "USXNumberDict":myUSXNDict, "UnboundCodeDict":myUCDict, "BibleditNumberDict":myBENDict,
-                        "NETBibleAbbreviationDict":myNETDict, "DrupalBibleAbbreviationDict":myDrBibDict,
-                        "BibleWorksAbbreviationDict":myBWDict, "ByzantineAbbreviationDict":myBzDict,
-                        "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
+        self.__DataDicts = { 'referenceNumberDict':myIDDict, 'referenceAbbreviationDict':myRefAbbrDict, 'sequenceList':sequenceList,
+                        'SBLAbbreviationDict':mySBLDict, 'OSISAbbreviationDict':myOADict, 'SwordAbbreviationDict':mySwDict,
+                        'CCELDict':myCCELDict, 'USFMAbbreviationDict':myUSFMAbbrDict, 'USFMNumberDict':myUSFMNDict,
+                        'USXNumberDict':myUSXNDict, 'UnboundCodeDict':myUCDict, 'BibleditNumberDict':myBENDict,
+                        'NETBibleAbbreviationDict':myNETDict, 'DrupalBibleAbbreviationDict':myDrBibDict,
+                        'BibleWorksAbbreviationDict':myBWDict, 'ByzantineAbbreviationDict':myBzDict,
+                        'EnglishNameDict':myENDict, 'allAbbreviationsDict':adjAllAbbreviationsDict }
 
         #if 0:
             ## Print available reference book numbers
@@ -858,6 +858,9 @@ def demo():
         # Demo the converter object
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         print( bbcc ) # Just print a summary
+        OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
+        print( 'OAD', len(OAD), sorted(OAD) )
+        print( OAD['EPLAO'] )
 # end of demo
 
 if __name__ == '__main__':

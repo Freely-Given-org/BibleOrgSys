@@ -5,7 +5,7 @@
 #
 # Module handling USFMMarkers
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,11 +34,11 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-12' # by RJH
+LastModifiedDate = '2015-04-21' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
-ProgVersion = '0.68'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.67'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -473,16 +473,20 @@ class USFMMarkers:
 
 
     def getInternalMarkersList( self ):
-        """ Returns a list of all possible internal markers.
-            This includes character markers, but not footnote and xref markers. """
+        """
+        Returns a list of all possible internal markers.
+        This includes character markers, but not footnote and xref markers.
+        """
         return self.__DataDict["internalMarkersList"]
     # end of USFMMarkers.getInternalMarkersList
 
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
-        """ Returns a list of all possible character markers.
-            These are fields that need to be displayed inline with the text, albeit with special formatting.
-            This excludes footnote and xref markers. """
+        """
+        Returns a list of all possible character markers.
+        These are fields that need to be displayed inline with the text, albeit with special formatting.
+        This excludes footnote and xref markers.
+        """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #print( marker, self.markerOccursIn(marker) )
