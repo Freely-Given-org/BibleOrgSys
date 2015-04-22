@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-21' # by RJH
+LastModifiedDate = '2015-04-22' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -374,9 +374,9 @@ class InternalBibleBook:
                             print( "marker", marker )
                             print( "leftovers", repr(leftovers) )
                             #if marker[-1] == '*': marker = marker[:-1]
-                            assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'iot','io1','io2','io3','io4',
+                            assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
                                             's1','s2','s3','s4', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', )
-                                or marker in ( 'x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','sc', 'str', ) ) # These ones are character markers which can start a new line
+                                or marker in ( 'x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) ) # These ones are character markers which can start a new line
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             self.addLine( marker, bits[1] )
                         elif not writtenV:
