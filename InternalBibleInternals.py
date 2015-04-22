@@ -43,10 +43,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-22' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.59'
+ProgVersion = '0.60'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -639,6 +639,7 @@ class InternalBibleIndex:
         #if self.BBB=='PHM':
         #print( self.givenBibleEntries )
         self.indexData = OrderedDict()
+        errorData = []
 
 
         def printIndexEntry( ie ):
@@ -658,11 +659,12 @@ class InternalBibleIndex:
                 #print( "saveAnythingOutstanding", self.BBB, saveCV, saveJ, lineCount, context )
                 #if saveCV == ('0','0'): halt
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self.indexData:
-                    logging.critical( "makeIndex.saveAnythingOutstanding: losing Biblical text by replacing index entry {} {}:{}".format( self.BBB, strC, strV ) )
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( saveCV )
-                        try:
+                if saveCV in self.indexData: # we already have an index entry for this C:V
+                    #print( "makeIndex.saveAnythingOutstanding: already have an index entry @ {} {}:{}".format( self.BBB, strC, strV ) )
+                    errorData.append( ( self.BBB,strC,strV,) )
+                    if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
+                        print( 'saveAnythingOutstanding @ ', self.BBB, saveCV )
+                        try: # printing the previous index entry
                             iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
                             logging.error( "  mI:sAO previous {}".format( iep ) )
                             ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
@@ -681,7 +683,16 @@ class InternalBibleIndex:
                             C, V = saveCV
                             if C != '0' and V != '0': # intros aren't so important
                                 halt # This is a serious error that is losing Biblical text
-                self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
+                    # Let's combine the entries
+                    ie = self.indexData[saveCV]
+                    ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
+                    self.indexData[saveCV] = InternalBibleIndexEntry( ix, lc+lineCount, ct[:] )
+                    if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
+                        logging.error( "  mI:sAO combined {}".format( (ix,lc+lineCount,ct) ) )
+                        for ixx in range( ix, ix+lc+lineCount ):
+                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                else: # no pre-existing duplicate
+                    self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
                 #print( 'sAO', printIndexEntry( self.indexData[saveCV] ) )
                 saveCV = saveJ = None
                 lineCount = 0
@@ -799,6 +810,19 @@ class InternalBibleIndex:
                 if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
             saveAnythingOutstanding()
 
+        if errorData: # We got some overwriting errors
+            lastBBB = None
+            errorDataString = ''
+            for BBB,C,V in errorData:
+                assert( BBB == self.BBB ) # We didn't really need to save this
+                if BBB != lastBBB:
+                    errorDataString += (' ' if errorDataString else '') + BBB
+                    lastBBB, lastC = BBB, None
+                if C != lastC:
+                    errorDataString += (' ' if lastC is None else '; ') + C + ':'
+                    lastC = C
+                errorDataString += ('' if errorDataString[-1]==':' else ',') + V
+            logging.warning( "makeIndex.saveAnythingOutstanding: Needed to combine multiple index entries for {}".format( errorDataString ) )
         self._indexedFlag = True
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkIndex()
     # end of InternalBibleIndex.makeIndex

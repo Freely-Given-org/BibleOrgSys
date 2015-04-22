@@ -41,7 +41,7 @@ ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os, re
@@ -1013,7 +1013,7 @@ class SwordBible( Bible ):
 
             if ':' not in verseKeyText:
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "Unusual Sword verse key: {!r} (gave {!r})".format( verseKeyText, nativeVerseText ) )
+                    print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert( verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', ) )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1116,12 +1116,7 @@ def testSwB( SwFolderPath, SwModuleName=None ):
             if BibleOrgSysGlobals.debugFlag: print()
             print( reference, shortText, verseText )
             if BibleOrgSysGlobals.debugFlag: print( '  {}'.format( fullVerseText ) )
-
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        BBB = 'JN1'
-        if BBB in SwBible:
-            for entryKey in SwBible.books[BBB]._CVIndex:
-                print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
+    return SwBible
 # end of testSwB
 
 
@@ -1150,9 +1145,15 @@ def demo():
         testSwB( testFolder )
 
     if 0: # specified single installed module
-        singleModule = 'NHEBME'
+        singleModule = 'WEBME'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword C/ Trying installed {} module".format( singleModule ) )
-        testSwB( None, singleModule )
+        SwBible = testSwB( None, singleModule )
+        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+            BBB = 'JN1'
+            if BBB in SwBible:
+                SwBible.books[BBB].debugPrint()
+                for entryKey in SwBible.books[BBB]._CVIndex:
+                    print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 1: # specified installed modules
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB','ESV','ISV','NET','OEB',

@@ -108,7 +108,7 @@ class InternalBibleBook:
         #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
         if isinstance( parameter1, str ):
             # Downgrade from critical to warning after testing
-            logging.critical( "InternalBibleBook.constructor( {}, {} ): Not passed a containing Bible object".format( repr(parameter1), BBB ) )
+            logging.critical( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
             self.containerBibleObject = None
             self.workName = parameter1
         else:
@@ -278,7 +278,7 @@ class InternalBibleBook:
         if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert( marker == expectedLastMarker )
         #if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
-        if forceDebugHere: print( "  newText for {} is {}".format( repr(marker), repr(text) ) )
+        if forceDebugHere: print( "  newText for {!r} is {!r}".format( marker, text ) )
         self._rawLines[-1] = (marker, text,)
     # end of InternalBibleBook.appendToLastLine
 
@@ -1458,7 +1458,8 @@ class InternalBibleBook:
                     if poppedStuff is not None:
                         lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText = poppedStuff
                     else: lastAdjustedMarker = lastOriginalMarker = lastAdjustedText = lastCleanText = lastExtras = lastOriginalText = None
-                    print( self.BBB, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        print( self.BBB, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
                     if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', None, '1') ) # Write the explicit chapter number
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
@@ -1731,11 +1732,12 @@ class InternalBibleBook:
         """
         """
         print( "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
-        numLines = 30
-        for j in range( 0, min( numLines, len(self._rawLines) ) ):
-            print( " Raw {}: {} = {}".format( j, self._rawLines[j][0], repr(self._rawLines[j][1]) ) )
+        numLines = 50
+        if '_rawLines' in dir(self):
+            for j in range( 0, min( numLines, len(self._rawLines) ) ):
+                print( " Raw {}: {} = {!r}".format( j, self._rawLines[j][0], self._rawLines[j][1] ) )
         for j in range( 0, min( numLines, len(self._processedLines) ) ):
-            print( " Proc {}: {}{} = {}".format( j, self._processedLines[j][0], '('+self._processedLines[j][1]+')' if self._processedLines[j][1]!=self._processedLines[j][0] else '', repr(self._processedLines[j][2]) ) )
+            print( " Proc {}: {}{} = {!r}".format( j, self._processedLines[j][0], '({})'.format(self._processedLines[j][1]) if self._processedLines[j][1]!=self._processedLines[j][0] else '', self._processedLines[j][2] ) )
     # end of InternalBibleBook.debugPrint
 
 
@@ -1784,24 +1786,24 @@ class InternalBibleBook:
             or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
-                self.addPriorityError( 80, C, V, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
+                self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )
             if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( marker ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Deprecated {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Deprecated {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
-                self.addPriorityError( 90, C, V, _("Newline marker {} is deprecated in USFM standard".format( repr(marker) ) ) )
+                self.addPriorityError( 90, C, V, _("Newline marker {!r} is deprecated in USFM standard").format( marker ) )
             markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:{!r}".format(marker,text)); print( markerList )
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                 if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Deprecated {!r} internal marker in Bible book (Text is {!r})").format( insideMarker, text ) )
                     logging.warning( _("Deprecated {!r} internal marker in Bible book after {} {}:{} (Text is {!r})").format( insideMarker, self.BBB, C, V, text ) )
-                    self.addPriorityError( 89, C, V, _("Internal marker {} is deprecated in USFM standard".format( repr(insideMarker) ) ) )
+                    self.addPriorityError( 89, C, V, _("Internal marker {!r} is deprecated in USFM standard").format( insideMarker ) )
             ix = 0
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check newline markers
                 if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker {!r} must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.BBB, C, V, marker, text ) )
-                    self.addPriorityError( 90, C, V, _("Newline marker {} should be at start of line".format( repr(insideMarker) ) ) )
+                    self.addPriorityError( 90, C, V, _("Newline marker {!r} should be at start of line").format( insideMarker ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
     # end of InternalBibleBook.validateMarkers
@@ -2993,13 +2995,13 @@ class InternalBibleBook:
             nonlocal haveNonAsciiChars
             #print( "countCharacters: {!r}".format( adjText ) )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple spaces in {}").format( repr(adjText.replace( '  ', '··' )) ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
                 self.addPriorityError( 7, C, V, _("Multiple spaces in text line") )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple non-breaking spaces in {}").format( repr(adjText.replace( '  ', '··' )) ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple non-breaking spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
                 self.addPriorityError( 9, C, V, _("Multiple non-breaking spaces in text line") )
             if adjText[-1].isspace(): # Most trailing spaces have already been removed, but this can happen in a note after the markers have been removed
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {}").format( repr(adjText) ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {!r}").format( adjText ) )
                 self.addPriorityError( 5, C, V, _("Trailing space in text line") )
                 #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {} {!r}").format( marker, adjText ) )
             if BibleOrgSysGlobals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
@@ -3015,7 +3017,7 @@ class InternalBibleBook:
                     except ValueError: unicodeCharName = simpleCharName
                     try: unicodeLCCharName = unicodedata.name( lcChar )
                     except (ValueError,TypeError):
-                        logging.error( t("InternalBibleBook.countCharacters has error getting Unicode name of {} (from {})").format( repr(lcChar), repr(char) ) )
+                        logging.error( t("InternalBibleBook.countCharacters has error getting Unicode name of {!r} (from {!r})").format( lcChar, char ) )
                         unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
@@ -3936,7 +3938,7 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumVerses( {} )").format( repr(C) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumVerses( {!r} )").format( C ) )
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( t("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
             C = str( C )
