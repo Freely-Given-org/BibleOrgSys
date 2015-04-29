@@ -59,10 +59,10 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-28' # by RJH
+LastModifiedDate = '2015-04-29' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -85,7 +85,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
 
 
 
-def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Haggai XML Bible files or folders in the folder and in the next level down.
 
@@ -145,9 +145,9 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
         numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = HaggaiXMLBible( givenFolderName, lastFilenameFound )
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
     elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -188,10 +188,10 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
             numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             ub = HaggaiXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
 # end of HaggaiXMLBibleFileCheck

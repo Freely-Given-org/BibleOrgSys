@@ -62,7 +62,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-04-29' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -85,7 +85,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
 
 
 
-def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for VerseView XML Bible files or folders in the folder and in the next level down.
 
@@ -146,9 +146,9 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
         numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "VerseViewXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad and autoLoadBooks):
             ub = VerseViewXMLBible( givenFolderName, lastFilenameFound )
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
     elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -190,10 +190,10 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
             numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "VerseViewXMLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             ub = VerseViewXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
 # end of VerseViewXMLBibleFileCheck
