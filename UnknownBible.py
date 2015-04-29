@@ -31,16 +31,16 @@ Given a folder name, analyses the files in it
 Currently aware of the following Bible types:
     USFM
     Unbound Bible (table based), theWord (line based), MySword (SQLite based), e-Sword (SQLite based)
-    OSIS, USX, USFX, OpenSong, Zefania, Haggai (all XML)
+    OSIS, USX, USFX, OpenSong, Zefania, Haggai, VerseView (all XML)
     Sword modules (binary).
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-28' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -58,6 +58,7 @@ from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
 from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from HaggaiXMLBible import HaggaiXMLBibleFileCheck, HaggaiXMLBible
+from VerseViewXMLBible import VerseViewXMLBibleFileCheck, VerseViewXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from DrupalBible import DrupalBibleFileCheck, DrupalBible
 from YETBible import YETBibleFileCheck, YETBible
@@ -268,6 +269,14 @@ class UnknownBible:
             typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
+        # Search for VerseView XML Bibles
+        VerseViewBibleCount = VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if VerseViewBibleCount:
+            totalBibleCount += VerseViewBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'VerseView:' + str(VerseViewBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
+
         # Search for CSV text Bibles
         CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if CSVBibleCount:
@@ -381,6 +390,10 @@ class UnknownBible:
                 self.foundType = "Haggai XML Bible"
                 if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif VerseViewBibleCount == 1:
+                self.foundType = "VerseView XML Bible"
+                if autoLoad: return VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
         return self.foundType
     # end of UnknownBible.search
 # end of class UnknownBible
@@ -410,6 +423,7 @@ def demo():
                     "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
                     "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/VerseViewXML/",
                     "Tests/DataFilesForTests/e-SwordTest/",
                     "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",

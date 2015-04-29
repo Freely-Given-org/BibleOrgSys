@@ -5,7 +5,7 @@
 #
 # Module handling OpenSong XML Bibles
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,11 +34,11 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-18' # by RJH
+LastModifiedDate = '2015-04-29' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.30"
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.31'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -269,7 +269,7 @@ class OpenSongXMLBible( Bible ):
                 bookName = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookName:
-            BBB = self.genericBOS.getBBB( bookName )
+            BBB = self.genericBOS.getBBB( bookName ) # Booknames are in English
             if BBB:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
@@ -356,7 +356,8 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    testFolder = "../../../../../Data/Work/Bibles//OpenSong Bibles/"
+    testFolder = "Tests/DataFilesForTests/VerseViewXML/" # These are very similar
+    testFolder = "../../../../../Data/Work/Bibles/OpenSong Bibles/"
     single1 = ( "KJV.xmm", )
     single2 = ( "BIBLIA warszawska", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "MKJV", \

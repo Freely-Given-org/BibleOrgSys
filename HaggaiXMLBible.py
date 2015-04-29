@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -58,21 +57,24 @@ Module reading and loading Haggai XML Bibles:
             <VERSE vnumber="3">Juda aber zeugte Phares und Zarah von der Thamar, Phares aber zeugte Hezron, Hezron aber zeugte Aram,</VERSE>
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-28' # by RJH
+ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
-ProgVersion = "0.29"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.29'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-#from InternalBible import InternalBible
-#from InternalBibleBook import InternalBibleBook
-#from BibleWriter import BibleWriter
 from Bible import Bible, BibleBook
 
 
@@ -126,7 +128,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
-    # See if there's an OpenSong project here in this folder
+    # See if there's an Haggai project here in this folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -178,7 +180,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
@@ -256,8 +258,7 @@ class HaggaiXMLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
 
-            schema = None
-            name = status = BibleType = revision = lgid = None
+            schema = name = status = BibleType = revision = version = lgid = None
             for attrib,value in self.tree.items():
                 if attrib == HaggaiXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
@@ -710,17 +711,14 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
+    if 1: # demo the file checking code
+        testFolder = "Tests/DataFilesForTests/HaggaiTest/"
         print( "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
         print( "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        #testSubfolder = os.path.join( testFolder, 'something/' )
-        #print( "TestB1", HaggaiXMLBibleFileCheck( testSubfolder ) )
-        #print( "TestB2", HaggaiXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
 
 
     if 1:
-        testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
+        testFolder = "Tests/DataFilesForTests/HaggaiTest/"
         count = totalBooks = 0
         if os.access( testFolder, os.R_OK ): # check that we can read the test data
             for something in sorted( os.listdir( testFolder ) ):
@@ -728,11 +726,11 @@ def demo():
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nH B{}/ {}".format( count, something ) )
-                    zb = HaggaiXMLBible( testFolder, something )
-                    zb.load()
-                    if BibleOrgSysGlobals.verbosityLevel > 0: print( zb )
+                    hB = HaggaiXMLBible( testFolder, something )
+                    hB.load()
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( hB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
-                        zb.check()
+                        hB.check()
                         #UBErrors = UB.getErrors()
                         # print( UBErrors )
                     #print( UB.getVersification () )
@@ -747,56 +745,20 @@ def demo():
                                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                                             ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
                             (t, b, c, v) = reference
-                            if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                            if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                            if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
+                            if t=='OT' and len(hB)==27: continue # Don't bother with OT references if it's only a NT
+                            if t=='NT' and len(hB)==39: continue # Don't bother with NT references if it's only a OT
+                            if t=='DC' and len(hB)<=66: continue # Don't bother with DC references if it's too small
                             svk = VerseReferences.SimpleVerseKey( b, c, v )
                             #print( svk, ob.getVerseDataList( reference ) )
-                            try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+                            try: print( reference, svk.getShortText(), hB.getVerseText( svk ) )
                             except KeyError: print( something, reference, "doesn't exist" )
                     if BibleOrgSysGlobals.commandLineOptions.export:
-                        zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                        hB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
-                        zb.toHaggaiXML()
+                        hB.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total Haggai Bibles processed.".format( count ) )
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
-
-
-    #if 0: # Try some Zefania modules and see if they load
-        #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
-        ##testFolder = "Tests/DataFilesForTests/HaggaiTest/"
-        #single = ( "kjv.xml", )
-        #good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
-            #'sf_elb_1871_original_NT_rev1.xml', 'sf_wycliffe.xml', 'ylt.xml')
-        #nonEnglish = ( "italian.xml", )
-        #bad = (  )
-        #allOfThem = good + nonEnglish + bad
-
-        #for j, testFilename in enumerate( allOfThem ): # Choose one of the above lists for testing
-            #testFilepath = os.path.join( testFolder, testFilename )
-
-            ## Demonstrate the XML Bible class
-            #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nHZ C{}/ Demonstrating the Haggai Bible class...".format( j+1 ) )
-            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
-            #zb = HaggaiXMLBible( testFolder, testFilename )
-            #zb.load() # Load and process the XML
-            #print( zb ) # Just print a summary
-            ##print( zb.books['JDE']._processedLines )
-            #if 1: # Test verse lookup
-                #import VerseReferences
-                #for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                    #('OT','DAN','1','21'),
-                                    #('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                    #('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                    #(t, b, c, v) = reference
-                    #if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                    #if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                    #if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                    #svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    ##print( svk, ob.getVerseDataList( reference ) )
-                    #try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-                    #except KeyError: print( testFilename, reference, "doesn't exist" )
 # end of demo
 
 if __name__ == '__main__':

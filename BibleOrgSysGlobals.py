@@ -35,6 +35,8 @@ Contains functions:
     makeSafeFilename( someName )
     makeSafeXML( someString )
     makeSafeString( someString )
+    removeAccents( someString )
+
     peekIntoFile( filenameOrFilepath, folderName=None, numLines=1 )
 
     totalSize( o, handlers={} )
@@ -72,10 +74,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-04' # by RJH
+LastModifiedDate = '2015-04-29' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.58'
+ProgVersion = '0.59'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -293,6 +295,32 @@ def makeSafeString( someString ):
     """
     #return someString.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     return someString.replace('<','_LT_').replace('>','_GT_')
+# end of BibleOrgSysGlobals.makeSafeString
+
+
+##########################################################################################################
+#
+# Remove accents
+
+accentDict = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','Ą':'A', 'Æ':'AE',
+              'Ç':'C','Ć':'C','Ĉ':'C','Ċ':'C','Č':'C',
+              'È':'E','É':'E','Ê':'E','Ë':'E', 'Ì':'I','Í':'I','Î':'I','Ï':'I', 'Ð':'D', 'Ñ':'N',
+              'Ò':'O','Ó':'O','Ô':'O','Õ':'O','Ö':'O','Ø':'O',
+              'Ù':'U','Ú':'U','Û':'U','Ü':'U', 'Ý':'Y',
+              'à':'a','á':'a','â':'a','ã':'a','ä':'a','å':'a','ā':'a','ă':'a','ą':'a', 'æ':'ae',
+              'ç':'c','ć':'c','ĉ':'c','ċ':'c','č':'c',
+              'è':'e','é':'e','ê':'e','ë':'e', 'ì':'i','í':'i','î':'i','ï':'i', 'ð':'d', 'ñ':'n',
+              'ò':'o','ó':'o','ô':'o','õ':'o','ö':'o','ø':'o',
+              'ù':'u','ú':'u','û':'u','ü':'u', 'ý':'y','ÿ':'y',
+              }
+def removeAccents( someString ):
+    """
+    Remove accents from the string and return it (used for fuzzy matching)
+    """
+    resultString = ''
+    for char in someString:
+        resultString += accentDict[char] if char in accentDict else char
+    return resultString
 # end of BibleOrgSysGlobals.makeSafeString
 
 

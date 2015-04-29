@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -63,21 +62,24 @@ or
       <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-28' # by RJH
+ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.30"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.30'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-#from InternalBible import InternalBible
-#from InternalBibleBook import InternalBibleBook
-#from BibleWriter import BibleWriter
 from Bible import Bible, BibleBook
 
 
@@ -270,8 +272,7 @@ class ZefaniaXMLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
 
-            schema = None
-            name = status = BibleType = revision = version = lgid = None
+            schema = name = status = BibleType = revision = version = lgid = None
             for attrib,value in self.tree.items():
                 if attrib == ZefaniaXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
@@ -663,14 +664,11 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code
         testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
         #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
         print( "TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
         print( "TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        #testSubfolder = os.path.join( testFolder, 'something/' )
-        #print( "TestB1", ZefaniaXMLBibleFileCheck( testSubfolder ) )
-        #print( "TestB2", ZefaniaXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
 
     if 1:
         testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
@@ -706,48 +704,6 @@ def demo():
                     #print( svk, ob.getVerseDataList( reference ) )
                     try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
                     except KeyError: print( testFilename, reference, "doesn't exist" )
-
-
-    #if 1: # See how well Haggai XML modules load using this program
-        #testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
-        #count = totalBooks = 0
-        #if os.access( testFolder, os.R_OK ): # check that we can read the test data
-            #for something in sorted( os.listdir( testFolder ) ):
-                #somepath = os.path.join( testFolder, something )
-                #if os.path.isfile( somepath ) and something.endswith( '.xml' ):
-                    #count += 1
-                    #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nZH C{}/ {}".format( count, something ) )
-                    #zb = ZefaniaXMLBible( testFolder, something )
-                    #zb.load()
-                    #if BibleOrgSysGlobals.verbosityLevel > 0: print( zb )
-                    #if BibleOrgSysGlobals.strictCheckingFlag:
-                        #zb.check()
-                        ##UBErrors = UB.getErrors()
-                        ## print( UBErrors )
-                    ##print( UB.getVersification () )
-                    ##print( UB.getAddedUnits () )
-                    ##for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ###print( "Looking for", ref )
-                        ##print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-                    #if 1: # Test verse lookup
-                        #import VerseReferences
-                        #for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                            #('OT','DAN','1','21'),
-                                            #('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                            #('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                            #(t, b, c, v) = reference
-                            #if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                            #if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                            #if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                            #svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            ##print( svk, ob.getVerseDataList( reference ) )
-                            #try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-                            #except KeyError: print( something, reference, "doesn't exist" )
-                    #if BibleOrgSysGlobals.commandLineOptions.export:
-                        #zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                #else: print( "Sorry, skipping {}.".format( something ) )
-            #if count: print( "\n{} total Zefania Bibles processed.".format( count ) )
-        #else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
 # end of demo
 
 

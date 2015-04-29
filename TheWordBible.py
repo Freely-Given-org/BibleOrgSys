@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-28' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.39'
@@ -503,6 +503,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+        #print( '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
@@ -510,10 +511,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             vCount += 1
             if vCount == 1: # Handle verse bridges
                 if text != str(V):
-                    composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
+                    composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
             elif vCount > 1: # We have an additional verse number
                 assert( text != str(V) )
-                composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
             lastMarker = marker
             continue
 

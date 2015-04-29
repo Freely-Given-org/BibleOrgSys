@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-22' # by RJH
+LastModifiedDate = '2015-04-27' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.22'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -318,6 +318,30 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
                     savlm = savlm[:match3.start()] + savlm[match3.end():] # Remove this Strongs' number
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
+            match2 = re.search( 'lemma="(.+?)"', attributeString )
+            if match2:
+                lemma = match2.group(1)
+                #print( 'lemma', repr(lemma) )
+                while True:
+                    match3 = re.search( 'strong:([GH]\d{1,5})', lemma )
+                    if not match3: break
+                    #print( 'string', repr(match3.group(1) ) )
+                    attributeReplacementResult += '\\str {}\\str*'.format( match3.group(1) )
+                    lemma = lemma[:match3.start()] + lemma[match3.end():] # Remove this Strongs' number
+                attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
+
+            match2 = re.search( 'morph="(.+?)"', attributeString )
+            if match2:
+                morph = match2.group(1)
+                #print( 'morph', repr(morph) )
+                while True:
+                    match3 = re.search( 'strongMorph:(TH\d{1,4})', morph )
+                    if not match3: break
+                    #print( 'string', repr(match3.group(1) ) )
+                    attributeReplacementResult += '\\morph {}\\morph*'.format( match3.group(1) )
+                    morph = morph[:match3.start()] + morph[match3.end():] # Remove this Strongs' number
+                attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
+
             match2 = re.search( 'type="(.+?)"', attributeString )
             if match2:
                 typeValue = match2.group(1)
@@ -384,6 +408,13 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         if not match: break
         assert( V == '0' )
         verseLine = verseLine[:match.start()] + verseLine[match.end():] # It's in v0 anyway so no problem
+    while True:
+        match = re.search( '<div ([^/>]*?)type="section"([^/>]*?)>', verseLine )
+        if not match: break
+        attributes = match.group(1) + match.group(2)
+        print( "Div section attributes={!r}".format( attributes ) )
+        assert( 'scope="' in attributes )
+        verseLine = verseLine[:match.start()] + verseLine[match.end():]
     while True:
         match = re.search( '<div [^/>]*?type="colophon"[^/>]*?/>', verseLine )
         if not match: break
@@ -690,6 +721,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         elif '"acrostic"' in attributes: marker = 'tl'
         elif '"bold"' in attributes: marker = 'bd'
         elif '"underline"' in attributes: marker = 'em' # We don't have an underline marker
+        elif '"x-superscript"' in attributes: marker = 'ord' # We don't have a superscript marker
         elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
         #print( 'replacement', repr(replacement) )
@@ -724,7 +756,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         match = re.search( '<milestone ([^/>]*?)type="x-strongsMarkup"([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)+match.group(2)
-        print( 'Strongs milestone attributes={!r}'.format( attributes ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Strongs milestone attributes={!r}'.format( attributes ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
         #print( "verseLineC", repr(verseLine) )
     while True:
@@ -759,10 +792,19 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     while True:
         match = re.search( '<note([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
-        attributes, noteContents = match.group(1), match.group(2)
+        attributes, noteContents = match.group(1), match.group(2).rstrip().replace( '\\NL**\\q1\\NL**', '//' ) # was <l />
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( 'Note attributes={!r} contents={!r}'.format( attributes, noteContents ) )
         replacement = '\\f + \\ft {}\\f*'.format( noteContents )
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<abbr([^/>]*?)>(.*?)</abbr>', verseLine )
+        if not match: break
+        attributes, abbr = match.group(1), match.group(2)
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Abbr attributes={!r} abbr={!r}'.format( attributes, abbr ) )
+        replacement = '{}'.format( abbr )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
@@ -786,6 +828,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
             ('<milestone type="x-idiom-start"/>','\\bdit ','<milestone type="x-idiom-end"/>','\\bdit*'), # What should this really be?
             ('<seg>','','</seg>',''), # Just remove these left-overs
             ('<foreign>','\\tl ','</foreign>','\\tl*'),
+            ('<i>','\\it ','</i>','\\it*'),
             ]
     if '<divineName>' in verseLine:
         replacementList.append( ('<divineName>','\\nd ','</divineName>','\\nd*') )
@@ -804,7 +847,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
 
     # Now divide up lines and enter them
     location = '{} {} {}:{} {!r}'.format( moduleName, BBB, C, V, osisVerseString ) if debuggingThisModule else '{} {} {}:{}'.format( moduleName, BBB, C, V )
-    thisBook.addVerseSegments( V, verseLine, location )
+    if verseLine or V != '0':
+        thisBook.addVerseSegments( V, verseLine, location )
 # end of importOSISVerseLine
 
 
@@ -823,8 +867,92 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "importGBFVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, gbfVerseString ) )
+        print( "\nimportGBFVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, gbfVerseString ) )
     verseLine = gbfVerseString
+
+    if moduleName == 'ASV': # Fix a module bug
+        verseLine = verseLine.replace( 'pit of the<RF>1<Rf> shearing', 'pit of the<RF>2<Rf> shearing' )
+        
+    # Scan for footnote callers and callees
+    lastCalled = None
+    contentsDict = {}
+    while True:
+        match1 = re.search( '<RF>(\d{1,2}?)<Rf>', verseLine ) # Footnote caller
+        if not match1: break
+        caller = match1.group(1)
+        match2 = re.search( '<RF>(\d{1,2}?)\\)? (.+?)<Rf>', verseLine ) # Footnote text starts with 1) or just 1
+        if not match2:
+            match3 = re.search( '<RF>([^\d].+?)<Rf>', verseLine )
+        if match1 or match2: assert( match1 and (match2 or lastCalled or match3) )
+        #if not match1: break
+        #caller = int(match1.group(1))
+        if caller in contentsDict: # We have a repeat of a previous caller
+            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            #print( 'replacement1 (repeat)', caller, repr(replacement1), contentsDict )
+            verseLine = verseLine[:match1.start()] + replacement1 + verseLine[match1.end():]
+        elif match2: # normal case -- let's separate out all of the numbered callees
+            callee, contents = match2.group(1), match2.group(2).rstrip()
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( 'FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
+            replacement2 = '{}) {}'.format( callee, contents )
+            j = 0
+            while replacement2:
+                #print( 'Loop {} start: now {} with replacement2={!r}'.format( j, contentsDict, replacement2 ) )
+                match8 = re.search( '(\d{1,2})\\) (.*?)(\d{1,2})\\) ', replacement2 )
+                match9 = re.search( '(\d{1,2})\\) ', replacement2 )
+                if match8: assert( match9 and match9.group(1)==match8.group(1) )
+                if not match9: break
+                if match8: callee8a, contents8, callee8b = match8.group(1), match8.group(2), match8.group(3)
+                callee9 = match9.group(1)
+                if match8: # We have two parts
+                    assert( callee8a == callee9 )
+                    contentsDict[callee9] = contents8
+                    replacement2 = replacement2[match8.end()-2-len(callee8b):]
+                    #print( 'Loop {} with match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
+                else: # We only have one part
+                    #print( repr(callee9), repr(callee) )
+                    #assert( callee9 == callee )
+                    contentsDict[callee9] = replacement2[len(callee9)+2:]
+                    replacement2 = ''
+                    #print( 'Loop {} with no match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
+                j += 1
+            if j==0: # We found nothing above
+                contentsDict[callee] = contents
+                replacement2 = ''
+            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            assert( match2.start()>match1.start() and match2.end()>match1.end() and match2.start()>match1.end() )
+            verseLine = verseLine[:match1.start()] + replacement1 + \
+                        verseLine[match1.end():match2.start()] + replacement2 + verseLine[match2.end():]
+        elif match3: # We have a callee without a number
+            assert( caller == '1' ) # Would only work for a single footnote I think
+            callee, contents = caller, match3.group(1).rstrip()
+            contentsDict[caller] = contents
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( 'FN caller={!r} unnumbered contents={!r}'.format( caller, contents ) )
+            nextOne = ' {}) '.format( int(caller)+1 )
+            if nextOne in contents: # It contains the next footnote(s) as well
+                halt # Not expected
+            else:
+                replacement3 = ''
+            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            #print( 'replacement1', repr(replacement1) )
+            #print( 'replacement3', repr(replacement3) )
+            assert( match3.start()>match1.start() and match3.end()>match1.end() and match3.start()>match1.end() )
+            verseLine = verseLine[:match1.start()] + replacement1 + \
+                        verseLine[match1.end():match3.start()] + replacement3 + verseLine[match3.end():]
+        else:
+            print( 'WHY FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
+            halt
+        #print( repr(verseLine ) )
+        lastCalled = callee, contents
+    match4 = re.search( '<RF>(.+?)<Rf>', verseLine ) # Footnote that doesn't match the above system
+    if match4:
+        contents = match4.group(1)
+        #print( 'match4', repr(contents), repr(verseLine), contentsDict )
+        assert( len(contents) > 2 and not contents[0].isdigit() )
+        replacement4 = '\\f + \\ft {}\\f*'.format( contents )
+        #print( 'replacement4', repr(replacement4) )
+        verseLine = verseLine[:match4.start()] + replacement4 + verseLine[match4.end():]
 
     # Now scan for fixed open and close fields
     replacementList = ( ('<FI>','\\it ','<Fi>','\\it*'),
@@ -866,7 +994,7 @@ def importTHMLVerseLine( thmlVerseString, thisBook, moduleName, BBB, C, V ):
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "importTHMLVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
+        print( "\nimportTHMLVerseLine( {} {} {}:{} ... {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
     verseLine = thmlVerseString
 
     # Straight substitutions
@@ -938,6 +1066,13 @@ class SwordBible( Bible ):
 
         # Load the Sword manager and find our module
         self.SWMgr = Sword.SWMgr()
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            availableGlobalOptions = [str(option) for option in self.SWMgr.getGlobalOptions()]
+            print( "availableGlobalOptions", availableGlobalOptions )
+        # Don't need to set options if we use getRawEntry() rather than stripText() or renderText()
+        #for optionName in ( 'Headings', 'Footnotes', 'Cross-references', "Strong's Numbers", 'Morphological Tags', ):
+            #self.SWMgr.setGlobalOption( optionName, 'On' )
+
         if self.sourceFolder:
             self.SWMgr.augmentModules( self.sourceFolder, False ) # Add our folder to the SW Mgr
         availableModuleCodes = []
@@ -982,11 +1117,9 @@ class SwordBible( Bible ):
             print( 'Description: {!r}'.format( module.getDescription() ) )
             print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
             print( 'Encoding: {!r}'.format( encoding ) )
-            print( 'KeyText: {!r}'.format( module.getKeyText() ) )
             print( 'Language: {!r}'.format( module.getLanguage() ) )
             print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
             print( 'Name: {!r}'.format( module.getName() ) )
-            print( 'RawEntry: {!r}'.format( module.getRawEntry() ) )
             print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
             print( 'Type: {!r}'.format( module.getType() ) )
             print( 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
@@ -1003,16 +1136,22 @@ class SwordBible( Bible ):
             # Find where we're at
             verseKey = module.getKey()
             verseKeyText = verseKey.getShortText()
+            #if '2' in verseKeyText: halt # for debugging first verses
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( 'vkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
+                #print( '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
 
             #nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
             #nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
-            try: nativeVerseText = str( module.renderText() )
+            #print( 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
+            #print( 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
+            #print( 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
+            #print( 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
+            try: nativeVerseText = module.getRawEntry()
+            #try: nativeVerseText = str( module.renderText() )
             except UnicodeDecodeError: nativeVerseText = ''
 
             if ':' not in verseKeyText:
-                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert( verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', ) )
@@ -1096,9 +1235,10 @@ def testSwB( SwFolderPath, SwModuleName=None ):
     if BibleOrgSysGlobals.commandLineOptions.export:
         ##SwBible.toDrupalBible()
         SwBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'),
                         ('OT','DAN','1','21'),
-                        ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                        ('NT','MAT','1','1'), ('NT','MAT','3','5'), ('NT','MAT','3','8'),
+                        ('NT','JDE','1','4'), ('NT','REV','22','21'),
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
         (t, b, c, v) = reference
         if t=='OT' and len(SwBible)==27: continue # Don't bother with OT references if it's only a NT
@@ -1145,10 +1285,10 @@ def demo():
         testSwB( testFolder )
 
     if 0: # specified single installed module
-        singleModule = 'WEBME'
+        singleModule = 'ASV'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword C/ Trying installed {} module".format( singleModule ) )
         SwBible = testSwB( None, singleModule )
-        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
             BBB = 'JN1'
             if BBB in SwBible:
                 SwBible.books[BBB].debugPrint()
