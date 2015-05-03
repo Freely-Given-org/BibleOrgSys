@@ -59,10 +59,10 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-29' # by RJH
+LastModifiedDate = '2015-04-30' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -269,37 +269,37 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.filename = element.text
+                    #self.filename = element.text
                 elif element.tag == VerseViewXMLBible.revisionTag:
                     sublocation = "revision in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.revision = element.text
+                    self.settingsDict['Revision'] = element.text
                 elif element.tag == VerseViewXMLBible.titleTag:
                     sublocation = "title in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.title = element.text
+                    self.settingsDict['Title'] = element.text
                 elif element.tag == VerseViewXMLBible.fontTag:
                     sublocation = "font in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.font = element.text
+                    self.settingsDict['Font'] = element.text
                 elif element.tag == VerseViewXMLBible.copyrightTag:
                     sublocation = "copyright in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.copyright = element.text
+                    self.settingsDict['Copyright'] = element.text
                 elif element.tag == VerseViewXMLBible.sizefactorTag:
                     sublocation = "sizefactor in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.sizeFactor = element.text
+                    if BibleOrgSysGlobals.debugFlag: assert( element.tail == '1' )
                 elif element.tag == VerseViewXMLBible.bookTag:
                     sublocation = "book in " + location
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
@@ -311,12 +311,12 @@ class VerseViewXMLBible( Bible ):
 
         if  BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             # These are all compulsory so they should all exist
-            print( "Filename is {!r}".format( self.filename ) )
-            print( "Revision is {!r}".format( self.revision ) )
-            print( "Title is {!r}".format( self.title ) )
-            print( "Font is {!r}".format( self.font ) )
-            print( "Copyright is {!r}".format( self.copyright ) )
-            print( "SizeFactor is {!r}".format( self.sizeFactor ) )
+            #print( "Filename is {!r}".format( self.filename ) )
+            print( "Revision is {!r}".format( self.settingsDict['Revision'] ) )
+            print( "Title is {!r}".format( self.settingsDict['Title'] ) )
+            print( "Font is {!r}".format( self.settingsDict['Font'] ) )
+            print( "Copyright is {!r}".format( self.settingsDict['Copyright'] ) )
+            #print( "SizeFactor is {!r}".format( self.sizeFactor ) )
 
         self.doPostLoadProcessing()
     # end of VerseViewXMLBible.load
@@ -403,7 +403,7 @@ class VerseViewXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
+        if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )

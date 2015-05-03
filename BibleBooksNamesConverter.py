@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNamesConverter.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,19 @@
 Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data tables.
 """
 
-ProgName = "Bible Books Names Systems handler"
-ProgVersion = "0.34"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+from gettext import gettext as _
+
+LastModifiedDate = '2015-05-03' # by RJH
+ShortProgName = "BibleBooksNamesConverter"
+ProgName = "Bible Books Names Systems converter"
+ProgVersion = '0.34'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 

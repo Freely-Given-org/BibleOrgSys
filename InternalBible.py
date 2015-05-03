@@ -44,10 +44,10 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-04-30' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.61'
+ProgVersion = '0.62'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -129,9 +129,16 @@ class InternalBible:
         if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
         if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
         elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
-        if self.status: result += ('\n' if result else '') + ' '*indent + _("Status: {}").format( self.status )
-        if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
-        if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            for fieldName in ( 'Title', 'Version', 'Revision',  ):
+                if fieldName in self.settingsDict:
+                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, self.settingsDict[fieldName] )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            for fieldName in ( 'Status', 'Font', 'Copyright', ):
+                if fieldName in self.settingsDict:
+                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, self.settingsDict[fieldName] )
+        #if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
+        #if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
         result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
                                         .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<5 else '' )
         return result

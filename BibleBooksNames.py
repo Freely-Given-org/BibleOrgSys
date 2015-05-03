@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2014-03-11 (also update ProgVersion below)
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,18 +26,22 @@
 Module handling BibleBooksNames.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-05-03' # by RJH
+ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
-ProgVersion = "0.35"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.36'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from collections import OrderedDict
 
-#from singleton import singleton
+from singleton import singleton
 
 import BibleOrgSysGlobals
 
@@ -196,7 +199,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
 
 
 
-#@singleton # Can only ever have one instance
+@singleton # Can only ever have one instance
 class BibleBooksNamesSystems:
     """
     Class for handling Bible books names systems.
@@ -211,10 +214,12 @@ class BibleBooksNamesSystems:
         Constructor:
         """
         self.__DataDicts, self.__ExpandedDicts = None, None # We'll import into this in loadData
-    # end of __init__
+    # end of BibleBooksNamesSystems.__init__
 
     def loadData( self, XMLFolder=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        """
+        Loads the XML data file and imports it to dictionary format (if not done already).
+        """
         if not self.__DataDicts: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             picklesGood = False
@@ -245,7 +250,7 @@ class BibleBooksNamesSystems:
                 bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self
-    # end of loadData
+    # end of BibleBooksNamesSystems.loadData
 
     def __str__( self ):
         """
@@ -258,20 +263,26 @@ class BibleBooksNamesSystems:
         if self.__ExpandedDicts: assert( len(self.__DataDicts) == len(self.__ExpandedDicts) )
         result += ('\n' if result else '') + '  ' + _("Number of loaded bookname systems = {}").format( len(self.__DataDicts) )
         return result
-    # end of __str__
+    # end of BibleBooksNamesSystems.__str__
 
     def __len__( self ):
-        """ Returns the number of systems loaded. """
+        """
+        Returns the number of book names systems loaded.
+        """
         return len( self.__DataDicts )
-    # end of __len__
+    # end of BibleBooksNamesSystems.__len__
 
     def __contains__( self, name ):
-        """ Returns True/False if the name is in this system. """
+        """
+        Returns True/False if the name is in this system.
+        """
         return name in self.__DataDicts
-    # end of __contains__
+    # end of BibleBooksNamesSystems.__contains__
 
     def getAvailableBooksNamesSystemNames( self, languageCode=None ):
-        """ Returns a list of available system name strings. """
+        """
+        Returns a list of available system name strings.
+        """
         if languageCode is None:
             return [systemName for systemName in self.__DataDicts]
         # else -- we were given a language code
@@ -282,24 +293,62 @@ class BibleBooksNamesSystems:
             if systemName==languageCode: result.append( '' )
             if systemName.startswith( search ): result.append( systemName[4:] ) # Get the bit after the underline
         return result
-    # end of getAvailableBooksNamesSystemNames
+    # end of BibleBooksNamesSystems.getAvailableBooksNamesSystemNames
 
     def getAvailableLanguageCodes( self ):
-        """ Returns a list of available ISO 639-3 language code strings. """
+        """
+        Returns a list of available ISO 639-3 language code strings.
+        """
         result = set()
         for systemName in self.__DataDicts:
             assert( len(systemName) >= 3 )
             languageCode = systemName[:3]
             result.add( languageCode )
         return result
-    # end of getAvailableLanguageCodes
+    # end of BibleBooksNamesSystems.getAvailableLanguageCodes
+
+
+    def getBBB( self, bookNameOrAbbreviation ):
+        """
+        Get the referenceAbbreviation from the given book name or abbreviation.
+                (Automatically converts to upper case before comparing strings.)
+
+        Tries all the known Bible Books Names systems.
+        """
+        if BibleOrgSysGlobals.debugFlag: assert( bookNameOrAbbreviation )
+        upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
+
+        for systemName in self.__DataDicts:
+            #print( '\n'+repr(systemName) )
+            #print( self.__DataDicts[systemName] )
+            #for j in range( 0, len(self.__DataDicts[systemName]) ):
+                #print( '\nHere1', j, self.__DataDicts[systemName][j] )
+            #for BBB in self.__DataDicts[systemName][2]:
+                #print( 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )
+            divisionsNamesDict, booknameLeadersDict, bookNamesDict, sortedDivisionNamesDict, sortedBookNamesDict = self.getBooksNamesSystem( systemName )
+            #print( '\nHere3 '+systemName, sortedBookNamesDict )
+            if sortedBookNamesDict:
+                if upperCaseBookNameOrAbbreviation in sortedBookNamesDict:
+                    return sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
+            else:
+                for BBB in self.__DataDicts[systemName][2]:
+                    for possibility in self.__DataDicts[systemName][2][BBB]['inputFields']:
+                        #print( possibility )
+                        if possibility.upper().startswith( upperCaseBookNameOrAbbreviation ):
+                            return BBB
+
+            if self.__ExpandedDicts: print( self.__ExpandedDicts[systemName] ); halt # nothing written here yet
+    # end of BibleBooksNamesSystems.getBBB
+
 
     def getBooksNamesSystem( self, systemName, bookList=None ):
-        """ Returns two dictionaries and a list object."""
+        """
+        Returns two dictionaries and a list object.
+        """
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                    logging.error( _("Invalid {!r} in booklist requested for {} books names system").format(BBB,systemName) )
+                    logging.error( _("Invalid {!r} in booklist requested for {} books names system").format( BBB, systemName ) )
 
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
@@ -313,7 +362,7 @@ class BibleBooksNamesSystems:
 
             # Else we were given a booklist so we need to expand the input abbreviations here now
             if self.__ExpandedDicts:
-                logging.warning( _("This {} book names system was already expanded, but never mind :)").format(systemName) )
+                logging.warning( _("This {} book names system was already expanded, but never mind :)").format( systemName ) )
 
             # Let's make copies without unneeded entries
             divisionsNamesDictCopy = {}
@@ -342,10 +391,10 @@ class BibleBooksNamesSystems:
             return divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, sortedDNDict, sortedBNDict
 
         # else we couldn't find the requested system name
-        logging.error( _("No {!r} system in Bible Books Names Systems").format(systemName) )
+        logging.error( _("No {!r} system in Bible Books Names Systems").format( systemName ) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
-    # end of getBooksNamesSystem
+    # end of BibleBooksNamesSystems.getBooksNamesSystem
 # end of BibleBooksNamesSystems class
 
 
@@ -359,9 +408,12 @@ class BibleBooksNamesSystem:
 
     def __init__( self, systemName, bookList=None ):
         """
-        Grabs a particular BibleBooksNames system from the singleton object which contains all of the known books names systems.
-            The optional (but highly recommended) book list is used for automatically determining non-ambiguous bookname abbreviations.
-                i.e., if you just have English Old Testament, G could automatically represent Genesis, but if you have an entire Bible, G would be ambiguous (Genesis or Galatians).
+        Grabs a particular BibleBooksNames system from the singleton object
+                            which contains all of the known books names systems.
+            The optional (but highly recommended) book list is used for automatically
+                                    determining non-ambiguous bookname abbreviations.
+                i.e., if you just have English Old Testament, G could automatically represent Genesis,
+                    but if you have an entire Bible, G would be ambiguous (Genesis or Galatians).
                     NOTE: However, of course, you can manually specify in the data file that you want G to be an inputAbbreviation for say, Genesis.
         """
         self.__systemName = systemName
@@ -401,29 +453,35 @@ class BibleBooksNamesSystem:
 
 
     def getBookName( self, BBB ):
-        """ Get the default book name from the given referenceAbbreviation. """
+        """
+        Get the default book name from the given referenceAbbreviation.
+        """
         if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
 
     def getBookAbbreviation( self, BBB ):
-        """ Get the default book abbreviation from the given referenceAbbreviation. """
+        """
+        Get the default book abbreviation from the given referenceAbbreviation.
+        """
         if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultAbbreviation']
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
 
     def getBBB( self, bookNameOrAbbreviation ):
-        """ Get the referenceAbbreviation from the given book name or abbreviation.
-                (Automatically converts to upper case before comparing strings.) """
+        """
+        Get the referenceAbbreviation from the given book name or abbreviation.
+                (Automatically converts to upper case before comparing strings.)
+        """
         if BibleOrgSysGlobals.debugFlag: assert( bookNameOrAbbreviation )
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         try:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
                 return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
         except AttributeError:
-            logging.critical( "No bookname dictionary in BibleBooksNamesSystem" )
+            logging.critical( "No bookname dictionary in {} BibleBooksNamesSystem".format( self.__systemName ) )
             return None
         if BibleOrgSysGlobals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
@@ -439,8 +497,10 @@ class BibleBooksNamesSystem:
 
 
     def getDivisionAbbreviation( self, divisionNameOrAbbreviation ):
-        """ Get the division standardAbbreviation from the given division name or abbreviation.
-                (Automatically converts to upper case before comparing strings.) """
+        """
+        Get the division standardAbbreviation from the given division name or abbreviation.
+                (Automatically converts to upper case before comparing strings.)
+        """
         if BibleOrgSysGlobals.debugFlag: assert( divisionNameOrAbbreviation )
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
@@ -457,8 +517,10 @@ class BibleBooksNamesSystem:
 
 
     def getDivisionBooklist( self, divisionAbbreviation ):
-        """ Returns the booklist for the division given the division standardAbbreviation
-                                                or else given a vernacular inputAbbreviation. """
+        """
+        Returns the booklist for the division given the division standardAbbreviation
+                                                or else given a vernacular inputAbbreviation.
+        """
         if BibleOrgSysGlobals.debugFlag: assert( divisionAbbreviation )
         if divisionAbbreviation in self.__divisionsNamesDict:
             return self.__divisionsNamesDict[divisionAbbreviation]['includedBooks']
@@ -488,6 +550,8 @@ def demo():
     print( "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
     print( "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
     print( "Available language codes are:", bbnss.getAvailableLanguageCodes() )
+    for bookName in ( 'Genesis', 'Genèse', 'Gênesis', '1 John' ):
+        print( "From {!r} got {}".format( bookName, bbnss.getBBB( bookName ) ) )
 
     # Demo the BibleBooksNamesSystem object
     bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
@@ -509,7 +573,7 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
