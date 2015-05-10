@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-03' # by RJH
+LastModifiedDate = '2015-05-04' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.36'
@@ -550,7 +550,7 @@ def demo():
     print( "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
     print( "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
     print( "Available language codes are:", bbnss.getAvailableLanguageCodes() )
-    for bookName in ( 'Genesis', 'Genèse', 'Gênesis', '1 John' ):
+    for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
         print( "From {!r} got {}".format( bookName, bbnss.getBBB( bookName ) ) )
 
     # Demo the BibleBooksNamesSystem object

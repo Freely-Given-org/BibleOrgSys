@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-05-06' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -640,7 +640,7 @@ def demo():
         testFolder = "Tests/DataFilesForTests/e-SwordTest/"
         result1 = ESwordBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
-        result2 = ESwordBibleFileCheck( testFolder, autoLoad=True )
+        result2 = ESwordBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
 
 

@@ -5,7 +5,7 @@
 #
 # Module handling USFX XML Bibles
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,15 +24,35 @@
 
 """
 Module for defining and manipulating complete or partial USFX Bibles.
+    <?xml version="1.0" encoding="UTF-8"?><usfx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="usfx.xsd"><languageCode>zia</languageCode><book id="MAT"><id id="MAT">NT0018.MT
+    </id><h>MATIU
+    </h><toc level="1">BOWI IWAING MATIU MENE GAENA
+    </toc><toc level="2">MATIU
+    </toc><toc level="3">Mt
+    </toc><p sfm="mt">BOWI IWAING MATIU MENE GAENA
+    </p><p sfm="ip"><it>Matiu, nung Yesura buro-mani 12 auna zo. Yazo nuna zo Lewi. Nung Yesura ungwe Yuda emo otao mani nuna eno gaena, arare nung porofetera ge gayao witao awiya ge nuna-una susuuno gaena. Awiya Yesu nung Yuda emora Mesia me awiya gipai gaese sero ayero yena ara.
+    </it>
+    </p><c id="1"/>
+    <s>Yesu Kristora aya-ewowo auna yazo.
+    </s><p sfm="r"><ref tgt="LUK.3.23">Lu 3:23-38</ref>
+    </p><p><v id="1" bcv="MAT.1.1"/>Emo kasa yero butunawe duwa Yesu Kristo nung Abrahamto Dawidira saisibuna nunato zo mene kasa yena, auna ungwe.
+    <ve/></p><p sfm="li"><v id="2" bcv="MAT.1.2"/>Abraham nung Isakara mfaung.
+    </p><p sfm="li">Isaka nung Yakobora maung. Yakobo nung Yuda meta maingne auna maung.
+    <ve/></p><p sfm="li"><v id="3" bcv="MAT.1.3"/>Yuda nung Pereseto Zerara maung. Ai nunato awiya Tema.
+    <ve/></p><p sfm="li"><v id="4" bcv="MAT.1.4"/>Ramu nung Aminadapra maung. Aminadap nung Nasonna maung.
+    <ve/></p><p sfm="li"><v id="5" bcv="MAT.1.5"/>Salamon nung Boasira maung. Boasira ai awiya Rehap.
+    <ve/></p><p sfm="li"><v id="6" bcv="MAT.1.6"/>Zesi nung emo tuwa Dawidi auna maung. Dawidi nung
+    </p><p sfm="li">Solomonna maung. Solomonna ai awiya Yurayara bauno noi.
+    ...
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-18' # by RJH
+LastModifiedDate = '2015-05-10' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.21'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.22'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -108,7 +128,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
-            if "<usfx " not in firstLines[0]:
+            if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -151,7 +171,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
-                if "<usfx " not in firstLines[0]:
+                if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                     continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
@@ -236,7 +256,7 @@ class USFXXMLBible( Bible ):
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
-            if "<usfx " not in firstLines[0]:
+            if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                 continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -245,7 +265,7 @@ class USFXXMLBible( Bible ):
             if numFound == 1:
                 self.sourceFilename = lastFilenameFound
                 self.sourceFilepath = os.path.join( self.sourceFolder, self.sourceFilename )
-        elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
     # end of USFXXMLBible.__init_
 
 
@@ -254,7 +274,7 @@ class USFXXMLBible( Bible ):
         Load the XML data file -- we should already know the filepath.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USFXXMLBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+            print( _("USFXXMLBible.load: Loading {!r} from {!r}...").format( self.name, self.sourceFilepath ) )
 
                                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
                         #self.thisBook = BibleBook( self, BBB )
@@ -270,8 +290,9 @@ class USFXXMLBible( Bible ):
         if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
-        if self.tree.tag == 'usfx':
-            location = "USFX file"
+        prefix = self.tree.tag[:-4] if self.tree.tag[0]=='{' and self.tree.tag[-5]=='}' else ''
+        if self.tree.tag == prefix + 'usfx':
+            location = 'USFX file'
             BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
             # Process the attributes first
@@ -313,6 +334,18 @@ class USFXXMLBible( Bible ):
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "USFXXMLBible.load: Didn't find any regularly named USFX files in {!r}".format( self.sourceFolder ) )
+            foundFiles = []
+            for something in os.listdir( self.sourceFolder ):
+                somepath = os.path.join( self.sourceFolder, something )
+                if os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    ignore = False
+                    for ending in filenameEndingsToIgnore:
+                        if somethingUpper.endswith( ending): ignore=True; break
+                    if ignore: continue
+                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                        foundFiles.append( something )
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USFX file)
                 isUSFX = False
@@ -455,6 +488,19 @@ class USFXXMLBible( Bible ):
                         logging.warning( _("jx9q Unprocessed {} element after {} {}:{} in {}").format( subelement.tag, BBB, C, V, sublocation ) )
             elif element.tag in ('p','q','d',):
                 V = self.loadParagraph( element, location, BBB, C )
+            elif element.tag == 'v': # verse milestone outside of a paragraph
+                vTail = clean( element.tail ) # Main verse text
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'djf3' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'jsh2' )
+                lastV, V = V, None
+                for attrib,value in element.items():
+                    if attrib == 'id':
+                        V = value
+                    else:
+                        logging.warning( _("sjx9 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                assert( V is not None )
+                assert( V )
+                self.thisBook.addLine( 'v', V + ((' '+vTail) if vTail else '' ) )
             elif element.tag == 'b':
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'ks35' )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'gs35' )
@@ -480,7 +526,7 @@ class USFXXMLBible( Bible ):
                 self.thisBook.addLine( marker, text )
             elif element.tag == 'table':
                 self.loadTable( element, location )
-            elif element.tag == 've': # What's this in Psalms: <c id="4" /><ve /><d>For the Chief Musician; on stringed instruments. A Psalm of David.</d>
+            elif element.tag == 've': # Verse end in Psalms: <c id="4" /><ve /><d>For the Chief Musician; on stringed instruments. A Psalm of David.</d>
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'kds3' )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ks29' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'kj24' )
@@ -535,9 +581,10 @@ class USFXXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'crc2' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'lct3' )
                 lastV, V = V, None
+                bcv = None
                 for attrib,value in element.items():
-                    if attrib == 'id':
-                        V = value
+                    if attrib == 'id': V = value
+                    elif attrib == 'bcv': bcv = value # This is an BCV reference string with periods, e.g., 'MAT.1.11'
                     else:
                         logging.warning( _("cbs2 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                 assert( V is not None )
@@ -816,34 +863,44 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    testData = (
-                ('ASV', "Tests/DataFilesForTests/USFXTest1/"),
-                ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
-                ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
-                ("HBO", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/hbo_usfx/",),
-                ("ZIA", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/zia_usfx/",),
-                ) # You can put your USFX test folder here
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        testFolder = 'Tests/DataFilesForTests/USFXTest1/'
+        resultA1 = USFXXMLBibleFileCheck( testFolder )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
+        resultA2 = USFXXMLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA2", resultA2 )
+        #testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
+        #resultB1 = USFXXMLBibleFileCheck( testSubfolder )
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB1", resultB1 )
+        #resultB2 = USFXXMLBibleFileCheck( testSubfolder, autoLoad=True, autoLoadBooks=True )
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB2", resultB2 )
 
-    for name, testFolder in testData:
-        if os.access( testFolder, os.R_OK ):
-            UB = USFXXMLBible( testFolder, name )
-            UB.load()
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
-            if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-            if BibleOrgSysGlobals.commandLineOptions.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            #UBErrors = UB.getErrors()
-            # print( UBErrors )
-            #print( UB.getVersification () )
-            #print( UB.getAddedUnits () )
-            #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                ##print( "Looking for", ref )
-                #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
-    #if BibleOrgSysGlobals.commandLineOptions.export:
-    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
-    #       pass
+    if 1:
+        testData = (
+                    ('ASV', "Tests/DataFilesForTests/USFXTest1/"),
+                    ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
+                    ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
+                    ("HBO", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/hbo_usfx/",),
+                    ("ZIA", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/zia_usfx/",),
+                    ) # You can put your USFX test folder here
 
+        for name, testFolder in testData:
+            if os.access( testFolder, os.R_OK ):
+                UsfxB = USFXXMLBible( testFolder, name )
+                UsfxB.load()
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfxB )
+                if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
+                if BibleOrgSysGlobals.commandLineOptions.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                #UsfxBErrors = UsfxB.getErrors()
+                # print( UsfxBErrors )
+                #print( UsfxB.getVersification () )
+                #print( UsfxB.getAddedUnits () )
+                #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                    ##print( "Looking for", ref )
+                    #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )
+            else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+# end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
