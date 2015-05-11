@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-27' # by RJH
+LastModifiedDate = '2015-05-11' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -86,6 +86,33 @@ def t( messageString ):
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 # end of t
+
+
+
+def hasClosingPeriod( text ):
+    """
+    Return True if the text ends with a period or something like '.)'
+    """
+    if not text: return False
+    for period in '.።':
+        if text[-1] == period: return True
+        for closingPunctuation in ''')]"'”’»›''':
+            if text.endswith( period + closingPunctuation ): return True
+    return False
+# end of hasClosingPeriod
+
+
+def hasClosingPunctuation( text ):
+    """
+    Return True if the text ends with a period or question mark or exclamation mark, or something like '.)'
+    """
+    if not text: return False
+    for period in '.።?!':
+        if text[-1] == period: return True
+        for closingPunctuation in ''')]"'”’»›''':
+            if text.endswith( period + closingPunctuation ): return True
+    return False
+# end of hasClosingPunctuation
 
 
 
@@ -3504,9 +3531,9 @@ class InternalBibleBook:
                         if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 27
                         if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
                     self.addPriorityError( priority, C, V, _("Missing heading text") )
-                elif text[-1] not in '.።':
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading should end with a period: {}").format( marker, text ) )
-                    self.addPriorityError( 67, C, V, _("Heading should end with a period") )
+                elif text[-1] != ':' and not hasClosingPeriod( text ):
+                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading should have closing punctuation (period): {}").format( marker, text ) )
+                    self.addPriorityError( 67, C, V, _("Heading should have closing punctuation (period)") )
 
         if (headingErrors or titleList or sectionHeadingList or sectionReferenceList or descriptiveTitleList) and 'Headings' not in self.errorDictionary:
             self.errorDictionary['Headings'] = OrderedDict() # So we hopefully get the errors first
@@ -3575,17 +3602,14 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing introduction text for marker {}").format( marker ) )
                     self.addPriorityError( 36, C, V, _("Missing introduction text") )
-                elif cleanText[-1] not in '.።:' and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
-                and not cleanText.endswith('."') and not cleanText.endswith(".'") \
-                and not cleanText.endswith('.”') and not cleanText.endswith('.’') \
-                and not cleanText.endswith('.»') and not cleanText.endswith('.›'): # \
+                elif cleanText[-1] != ':' and not hasClosingPeriod( cleanText ):
                 #and not cleanText.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
-                    if cleanText.endswith(')') or cleanText.endswith(']'):
-                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text possibly does not end with a period: {}").format( marker, text ) )
-                        self.addPriorityError( 26, C, V, _("Introduction text possibly ends without a period") )
+                    if cleanText.endswith(')') or cleanText.endswith(']'): # do we still need this
+                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text possibly does not have closing punctuation (period): {}").format( marker, text ) )
+                        self.addPriorityError( 26, C, V, _("Introduction text possibly ends without closing punctuation (period)") )
                     else:
-                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text does not end with a period: {}").format( marker, text ) )
-                        self.addPriorityError( 46, C, V, _("Introduction text ends without a period") )
+                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text does not have closing punctuation (period): {}").format( marker, text ) )
+                        self.addPriorityError( 46, C, V, _("Introduction text ends without closing punctuation (period)") )
 
         if (introductionErrors or mainTitleList or headingList or titleList or outlineList) and 'Introduction' not in self.errorDictionary:
             self.errorDictionary['Introduction'] = OrderedDict() # So we hopefully get the errors first
@@ -3706,41 +3730,32 @@ class InternalBibleBook:
                             if cleanExtraText.endswith(' '):
                                 footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have an extra space at end: {!r}").format( extraText ) )
                                 self.addPriorityError( 32, C, V, _("Extra space at end of footnote") )
-                            elif cleanExtraText and cleanExtraText[-1] not in '.።' and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
-                                                                and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›') \
-                            and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?»') \
-                                                                and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") and not cleanExtraText.endswith('?›') \
-                            and not cleanExtraText.endswith('!') and not cleanExtraText.endswith('!”') and not cleanExtraText.endswith('!"') and not cleanExtraText.endswith('!»') \
-                                                                and not cleanExtraText.endswith('!’') and not cleanExtraText.endswith("!'") and not cleanExtraText.endswith('!›') \
-                            and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
+                            elif cleanExtraText and not hasClosingPunctuation( cleanExtraText ):
                             #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                                 haveFinalPeriod = False
                             if discoveryDict and 'footnotesPeriodFlag' in discoveryDict:
                                 if discoveryDict['footnotesPeriodFlag']==True and not haveFinalPeriod:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to be missing a final period: {!r}").format( extraText ) )
-                                    self.addPriorityError( 33, C, V, _("Missing period at end of footnote") )
+                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to be missing closing punctuation (period): {!r}").format( extraText ) )
+                                    self.addPriorityError( 33, C, V, _("Missing closing punctuation (period) at end of footnote") )
                                 if discoveryDict['footnotesPeriodFlag']==False and haveFinalPeriod:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to include possible unnecessary final period: {!r}").format( extraText ) )
-                                    self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of footnote") )
+                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
+                                    self.addPriorityError( 32, C, V, _("Possible unnecessary closing punctuation (period) at end of footnote") )
                         elif extraType == 'xr':
                             haveFinalPeriod = True
                             xrefList.append( line )
                             if cleanExtraText.endswith(' '):
                                 xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have an extra space at end: {!r}").format( extraText ) )
                                 self.addPriorityError( 30, C, V, _("Extra space at end of cross-reference") )
-                            elif cleanExtraText and cleanExtraText[-1] not in '.።' and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
-                            and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
-                            and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
-                            and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \
+                            elif cleanExtraText and not hasClosingPunctuation( cleanExtraText ):
                             #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                                 haveFinalPeriod = False
                             if discoveryDict and 'crossReferencesPeriodFlag' in discoveryDict:
                                 if discoveryDict['crossReferencesPeriodFlag']==True and not haveFinalPeriod:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to be missing a final period: {!r}").format( extraText ) )
-                                    self.addPriorityError( 31, C, V, _("Missing period at end of cross-reference") )
+                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to be missing closing punctuation (period): {!r}").format( extraText ) )
+                                    self.addPriorityError( 31, C, V, _("Missing closing punctuation (period) at end of cross-reference") )
                                 if discoveryDict['crossReferencesPeriodFlag']==False and haveFinalPeriod:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to include possible unnecessary final period: {!r}").format( extraText ) )
-                                    self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of cross-reference") )
+                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
+                                    self.addPriorityError( 32, C, V, _("Possible unnecessary closing punctuation (period) at end of cross-reference") )
 
                         # Check for two identical fields in a row
                         lastNoteMarker = None
