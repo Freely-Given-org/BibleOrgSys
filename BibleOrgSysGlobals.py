@@ -74,11 +74,11 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-30' # by RJH
+LastModifiedDate = '2015-05-11' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.59'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False

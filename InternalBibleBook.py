@@ -105,6 +105,8 @@ def hasClosingPeriod( text ):
 def hasClosingPunctuation( text ):
     """
     Return True if the text ends with a period or question mark or exclamation mark, or something like '.)'
+
+    Note that the colon, etc. is not included here because it's a special case.
     """
     if not text: return False
     for period in '.።?!':
@@ -3531,7 +3533,7 @@ class InternalBibleBook:
                         if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 27
                         if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
                     self.addPriorityError( priority, C, V, _("Missing heading text") )
-                elif text[-1] != ':' and not hasClosingPeriod( text ):
+                elif text[-1] != ':' and not hasClosingPunctuation( text ):
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading should have closing punctuation (period): {}").format( marker, text ) )
                     self.addPriorityError( 67, C, V, _("Heading should have closing punctuation (period)") )
 

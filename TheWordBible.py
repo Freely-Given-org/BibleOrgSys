@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-28' # by RJH
+LastModifiedDate = '2015-05-12' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.39'
+ProgVersion = '0.40'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -513,7 +513,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 if text != str(V):
                     composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
             elif vCount > 1: # We have an additional verse number
-                assert( text != str(V) )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( text != str(V) )
                 composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
             lastMarker = marker
             continue
