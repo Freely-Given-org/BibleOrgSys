@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-05-19' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.64'
@@ -142,7 +142,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
-            if autoLoadBooks: uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the book files
             return uB
         return numFound
 
@@ -189,7 +189,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
-            if autoLoadBooks: uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the book files
             return uB
         return numFound
 # end of USFMBibleFileCheck

@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-27' # by RJH
+LastModifiedDate = '2015-05-19' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -209,6 +209,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 foundSubfolders.append( something )
                 if something in compulsoryTopFolders: foundFolderCount += 1
             elif os.path.isfile( somepath ):
+                somethingUpper = something.upper()
                 if somethingUpper in compulsoryFiles: foundFileCount += 1
         if foundFolderCount == len(compulsoryTopFolders):
             assert( foundFileCount == 0 )
@@ -872,7 +873,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
 
     if moduleName == 'ASV': # Fix a module bug
         verseLine = verseLine.replace( 'pit of the<RF>1<Rf> shearing', 'pit of the<RF>2<Rf> shearing' )
-        
+
     # Scan for footnote callers and callees
     lastCalled = None
     contentsDict = {}

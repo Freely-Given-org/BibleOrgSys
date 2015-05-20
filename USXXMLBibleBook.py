@@ -28,11 +28,11 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-05-20' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.13'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.14'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -169,8 +169,7 @@ class USXXMLBibleBook( BibleBook ):
                         if attrib=='style':
                             noteStyle = value # This is basically the USFM marker name
                             assert( noteStyle in ('x','f',) )
-                        elif attrib=='caller':
-                            noteCaller = value # Usually hyphen or a symbol to be used for the note
+                        elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     assert( noteStyle and noteCaller ) # both compulsory
@@ -208,7 +207,7 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, c, v, sublocation ) )
                             self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
-                    if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
+                        if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
                     #noteLine += "\\{}*".format( charStyle )
                     noteLine += "\\{}*".format( noteStyle )
                     if element.tail:
@@ -268,7 +267,7 @@ class USXXMLBibleBook( BibleBook ):
             version = None
             for attrib,value in self.tree.items():
                 if attrib=='version': version = value
-                logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
             if version not in ( None, '2.0' ):
                 logging.warning( _("Not sure if we can handle v{} USX files").format( version ) )
 

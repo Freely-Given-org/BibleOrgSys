@@ -32,15 +32,16 @@ Currently aware of the following Bible types:
     USFM
     Unbound Bible (table based), theWord (line based), MySword (SQLite based), e-Sword (SQLite based)
     OSIS, USX, USFX, OpenSong, Zefania, Haggai, VerseView (all XML)
+    Digital Bible Library (DB) which is USX (XML) plus XML metadata
     Sword modules (binary).
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-28' # by RJH
+LastModifiedDate = '2015-05-19' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -52,6 +53,7 @@ import logging, os.path
 import BibleOrgSysGlobals
 from ESFMBible import ESFMBibleFileCheck, ESFMBible
 from USFMBible import USFMBibleFileCheck, USFMBible
+from DBLBible import DBLBibleFileCheck, DBLBible
 from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
 from USFXXMLBible import USFXXMLBibleFileCheck, USFXXMLBible
 from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
@@ -221,6 +223,14 @@ class UnknownBible:
             typesFound.append( 'USFM:' + str(USFMBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFMBibleCount", USFMBibleCount )
 
+        # Search for DBL Bibles
+        DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if DBLBibleCount:
+            totalBibleCount += DBLBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'DBL:' + str(DBLBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: DBLBibleCount", DBLBibleCount )
+
         # Search for USX XML Bibles
         USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if USXBibleCount:
@@ -357,6 +367,10 @@ class UnknownBible:
                 self.foundType = "USFM Bible"
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif DBLBibleCount == 1:
+                self.foundType = "DBL Bible"
+                if autoLoad: return DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             elif CSVBibleCount == 1:
                 self.foundType = "CSV Bible"
                 if autoLoad: return CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
@@ -408,6 +422,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs", # Shouldn't have any Bibles here
+                    "Tests/DataFilesForTests/DBLTest/",
                     #"../../../../../Data/Work/Bibles/theWord modules/",
                     #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
                     #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
@@ -418,6 +433,7 @@ def demo():
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
                     "Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
+                    "Tests/DataFilesForTests/DBLTest/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
                     "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
                     "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",

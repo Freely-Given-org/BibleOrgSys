@@ -3,7 +3,7 @@
 #
 # InternalBible.py
 #
-# Module handling the USFM markers for Bible books
+# Module handling the overall Bible and holding the Bible book objects
 #
 # Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-30' # by RJH
+LastModifiedDate = '2015-05-12' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.62'
