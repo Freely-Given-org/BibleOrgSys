@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-09-11 (also update ProgVersion below)
 #
 # Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,13 +29,19 @@ NOTE: We still lack a REFERENCE Bible versification system
         with back-and-forth mappings. This is a MAJOR outstanding deficiency.
 """
 
-ProgName = "Bible Chapter-Verse Systems handler"
-ProgVersion = "0.50"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+from gettext import gettext as _
+
+LastModifiedDate = '2015-05-21' # by RJH
+ShortProgName = "BibleVersificationSystemsConverter"
+ProgName = "Bible Versification Systems converter"
+ProgVersion = '0.50'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree

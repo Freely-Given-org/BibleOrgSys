@@ -33,9 +33,9 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
-ShortProgName = "ChapterVerseSystems"
-ProgName = "Bible Chapter-Verse Systems handler"
+LastModifiedDate = '2015-05-21' # by RJH
+ShortProgName = "BibleVersificationSystems"
+ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.54'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )

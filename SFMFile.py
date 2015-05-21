@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2014-10-18 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,11 +37,16 @@ There are three kinds of SFM encoded files which can be loaded:
   Gives a fatal error (IOError) if file doesn't exist.
 """
 
+from gettext import gettext as _
 
+LastModifiedDate = '2015-05-20' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
-ProgVersion = "0.84"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.84'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, sys

@@ -25,6 +25,7 @@ and then these optional fields (optional because not all systems handle the less
     The Sword abbreviation
     The 1-2 digit CCEL ID number
     The three-character USFM abbreviation (no spaces but may begin with a digit)
+        Also used for Paratext Bible editor and Digital Bible Library (DBL) bundles
     The two-digit USFM ID number
         UBS Paratext uses both the number and the abbreviation above (and USFM format)
     The three-digit USX ID number
@@ -121,8 +122,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.75</version>
-      <date>2015-01-15</date>
+      <version>0.76</version>
+      <date>2015-05-21</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -2307,7 +2308,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <sequenceNumber>300</sequenceNumber>
     <expectedChapters>14</expectedChapters>
     <SwordAbbreviation>Odes</SwordAbbreviation>
-    <USFMAbbreviation>Ode</USFMAbbreviation> <!-- USFMAbbreviation used to be Oda -->
+    <USFMAbbreviation>Oda</USFMAbbreviation> <!-- I've sometimes seen Ode -->
     <USFMNumber>86</USFMNumber>
     <USXNumber>085</USXNumber>
     <UnboundCode>86A</UnboundCode>
