@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-20' # by RJH
+LastModifiedDate = '2015-05-29' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -215,10 +215,14 @@ class USXXMLBible( Bible ):
         Load the books.
         """
         def loadSSFData( ssfFilepath, encoding='utf-8' ):
-            """Process the SSF data from the given filepath.
-                Returns a dictionary."""
+            """
+            Process the SSF data from the given filepath into self.suppliedMetadata.
+
+            Returns a dictionary.
+            """
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from {!r}").format( ssfFilepath ) )
-            lastLine, lineCount, status, settingsDict = '', 0, 0, {}
+            lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
+            self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
             with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1
@@ -239,7 +243,7 @@ class USXXMLBible( Bible ):
                     elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                         fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
                         if ' ' not in fieldname:
-                            settingsDict[fieldname] = ''
+                            self.suppliedMetadata[fieldname] = ''
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -247,7 +251,7 @@ class USXXMLBible( Bible ):
                             fieldname = bits[0]
                             attributes = bits[1]
                             #print( "attributes = {!r}".format( attributes) )
-                            settingsDict[fieldname] = (contents, attributes)
+                            self.suppliedMetadata[fieldname] = (contents, attributes)
                             processed = True
                     elif status==1 and line[0]=='<' and line[-1]=='>':
                         ix1 = line.find('>')
@@ -256,7 +260,7 @@ class USXXMLBible( Bible ):
                             fieldname = line[1:ix1]
                             contents = line[ix1+1:ix2]
                             if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                                settingsDict[fieldname] = contents
+                                self.suppliedMetadata[fieldname] = contents
                                 processed = True
                             elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                                 bits = fieldname.split( None, 1 )
@@ -265,16 +269,15 @@ class USXXMLBible( Bible ):
                                 attributes = bits[1]
                                 #print( "attributes = {!r}".format( attributes) )
                                 if line[ix2+2:-1]==fieldname:
-                                    settingsDict[fieldname] = (contents, attributes)
+                                    self.suppliedMetadata[fieldname] = (contents, attributes)
                                     processed = True
                     if not processed: logging.error( "Unexpected {!r} line in SSF file".format( line ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
+                print( "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
-                    for key in sorted(settingsDict):
-                        print( "    {}: {}".format( key, settingsDict[key] ) )
-            self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
-            self.settingsDict = settingsDict.copy() # This will be all the combined settings
+                    for key in sorted(self.suppliedMetadata):
+                        print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
+            self.applySuppliedMetadata() # Copy to self.settingsDict
         # end of loadSSFData
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("USXXMLBible: Loading {} from {}...").format( self.name, self.givenFolderName ) )

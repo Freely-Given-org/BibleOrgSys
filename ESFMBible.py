@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-12-21 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,15 +26,19 @@
 Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-05-29' # by RJH
+ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -239,7 +242,7 @@ class ESFMBible( Bible ):
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
-            self.loadSSFData( self.ssfFilepath )
+            self.loadMetadata( self.ssfFilepath )
 
         self.name = self.givenName
         if self.name is None:
@@ -260,16 +263,20 @@ class ESFMBible( Bible ):
     # end of ESFMBible.__init_
 
 
-    def loadSSFData( self, ssfFilepath ):
-        """Process the SSF data from the given filepath.
-            Returns a dictionary."""
+    def loadMetadata( self, ssfFilepath ):
+        """
+        Process the SSF metadata from the given filepath into self.suppliedMetadata.
+
+        Returns a dictionary.
+        """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from {!r}").format( ssfFilepath ) )
-        lastLine, lineCount, status, settingsDict = '', 0, 0, {}
+        lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
+        self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
         with open( ssfFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( "ESFMBible.loadSSFData: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
+                    logging.info( "ESFMBible.loadMetadata: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -285,7 +292,7 @@ class ESFMBible( Bible ):
                 elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                     fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
                     if ' ' not in fieldname:
-                        settingsDict[fieldname] = ''
+                        self.suppliedMetadata[fieldname] = ''
                         processed = True
                     elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                         bits = fieldname.split( None, 1 )
@@ -293,7 +300,7 @@ class ESFMBible( Bible ):
                         fieldname = bits[0]
                         attributes = bits[1]
                         #print( "attributes = {!r}".format( attributes) )
-                        settingsDict[fieldname] = (contents, attributes)
+                        self.suppliedMetadata[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
                     ix1 = line.find('>')
@@ -302,7 +309,7 @@ class ESFMBible( Bible ):
                         fieldname = line[1:ix1]
                         contents = line[ix1+1:ix2]
                         if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                            settingsDict[fieldname] = contents
+                            self.suppliedMetadata[fieldname] = contents
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -311,17 +318,16 @@ class ESFMBible( Bible ):
                             attributes = bits[1]
                             #print( "attributes = {!r}".format( attributes) )
                             if line[ix2+2:-1]==fieldname:
-                                settingsDict[fieldname] = (contents, attributes)
+                                self.suppliedMetadata[fieldname] = (contents, attributes)
                                 processed = True
                 if not processed: print( "ERROR: Unexpected {!r} line in SSF file".format( line ) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
+            print( "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
-                for key in sorted(settingsDict):
-                    print( "    {}: {}".format( key, settingsDict[key] ) )
-        self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
-        self.settingsDict = settingsDict.copy() # This will be all the combined settings
-    # end of ESFMBible.loadSSFData
+                for key in sorted(self.suppliedMetadata):
+                    print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
+        self.applySuppliedMetadata() # Copy to self.settingsDict
+    # end of ESFMBible.loadMetadata
 
 
     def loadSemanticDictionary( self, BBB, filename ):

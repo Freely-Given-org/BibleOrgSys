@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBibleBook.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,15 +26,19 @@
 Module for defining and manipulating ESFM Bible books.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-05-24' # by RJH
+ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
-ProgVersion = "0.45"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.46'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 from InternalBibleInternals import DASH_CHARS, ALL_WORD_PUNCT_CHARS

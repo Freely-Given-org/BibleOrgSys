@@ -82,10 +82,10 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-05-28' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1514,14 +1514,18 @@ class BibleAnchorReference:
         # end of saveStartReference
 
         def saveReferenceRange( startTuple, BBB, C, V, S, refList ):
-            """ Checks the reference info then saves it as a referenceTuple in the refList. """
-            #print( startTuple, BBB, C, V, S, refList )
-            assert( len(BBB) == 3 )
-            assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
-            if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
-                S = V[-1]; V = V[:-1]
-            assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-            assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+            """
+            Checks the reference info then saves it as a referenceTuple in the refList.
+            """
+            if BibleOrgSysGlobals.debugFlag:
+                print( "saveReferenceRange( {}, {} {}:{} {!r}, {} )".format( startTuple, BBB, C, V, S, refList ) )
+                #print( startTuple, BBB, C, V, S, refList )
+                assert( len(BBB) == 3 )
+                assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+                if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
+                    S = V[-1]; V = V[:-1]
+                assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+                assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
 
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:

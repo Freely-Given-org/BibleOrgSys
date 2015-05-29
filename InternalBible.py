@@ -3,7 +3,8 @@
 #
 # InternalBible.py
 #
-# Module handling the overall Bible and holding the Bible book objects
+# Module handling the internal representation of the overall Bible
+#       and which in turn holds the Bible book objects.
 #
 # Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -25,29 +26,35 @@
 """
 Module for defining and manipulating Bibles in our internal USFM-based 'lines' format.
 
+InternalBible is the base class containing self.books which contains the Bible text.
+    The BibleWriter class builds on this by adding export routines.
+    The Bible class builds on that by adding metadata
+        and understanding of divisions (e.g., Old Testament) and things like that.
+
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (e.g., "USFM" or "USX")
-    self.objectNameString (with a description of the type of Bible object, e.g., "USFM Bible object")
+    self.objectTypeString (e.g., 'USFM' or 'USX')
+    self.objectNameString (with a description of the type of Bible object, e.g., 'USFM Bible object')
 
 It also needs to provide a "load" routine that sets any of the relevant fields:
     self.sourceFolder, self.sourceFilename, self.sourceFilepath, self.fileExtension
     self.name, self.givenName, self.shortName, self.abbreviation
     self.status, self.revision, self.version
 
-If you have access to any metadata, that goes in
-    self.ssfFilepath, self.ssfDict, self.settingsDict
+If you have access to any metadata, that goes in self.suppliedMetadata dictionary
+    and then call or supply applySuppliedMetadata
+    to standardise and copy it to self.settingsDict.
 
-and then fills
+The calling class then fills
     self.books by calling saveBook() which updates:
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-12' # by RJH
+LastModifiedDate = '2015-05-29' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.62'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -84,6 +91,7 @@ def t( messageString ):
 # end of t
 
 
+InternalBibleProperties = {} # Used for diagnostic reasons
 
 class InternalBible:
     """
@@ -92,6 +100,10 @@ class InternalBible:
     The BibleWriter class is based on this class.
 
     This class contains no load function -- that is expected to be supplied by the superclass.
+
+    The superclass MUST also set:
+        self.objectNameString = 'XYZ Bible object'
+        self.objectTypeString = 'XYZ'
     """
     def __init__( self ):
         """
@@ -105,14 +117,15 @@ class InternalBible:
 
         # Set up empty containers for the object
         self.books = OrderedDict()
-        self.ssfFilepath, self.ssfDict, self.settingsDict = '', {}, {}
+        self.suppliedMetadata = None
+        self.settingsDict = {} # This is often filled from self.suppliedMetadata in applySuppliedMetadata()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
         self.loadedAllBooks, self.triedLoadingBook = False, {}
         self.divisions = OrderedDict()
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
-    # end of InternalBible.__init_
+    # end of InternalBible.__init__
 
 
     def __str__( self ):
@@ -196,6 +209,53 @@ class InternalBible:
     # end of InternalBible.__iter__
 
 
+    def discoverProperties( self ):
+        """
+        This is a diagnostic function which lists the properties of various types of internal Bibles.
+
+        We need this to standardise all the different Bible types.
+        """
+        print( "discoverProperties for {}".format( self.objectTypeString ) )
+        InternalBibleProperties[self.objectTypeString] = {}
+
+        for myPropertyName in dir(self):
+            if myPropertyName in ( '__class__','__contains__','__delattr__','__dict__','__dir__','__doc__','__eq__',
+                              '__format__','__ge__','__getattribute__','__getitem__','__gt__','__hash__','__init__',
+                              '__iter__','__le__','__len__','__lt__','__module__','__ne__','__new__','__reduce__',
+                              '__reduce_ex__','__repr__','__setattr__','__sizeof__','__str__','__subclasshook__',
+                              '__weakref__' ):
+                continue # ignore Python built-ins
+            if myPropertyName in ( 'containsAnyOT39Books', 'containsAnyNT27Books', '_InternalBible__getNames',
+                              'loadBookIfNecessary', 'reloadBook', 'doPostLoadProcessing', 'xxxunloadBooks',
+                              'loadMetadataFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
+                              'getShortTOCName', 'getBooknameAbbreviation', 'saveBook', 'guessXRefBBB',
+                              'getVersification', 'getAddedUnits', 'discover', '_aggregateDiscoveryResults',
+                              'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
+                              'getVerseData', 'getVerseText', 'writeBOSBCVFiles' ):
+                continue # ignore my own functions
+            if myPropertyName in ( 'toBOSBCV', 'toCustomBible', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
+                              'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
+                              'toOpenSongXML', 'toPhotoBible', 'toPickle', 'toPseudoUSFM', 'toSwordModule',
+                              'toSwordSearcher', 'toTeX', 'toText', 'toUSFM', 'toUSFXXML', 'toUSXXML',
+                              'toZefaniaXML', 'totheWord', 'doAllExports', 'doExportHelper',
+                              '_BibleWriter__adjustControlDict', '_BibleWriter__formatHTMLVerseText',
+                              '_BibleWriter__setupWriter', '_writeSwordLocale',
+                              'ipHTMLClassDict', 'pqHTMLClassDict', 'doneSetupGeneric', ):
+                continue # ignore BibleWriter functions
+
+            myProperty = getattr( self, myPropertyName )
+            #print( type(myProperty), type(myProperty).__name__, myProperty.__class__ )
+            if myProperty is None or isinstance( myProperty, str ) or isinstance( myProperty, int ):
+                print( myPropertyName, '=', myProperty )
+                InternalBibleProperties[self.objectTypeString][myPropertyName] = myProperty
+            else: # not any of the above simple types
+                print( myPropertyName, 'is', type(myProperty).__name__ )
+                InternalBibleProperties[self.objectTypeString][myPropertyName] = type(myProperty).__name__
+
+        print( InternalBibleProperties )
+    #end of InternalBible.discoverProperties
+
+
     def containsAnyOT39Books( self ):
         """
         Returns True if any of the 39 common OT books are present.
@@ -222,15 +282,15 @@ class InternalBible:
 
     def __getNames( self ):
         """
-        Try to improve our names.
+        Try to improve our names from supplied metadata in self.settingsDict.
 
         This method should be called once all books are loaded.
         May be called again if external metadata is also loaded.
         """
         #print( "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
-        if not self.name and 'FullName' in self.ssfDict: self.name = self.ssfDict['FullName']
-        if not self.shortName and 'Name' in self.ssfDict: self.shortName = self.ssfDict['Name']
+        if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
+        if not self.shortName and 'Name' in self.settingsDict: self.shortName = self.settingsDict['Name']
         self.projectName = self.name if self.name else "Unknown"
 
         if self.settingsDict: # we have metadata loaded
@@ -286,6 +346,8 @@ class InternalBible:
 
         # Discover what we've got loaded so we don't have to worry about doing it later
         #self.discover()
+
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: self.discoverProperties()
     # end of InternalBible.doPostLoadProcessing
 
 
@@ -310,29 +372,35 @@ class InternalBible:
 
     def loadMetadataFile( self, mdFilepath ):
         """
-        Load the fields from the given metadata text file into self.settingsDict.
+        Load the fields from the given Freely-Given.org metadata text file into self.suppliedMetadata
+            and then copy them into self.settingsDict.
+
+        See http://freely-given.org/Software/BibleDropBox/Metadata.html for
+            a description of the format and the allowed fields.
         """
         def saveMD( fieldName, contents ):
             """
             Save an entry in the settings dictionary
                 but check for duplicates first.
             """
-            if fieldName in self.settingsDict: # We have a duplicate
-                logging.warning("About to replace {}={} from metadata file".format( repr(fieldName), repr(self.settingsDict[fieldName]) ) )
+            if fieldName in self.suppliedMetadata: # We have a duplicate
+                logging.warning("About to replace {}={} from supplied metadata file".format( repr(fieldName), repr(self.suppliedMetadata[fieldName]) ) )
             else: # Also check for "duplicates" with a different case
                 ucFieldName = fieldName.upper()
-                for key in self.settingsDict:
+                for key in self.suppliedMetadata:
                     ucKey = key.upper()
                     if ucKey == ucFieldName:
-                        logging.warning("About to add {} from metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
+                        logging.warning("About to add {} from supplied metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
                         break
-            self.settingsDict[fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
+            self.suppliedMetadata[fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
         # end of loadMetadataFile.saveMD
 
-        # main code for loadMetadataFile()
+        # Main code for loadMetadataFile()
+        # Loads the metadata into self.suppliedMetadata
         logging.info( "Loading supplied project metadata..." )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.settingsDict), self.settingsDict )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
+        self.suppliedMetadata = {}
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt' ) as mdFile:
             for line in mdFile:
@@ -364,11 +432,39 @@ class InternalBible:
                         logging.warning( t("loadMetadataFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
                         saveMD( fieldName, fieldContents )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
+
+        # Now move the information into our settingsDict
+        self.applySuppliedMetadata()
 
         # Try to improve our names (also called earlier from doPostLoadProcessing)
         self.__getNames()
     # end of InternalBible.loadMetadataFile
+
+
+    def applySuppliedMetadata( self ):
+        """
+        Using the dictionary at self.suppliedMetadata,
+            load the fields into self.settingsDict
+            and try to standardise it at the same time.
+        """
+        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("applySuppliedMetadata()") )
+
+        nameChangeDict = {} # not done yet
+        for oldKey,value in self.suppliedMetadata.items():
+            newKey = nameChangeDict[oldKey] if oldKey in nameChangeDict else oldKey
+            if newKey in self.settingsDict: # We have a duplicate
+                logging.warning("About to replace {}={} from metadata file".format( repr(newKey), repr(self.settingsDict[newKey]) ) )
+            else: # Also check for "duplicates" with a different case
+                ucNewKey = newKey.upper()
+                for key in self.settingsDict:
+                    ucKey = key.upper()
+                    if ucKey == ucNewKey:
+                        logging.warning("About to copy {} from metadata file even though already have {}".format( repr(newKey), repr(key) ) )
+                        break
+            self.settingsDict[newKey] = value
+    # end of InternalBible.applySuppliedMetadata
 
 
     def getBookList( self ):

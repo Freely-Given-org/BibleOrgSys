@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-19' # by RJH
+LastModifiedDate = '2015-05-29' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.64'
+ProgVersion = '0.65'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -209,13 +209,13 @@ class USFMBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "USFM Bible object"
-        self.objectTypeString = "USFM"
+        self.objectNameString = 'USFM Bible object'
+        self.objectTypeString = 'USFM'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
 
-        self.ssfFilepath, self.ssfDict, self.settingsDict = None, {}, {}
+        self.ssfFilepath, self.suppliedMetadata = None, {}
         if sourceFolder is not None:
             self.preload( sourceFolder )
     # end of USFMBible.__init_
@@ -259,7 +259,7 @@ class USFMBible( Bible ):
 
         if self.ssfFilepath is None: # it might have been loaded first
             # Attempt to load the SSF file
-            self.ssfDict, self.settingsDict = {}, {}
+            self.suppliedMetadata, self.settingsDict = {}, {}
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
                 self.loadSSFData( ssfFilepathList[0] )
@@ -282,7 +282,7 @@ class USFMBible( Bible ):
 
     def loadSSFData( self, ssfFilepath, encoding=None ):
         """
-        Process the SSF data from the given filepath.
+        Process the SSF data from the given filepath into self.suppliedMetadata.
 
         Returns a dictionary.
         """
@@ -290,7 +290,8 @@ class USFMBible( Bible ):
             print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
         if encoding is None: encoding = 'utf-8'
         self.ssfFilepath = ssfFilepath
-        lastLine, lineCount, status, settingsDict = '', 0, 0, {}
+        lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
+        self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
         with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
@@ -311,7 +312,7 @@ class USFMBible( Bible ):
                 elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                     fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
                     if ' ' not in fieldname:
-                        settingsDict[fieldname] = ''
+                        self.suppliedMetadata[fieldname] = ''
                         processed = True
                     elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                         bits = fieldname.split( None, 1 )
@@ -319,7 +320,7 @@ class USFMBible( Bible ):
                         fieldname = bits[0]
                         attributes = bits[1]
                         #print( "attributes = {!r}".format( attributes) )
-                        settingsDict[fieldname] = (contents, attributes)
+                        self.suppliedMetadata[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
                     ix1 = line.find('>')
@@ -328,7 +329,7 @@ class USFMBible( Bible ):
                         fieldname = line[1:ix1]
                         contents = line[ix1+1:ix2]
                         if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                            settingsDict[fieldname] = contents
+                            self.suppliedMetadata[fieldname] = contents
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -337,7 +338,7 @@ class USFMBible( Bible ):
                             attributes = bits[1]
                             #print( "attributes = {!r}".format( attributes) )
                             if line[ix2+2:-1]==fieldname:
-                                settingsDict[fieldname] = (contents, attributes)
+                                self.suppliedMetadata[fieldname] = (contents, attributes)
                                 processed = True
                 elif status==1 and line[0]=='<ValidCharacters>' and line[-1]=='>':
                     fieldname = 'ValidCharacters'
@@ -347,17 +348,16 @@ class USFMBible( Bible ):
             status = 9
         if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + t("Got {} SSF entries:").format( len(settingsDict) ) )
+            print( "  " + t("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
-                for key in sorted(settingsDict):
-                    try: print( "    {}: {}".format( key, settingsDict[key] ) )
+                for key in sorted(self.suppliedMetadata):
+                    try: print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
                     except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
-        self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
-        self.settingsDict = settingsDict.copy() # This will be all the combined settings
+        self.applySuppliedMetadata() # Copy to self.settingsDict
 
         # Determine our encoding while we're at it
-        if self.encoding is None and 'Encoding' in self.ssfDict: # See if the SSF file gives some help to us
-            ssfEncoding = self.ssfDict['Encoding']
+        if self.encoding is None and 'Encoding' in self.suppliedMetadata: # See if the SSF file gives some help to us
+            ssfEncoding = self.suppliedMetadata['Encoding']
             if ssfEncoding == '65001': self.encoding = 'utf-8'
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 0:

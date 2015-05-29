@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-11' # by RJH
+LastModifiedDate = '2015-05-28' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -1041,9 +1041,9 @@ class InternalBibleBook:
                     print( "Multiple introduction sections!!! " )
                     if BibleOrgSysGlobals.debugFlag: halt
 
-            if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
-            if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
-            if marker not in ourMainListMarkers and marker not in ('v~','p~',) and 'list' in openMarkers:
+            if 'iot' in openMarkers and marker not in ourIntroOutlineMarkers: closeOpenMarker( 'iot' )
+            if 'ilist' in openMarkers and marker not in ourIntroListMarkers: closeOpenMarker( 'ilist' )
+            if 'list' in openMarkers and marker not in ourMainListMarkers and marker not in ('v~','p~',):
                 # This is more complex coz can cross v and c boundaries
                 #print( "Shall we close", marker, findNextRelevantListMarker(j), findNextRelevantMarker(j) )
                 if findNextRelevantListMarker(j) not in ourMainListMarkers:
@@ -1134,7 +1134,8 @@ class InternalBibleBook:
         if openMarkers: # Close any left-over open markers
             if 'ilist' in openMarkers or 'iot' in openMarkers:
                 print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
-                if BibleOrgSysGlobals.debugFlag and self.BBB not in ('BAK',): halt
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    if self.BBB not in ('GLS','BAK',): halt
             for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                 if lMarker == 'v': closeLastOpenMarker( V )
                 elif lMarker == 'c': closeLastOpenMarker( C )
@@ -1466,7 +1467,10 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert( haveWaitingC ) # coz this should follow the c and precede the v
                 haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='cl' and text:
-                if BibleOrgSysGlobals.debugFlag: assert( V == '0' ) # coz this should precede the first c, or follow the c and precede the v
+                if BibleOrgSysGlobals.debugFlag:
+                    if V != '0':
+                        print( "InternalBibleBook.processLine: Something before cl", self.workName, self.BBB, C, V, repr(text) )
+                    if debuggingThisModule: assert( V == '0' ) # coz this should precede the first c, or follow the c and precede the v
                 if C == '0': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:

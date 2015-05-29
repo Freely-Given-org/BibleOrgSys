@@ -5,7 +5,7 @@
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,11 +28,11 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2015-05-24' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.43'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.44'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -59,8 +59,8 @@ class USFMBibleBook( BibleBook ):
         Create the USFM Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
-        self.objectNameString = "USFM Bible Book object"
-        self.objectTypeString = "USFM"
+        self.objectNameString = 'USFM Bible Book object'
+        self.objectTypeString = 'USFM'
     # end of USFMBibleBook.__init__
 
 

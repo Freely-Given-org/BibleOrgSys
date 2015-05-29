@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-20' # by RJH
+LastModifiedDate = '2015-05-24' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -85,8 +85,11 @@ class USXXMLBibleBook( BibleBook ):
         """
 
         def loadParagraph( paragraphXML, paragraphlocation ):
-            """ Load a paragraph from the USX XML.
-                Uses (and updates) c,v information from the containing function. """
+            """
+            Load a paragraph from the USX XML.
+
+            Uses (and updates) c,v information from the containing function.
+            """
             nonlocal c, v
 
             # Process the attributes first
@@ -162,7 +165,7 @@ class USXXMLBibleBook( BibleBook ):
                     if debuggingThisModule: print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(charLine) )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
-                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    #print( "NOTE", BibleOrgSysGlobals.elementStr( element ) )
                     # Process the attributes first
                     noteStyle = noteCaller = None
                     for attrib,value in element.items():
@@ -174,6 +177,9 @@ class USXXMLBibleBook( BibleBook ):
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     assert( noteStyle and noteCaller ) # both compulsory
                     noteLine = "\\{} {} ".format( noteStyle, noteCaller )
+                    if element.text:
+                        noteText = element.text.strip()
+                        noteLine += noteText
                     # Now process the subelements -- notes are one of the few multiply embedded fields in USX
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + location
@@ -211,8 +217,8 @@ class USXXMLBibleBook( BibleBook ):
                     #noteLine += "\\{}*".format( charStyle )
                     noteLine += "\\{}*".format( noteStyle )
                     if element.tail:
-                        noteText = element.tail.strip()
-                        noteLine += noteText
+                        noteTail = element.tail.strip()
+                        noteLine += noteTail
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'link': # Used to include extra resources
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -244,7 +250,8 @@ class USXXMLBibleBook( BibleBook ):
                     if BibleOrgSysGlobals.debugFlag: halt
         # end of loadParagraph
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}...").format( filename, folder ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder

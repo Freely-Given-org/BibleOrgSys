@@ -36,14 +36,14 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-05-28' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.47'
+ProgVersion = '0.48'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os
@@ -251,8 +251,8 @@ class OSISXMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "OSIS XML Bible object"
-        self.objectTypeString = "OSIS"
+        self.objectNameString = 'OSIS XML Bible object'
+        self.objectTypeString = 'OSIS'
 
         # Now we can set our object variables
         self.sourceFilepath, self.givenName, self.givenAbbreviation, self.encoding  = sourceFilepath, givenName, givenAbbreviation, encoding
@@ -292,6 +292,8 @@ class OSISXMLBible( Bible ):
         Loads the OSIS XML file or files.
         """
         loadErrors = []
+        self.suppliedMetadata = {}
+        self.suppliedMetadata['MetadataType'] = 'OSISMetadata'
         if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             for filename in self.possibleFilenames:
                 pathname = os.path.join( self.sourceFolder, filename )
@@ -690,15 +692,19 @@ class OSISXMLBible( Bible ):
                         sublocation = "rights of " + location
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '6v2x', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '9l5b', loadErrors )
-                        self.rights = subelement.text
                         copyrightType = None
                         for attrib,value in subelement.items():
                             if attrib=='type': copyrightType = value
                             else:
                                 logging.warning( "1s3d Unprocessed {!r} attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} (1s3d)".format( attrib, value, sublocation ) )
-                        if BibleOrgSysGlobals.debugFlag: assert( copyrightType in (None,'x-copyright','x-license','x-license-url',) )
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Rights{} are/were {!r}".format( " ({})".format(copyrightType) if copyrightType else '', self.rights ) )
+                        #print( "copyrightType", copyrightType )
+                        if BibleOrgSysGlobals.debugFlag:
+                            assert( copyrightType in (None,'x-copyright','x-license','x-license-url','x-BY-SA',) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "    Rights{} are/were {!r}".format( " ({})".format(copyrightType) if copyrightType else '', subelement.text ) )
+                        self.suppliedMetadata['Rights'] = subelement.text
+                        if copyrightType: self.suppliedMetadata['CopyrightType'] = copyrightType
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"relation":
                         sublocation = "relation of " + location
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'g4h2', loadErrors )
@@ -1296,6 +1302,7 @@ class OSISXMLBible( Bible ):
                 <hi type="bold"><hi type="italic">buk</hi></hi> tainoraun ämän
             Nesting doesn't currently work here.
             """
+            #print( "validateSEG( {}, {}, {} )".format( BibleOrgSysGlobals.elementStr(element), locationDescription, verseMilestone ) )
             location = 'validateSEG: ' + locationDescription
             SegText, SegTail = element.text, element.tail
             BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'mjd4', loadErrors )
@@ -1312,12 +1319,15 @@ class OSISXMLBible( Bible ):
                 if theType=='verseNumber': marker = 'fv'
                 elif theType=='keyword': marker = 'fk'
                 elif theType=='otPassage': marker = 'qt'
-                elif theType=='section': marker = 'section' # invented -- used below
+                elif theType in ('section','x-maqqef','x-sof-pasuq','x-pe','x-paseq','x-samekh',):
+                    marker = theType # invented -- used below
                 elif BibleOrgSysGlobals.debugFlag: print(  theType, location, verseMilestone ); halt
             else: # What marker do we need ???
                 marker = 'fv'
             if marker == 'section': # We don't have marker for this
                 self.thisBook.appendToLastLine( ' ' + clean(SegText) + ' ' )
+            elif marker.startswith( 'x-' ): # We don't have marker for this
+                self.thisBook.appendToLastLine( clean(SegText) )
             else: self.thisBook.appendToLastLine( '\\{} {}'.format( marker, clean(SegText) ) )
             if SegTail:
                 self.thisBook.appendToLastLine( '\\f* {}'.format( clean(SegTail) ) ) # Do we need that space?
@@ -1359,23 +1369,10 @@ class OSISXMLBible( Bible ):
                         else:
                             logging.warning( "6b8m Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {} (6b8m)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                    self.thisBook.addLine( 'rdgW', rdgW )
+                    self.thisBook.appendToLastLine( rdgW )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg': # cross-references
                     sublocation = "validateRDG: seg of rdg of " + locationDescription
                     validateSEG( subelement, sublocation, verseMilestone )
-                    #if 0:
-                        ##print( "  Have", sublocation, "6n83" )
-                        #rdgSeg = subelement.text
-                        #BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'fyg5', loadErrors )
-                        #BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 's2db', loadErrors )
-                        ## Process the attributes
-                        #theType = None
-                        #for attrib,value in subelement.items():
-                            #if attrib=='type': theType = value
-                            #else:
-                                #logging.warning( "k6g3 Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                                #loadErrors.append( "Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {} (k6g3)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                        #self.thisBook.addLine( 'rdgSeg', rdgSeg )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+'hi':
                     sublocation = "validateRDG: hi of rdg of " + locationDescription
                     validateHighlight( subelement, sublocation, verseMilestone )
@@ -1554,8 +1551,9 @@ class OSISXMLBible( Bible ):
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if BibleOrgSysGlobals.debugFlag: assert( not notePlacement )
                 # What do we do here ???? XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                #if not noteN: noteN = '+'
-                self.thisBook.addLine( 'var', noteN )
+                if not noteN: noteN = '+'
+                self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
+                openFieldname = 'f'
             elif noteType == 'x-index':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if BibleOrgSysGlobals.debugFlag: assert( notePlacement in ('inline',) )
@@ -1565,8 +1563,8 @@ class OSISXMLBible( Bible ):
                 #print( "  noteType =", noteType, "noteN =", noteN, repr(notePlacement) )
                 if BibleOrgSysGlobals.debugFlag: assert( notePlacement is None )
                 if not noteN: noteN = '+ '
-                self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
-                openFieldname = 'f'
+                self.thisBook.appendToLastLine( '\\str {} '.format( noteN ) )
+                openFieldname = 'str'
             else:
                 print( "note1", noteType )
                 if BibleOrgSysGlobals.debugFlag: halt
@@ -1651,33 +1649,39 @@ class OSISXMLBible( Bible ):
                         self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText ) )
                     elif noteType=='crossReference' and not referenceType and referenceOsisRef is not None:
                         if 0 and USFMResults and USFMResults[-1][0]=='xt': # Combine multiple cross-references into one xt field
-                            self.thisBook.appendToLastLine( '\\xt {}'.format( USFMResults.pop()[1]+referenceText+referenceTail ) )
+                            self.thisBook.appendToLastLine( '\\xt {}'.format( USFMResults.pop()[1]+referenceText ) )
                         else:
-                            self.thisBook.appendToLastLine( '\\xt {}'.format( clean(referenceText+referenceTail) ) )
+                            self.thisBook.appendToLastLine( '\\xt {}'.format( clean(referenceText) ) )
                     elif noteType=='footnote' and referenceType=='source':
                         if BibleOrgSysGlobals.debugFlag: assert( referenceText and not noteText )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( clean(referenceText) ) )
-                        if BibleOrgSysGlobals.debugFlag: assert( referenceTail )
-                        self.thisBook.appendToLastLine( '\\ft {}'.format( clean(referenceTail) ) )
                     elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT={!r} nT={!r} rTail={!r}".format( referenceText, noteText, referenceTail ) )
                         if BibleOrgSysGlobals.debugFlag: assert( referenceText and not noteText.strip() )
                         if not referenceText[-1] == ' ': referenceText += ' '
-                        if referenceTail: self.thisBook.addLine( 'st', referenceTail )
                         #else: logging.warning( "How come there's no tail? rT={!r} nT={!r} rTail={!r}".format( referenceText, noteText, referenceTail ) )
                         #print( "study note3", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement ); halt
                     elif noteType=='translation' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( "rT={!r} nT={!r} rTail={!r}".format( referenceText, noteText, referenceTail ) )
+                            print( "{}: rT={!r} nT={!r} rTail={!r}".format( self.abbreviation, referenceText, noteText, referenceTail ) )
                             assert( referenceText and not noteText )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
-                        if referenceTail and referenceTail.strip(): self.thisBook.appendToLastLine( '\\ft {}'.format( clean(referenceTail) ) )
+                    elif noteType=='translation' and referenceType is None: # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                            print( "{}: rT={!r} nT={!r} rTail={!r}".format( self.abbreviation, referenceText, noteText, referenceTail ) )
+                            assert( referenceText )
+                        if noteText:
+                            self.thisBook.appendToLastLine( '\\fr {} \\ft {}'.format( referenceText, noteText ) )
+                        else:
+                            if not referenceText[-1] == ' ': referenceText += ' '
+                            self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
                     else:
                         logging.critical( "Don't know how to handle notetype={!r} and referenceType={!r} yet".format( noteType, referenceType ) )
                         loadErrors.append( "Don't know how to handle notetype={!r} and referenceType={!r} yet".format( noteType, referenceType ) )
-                    for sub2element in subelement: # Can have nested references in some (horrible) OSIS files)
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                    for sub2element in subelement: # Can have nested references in some OSIS files
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+'reference': # cross-references
                             sub2location = "validateCrossReferenceOrFootnote: reference of reference of " + locationDescription
                             #print( "  Have", sub2location, "w3r5" )
@@ -1694,10 +1698,16 @@ class OSISXMLBible( Bible ):
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'x3b7', loadErrors )
                             subreferenceText = sub2element.text
                             self.thisBook.appendToLastLine( '\\tl {}\\tl*'.format( clean(subreferenceText) ) )
+                        elif sub2element.tag == OSISXMLBible.OSISNameSpace+'seg':
+                            sub2location = "validateCrossReferenceOrFootnote: seg of reference of " + locationDescription
+                            validateSEG( sub2element, sub2location, verseMilestone )
                         else:
                             logging.error( "7h45 Unprocessed {!r} sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed {!r} sub2element ({}) in {} at {} (7h45)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                                print( self.abbreviation, sub2element.tag ); halt
+                    if referenceTail and referenceTail.strip():
+                        self.thisBook.appendToLastLine( '\\{} {}'.format( ('xt' if noteType=='crossReference' else 'ft'), clean(referenceTail) ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                     sublocation = "validateCrossReferenceOrFootnote: q of " + locationDescription
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'n56d', loadErrors )
@@ -2977,20 +2987,23 @@ class OSISXMLBible( Bible ):
                                             else:
                                                 logging.warning( "2h54 Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub2location, verseMilestone ) )
                                                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (2h54)".format( attrib, value, sub2location, verseMilestone ) )
+                                        #print( "wlm", word, lemma, morph )
+                                        self.thisBook.appendToLastLine( "{} [{}]".format( word,lemma) )
                                         # Now process the subelements
-                                        segText = segTail = None
+                                        segText = segTail = segType = None
                                         for sub3element in sub2element:
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+'seg':
                                                 sub3location = "seg of " + sub2location
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
                                                 segText, segTail = sub3element.text, sub3element.tail # XXX unused .............................................
                                                 # Process the attributes
+                                                segType = None
                                                 for attrib,value in sub3element.items():
                                                     if attrib=='type': segType = value
                                                     else:
                                                         logging.warning( "963k Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub3location, verseMilestone ) )
                                                         loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (963k)".format( attrib, value, sub3location, verseMilestone ) )
-                                        self.thisBook.addLine( 'vw', "{} [{}]".format( word,lemma) )
+                                        #print( "segTTT", segText, segTail, segType )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+'seg':
                                         sub2location = "seg of " + sublocation
                                         validateSEG( sub2element, sub2location, verseMilestone )

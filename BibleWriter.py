@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-05-27' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -2103,8 +2103,9 @@ class BibleWriter( InternalBible ):
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not haveOpenParagraph )
-                    #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if haveOpenParagraph:
+                        logging.error( "toHTML5: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     tClass = 'mainTitle' if marker in ('mt1','mt2','mt3','mt4',) else 'introductionMainTitle'
                     if text: writerObject.writeLineOpenClose( 'h1', text, ('class',tClass+marker[2]) )
                 elif marker in ('is1','is2','is3','is4',):
@@ -2703,7 +2704,10 @@ class BibleWriter( InternalBible ):
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not pOpen )
+                    if pOpen:
+                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        thisHTML += '</p>'; pOpen = False
+                        if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     tClass = 'mainTitle' if marker in ('mt1','mt2','mt3','mt4',) else 'introductionMainTitle'
@@ -3915,12 +3919,9 @@ class BibleWriter( InternalBible ):
         #xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Haiola output as closely as possible
         xw.start()
         xw.writeLineOpen( 'usfx', [('xmlns:xsi',"http://eBible.org/usfx.xsd"), ('xsi:noNamespaceSchemaLocation',"usfx-2013-08-05.xsd")] )
-        #print( self.ssfDict, self.settingsDict )
         languageCode = None
         if languageCode is None and 'Language' in self.settingsDict and len(self.settingsDict['Language'])==3:
             languageCode = self.settingsDict['Language']
-        #if languageCode is None and 'Language' in self.ssfDict and len(self.ssfDict['Language'])==3:
-            #languageCode = self.ssfDict['Language']
         if languageCode: xw.writeLineOpenClose( 'languageCode', languageCode )
         for BBB,bookData in self.books.items(): # Process each Bible book
             writeUSFXBook( xw, BBB, bookData )
@@ -6547,7 +6548,7 @@ class BibleWriter( InternalBible ):
                         if text != str(V):
                             composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
                     elif vCount > 1: # We have an additional verse number
-                        assert( text != str(V) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( text != str(V) )
                         composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
                     lastMarker = marker
                     continue
@@ -6556,7 +6557,8 @@ class BibleWriter( InternalBible ):
                 if marker in theWordIgnoredIntroMarkers:
                     logging.error( "toESword.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                     print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
                 if marker == 'ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                 elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -6997,7 +6999,6 @@ class BibleWriter( InternalBible ):
         #print( 'status' in self ) # False
         #print( 'status' in dir(self) ) # True
         #print( '\nself', dir(self) )
-        #print( '\nssf', dir(self.ssfDict) )
         #print( '\nsettings', dir(self.settingsDict) )
 
 
