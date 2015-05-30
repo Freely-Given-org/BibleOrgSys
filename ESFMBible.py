@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-29' # by RJH
+LastModifiedDate = '2015-05-30' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
@@ -46,6 +46,7 @@ from USFMFilenames import USFMFilenames
 from ESFMFile import ESFMFile
 from ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from Bible import Bible
+from USFMBible import loadSSFData
 
 
 
@@ -242,7 +243,7 @@ class ESFMBible( Bible ):
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
-            self.loadMetadata( self.ssfFilepath )
+            self.loadSSFData( self.ssfFilepath )
 
         self.name = self.givenName
         if self.name is None:
@@ -263,71 +264,71 @@ class ESFMBible( Bible ):
     # end of ESFMBible.__init_
 
 
-    def loadMetadata( self, ssfFilepath ):
-        """
-        Process the SSF metadata from the given filepath into self.suppliedMetadata.
+    #def loadMetadata( self, ssfFilepath ):
+        #"""
+        #Process the SSF metadata from the given filepath into self.suppliedMetadata.
 
-        Returns a dictionary.
-        """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from {!r}").format( ssfFilepath ) )
-        lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
-        self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
-        with open( ssfFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
-            for line in myFile:
-                lineCount += 1
-                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( "ESFMBible.loadMetadata: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
-                    line = line[1:] # Remove the Byte Order Marker
-                if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-                line = line.strip() # Remove leading and trailing whitespace
-                if not line: continue # Just discard blank lines
-                lastLine = line
-                processed = False
-                if status==0 and line=="<ScriptureText>":
-                    status = 1
-                    processed = True
-                elif status==1 and line=="</ScriptureText>":
-                    status = 2
-                    processed = True
-                elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
-                    fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
-                    if ' ' not in fieldname:
-                        self.suppliedMetadata[fieldname] = ''
-                        processed = True
-                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                        bits = fieldname.split( None, 1 )
-                        if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                        fieldname = bits[0]
-                        attributes = bits[1]
-                        #print( "attributes = {!r}".format( attributes) )
-                        self.suppliedMetadata[fieldname] = (contents, attributes)
-                        processed = True
-                elif status==1 and line[0]=='<' and line[-1]=='>':
-                    ix1 = line.find('>')
-                    ix2 = line.find('</')
-                    if ix1!=-1 and ix2!=-1 and ix2>ix1:
-                        fieldname = line[1:ix1]
-                        contents = line[ix1+1:ix2]
-                        if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                            self.suppliedMetadata[fieldname] = contents
-                            processed = True
-                        elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                            bits = fieldname.split( None, 1 )
-                            if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                            fieldname = bits[0]
-                            attributes = bits[1]
-                            #print( "attributes = {!r}".format( attributes) )
-                            if line[ix2+2:-1]==fieldname:
-                                self.suppliedMetadata[fieldname] = (contents, attributes)
-                                processed = True
-                if not processed: print( "ERROR: Unexpected {!r} line in SSF file".format( line ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
-            if BibleOrgSysGlobals.verbosityLevel > 3:
-                for key in sorted(self.suppliedMetadata):
-                    print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
-        self.applySuppliedMetadata() # Copy to self.settingsDict
-    # end of ESFMBible.loadMetadata
+        #Returns a dictionary.
+        #"""
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from {!r}").format( ssfFilepath ) )
+        #lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
+        #self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
+        #with open( ssfFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
+            #for line in myFile:
+                #lineCount += 1
+                #if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    #logging.info( "ESFMBible.loadMetadata: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
+                    #line = line[1:] # Remove the Byte Order Marker
+                #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+                #line = line.strip() # Remove leading and trailing whitespace
+                #if not line: continue # Just discard blank lines
+                #lastLine = line
+                #processed = False
+                #if status==0 and line=="<ScriptureText>":
+                    #status = 1
+                    #processed = True
+                #elif status==1 and line=="</ScriptureText>":
+                    #status = 2
+                    #processed = True
+                #elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
+                    #fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
+                    #if ' ' not in fieldname:
+                        #self.suppliedMetadata[fieldname] = ''
+                        #processed = True
+                    #elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                        #bits = fieldname.split( None, 1 )
+                        #if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                        #fieldname = bits[0]
+                        #attributes = bits[1]
+                        ##print( "attributes = {!r}".format( attributes) )
+                        #self.suppliedMetadata[fieldname] = (contents, attributes)
+                        #processed = True
+                #elif status==1 and line[0]=='<' and line[-1]=='>':
+                    #ix1 = line.find('>')
+                    #ix2 = line.find('</')
+                    #if ix1!=-1 and ix2!=-1 and ix2>ix1:
+                        #fieldname = line[1:ix1]
+                        #contents = line[ix1+1:ix2]
+                        #if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
+                            #self.suppliedMetadata[fieldname] = contents
+                            #processed = True
+                        #elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                            #bits = fieldname.split( None, 1 )
+                            #if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                            #fieldname = bits[0]
+                            #attributes = bits[1]
+                            ##print( "attributes = {!r}".format( attributes) )
+                            #if line[ix2+2:-1]==fieldname:
+                                #self.suppliedMetadata[fieldname] = (contents, attributes)
+                                #processed = True
+                #if not processed: print( "ERROR: Unexpected {!r} line in SSF file".format( line ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2:
+            #print( "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 3:
+                #for key in sorted(self.suppliedMetadata):
+                    #print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
+        #self.applySuppliedMetadata() # Copy to self.settingsDict
+    ## end of ESFMBible.loadMetadata
 
 
     def loadSemanticDictionary( self, BBB, filename ):

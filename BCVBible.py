@@ -248,9 +248,11 @@ class BCVBible( Bible ):
             print( t("Loading metadata from {!r}").format( metadataFilepath ) )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['BCV'] = {}
+
         self.givenBookList = None
-        lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
-        self.suppliedMetadata['MetadataType'] = 'BCVMetadata'
+        lastLine, lineCount, status = '', 0, 0
         with open( metadataFilepath, 'rt' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
@@ -265,29 +267,33 @@ class BCVBible( Bible ):
                 #BCVVersion = 1.0
                 for fieldName in ('BCVVersion','ProjectName','Name','Abbreviation','BookList',):
                     if line.startswith( fieldName+' = ' ):
-                        self.suppliedMetadata[fieldName] = line[len(fieldName)+3:]
+                        self.suppliedMetadata['BCV'][fieldName] = line[len(fieldName)+3:]
                         processed = True
                         break
                 if not processed: print( t("ERROR: Unexpected {!r} line in metadata file").format( line ) )
-        #print( 'SD', self.suppliedMetadata )
+        #print( 'SD', self.suppliedMetadata['BCV'] )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + t("Got {} metadata entries:").format( len(self.suppliedMetadata) ) )
+            print( "  " + t("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
-                for key in sorted(self.suppliedMetadata):
-                    try: print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
+                for key in sorted(self.suppliedMetadata['BCV']):
+                    try: print( "    {}: {}".format( key, self.suppliedMetadata['BCV'][key] ) )
                     except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
 
-        if 'BCVVersion' in self.suppliedMetadata: assert( self.suppliedMetadata['BCVVersion'] == '1.0' ); del self.suppliedMetadata['BCVVersion']
-        if 'ProjectName' in self.suppliedMetadata: self.projectName = self.suppliedMetadata['ProjectName']; del self.suppliedMetadata['ProjectName']
-        if 'Name' in self.suppliedMetadata: self.projectName = self.suppliedMetadata['Name']; del self.suppliedMetadata['Name']
-        if 'Abbreviation' in self.suppliedMetadata: self.projectName = self.suppliedMetadata['Abbreviation']; del self.suppliedMetadata['Abbreviation']
-        if 'BookList' in self.suppliedMetadata:
-            BL = self.suppliedMetadata['BookList']
+        if 'BCVVersion' in self.suppliedMetadata['BCV']:
+            assert( self.suppliedMetadata['BCV']['BCVVersion'] == '1.0' ); del self.suppliedMetadata['BCV']['BCVVersion']
+        if 'ProjectName' in self.suppliedMetadata['BCV']:
+            self.projectName = self.suppliedMetadata['BCV']['ProjectName']; del self.suppliedMetadata['BCV']['ProjectName']
+        if 'Name' in self.suppliedMetadata['BCV']:
+            self.projectName = self.suppliedMetadata['BCV']['Name']; del self.suppliedMetadata['BCV']['Name']
+        if 'Abbreviation' in self.suppliedMetadata['BCV']:
+            self.projectName = self.suppliedMetadata['BCV']['Abbreviation']; del self.suppliedMetadata['BCV']['Abbreviation']
+        if 'BookList' in self.suppliedMetadata['BCV']:
+            BL = self.suppliedMetadata['BCV']['BookList']
             if BL and BL[0]=='[' and BL[-1]==']': self.givenBookList = eval( BL )
             #print( 'x1', repr(self.givenBookList), repr(self.givenBookList[2]) )
-            if isinstance( self.givenBookList, list ): del self.suppliedMetadata['BookList']
+            if isinstance( self.givenBookList, list ): del self.suppliedMetadata['BCV']['BookList']
             else: print( t("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
-            #bl = self.suppliedMetadata['BookList']
+            #bl = self.suppliedMetadata['BCV']['BookList']
             #if bl[0]=='[' and bl[-1]==']':
                 #for something in bl[1:-1].split( ',' ):
                     #if something[0]==' ': something = something[1:]
@@ -295,10 +301,10 @@ class BCVBible( Bible ):
                     #if something in BibleOrgSysGlobals.BibleBooksCodes:
                         #self.givenBookList.append( something )
                     #else: print( t("ERROR: Unexpected {!r} booklist entry in metadata file").format( something ) )
-                #del self.suppliedMetadata['BookList']
+                #del self.suppliedMetadata['BCV']['BookList']
             #else: print( t("ERROR: Unexpected {!r} format in metadata file").format( bl ) )
 
-        if self.suppliedMetadata:
+        if self.suppliedMetadata['BCV']:
             self.applySuppliedMetadata()
             print( 's.SD', self.settingsDict )
     # end of BCVBible.loadMetadata
@@ -393,7 +399,7 @@ class BCVBibleBook( BibleBook ):
     # end of BCVBibleBook.__init__
 
 
-    def loadMetadata( self, metadataFilepath ):
+    def loadBookMetadata( self, metadataFilepath ):
         """
         Process the metadata from the given filepath.
 
@@ -409,7 +415,7 @@ class BCVBibleBook( BibleBook ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( t("loadMetadata: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
+                    logging.info( t("loadBookMetadata: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -448,7 +454,7 @@ class BCVBibleBook( BibleBook ):
         if settingsDict:
             self.settingsDict = settingsDict
             print( 's.SD', self.settingsDict )
-    # end of BCVBibleBook.loadMetadata
+    # end of BCVBibleBook.loadBookMetadata
 
 
     def load( self, folder ):
@@ -500,7 +506,7 @@ class BCVBibleBook( BibleBook ):
         self.sourceFolder = os.path.join( folder, self.BBB+'/' )
 
         # Read book metadata
-        self.loadMetadata( os.path.join( self.sourceFolder, self.BBB+'_BookMetadata.txt' ) )
+        self.loadBookMetadata( os.path.join( self.sourceFolder, self.BBB+'_BookMetadata.txt' ) )
 
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
@@ -513,7 +519,7 @@ class BCVBibleBook( BibleBook ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( t("loadMetadata: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
+                        logging.info( t("loadBCVBibleBook: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     #print( CV, "line", line )
@@ -577,8 +583,8 @@ def demo():
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )
-            vBErrors = result2.getErrors()
-            # print( vBErrors )
+            bibleErrors = result2.getErrors()
+            # print( bibleErrors )
         #if BibleOrgSysGlobals.commandLineOptions.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -590,8 +596,8 @@ def demo():
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )
-            vBErrors = result3.getErrors()
-            # print( vBErrors )
+            bibleErrors = result3.getErrors()
+            # print( bibleErrors )
         if BibleOrgSysGlobals.commandLineOptions.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -638,73 +644,14 @@ def demo():
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     bcvB.check()
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    bcvBErrors = bcvB.getErrors()
-                    # print( bcvBErrors )
+                    bcbibleErrors = bcvB.getErrors()
+                    # print( bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineOptions.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
             else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
-
-
-    if 0: # Test a whole folder full of folders of BCV Bibles
-        testBaseFolder = "Tests/DataFilesForTests/RoundtripTestFiles/"
-
-        def findInfo( somepath ):
-            """ Find out info about the project from the included copyright.htm file """
-            cFilepath = os.path.join( somepath, "copyright.htm" )
-            if not os.path.exists( cFilepath ): return
-            with open( cFilepath ) as myFile: # Automatically closes the file when done
-                lastLine, lineCount = None, 0
-                title, nameDict = None, {}
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "BCVBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
-                    if line.startswith('<option value="'):
-                        adjLine = line.replace('<option value="','').replace('</option>','')
-                        BCV_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromBCV( BCV_BBB )
-                        #print( BCV_BBB, BBB, name )
-                        nameDict[BBB] = name
-            return title, nameDict
-        # end of findInfo
-
-
-        count = totalBooks = 0
-        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
-            for something in sorted( os.listdir( testBaseFolder ) ):
-                somepath = os.path.join( testBaseFolder, something )
-                if os.path.isfile( somepath ): print( "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
-                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a BCV (partial) Bible
-                    #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
-                    count += 1
-                    title = None
-                    findInfoResult = findInfo( somepath )
-                    if findInfoResult: title, bookNameDict = findInfoResult
-                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                    name, encoding, testFolder = title, "utf-8", somepath
-                    if os.access( testFolder, os.R_OK ):
-                        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nBCV B{}/".format( count ) )
-                        UsfmB = BCVBible( testFolder, name, encoding=encoding )
-                        UsfmB.load()
-                        if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfmB )
-                        if BibleOrgSysGlobals.strictCheckingFlag:
-                            UsfmB.check()
-                            UsfmBErrors = UsfmB.getErrors()
-                            #print( UsfmBErrors )
-                        if BibleOrgSysGlobals.commandLineOptions.export:
-                            UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
-            if count: print( "\n{} total BCV (partial) Bibles processed.".format( count ) )
-            if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':

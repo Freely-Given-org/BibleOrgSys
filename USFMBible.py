@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-29' # by RJH
+LastModifiedDate = '2015-05-30' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.65'
@@ -196,6 +196,99 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 
 
+def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
+    """
+    Process the SSF data from the given filepath into BibleObject.suppliedMetadata['SSF'].
+
+    Returns a dictionary.
+    """
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
+    #if encoding is None: encoding = 'utf-8'
+    BibleObject.ssfFilepath = ssfFilepath
+    lastLine, lineCount, status = '', 0, 0
+    if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
+    BibleObject.suppliedMetadata['SSF'] = {}
+    with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
+        for line in myFile:
+            lineCount += 1
+            if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                logging.info( t("loadSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
+                line = line[1:] # Remove the Byte Order Marker
+            if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+            line = line.strip() # Remove leading and trailing whitespace
+            if not line: continue # Just discard blank lines
+            lastLine = line
+            processed = False
+            if status==0 and line=="<ScriptureText>":
+                status = 1
+                processed = True
+            elif status==1 and line=="</ScriptureText>":
+                status = 9
+                processed = True
+            elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a BibleObject-closing (empty) field
+                fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
+                if ' ' not in fieldname:
+                    BibleObject.suppliedMetadata['SSF'][fieldname] = ''
+                    processed = True
+                elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                    bits = fieldname.split( None, 1 )
+                    if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                    fieldname = bits[0]
+                    attributes = bits[1]
+                    #print( "attributes = {!r}".format( attributes) )
+                    BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
+                    processed = True
+            elif status==1 and line[0]=='<' and line[-1]=='>':
+                ix1 = line.find('>')
+                ix2 = line.find('</')
+                if ix1!=-1 and ix2!=-1 and ix2>ix1:
+                    fieldname = line[1:ix1]
+                    contents = line[ix1+1:ix2]
+                    if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
+                        BibleObject.suppliedMetadata['SSF'][fieldname] = contents
+                        processed = True
+                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                        bits = fieldname.split( None, 1 )
+                        if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                        fieldname = bits[0]
+                        attributes = bits[1]
+                        #print( "attributes = {!r}".format( attributes) )
+                        if line[ix2+2:-1]==fieldname:
+                            BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
+                            processed = True
+            elif status==1 and line[0]=='<ValidCharacters>' and line[-1]=='>':
+                fieldname = 'ValidCharacters'
+            if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
+    if status == 0:
+        logging.error( "SSF file was empty: {}".format( BibleObject.ssfFilepath ) )
+        status = 9
+    if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
+    if BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "  " + t("Got {} SSF entries:").format( len(BibleObject.suppliedMetadata['SSF']) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            for key in sorted(BibleObject.suppliedMetadata['SSF']):
+                try: print( "    {}: {}".format( key, BibleObject.suppliedMetadata['SSF'][key] ) )
+                except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
+    BibleObject.applySuppliedMetadata() # Copy to BibleObject.settingsDict
+
+    # Determine our encoding while we're at it
+    if BibleObject.encoding is None and 'Encoding' in BibleObject.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
+        ssfEncoding = BibleObject.suppliedMetadata['SSF']['Encoding']
+        if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
+        else:
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+            if ssfEncoding.isdigit():
+                BibleObject.encoding = 'cp' + ssfEncoding
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( t("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
+            else:
+                logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+# end of loadSSFData
+
+
+
 class USFMBible( Bible ):
     """
     Class to load and manipulate USFM Bibles.
@@ -262,7 +355,7 @@ class USFMBible( Bible ):
             self.suppliedMetadata, self.settingsDict = {}, {}
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
-                self.loadSSFData( ssfFilepathList[0] )
+                loadSSFData( self, ssfFilepathList[0] )
 
         self.name = self.givenName
         if self.name is None:
@@ -278,97 +371,6 @@ class USFMBible( Bible ):
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
     # end of USFMBible.preload
-
-
-    def loadSSFData( self, ssfFilepath, encoding=None ):
-        """
-        Process the SSF data from the given filepath into self.suppliedMetadata.
-
-        Returns a dictionary.
-        """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
-        if encoding is None: encoding = 'utf-8'
-        self.ssfFilepath = ssfFilepath
-        lastLine, lineCount, status, self.suppliedMetadata = '', 0, 0, {}
-        self.suppliedMetadata['MetadataType'] = 'SSFMetadata'
-        with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-            for line in myFile:
-                lineCount += 1
-                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( t("loadSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
-                    line = line[1:] # Remove the Byte Order Marker
-                if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-                line = line.strip() # Remove leading and trailing whitespace
-                if not line: continue # Just discard blank lines
-                lastLine = line
-                processed = False
-                if status==0 and line=="<ScriptureText>":
-                    status = 1
-                    processed = True
-                elif status==1 and line=="</ScriptureText>":
-                    status = 9
-                    processed = True
-                elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
-                    fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
-                    if ' ' not in fieldname:
-                        self.suppliedMetadata[fieldname] = ''
-                        processed = True
-                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                        bits = fieldname.split( None, 1 )
-                        if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                        fieldname = bits[0]
-                        attributes = bits[1]
-                        #print( "attributes = {!r}".format( attributes) )
-                        self.suppliedMetadata[fieldname] = (contents, attributes)
-                        processed = True
-                elif status==1 and line[0]=='<' and line[-1]=='>':
-                    ix1 = line.find('>')
-                    ix2 = line.find('</')
-                    if ix1!=-1 and ix2!=-1 and ix2>ix1:
-                        fieldname = line[1:ix1]
-                        contents = line[ix1+1:ix2]
-                        if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                            self.suppliedMetadata[fieldname] = contents
-                            processed = True
-                        elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                            bits = fieldname.split( None, 1 )
-                            if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                            fieldname = bits[0]
-                            attributes = bits[1]
-                            #print( "attributes = {!r}".format( attributes) )
-                            if line[ix2+2:-1]==fieldname:
-                                self.suppliedMetadata[fieldname] = (contents, attributes)
-                                processed = True
-                elif status==1 and line[0]=='<ValidCharacters>' and line[-1]=='>':
-                    fieldname = 'ValidCharacters'
-                if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
-        if status == 0:
-            logging.error( "SSF file was empty: {}".format( self.ssfFilepath ) )
-            status = 9
-        if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + t("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
-            if BibleOrgSysGlobals.verbosityLevel > 3:
-                for key in sorted(self.suppliedMetadata):
-                    try: print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
-                    except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
-        self.applySuppliedMetadata() # Copy to self.settingsDict
-
-        # Determine our encoding while we're at it
-        if self.encoding is None and 'Encoding' in self.suppliedMetadata: # See if the SSF file gives some help to us
-            ssfEncoding = self.suppliedMetadata['Encoding']
-            if ssfEncoding == '65001': self.encoding = 'utf-8'
-            else:
-                if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
-                if ssfEncoding.isdigit():
-                    self.encoding = 'cp' + ssfEncoding
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
-                        print( t("__init__: Switched to {!r} file encoding").format( self.encoding ) )
-                else:
-                    logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
-    # end of USFMBible.loadSSFData
 
 
     def loadBook( self, BBB, filename=None ):

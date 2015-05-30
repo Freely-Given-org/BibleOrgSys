@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-24' # by RJH
+LastModifiedDate = '2015-05-30' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -213,7 +213,7 @@ class DBLBible( Bible ):
             logging.error( "DBLBible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
         # Create empty containers for loading the XML metadata files
-        self.suppliedMetadata = self.DBLLicense = self.DBLStyles = self.DBLVersification = self.DBLLanguage = None
+        self.DBLLicense = self.DBLStyles = self.DBLVersification = self.DBLLanguage = None
     # end of DBLBible.__init__
 
 
@@ -237,7 +237,7 @@ class DBLBible( Bible ):
             return # No use continuing
 
         self.loadDBLLicense()
-        self.loadDBLMetadata() # into self.suppliedMetadata (still in DBL format)
+        self.loadDBLMetadata() # into self.suppliedMetadata['DBL'] (still in DBL format)
         self.applySuppliedMetadata() # copy into self.settingsDict (standardised)
         self.loadDBLStyles()
         self.loadDBLVersification()
@@ -252,7 +252,7 @@ class DBLBible( Bible ):
 
     def loadDBLLicense( self ):
         """
-        Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
+        Load the metadata.xml file and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("loadDBLLicense()") )
@@ -325,7 +325,7 @@ class DBLBible( Bible ):
             Load the contents information (which is more nested/complex).
             """
             assert( element.tag == 'contents' )
-            ourDict = self.suppliedMetadata['contents']
+            ourDict = self.suppliedMetadata['DBL']['contents']
             BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
             BibleOrgSysGlobals.checkXMLNoText( element, location )
             BibleOrgSysGlobals.checkXMLNoTail( element, location )
@@ -392,11 +392,11 @@ class DBLBible( Bible ):
                                 #assert( len(items)==1 and items[0][0]=='code' )
                                 #bookCode = items[0][1]
                                 #ourDict[bookListTag]['divisions'][divisionID].append( bookCode )
-            #print( "Contents:", self.suppliedMetadata['contents'] )
+            #print( "Contents:", self.suppliedMetadata['DBL']['contents'] )
         # end of getContents
 
-        self.suppliedMetadata = OrderedDict()
-        self.suppliedMetadata['MetadataType'] = 'DBLMetadata'
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['DBL'] = {}
         #loadErrors = []
 
         # Find the main container
@@ -422,7 +422,7 @@ class DBLBible( Bible ):
             for element in self.tree:
                 sublocation = element.tag + ' ' + location
                 #print( "\nProcessing {}...".format( sublocation ) )
-                self.suppliedMetadata[element.tag] = OrderedDict()
+                self.suppliedMetadata['DBL'][element.tag] = OrderedDict()
                 if element.tag == 'identification':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -440,13 +440,13 @@ class DBLBible( Bible ):
                                 thisTag = thisTag + '-' + items[0][1]
                             else: BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                             assert( subelement.text )
-                            self.suppliedMetadata[element.tag][thisTag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][thisTag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'confidential':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
-                    self.suppliedMetadata['confidential'] = element.text
+                    self.suppliedMetadata['DBL']['confidential'] = element.text
                 elif element.tag == 'agencies':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -458,7 +458,7 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('etenPartner','creator','publisher','contributor'):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'language':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -471,7 +471,7 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('iso','name','ldml','rod','script','scriptDirection','numerals'):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'country':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -484,7 +484,7 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('iso','name'):
                             if BibleOrgSysGlobals.debugFlag: assert( subelement.text )
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'type':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -497,7 +497,7 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('translationType','audience'):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'bookNames':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -512,7 +512,7 @@ class DBLBible( Bible ):
                         assert( len(items)==1 and items[0][0]=='code' )
                         bookCode = items[0][1]
                         assert( len(bookCode) == 3 )
-                        self.suppliedMetadata[element.tag][bookCode] = {}
+                        self.suppliedMetadata['DBL'][element.tag][bookCode] = {}
                         for sub2element in subelement:
                             sub3location = sub2element.tag + ' ' + bookCode + ' ' + sub2location
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
@@ -520,7 +520,7 @@ class DBLBible( Bible ):
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                             if sub2element.tag in ('long','short','abbr'):
                                 assert( sub2element.text )
-                                self.suppliedMetadata[element.tag][bookCode][sub2element.tag] = sub2element.text
+                                self.suppliedMetadata['DBL'][element.tag][bookCode][sub2element.tag] = sub2element.text
                             else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub3location ) )
                 elif element.tag == 'contents':
                     getContents( element, sublocation )
@@ -528,7 +528,7 @@ class DBLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
-                    self.suppliedMetadata[element.tag] = {} # Don't need this ordered
+                    self.suppliedMetadata['DBL'][element.tag] = {} # Don't need this ordered
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
@@ -542,10 +542,10 @@ class DBLBible( Bible ):
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                         #print( bookCode, stage )
                         assert( len(bookCode) == 3 )
-                        if bookCode not in self.suppliedMetadata['bookNames']:
+                        if bookCode not in self.suppliedMetadata['DBL']['bookNames']:
                             logging.warning( _("Bookcode {} mentioned in progress but not found in bookNames").format( bookCode ) )
                         assert( stage in ('1','2','3','4') )
-                        self.suppliedMetadata[element.tag][bookCode] = stage
+                        self.suppliedMetadata['DBL'][element.tag][bookCode] = stage
                 elif element.tag == 'contact':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -557,7 +557,7 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('rightsHolder','rightsHolderLocal','rightsHolderAbbreviation','rightsHolderURL','rightsHolderFacebook'):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'copyright':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -572,9 +572,9 @@ class DBLBible( Bible ):
                             contentType = items[0][1]
                             assert( contentType in ('xhtml',) )
                             if not len(subelement) and subelement.text:
-                                self.suppliedMetadata[element.tag][subelement.tag+'-'+contentType] = subelement.text
+                                self.suppliedMetadata['DBL'][element.tag][subelement.tag+'-'+contentType] = subelement.text
                             else:
-                                self.suppliedMetadata[element.tag][subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( subelement, sub2location )
+                                self.suppliedMetadata['DBL'][element.tag][subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( subelement, sub2location )
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'promotion':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -589,9 +589,9 @@ class DBLBible( Bible ):
                             contentType = items[0][1]
                             assert( contentType in ('xhtml',) )
                             if not len(subelement) and subelement.text:
-                                self.suppliedMetadata[element.tag][subelement.tag+'-'+contentType] = subelement.text
+                                self.suppliedMetadata['DBL'][element.tag][subelement.tag+'-'+contentType] = subelement.text
                             else:
-                                self.suppliedMetadata[element.tag][subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( subelement, sub2location )
+                                self.suppliedMetadata['DBL'][element.tag][subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( subelement, sub2location )
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'archiveStatus':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -604,19 +604,19 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('archivistName','dateArchived','dateUpdated','comments'):
                             if BibleOrgSysGlobals.debugFlag: assert( subelement.text )
-                            self.suppliedMetadata[element.tag][subelement.tag] = subelement.text
+                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 elif element.tag == 'format':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     assert( element.text )
-                    self.suppliedMetadata[element.tag]  = element.text
+                    self.suppliedMetadata['DBL'][element.tag]  = element.text
                 else:
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
-        #print( '\n', self.suppliedMetadata )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} supplied metadata elements.".format( len(self.suppliedMetadata) ) )
+        #print( '\n', self.suppliedMetadata['DBL'] )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} supplied metadata elements.".format( len(self.suppliedMetadata['DBL']) ) )
     # end of DBLBible.loadDBLMetadata
 
 
@@ -629,12 +629,12 @@ class DBLBible( Bible ):
         if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("applySuppliedMetadata()") )
 
-        self.name = self.suppliedMetadata['identification']['name']
-        self.abbreviation = self.suppliedMetadata['identification']['abbreviation']
+        self.name = self.suppliedMetadata['DBL']['identification']['name']
+        self.abbreviation = self.suppliedMetadata['DBL']['identification']['abbreviation']
 
         # Now we'll flatten the supplied metadata and remove empty values
         flattenedMetadata = {}
-        for mainKey,value in self.suppliedMetadata.items():
+        for mainKey,value in self.suppliedMetadata['DBL'].items():
             #print( "Got {} = {}".format( mainKey, value ) )
             if not value: pass # ignore empty ones
             elif isinstance( value, str ): flattenedMetadata[mainKey] = value # Straight copy
@@ -676,7 +676,7 @@ class DBLBible( Bible ):
 
     def loadDBLStyles( self ):
         """
-        Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
+        Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("loadDBLStyles()") )
@@ -764,7 +764,7 @@ class DBLBible( Bible ):
                 else:
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
-        #print( '\n', self.suppliedMetadata )
+        #print( '\n', self.suppliedMetadata['DBL'] )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style elements.".format( len(self.DBLStyles['styles']) ) )
     # end of DBLBible.loadDBLStyles
 
@@ -835,7 +835,7 @@ class DBLBible( Bible ):
                     except KeyError:
                         logging.error( "Unknown {!r} USX book code in DBLBible.loading versification from {}".format( USFMBookCode, versificationFilepath ) )
 
-        #print( '\n', self.suppliedMetadata )
+        #print( '\n', self.suppliedMetadata['DBL'] )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versification elements.".format( len(self.DBLVersification) ) )
     # end of DBLBible.loadDBLVersification
 
@@ -947,7 +947,7 @@ class DBLBible( Bible ):
             print( t("loadBooks()") )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DBLBible: Loading {} books from {}...").format( self.name, self.sourceFilepath ) )
 
-        if not self.suppliedMetadata: self.load() # Might not have been done yet
+        if not self.suppliedMetadata or 'DBL' not in self.suppliedMetadata: self.load() # Might not have been done yet
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -963,7 +963,7 @@ class DBLBible( Bible ):
         # Determine which is the USX subfolder
         possibilities = []
         haveDefault = False
-        for someKey in self.suppliedMetadata['contents']:
+        for someKey in self.suppliedMetadata['DBL']['contents']:
             if someKey.startswith( 'bookList' ): possibilities.append( someKey )
             if '(default)' in someKey: haveDefault = someKey
         #print( "possibilities", possibilities )
@@ -978,7 +978,7 @@ class DBLBible( Bible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         #print( "bookListKey", bookListKey )
-        for USFMBookCode in self.suppliedMetadata['contents'][bookListKey]['books']:
+        for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
             #print( "USFMBookCode", USFMBookCode )
             BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
             filename = USFMBookCode + '.usx'
