@@ -6338,7 +6338,7 @@ class BibleWriter( InternalBible ):
         values.append( Strong if Strong else False )
 
         customCSS = self.getSetting( 'CustomCSS' )
-        values.append( customCSS )
+        if customCSS: values.append( customCSS )
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
