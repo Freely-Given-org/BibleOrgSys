@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-01' # by RJH
+LastModifiedDate = '2015-06-02' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -6140,7 +6140,7 @@ class BibleWriter( InternalBible ):
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents and keyName not in written:
                     myFile.write( "{}={}\n".format( keyName, fieldContents ) )
-                    written.append( key )
+                    written.append( keyName )
             keyName = 'publish.date'
             if keyName not in written:
                 myFile.write( "{}={}\n".format( keyName, datetime.now().strftime('%Y') ) )
