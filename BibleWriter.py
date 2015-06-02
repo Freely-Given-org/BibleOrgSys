@@ -6304,6 +6304,7 @@ class BibleWriter( InternalBible ):
         if customCSS: exeStr += ', CustomCSS TEXT'
         exeStr += ')'
         cursor.execute( exeStr )
+
         values = []
 
         description = self.getSetting( 'Description' )
@@ -6337,7 +6338,7 @@ class BibleWriter( InternalBible ):
         Strong = self.getSetting( 'Strong' )
         values.append( Strong if Strong else False )
 
-        customCSS = self.getSetting( 'CustomCSS' )
+        #customCSS = self.getSetting( 'CustomCSS' )
         if customCSS: values.append( customCSS )
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
@@ -6805,6 +6806,7 @@ class BibleWriter( InternalBible ):
         if self.getSetting( 'CustomCSS' ): exeStr += ', CustomCSS TEXT'
         exeStr += ')'
         cursor.execute( exeStr )
+
         values = []
 
         description = self.getSetting( 'Description' )
@@ -6838,8 +6840,8 @@ class BibleWriter( InternalBible ):
         Strong = self.getSetting( 'Strong' )
         values.append( Strong if Strong else False )
 
-        customCSS = self.getSetting( 'CustomCSS' )
-        values.append( customCSS )
+        #customCSS = self.getSetting( 'CustomCSS' )
+        if customCSS: values.append( customCSS )
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
