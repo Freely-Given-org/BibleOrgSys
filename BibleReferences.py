@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-02' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -1482,7 +1482,7 @@ class BibleAnchorReference:
 
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
-        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if location is None: location = '(unknown)'
         #print( "Processing {!r} from {}".format( anchorString, location ) )
