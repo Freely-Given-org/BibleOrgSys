@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-30' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.65'
@@ -206,9 +206,11 @@ def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
     #if encoding is None: encoding = 'utf-8'
     BibleObject.ssfFilepath = ssfFilepath
-    lastLine, lineCount, status = '', 0, 0
+
     if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
     BibleObject.suppliedMetadata['SSF'] = {}
+
+    lastLine, lineCount, status = '', 0, 0
     with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
         for line in myFile:
             lineCount += 1
@@ -270,21 +272,22 @@ def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
             for key in sorted(BibleObject.suppliedMetadata['SSF']):
                 try: print( "    {}: {}".format( key, BibleObject.suppliedMetadata['SSF'][key] ) )
                 except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
-    BibleObject.applySuppliedMetadata() # Copy to BibleObject.settingsDict
 
-    # Determine our encoding while we're at it
-    if BibleObject.encoding is None and 'Encoding' in BibleObject.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
-        ssfEncoding = BibleObject.suppliedMetadata['SSF']['Encoding']
-        if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
-        else:
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
-            if ssfEncoding.isdigit():
-                BibleObject.encoding = 'cp' + ssfEncoding
-                if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( t("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
-            else:
-                logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+    BibleObject.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+
+    ## Determine our encoding while we're at it
+    #if BibleObject.encoding is None and 'Encoding' in BibleObject.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
+        #ssfEncoding = BibleObject.suppliedMetadata['SSF']['Encoding']
+        #if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
+        #else:
+            #if BibleOrgSysGlobals.verbosityLevel > 0:
+                #print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+            #if ssfEncoding.isdigit():
+                #BibleObject.encoding = 'cp' + ssfEncoding
+                #if BibleOrgSysGlobals.verbosityLevel > 0:
+                    #print( t("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
+            #else:
+                #logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
 # end of loadSSFData
 
 
@@ -352,18 +355,18 @@ class USFMBible( Bible ):
 
         if self.ssfFilepath is None: # it might have been loaded first
             # Attempt to load the SSF file
-            self.suppliedMetadata, self.settingsDict = {}, {}
+            #self.suppliedMetadata, self.settingsDict = {}, {}
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
                 loadSSFData( self, ssfFilepathList[0] )
 
-        self.name = self.givenName
-        if self.name is None:
-            for field in ('FullName','Name',):
-                if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        if not self.name: self.name = os.path.basename( self.sourceFolder )
-        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        if not self.name: self.name = "USFM Bible"
+        #self.name = self.givenName
+        #if self.name is None:
+            #for field in ('FullName','Name',):
+                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
+        #if not self.name: self.name = os.path.basename( self.sourceFolder )
+        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        #if not self.name: self.name = "USFM Bible"
 
         # Find the filenames of all our books
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples

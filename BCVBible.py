@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-29' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.12'
@@ -228,13 +228,13 @@ class BCVBible( Bible ):
             # Attempt to load the metadata file
             self.loadMetadata( os.path.join( sourceFolder, METADATA_FILENAME ) )
 
-        self.name = self.givenName
-        if self.name is None:
-            for field in ('FullName','Name',):
-                if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        if not self.name: self.name = os.path.basename( self.sourceFolder )
-        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        if not self.name: self.name = "BCV Bible"
+        #self.name = self.givenName
+        #if self.name is None:
+            #for field in ('FullName','Name',):
+                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
+        #if not self.name: self.name = os.path.basename( self.sourceFolder )
+        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        #if not self.name: self.name = "BCV Bible"
     # end of BCVBible.preload
 
 
@@ -271,7 +271,7 @@ class BCVBible( Bible ):
                         processed = True
                         break
                 if not processed: print( t("ERROR: Unexpected {!r} line in metadata file").format( line ) )
-        #print( 'SD', self.suppliedMetadata['BCV'] )
+        #print( 'SD', self.suppliedMetadata['BCV'] ); halt
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  " + t("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -280,18 +280,19 @@ class BCVBible( Bible ):
                     except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
 
         if 'BCVVersion' in self.suppliedMetadata['BCV']:
-            assert( self.suppliedMetadata['BCV']['BCVVersion'] == '1.0' ); del self.suppliedMetadata['BCV']['BCVVersion']
-        if 'ProjectName' in self.suppliedMetadata['BCV']:
-            self.projectName = self.suppliedMetadata['BCV']['ProjectName']; del self.suppliedMetadata['BCV']['ProjectName']
-        if 'Name' in self.suppliedMetadata['BCV']:
-            self.projectName = self.suppliedMetadata['BCV']['Name']; del self.suppliedMetadata['BCV']['Name']
-        if 'Abbreviation' in self.suppliedMetadata['BCV']:
-            self.projectName = self.suppliedMetadata['BCV']['Abbreviation']; del self.suppliedMetadata['BCV']['Abbreviation']
+            assert( self.suppliedMetadata['BCV']['BCVVersion'] == '1.0' )
+
+        #if 'ProjectName' in self.suppliedMetadata['BCV']:
+            #self.projectName = self.suppliedMetadata['BCV']['ProjectName']
+        #if 'Name' in self.suppliedMetadata['BCV']:
+            #self.projectName = self.suppliedMetadata['BCV']['Name']
+        #if 'Abbreviation' in self.suppliedMetadata['BCV']:
+            #self.projectName = self.suppliedMetadata['BCV']['Abbreviation']
         if 'BookList' in self.suppliedMetadata['BCV']:
             BL = self.suppliedMetadata['BCV']['BookList']
             if BL and BL[0]=='[' and BL[-1]==']': self.givenBookList = eval( BL )
             #print( 'x1', repr(self.givenBookList), repr(self.givenBookList[2]) )
-            if isinstance( self.givenBookList, list ): del self.suppliedMetadata['BCV']['BookList']
+            if isinstance( self.givenBookList, list ): pass # del self.suppliedMetadata['BCV']['BookList']
             else: print( t("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
             #bl = self.suppliedMetadata['BCV']['BookList']
             #if bl[0]=='[' and bl[-1]==']':
@@ -305,8 +306,8 @@ class BCVBible( Bible ):
             #else: print( t("ERROR: Unexpected {!r} format in metadata file").format( bl ) )
 
         if self.suppliedMetadata['BCV']:
-            self.applySuppliedMetadata()
-            print( 's.SD', self.settingsDict )
+            self.applySuppliedMetadata( 'BCV' ) # Copy some to self.settingsDict
+            if debuggingThisModule: print( 's.SD', self.settingsDict )
     # end of BCVBible.loadMetadata
 
 
@@ -453,7 +454,7 @@ class BCVBibleBook( BibleBook ):
 
         if settingsDict:
             self.settingsDict = settingsDict
-            print( 's.SD', self.settingsDict )
+            print( 'book SD', self.settingsDict )
     # end of BCVBibleBook.loadBookMetadata
 
 
@@ -590,7 +591,7 @@ def demo():
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nBCV TestA3" )
-        result3 = BCVBibleFileCheck( testFolder, autoLoadBooks=True )
+        result3 = BCVBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "BCV TestA3", result3 )
         #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:

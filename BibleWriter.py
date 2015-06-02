@@ -52,7 +52,7 @@ Contains functions:
     toHaggaiXML( outputFolder=None, controlDict=None, validationSchema=None )
     toOpenSongXML( outputFolder=None, controlDict=None, validationSchema=None )
     toSwordModule( outputFolder=None, controlDict=None, validationSchema=None )
-    totheWord( outputFolder=None )
+    toTheWord( outputFolder=None )
     toMySword( outputFolder=None )
     toESword( outputFolder=None )
     toSwordSearcher( outputFolder=None )
@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-27' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -2515,8 +2515,10 @@ class BibleWriter( InternalBible ):
             headerDict['Data format version'] = CBDataFormatVersion
             headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
             headerDict['Conversion program'] = ProgNameVersion
-            headerDict['Version name'] = self.settingsDict['WorkTitle'] if 'WorkTitle' in self.settingsDict else self.name
-            headerDict['Version abbreviation'] = self.settingsDict['WorkAbbreviation'] if 'WorkAbbreviation' in self.settingsDict else self.abbreviation
+            workTitle = self.getSetting( 'WorkTitle' )
+            headerDict['Version name'] = workTitle if workTitle else self.name
+            workAbbreviation = self.getSetting( 'WorkAbbreviation' )
+            headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
             #print( headerDict )
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}...").format( headerFilepath ) )
@@ -2535,15 +2537,20 @@ class BibleWriter( InternalBible ):
                 """ Given a book code, return the division name. """
                 result = ""
                 if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ) or BBB == 'PS2':
-                    result = self.settingsDict['OldTestamentName'] if "OldTestamentName" in self.settingsDict else "Old Testament"
+                    result = self.getSetting( 'OldTestamentName' )
+                    if not result: result = _("Old Testament")
                 elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
-                    result = self.settingsDict['NewTestamentName'] if "NewTestamentName" in self.settingsDict else "New Testament"
+                    result = self.getSetting( 'NewTestamentName' )
+                    if not result: result = _("New Testament")
                 elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ) or BBB in ('MA3','MA4'):
-                    result = self.settingsDict['DeuterocanonName'] if "DeuterocanonName" in self.settingsDict else "Deuterocanon"
+                    result = self.getSetting( 'DeuterocanonName' )
+                    if not result: result = _("Deuterocanon")
                 elif doneAny == False:
-                    result = self.settingsDict['FrontMatterName'] if "FrontMatterName" in self.settingsDict else "Front Matter"
+                    result = self.getSetting( 'FrontMatterName' )
+                    if not result: result = _("Front Matter")
                 elif doneBooks == True:
-                    result = self.settingsDict['BackMatterName'] if "BackMatterName" in self.settingsDict else "Back Matter"
+                    result = self.getSetting( 'BackMatterName' )
+                    if not result: result = _("Back Matter")
                 return result
             # end of getDivisionName
 
@@ -3919,9 +3926,9 @@ class BibleWriter( InternalBible ):
         #xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Haiola output as closely as possible
         xw.start()
         xw.writeLineOpen( 'usfx', [('xmlns:xsi',"http://eBible.org/usfx.xsd"), ('xsi:noNamespaceSchemaLocation',"usfx-2013-08-05.xsd")] )
-        languageCode = None
-        if languageCode is None and 'Language' in self.settingsDict and len(self.settingsDict['Language'])==3:
-            languageCode = self.settingsDict['Language']
+        languageCode = self.getSetting( 'ISOLanguageCode' )
+        #if languageCode is None and 'Language' in self.settingsDict and len(self.settingsDict['Language'])==3:
+            #languageCode = self.settingsDict['Language']
         if languageCode: xw.writeLineOpenClose( 'languageCode', languageCode )
         for BBB,bookData in self.books.items(): # Process each Bible book
             writeUSFXBook( xw, BBB, bookData )
@@ -5377,23 +5384,26 @@ class BibleWriter( InternalBible ):
             if "INDONESIA" in pnUpper:
                 confText = confText.replace( '__LANGUAGE__', 'id' )
 
-            # Do replacements from SSF file
-            if self.settingsDict:
-                #print( "  Given Project name is", projectName )
-                #print( "  Given Email is", emailAddress )
-                #print( "  Given Name is", projectName )
-                #if 'FullName' in self.settingsDict:
-                    #print( "  SSF Full name (unused) is", self.settingsDict['FullName'] )
-                if 'Name' in self.settingsDict:
-                    #print( "  SSF Name is", self.settingsDict['Name'] )
-                    confText = confText.replace( '__ABBREVIATION__', self.settingsDict['Name'] )
-                if 'Language' in self.settingsDict:
-                    #print( "  SSF Language is", self.settingsDict['Language'] )
-                    confText = confText.replace( '__LANGUAGE__', self.settingsDict['Language'] )
-                #if 'productName' in self.settingsDict:
-                    #print( "  SSF Product name (unused) is", self.settingsDict['productName'] )
-                #if 'LanguageIsoCode' in self.settingsDict:
-                    #print( "  SSF Language Iso Code (unused) is", self.settingsDict['LanguageIsoCode'] )
+            # Do replacements from metadata
+            #print( "  Given Project name is", projectName )
+            #print( "  Given Email is", emailAddress )
+            #print( "  Given Name is", projectName )
+            #if 'FullName' in self.settingsDict:
+                #print( "  SSF Full name (unused) is", self.settingsDict['FullName'] )
+            name = self.getSetting( 'Name' )
+            if name:
+            #if 'Name' in self.settingsDict:
+                #print( "  SSF Name is", self.settingsDict['Name'] )
+                confText = confText.replace( '__ABBREVIATION__', name )
+            language = self.getSetting( 'Language' )
+            if language:
+            #if 'Language' in self.settingsDict:
+                #print( "  SSF Language is", self.settingsDict['Language'] )
+                confText = confText.replace( '__LANGUAGE__', language )
+            #if 'productName' in self.settingsDict:
+                #print( "  SSF Product name (unused) is", self.settingsDict['productName'] )
+            #if 'LanguageIsoCode' in self.settingsDict:
+                #print( "  SSF Language Iso Code (unused) is", self.settingsDict['LanguageIsoCode'] )
 
             # Do exasperated replacements if there's any unknown fields left (coz we have no better info)
             confText = confText.replace( '__ABBREVIATION__', 'NONE' )
@@ -5975,19 +5985,19 @@ class BibleWriter( InternalBible ):
 
 
 
-    def totheWord( self, outputFolder=None, controlDict=None ):
+    def toTheWord( self, outputFolder=None, controlDict=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 TheWord file.
 
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
-        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, resetTheWordMargins, theWordHandleIntroduction, theWordComposeVerseLine
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:totheWord..." )
+        from TheWordBible import TheWordOTBookLines, TheWordNTBookLines, TheWordBookLines, resetTheWordMargins, TheWordHandleIntroduction, TheWordComposeVerseLine
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTheWord..." )
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_theWord_" + ("Reexport/" if self.objectTypeString=="theWord" else "Export/")
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord_" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -6001,7 +6011,7 @@ class BibleWriter( InternalBible ):
 
         def writeTWBook( writerObject, BBB, ourGlobals ):
             """
-            Writes a book to the theWord writerObject file.
+            Writes a book to the TheWord writerObject file.
             """
             nonlocal lineCount
             bkData = self.books[BBB] if BBB in self.books else None
@@ -6011,7 +6021,7 @@ class BibleWriter( InternalBible ):
 
             resetTheWordMargins( ourGlobals )
             if bkData: # write book headings (stuff before chapter 1)
-                ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
+                ourGlobals['line'] = TheWordHandleIntroduction( BBB, bkData, ourGlobals )
 
             # Write the verses (whether or not they're populated)
             C = V = 1
@@ -6038,7 +6048,7 @@ class BibleWriter( InternalBible ):
                             verseData18, context18 = result18
                             verseData.extend( verseData18 )
                         except KeyError: pass #  just ignore it
-                if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+                if verseData: composedLine = TheWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
                 assert( '\n' not in composedLine ) # This would mess everything up
                 #print( BBB, C, V, repr(composedLine) )
                 if C!=1 or V!=1: # Stay one line behind (because paragraph indicators get appended to the previous line)
@@ -6058,7 +6068,7 @@ class BibleWriter( InternalBible ):
             assert( '\n' not in ourGlobals['lastLine'] ) # This would mess everything up
             writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
             lineCount += 1
-        # end of totheWord.writeTWBook
+        # end of toTheWord.writeTWBook
 
 
         # Set-up their Bible reference system
@@ -6068,15 +6078,15 @@ class BibleWriter( InternalBible ):
         # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
         if len(self) <= (39+6) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
-            booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 39, 23145, TheWordOTBookLines
         elif len(self) <= (27+6) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 27, 7957, TheWordNTBookLines
         else: # assume it's an entire Bible
             testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+            booksExpected, textLineCountExpected, checkTotals = 66, 31102, TheWordBookLines
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to theWord format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to TheWord format...") )
         mySettings = {}
         mySettings['unhandledMarkers'] = set()
         handledBooks = []
@@ -6091,7 +6101,7 @@ class BibleWriter( InternalBible ):
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
-            try: myFile.write('\ufeff') # theWord needs the BOM
+            try: myFile.write('\ufeff') # TheWord needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
                 logging.critical( t("toTheWord: Unable to write BOM to file") )
             BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
@@ -6108,55 +6118,56 @@ class BibleWriter( InternalBible ):
 
             # Now append the various settings if any
             written = []
-            for key in self.settingsDict:
-                if key.lower() in ('id','lang','charset','title','short.title','title.english','description','author',
+            for keyName in ('id','lang','charset','title','short.title','title.english','description','author',
                             'status','publish.date','version.date','isbn','r2l','font','font.size',
                            'version.major','version.minor','publisher','about','source','creator','keywords',
-                           'verse.rule',) \
-                and self.settingsDict[key]: # Copy non-blank exact matches
-                    myFile.write( "{}={}\n".format( key.lower(), self.settingsDict[key] ) )
-                    written.append( key.lower() )
-                elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.totheWord: ignored {!r} setting ({})".format( key, self.settingsDict[key] ) )
+                           'verse.rule',):
+                field = self.getSetting( keyName )
+                if field: # Copy non-blank matches
+                    myFile.write( "{}={}\n".format( keyName, field ) )
+                    written.append( keyName )
+                elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.toTheWord: ignored {!r} setting ({})".format( keyName, field ) )
             # Now do some adaptions
-            key = 'short.title'
-            if self.abbreviation and key not in written:
-                myFile.write( "{}={}\n".format( key, self.abbreviation ) )
-                written.append( key )
-            if self.name and key not in written:
-                myFile.write( "{}={}\n".format( key, self.name ) )
-                written.append( key )
+            keyName = 'short.title'
+            if self.abbreviation and keyName not in written:
+                myFile.write( "{}={}\n".format( keyName, self.abbreviation ) )
+                written.append( keyName )
+            if self.name and keyName not in written:
+                myFile.write( "{}={}\n".format( keyName, self.name ) )
+                written.append( keyName )
             # Anything useful in the settingsDict?
-            for key, fieldName in (('title','FullName'),):
-                if fieldName in self.settingsDict and key not in written:
-                    myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
+            for keyName, fieldName in (('title','FullName'),):
+                fieldContents = self.getSetting( fieldName )
+                if fieldContents and keyName not in written:
+                    myFile.write( "{}={}\n".format( keyName, fieldContents ) )
                     written.append( key )
-            key = 'publish.date'
-            if key not in written:
-                myFile.write( "{}={}\n".format( key, datetime.now().strftime('%Y') ) )
-                written.append( key )
+            keyName = 'publish.date'
+            if keyName not in written:
+                myFile.write( "{}={}\n".format( keyName, datetime.now().strftime('%Y') ) )
+                written.append( keyName )
 
         if mySettings['unhandledMarkers']:
-            logging.warning( "BibleWriter.totheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+            logging.warning( "BibleWriter.toTheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+                print( "  " + _("WARNING: Unhandled toTheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
         unhandledBooks = []
         for BBB in self.getBookList():
             if BBB not in handledBooks: unhandledBooks.append( BBB )
         if unhandledBooks:
-            logging.warning( "totheWord: Unhandled books were {}".format( unhandledBooks ) )
+            logging.warning( "toTheWord: Unhandled books were {}".format( unhandledBooks ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
+                print( "  " + _("WARNING: Unhandled toTheWord books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} theWord file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} TheWord file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.totheWord finished successfully." )
+            print( "  BibleWriter.toTheWord finished successfully." )
         return True
-    # end of BibleWriter.totheWord
+    # end of BibleWriter.toTheWord
 
 
 
@@ -6167,7 +6178,7 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
-        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
+        from TheWordBible import TheWordOTBookLines, TheWordNTBookLines, TheWordBookLines, TheWordHandleIntroduction, TheWordComposeVerseLine
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
@@ -6199,7 +6210,7 @@ class BibleWriter( InternalBible ):
             ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
             if bkData:
                 # Write book headings (stuff before chapter 1)
-                ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
+                ourGlobals['line'] = TheWordHandleIntroduction( BBB, bkData, ourGlobals )
 
                 # Write the verses
                 C = V = 1
@@ -6226,7 +6237,7 @@ class BibleWriter( InternalBible ):
                                 verseData.extend( verseData18 )
                             except KeyError: pass #  just ignore it
                         composedLine = ''
-                        if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+                        if verseData: composedLine = TheWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
                         # Stay one line behind (because paragraph indicators get appended to the previous line)
                         if ourGlobals['lastBCV'] is not None \
                         and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
@@ -6260,13 +6271,13 @@ class BibleWriter( InternalBible ):
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
         if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
-            booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 39, 23145, TheWordOTBookLines
         elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 27, 7957, TheWordNTBookLines
         else: # assume it's an entire Bible
             testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+            booksExpected, textLineCountExpected, checkTotals = 66, 31102, TheWordBookLines
         extension = '.bbl.mybible'
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MySword format...") )
@@ -6289,36 +6300,46 @@ class BibleWriter( InternalBible ):
 
         # First write the settings Details table
         exeStr = 'CREATE TABLE Details (Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL'
-        if 'CustomCSS' in self.settingsDict: exeStr += ', CustomCSS TEXT'
+        customCSS = self.getSetting( 'CustomCSS' )
+        if customCSS: exeStr += ', CustomCSS TEXT'
         exeStr += ')'
         cursor.execute( exeStr )
         values = []
-        value = ''
-        if 'Description' in self.settingsDict: value = self.settingsDict['Description']
-        elif 'description' in self.settingsDict: value = self.settingsDict['description']
-        elif self.name: value = self.name
-        values.append( value); value = ''
-        if self.abbreviation: value = self.abbreviation
-        elif 'WorkAbbreviation' in self.settingsDict: value = self.settingsDict['WorkAbbreviation']
-        else: value = self.name[:3].upper()
-        values.append( value ); value = ''
-        if 'Comments' in self.settingsDict: value = self.settingsDict['Comments']
-        values.append( value ); value = ''
-        if 'Version' in self.settingsDict: value = self.settingsDict['Version']
-        values.append( value ); value = ''
-        if 'VersionDate' in self.settingsDict: value = self.settingsDict['VersionDate']
-        values.append( value ); value = ''
-        if 'PublishDate' in self.settingsDict: value = self.settingsDict['PublishDate']
-        values.append( value ); value = False
-        if 'RightToLeft' in self.settingsDict: value = self.settingsDict['RightToLeft']
-        values.append( value ); value = False
-        if testament=='OT' or testament=='BOTH': value = True
-        values.append( value ); value = False
-        if testament=='NT' or testament=='BOTH': value = True
-        values.append( value ); value = False
-        if 'Strong' in self.settingsDict: value = self.settingsDict['Strong']
-        values.append( value ); value = ''
-        if 'CustomCSS' in self.settingsDict: value = self.settingsDict['CustomCSS']
+
+        description = self.getSetting( 'Description' )
+        if not description: description = self.getSetting( 'description' )
+        if not description: description = self.name
+        values.append( description )
+
+        if self.abbreviation: abbreviation = self.abbreviation
+        else: abbreviation = self.getSetting( 'WorkAbbreviation' )
+        if not abbreviation: abbreviation = self.name[:3].upper()
+        values.append( abbreviation )
+
+        comments = self.getSetting( 'Comments' )
+        values.append( comments )
+
+        version = self.getSetting( 'Version' )
+        values.append( version )
+
+        versionDate = self.getSetting( 'VersionDate' )
+        values.append( versionDate )
+
+        publishDate = self.getSetting( 'PublishDate' )
+        values.append( publishDate )
+
+        rightToLeft = self.getSetting( 'RightToLeft' )
+        values.append( rightToLeft )
+
+        values.append( True if testament=='OT' or testament=='BOTH' else False )
+        values.append( True if testament=='NT' or testament=='BOTH' else False )
+
+        Strong = self.getSetting( 'Strong' )
+        values.append( Strong if Strong else False )
+
+        customCSS = self.getSetting( 'CustomCSS' )
+        values.append( customCSS )
+
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
         cursor.execute( exeStr, values )
@@ -6368,7 +6389,7 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at xxx
         """
-        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+        from TheWordBible import TheWordOTBookLines, TheWordNTBookLines, TheWordBookLines, TheWordIgnoredIntroMarkers
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword..." )
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
@@ -6488,7 +6509,7 @@ class BibleWriter( InternalBible ):
                 verseData, context = result
                 assert( len(verseData ) == 1 ) # in the introductory section
                 marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-                if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
+                if marker not in TheWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
                     if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -6554,11 +6575,11 @@ class BibleWriter( InternalBible ):
                     continue
 
                 #print( "toESword.composeVerseLine:", BBB, C, V, marker, text )
-                if marker in theWordIgnoredIntroMarkers:
+                if marker in TheWordIgnoredIntroMarkers:
                     logging.error( "toESword.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                     print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+                        assert( marker not in TheWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
                 if marker == 'ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                 elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -6752,13 +6773,13 @@ class BibleWriter( InternalBible ):
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
         if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
-            booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 39, 23145, TheWordOTBookLines
         elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+            booksExpected, textLineCountExpected, checkTotals = 27, 7957, TheWordNTBookLines
         else: # assume it's an entire Bible
             testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
-            booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+            booksExpected, textLineCountExpected, checkTotals = 66, 31102, TheWordBookLines
         extension = '.bblx'
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to e-Sword format...") )
@@ -6781,36 +6802,45 @@ class BibleWriter( InternalBible ):
 
         # First write the settings Details table
         exeStr = 'CREATE TABLE Details (Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL'
-        if 'CustomCSS' in self.settingsDict: exeStr += ', CustomCSS TEXT'
+        if self.getSetting( 'CustomCSS' ): exeStr += ', CustomCSS TEXT'
         exeStr += ')'
         cursor.execute( exeStr )
         values = []
-        value = ''
-        if 'Description' in self.settingsDict: value = self.settingsDict['Description']
-        elif 'description' in self.settingsDict: value = self.settingsDict['description']
-        elif self.name: value = self.name
-        values.append( value); value = ''
-        if self.abbreviation: value = self.abbreviation
-        elif 'WorkAbbreviation' in self.settingsDict: value = self.settingsDict['WorkAbbreviation']
-        else: value = self.name[:3].upper()
-        values.append( value ); value = ''
-        if 'Comments' in self.settingsDict: value = self.settingsDict['Comments']
-        values.append( value ); value = ''
-        if 'Version' in self.settingsDict: value = self.settingsDict['Version']
-        values.append( value ); value = ''
-        if 'VersionDate' in self.settingsDict: value = self.settingsDict['VersionDate']
-        values.append( value ); value = ''
-        if 'PublishDate' in self.settingsDict: value = self.settingsDict['PublishDate']
-        values.append( value ); value = False
-        if 'RightToLeft' in self.settingsDict: value = self.settingsDict['RightToLeft']
-        values.append( value ); value = False
-        if testament=='OT' or testament=='BOTH': value = True
-        values.append( value ); value = False
-        if testament=='NT' or testament=='BOTH': value = True
-        values.append( value ); value = False
-        if 'Strong' in self.settingsDict: value = self.settingsDict['Strong']
-        values.append( value ); value = ''
-        if 'CustomCSS' in self.settingsDict: value = self.settingsDict['CustomCSS']
+
+        description = self.getSetting( 'Description' )
+        if not description: description = self.getSetting( 'description' )
+        if not description: description = self.name
+        values.append( description )
+
+        if self.abbreviation: abbreviation = self.abbreviation
+        else: abbreviation = self.getSetting( 'WorkAbbreviation' )
+        if not abbreviation: abbreviation = self.name[:3].upper()
+        values.append( abbreviation )
+
+        comments = self.getSetting( 'Comments' )
+        values.append( comments )
+
+        version = self.getSetting( 'Version' )
+        values.append( version )
+
+        versionDate = self.getSetting( 'VersionDate' )
+        values.append( versionDate )
+
+        publishDate = self.getSetting( 'PublishDate' )
+        values.append( publishDate )
+
+        rightToLeft = self.getSetting( 'RightToLeft' )
+        values.append( rightToLeft )
+
+        values.append( True if testament=='OT' or testament=='BOTH' else False )
+        values.append( True if testament=='NT' or testament=='BOTH' else False )
+
+        Strong = self.getSetting( 'Strong' )
+        values.append( Strong if Strong else False )
+
+        customCSS = self.getSetting( 'CustomCSS' )
+        values.append( customCSS )
+
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
         cursor.execute( exeStr, values )
@@ -7185,8 +7215,10 @@ class BibleWriter( InternalBible ):
 
         # First determine our frame and line sizes
         pixelWidth, pixelHeight = 240, 320
-        if 'PBPixelWidth' in self.settingsDict: pixelWidth = int( self.settingsDict['PBPixelWidth'] )
-        if 'PBPixelHeight' in self.settingsDict: pixelHeight = int( self.settingsDict['PBPixelHeight'] )
+        pixelWidthManualSetting = self.getSetting( 'PBPixelWidth' )
+        if pixelWidthManualSetting: pixelWidth = int( pixelWidthManualSetting )
+        pixelHeightManualSetting = self.getSetting( 'PBPixelHeight' )
+        if pixelHeightManualSetting: pixelWidth = int( pixelHeightManualSetting )
         assert( 240 <= pixelWidth <= 1080 )
         assert( 320 <= pixelHeight <= 1920 )
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
@@ -7202,8 +7234,10 @@ class BibleWriter( InternalBible ):
         defaultFontSize, defaultLeadingRatio = 20, 1.2
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
         maxLineCharacters, maxLines = 23, 12 # Reduced from 26 to 23 for SIL fonts
-        if 'BPMaxChars' in self.settingsDict: maxLineCharacters = int( self.settingsDict['BPMaxChars'] )
-        if 'BPMaxLines' in self.settingsDict: maxLines = int( self.settingsDict['BPMaxLines'] )
+        maxLineCharactersManualSetting = self.getSetting( 'BPMaxChars' )
+        if maxLineCharactersManualSetting: maxLineCharacters = int( maxLineCharactersManualSetting )
+        maxLinesManualSetting = self.getSetting( 'BPMaxLines' )
+        if maxLinesManualSetting: maxLines = int( maxLinesManualSetting )
         assert( 20 <= maxLineCharacters <= 40 )
         assert( 10 <= maxLines <= 20 )
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
@@ -9310,7 +9344,7 @@ class BibleWriter( InternalBible ):
         hagOutputFolder = os.path.join( givenOutputFolderName, "BOS_Haggai_" + ("Reexport/" if self.objectTypeString=='Haggia' else "Export/" ) )
         OSOutputFolder = os.path.join( givenOutputFolderName, "BOS_OpenSong_" + ("Reexport/" if self.objectTypeString=='OpenSong' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
-        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
+        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_Export/" )
@@ -9359,7 +9393,7 @@ class BibleWriter( InternalBible ):
             HagExportResult = self.toHaggaiXML( hagOutputFolder )
             OSExportResult = self.toOpenSongXML( OSOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
-            TWExportResult = self.totheWord( TWOutputFolder )
+            TWExportResult = self.toTheWord( TWOutputFolder )
             MySwExportResult = self.toMySword( MySwOutputFolder )
             ESwExportResult = self.toESword( ESwOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
@@ -9379,7 +9413,7 @@ class BibleWriter( InternalBible ):
                                     self.toMarkdown, self.toDoor43, self.toHTML5, self.toCustomBible,
                                     self.toUSXXML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
-                                    self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
+                                    self.toSwordModule, self.toTheWord, self.toMySword, self.toESword,
                                     self.toSwordSearcher, self.toDrupalBible, ]
             self.__outputFolders = [photoOutputFolder, ODFOutputFolder, TeXOutputFolder,
                                     listOutputFolder, BCVOutputFolder, pseudoUSFMOutputFolder,
@@ -9493,11 +9527,11 @@ class BibleWriter( InternalBible ):
                 swExportResult = False
                 print("BibleWriter.doAllExports.toSwordModule Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toSwordModule: Oops, failed!" )
-            try: TWExportResult = self.totheWord( TWOutputFolder )
+            try: TWExportResult = self.toTheWord( TWOutputFolder )
             except Exception as err:
                 TWExportResult = False
-                print("BibleWriter.doAllExports.totheWord Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.totheWord: Oops, failed!" )
+                print("BibleWriter.doAllExports.toTheWord Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toTheWord: Oops, failed!" )
             try: MySwExportResult = self.toMySword( MySwOutputFolder )
             except Exception as err:
                 MySwExportResult = False
@@ -9674,25 +9708,25 @@ def demo():
             else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
-    if 0: # Test reading USFM Bibles and exporting to theWord and MySword
+    if 0: # Test reading USFM Bibles and exporting to TheWord and MySword
         from USFMBible import USFMBible
-        from TheWordBible import theWordFileCompare
-        mainFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        from TheWordBible import TheWordFileCompare
+        mainFolder = "Tests/DataFilesForTests/TheWordRoundtripTestFiles/"
         testData = (
-                ("aai", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aai 2013-05-13/",),
-                ("acc", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/",),
-                ("acf", "Tests/DataFilesForTests/theWordRoundtripTestFiles/acfDBL 2013-02-03/",),
-                ("acr-n", "Tests/DataFilesForTests/theWordRoundtripTestFiles/acrNDBL 2013-03-08/",),
-                ("acr-t", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accTDBL 2013-03-08/",),
-                ("agr", "Tests/DataFilesForTests/theWordRoundtripTestFiles/agrDBL 2013-03-08/",),
-                ("agu", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aguDBL 2013-03-08/",),
-                ("ame", "Tests/DataFilesForTests/theWordRoundtripTestFiles/ameDBL 2013-02-13/",),
-                ("amr", "Tests/DataFilesForTests/theWordRoundtripTestFiles/amrDBL 2013-02-13/",),
-                ("apn", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apnDBL 2013-02-13/",),
-                ("apu", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apuDBL 2013-02-14/",),
-                ("apy", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apyDBL 2013-02-15/",),
-                ("arn", "Tests/DataFilesForTests/theWordRoundtripTestFiles/arnDBL 2013-03-08/",),
-                ("auc", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aucDBL 2013-02-26/",),
+                ("aai", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/aai 2013-05-13/",),
+                ("acc", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/accNT 2012-01-20/",),
+                ("acf", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/acfDBL 2013-02-03/",),
+                ("acr-n", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/acrNDBL 2013-03-08/",),
+                ("acr-t", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/accTDBL 2013-03-08/",),
+                ("agr", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/agrDBL 2013-03-08/",),
+                ("agu", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/aguDBL 2013-03-08/",),
+                ("ame", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/ameDBL 2013-02-13/",),
+                ("amr", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/amrDBL 2013-02-13/",),
+                ("apn", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/apnDBL 2013-02-13/",),
+                ("apu", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/apuDBL 2013-02-14/",),
+                ("apy", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/apyDBL 2013-02-15/",),
+                ("arn", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/arnDBL 2013-03-08/",),
+                ("auc", "Tests/DataFilesForTests/TheWordRoundtripTestFiles/aucDBL 2013-02-26/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
@@ -9701,20 +9735,20 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #result = UB.totheWord()
+                #result = UB.toTheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
-                if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the supplied and the exported theWord modules
-                    outputFolder = "OutputFiles/BOS_theWord_Export/"
+                if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the supplied and the exported TheWord modules
+                    outputFolder = "OutputFiles/BOS_TheWord_Export/"
                     if os.path.exists( os.path.join( mainFolder, name + '.nt' ) ): ext = '.nt'
                     elif os.path.exists( os.path.join( mainFolder, name + '.ont' ) ): ext = '.ont'
                     elif os.path.exists( os.path.join( mainFolder, name + '.ot' ) ): ext = '.ot'
                     else: halt
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing supplied and exported theWord files..." )
-                    result = theWordFileCompare( fn1, fn2, mainFolder, outputFolder, exitCount=10 )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing supplied and exported TheWord files..." )
+                    result = TheWordFileCompare( fn1, fn2, mainFolder, outputFolder, exitCount=10 )
                     if not result:
-                        print( "theWord modules did NOT match" )
+                        print( "TheWord modules did NOT match" )
                         #if BibleOrgSysGlobals.debugFlag: halt
             else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo

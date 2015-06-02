@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrdersConverter.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,19 @@
 Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-06-02' # by RJH
+ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
-ProgVersion = "0.83"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.83'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree

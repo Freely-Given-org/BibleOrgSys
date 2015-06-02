@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-20' # by RJH
+LastModifiedDate = '2015-05-31' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.78'
@@ -302,10 +302,10 @@ class BibleBooksCodes:
         matchCount, foundBBB = 0, None
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             if BBB.startswith( SomeUppercaseText ):
-                #print( BBB, UCSomeText )
+                #print( 'getBBB1', BBB, SomeUppercaseText )
                 matchCount += 1
                 foundBBB = BBB
-        #print( matchCount, foundBBB )
+        #print( 'getBBB2', repr(someText), matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
         #print( sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBB

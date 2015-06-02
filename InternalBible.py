@@ -53,7 +53,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-29' # by RJH
+LastModifiedDate = '2015-06-02' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -115,7 +115,7 @@ class InternalBible:
         #       some of which will be filled in later depending on what is known from the Bible type
         self.name = self.givenName = self.shortName = self.abbreviation = None
         self.sourceFolder = self.sourceFilename = self.sourceFilepath = self.fileExtension = None
-        self.status = self.revision = self.version = None
+        self.status = self.revision = self.version = self.encoding = None
 
         # Set up empty containers for the object
         self.books = OrderedDict()
@@ -137,6 +137,10 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
+        set2 = ( 'Status', 'Font', 'Copyright', 'License', ) # Ones to print at verbosityLevel > 2
+        set3 = set1 + set2 + ( 'Name', 'Abbreviation' ) # Ones not to print at verbosityLevel > 3
+
         result = self.objectNameString
         indent = 2
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
@@ -145,13 +149,22 @@ class InternalBible:
         if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
         elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            for fieldName in ( 'Title', 'Version', 'Revision',  ):
-                if fieldName in self.settingsDict:
-                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, self.settingsDict[fieldName] )
+            for fieldName in set1:
+                fieldContents = self.getSetting( fieldName )
+                if fieldContents:
+                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            for fieldName in ( 'Status', 'Font', 'Copyright', ):
-                if fieldName in self.settingsDict:
-                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, self.settingsDict[fieldName] )
+            for fieldName in ( 'Status', 'Font', 'Copyright', 'License', ):
+                fieldContents = self.getSetting( fieldName )
+                if fieldContents:
+                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
+        if BibleOrgSysGlobals.verbosityLevel > 3 and self.suppliedMetadata:
+            for metadataType in self.suppliedMetadata:
+                for fieldName in self.suppliedMetadata[metadataType]:
+                    if fieldName not in set3:
+                        fieldContents = self.suppliedMetadata[metadataType][fieldName]
+                        if fieldContents:
+                            result += ('\n' if result else '') + '  '*indent + _("{}: {!r}").format( fieldName, fieldContents )
         #if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
         #if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
         result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
@@ -239,7 +252,7 @@ class InternalBible:
                               'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
                               'toOpenSongXML', 'toPhotoBible', 'toPickle', 'toPseudoUSFM', 'toSwordModule',
                               'toSwordSearcher', 'toTeX', 'toText', 'toUSFM', 'toUSFXXML', 'toUSXXML',
-                              'toZefaniaXML', 'totheWord', 'doAllExports', 'doExportHelper',
+                              'toZefaniaXML', 'toTheWord', 'doAllExports', 'doExportHelper',
                               '_BibleWriter__adjustControlDict', '_BibleWriter__formatHTMLVerseText',
                               '_BibleWriter__setupWriter', '_writeSwordLocale',
                               'ipHTMLClassDict', 'pqHTMLClassDict', 'doneSetupGeneric', ):
@@ -292,6 +305,7 @@ class InternalBible:
         #print( "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
         if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
+        if not self.shortName and 'ShortName' in self.settingsDict: self.shortName = self.settingsDict['ShortName']
         if not self.shortName and 'Name' in self.settingsDict: self.shortName = self.settingsDict['Name']
         self.projectName = self.name if self.name else "Unknown"
 
@@ -438,68 +452,170 @@ class InternalBible:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
 
         # Now move the information into our settingsDict
-        self.applySuppliedMetadata()
+        self.applySuppliedMetadata( 'BDB' )
 
         # Try to improve our names (also called earlier from doPostLoadProcessing)
         self.__getNames()
     # end of InternalBible.loadBDBMetadataFile
 
 
-    def applySuppliedMetadata( self ):
+    def applySuppliedMetadata( self, applyMetadataType ):
         """
-        Using the dictionary at self.suppliedMetadata,
+        Using the dictionary at self.suppliedMetadata[applyMetadataType],
             load the fields into self.settingsDict
             and try to standardise it at the same time.
         """
-        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("applySuppliedMetadata()") )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("applySuppliedMetadata( {} )").format( applyMetadataType ) )
 
-        nameChangeDict = {} # not done yet
-        for metadataType in self.suppliedMetadata:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
+            for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
+                print( "  {} = {!r}".format( key, value ) )
+
+        if applyMetadataType in ( 'BDB','BCV','Online','TheWord','Unbound','VerseView', ):
+            # These types copy ALL the data across, but through a name-changing dictionary if necessary
+            nameChangeDict = {}
+            nameChangeDict['BDB'] = {}
+            nameChangeDict['BCV'] = {}
+            nameChangeDict['Online'] = { 'LongName':'FullName', }
+            nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
+            nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
+            nameChangeDict['VerseView'] = { 'Title':'FullName', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[metadataType]), metadataType ) )
-            for oldKey,value in self.suppliedMetadata[metadataType].items():
-                newKey = nameChangeDict[oldKey] if oldKey in nameChangeDict else oldKey
+                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
-                    logging.warning("About to replace {}={} from metadata file".format( repr(newKey), repr(self.settingsDict[newKey]) ) )
+                    logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
                 else: # Also check for "duplicates" with a different case
                     ucNewKey = newKey.upper()
                     for key in self.settingsDict:
                         ucKey = key.upper()
                         if ucKey == ucNewKey:
-                            logging.warning("About to copy {} from metadata file even though already have {}".format( repr(newKey), repr(key) ) )
+                            logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
                             break
                 self.settingsDict[newKey] = value
+
+        elif applyMetadataType == 'SSF':
+            wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if oldKey in wantedDict:
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                break
+                    self.settingsDict[newKey] = value
+            # Determine our encoding while we're at it
+            if self.encoding is None and 'Encoding' in self.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
+                ssfEncoding = self.suppliedMetadata['SSF']['Encoding']
+                if ssfEncoding == '65001': self.encoding = 'utf-8'
+                else:
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+                    if ssfEncoding.isdigit():
+                        self.encoding = 'cp' + ssfEncoding
+                        if BibleOrgSysGlobals.verbosityLevel > 0:
+                            print( t("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                    else:
+                        logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+
+        elif applyMetadataType == 'OSIS':
+            # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
+            #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
+            wantedDict = { 'Rights':'Rights', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if oldKey in wantedDict:
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                break
+                    self.settingsDict[newKey] = value
+
+
+        elif applyMetadataType in ( 'e-Sword','MySword', ):
+            # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
+            #                           RightToLeft, Strong, Version
+            wantedDict = { 'Abbreviation':'Abbreviation', 'Description':'Description', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if oldKey in wantedDict:
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                break
+                    self.settingsDict[newKey] = value
+
+
+        else:
+            logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "Updated settings dict ({}):".format( len(self.settingsDict) ) )
+            for key,value in sorted( self.settingsDict.items() ):
+                print( "  {} = {!r}".format( key, value ) )
+
+        # Ensure that self.name and self.abbreviation are set
+        self.name = self.givenName
+        if self.name is None:
+            for fieldName in ('FullName','Name',):
+                if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
+        if self.sourceFilename and not self.name: self.name = os.path.basename( self.sourceFilename )
+        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        if not self.name: self.name = self.objectTypeString + ' Bible'
+
+        if not self.abbreviation: self.abbreviation = self.getSetting( 'Abbreviation' )
     # end of InternalBible.applySuppliedMetadata
 
 
-    def getBookList( self ):
+    def getSetting( self, settingName ):
         """
-        Returns a list of loaded book codes.
-        """
-        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( t("getBookList result is unreliable because all books not loaded!") )
-        return [BBB for BBB in self.books]
+        Given a setting name, tries to find a value for that setting.
 
+        First it looks in self.settingsDict
+            then in self.suppliedMetadata['BDB']
+            then in self.suppliedMetadata[...].
 
-    def pickle( self, filename=None, folder=None ):
+        Returns None if nothing found.
         """
-        Writes the object to a .pickle file that can be easily loaded into a Python3 program.
-            If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
-            Created the folder(s) if necessary.
-        """
-        #print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
-        #print( repr(self.objectNameString), repr(self.objectTypeString) )
-        #print( (self.abbreviation), repr(self.name) )
-        if filename is None:
-            filename = self.abbreviation if self.abbreviation else self.name
-        if BibleOrgSysGlobals.debugFlag: assert( filename )
-        filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("pickle: Saving {} to {}...") \
-                .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        BibleOrgSysGlobals.pickleObject( self, filename, folder )
-    # end of InternalBible.pickle
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getSetting( {} )").format( settingName ) )
+        #print( "\nSettingsDict:", self.settingsDict )
+        #print( "\nSupplied Metadata:", self.suppliedMetadata )
+
+        if self.settingsDict:
+            try: return self.settingsDict[settingName]
+            except KeyError: pass
+        if self.suppliedMetadata:
+            try: return self.suppliedMetadata['BDB'][settingName]
+            except KeyError: pass
+            for metadataType in self.suppliedMetadata:
+                if settingName in self.suppliedMetadata[metadataType]:
+                    return self.suppliedMetadata[metadataType][settingName]
+    # end of InternalBible.getAssumedBookName
 
 
     def getAssumedBookName( self, BBB ):
@@ -535,6 +651,15 @@ class InternalBible:
     # end of InternalBible.getBooknameAbbreviation
 
 
+    def getBookList( self ):
+        """
+        Returns a list of loaded book codes.
+        """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("getBookList result is unreliable because all books not loaded!") )
+        return [BBB for BBB in self.books]
+
+
     def saveBook( self, bookData ):
         """
         Save the Bible book into our object
@@ -556,6 +681,26 @@ class InternalBible:
             self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
             if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
     # end of InternalBible.saveBook
+
+
+    def pickle( self, filename=None, folder=None ):
+        """
+        Writes the object to a .pickle file that can be easily loaded into a Python3 program.
+            If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
+            Created the folder(s) if necessary.
+        """
+        #print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
+        #print( repr(self.objectNameString), repr(self.objectTypeString) )
+        #print( (self.abbreviation), repr(self.name) )
+        if filename is None:
+            filename = self.abbreviation if self.abbreviation else self.name
+        if BibleOrgSysGlobals.debugFlag: assert( filename )
+        filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("pickle: Saving {} to {}...") \
+                .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
+        BibleOrgSysGlobals.pickleObject( self, filename, folder )
+    # end of InternalBible.pickle
 
 
     def guessXRefBBB( self, referenceString ):

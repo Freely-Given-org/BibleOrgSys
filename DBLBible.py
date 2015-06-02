@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-30' # by RJH
+LastModifiedDate = '2015-05-31' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.14'
@@ -238,7 +238,7 @@ class DBLBible( Bible ):
 
         self.loadDBLLicense()
         self.loadDBLMetadata() # into self.suppliedMetadata['DBL'] (still in DBL format)
-        self.applySuppliedMetadata() # copy into self.settingsDict (standardised)
+        self.applySuppliedMetadata( 'DBL' ) # copy into self.settingsDict (standardised)
         self.loadDBLStyles()
         self.loadDBLVersification()
         self.loadDBLLanguage()
@@ -620,14 +620,15 @@ class DBLBible( Bible ):
     # end of DBLBible.loadDBLMetadata
 
 
-    def applySuppliedMetadata( self ): # Overrides the default one in InternalBible.py
+    def applySuppliedMetadata( self, applyMetadataType ): # Overrides the default one in InternalBible.py
         """
         Using the dictionary at self.suppliedMetadata,
             load the fields into self.settingsDict
             and try to standardise it at the same time.
         """
         if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("applySuppliedMetadata()") )
+            print( t("applySuppliedMetadata({} )").format( applyMetadataType ) )
+        assert( applyMetadataType == 'DBL' )
 
         self.name = self.suppliedMetadata['DBL']['identification']['name']
         self.abbreviation = self.suppliedMetadata['DBL']['identification']['abbreviation']

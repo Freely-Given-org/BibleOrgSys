@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-30' # by RJH
+LastModifiedDate = '2015-05-31' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -306,6 +306,7 @@ class OSISXMLBible( Bible ):
         if loadErrors:
             self.errorDictionary['Load Errors'] = loadErrors
             #if BibleOrgSysGlobals.debugFlag: print( "loadErrors", len(loadErrors), loadErrors ); halt
+        self.applySuppliedMetadata( 'OSIS' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of OSISXMLBible.load
 

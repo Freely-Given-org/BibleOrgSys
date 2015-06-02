@@ -3,7 +3,7 @@
 #
 # TheWordBible.py
 #
-# Module handling "theWord" Bible module files
+# Module handling "TheWord" Bible module files
 #
 # Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,10 +23,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading theWord Bible files.
+Module reading and loading TheWord Bible files.
 These can be downloaded from: http://www.theword.net/index.php?downloads.modules
 
-A theWord Bible module file has one verse per line (KJV versification)
+A TheWord Bible module file has one verse per line (KJV versification)
     OT (.ot file) has 23145 lines
     NT (.nt file) has 7957 lines
     Bible (.ont file) has 31102 lines.
@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-12' # by RJH
-ShortProgName = "theWordBible"
-ProgName = "theWord Bible format handler"
-ProgVersion = '0.40'
+LastModifiedDate = '2015-06-01' # by RJH
+ShortProgName = "TheWordBible"
+ProgName = "TheWord Bible format handler"
+ProgVersion = '0.41'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -78,49 +78,49 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 
 # These are the verses per book in the traditional KJV versification (but only for the 66 books)
 #       (They must precede the Bible import)
-theWordOTBookCount = 39
-theWordOTBooks = OT39BookList
-assert( len( theWordOTBooks ) == theWordOTBookCount )
-theWordOTTotalLines = 23145
-theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
+TheWordOTBookCount = 39
+TheWordOTBooks = OT39BookList
+assert( len( TheWordOTBooks ) == TheWordOTBookCount )
+TheWordOTTotalLines = 23145
+TheWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
                         915, 222, 117, 1292, 1364, 154, 1273, 357, 197, 73, 146, 21, 48, 105, 47, 56, 53, 38, 211, 55 )
-assert( len( theWordOTBookLines ) == theWordOTBookCount )
+assert( len( TheWordOTBookLines ) == TheWordOTBookCount )
 total=0
-for count in theWordOTBookLines: total += count
-assert( total == theWordOTTotalLines )
+for count in TheWordOTBookLines: total += count
+assert( total == TheWordOTTotalLines )
 
-theWordNTBookCount = 27
-theWordNTBooks = NT27BookList
-assert( len( theWordNTBooks ) == theWordNTBookCount )
-theWordNTTotalLines = 7957
-theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
-assert( len( theWordNTBookLines ) == theWordNTBookCount )
+TheWordNTBookCount = 27
+TheWordNTBooks = NT27BookList
+assert( len( TheWordNTBooks ) == TheWordNTBookCount )
+TheWordNTTotalLines = 7957
+TheWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
+assert( len( TheWordNTBookLines ) == TheWordNTBookCount )
 total=0
-for count in theWordNTBookLines: total += count
-assert( total == theWordNTTotalLines )
+for count in TheWordNTBookLines: total += count
+assert( total == TheWordNTTotalLines )
 
-theWordBookCount = 66
-theWordTotalLines = 31102
-theWordBooks = theWordOTBooks + theWordNTBooks
-assert( len( theWordBooks ) == theWordBookCount )
-theWordBookLines = theWordOTBookLines + theWordNTBookLines
-assert( len( theWordBookLines ) == theWordBookCount )
+TheWordBookCount = 66
+TheWordTotalLines = 31102
+TheWordBooks = TheWordOTBooks + TheWordNTBooks
+assert( len( TheWordBooks ) == TheWordBookCount )
+TheWordBookLines = TheWordOTBookLines + TheWordNTBookLines
+assert( len( TheWordBookLines ) == TheWordBookCount )
 total=0
-for count in theWordBookLines: total += count
-assert( total == theWordTotalLines )
+for count in TheWordBookLines: total += count
+assert( total == TheWordTotalLines )
 
 
 def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
-    Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
+    Given a folder, search for TheWord Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one theWord Bible is found,
-        returns the loaded theWordBible object.
+    if autoLoad is true and exactly one TheWord Bible is found,
+        returns the loaded TheWordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "TheWordBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
@@ -153,7 +153,7 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
-    # See if there's an theWordBible project here in this given folder
+    # See if there's an TheWordBible project here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -210,7 +210,7 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
 
 
-def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
+def TheWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     """
     Given a line number (0... )
         return BBB, C, V 3-tuple.
@@ -226,11 +226,11 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
     if volumeType == 'OT':
-        bookCount, books, totalLines, bookLines = theWordOTBookCount, theWordOTBooks, theWordOTTotalLines, theWordOTBookLines
+        bookCount, books, totalLines, bookLines = TheWordOTBookCount, TheWordOTBooks, TheWordOTTotalLines, TheWordOTBookLines
     elif volumeType == 'NT':
-        bookCount, books, totalLines, bookLines = theWordNTBookCount, theWordNTBooks, theWordNTTotalLines, theWordNTBookLines
+        bookCount, books, totalLines, bookLines = TheWordNTBookCount, TheWordNTBooks, TheWordNTTotalLines, TheWordNTBookLines
     elif volumeType == 'BOTH':
-        bookCount, books, totalLines, bookLines = theWordBookCount, theWordBooks, theWordTotalLines, theWordBookLines
+        bookCount, books, totalLines, bookLines = TheWordBookCount, TheWordBooks, TheWordTotalLines, TheWordBookLines
 
     if lineNumber >= totalLines: return 'MDA', 0, lineNumber - totalLines
 
@@ -247,11 +247,11 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
                 verseTotal += verseCount
             halt # programming error
         runningTotal += lines
-# end of theWordGetBBBCV
+# end of TheWordGetBBBCV
 
 
 
-def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
+def TheWordFileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
     """
     Compare the two files.
     """
@@ -264,10 +264,10 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "theWordFileCompare: File1 {!r} is unreadable".format( filepath1 ) )
+        logging.error( "TheWordFileCompare: File1 {!r} is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "theWordFileCompare: File2 {!r} is unreadable".format( filepath2 ) )
+        logging.error( "TheWordFileCompare: File2 {!r} is unreadable".format( filepath2 ) )
         return None
 
     # Read the files
@@ -277,7 +277,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "      theWordFileCompare: Detected UTF-16 Byte Order Marker in file1" )
+                    print( "      TheWordFileCompare: Detected UTF-16 Byte Order Marker in file1" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
@@ -288,7 +288,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "      theWordFileCompare: Detected UTF-16 Byte Order Marker in file2" )
+                    print( "      TheWordFileCompare: Detected UTF-16 Byte Order Marker in file2" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
@@ -308,7 +308,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     for k in range( 0, min( len1, len2 ) ):
         if lines1[k] != lines2[k]:
             if printFlag:
-                BBB, C, V = theWordGetBBBCV( k, testament )
+                BBB, C, V = TheWordGetBBBCV( k, testament )
                 print( "  {} {}:{} {}:{} ({} chars)\n  {} {}:{} {}:{} ({} chars)" \
                         .format( BBB, C, V, k+1, repr(lines1[k]), len(lines1[k]), \
                                 BBB, C, V, k+1, repr(lines2[k]), len(lines2[k]) ) )
@@ -321,22 +321,22 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             diffCount += 1
             if diffCount > exitCount:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "theWordfileCompare: stopped comparing after {} mismatches".format( exitCount ) )
+                    print( "TheWordfileCompare: stopped comparing after {} mismatches".format( exitCount ) )
                 break
 
     return equalFlag
-# end of theWordFileCompare
+# end of TheWordFileCompare
 
 
-# These next three functions are used both by theWord and MySword exports
-theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
+# These next three functions are used both by TheWord and MySword exports
+TheWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
     'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
     'ip','ipi','im','imi','ipq','imq','ipr', 'iq1','iq2','iq3','iq4', 'ib', 'ili1','ili2','ili3','ili4',
     'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', )
 
-def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
+def TheWordHandleIntroduction( BBB, bookData, ourGlobals ):
     """
-    Go through the book introduction (if any) and extract main titles for theWord export.
+    Go through the book introduction (if any) and extract main titles for TheWord export.
 
     Parameters are BBB (for error messages),
         the actual book data, and
@@ -347,46 +347,46 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     intC = intV = 0
     composedLine = ''
     while True:
-        #print( "theWordHandleIntroduction", BBB, intC, intV )
+        #print( "TheWordHandleIntroduction", BBB, intC, intV )
         try: result = bookData.getContextVerseData( (BBB,'0',str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
-            if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
-            elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+        if marker not in TheWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
+            if marker in ('mt1','mte1'): composedLine += '<TS1>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt2','mte2'): composedLine += '<TS2>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt3','mte3'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt4','mte4'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker=='ms1': composedLine += '<TS2>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker=='mr': composedLine += '<TS3>'+TheWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             else:
-                logging.warning( "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                logging.warning( "TheWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                    print( "TheWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
         intV += 1 # Step to the next introductory section "verse"
 
     # Check what's left at the end
     if '\\' in composedLine:
-        logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+        logging.warning( "TheWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+            print( "TheWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
             halt
     return composedLine
-# end of theWordHandleIntroduction
+# end of TheWordHandleIntroduction
 
 
-def theWordAdjustLine( BBB, C, V, originalLine ):
+def TheWordAdjustLine( BBB, C, V, originalLine ):
     """
     Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
     Parameters are the Scripture reference (for error messsages)
         and the line (string) containing the backslash codes.
 
-    Returns a string with the backslash codes replaced by theWord formatting codes.
+    Returns a string with the backslash codes replaced by TheWord formatting codes.
     """
     line = originalLine # Keep a copy of the original line for error messages
 
@@ -455,12 +455,12 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
 
     # Check what's left at the end
     if '\\' in line:
-        logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        logging.warning( "TheWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            print( "TheWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
             halt
     return line
-# end of theWordAdjustLine
+# end of TheWordAdjustLine
 
 
 def resetTheWordMargins( ourGlobals, setKey=None ):
@@ -480,7 +480,7 @@ def resetTheWordMargins( ourGlobals, setKey=None ):
 # end of resetTheWordMargins
 
 
-def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
+def TheWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     """
     Composes a single line representing a verse.
 
@@ -489,11 +489,11 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
         and a ourGlobals dictionary for holding persistent variables (between calls).
 
     This function handles the paragraph/new-line markers;
-        theWordAdjustLine (above) is called to handle internal/character markers.
+        TheWordAdjustLine (above) is called to handle internal/character markers.
 
     Returns the composed line.
     """
-    #print( "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+    #print( "TheWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
     composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
     ourGlobals['line'] = '' # We've used them so we don't need them any more
     #marker = text = None
@@ -518,70 +518,70 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             lastMarker = marker
             continue
 
-        #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
-        if marker in theWordIgnoredIntroMarkers:
-            logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-            print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+        #print( "TheWordComposeVerseLine:", BBB, C, V, marker, text )
+        if marker in TheWordIgnoredIntroMarkers:
+            logging.error( "TheWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+            print( "TheWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( marker not in TheWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
-        if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        if marker in ('mt1','mte1'): composedLine += '<TS1>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt2','mte2'): composedLine += '<TS2>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt3','mte3'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt4','mte4'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='ms1': composedLine += '<TS2>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='mr': composedLine += '<TS3>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker == 's1':
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
-            composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 's3', 's4', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            composedLine += '<TS1>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker == 's2': composedLine += '<TS2>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ( 's3', 's4', 'sr', 'd', ): composedLine += '<TS3>'+TheWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker in ( 'qa', 'r', ):
             if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
                 text = '(' + text + ')'
-            composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
+            composedLine += '<TS3><i>'+TheWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
         elif marker in ( 'm', ):
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
             #if text:
                 #print( 'm', repr(text), verseData )
-                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
+                #composedLine += '<CL>'+TheWordAdjustLine(BBB,C,V,text)
                 #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
                     #composedLine += '<CL>'
                 #else: composedLine += '<CM>'
             #else: # there is text
-                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
+                #composedLine += '<CL>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ):
             #print( marker, text )
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
             #else: composedLine += '<CM>'
-            #composedLine += theWordAdjustLine(BBB,C,V,text)
+            #composedLine += TheWordAdjustLine(BBB,C,V,text)
             resetTheWordMargins( ourGlobals )
         elif marker in ( 'pi1', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi1' ); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi1' ); composedLine += '<CM><PI>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi2', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi2' ); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi2' ); composedLine += '<CM><PI2>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi3', 'pmc', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi3' ); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi3' ); composedLine += '<CM><PI3>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi4', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi4' ); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi4' ); composedLine += '<CM><PI4>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pc', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi5' ); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi5' ); composedLine += '<CM><PI5>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pr', 'pmr', 'cls', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi6' ); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
+            resetTheWordMargins( ourGlobals, 'pi6' ); composedLine += '<CM><PI6>'+TheWordAdjustLine(BBB,C,V,text) # Originally right-justified
         elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
             assert( not text )
-            resetTheWordMargins( ourGlobals, 'pi7' ); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
+            resetTheWordMargins( ourGlobals, 'pi7' ); composedLine += '<CM><PI7>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q1', 'qm1', ):
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
@@ -589,7 +589,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             else: composedLine += '<CI>'
             if not ourGlobals['pi1']: composedLine += '<PI>'
             resetTheWordMargins( ourGlobals, 'pi1' )
-            #composedLine += theWordAdjustLine(BBB,C,V,text)
+            #composedLine += TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q2', 'qm2', ):
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
@@ -597,7 +597,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             else: composedLine += '<CI>'
             if not ourGlobals['pi2']: composedLine += '<PI2>'
             resetTheWordMargins( ourGlobals, 'pi2' )
-            #composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
+            #composedLine += '<CI><PI2>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q3', 'qm3', ):
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
@@ -605,7 +605,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             else: composedLine += '<CI>'
             if not ourGlobals['pi3']: composedLine += '<PI3>'
             resetTheWordMargins( ourGlobals, 'pi3' )
-            #composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
+            #composedLine += '<CI><PI3>'+TheWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q4', 'qm4', ):
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
@@ -613,21 +613,21 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             else: composedLine += '<CI>'
             if not ourGlobals['pi4']: composedLine += '<PI4>'
             resetTheWordMargins( ourGlobals, 'pi4' )
-            #composedLine += '<CI><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li1': resetTheWordMargins( ourGlobals, 'pi1' ); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li2': resetTheWordMargins( ourGlobals, 'pi2' ); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li3': resetTheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li4': resetTheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
+            #composedLine += '<CI><PI4>'+TheWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li1': resetTheWordMargins( ourGlobals, 'pi1' ); composedLine += '<PI>• '+TheWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li2': resetTheWordMargins( ourGlobals, 'pi2' ); composedLine += '<PI2>• '+TheWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li3': resetTheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+TheWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li4': resetTheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+TheWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+TheWordAdjustLine(BBB,C,V,text)+'</i>'
         elif marker in ( 'v~', 'p~', ):
             #print( lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v':
-                composedLine += theWordAdjustLine(BBB,C,V, text )
+                composedLine += TheWordAdjustLine(BBB,C,V, text )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
+                    print( "TheWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
                     halt # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
@@ -636,13 +636,13 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             #elif ourGlobals['pi5']: composedLine += '<PI5>'
             #elif ourGlobals['pi6']: composedLine += '<PI6>'
             #elif ourGlobals['pi7']: composedLine += '<PI7>'
-            composedLine += theWordAdjustLine(BBB,C,V, text )
+            composedLine += TheWordAdjustLine(BBB,C,V, text )
         elif marker in ('nb',): # Just ignore these ones
             pass
         else:
-            logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
+            logging.warning( "TheWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
+                print( "TheWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
             ourGlobals['unhandledMarkers'].add( marker )
         lastMarker = marker
 
@@ -653,12 +653,12 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
     # Check what's left at the end
     if '\\' in composedLine:
-        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        logging.warning( "TheWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            print( "TheWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             halt
     return composedLine.rstrip()
-# end of theWordComposeVerseLine
+# end of TheWordComposeVerseLine
 
 
 
@@ -690,7 +690,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
         return
 
     if line.startswith( '<CM>' ):
-        print( "Why does theWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
+        print( "Why does TheWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
 
     # Fix apparent encoding errors in particular modules
     line = line.replace( ' >', '>' ) # fpr1933
@@ -976,8 +976,8 @@ class TheWordBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'theWord Bible object'
-        self.objectTypeString = 'theWord'
+        self.objectNameString = 'TheWord Bible object'
+        self.objectTypeString = 'TheWord'
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, givenFilename, encoding
@@ -1005,6 +1005,9 @@ class TheWordBible( Bible ):
         global BOS
         if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['TheWord'] = {}
+
         fileExtensionUpper = self.fileExtension.upper()
         assert( fileExtensionUpper in filenameEndingsToAccept )
         if fileExtensionUpper.endswith('X'):
@@ -1013,18 +1016,18 @@ class TheWordBible( Bible ):
 
         if fileExtensionUpper in ('.ONT','.ONTX',):
             testament, BBB = 'BOTH', 'GEN'
-            booksExpected, textLineCountExpected = theWordBookCount, theWordTotalLines
+            booksExpected, textLineCountExpected = TheWordBookCount, TheWordTotalLines
         elif fileExtensionUpper in ('.OT','.OTX',):
             testament, BBB = 'OT', 'GEN'
-            booksExpected, textLineCountExpected = theWordOTBookCount, theWordOTTotalLines
+            booksExpected, textLineCountExpected = TheWordOTBookCount, TheWordOTTotalLines
         elif fileExtensionUpper in ('.NT','.NTX',):
             testament, BBB = 'NT', 'MAT'
-            booksExpected, textLineCountExpected = theWordNTBookCount, theWordOTTotalLines
+            booksExpected, textLineCountExpected = TheWordNTBookCount, TheWordOTTotalLines
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "theWord Bible Book object"
-        thisBook.objectTypeString = "theWord"
+        thisBook.objectNameString = "TheWord Bible Book object"
+        thisBook.objectTypeString = "TheWord"
 
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -1065,8 +1068,8 @@ class TheWordBible( Bible ):
                                     BBB = BOS.getNextBookCode( BBB )
                                     # Create the next book
                                     thisBook = BibleBook( self, BBB )
-                                    thisBook.objectNameString = "theWord Bible Book object"
-                                    thisBook.objectTypeString = "theWord"
+                                    thisBook.objectNameString = "TheWord Bible Book object"
+                                    thisBook.objectTypeString = "TheWord"
 
                                     verseList = BOS.getNumVersesList( BBB )
                                     numC, numV = len(verseList), verseList[0]
@@ -1095,11 +1098,11 @@ class TheWordBible( Bible ):
                                     fieldName = bits[0]
                                     fieldContents = bits[1]
                                     if line.endswith( '\\' ): continued = True
-                                    else: self.settingsDict[fieldName] = fieldContents
+                                    else: self.suppliedMetadata['TheWord'][fieldName] = fieldContents
                             else: # continued
                                 fieldContents += line
                                 if not line.endswith( '\\' ):
-                                    self.settingsDict[fieldName] = fieldContents
+                                    self.suppliedMetadata['TheWord'][fieldName] = fieldContents
                                     continued = False
                         #if lineCount > 3:
                             #self.saveBook( thisBook )
@@ -1111,9 +1114,12 @@ class TheWordBible( Bible ):
                 break; # Get out of decoding loop because we were successful
             except UnicodeDecodeError:
                 logging.critical( _("TheWord Bible module file fails with encoding: {} {}").format( self.sourceFilename, self.encoding ) )
-        #print( self.settingsDict ); halt
-        if 'description' in self.settingsDict and len(self.settingsDict['description'])<40: self.name = self.settingsDict['description']
-        if 'short.title' in self.settingsDict: self.shortName = self.settingsDict['short.title']
+
+        #print( self.suppliedMetadata['TheWord'] ); halt
+        #if 'description' in self.suppliedMetadata['TheWord'] and len(self.suppliedMetadata['TheWord']['description'])<40: self.name = self.suppliedMetadata['TheWord']['description']
+        #if 'short.title' in self.suppliedMetadata['TheWord']: self.shortName = self.suppliedMetadata['TheWord']['short.title']
+
+        self.applySuppliedMetadata( 'TheWord' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of TheWordBible.load
 # end of TheWordBible class
@@ -1126,7 +1132,7 @@ def testTWB( TWBfolder, TWBfilename ):
     #testFolder = "../../../../../Data/Work/Bibles/TheWord modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( TWBfolder, TWBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the TheWord Bible class...") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TWBfolder, TWBfilename ) )
     tWb = TheWordBible( TWBfolder, TWBfilename )
     tWb.load() # Load and process the file
@@ -1147,11 +1153,11 @@ def testTWB( TWBfolder, TWBfilename ):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
-        tWb.totheWord()
+        tWb.toTheWord()
         #doaResults = tWb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/BOS_theWord_Reexport/"
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
+            outputFolder = "OutputFiles/BOS_TheWord_Reexport/"
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported TheWord files..." )
             result = BibleOrgSysGlobals.fileCompare( TWBfilename, TWBfilename, TWBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
@@ -1166,16 +1172,16 @@ def demo():
 
 
     if 1: # demo the functions
-        #print( theWordGetBBBCV( 1532 ) )
-        assert( theWordGetBBBCV( 0 ) == ('GEN', 1, 1) )
-        assert( theWordGetBBBCV( 1532 ) == ('GEN', 50, 26) )
-        assert( theWordGetBBBCV( 1533 ) == ('EXO', 1, 1) )
+        #print( TheWordGetBBBCV( 1532 ) )
+        assert( TheWordGetBBBCV( 0 ) == ('GEN', 1, 1) )
+        assert( TheWordGetBBBCV( 1532 ) == ('GEN', 50, 26) )
+        assert( TheWordGetBBBCV( 1533 ) == ('EXO', 1, 1) )
 
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        #testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
-        testFolder = "Tests/DataFilesForTests/theWordTest/"
+        #testFolder = "../../../../../Data/Work/Bibles/TheWord modules/"
+        testFolder = "Tests/DataFilesForTests/TheWordTest/"
         result1 = TheWordBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = TheWordBibleFileCheck( testFolder, autoLoad=True )
@@ -1183,7 +1189,7 @@ def demo():
 
 
     if 1: # all discovered modules in the round-trip folder
-        testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        testFolder = "Tests/DataFilesForTests/TheWordRoundtripTestFiles/"
         foundFolders, foundFiles = [], []
         if os.access( testFolder, os.R_OK ):
             for something in sorted( os.listdir( testFolder ) ):
@@ -1208,7 +1214,7 @@ def demo():
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     if 1: # all discovered modules in the test folder
-        testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
+        testFolder = "../../../../../Data/Work/Bibles/TheWord modules/"
         foundFolders, foundFiles = [], []
         if os.access( testFolder, os.R_OK ):
             for something in sorted( os.listdir( testFolder ) ):

@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -224,23 +224,26 @@ class MySwordBible( Bible ):
         cursor = connection.cursor()
 
         # First get the settings
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['MySword'] = {}
         cursor.execute( 'select * from Details' )
         row = cursor.fetchone()
         for key in row.keys():
-            self.settingsDict[key] = row[key]
-        #print( self.settingsDict ); halt
-        if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
-        if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
-        if 'encryption' in self.settingsDict: logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.settingsDict['encryption'] ) )
+            self.suppliedMetadata['MySword'][key] = row[key]
+        #print( self.suppliedMetadata['MySword'] ); halt
+        #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
+        #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
+        if 'encryption' in self.suppliedMetadata['MySword']:
+            logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
 
 
-        if self.settingsDict['OT'] and self.settingsDict['NT']:
+        if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
             testament, BBB = 'BOTH', 'GEN'
             booksExpected, textLineCountExpected = 66, 31102
-        elif self.settingsDict['OT']:
+        elif self.suppliedMetadata['MySword']['OT']:
             testament, BBB = 'OT', 'GEN'
             booksExpected, textLineCountExpected = 39, 23145
-        elif self.settingsDict['NT']:
+        elif self.suppliedMetadata['MySword']['NT']:
             testament, BBB = 'NT', 'MAT'
             booksExpected, textLineCountExpected = 27, 7957
 
@@ -274,11 +277,11 @@ class MySwordBible( Bible ):
             if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
-                    if 'encryption' in self.settingsDict:
+                    if 'encryption' in self.suppliedMetadata['MySword']:
                         logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
                         break
                     else:
-                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.suppliedMetadata['MySword'] ) )
                 elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
                     haveLines = True
@@ -323,6 +326,7 @@ class MySwordBible( Bible ):
                 thisBook.addLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
         cursor.close()
+        self.applySuppliedMetadata( 'MySword' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of MySwordBible.load
 # end of MySwordBible class
@@ -341,7 +345,7 @@ def testMySwB( MySwBfolder, MySwBfilename ):
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
     MySwB.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( MySwB ) # Just print a summary
-    #print( MySwB.settingsDict )
+    #print( MySwB.suppliedMetadata['MySword'] )
     if 0 and MySwB:
         if BibleOrgSysGlobals.strictCheckingFlag: MySwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -405,7 +409,7 @@ def demo():
 
 
     if 1: # all discovered modules in the test folder
-        testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        testFolder = "Tests/DataFilesForTests/TheWordRoundtripTestFiles/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )

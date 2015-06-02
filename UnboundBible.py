@@ -86,11 +86,11 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-18' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
-ProgVersion = '0.22'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.23'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -252,6 +252,9 @@ class UnboundBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['Unbound'] = {}
+
         lastLine, lineCount = '', 0
         BBB = None
         NRSVA_bookCode = NRSVA_chapterNumberString = NRSVA_verseNumberString = None
@@ -271,15 +274,15 @@ class UnboundBible( Bible ):
                 if line[0]=='#':
                     hashBits = line[1:].split( '\t' )
                     if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
-                        if hashBits[0] == 'name': self.name = hashBits[1]
-                        elif hashBits[0] == 'filetype': self.filetype = hashBits[1]
-                        elif hashBits[0] == 'copyright': self.copyright = hashBits[1]
-                        elif hashBits[0] == 'abbreviation': self.abbreviation = hashBits[1]
-                        elif hashBits[0] == 'language': self.language = hashBits[1]
-                        elif hashBits[0] == 'note': self.note = hashBits[1]
-                        elif hashBits[0] == 'columns': self.columns = hashBits[1]
-# Should some of these be placed into self.settingsDict???
-                        logging.warning( "Unknown UnboundBible meta-data field {!r} = {!r}".format( hashBits[0], hashBits[1] ) )
+                        self.suppliedMetadata['Unbound'][hashBits[0]] = hashBits[1]
+                        #if hashBits[0] == 'name': self.name = hashBits[1]
+                        #elif hashBits[0] == 'filetype': self.filetype = hashBits[1]
+                        #elif hashBits[0] == 'copyright': self.copyright = hashBits[1]
+                        #elif hashBits[0] == 'abbreviation': self.abbreviation = hashBits[1]
+                        #elif hashBits[0] == 'language': self.language = hashBits[1]
+                        #elif hashBits[0] == 'note': self.note = hashBits[1]
+                        #elif hashBits[0] == 'columns': self.columns = hashBits[1]
+                        #logging.warning( "Unknown UnboundBible meta-data field {!r} = {!r}".format( hashBits[0], hashBits[1] ) )
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
@@ -360,6 +363,7 @@ class UnboundBible( Bible ):
 
         # Save the final book
         self.saveBook( thisBook )
+        self.applySuppliedMetadata( 'Unbound' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of UnboundBible.load
 # end of UnboundBible class

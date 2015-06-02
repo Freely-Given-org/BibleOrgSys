@@ -37,11 +37,11 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-05-31' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.26'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -258,14 +258,15 @@ class VPLBible( Bible ):
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
                     #if bookCode in ('Ge',): BBB = 'GEN'
-                    #elif bookCode in ('Le',): BBB = 'LEV'
-                    ##elif bookCode in ('Jud',): BBB = 'JDG'
+                    if bookCode in ('Le',): BBB = 'LEV'
+                    elif bookCode in ('Jud',): BBB = 'JDG'
                     #elif bookCode in ('Es',): BBB = 'EST'
                     #elif bookCode in ('Pr',): BBB = 'PRO'
-                    #elif bookCode in ('So',): BBB = 'SNG'
-                    #elif bookCode in ('La',): BBB = 'LAM'
-                    #elif bookCode in ('Jude',): BBB = 'JDE'
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                    elif bookCode in ('So',): BBB = 'SNG'
+                    elif bookCode in ('La',): BBB = 'LAM'
+                    elif bookCode in ('Jude',): BBB = 'JDE'
+                    else:
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
                     if BBB:
                         thisBook = BibleBook( self, BBB )
                         thisBook.objectNameString = "VPL Bible Book object"
@@ -374,9 +375,9 @@ def demo():
         result1 = VPLBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA1", result1 )
 
-        result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
+        result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )
-        result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+        result2.loadBDBMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )

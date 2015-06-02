@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-20' # by RJH
+LastModifiedDate = '2015-06-02' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
 ProgVersion = '0.77'
@@ -860,7 +860,7 @@ def demo():
         print( bbcc ) # Just print a summary
         OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
         print( 'OAD', len(OAD), sorted(OAD) )
-        print( OAD['EPLAO'] )
+        print( OAD['WIS'] )
 # end of demo
 
 if __name__ == '__main__':

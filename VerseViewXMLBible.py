@@ -59,10 +59,10 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-30' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -254,6 +254,9 @@ class VerseViewXMLBible( Bible ):
         self.tree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['VerseView'] = {}
+
         # Find the main (bible) container
         if self.tree.tag == VerseViewXMLBible.treeTag:
             location = "VerseView XML file"
@@ -275,31 +278,31 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.settingsDict['Revision'] = element.text
+                    self.suppliedMetadata['VerseView']['Revision'] = element.text
                 elif element.tag == VerseViewXMLBible.titleTag:
                     sublocation = "title in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.settingsDict['Title'] = element.text
+                    self.suppliedMetadata['VerseView']['Title'] = element.text
                 elif element.tag == VerseViewXMLBible.fontTag:
                     sublocation = "font in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.settingsDict['Font'] = element.text
+                    self.suppliedMetadata['VerseView']['Font'] = element.text
                 elif element.tag == VerseViewXMLBible.copyrightTag:
                     sublocation = "copyright in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    self.settingsDict['Copyright'] = element.text
+                    self.suppliedMetadata['VerseView']['Copyright'] = element.text
                 elif element.tag == VerseViewXMLBible.sizefactorTag:
                     sublocation = "sizefactor in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    if BibleOrgSysGlobals.debugFlag: assert( element.tail == '1' )
+                    if BibleOrgSysGlobals.debugFlag: assert( element.text == '1' )
                 elif element.tag == VerseViewXMLBible.bookTag:
                     sublocation = "book in " + location
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
@@ -309,15 +312,16 @@ class VerseViewXMLBible( Bible ):
                 else: logging.error( "xk15 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.bookTag, element.tag ) )
         else: logging.error( "Expected to load {!r} but got {!r}".format( VerseViewXMLBible.treeTag, self.tree.tag ) )
 
-        if  BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             # These are all compulsory so they should all exist
             #print( "Filename is {!r}".format( self.filename ) )
-            print( "Revision is {!r}".format( self.settingsDict['Revision'] ) )
-            print( "Title is {!r}".format( self.settingsDict['Title'] ) )
-            print( "Font is {!r}".format( self.settingsDict['Font'] ) )
-            print( "Copyright is {!r}".format( self.settingsDict['Copyright'] ) )
+            print( "Revision is {!r}".format( self.suppliedMetadata['VerseView']['Revision'] ) )
+            print( "Title is {!r}".format( self.suppliedMetadata['VerseView']['Title'] ) )
+            print( "Font is {!r}".format( self.suppliedMetadata['VerseView']['Font'] ) )
+            print( "Copyright is {!r}".format( self.suppliedMetadata['VerseView']['Copyright'] ) )
             #print( "SizeFactor is {!r}".format( self.sizeFactor ) )
 
+        self.applySuppliedMetadata( 'VerseView' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of VerseViewXMLBible.load
 
@@ -376,7 +380,8 @@ class VerseViewXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter...") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 3:
+            print( _("Validating XML chapter...") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -403,7 +408,8 @@ class VerseViewXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 3:
+            print( _("Validating XML verse...") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )

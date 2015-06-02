@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-30' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
@@ -239,19 +239,19 @@ class ESFMBible( Bible ):
             print( self.USFMFilenamesObject )
 
         # Attempt to load the SSF file
-        self.ssfFilepath, self.settingsDict = {}, {}
+        self.ssfFilepath = None
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
-            self.loadSSFData( self.ssfFilepath )
+            loadSSFData( self, self.ssfFilepath )
 
-        self.name = self.givenName
-        if self.name is None:
-            for field in ('FullName','Name',):
-                if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        if not self.name: self.name = os.path.basename( self.sourceFolder )
-        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        if not self.name: self.name = "ESFM Bible"
+        #self.name = self.givenName
+        #if self.name is None:
+            #for field in ('FullName','Name',):
+                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
+        #if not self.name: self.name = os.path.basename( self.sourceFolder )
+        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        #if not self.name: self.name = "ESFM Bible"
 
         # Find the filenames of all our books
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples

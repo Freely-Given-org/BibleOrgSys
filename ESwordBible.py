@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-06' # by RJH
+LastModifiedDate = '2015-06-01' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -65,7 +65,6 @@ import multiprocessing
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-#from TheWordBible import handleLine
 
 
 
@@ -433,14 +432,17 @@ class ESwordBible( Bible ):
         cursor = connection.cursor()
 
         # First get the settings
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['e-Sword'] = {}
         cursor.execute( 'select * from Details' )
         row = cursor.fetchone()
         for key in row.keys():
-            self.settingsDict[key] = row[key]
-        #print( self.settingsDict ); halt
-        if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
-        if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
-        if 'encryption' in self.settingsDict: logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.settingsDict['encryption'] ) )
+            self.suppliedMetadata['e-Sword'][key] = row[key]
+        #print( self.suppliedMetadata['e-Sword'] ); halt
+        #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
+        #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
+        if 'encryption' in self.suppliedMetadata['e-Sword']:
+            logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['e-Sword']['encryption'] ) )
 
 
         # Just get some information from the file
@@ -457,27 +459,27 @@ class ESwordBible( Bible ):
 
         testament = BBB = None
         booksExpected = textLineCountExpected = 0
-        if self.settingsDict['OT'] and self.settingsDict['NT']:
+        if self.suppliedMetadata['e-Sword']['OT'] and self.suppliedMetadata['e-Sword']['NT']:
             testament, BBB = 'BOTH', 'GEN'
             booksExpected, textLineCountExpected = 66, 31102
-        elif self.settingsDict['OT']:
+        elif self.suppliedMetadata['e-Sword']['OT']:
             testament, BBB = 'OT', 'GEN'
             booksExpected, textLineCountExpected = 39, 23145
-        elif self.settingsDict['NT']:
+        elif self.suppliedMetadata['e-Sword']['NT']:
             testament, BBB = 'NT', 'MAT'
             booksExpected, textLineCountExpected = 27, 7957
-        elif self.settingsDict['Abbreviation'] == 'VIN2011': # Handle encoding error
-            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
-            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+        elif self.suppliedMetadata['e-Sword']['Abbreviation'] == 'VIN2011': # Handle encoding error
+            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword'] ) )
+            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword'] ) )
             testament, BBB = 'BOTH', 'GEN'
             booksExpected, textLineCountExpected = 66, 31102
-        elif self.settingsDict['Apocrypha']: # incomplete
+        elif self.suppliedMetadata['e-Sword']['Apocrypha']: # incomplete
             testament, BBB = 'AP', 'XXX'
             booksExpected, textLineCountExpected = 99, 999999
             halt
         if not BBB:
-            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
-            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword'] ) )
+            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword'] ) )
             if 0:
                 cursor.execute( 'select * from Bible' )
                 rows = cursor.fetchall()
@@ -529,11 +531,11 @@ class ESwordBible( Bible ):
             if line is None: logging.warning( "ESwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
-                    if 'encryption' in self.settingsDict:
+                    if 'encryption' in self.suppliedMetadata['e-Sword']:
                         logging.critical( "ESwordBible.load: Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
                         break
                     else:
-                        logging.critical( "ESwordBible.load: Probably encrypted module: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                        logging.critical( "ESwordBible.load: Probably encrypted module: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.suppliedMetadata['e-Sword'] ) )
                         break
                 elif not line: logging.warning( "ESwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
@@ -584,6 +586,7 @@ class ESwordBible( Bible ):
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkForExtraMaterial( cursor, BOS )
         cursor.close()
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
+        self.applySuppliedMetadata( 'e-Sword' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of ESwordBible.load
 # end of ESwordBible class
@@ -601,7 +604,7 @@ def testeSwB( eSwBfolder, eSwBfilename ):
     eSwB = ESwordBible( eSwBfolder, eSwBfilename )
     eSwB.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( eSwB ) # Just print a summary
-    #print( eSwB.settingsDict )
+    #print( eSwB.suppliedMetadata['e-Sword'] )
     if 0 and eSwB:
         if BibleOrgSysGlobals.strictCheckingFlag: eSwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -637,11 +640,21 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        testFolder = "Tests/DataFilesForTests/e-SwordTest/"
+        testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
         result1 = ESwordBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = ESwordBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+
+
+    if 1: # individual modules in the same test folder
+        testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
+        names = ('King James Bible Pure Cambridge Edition','KJ3.JayPGreen','Wycliffe_New_Testament(1385)',)
+        for j, name in enumerate( names):
+            fullname = name + '.bblx'
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw B{}/ Trying {}".format( j+1, fullname ) )
+            testeSwB( testFolder, fullname )
+            #halt
 
 
     if 0: # individual modules in the test folder
@@ -649,7 +662,7 @@ def demo():
         names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
         for j, name in enumerate( names):
             fullname = name + '.bblx'
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw B{}/ Trying {}".format( j+1, fullname ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw C{}/ Trying {}".format( j+1, fullname ) )
             testeSwB( testFolder, fullname )
             #halt
 
@@ -661,7 +674,7 @@ def demo():
             fullname = name + '.bblx'
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw C{}/ Trying {}".format( j+1, fullname ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw D{}/ Trying {}".format( j+1, fullname ) )
                 testeSwB( testFolder, fullname )
 
 
@@ -683,7 +696,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw D{}/ Trying {}".format( j+1, someFile ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw E{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( testFolder, someFile )
                 #break # only do the first one.........temp
@@ -704,7 +717,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw E{}/ Trying {}".format( j+1, someFile ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw F{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( testFolder, someFile )
                 #break # only do the first one.........temp

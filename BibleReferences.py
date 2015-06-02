@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-28' # by RJH
+LastModifiedDate = '2015-06-02' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -315,8 +315,8 @@ class BibleSingleReference( BibleReferenceBase ):
                         logging.warning( _("Extra space(s) after bookname in Bible reference {!r}").format( referenceString ) )
                         haveWarnings = True
                     C += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5b
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5b
+                    S = char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
                 else:
@@ -329,8 +329,8 @@ class BibleSingleReference( BibleReferenceBase ):
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5b
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5b
+                    S = char
                 else:
                     logging.error( _("BSR: Unexpected {!r} character when getting verse number in {} {} Bible reference {!r}").format( char, BBB, C, referenceString ) )
                     haveErrors = True
@@ -526,8 +526,8 @@ class BibleSingleReferences( BibleReferenceBase ):
                         logging.warning( _("Extra space(s) after bookname in Bible reference {!r}").format( referenceString ) )
                         haveWarnings = True
                     C += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5b
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5b
+                    S = char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
                 else:
@@ -540,8 +540,8 @@ class BibleSingleReferences( BibleReferenceBase ):
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5b
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5b
+                    S = char
                 elif V and char in self.punctuationDict['verseSeparator']:
                     saveReference( BBB, C, V, S, refList )
                     V, S = '', ''
@@ -914,8 +914,8 @@ class BibleReferenceList( BibleReferenceBase ):
                         logging.warning( _("Extra space(s) after bookname at position {} in Bible reference {!r}").format( nnn, referenceString ) )
                         haveWarnings = True
                     C += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5b
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5b
+                    S = char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
                 elif C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ):
@@ -948,8 +948,8 @@ class BibleReferenceList( BibleReferenceBase ):
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5a
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5a
+                    S = char
                 elif V and char in self.punctuationDict['verseSeparator']:
                     saveReference( BBB, C, V, S, self.referenceList )
                     V, S = '', ''
@@ -1155,8 +1155,8 @@ class BibleReferenceList( BibleReferenceBase ):
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.punctuationDict['allowedVerseSuffixes']: # Could be like verse 5a
-                    S += char
+                elif char in self.punctuationDict['allowedVerseSuffixes'] and not S: # Could be like verse 5a
+                    S = char
                 elif V and char in self.punctuationDict['verseSeparator']:
                     saveReferenceRange( startReferenceTuple, BBB, C, V, S, self.referenceList )
                     status, V, S = 3, '', '' # Go get a verse number
@@ -1482,6 +1482,13 @@ class BibleAnchorReference:
 
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
+        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        if location is None: location = '(unknown)'
+        #print( "Processing {!r} from {}".format( anchorString, location ) )
+        assert( anchorString and isinstance( anchorString, str ) )
+        assert( location and isinstance( location, str ) )
+
 
         def saveReference( BBB, C, V, S, refList ):
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
@@ -1501,6 +1508,7 @@ class BibleAnchorReference:
             totalVerseList.append( refTuple )
         # end of saveReference
 
+
         def saveStartReference( BBB, C, V, S ):
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
@@ -1512,6 +1520,7 @@ class BibleAnchorReference:
             if BBB is None: # or not self._BibleOrganizationalSystem.isValidBCVRef( startReferenceTuple, referenceString ):
                 haveErrors = True
         # end of saveStartReference
+
 
         def saveReferenceRange( startTuple, BBB, C, V, S, refList ):
             """
@@ -1545,10 +1554,8 @@ class BibleAnchorReference:
             refList.append( rangeTuple )
         # end of saveReferenceRange
 
-        if location is None: location = '(unknown)'
-        #print( "Processing {!r} from {}".format( anchorString, location ) )
-        assert( anchorString and isinstance( anchorString, str ) )
-        assert( location and isinstance( location, str ) )
+
+        # Start of main code for parseAnchorString
         haveWarnings, haveErrors, totalVerseList = False, False, []
         strippedAnchorString = anchorString.strip()
         if strippedAnchorString != anchorString:
@@ -1557,8 +1564,9 @@ class BibleAnchorReference:
         adjustedAnchorString = strippedAnchorString
         for value in ignoredSuffixes:
             adjustedAnchorString = adjustedAnchorString.replace( value, '' )
+        C = V = S = ''
+        status, spaceCount, startReferenceTuple, self.referenceList = 0, 0, (), []
         #statusList = {0:"gettingChapter", 1:"gettingVerse", 2:"gettingNextC", 3:"gettingCorVRange", 4:"gettingCRange", 5:"gettingVRange", 6:"finished"}
-        status, C, V, S, spaceCount, startReferenceTuple, self.referenceList = 0, '', '', '', 0, (), []
         for nn, char in enumerate(adjustedAnchorString):
             nnn = anchorString.find( char, nn ) # Best guess of where this char might be in the original anchor string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
@@ -1571,8 +1579,8 @@ class BibleAnchorReference:
                     spaceCount += 1
                 elif char.isdigit():
                     C += char
-                elif char in self.allowedVerseSuffixes: # Could be like verse 5b
-                    S += char
+                elif (C or V) and char in self.allowedVerseSuffixes and not S: # Could be like verse 5b
+                    S = char
                 elif C and char in self.allowedCVSeparators:
                     status = 1 # Start getting the verse number
                 elif C and self.isSingleChapterBook:
@@ -1587,10 +1595,11 @@ class BibleAnchorReference:
                     else:
                         logging.error( _("Unexpected {!r} character when processing single chapter book {} at position {} in Bible reference {!r}{}").format( char, self.BBB, nnn, anchorString, '' if location is None else " at {}".format(location) ) )
                         haveErrors = True
-                    V, S = '', ''
+                    V = S = ''
                 elif C and char in self.allowedBridgeCharacters:
                     saveStartReference( self.BBB, C, V, S )
-                    status, C, V, S = 4, '', '', '' # Getting chapter range
+                    C = V = S = ''
+                    status = 4 # Getting chapter range
                 else:
                     logging.error( _("Unexpected {!r} character when getting chapter number at position {} in {} Bible reference {!r}{}").format( char, nnn, self.BBB, anchorString, '' if location is None else " at {}".format(location) ) )
                     haveErrors = True
@@ -1601,8 +1610,8 @@ class BibleAnchorReference:
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.allowedVerseSuffixes: # Could be like verse 5a
-                    S += char
+                elif V and char in self.allowedVerseSuffixes and not S: # Could be like verse 5a
+                    S = char
                 elif V and char in self.allowedVerseSeparators:
                     saveReference( self.BBB, C, V, S, self.referenceList )
                     V, S = '', ''
@@ -1614,18 +1623,19 @@ class BibleAnchorReference:
                         status = 4
                 elif char in self.allowedBridgeCharacters:
                     saveStartReference( self.BBB, C, V, S )
-                    V, S = '', ''
+                    V = S = ''
                     # We don't know what kind of bridge this is
                     status, X = 3, ''
                 elif char in self.allowedBridgeCharacters:
                     saveStartReference( self.BBB, C, V, S )
-                    status, V, S = 5, '', ''
+                    V = S = ''
+                    status = 5
                 else:
                     logging.error( _("BRL1: Unexpected {!r} character when getting verse number at position {} in {} {} Bible reference {!r}{}").format( char, nnn, self.BBB, C, anchorString, '' if location is None else " at {}".format(location) ) )
                     haveErrors = True
                     if V:
                         saveReference( self.BBB, C, V, S, self.referenceList )
-                        V, S = '', ''
+                        V = S = ''
                     break # Seems better to break on this one or else we get lots of errors (e.g., if a fr is left open in a footnote)
                 continue
             if status == 2: # Getting the next chapter numberXXXXXXXXXXXXXXXXXXXXX
@@ -1660,15 +1670,17 @@ class BibleAnchorReference:
                     X += char
                 elif X and char in self.chapterVerseSeparators: # This must have been a chapter range
                     C = X
-                    status, V, S = 5, '', ''
+                    V = S = ''
+                    status = 5
                 elif X and char in self.allowedVerseSeparators: # This must have been a verse range
                     V = X
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
-                    status, V, S = 1, '', '' # Go get a verse number
+                    V = S = ''
+                    status = 1 # Go get a verse number
                 elif X and char in self.allowedChapterSeparators: # This must have been a verse range
                     V = X
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
-                    V, S = '', ''
+                    V = S = ''
                     if char in self.allowedChapterSeparators:
                         status,C = 1, ''
                     else: assert( "Should never happen" == 123 )
@@ -1687,10 +1699,11 @@ class BibleAnchorReference:
                     V = C
                     C = '1'
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
-                    status, V, S = 5, '', ''
+                    V = S = ''
+                    status = 5
                 elif C and char in self.allowedChapterSeparators:
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
-                    C, V, S = '', '', ''
+                    C = V = S = ''
                     if char in self.allowedChapterSeparators:
                         status = 1
                 else:
@@ -1703,14 +1716,14 @@ class BibleAnchorReference:
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
-                elif char in self.allowedVerseSuffixes: # Could be like verse 5a
-                    S += char
+                elif char in self.allowedVerseSuffixes and not S: # Could be like verse 5a
+                    S = char
                 elif V and char in self.allowedVerseSeparators:
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
                     status, V, S = 1, '', '' # Go get a verse number
                 elif V and char in self.allowedChapterSeparators:
                     saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )
-                    V, S = '', ''
+                    V = S = ''
                     if char in self.allowedChapterSeparators:
                         status, C = 1, ''
                 else:
@@ -1718,7 +1731,7 @@ class BibleAnchorReference:
                     haveErrors = True
                     if V:
                         saveReference( self.BBB, C, V, S, self.referenceList )
-                        V, S = '', ''
+                        V = S = ''
                     break # Seems better to break on this one or else we get lots of errors (e.g., if a fr is left open in a footnote)
                 continue
         if status==0 and C: # Getting chapter number
@@ -1848,8 +1861,10 @@ class BibleAnchorReference:
         Compares the given footnote or cross-reference anchor string, and sees if it matches where we are in the text.
             Returns True or False.
         """
-        #print( "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         assert( anchorString )
+
         adjAnchorString = anchorString.strip()
         if adjAnchorString[-2:]==' a': adjAnchorString = adjAnchorString[:-2] # Remove any trailing subnote letter
         if adjAnchorString[-1]==':': adjAnchorString = adjAnchorString[:-1] # Remove any trailing punctuation
