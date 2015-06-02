@@ -6338,7 +6338,6 @@ class BibleWriter( InternalBible ):
         Strong = self.getSetting( 'Strong' )
         values.append( Strong if Strong else False )
 
-        #customCSS = self.getSetting( 'CustomCSS' )
         if customCSS: values.append( customCSS )
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
@@ -6803,7 +6802,8 @@ class BibleWriter( InternalBible ):
 
         # First write the settings Details table
         exeStr = 'CREATE TABLE Details (Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL'
-        if self.getSetting( 'CustomCSS' ): exeStr += ', CustomCSS TEXT'
+        customCSS = self.getSetting( 'CustomCSS' )
+        if customCSS: exeStr += ', CustomCSS TEXT'
         exeStr += ')'
         cursor.execute( exeStr )
 
@@ -6840,7 +6840,6 @@ class BibleWriter( InternalBible ):
         Strong = self.getSetting( 'Strong' )
         values.append( Strong if Strong else False )
 
-        #customCSS = self.getSetting( 'CustomCSS' )
         if customCSS: values.append( customCSS )
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
