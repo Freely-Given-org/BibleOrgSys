@@ -53,7 +53,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-02' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -485,6 +485,7 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if BibleOrgSysGlobals.debugFlag: assert( value )
                 newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
                     logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -502,7 +503,7 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
-                if oldKey in wantedDict:
+                if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -535,7 +536,8 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
-                if oldKey in wantedDict:
+                if oldKey in wantedDict: #  Only copy wanted entries
+                    if BibleOrgSysGlobals.debugFlag: assert( value )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -556,7 +558,8 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
-                if oldKey in wantedDict:
+                if oldKey in wantedDict: #  Only copy wanted entries
+                    if BibleOrgSysGlobals.debugFlag: assert( value )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -580,10 +583,9 @@ class InternalBible:
                 print( "  {} = {!r}".format( key, value ) )
 
         # Ensure that self.name and self.abbreviation are set
-        self.name = self.givenName
-        if self.name is None:
-            for fieldName in ('FullName','Name',):
-                if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
+        for fieldName in ('FullName','WorkName','Name',):
+            if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
+        if not self.name: self.name = self.givenName
         if self.sourceFilename and not self.name: self.name = os.path.basename( self.sourceFilename )
         if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
         if not self.name: self.name = self.objectTypeString + ' Bible'
