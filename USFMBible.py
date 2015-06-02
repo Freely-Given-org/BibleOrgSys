@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-01' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.65'
+ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -241,7 +241,7 @@ def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                     #print( "attributes = {!r}".format( attributes) )
                     BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
                     processed = True
-            elif status==1 and line[0]=='<' and line[-1]=='>':
+            elif status==1 and line[0]=='<' and line[-1]=='>' and '/' in line:
                 ix1 = line.find('>')
                 ix2 = line.find('</')
                 if ix1!=-1 and ix2!=-1 and ix2>ix1:
@@ -259,8 +259,19 @@ def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                         if line[ix2+2:-1]==fieldname:
                             BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
                             processed = True
-            elif status==1 and line[0]=='<ValidCharacters>' and line[-1]=='>':
+            elif status==1 and line.startswith( '<ValidCharacters>' ):
                 fieldname = 'ValidCharacters'
+                contents = line[len(fieldname)+2:]
+                #print( "Got {} opener {!r} from {!r}".format( fieldname, contents, line ) )
+                status = 2
+                processed = True
+            elif status==2: # in the middle of processing an extension line
+                if line.endswith( '</' + fieldname + '>' ):
+                    line = line[:-len(fieldname)-3]
+                    status = 1
+                contents += ' ' + line
+                #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
+                processed = True
             if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
     if status == 0:
         logging.error( "SSF file was empty: {}".format( BibleObject.ssfFilepath ) )
@@ -336,7 +347,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( t("__init__: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( t("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -344,9 +355,9 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( t("__init__: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( t("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( t("__init__: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( t("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -357,7 +368,10 @@ class USFMBible( Bible ):
             # Attempt to load the SSF file
             #self.suppliedMetadata, self.settingsDict = {}, {}
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            if len(ssfFilepathList) == 1: # Seems we found the right one
+            #print( "ssfFilepathList", ssfFilepathList )
+            if len(ssfFilepathList) > 1:
+                logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+            if len(ssfFilepathList) >= 1: # Seems we found the right one
                 loadSSFData( self, ssfFilepathList[0] )
 
         #self.name = self.givenName
@@ -462,6 +476,7 @@ def demo():
         for name, encoding, testFolder in (
                                         ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"),
                                         ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"),
+                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest3/"),
                                         ("WEB+", "utf-8", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
                                         ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"),
                                         ("Exported", "utf-8", "Tests/BOS_USFM_Export/"),
@@ -488,7 +503,8 @@ def demo():
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            elif BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test a whole folder full of folders of USFM Bibles
@@ -547,7 +563,8 @@ def demo():
                     else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':
