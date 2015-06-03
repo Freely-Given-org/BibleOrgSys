@@ -44,7 +44,10 @@ If you have access to any metadata, that goes in self.suppliedMetadata dictionar
     and then call or supply applySuppliedMetadata
     to standardise and copy it to self.settingsDict.
 self.suppliedMetadata is a dictionary containing the following possible entries (all dictionaries):
-    'SSF', 'BDB', 'OSIS', 'DBL', 'BCV'
+    'Project' for metadata supplied for the project
+    'File' for metadata submitted in a separate text file (this is given priority)
+    'SSF' for USFM/Paratext Bibles
+    'OSIS', 'DBL', 'BCV' for other Bibles
 
 The calling class then fills
     self.books by calling saveBook() which updates:
@@ -242,7 +245,7 @@ class InternalBible:
                 continue # ignore Python built-ins
             if myPropertyName in ( 'containsAnyOT39Books', 'containsAnyNT27Books', '_InternalBible__getNames',
                               'loadBookIfNecessary', 'reloadBook', 'doPostLoadProcessing', 'xxxunloadBooks',
-                              'loadBDBMetadataFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
+                              'loadMetadataTextFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
                               'getShortTOCName', 'getBooknameAbbreviation', 'saveBook', 'guessXRefBBB',
                               'getVersification', 'getAddedUnits', 'discover', '_aggregateDiscoveryResults',
                               'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
@@ -357,7 +360,7 @@ class InternalBible:
         """
         self.loadedAllBooks = True
 
-        # Try to improve our names (may also be called from loadBDBMetadataFile)
+        # Try to improve our names (may also be called from loadMetadataTextFile)
         self.__getNames()
 
         # Discover what we've got loaded so we don't have to worry about doing it later
@@ -386,38 +389,38 @@ class InternalBible:
     # end of InternalBible.unloadBooks
 
 
-    def loadBDBMetadataFile( self, mdFilepath ):
+    def loadMetadataTextFile( self, mdFilepath ):
         """
-        Load the fields from the given Freely-Given.org BibleDropBox metadata text file into self.suppliedMetadata
+        Load the fields from the given metadata text file into self.suppliedMetadata['File']
             and then copy them into self.settingsDict.
 
         See http://freely-given.org/Software/BibleDropBox/Metadata.html for
-            a description of the format and the allowed fields.
+            a description of the format and the typical, allowed fields.
         """
-        def saveBDBMetadata( fieldName, contents ):
+        def saveMetadataField( fieldName, contents ):
             """
             Save an entry in the settings dictionary
                 but check for duplicates first.
             """
-            if fieldName in self.suppliedMetadata['BDB']: # We have a duplicate
-                logging.warning("About to replace {}={} from supplied metadata file".format( repr(fieldName), repr(self.suppliedMetadata['BDB'][fieldName]) ) )
+            if fieldName in self.suppliedMetadata['File']: # We have a duplicate
+                logging.warning("About to replace {}={} from supplied metadata file".format( repr(fieldName), repr(self.suppliedMetadata['File'][fieldName]) ) )
             else: # Also check for "duplicates" with a different case
                 ucFieldName = fieldName.upper()
-                for key in self.suppliedMetadata['BDB']:
+                for key in self.suppliedMetadata['File']:
                     ucKey = key.upper()
                     if ucKey == ucFieldName:
                         logging.warning("About to add {} from supplied metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
                         break
-            self.suppliedMetadata['BDB'][fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
-        # end of loadBDBMetadataFile.saveBDBMetadata
+            self.suppliedMetadata['File'][fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
+        # end of loadMetadataTextFile.saveMetadataField
 
-        # Main code for loadBDBMetadataFile()
+        # Main code for loadMetadataTextFile()
         # Loads the metadata into self.suppliedMetadata
         logging.info( "Loading supplied project metadata..." )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        self.suppliedMetadata['BDB'] = {}
+        self.suppliedMetadata['File'] = {}
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt' ) as mdFile:
             for line in mdFile:
@@ -428,7 +431,7 @@ class InternalBible:
                 if line[0] == '#': continue # Just discard comment lines
                 if not continuedFlag:
                     if '=' not in line:
-                        logging.warning( t("loadBDBMetadataFile: Missing equals sign from metadata line (ignored): {}").format( repr(line) ) )
+                        logging.warning( t("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {}").format( repr(line) ) )
                     else: # Seems like a field=something type line
                         bits = line.split( '=', 1 )
                         assert( len(bits) == 2 )
@@ -440,23 +443,23 @@ class InternalBible:
                         else:
                             if not fieldContents:
                                 logging.warning( "Metadata line has a blank entry for {}".format( repr(fieldName) ) )
-                            saveBDBMetadata( fieldName, fieldContents )
+                            saveMetadataField( fieldName, fieldContents )
                 else: # continuedFlag
                     if line.endswith( '\\' ): line = line[:-1] # Remove the continuation character
                     else: continuedFlag = False
                     fieldContents += line
                     if not continuedFlag:
-                        logging.warning( t("loadBDBMetadataFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
-                        saveBDBMetadata( fieldName, fieldContents )
+                        logging.warning( t("loadMetadataTextFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
+                        saveMetadataField( fieldName, fieldContents )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
 
         # Now move the information into our settingsDict
-        self.applySuppliedMetadata( 'BDB' )
+        self.applySuppliedMetadata( 'File' )
 
         # Try to improve our names (also called earlier from doPostLoadProcessing)
         self.__getNames()
-    # end of InternalBible.loadBDBMetadataFile
+    # end of InternalBible.loadMetadataTextFile
 
 
     def applySuppliedMetadata( self, applyMetadataType ):
@@ -473,10 +476,11 @@ class InternalBible:
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
                 print( "  {} = {!r}".format( key, value ) )
 
-        if applyMetadataType in ( 'BDB','BCV','Online','TheWord','Unbound','VerseView', ):
+        if applyMetadataType in ( 'Project','File', 'BCV','Online','TheWord','Unbound','VerseView', ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
-            nameChangeDict['BDB'] = {}
+            nameChangeDict['Project'] = {}
+            nameChangeDict['File'] = {}
             nameChangeDict['BCV'] = {}
             nameChangeDict['Online'] = { 'LongName':'FullName', }
             nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
@@ -599,7 +603,7 @@ class InternalBible:
         Given a setting name, tries to find a value for that setting.
 
         First it looks in self.settingsDict
-            then in self.suppliedMetadata['BDB']
+            then in self.suppliedMetadata['File']
             then in self.suppliedMetadata[...].
 
         Returns None if nothing found.
@@ -612,7 +616,7 @@ class InternalBible:
             try: return self.settingsDict[settingName]
             except KeyError: pass
         if self.suppliedMetadata:
-            try: return self.suppliedMetadata['BDB'][settingName]
+            try: return self.suppliedMetadata['File'][settingName]
             except KeyError: pass
             for metadataType in self.suppliedMetadata:
                 if settingName in self.suppliedMetadata[metadataType]:

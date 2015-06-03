@@ -34,10 +34,10 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = "0.16"
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -286,7 +286,7 @@ class LexicalIndexFileConverter:
 
         ID = xlit = None
         pos = definition = etym = None
-        bdbXref = strongsXref = strongsAugXref = twotXref = None
+        BrDrBrXref = strongsXref = strongsAugXref = twotXref = None
         etym = etymType = etymRoot = None
 
         # Process the entry attributes first
@@ -330,10 +330,10 @@ class LexicalIndexFileConverter:
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
                 # Process the attributes
                 for attrib,value in element.items():
-                    if attrib=="bdb": bdbXref = value
-                    elif attrib=="strong": strongsXref = value
-                    elif attrib=="aug": strongsAugXref = value
-                    elif attrib=="twot": twotXref = value
+                    if attrib=='bdb': BrDrBrXref = value
+                    elif attrib=='strong': strongsXref = value
+                    elif attrib=='aug': strongsAugXref = value
+                    elif attrib=='twot': twotXref = value
                     else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"etym":
                 location = "etym of " + ID
@@ -349,7 +349,7 @@ class LexicalIndexFileConverter:
             else: logging.warning( "sdv1 Unprocessed {!r} sub-element ({}) in entry".format( element.tag, element.text ) )
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
 
-        self.entries[lang][ID] = (xlit, pos, definition, bdbXref,strongsXref,strongsAugXref,twotXref, etym,etymRoot,etymType)
+        self.entries[lang][ID] = (xlit, pos, definition, BrDrBrXref,strongsXref,strongsAugXref,twotXref, etym,etymRoot,etymType)
     # end of LexicalIndexFileConverter.validateEntry
 
 
@@ -717,7 +717,7 @@ class BrownDriverBriggsFileConverter:
             #print( "statusP", repr(statusP), "st", repr(status) )
             if BibleOrgSysGlobals.debugFlag: assert( status in ('new','made','base','ref','added','done',) )
         else:
-            logging.warning( "Missing status in {} BDB entry: {}".format( entryID, repr(flattenedXML) ) )
+            logging.warning( "Missing status in {} BrDrBr entry: {}".format( entryID, repr(flattenedXML) ) )
             resultXML = flattenedXML
 
         #print( repr(partID), repr(sectionID), repr(title), repr(lang) )
@@ -834,19 +834,19 @@ class HebrewLexiconIndex:
     # end of HebrewLexiconIndex.getStrongsNumberFromLexiconCode
 
 
-    def getBDBCodeFromLexiconCode( self, key ):
+    def getBrDrBrCodeFromLexiconCode( self, key ):
         """
         The key is a three letter internal code like 'aac'.
 
-        Returns a BDB code, e.g., 'm.ba.aa'
+        Returns a BrDrBr code, e.g., 'm.ba.aa'
         """
         keyDigits = key[1:]
         if key in self.IndexEntries['heb']: return self.IndexEntries['heb'][key][3]
         if key in self.IndexEntries['arc']: return self.IndexEntries['arc'][key][3]
-    # end of HebrewLexiconIndex.getBDBCodeFromLexiconCode
+    # end of HebrewLexiconIndex.getBrDrBrCodeFromLexiconCode
 
 
-    def getBDBCodeFromStrongsNumber( self, key ):
+    def getBrDrBrCodeFromStrongsNumber( self, key ):
         """
         The key is a digit string like '172' (optional preceding H).
 
@@ -856,15 +856,15 @@ class HebrewLexiconIndex:
         keyDigits = key[1:]
         if key in self.IndexEntries1:
             internalCode = self.IndexEntries1[key]
-            return self.getBDBCodeFromLexiconCode( internalCode )
-    # end of HebrewLexiconIndex.getBDBCodeFromStrongsNumber
+            return self.getBrDrBrCodeFromLexiconCode( internalCode )
+    # end of HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber
 
 
     def getTWOTCodeFromLexiconCode( self, key ):
         """
         The key is a three letter code like 'aac'.
 
-        Returns a BDB code, e.g., '4a'
+        Returns a BrDrBr code, e.g., '4a'
         """
         keyDigits = key[1:]
         if key in self.IndexEntries['heb']: return self.IndexEntries['heb'][key][6]
@@ -903,9 +903,9 @@ class HebrewLexiconSimple:
         hStr.loadAndValidate( self.XMLFolder ) # Load the XML
         self.StrongsEntries = hStr.importDataToPython()
 
-        hBDB = BrownDriverBriggsFileConverter() # Create the empty object
-        hBDB.loadAndValidate( self.XMLFolder ) # Load the XML
-        self.BrownDriverBriggsEntries = hBDB.importDataToPython()
+        hBrDrBr = BrownDriverBriggsFileConverter() # Create the empty object
+        hBrDrBr.loadAndValidate( self.XMLFolder ) # Load the XML
+        self.BrownDriverBriggsEntries = hBrDrBr.importDataToPython()
     # end of HebrewLexiconSimple.load
 
 
@@ -923,8 +923,8 @@ class HebrewLexiconSimple:
         if self.StrongsEntries:
             result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
         if self.BrownDriverBriggsEntries:
-            result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
-            result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
+            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
+            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
         return result
     # end of HebrewLexiconSimple.__str__
 
@@ -1032,9 +1032,9 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.getStrongsEntryHTML
 
 
-    def getBDBEntryData( self, key ):
+    def getBrDrBrEntryData( self, key ):
         """
-        The key is a BDB number (string) like 'a.ca.ab'.
+        The key is a BrDrBr number (string) like 'a.ca.ab'.
 
         Returns an entry for the given key.
             This is a dictionary containing fields, e.g.,
@@ -1042,47 +1042,47 @@ class HebrewLexiconSimple:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexiconSimple.getBDBEntryData( {} )").format( repr(key) ) )
+            print( t("HebrewLexiconSimple.getBrDrBrEntryData( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         if self.BrownDriverBriggsEntries is None: self.load()
 
         if key in self.BrownDriverBriggsEntries['heb']: return self.BrownDriverBriggsEntries['heb'][key]
         if key in self.BrownDriverBriggsEntries['arc']: return self.BrownDriverBriggsEntries['arc'][key]
-    # end of HebrewLexiconSimple.getBDBEntryData
+    # end of HebrewLexiconSimple.getBrDrBrEntryData
 
 
-    def getBDBEntryField( self, key, fieldName ):
+    def getBrDrBrEntryField( self, key, fieldName ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
         The fieldName is a name (string) like 'status'.
 
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexiconSimple.getBDBEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            print( t("HebrewLexiconSimple.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         if self.BrownDriverBriggsEntries is None: self.load()
 
-        entry =  self.getBDBEntryData( key )
+        entry =  self.getBrDrBrEntryData( key )
         if entry:
             if fieldName == 'status': return entry[2]
-    # end of HebrewLexiconSimple.getBDBEntryField
+    # end of HebrewLexiconSimple.getBrDrBrEntryField
 
 
-    def getBDBEntryHTML( self, key ):
+    def getBrDrBrEntryHTML( self, key ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
 
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexiconSimple.getBDBEntryHTML( {} )").format( repr(key) ) )
+            print( t("HebrewLexiconSimple.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         if self.BrownDriverBriggsEntries is None: self.load()
 
-        entry =  self.getBDBEntryData( key )
+        entry =  self.getBrDrBrEntryData( key )
         if entry:
             mainEntry = entry[0] \
                 .replace( '<sense>', '<span class="Sense">' ).replace( '</sense>', '</span>' ) \
@@ -1105,7 +1105,7 @@ class HebrewLexiconSimple:
             html = '{} <span class="Status">{{{}}}</span>'.format( mainEntry, entry[1] )
             print( "hls html", repr(html) )
             return html
-    # end of HebrewLexiconSimple.getBDBEntryHTML
+    # end of HebrewLexiconSimple.getBrDrBrEntryHTML
 # end of HebrewLexiconSimple class
 
 
@@ -1119,7 +1119,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         so it can be more intelligent with coverting code systems.
 
     It automagically accepts Hebrew and Greek Strong's numbers (like H123 and G532)
-        plus BDB (Hebrew) codes (like a.gq.ab).
+        plus BrDrBr (Hebrew) codes (like a.gq.ab).
     """
     def __init__( self, XMLFolder, preload=False ):
         """
@@ -1164,15 +1164,15 @@ class HebrewLexicon( HebrewLexiconSimple ):
         if self.StrongsEntries is not None:
             result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
         if self.BrownDriverBriggsEntries is not None:
-            result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
-            result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
+            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
+            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
         return result
     # end of HebrewLexicon.__str__
 
 
-    def getBDBEntryData( self, key ):
+    def getBrDrBrEntryData( self, key ):
         """
-        The key is a BDB number (string) like 'a.ca.ab'.
+        The key is a BrDrBr number (string) like 'a.ca.ab'.
             but can also be a Strong's number (with or without the leading H)
 
         Returns an entry for the given key.
@@ -1181,18 +1181,18 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexicon.getBDBEntryData( {} )").format( repr(key) ) )
+            print( t("HebrewLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
         if '.' not in key: # assume it's a Strongs code then
             if self.hix is None: self.load()
-            key = self.hix.getBDBCodeFromStrongsNumber( key )
+            key = self.hix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
-            return HebrewLexiconSimple.getBDBEntryData( self, key )
-    # end of HebrewLexicon.getBDBEntryData
+            return HebrewLexiconSimple.getBrDrBrEntryData( self, key )
+    # end of HebrewLexicon.getBrDrBrEntryData
 
 
-    def getBDBEntryField( self, key, fieldName ):
+    def getBrDrBrEntryField( self, key, fieldName ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
             but can also be a Strong's number (with or without the leading H)
         The fieldName is a name (string) like 'status'.
 
@@ -1200,31 +1200,31 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexicon.getBDBEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            print( t("HebrewLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if '.' not in key: # assume it's a Strongs code then
             if self.hix is None: self.load()
-            key = self.hix.getBDBCodeFromStrongsNumber( key )
+            key = self.hix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
-            return HebrewLexiconSimple.getBDBEntryField( self, key, fieldName )
-    # end of HebrewLexicon.getBDBEntryField
+            return HebrewLexiconSimple.getBrDrBrEntryField( self, key, fieldName )
+    # end of HebrewLexicon.getBrDrBrEntryField
 
 
-    def getBDBEntryHTML( self, key ):
+    def getBrDrBrEntryHTML( self, key ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
             but can also be a Strong's number (with or without the leading H)
 
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("HebrewLexicon.getBDBEntryHTML( {} )").format( repr(key) ) )
+            print( t("HebrewLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
         if '.' not in key: # assume it's a Strongs code then
             if self.hix is None: self.load()
-            key = self.hix.getBDBCodeFromStrongsNumber( key )
+            key = self.hix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
-            return HebrewLexiconSimple.getBDBEntryHTML( self, key )
-    # end of HebrewLexicon.getBDBEntryHTML
+            return HebrewLexiconSimple.getBrDrBrEntryHTML( self, key )
+    # end of HebrewLexicon.getBrDrBrEntryHTML
 # end of HebrewLexicon class
 
 
@@ -1276,10 +1276,10 @@ def demo():
         print( "Code for 2 is", hix.getLexiconCodeFromStrongsNumber( '2' ) )
         print( "Code for H8674 is", hix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
         print( "Code for H8675 is", hix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
-        print( "Codes for aac are", hix.getStrongsNumberFromLexiconCode('aac'), hix.getBDBCodeFromLexiconCode('aac'), hix.getTWOTCodeFromLexiconCode('aac') )
-        print( "Codes for nyy are", hix.getStrongsNumberFromLexiconCode('nyy'), hix.getBDBCodeFromLexiconCode('nyy'), hix.getTWOTCodeFromLexiconCode('nyy') )
-        print( "Codes for pdc are", hix.getStrongsNumberFromLexiconCode('pdc'), hix.getBDBCodeFromLexiconCode('pdc'), hix.getTWOTCodeFromLexiconCode('pdc') )
-        print( "Codes for pdd are", hix.getStrongsNumberFromLexiconCode('pdd'), hix.getBDBCodeFromLexiconCode('pdd'), hix.getTWOTCodeFromLexiconCode('pdd') )
+        print( "Codes for aac are", hix.getStrongsNumberFromLexiconCode('aac'), hix.getBrDrBrCodeFromLexiconCode('aac'), hix.getTWOTCodeFromLexiconCode('aac') )
+        print( "Codes for nyy are", hix.getStrongsNumberFromLexiconCode('nyy'), hix.getBrDrBrCodeFromLexiconCode('nyy'), hix.getTWOTCodeFromLexiconCode('nyy') )
+        print( "Codes for pdc are", hix.getStrongsNumberFromLexiconCode('pdc'), hix.getBrDrBrCodeFromLexiconCode('pdc'), hix.getTWOTCodeFromLexiconCode('pdc') )
+        print( "Codes for pdd are", hix.getStrongsNumberFromLexiconCode('pdd'), hix.getBrDrBrCodeFromLexiconCode('pdd'), hix.getTWOTCodeFromLexiconCode('pdd') )
 
 
     if 1: # demonstrate the simple Hebrew Lexicon class
@@ -1292,11 +1292,11 @@ def demo():
             print( " Data:", hl.getStrongsEntryData( strongsKey ) )
             print( " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
             print( " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-        for BDBKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            print( '\n' + BDBKey )
-            print( " Data:", hl.getBDBEntryData( BDBKey ) )
-            print( " Status:", hl.getBDBEntryField( BDBKey, 'status' ) )
-            print( " HTML:", hl.getBDBEntryHTML( BDBKey ) )
+        for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
+            print( '\n' + BrDrBrKey )
+            print( " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            print( " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            print( " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class..." )
@@ -1308,14 +1308,14 @@ def demo():
             print( " Data:", hl.getStrongsEntryData( strongsKey ) )
             print( " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
             print( " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-            print( " Data:", hl.getBDBEntryData( strongsKey ) )
-            print( " Status:", hl.getBDBEntryField( strongsKey, 'status' ) )
-            print( " HTML:", hl.getBDBEntryHTML( strongsKey ) )
-        for BDBKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            print( '\n' + BDBKey )
-            print( " Data:", hl.getBDBEntryData( BDBKey ) )
-            print( " Status:", hl.getBDBEntryField( BDBKey, 'status' ) )
-            print( " HTML:", hl.getBDBEntryHTML( BDBKey ) )
+            print( " Data:", hl.getBrDrBrEntryData( strongsKey ) )
+            print( " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
+            print( " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
+        for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
+            print( '\n' + BrDrBrKey )
+            print( " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            print( " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            print( " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of demo
 
 if __name__ == '__main__':

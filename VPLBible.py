@@ -37,7 +37,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-31' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.26'
@@ -377,7 +377,7 @@ def demo():
 
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )
-        result2.loadBDBMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+        result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )

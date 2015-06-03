@@ -25,17 +25,17 @@
 """
 Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
 
-    Hebrew has Strongs and BDB
+    Hebrew has Strongs and BrDrBr
     Greek has Strongs only.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
-ProgVersion = '0.23'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgVersion = '0.24'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
@@ -148,22 +148,22 @@ class BibleLexiconIndex:
     # end of BibleLexiconIndex.getStrongsNumberFromLexiconCode
 
 
-    def getBDBCodeFromLexiconCode( self, key ):
+    def getBrDrBrCodeFromLexiconCode( self, key ):
         """
         The key is a three letter code like 'aac'.
 
-        Returns a BDB code, e.g., 'm.ba.aa'
+        Returns a BrDrBr code, e.g., 'm.ba.aa'
         """
         if self.hIndex is None: self.load()
-        if key.startswith( 'H' ): return self.hIndex.getBDBCodeFromLexiconCode( key )
-    # end of BibleLexiconIndex.getBDBCodeFromLexiconCode
+        if key.startswith( 'H' ): return self.hIndex.getBrDrBrCodeFromLexiconCode( key )
+    # end of BibleLexiconIndex.getBrDrBrCodeFromLexiconCode
 
 
     def getTWOTCodeFromLexiconCode( self, key ):
         """
         The key is a three letter code like 'aac'.
 
-        Returns a BDB code, e.g., '4a'
+        Returns a BrDrBr code, e.g., '4a'
         """
         if self.hIndex is None: self.load()
         if key.startswith( 'H' ): return self.hIndex.getTWOTCodeFromLexiconCode( key )
@@ -217,8 +217,8 @@ class BibleLexicon:
             if self.hLexicon.StrongsEntries is not None:
                 result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.hLexicon.StrongsEntries) )
             if self.hLexicon.BrownDriverBriggsEntries is not None:
-                result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['heb']) )
-                result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['arc']) )
+                result += ('\n' if result else '') + "  " + _("Number of BrDrBr Hebrew entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['heb']) )
+                result += ('\n' if result else '') + "  " + _("Number of BrDrBr Aramaic entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['arc']) )
             if self.gLexicon.StrongsEntries is not None:
                 result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.gLexicon.StrongsEntries) )
         return result
@@ -281,9 +281,9 @@ class BibleLexicon:
     # end of BibleLexicon.getStrongsEntryHTML
 
 
-    def getBDBEntryData( self, key ):
+    def getBrDrBrEntryData( self, key ):
         """
-        The key is a BDB number (string) like 'a.ca.ab'.
+        The key is a BrDrBr number (string) like 'a.ca.ab'.
 
         Returns an entry for the given key.
             This is a dictionary containing fields, e.g.,
@@ -291,36 +291,36 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBDBEntryData( {} )").format( repr(key) ) )
-        return self.hLexicon.getBDBEntryData( key )
-    # end of BibleLexicon.getBDBEntryData
+            print( t("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
+        return self.hLexicon.getBrDrBrEntryData( key )
+    # end of BibleLexicon.getBrDrBrEntryData
 
 
-    def getBDBEntryField( self, key, fieldName ):
+    def getBrDrBrEntryField( self, key, fieldName ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
         The fieldName is a name (string) like 'status'.
 
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBDBEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
-        return self.hLexicon.getBDBEntryField( key, fieldName )
-    # end of BibleLexicon.getBDBEntryField
+            print( t("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+        return self.hLexicon.getBrDrBrEntryField( key, fieldName )
+    # end of BibleLexicon.getBrDrBrEntryField
 
 
-    def getBDBEntryHTML( self, key ):
+    def getBrDrBrEntryHTML( self, key ):
         """
-        The key is a BDB number (string) like 'ah.ba.aa'.
+        The key is a BrDrBr number (string) like 'ah.ba.aa'.
 
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBDBEntryHTML( {} )").format( repr(key) ) )
-        return self.hLexicon.getBDBEntryHTML( key )
-    # end of BibleLexicon.getBDBEntryHTML
+            print( t("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
+        return self.hLexicon.getBrDrBrEntryHTML( key )
+    # end of BibleLexicon.getBrDrBrEntryHTML
 
 
     def getEntryData( self, key ):
@@ -337,7 +337,7 @@ class BibleLexicon:
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryData( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryData( key )
-        if '.' in key: return self.hLexicon.getBDBEntryData( key )
+        if '.' in key: return self.hLexicon.getBrDrBrEntryData( key )
     # end of BibleLexicon.getEntryData
 
 
@@ -354,7 +354,7 @@ class BibleLexicon:
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryField( key, fieldName )
-        if '.' in key: return self.hLexicon.getBDBEntryField( key, fieldName )
+        if '.' in key: return self.hLexicon.getBrDrBrEntryField( key, fieldName )
     # end of BibleLexicon.getEntryField
 
 
@@ -381,7 +381,7 @@ class BibleLexicon:
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryHTML( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryHTML( key )
-        if '.' in key: return self.hLexicon.getBDBEntryHTML( key )
+        if '.' in key: return self.hLexicon.getBrDrBrEntryHTML( key )
     # end of BibleLexicon.getEntryHTML
 # end of BibleLexicon class
 
@@ -405,10 +405,10 @@ def demo():
         print( "Code for 2 is", blix.getLexiconCodeFromStrongsNumber( '2' ) )
         print( "Code for H8674 is", blix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
         print( "Code for H8675 is", blix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
-        print( "Codes for aac are", blix.getStrongsNumberFromLexiconCode('aac'), blix.getBDBCodeFromLexiconCode('aac'), blix.getTWOTCodeFromLexiconCode('aac') )
-        print( "Codes for nyy are", blix.getStrongsNumberFromLexiconCode('nyy'), blix.getBDBCodeFromLexiconCode('nyy'), blix.getTWOTCodeFromLexiconCode('nyy') )
-        print( "Codes for pdc are", blix.getStrongsNumberFromLexiconCode('pdc'), blix.getBDBCodeFromLexiconCode('pdc'), blix.getTWOTCodeFromLexiconCode('pdc') )
-        print( "Codes for pdd are", blix.getStrongsNumberFromLexiconCode('pdd'), blix.getBDBCodeFromLexiconCode('pdd'), blix.getTWOTCodeFromLexiconCode('pdd') )
+        print( "Codes for aac are", blix.getStrongsNumberFromLexiconCode('aac'), blix.getBrDrBrCodeFromLexiconCode('aac'), blix.getTWOTCodeFromLexiconCode('aac') )
+        print( "Codes for nyy are", blix.getStrongsNumberFromLexiconCode('nyy'), blix.getBrDrBrCodeFromLexiconCode('nyy'), blix.getTWOTCodeFromLexiconCode('nyy') )
+        print( "Codes for pdc are", blix.getStrongsNumberFromLexiconCode('pdc'), blix.getBrDrBrCodeFromLexiconCode('pdc'), blix.getTWOTCodeFromLexiconCode('pdc') )
+        print( "Codes for pdd are", blix.getStrongsNumberFromLexiconCode('pdd'), blix.getBrDrBrCodeFromLexiconCode('pdd'), blix.getTWOTCodeFromLexiconCode('pdd') )
 
 
     if 1: # demonstrate the Bible Lexicon class
@@ -422,11 +422,11 @@ def demo():
             print( " Data:", bl.getStrongsEntryData( strongsKey ) )
             print( " Usage:", bl.getStrongsEntryField( strongsKey, 'usage' ) )
             print( " HTML:", bl.getStrongsEntryHTML( strongsKey ) )
-        for BDBKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            print( '\n' + BDBKey )
-            print( " Data:", bl.getBDBEntryData( BDBKey ) )
-            print( " Status:", bl.getBDBEntryField( BDBKey, 'status' ) )
-            print( " HTML:", bl.getBDBEntryHTML( BDBKey ) )
+        for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
+            print( '\n' + BrDrBrKey )
+            print( " Data:", bl.getBrDrBrEntryData( BrDrBrKey ) )
+            print( " Status:", bl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            print( " HTML:", bl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of demo
 
 if __name__ == '__main__':
