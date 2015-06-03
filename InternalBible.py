@@ -476,10 +476,9 @@ class InternalBible:
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
                 print( "  {} = {!r}".format( key, value ) )
 
-        if applyMetadataType in ( 'Project','File', 'BCV','Online','TheWord','Unbound','VerseView', ):
+        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView', ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
-            nameChangeDict['Project'] = {}
             nameChangeDict['File'] = {}
             nameChangeDict['BCV'] = {}
             nameChangeDict['Online'] = { 'LongName':'FullName', }
@@ -501,6 +500,28 @@ class InternalBible:
                             logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
                             break
                 self.settingsDict[newKey] = value
+
+        elif applyMetadataType == 'Project':
+            # Available fields include: ContactName, EmailAddress, Goals, Permission, ProjectCode, ProjectName,
+            #                           SubmittedBibleFileInfo, SubmittedMetadataFileInfo,
+            #                           WantODFs, WantPDFs, WantPhotoBible
+            wantedDict = { 'ProjectName':'ProjectName', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if oldKey in wantedDict: #  Only copy wanted entries
+                    if BibleOrgSysGlobals.debugFlag: assert( value )
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                break
+                    self.settingsDict[newKey] = value
 
         elif applyMetadataType == 'SSF':
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
@@ -554,7 +575,6 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
 
-
         elif applyMetadataType in ( 'e-Sword','MySword', ):
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
             #                           RightToLeft, Strong, Version
@@ -576,7 +596,6 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
 
-
         else:
             logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -587,7 +606,7 @@ class InternalBible:
                 print( "  {} = {!r}".format( key, value ) )
 
         # Ensure that self.name and self.abbreviation are set
-        for fieldName in ('FullName','WorkName','Name',):
+        for fieldName in ('FullName','WorkName','Name','ProjectName',):
             if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
         if not self.name: self.name = self.givenName
         if self.sourceFilename and not self.name: self.name = os.path.basename( self.sourceFilename )
