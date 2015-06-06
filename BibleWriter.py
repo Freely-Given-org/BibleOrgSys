@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-02' # by RJH
+LastModifiedDate = '2015-06-04' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -3449,10 +3449,10 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if 1 or adjText:
-                        xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
-                    else:
-                        logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
+                    #if 1 or adjText:
+                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    #else:
+                        #logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'para' )
@@ -3895,10 +3895,10 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
-                    if 1 or adjText:
-                        xw.writeLineOpenClose( marker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                    else:
-                        logging.info( "toUSFXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
+                    #if 1 or adjText:
+                    xw.writeLineOpenClose( marker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    #else:
+                        #logging.info( "toUSFXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'p' )

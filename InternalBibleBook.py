@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-28' # by RJH
+LastModifiedDate = '2015-06-04' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -1586,105 +1586,105 @@ class InternalBibleBook:
                     #print( 'Gs', goodStart, repr(verseNumberRest[1:] if goodStart else strippedVerseText) )
                     adjustedMarker, text = 'v~', verseNumberRest[1:] if goodStart else strippedVerseText
 
-            if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
-                if self.objectTypeString == 'USFM':
-                    markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
-                    ix = 0
-                    for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
-                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
-                            if ix==0:
-                                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} shouldn't appear within line in \\{}: {!r}").format( insideMarker, originalMarker, text ) )
-                                logging.error( "InternalBibleBook.processLine: " + _("Marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, originalMarker, text ) ) # Only log the first error in the line
-                                self.addPriorityError( 96, C, V, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
-                            thisText = text[ix:iMIndex].rstrip()
-                            #print( "QQQ10: rstrip" ); halt
-                            adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, thisText, fixErrors )
-                            self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras, originalText) )
-                            ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                            adjMarker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
-                    if ix != 0: # We must have separated multiple lines
-                        text = text[ix:]
-                elif self.objectTypeString == 'SwordBibleModule':
-                    # First replace fixed strings
-                    ixLT = text.find( '<' )
-                    while ixLT != -1:
-                        beforeText = text[:ixLT]
-                        thisText = text[ixLT:]
-                        for pText in ( '<milestone type="x-extra-p"/>', '<milestone marker="Â¶" type="x-p"/>', '<milestone marker="Â¶" subType="x-added" type="x-p"/>' ):
-                            if thisText.startswith( pText ):
-                                afterText = text[ixLT+len(pText):]
-                                #print( "\n", C, V, "'"+text+"'" )
-                                #print( "'"+beforeText+"'", pText, "'"+afterText+"'" )
-                                adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, beforeText, fixErrors )
-                                lastAM, lastOM, lastAT, lastCT, lastX, lastOT = self._processedLines.pop() # Get the previous line
-                                if adjText or lastAM != 'v': # Just return it again
-                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) )
-                                self._processedLines.append( InternalBibleEntry('p', originalMarker, adjText, cleanText, extras,originalText) )
-                                if lastAM == 'v' and not adjText: # Put the empty paragraph marker BEFORE verse number marker
-                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) ) # Return it
-                                text = afterText
-                                ixLT = -1
-                        ixLT = text.find( '<', ixLT+1 )
-                    # OSIS strings aren't fixed coz they contain varying ID and reference fields
-                    ixLT = text.find( '<' )
-                    #if ixLT != -1: print( "text", "'"+text+"'" )
-                    while ixLT != -1:
-                        ixGT = text.find( '>', ixLT+1 )
-                        if BibleOrgSysGlobals.debugFlag: assert( ixGT != -1 )
-                        beforeText = text[:ixLT]
-                        thisField = text[ixLT:ixGT+1]
-                        afterText = text[ixGT+1:]
-                        #print( "before", "'"+beforeText+"'" )
-                        #print( "this", "'"+thisField+"'" )
-                        #print( "after", "'"+afterText+"'" )
-                        if thisField.startswith( '<div type="x-milestone" subType="x-preverse" sID="' ) and thisField.endswith( '"/>' ):
-                            ixEnd = afterText.index( '<div type="x-milestone" subType="x-preverse" eID="' )
-                            ixFinal = afterText.index( '>', ixEnd+30 )
-                            preverseText = afterText[:ixEnd].strip()
-                            #print( "QQQ11: strip" ); halt
-                            if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
-                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', None, originalText) )
-                            else: print( "preverse", "'"+preverseText+"'" )
-                            text = beforeText + afterText[ixFinal+1:]
-                        elif thisField.startswith( '<div sID="' ) and thisField.endswith( '" type="paragraph"/>' ):
+            #if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
+            if self.objectTypeString == 'USFM':
+                markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+                ix = 0
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
+                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                        if ix==0:
+                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} shouldn't appear within line in \\{}: {!r}").format( insideMarker, originalMarker, text ) )
+                            logging.error( "InternalBibleBook.processLine: " + _("Marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, originalMarker, text ) ) # Only log the first error in the line
+                            self.addPriorityError( 96, C, V, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
+                        thisText = text[ix:iMIndex].rstrip()
+                        #print( "QQQ10: rstrip" ); halt
+                        adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, thisText, fixErrors )
+                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras, originalText) )
+                        ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
+                        adjMarker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
+                if ix != 0: # We must have separated multiple lines
+                    text = text[ix:]
+            elif self.objectTypeString == 'SwordBibleModule':
+                # First replace fixed strings
+                ixLT = text.find( '<' )
+                while ixLT != -1:
+                    beforeText = text[:ixLT]
+                    thisText = text[ixLT:]
+                    for pText in ( '<milestone type="x-extra-p"/>', '<milestone marker="Â¶" type="x-p"/>', '<milestone marker="Â¶" subType="x-added" type="x-p"/>' ):
+                        if thisText.startswith( pText ):
+                            afterText = text[ixLT+len(pText):]
+                            #print( "\n", C, V, "'"+text+"'" )
+                            #print( "'"+beforeText+"'", pText, "'"+afterText+"'" )
+                            adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, beforeText, fixErrors )
+                            lastAM, lastOM, lastAT, lastCT, lastX, lastOT = self._processedLines.pop() # Get the previous line
+                            if adjText or lastAM != 'v': # Just return it again
+                                self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) )
+                            self._processedLines.append( InternalBibleEntry('p', originalMarker, adjText, cleanText, extras,originalText) )
+                            if lastAM == 'v' and not adjText: # Put the empty paragraph marker BEFORE verse number marker
+                                self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) ) # Return it
+                            text = afterText
+                            ixLT = -1
+                    ixLT = text.find( '<', ixLT+1 )
+                # OSIS strings aren't fixed coz they contain varying ID and reference fields
+                ixLT = text.find( '<' )
+                #if ixLT != -1: print( "text", "'"+text+"'" )
+                while ixLT != -1:
+                    ixGT = text.find( '>', ixLT+1 )
+                    if BibleOrgSysGlobals.debugFlag: assert( ixGT != -1 )
+                    beforeText = text[:ixLT]
+                    thisField = text[ixLT:ixGT+1]
+                    afterText = text[ixGT+1:]
+                    #print( "before", "'"+beforeText+"'" )
+                    #print( "this", "'"+thisField+"'" )
+                    #print( "after", "'"+afterText+"'" )
+                    if thisField.startswith( '<div type="x-milestone" subType="x-preverse" sID="' ) and thisField.endswith( '"/>' ):
+                        ixEnd = afterText.index( '<div type="x-milestone" subType="x-preverse" eID="' )
+                        ixFinal = afterText.index( '>', ixEnd+30 )
+                        preverseText = afterText[:ixEnd].strip()
+                        #print( "QQQ11: strip" ); halt
+                        if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
                             self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', None, originalText) )
-                            text = beforeText + afterText
-                        #elif thisField.startswith( '<div eID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', None) )
-                            #text = beforeText + afterText
-                        elif thisField == '<note>':
-                            ixEND = afterText.index( '</note>' )
-                            note = afterText[:ixEND]
-                            #print( "note", "'"+note+"'" )
-                            noteIX = len( beforeText )
-                            # Save note in extras
-                            text = beforeText + afterText[ixEND+7:]
-                        elif thisField.startswith( '<l level="' ) and thisField.endswith( '"/>' ):
-                            levelDigit = thisField[10]
-                            if BibleOrgSysGlobals.debugFlag:
-                                assert( thisField[11] == '"' )
-                                assert( levelDigit.isdigit() )
-                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', None, originalText) )
-                            text = beforeText + afterText
-                        elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
-                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', None, originalText) )
-                            text = beforeText + afterText
-                        elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
-                            if 0: # Don't actually need this stuff
-                                ixDQ = thisField.index( '"', 17 )
-                                #assert( ixDQ != -1 )
-                                osisID = thisField[17:ixDQ]
-                                #print( "osisID", "'"+osisID+"'" )
-                                ixDOT = osisID.index( '.' )
-                                #assert( ixDOT != -1 )
-                                chapterDigits = osisID[ixDOT+1:]
-                                #print( "chapter", chapterDigits )
-                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, None, originalText) )
-                            text = beforeText + afterText
-                        elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
-                        and thisField.endswith( '"/>' ):
-                            text = beforeText + afterText # We just ignore it
-                        ixLT = text.find( '<', ixLT+1 )
+                        else: print( "preverse", "'"+preverseText+"'" )
+                        text = beforeText + afterText[ixFinal+1:]
+                    elif thisField.startswith( '<div sID="' ) and thisField.endswith( '" type="paragraph"/>' ):
+                        self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', None, originalText) )
+                        text = beforeText + afterText
+                    #elif thisField.startswith( '<div eID="' ) and thisField.endswith( '" type="paragraph"/>' ):
+                        #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', None) )
+                        #text = beforeText + afterText
+                    elif thisField == '<note>':
+                        ixEND = afterText.index( '</note>' )
+                        note = afterText[:ixEND]
+                        #print( "note", "'"+note+"'" )
+                        noteIX = len( beforeText )
+                        # Save note in extras
+                        text = beforeText + afterText[ixEND+7:]
+                    elif thisField.startswith( '<l level="' ) and thisField.endswith( '"/>' ):
+                        levelDigit = thisField[10]
+                        if BibleOrgSysGlobals.debugFlag:
+                            assert( thisField[11] == '"' )
+                            assert( levelDigit.isdigit() )
+                        self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', None, originalText) )
+                        text = beforeText + afterText
+                    elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
+                        self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', None, originalText) )
+                        text = beforeText + afterText
+                    elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
+                        if 0: # Don't actually need this stuff
+                            ixDQ = thisField.index( '"', 17 )
+                            #assert( ixDQ != -1 )
+                            osisID = thisField[17:ixDQ]
+                            #print( "osisID", "'"+osisID+"'" )
+                            ixDOT = osisID.index( '.' )
+                            #assert( ixDOT != -1 )
+                            chapterDigits = osisID[ixDOT+1:]
+                            #print( "chapter", chapterDigits )
+                            self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, None, originalText) )
+                        text = beforeText + afterText
+                    elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
+                    and thisField.endswith( '"/>' ):
+                        text = beforeText + afterText # We just ignore it
+                    ixLT = text.find( '<', ixLT+1 )
 
             #print( "__doAppendEntry", adjustedMarker, originalMarker, repr(text), repr(originalText) )
             #print( " ", verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )

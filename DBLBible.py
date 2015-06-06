@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-31' # by RJH
+LastModifiedDate = '2015-06-04' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.14'
@@ -626,7 +626,7 @@ class DBLBible( Bible ):
             load the fields into self.settingsDict
             and try to standardise it at the same time.
         """
-        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata({} )").format( applyMetadataType ) )
         assert( applyMetadataType == 'DBL' )
 

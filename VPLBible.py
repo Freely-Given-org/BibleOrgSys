@@ -33,21 +33,34 @@ e.g.,
     Re 22:19 Y si alguno quitare de las palabras del libro de esta profecía, Dios quitará su parte del libro de la vida, y de la santa ciudad, y de las cosas que están escritas en este libro.
     Re 22:20 El que da testimonio de estas cosas, dice: <Ciertamente vengo en breve.> Amén, así sea. Ven: Señor Jesús.
     Re 22:21 La gracia de nuestro Señor Jesucristo [sea] con todos vosotros. Amén.
+or
+    # language_name:        Matigsalug
+    # closest ISO 639-3:    mbt
+    # year_short:           Not available
+    # year_long:            Not available
+    # title:                The New Testament in Matigsalug
+    # URL:                  http://www.bible.is/MBTWBT/Mark/3/D
+    # copyright_short:      © Wycliffe Bible Translators Inc.
+    # copyright_long:       Not available
+    41001001	Seini ka Meupiya ne Panugtulen meyitenged ki Hisu Kristu ne anak te Manama , ne migbunsud
+    41001002	sumale te impasulat te Manama ki prupita Isayas , “ Igpewun-a ku keykew ka suluhuanen ku ne iyan eg-andam te egbayaan nu .
+    41001003	Due egpanguleyi diye te mammara ne inged ne kene egkeugpaan ne egkahi : ‘ Andama niyu ka dalan te Magbebaye . Tul-ira niyu ka egbayaan din ! ’ ”
+    41001004	Ne natuman sika te pegginguma ni Huwan diye te mammara ne inged ne kene egkeugpaan ne migpamewutismu wey migwali ne migkahi , “ Inniyuhi niyu ka me sale niyu wey pabewutismu kew eyew egpasayluwen te Manama ka me sale niyu . ”
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2015-06-06' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.26'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
-import logging, os
+import logging, os, re
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -124,7 +137,18 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
-                if not firstLine.startswith( "Ge 1:1 " ):
+                match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
+                if match: vplType = 1
+                else:
+                    match = re.search( '^(\\d{8})\\s', firstLine )
+                    if match: vplType = 2
+                    else:
+                        match = re.search( '^# language_name:\\s', firstLine )
+                        if match: vplType = 3
+                if match:
+                    if BibleOrgSysGlobals.debugFlag:
+                        print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                else:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
@@ -167,9 +191,20 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
-                    if not firstLine.startswith( "Ge 1:1 " ):
+                    match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
+                    if match: vplType = 1
+                    else:
+                        match = re.search( '^(\\d{8})\\s', firstLine )
+                        if match: vplType = 2
+                        else:
+                            match = re.search( '^# language_name:\\s', firstLine )
+                            if match: vplType = 3
+                    if match:
+                        if BibleOrgSysGlobals.debugFlag:
+                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                    else:
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
-                        if debuggingThisModule: halt
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -220,53 +255,181 @@ class VPLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
         lastLine, lineCount = '', 0
-        BBB = None
+        vplType = BBB = None
         lastBookCode = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
+        settingsDict = {}
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
-                    line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
+                if lineCount==1:
+                    if self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                        logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
+                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', line )
+                    if match: vplType = 1
+                    else:
+                        match = re.search( '^(\\d{8})\\s', line )
+                        if match: vplType = 2
+                        else:
+                            match = re.search( '^# language_name:\\s', line )
+                            if match: vplType = 3
+                    if match:
+                        if BibleOrgSysGlobals.debugFlag:
+                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
+                    else:
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                        continue
+                    #print( 'vplType', vplType )
+
+                #print ( 'VPL file line is "' + line + '"' )
                 lastLine = line
-                #print ( 'VLP file line is "' + line + '"' )
-                if line[0]=='#': continue # Just discard comment lines
 
-                bits = line.split( ' ', 2 )
-                #print( self.givenName, BBB, bits )
-                if len(bits) == 3 and ':' in bits[1]:
-                    bookCode, CVString, vText = bits
-                    chapterNumberString, verseNumberString = CVString.split( ':' )
-                else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
+                if   line.startswith( '# language_name:' ):
+                    string = line[16:].strip()
+                    if string and string != 'Not available': settingsDict['LanguageName'] = string
+                    continue
+                elif line.startswith( '# closest ISO 639-3:' ):
+                    string = line[20:].strip()
+                    if string and string != 'Not available': settingsDict['ISOLanguageCode'] = string
+                    continue
+                elif line.startswith( '# year_short:' ):
+                    string = line[13:].strip()
+                    if string and string != 'Not available': settingsDict['Year.short'] = string
+                    continue
+                elif line.startswith( '# year_long:' ):
+                    string = line[12:].strip()
+                    if string and string != 'Not available': settingsDict['Year.long'] = string
+                    continue
+                elif line.startswith( '# title:' ):
+                    string = line[8:].strip()
+                    if string and string != 'Not available': settingsDict['WorkTitle'] = string
+                    continue
+                elif line.startswith( '# URL:' ):
+                    string = line[6:].strip()
+                    if string and string != 'Not available': settingsDict['URL'] = string
+                    continue
+                elif line.startswith( '# copyright_short:' ):
+                    string = line[18:].strip()
+                    if string and string != 'Not available': settingsDict['Copyright.short'] = string
+                    continue
+                elif line.startswith( '# copyright_long:' ):
+                    string = line[17:].strip()
+                    if string and string != 'Not available': settingsDict['Copyright.long'] = string
+                    continue
+                elif line[0]=='#': continue # Just discard comment lines
 
-                if not bookCode and not chapterNumberString and not verseNumberString:
-                    print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    continue
-                if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
-                if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
-                if not verseNumberString.isdigit():
-                    logging.error( "Invalid verse number field at {}/{} {}:{!r}".format( bookCode, BBB, chapterNumberString, verseNumberString ) )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( verseNumberString.isdigit() )
-                    continue
-                chapterNumber = int( chapterNumberString )
-                verseNumber = int( verseNumberString )
+                if vplType == 1:
+                    bits = line.split( ' ', 2 )
+                    #print( self.givenName, BBB, bits )
+                    if len(bits) == 3 and ':' in bits[1]:
+                        bookCode, CVString, vText = bits
+                        chapterNumberString, verseNumberString = CVString.split( ':' )
+                    else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
+
+                    if not bookCode and not chapterNumberString and not verseNumberString:
+                        print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        continue
+                    if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
+                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
+                    if not verseNumberString.isdigit():
+                        logging.error( "Invalid verse number field at {}/{} {}:{!r}".format( bookCode, BBB, chapterNumberString, verseNumberString ) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( verseNumberString.isdigit() )
+                        continue
+                    chapterNumber = int( chapterNumberString )
+                    verseNumber = int( verseNumberString )
+
+                    if bookCode != lastBookCode: # We've started a new book
+                        #if lastBookCode != -1: # Better save the last book
+                            #self.saveBook( thisBook )
+                        #if bookCode in ('Ge',): BBB = 'GEN'
+                        if bookCode in ('Le',): BBB = 'LEV'
+                        elif bookCode in ('Jud',): BBB = 'JDG'
+                        #elif bookCode in ('Es',): BBB = 'EST'
+                        #elif bookCode in ('Pr',): BBB = 'PRO'
+                        elif bookCode in ('So',): BBB = 'SNG'
+                        elif bookCode in ('La',): BBB = 'LAM'
+                        elif bookCode in ('Jude',): BBB = 'JDE'
+                        else:
+                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                        #if BBB:
+                            #thisBook = BibleBook( self, BBB )
+                            #thisBook.objectNameString = "VPL Bible Book object"
+                            #thisBook.objectTypeString = "VPL"
+                            #lastBookCode = bookCode
+                            #lastChapterNumber = lastVerseNumber = -1
+                        #else:
+                            #logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
+                            #if BibleOrgSysGlobals.debugFlag: halt
+
+                    #if chapterNumber != lastChapterNumber: # We've started a new chapter
+                        #if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                        #if chapterNumber == 0:
+                            #logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        #thisBook.addLine( 'c', chapterNumberString )
+                        #lastChapterNumber = chapterNumber
+                        #lastVerseNumber = -1
+
+                    # Handle special formatting
+                    #   [brackets] are for Italicized words
+                    #   <brackets> are for the Words of Christ in Red
+                    #   «brackets»  are for the Titles in the Book  of Psalms.
+                    vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
+                        .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
+                    if vText and vText[0]=='«':
+                        #print( "Oh!", BBB, chapterNumberString, verseNumberString, repr(vText) )
+                        if BBB=='PSA' and verseNumberString=='1': # Psalm title
+                            vBits = vText[1:].split( '»' )
+                            #print( "vBits", vBits )
+                            thisBook.addLine( 'd', vBits[0] ) # Psalm title
+                            vText = vBits[1].lstrip()
+
+                    # Handle the verse info
+                    #if verseNumber==lastVerseNumber and vText==lastVText:
+                        #logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        #continue
+                    if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
+                        # Move Psalm titles to verse zero
+                        verseNumber = 0
+                    #if verseNumber < lastVerseNumber:
+                        #logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    #elif verseNumber == lastVerseNumber:
+                        #if vText == lastVText:
+                            #logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        #else:
+                            #logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+
+                elif vplType in (2,3):
+                    bits = line.split( '\t', 1 )
+                    #print( self.givenName, BBB, bits )
+                    bookNumberString, chapterNumberString, verseNumberString = bits[0][:2], bits[0][2:5], bits[0][5:]
+                    #print( bookNumberString, chapterNumberString, verseNumberString )
+                    while len(chapterNumberString)>1 and chapterNumberString[0]=='0':
+                        chapterNumberString = chapterNumberString[1:] # Remove leading zeroes
+                    while len(verseNumberString)>1 and verseNumberString[0]=='0':
+                        verseNumberString = verseNumberString[1:] # Remove leading zeroes
+                    bookCode, chapterNumber, verseNumber = int( bookNumberString), int(chapterNumberString), int(verseNumberString)
+                    vText = bits[1].replace(' ,',',').replace(' .','.').replace(' ;',';').replace(' :',':') \
+                                    .replace(' !','!').replace(' )',')').replace(' ]',']').replace(' ”','”') \
+                                    .replace('“ ','“').replace('( ','(').replace('[ ','[') #.replace(' !','!')
+
+                    if bookCode != lastBookCode: # We've started a new book
+                        bnDict = { 67:'TOB', 68:'JDT', 69:'ESG', 70:'WIS', 71:'SIR', 72:'BAR', 73:'LJE', 74:'PAZ', 75:'SUS',
+                                76:'BEL', 77:'MA1', 78:'MA2', 79:'MA3', 80:'MA4', 81:'ES1', 82:'ES2', 83:'MAN', 84:'PS2',
+                                85:'PSS', 86:'ODE', }
+                        if 1 <= bookCode <= 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookCode )
+                        else: BBB = bnDict[bookCode]
+
+                else:
+                    logging.critical( 'Unknown VPL type {}'.format( vplType ) )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
-                    #if bookCode in ('Ge',): BBB = 'GEN'
-                    if bookCode in ('Le',): BBB = 'LEV'
-                    elif bookCode in ('Jud',): BBB = 'JDG'
-                    #elif bookCode in ('Es',): BBB = 'EST'
-                    #elif bookCode in ('Pr',): BBB = 'PRO'
-                    elif bookCode in ('So',): BBB = 'SNG'
-                    elif bookCode in ('La',): BBB = 'LAM'
-                    elif bookCode in ('Jude',): BBB = 'JDE'
-                    else:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
                     if BBB:
                         thisBook = BibleBook( self, BBB )
                         thisBook.objectNameString = "VPL Bible Book object"
@@ -285,27 +448,10 @@ class VPLBible( Bible ):
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
-                # Handle special formatting
-                #   [brackets] are for Italicized words
-                #   <brackets> are for the Words of Christ in Red
-                #   «brackets»  are for the Titles in the Book  of Psalms.
-                vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
-                    .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
-                if vText and vText[0]=='«':
-                    #print( "Oh!", BBB, chapterNumberString, verseNumberString, repr(vText) )
-                    if BBB=='PSA' and verseNumberString=='1': # Psalm title
-                        vBits = vText[1:].split( '»' )
-                        #print( "vBits", vBits )
-                        thisBook.addLine( 'd', vBits[0] ) # Psalm title
-                        vText = vBits[1].lstrip()
-
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
                     logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
-                    # Move Psalm titles to verse zero
-                    verseNumber = 0
                 if verseNumber < lastVerseNumber:
                     logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 elif verseNumber == lastVerseNumber:
@@ -313,6 +459,8 @@ class VPLBible( Bible ):
                         logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     else:
                         logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+
+                #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
                 thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -368,24 +516,25 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "Tests/DataFilesForTests/VPLTest1/"
-
-
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = VPLBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA1", result1 )
+        for testFolder in ("Tests/DataFilesForTests/VPLTest1/",
+                            "Tests/DataFilesForTests/VPLTest2/", ):
+            result1 = VPLBibleFileCheck( testFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA1", result1 )
 
-        result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )
-        result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
-        if BibleOrgSysGlobals.strictCheckingFlag:
-            result2.check()
-            #print( UsfmB.books['GEN']._processedLines[0:40] )
-            vBErrors = result2.getErrors()
-            # print( vBErrors )
-        if BibleOrgSysGlobals.commandLineOptions.export:
-            ##result2.toDrupalBible()
-            result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )
+            if result2 is not None:
+                try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+                except FileNotFoundError: pass # it's not compulsory
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result2.check()
+                    #print( UsfmB.books['GEN']._processedLines[0:40] )
+                    vBErrors = result2.getErrors()
+                    # print( vBErrors )
+                if BibleOrgSysGlobals.commandLineOptions.export:
+                    ##result2.toDrupalBible()
+                    result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
     if 0: # all discovered modules in the test folder

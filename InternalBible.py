@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2015-06-05' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -468,7 +468,7 @@ class InternalBible:
             load the fields into self.settingsDict
             and try to standardise it at the same time.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata( {} )").format( applyMetadataType ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -485,10 +485,10 @@ class InternalBible:
             nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
             nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
             nameChangeDict['VerseView'] = { 'Title':'FullName', }
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
-                if BibleOrgSysGlobals.debugFlag: assert( value )
+                if BibleOrgSysGlobals.debugFlag: assert( value ) # We don't expect blank metadata values
                 newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
                     logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -506,8 +506,8 @@ class InternalBible:
             #                           SubmittedBibleFileInfo, SubmittedMetadataFileInfo,
             #                           WantODFs, WantPDFs, WantPhotoBible
             wantedDict = { 'ProjectName':'ProjectName', }
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert( value )
@@ -525,8 +525,8 @@ class InternalBible:
 
         elif applyMetadataType == 'SSF':
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
@@ -558,8 +558,8 @@ class InternalBible:
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
             #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
             wantedDict = { 'Rights':'Rights', }
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert( value )
@@ -579,8 +579,8 @@ class InternalBible:
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
             #                           RightToLeft, Strong, Version
             wantedDict = { 'Abbreviation':'Abbreviation', 'Description':'Description', }
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "applySuppliedMetadata is processing {} {} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert( value )
@@ -600,7 +600,7 @@ class InternalBible:
             logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel>3:
             print( "Updated settings dict ({}):".format( len(self.settingsDict) ) )
             for key,value in sorted( self.settingsDict.items() ):
                 print( "  {} = {!r}".format( key, value ) )

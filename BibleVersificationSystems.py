@@ -33,7 +33,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-21' # by RJH
+LastModifiedDate = '2015-06-03' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.54'
@@ -291,7 +291,7 @@ class BibleVersificationSystems:
                 numCloseMatches += 1
                 if not haveMinorDifferences: numExactMatches += 1
             numComparesDone += 1
-        if BibleOrgSysGlobals.verbosityLevel > 1 or numExactMatches!=numComparesDone:
+        if BibleOrgSysGlobals.verbosityLevel>1 or numExactMatches!=numComparesDone:
             if numComparesDone==1: print( '\n' + _("Compared {} against {} (with {} exact system matches, {} close matches)").format( system1Name, system2Name, numExactMatches, numCloseMatches ) )
             else: print( '\n' + _("Compared {} against {} other systems (with {} exact system matches, {} close matches)").format( system1Name, numComparesDone, numExactMatches, numCloseMatches ) )
             if BibleOrgSysGlobals.verbosityLevel > 1 and (booksMatchExactly or booksWithOnlyMinorDifferences):
