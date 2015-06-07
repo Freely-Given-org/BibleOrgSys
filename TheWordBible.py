@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-01' # by RJH
+LastModifiedDate = '2015-06-08' # by RJH
 ShortProgName = "TheWordBible"
 ProgName = "TheWord Bible format handler"
-ProgVersion = '0.41'
+ProgVersion = '0.42'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1028,6 +1028,7 @@ class TheWordBible( Bible ):
         thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = "TheWord Bible Book object"
         thisBook.objectTypeString = "TheWord"
+        consecutiveBlankLineCount, hadText = 0, False
 
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -1054,15 +1055,26 @@ class TheWordBible( Bible ):
 
                         if lineCount <= textLineCountExpected: # assume it's verse text
                             #print ( lineCount, BBB, C, V, 'TW file line is "' + line + '"' )
-                            if not line: logging.warning( "TheWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
+                            if line:
+                                hadText = True
+                                consecutiveBlankLineCount = 0
+                            else:
+                                if consecutiveBlankLineCount < 5:
+                                    logging.warning( "TheWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
+                                elif consecutiveBlankLineCount == 5:
+                                    logging.warning( 'TheWordBible.load: Additional {} "Found blank verse line" messages suppressed...'.format( BBB ) )
+                                consecutiveBlankLineCount += 1
 
                             handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
                             V += 1
                             if V > numV:
                                 C += 1
                                 if C > numC: # Save this book now
-                                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                                    self.saveBook( thisBook )
+                                    if hadText:
+                                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                                        self.saveBook( thisBook )
+                                    else: logging.warning( "TheWordBible.load: Didn't save {} because it was blank".format( BBB ) )
+
                                     bookCount += 1
                                     if bookCount >= booksExpected: break
                                     BBB = BOS.getNextBookCode( BBB )
@@ -1075,6 +1087,7 @@ class TheWordBible( Bible ):
                                     numC, numV = len(verseList), verseList[0]
                                     C = V = 1
                                     # Don't append c 1 yet, because there might be a book heading to precede it
+                                    consecutiveBlankLineCount, hadText = 0, False
                                 else: # next chapter only
                                     #thisBook.addLine( 'c', str(C) )
                                     numV = verseList[C-1]
