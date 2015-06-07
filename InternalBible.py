@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-05' # by RJH
+LastModifiedDate = '2015-06-08' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -488,7 +488,8 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
-                if BibleOrgSysGlobals.debugFlag: assert( value ) # We don't expect blank metadata values
+                if not value: # We don't expect blank metadata values
+                    logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                 newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
                     logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -510,7 +511,8 @@ class InternalBible:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
-                    if BibleOrgSysGlobals.debugFlag: assert( value )
+                    if not value: # We don't expect blank metadata values
+                        logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
@@ -583,7 +585,8 @@ class InternalBible:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
-                    if BibleOrgSysGlobals.debugFlag: assert( value )
+                    if not value: # We don't expect blank metadata values
+                        logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
