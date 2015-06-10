@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-04' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.66'
+ProgVersion = '0.67'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -142,7 +142,8 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
-            if autoLoadBooks: uB.load() # Load and process the book files
+            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
 
@@ -189,117 +190,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
-            if autoLoadBooks: uB.load() # Load and process the book files
+            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
 # end of USFMBibleFileCheck
-
-
-
-def loadSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
-    """
-    Process the SSF data from the given filepath into BibleObject.suppliedMetadata['SSF'].
-
-    Returns a dictionary.
-    """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
-    #if encoding is None: encoding = 'utf-8'
-    BibleObject.ssfFilepath = ssfFilepath
-
-    if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
-    BibleObject.suppliedMetadata['SSF'] = {}
-
-    lastLine, lineCount, status = '', 0, 0
-    with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-        for line in myFile:
-            lineCount += 1
-            if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                logging.info( t("loadSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
-                line = line[1:] # Remove the Byte Order Marker
-            if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-            line = line.strip() # Remove leading and trailing whitespace
-            if not line: continue # Just discard blank lines
-            lastLine = line
-            processed = False
-            if status==0 and line=="<ScriptureText>":
-                status = 1
-                processed = True
-            elif status==1 and line=="</ScriptureText>":
-                status = 9
-                processed = True
-            elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a BibleObject-closing (empty) field
-                fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
-                if ' ' not in fieldname:
-                    BibleObject.suppliedMetadata['SSF'][fieldname] = ''
-                    processed = True
-                elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                    bits = fieldname.split( None, 1 )
-                    if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                    fieldname = bits[0]
-                    attributes = bits[1]
-                    #print( "attributes = {!r}".format( attributes) )
-                    BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
-                    processed = True
-            elif status==1 and line[0]=='<' and line[-1]=='>' and '/' in line:
-                ix1 = line.find('>')
-                ix2 = line.find('</')
-                if ix1!=-1 and ix2!=-1 and ix2>ix1:
-                    fieldname = line[1:ix1]
-                    contents = line[ix1+1:ix2]
-                    if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                        BibleObject.suppliedMetadata['SSF'][fieldname] = contents
-                        processed = True
-                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                        bits = fieldname.split( None, 1 )
-                        if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
-                        fieldname = bits[0]
-                        attributes = bits[1]
-                        #print( "attributes = {!r}".format( attributes) )
-                        if line[ix2+2:-1]==fieldname:
-                            BibleObject.suppliedMetadata['SSF'][fieldname] = (contents, attributes)
-                            processed = True
-            elif status==1 and line.startswith( '<ValidCharacters>' ):
-                fieldname = 'ValidCharacters'
-                contents = line[len(fieldname)+2:]
-                #print( "Got {} opener {!r} from {!r}".format( fieldname, contents, line ) )
-                status = 2
-                processed = True
-            elif status==2: # in the middle of processing an extension line
-                if line.endswith( '</' + fieldname + '>' ):
-                    line = line[:-len(fieldname)-3]
-                    status = 1
-                contents += ' ' + line
-                #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
-                processed = True
-            if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
-    if status == 0:
-        logging.error( "SSF file was empty: {}".format( BibleObject.ssfFilepath ) )
-        status = 9
-    if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + t("Got {} SSF entries:").format( len(BibleObject.suppliedMetadata['SSF']) ) )
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            for key in sorted(BibleObject.suppliedMetadata['SSF']):
-                try: print( "    {}: {}".format( key, BibleObject.suppliedMetadata['SSF'][key] ) )
-                except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
-
-    BibleObject.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
-
-    ## Determine our encoding while we're at it
-    #if BibleObject.encoding is None and 'Encoding' in BibleObject.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
-        #ssfEncoding = BibleObject.suppliedMetadata['SSF']['Encoding']
-        #if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
-        #else:
-            #if BibleOrgSysGlobals.verbosityLevel > 0:
-                #print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
-            #if ssfEncoding.isdigit():
-                #BibleObject.encoding = 'cp' + ssfEncoding
-                #if BibleOrgSysGlobals.verbosityLevel > 0:
-                    #print( t("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
-            #else:
-                #logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
-# end of loadSSFData
 
 
 
@@ -322,24 +217,17 @@ class USFMBible( Bible ):
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
 
-        self.ssfFilepath, self.suppliedMetadata = None, {}
-        if sourceFolder is not None:
-            self.preload( sourceFolder )
+        self.ssfFilepath = None
     # end of USFMBible.__init_
 
 
-    def preload( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+    def preload( self ):
         """
         Loads the SSF file if it can be found.
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload( {} {} {} {} )").format( sourceFolder, givenName, givenAbbreviation, encoding ) )
-        if BibleOrgSysGlobals.debugFlag: assert( sourceFolder )
-        self.sourceFolder = sourceFolder
-        if givenName: self.givenName = givenName
-        if givenAbbreviation: self.givenAbbreviation = givenAbbreviation
-        if encoding: self.encoding = encoding
+            print( t("preload( {} )").format( sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -364,6 +252,7 @@ class USFMBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
         if self.ssfFilepath is None: # it might have been loaded first
             # Attempt to load the SSF file
             #self.suppliedMetadata, self.settingsDict = {}, {}
@@ -372,7 +261,11 @@ class USFMBible( Bible ):
             if len(ssfFilepathList) > 1:
                 logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             if len(ssfFilepathList) >= 1: # Seems we found the right one
-                loadSSFData( self, ssfFilepathList[0] )
+                from PTXBible import loadPTXSSFData
+                SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
+                if SSFDict:
+                    self.suppliedMetadata['SSF'] = SSFDict
+                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
         #if self.name is None:
@@ -387,12 +280,16 @@ class USFMBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
+
+        self.preloadDone = True
     # end of USFMBible.preload
 
 
     def loadBook( self, BBB, filename=None ):
         """
         Load the requested book into self.books if it's not already loaded.
+
+        NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
@@ -433,11 +330,13 @@ class USFMBible( Bible ):
     # end of USFMBible.loadBookMP
 
 
-    def load( self ):
+    def loadBooks( self ):
         """
         Load all the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+
+        if not self.preloadDone: self.preload()
 
         if self.maximumPossibleFilenameTuples:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
@@ -459,7 +358,10 @@ class USFMBible( Bible ):
             logging.critical( t("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
-    # end of USFMBible.load
+    # end of USFMBible.loadBooks
+
+    def load( self ):
+        self.loadBooks()
 # end of class USFMBible
 
 
@@ -469,6 +371,26 @@ def demo():
     Demonstrate reading and checking some Bible databases.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
+                            "Tests/DataFilesForTests/USFMTest2/",
+                            "Tests/DataFilesForTests/USFMTest3/",
+                            "Tests/DataFilesForTests/USFMAllMarkersProject/",
+                            "Tests/DataFilesForTests/USFMErrorProject/",
+                            "Tests/DataFilesForTests/PTXTest/",
+                            "OutputFiles/BOS_USFM_Export/",
+                            "OutputFiles/BOS_USFM_Reexport/",
+                            "MadeUpFolder/",
+                            ):
+            print( "\nTestfolder is: {}".format( testFolder ) )
+            result1 = USFMBibleFileCheck( testFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA1", result1 )
+            result2 = USFMBibleFileCheck( testFolder, autoLoad=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA2", result2 )
+            result3 = USFMBibleFileCheck( testFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA3", result3 )
 
 
     if 1: # Load and process some of our test versions
@@ -483,7 +405,7 @@ def demo():
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM A{}/".format( count ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( count ) )
                 UsfmB = USFMBible( testFolder, name, encoding=encoding )
                 UsfmB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -550,7 +472,7 @@ def demo():
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
                     name, encoding, testFolder = title, "utf-8", somepath
                     if os.access( testFolder, os.R_OK ):
-                        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( count ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM C{}/".format( count ) )
                         UsfmB = USFMBible( testFolder, name, encoding=encoding )
                         UsfmB.load()
                         if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfmB )

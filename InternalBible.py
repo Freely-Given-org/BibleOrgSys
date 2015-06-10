@@ -126,7 +126,8 @@ class InternalBible:
         self.settingsDict = {} # This is often filled from self.suppliedMetadata in applySuppliedMetadata()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
-        self.loadedAllBooks, self.triedLoadingBook = False, {}
+        self.preloadDone = self.loadedAllBooks = False
+        self.triedLoadingBook = {}
         self.divisions = OrderedDict()
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary

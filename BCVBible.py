@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -122,7 +122,8 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("BCVBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( givenFolderName )
-            if autoLoadBooks: bcvB.load() # Load and process the file
+            if autoLoad: bcvB.preload()
+            if autoLoadBooks: bcvB.loadBooks() # Load and process the file
             return bcvB
         return numFound
 
@@ -160,7 +161,8 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("BCVBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( foundProjects[0] )
-            if autoLoadBooks: bcvB.load() # Load and process the file
+            if autoLoad: bcvB.preload()
+            if autoLoadBooks: bcvB.loadBooks() # Load and process the file
             return bcvB
         return numFound
 # end of BCVBibleFileCheck
@@ -185,25 +187,15 @@ class BCVBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
-
-        self.metadataFilepath = None
-
-        if sourceFolder is not None:
-            self.preload( sourceFolder )
     # end of BCVBible.__init_
 
 
-    def preload( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+    def preload( self ):
         """
         Loads the Metadata file if it can be found.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload( {} {} {} {} )").format( sourceFolder, givenName, givenAbbreviation, encoding ) )
-        if BibleOrgSysGlobals.debugFlag: assert( sourceFolder )
-        self.sourceFolder = sourceFolder
-        if givenName: self.givenName = givenName
-        if givenAbbreviation: self.givenAbbreviation = givenAbbreviation
-        if encoding: self.encoding = encoding
+            print( t("preload( {} )").format( sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -224,9 +216,9 @@ class BCVBible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print( t("__init__: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
-        if self.metadataFilepath is None: # it might have been loaded first
-            # Attempt to load the metadata file
-            self.loadMetadata( os.path.join( sourceFolder, METADATA_FILENAME ) )
+        #if self.metadataFilepath is None: # it might have been loaded first
+        # Attempt to load the metadata file
+        self.loadMetadata( os.path.join( self.sourceFolder, METADATA_FILENAME ) )
 
         #self.name = self.givenName
         #if self.name is None:
@@ -235,6 +227,8 @@ class BCVBible( Bible ):
         #if not self.name: self.name = os.path.basename( self.sourceFolder )
         #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
         #if not self.name: self.name = "BCV Bible"
+
+        self.preloadDone = True
     # end of BCVBible.preload
 
 
@@ -314,6 +308,8 @@ class BCVBible( Bible ):
     def loadBook( self, BBB ):
         """
         Load the requested book into self.books if it's not already loaded.
+
+        NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "BCVBible.loadBook( {} )".format( BBB ) )
         if BBB in self.books: return # Already loaded
@@ -355,11 +351,13 @@ class BCVBible( Bible ):
     # end of BCVBible.loadBookMP
 
 
-    def load( self ):
+    def loadBooks( self ):
         """
         Load all the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+
+        if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible

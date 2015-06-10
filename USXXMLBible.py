@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-30' # by RJH
+LastModifiedDate = '2015-06-09' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -43,9 +43,9 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from USXFilenames import USXFilenames
+from PTXBible import loadPTXSSFData
 from USXXMLBibleBook import USXXMLBibleBook
 from Bible import Bible
-from USFMBible import loadSSFData
 
 
 
@@ -230,11 +230,14 @@ class USXXMLBible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in {!r}".format( self.givenFolderName ) )
             return # No use continuing
 
-        if 0: # We don't have a getSSFFilenames function
-            # Attempt to load the metadata file
-            ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            if len(ssfFilepathList) == 1: # Seems we found the right one
-                loadSSFData( ssfFilepathList[0] )
+        #if 0: # We don't have a getSSFFilenames function
+            ## Attempt to load the metadata file
+            #ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+            #if len(ssfFilepathList) == 1: # Seems we found the right one
+                #SSFDict = loadPTXSSFData( ssfFilepathList[0] )
+                #if SSFDict:
+                    #self.suppliedMetadata['SSF'] = SSFDict
+                    #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         # DON'T KNOW WHY THIS DOESN'T WORK

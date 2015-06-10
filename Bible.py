@@ -30,7 +30,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
 ProgVersion = '0.09'

@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,15 +26,19 @@
 Module for creating and manipulating USFM filenames.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-06-08' # by RJH
+ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
-ProgVersion = "0.64"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.65'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 
 
 import BibleOrgSysGlobals
@@ -95,14 +98,15 @@ class USFMFilenames:
     """
 
     def __init__( self, givenFolderName ):
-        """Create the object by inspecting files in the given folder.
+        """
+        Create the object by inspecting files in the given folder.
 
             Creates a self.pattern (Paratext template) for USFM filenames where
                 nnn = language code (lower case) or NNN = language code (UPPER CASE)
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
                 dd = digits
         """
-        #print( "USFMFilenames( {} )".format( givenFolderName ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "USFMFilenames( {} )".format( givenFolderName ) )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -309,13 +313,17 @@ class USFMFilenames:
 
 
     def getUSFMIDsFromFiles( self, givenFolder ):
-        """ Go through all the files in the given folder and see how many USFM IDs we can find.
+        """
+        Go through all the files in the given folder and see how many USFM IDs we can find.
                 Populates the two dictionaries.
-                Returns the number of files found. """
-        # Empty the two dictionaries
+                Returns the number of files found.
+        """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
+
+        # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
+
         folderFilenames = os.listdir( givenFolder )
         for possibleFilename in folderFilenames:
             pFUpper = possibleFilename.upper()
@@ -380,7 +388,8 @@ class USFMFilenames:
 
 
     def getDerivedFilenameTuples( self ):
-        """Return a theoretical list of valid USFM filenames that match our filename template.
+        """
+        Return a theoretical list of valid USFM filenames that match our filename template.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
@@ -441,7 +450,8 @@ class USFMFilenames:
 
 
     def getPossibleFilenameTuplesExt( self ):
-        """ Return a list of filename tuples just derived from the list of files in the folder,
+        """
+        Return a list of filename tuples just derived from the list of files in the folder,
                 i.e., look only externally at the filenames.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
@@ -465,7 +475,8 @@ class USFMFilenames:
 
 
     def getPossibleFilenameTuplesInt( self ):
-        """Return a list of filename tuples which contain book codes internally on the \\id line.
+        """
+        Return a list of filename tuples which contain book codes internally on the \\id line.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
@@ -484,16 +495,17 @@ class USFMFilenames:
 
 
     def getMaximumPossibleFilenameTuples( self ):
-        """ Find the method that finds the maximum number of USFM Bible files.
+        """
+        Find the method that finds the maximum number of USFM Bible files.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultString, resultList = "Confirmed", self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
-        if len(resultListExt)>len(resultList):
+        if len(resultListExt) > len(resultList):
             resultString, resultList = "External", resultListExt
         resultListInt = self.getPossibleFilenameTuplesInt()
-        if len(resultListInt)>len(resultList):
+        if len(resultListInt) > len(resultList):
             resultString, resultList = "Internal", resultListInt
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
         self.lastTupleList = resultList
@@ -505,7 +517,8 @@ class USFMFilenames:
     def getUnusedFilenames( self ):
         """ Return a list of filenames which didn't seem to be USFM files.
             NOTE: This list depends on which "find" routine above was run last!
-            The order of the filenames in the list has no meaning. """
+            The order of the filenames in the list has no meaning.
+        """
         folderFilenames = os.listdir( self.givenFolderName )
         if self.lastTupleList is None: return None # Not sure what list they're after here
         #print( len(self.lastTupleList), self.lastTupleList )

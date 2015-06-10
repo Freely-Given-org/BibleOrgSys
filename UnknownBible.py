@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-19' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.21'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -52,6 +52,7 @@ import logging, os.path
 
 import BibleOrgSysGlobals
 from ESFMBible import ESFMBibleFileCheck, ESFMBible
+from PTXBible import PTXBibleFileCheck, PTXBible
 from USFMBible import USFMBibleFileCheck, USFMBible
 from DBLBible import DBLBibleFileCheck, DBLBible
 from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
@@ -207,13 +208,21 @@ class UnknownBible:
             typesFound.append( 'YET:' + str(YETBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
 
-        # Search for ESFM Bibles
+        # Search for ESFM Bibles -- put BEFORE USFM
         ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if ESFMBibleCount:
             totalBibleCount += ESFMBibleCount
             totalBibleTypes += 1
             typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
+
+        # Search for PTX Bibles -- put BEFORE USFM
+        PTXBibleCount = PTXBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PTXBibleCount:
+            totalBibleCount += PTXBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'PTX:' + str(PTXBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTXBibleCount", PTXBibleCount )
 
         # Search for USFM Bibles
         USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -223,7 +232,7 @@ class UnknownBible:
             typesFound.append( 'USFM:' + str(USFMBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFMBibleCount", USFMBibleCount )
 
-        # Search for DBL Bibles
+        # Search for DBL Bibles -- put BEFORE USX
         DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if DBLBibleCount:
             totalBibleCount += DBLBibleCount
@@ -318,7 +327,11 @@ class UnknownBible:
                     print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many types found'
             if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+                # If there's only one of a particular type, we'll go for that one
+                haveSingle = False
+                for entry in typesFound:
+                    if entry.endswith( ':1' ): haveSingle = True; break
+                if haveSingle: print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
 
         if autoLoadAlways or totalBibleCount == 1:
             # Put the binary formats first here because they can be detected more reliably
@@ -359,15 +372,19 @@ class UnknownBible:
                 self.foundType = "YET Bible"
                 if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
-            elif ESFMBibleCount == 1:
+            elif ESFMBibleCount == 1: # Must be ahead of USFM
                 self.foundType = "ESFM Bible"
                 if autoLoad: return ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif PTXBibleCount == 1: # Must be ahead of USFM
+                self.foundType = "PTX Bible"
+                if autoLoad: return PTXBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFMBibleCount == 1:
                 self.foundType = "USFM Bible"
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
-            elif DBLBibleCount == 1:
+            elif DBLBibleCount == 1: # Must be ahead of USX
                 self.foundType = "DBL Bible"
                 if autoLoad: return DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
@@ -422,6 +439,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs", # Shouldn't have any Bibles here
+                    "Tests/DataFilesForTests/PTXTest/",
                     "Tests/DataFilesForTests/DBLTest/",
                     #"../../../../../Data/Work/Bibles/theWord modules/",
                     #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
@@ -433,7 +451,7 @@ def demo():
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
                     "Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
-                    "Tests/DataFilesForTests/DBLTest/",
+                    #"Tests/DataFilesForTests/DBLTest/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
                     "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
                     "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
@@ -451,7 +469,7 @@ def demo():
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying (but not loading) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
@@ -460,7 +478,7 @@ def demo():
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (no files) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (no books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -468,7 +486,7 @@ def demo():
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (with files) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (incl. books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -476,7 +494,7 @@ def demo():
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (no books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -484,7 +502,7 @@ def demo():
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading (incl. books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )

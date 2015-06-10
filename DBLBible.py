@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-04' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -53,6 +53,7 @@ import BibleOrgSysGlobals
 from Bible import Bible
 from USXFilenames import USXFilenames
 from USXXMLBibleBook import USXXMLBibleBook
+from PTXBible import loadPTXLanguages, loadPTXVersifications
 
 
 
@@ -131,7 +132,7 @@ def DBLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if numFound == 1 and (autoLoad or autoLoadBooks):
             dB = DBLBible( givenFolderName )
             if autoLoad or autoLoadBooks:
-                dB.load() # Load and process the metadata files
+                dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
             return dB
         return numFound
@@ -177,7 +178,7 @@ def DBLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if numFound == 1 and (autoLoad or autoLoadBooks):
             dB = DBLBible( foundProjects[0] )
             if autoLoad or autoLoadBooks:
-                dB.load() # Load and process the metadata files
+                dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
             return dB
         return numFound
@@ -213,16 +214,16 @@ class DBLBible( Bible ):
             logging.error( "DBLBible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
         # Create empty containers for loading the XML metadata files
-        self.DBLLicense = self.DBLStyles = self.DBLVersification = self.DBLLanguage = None
+        #DBLLicense = DBLStyles = DBLVersification = DBLLanguage = None
     # end of DBLBible.__init__
 
 
-    def load( self ):
+    def preload( self ):
         """
         Load the XML metadata files.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("load()") )
+            print( t("preload()") )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("DBLBible: Loading {} from {}...").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
@@ -233,21 +234,28 @@ class DBLBible( Bible ):
             elif os.path.isfile( somepath ): foundFiles.append( something )
             else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
         if not foundFiles:
-            print( "DBLBible.load: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
+            print( "DBLBible.preload: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
             return # No use continuing
+
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['DBL'] = {}
 
         self.loadDBLLicense()
         self.loadDBLMetadata() # into self.suppliedMetadata['DBL'] (still in DBL format)
         self.applySuppliedMetadata( 'DBL' ) # copy into self.settingsDict (standardised)
         self.loadDBLStyles()
-        self.loadDBLVersification()
-        self.loadDBLLanguage()
-        #print( 'DBLLicense', len(self.DBLLicense), self.DBLLicense )
+        result = loadPTXVersifications( self )
+        if result: self.suppliedMetadata['DBL']['Versifications'] = result
+        result = loadPTXLanguages( self )
+        if result: self.suppliedMetadata['DBL']['Languages'] = result
+        #print( 'DBLLicense', len(DBLLicense), DBLLicense )
         #print( 'DBLMetadata', len(self.suppliedMetadata), self.suppliedMetadata )
-        #print( 'DBLStyles', len(self.DBLStyles), self.DBLStyles )
-        #print( 'DBLVersification', len(self.DBLVersification), self.DBLVersification )
-        #print( 'DBLLanguage', len(self.DBLLanguage), self.DBLLanguage )
-    # end of DBLBible.load
+        #print( 'DBLStyles', len(DBLStyles), DBLStyles )
+        #print( 'DBLVersification', len(DBLVersification), DBLVersification )
+        #print( 'DBLLanguage', len(DBLLanguage), DBLLanguage )
+
+        self.preloadDone = True
+    # end of DBLBible.preload
 
 
     def loadDBLLicense( self ):
@@ -262,7 +270,7 @@ class DBLBible( Bible ):
         self.tree = ElementTree().parse( licenseFilepath )
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
-        self.DBLLicense = OrderedDict()
+        DBLLicense = OrderedDict()
         #loadErrors = []
 
         # Find the main container
@@ -276,7 +284,7 @@ class DBLBible( Bible ):
             for attrib,value in self.tree.items():
                 if attrib=='id': licenseID = value
                 else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-            self.DBLLicense['Id'] = licenseID
+            DBLLicense['Id'] = licenseID
 
             # Now process the actual metadata
             for element in self.tree:
@@ -286,10 +294,10 @@ class DBLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                 if element.tag in ( 'dateLicense', 'dateLicenseExpiry' ):
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
-                    self.DBLLicense[element.tag] = element.text
+                    DBLLicense[element.tag] = element.text
                 elif element.tag == 'publicationRights':
-                    assert( element.tag not in self.DBLLicense )
-                    self.DBLLicense[element.tag] = OrderedDict()
+                    assert( element.tag not in DBLLicense )
+                    DBLLicense[element.tag] = {}
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
                         #print( "  Processing {}...".format( sub2location ) )
@@ -298,13 +306,15 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('allowOffline', 'allowIntroductions', 'allowFootnotes', 'allowCrossReferences', 'allowExtendedNotes' ):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
-                            assert( subelement.tag not in self.DBLLicense[element.tag] )
-                            self.DBLLicense[element.tag][subelement.tag] = subelement.text
+                            assert( subelement.tag not in DBLLicense[element.tag] )
+                            DBLLicense[element.tag][subelement.tag] = subelement.text
                         else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                 else:
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} license elements.".format( len(self.DBLLicense) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} license elements.".format( len(DBLLicense) ) )
+        #print( 'DBLLicense', DBLLicense )
+        if DBLLicense: self.suppliedMetadata['DBL']['License'] = DBLLicense
     # end of DBLBible.loadDBLLicense
 
 
@@ -677,7 +687,7 @@ class DBLBible( Bible ):
 
     def loadDBLStyles( self ):
         """
-        Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
+        Load the styles.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("loadDBLStyles()") )
@@ -692,7 +702,7 @@ class DBLBible( Bible ):
             Load the contents information (which is more nested/complex).
             """
             assert( element.tag == 'style' )
-            ourDict = self.DBLStyles['styles']
+            ourDict = DBLStyles['styles']
             BibleOrgSysGlobals.checkXMLNoText( element, location )
             BibleOrgSysGlobals.checkXMLNoTail( element, location )
 
@@ -730,10 +740,10 @@ class DBLBible( Bible ):
                     if name in ( 'font-family', 'font-size' ):
                         ourDict[styleID]['properties'][name] = ( element.text, attribDict )
                 else: logging.warning( _("Unprocessed style {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
-            #print( "Styles:", self.DBLStyles['styles'] )
+            #print( "Styles:", DBLStyles['styles'] )
         # end of getStyle
 
-        self.DBLStyles = OrderedDict()
+        DBLStyles = OrderedDict()
         #loadErrors = []
 
         # Find the main container
@@ -748,7 +758,7 @@ class DBLBible( Bible ):
                 sublocation = element.tag + ' ' + location
                 #print( "\nProcessing {}...".format( sublocation ) )
                 if element.tag == 'property':
-                    if 'properties' not in self.DBLStyles: self.DBLStyles['properties'] = OrderedDict()
+                    if 'properties' not in DBLStyles: DBLStyles['properties'] = OrderedDict()
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     # Collect the property attributes first
@@ -758,186 +768,146 @@ class DBLBible( Bible ):
                         if attrib=='name': name = value
                         else: attribDict[attrib] = value
                     if name in ( 'font-family', 'font-size' ):
-                        self.DBLStyles['properties'][name] = ( element.text, attribDict )
+                        DBLStyles['properties'][name] = ( element.text, attribDict )
                 elif element.tag == 'style':
-                    if 'styles' not in self.DBLStyles: self.DBLStyles['styles'] = OrderedDict()
+                    if 'styles' not in DBLStyles: DBLStyles['styles'] = OrderedDict()
                     getStyle( element, sublocation )
                 else:
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
         #print( '\n', self.suppliedMetadata['DBL'] )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style elements.".format( len(self.DBLStyles['styles']) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style elements.".format( len(DBLStyles['styles']) ) )
+        #print( 'DBLStyles', DBLStyles )
+        if DBLStyles: self.suppliedMetadata['DBL']['Styles'] = DBLStyles
     # end of DBLBible.loadDBLStyles
 
 
-    def loadDBLVersification( self ):
-        """
-        Load the versification.vrs file and parse it into the ordered dictionary self.DBLVersification.
-        """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadDBLVersification()") )
+    #def loadDBLVersification( self ):
+        #"""
+        #Load the versification.vrs file (which is a text file)
+            #and parse it into the ordered dictionary DBLVersification.
+        #"""
+        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            #print( t("loadDBLVersification()") )
 
-        versificationFilename = 'versification.vrs'
-        versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading versification from {}...".format( versificationFilepath ) )
+        #versificationFilename = 'versification.vrs'
+        #versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading versification from {}...".format( versificationFilepath ) )
 
-        self.DBLVersification = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
+        #DBLVersification = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
-        lineCount = 0
-        with open( versificationFilepath, 'rt' ) as vFile: # Automatically closes the file when done
-            for line in vFile:
-                lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( versificationFilename ) )
-                    line = line[1:] # Remove the UTF-8 Byte Order Marker
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                if not line: continue # Just discard blank lines
-                lastLine = line
-                if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
-                #print( "Versification line", repr(line) )
+        #lineCount = 0
+        #with open( versificationFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+            #for line in vFile:
+                #lineCount += 1
+                #if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                    #logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( versificationFilename ) )
+                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                #if not line: continue # Just discard blank lines
+                #lastLine = line
+                #if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
+                ##print( "Versification line", repr(line) )
 
-                if len(line)<7:
-                    print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
-                    continue
+                #if len(line)<7:
+                    #print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    #continue
 
-                if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
-                    assert( line[7] == ' ' )
-                    USFMBookCode = line[4:7]
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
-                    C,V = line[8:].split( ':', 1 )
-                    #print( "CV", repr(C), repr(V) )
-                    if BibleOrgSysGlobals.debugFlag: assert( C.isdigit() and V.isdigit() )
-                    #print( "Omitted {} {}:{}".format( BBB, C, V ) )
-                    self.DBLVersification['Omitted'].append( (BBB,C,V) )
-                elif line[0] == '#': # It's a comment line
-                    pass # Just ignore it
-                elif '=' in line: # it's a verse mapping, e.g.,
-                    left, right = line.split( ' = ', 1 )
-                    #print( "left", repr(left), 'right', repr(right) )
-                    USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode1 )
-                    BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode2 )
-                    self.DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
-                    #print( self.DBLVersification['Mappings'] )
-                else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
-                    assert( line[3] == ' ' )
-                    USFMBookCode = line[:3]
-                    #if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
-                    try:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
-                        self.DBLVersification['VerseCounts'][BBB] = OrderedDict()
-                        for CVBit in line[4:].split():
-                            #print( "CVBit", repr(CVBit) )
-                            assert( ':' in CVBit )
-                            C,V = CVBit.split( ':', 1 )
-                            #print( "CV", repr(C), repr(V) )
-                            if BibleOrgSysGlobals.debugFlag: assert( C.isdigit() and V.isdigit() )
-                            self.DBLVersification['VerseCounts'][BBB][C] = V
-                    except KeyError:
-                        logging.error( "Unknown {!r} USX book code in DBLBible.loading versification from {}".format( USFMBookCode, versificationFilepath ) )
+                #if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
+                    #assert( line[7] == ' ' )
+                    #USFMBookCode = line[4:7]
+                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    #C,V = line[8:].split( ':', 1 )
+                    ##print( "CV", repr(C), repr(V) )
+                    #if BibleOrgSysGlobals.debugFlag: assert( C.isdigit() and V.isdigit() )
+                    ##print( "Omitted {} {}:{}".format( BBB, C, V ) )
+                    #DBLVersification['Omitted'].append( (BBB,C,V) )
+                #elif line[0] == '#': # It's a comment line
+                    #pass # Just ignore it
+                #elif '=' in line: # it's a verse mapping, e.g.,
+                    #left, right = line.split( ' = ', 1 )
+                    ##print( "left", repr(left), 'right', repr(right) )
+                    #USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
+                    #BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode1 )
+                    #BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode2 )
+                    #DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
+                    ##print( DBLVersification['Mappings'] )
+                #else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
+                    #assert( line[3] == ' ' )
+                    #USFMBookCode = line[:3]
+                    ##if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
+                    #try:
+                        #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                        #DBLVersification['VerseCounts'][BBB] = OrderedDict()
+                        #for CVBit in line[4:].split():
+                            ##print( "CVBit", repr(CVBit) )
+                            #assert( ':' in CVBit )
+                            #C,V = CVBit.split( ':', 1 )
+                            ##print( "CV", repr(C), repr(V) )
+                            #if BibleOrgSysGlobals.debugFlag: assert( C.isdigit() and V.isdigit() )
+                            #DBLVersification['VerseCounts'][BBB][C] = V
+                    #except KeyError:
+                        #logging.error( "Unknown {!r} USX book code in DBLBible.loading versification from {}".format( USFMBookCode, versificationFilepath ) )
 
-        #print( '\n', self.suppliedMetadata['DBL'] )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versification elements.".format( len(self.DBLVersification) ) )
-    # end of DBLBible.loadDBLVersification
-
-
-    def loadDBLLanguage( self ):
-        """
-        Load the something.lds file and parse it into the ordered dictionary self.DBLLanguage.
-        """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadDBLLanguage()") )
-
-        languageFilenames = []
-        for something in os.listdir( self.sourceFilepath ):
-            somepath = os.path.join( self.sourceFilepath, something )
-            if os.path.isfile(somepath) and something.endswith('.lds'): languageFilenames.append( something )
-        if len(languageFilenames) > 1:
-            logging.error( "Got more than one language file: {}".format( languageFilenames ) )
-        languageFilename = languageFilenames[0]
-        languageName = languageFilename[:-4] # Remove the .lds
-
-        languageFilepath = os.path.join( self.sourceFilepath, languageFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading language from {}...".format( languageFilepath ) )
-
-        self.DBLLanguage = { 'Filename':languageName }
-
-        lineCount = 0
-        sectionName = None
-        with open( languageFilepath, 'rt' ) as vFile: # Automatically closes the file when done
-            for line in vFile:
-                lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( languageFilename ) )
-                    line = line[1:] # Remove the UTF-8 Byte Order Marker
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                if not line: continue # Just discard blank lines
-                lastLine = line
-                if line[0]=='#': continue # Just discard comment lines
-                #print( "line", repr(line) )
-
-                if len(line)<5:
-                    print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
-                    continue
-
-                if line[0]=='[' and line[-1]==']': # it's a new section name
-                    sectionName = line[1:-1]
-                    assert( sectionName not in self.DBLLanguage )
-                    self.DBLLanguage[sectionName] = {}
-                elif '=' in line: # it's a mapping, e.g., UpperCaseLetters=ABCDEFGHIJKLMNOPQRSTUVWXYZ
-                    left, right = line.split( '=', 1 )
-                    #print( "left", repr(left), 'right', repr(right) )
-                    self.DBLLanguage[sectionName][left] = right
-                else: print( "What's this language line? {!r}".format( line ) )
-
-        #print( '\n', self.DBLLanguage )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} language sections.".format( len(self.DBLLanguage) ) )
-    # end of DBLBible.loadDBLLanguage
+        ##print( '\n', self.suppliedMetadata['DBL'] )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versification elements.".format( len(DBLVersification) ) )
+        #print( 'DBLVersification', DBLVersification ); halt
+    ## end of DBLBible.loadDBLVersification
 
 
-    def xxxloadDBLBooksNames( self ):
-        """
-        """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadDBLBooksNames()") )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "DBLBible.loading books names from {}...".format( self.sourceFilepath ) )
-        bnFilepath = os.path.join( self.sourceFilepath, "BookNames.xml" )
-        self.tree = ElementTree().parse( bnFilepath )
-        assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+    #def loadDBLLanguage( self ):
+        #"""
+        #Load the something.lds file (which is an INI file) and parse it into the ordered dictionary DBLLanguage.
+        #"""
+        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            #print( t("loadDBLLanguage()") )
 
-        self.booksNames = OrderedDict()
-        #loadErrors = []
+        #languageFilenames = []
+        #for something in os.listdir( self.sourceFilepath ):
+            #somepath = os.path.join( self.sourceFilepath, something )
+            #if os.path.isfile(somepath) and something.endswith('.lds'): languageFilenames.append( something )
+        #if len(languageFilenames) > 1:
+            #logging.error( "Got more than one language file: {}".format( languageFilenames ) )
+        #languageFilename = languageFilenames[0]
+        #languageName = languageFilename[:-4] # Remove the .lds
 
-        # Find the main container
-        if self.tree.tag=='BookNames':
-            location = "DBL {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+        #languageFilepath = os.path.join( self.sourceFilepath, languageFilename )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading language from {}...".format( languageFilepath ) )
 
-            # Now process the actual book data
-            for element in self.tree:
-                sublocation = element.tag + ' ' + location
-                if element.tag == 'book':
-                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
-                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
-                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+        #DBLLanguage = { 'Filename':languageName }
 
-                    bnCode = bnAbbr = bnShort = bnLong = None
-                    for attrib,value in element.items():
-                        if attrib=='code': bnCode = value
-                        elif attrib=='abbr': bnAbbr = value
-                        elif attrib=='short': bnShort = value
-                        elif attrib=='long': bnLong = value
-                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                    #print( bnCode, self.booksNames[bnCode] )
-                    assert( len(bnCode)==3 )
-                    self.booksNames[bnCode] = (bnAbbr,bnShort,bnLong,)
-                else:
-                    logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
-        #print( '\n', self.booksNames )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} books names.".format( len(self.booksNames) ) )
-    # end of DBLBible.loadDBLBooksNames
+        #lineCount = 0
+        #sectionName = None
+        #with open( languageFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+            #for line in vFile:
+                #lineCount += 1
+                #if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                    #logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( languageFilename ) )
+                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                #if not line: continue # Just discard blank lines
+                #lastLine = line
+                #if line[0]=='#': continue # Just discard comment lines
+                ##print( "line", repr(line) )
+
+                #if len(line)<5:
+                    #print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    #continue
+
+                #if line[0]=='[' and line[-1]==']': # it's a new section name
+                    #sectionName = line[1:-1]
+                    #assert( sectionName not in DBLLanguage )
+                    #DBLLanguage[sectionName] = {}
+                #elif '=' in line: # it's a mapping, e.g., UpperCaseLetters=ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                    #left, right = line.split( '=', 1 )
+                    ##print( "left", repr(left), 'right', repr(right) )
+                    #DBLLanguage[sectionName][left] = right
+                #else: print( "What's this language line? {!r}".format( line ) )
+
+        ##print( '\n', DBLLanguage )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} language sections.".format( len(DBLLanguage) ) )
+        #print( 'DBLLanguage', DBLLanguage ); halt
+    ## end of DBLBible.loadDBLLanguage
 
 
     def loadBooks( self ):
@@ -948,7 +918,7 @@ class DBLBible( Bible ):
             print( t("loadBooks()") )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DBLBible: Loading {} books from {}...").format( self.name, self.sourceFilepath ) )
 
-        if not self.suppliedMetadata or 'DBL' not in self.suppliedMetadata: self.load() # Might not have been done yet
+        if not self.preloadDone: self.preload()
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -999,10 +969,13 @@ class DBLBible( Bible ):
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "DBLBible.load: Didn't find any regularly named USX files in '{}'".format( self.USXFolderPath ) )
+                print( "DBLBible.loadBooks: Didn't find any regularly named USX files in '{}'".format( self.USXFolderPath ) )
 
         self.doPostLoadProcessing()
     # end of DBLBible.loadBooks
+
+    def load( self ):
+        self.loadBooks()
 # end of class DBLBible
 
 
@@ -1031,7 +1004,7 @@ def demo():
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL C/ Trying installed {} module".format( singleModule ) )
         DBL_Bible = DBLBible( testFolder, singleModule )
-        DBL_Bible.loadBooks()
+        DBL_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
             BBB = 'JN1'
             if BBB in DBL_Bible:
@@ -1053,7 +1026,7 @@ def demo():
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             DBL_Bible = DBLBible( testFolder, testFilename )
-            DBL_Bible.loadBooks()
+            DBL_Bible.load()
 
 
     if 0: # all discovered modules in the test folder
@@ -1083,7 +1056,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 DB = DBLBible( testFolder )
                 DB.loadDBLMetadata()
-                DB.load()
+                DB.preload()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( DB )
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 #DBErrors = DB.getErrors()
@@ -1105,7 +1078,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 DB = DBLBible( testFolder )
                 DB.loadDBLBooksNames()
-                #DB.load()
+                #DB.preload()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( DB )
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 #DBErrors = DB.getErrors()

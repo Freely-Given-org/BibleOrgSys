@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-04' # by RJH
+LastModifiedDate = '2015-06-10' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
@@ -43,10 +43,10 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from USFMFilenames import USFMFilenames
+from PTXBible import loadPTXSSFData
 from ESFMFile import ESFMFile
 from ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from Bible import Bible
-from USFMBible import loadSSFData
 
 
 
@@ -239,11 +239,15 @@ class ESFMBible( Bible ):
             print( self.USFMFilenamesObject )
 
         # Attempt to load the SSF file
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.ssfFilepath = None
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
-            loadSSFData( self, self.ssfFilepath )
+            SSFDict = loadPTXSSFData( self, self.ssfFilepath )
+            if SSFDict:
+                self.suppliedMetadata['SSF'] = SSFDict
+                self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
         #if self.name is None:
@@ -262,6 +266,15 @@ class ESFMBible( Bible ):
         self.dontLoadBook = []
         self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
     # end of ESFMBible.__init_
+
+
+    def preload( self ):
+        """
+        """
+        # NEEDS WRITING XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+        self.preloadDone = True
+    # end of ESFMBible.preload
 
 
     #def loadMetadata( self, ssfFilepath ):
@@ -403,6 +416,8 @@ class ESFMBible( Bible ):
     def loadBook( self, BBB, filename=None ):
         """
         Load the requested book if it's not already loaded.
+
+        NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
@@ -446,11 +461,13 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadBookMP
 
 
-    def load( self ):
+    def loadBooks( self ):
         """
         Load all the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("ESFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+
+        if not self.preloadDone: self.preload()
 
         if self.maximumPossibleFilenameTuples:
             # First try to load the dictionaries
@@ -480,6 +497,9 @@ class ESFMBible( Bible ):
         if 'Missing' in self.semanticDict: print( "Missing:", self.semanticDict['Missing'] )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
+
+    def load( self ):
+        self.loadBooks()
 # end of class ESFMBible
 
 
