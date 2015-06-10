@@ -7255,11 +7255,11 @@ class BibleWriter( InternalBible ):
             #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman", "Liberation-Sans-Bold"
         #else:
             #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman-Regular", "FreeSans-Bold"
-        defaultTextFontname, defaultHeadingFontname = "Charis-SIL-Regular", "Andika-Regular"
-        topLineColor = "opaque"
-        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
-        #defaultVerseNumberFontcolor = "DarkOrange1"
-        namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
+        defaultTextFontname, defaultHeadingFontname = 'Charis-SIL', 'Andika' # was 'Charis-SIL-Regular', 'Andika-Regular'
+        topLineColor = 'opaque'
+        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = 'indigo', 'red1', 'royalBlue'
+        #defaultVerseNumberFontcolor = 'DarkOrange1'
+        namingFormat = 'Short # 'Short' or 'Long' -- affects folder and filenames
         colorVerseNumbersFlag = False
         #digitSpace = chr(8199) # '\u2007'
         verseDigitSubstitutions = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', }
