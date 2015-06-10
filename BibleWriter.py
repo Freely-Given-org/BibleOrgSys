@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-10' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -7259,7 +7259,7 @@ class BibleWriter( InternalBible ):
         topLineColor = 'opaque'
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = 'indigo', 'red1', 'royalBlue'
         #defaultVerseNumberFontcolor = 'DarkOrange1'
-        namingFormat = 'Short # 'Short' or 'Long' -- affects folder and filenames
+        namingFormat = 'Short' # 'Short' or 'Long' -- affects folder and filenames
         colorVerseNumbersFlag = False
         #digitSpace = chr(8199) # '\u2007'
         verseDigitSubstitutions = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', }

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-08' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -527,10 +527,11 @@ class InternalBible:
                     self.settingsDict[newKey] = value
 
         elif applyMetadataType == 'SSF':
+            # This is a special case (coz it's inside the PTX metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
-            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX']['SSF']), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata['PTX']['SSF'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
@@ -544,8 +545,8 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
-            if self.encoding is None and 'Encoding' in self.suppliedMetadata['SSF']: # See if the SSF file gives some help to us
-                ssfEncoding = self.suppliedMetadata['SSF']['Encoding']
+            if self.encoding is None and 'Encoding' in self.suppliedMetadata['PTX']['SSF']: # See if the SSF file gives some help to us
+                ssfEncoding = self.suppliedMetadata['PTX']['SSF']['Encoding']
                 if ssfEncoding == '65001': self.encoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.verbosityLevel > 0:

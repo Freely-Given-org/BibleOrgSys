@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-10' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
@@ -56,6 +56,20 @@ from Bible import Bible
                     #'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
 #BibleFilenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
+# end of t
+
 
 
 #def removeUnwantedTupleExtensions( fnTuples ):
@@ -215,6 +229,17 @@ class ESFMBible( Bible ):
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation = sourceFolder, givenName, givenAbbreviation
 
+        self.dontLoadBook = []
+        self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
+    # end of ESFMBible.__init_
+
+
+    def preload( self ):
+        """
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("preload() from {}").format( self.sourceFolder ) )
+
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
@@ -238,15 +263,17 @@ class ESFMBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
             print( self.USFMFilenamesObject )
 
-        # Attempt to load the SSF file
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
+
+        # Attempt to load the SSF file
         self.ssfFilepath = None
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
             SSFDict = loadPTXSSFData( self, self.ssfFilepath )
             if SSFDict:
-                self.suppliedMetadata['SSF'] = SSFDict
+                if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
+                self.suppliedMetadata['PTX']['SSF'] = SSFDict
                 self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
@@ -262,16 +289,6 @@ class ESFMBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
-
-        self.dontLoadBook = []
-        self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
-    # end of ESFMBible.__init_
-
-
-    def preload( self ):
-        """
-        """
-        # NEEDS WRITING XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
         self.preloadDone = True
     # end of ESFMBible.preload

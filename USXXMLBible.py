@@ -171,6 +171,16 @@ class USXXMLBible( Bible ):
         if not self.name: self.name = os.path.basename( self.givenFolderName )
         if not self.name: self.name = os.path.basename( self.givenFolderName[:-1] ) # Remove the final slash
         if not self.name: self.name = "USX Bible"
+    # end of USXXMLBible.__init_
+
+
+    def preload( self ):
+        """
+        Loads the SSF file if it can be found.
+        Tries to determine USX filename pattern.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
@@ -181,12 +191,40 @@ class USXXMLBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
             self.possibleFilenameDict[BBB] = filename
-    # end of USXXMLBible.__init_
+
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        if self.ssfFilepath is None: # it might have been loaded first
+            # Attempt to load the SSF file
+            #self.suppliedMetadata, self.settingsDict = {}, {}
+            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+            #print( "ssfFilepathList", ssfFilepathList )
+            if len(ssfFilepathList) > 1:
+                logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+            if len(ssfFilepathList) >= 1: # Seems we found the right one
+                from PTXBible import loadPTXSSFData
+                SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
+                if SSFDict:
+                    if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
+                    self.suppliedMetadata['PTX']['SSF'] = SSFDict
+                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+
+        #self.name = self.givenName
+        #if self.name is None:
+            #for field in ('FullName','Name',):
+                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
+        #if not self.name: self.name = os.path.basename( self.sourceFolder )
+        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        #if not self.name: self.name = "USFM Bible"
+
+        self.preloadDone = True
+    # end of USFMBible.preload
 
 
     def loadBook( self, BBB, filename=None ):
         """
         Used for multiprocessing.
+
+        NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
@@ -211,12 +249,14 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.loadBook
 
 
-    def load( self ):
+    def loadBooks( self ):
         """
         Load the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USXXMLBible: Loading {} from {}...").format( self.name, self.givenFolderName ) )
+            print( _("USXXMLBible: Loading books {} from {}...").format( self.name, self.givenFolderName ) )
+
+        if not self.preloadDone: self.preload()
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -225,9 +265,9 @@ class USXXMLBible( Bible ):
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
             else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.givenFolderName ) )
-        if foundFolders: logging.info( "USXXMLBible.load: Surprised to see subfolders in {!r}: {}".format( self.givenFolderName, foundFolders ) )
+        if foundFolders: logging.info( "USXXMLBible.loadBooks: Surprised to see subfolders in {!r}: {}".format( self.givenFolderName, foundFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in {!r}".format( self.givenFolderName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.loadBooks: Couldn't find any files in {!r}".format( self.givenFolderName ) )
             return # No use continuing
 
         #if 0: # We don't have a getSSFFilenames function
@@ -236,7 +276,8 @@ class USXXMLBible( Bible ):
             #if len(ssfFilepathList) == 1: # Seems we found the right one
                 #SSFDict = loadPTXSSFData( ssfFilepathList[0] )
                 #if SSFDict:
-                    #self.suppliedMetadata['SSF'] = SSFDict
+                    #if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
+                    #self.suppliedMetadata['PTX']['SSF'] = SSFDict
                     #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -280,7 +321,7 @@ class USXXMLBible( Bible ):
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "USXXMLBible.load: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
+                print( "USXXMLBible.loadBooks: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USX file)
                 isUSX = False
@@ -308,9 +349,12 @@ class USXXMLBible( Bible ):
                         self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            if self.books: print( "USXXMLBible.load: Found {} irregularly named USX files".format( len(self.books) ) )
+            if self.books: print( "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
         self.doPostLoadProcessing()
-    # end of USXXMLBible.load
+    # end of USXXMLBible.loadBooks
+
+    def load( self ):
+        self.loadBooks()
 # end of class USXXMLBible
 
 

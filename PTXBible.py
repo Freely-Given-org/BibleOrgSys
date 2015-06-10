@@ -541,6 +541,9 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        self.suppliedMetadata['PTX'] = {}
+
         if self.ssfFilepath is None: # it might have been loaded first
             # Attempt to load the SSF file
             #self.suppliedMetadata, self.settingsDict = {}, {}
@@ -552,7 +555,7 @@ class PTXBible( Bible ):
                 from PTXBible import loadPTXSSFData
                 SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
                 if SSFDict:
-                    self.suppliedMetadata['SSF'] = SSFDict
+                    self.suppliedMetadata['PTX']['SSF'] = SSFDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
@@ -568,9 +571,6 @@ class PTXBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
-
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        self.suppliedMetadata['PTX'] = {}
 
         self.loadPTXBooksNames() # from XML (if it exists)
         self.loadPTXProjectUsers() # from XML (if it exists)
