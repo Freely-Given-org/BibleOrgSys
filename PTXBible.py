@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-10' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.03'
@@ -514,7 +514,7 @@ class PTXBible( Bible ):
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload( {} )").format( sourceFolder ) )
+            print( t("preload() from {}").format( self.sourceFolder ) )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 

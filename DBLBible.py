@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-10' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.15'
@@ -223,7 +223,7 @@ class DBLBible( Bible ):
         Load the XML metadata files.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload()") )
+            print( t("preload() from {}").format( self.sourceFolder ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("DBLBible: Loading {} from {}...").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
