@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-09' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -171,6 +171,8 @@ class USXXMLBible( Bible ):
         if not self.name: self.name = os.path.basename( self.givenFolderName )
         if not self.name: self.name = os.path.basename( self.givenFolderName[:-1] ) # Remove the final slash
         if not self.name: self.name = "USX Bible"
+
+        self.ssfFilepath = None
     # end of USXXMLBible.__init_
 
 
@@ -192,21 +194,22 @@ class USXXMLBible( Bible ):
         for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
             self.possibleFilenameDict[BBB] = filename
 
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        if self.ssfFilepath is None: # it might have been loaded first
-            # Attempt to load the SSF file
-            #self.suppliedMetadata, self.settingsDict = {}, {}
-            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            #print( "ssfFilepathList", ssfFilepathList )
-            if len(ssfFilepathList) > 1:
-                logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
-            if len(ssfFilepathList) >= 1: # Seems we found the right one
-                from PTXBible import loadPTXSSFData
-                SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
-                if SSFDict:
-                    if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                    self.suppliedMetadata['PTX']['SSF'] = SSFDict
-                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+        if 0: # we don't have a getSSFFilenames function :(
+            if self.suppliedMetadata is None: self.suppliedMetadata = {}
+            if self.ssfFilepath is None: # it might have been loaded first
+                # Attempt to load the SSF file
+                #self.suppliedMetadata, self.settingsDict = {}, {}
+                ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+                #print( "ssfFilepathList", ssfFilepathList )
+                if len(ssfFilepathList) > 1:
+                    logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+                if len(ssfFilepathList) >= 1: # Seems we found the right one
+                    from PTXBible import loadPTXSSFData
+                    SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
+                    if SSFDict:
+                        if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
+                        self.suppliedMetadata['PTX']['SSF'] = SSFDict
+                        self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
         #if self.name is None:
