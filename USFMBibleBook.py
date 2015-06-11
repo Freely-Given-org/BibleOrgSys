@@ -3,7 +3,7 @@
 #
 # USFMBibleBook.py
 #
-# Module handling the USFM markers for Bible books
+# Module handling the importation of USFM Bible books
 #
 # Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-24' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.44'
@@ -233,7 +233,7 @@ def demo():
             demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
-    if 1: # Test a whole folder full of files
+    if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):

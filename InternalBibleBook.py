@@ -42,10 +42,10 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-04' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.92'
+ProgVersion = '0.93'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -68,7 +68,7 @@ from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_PRINTABLE_MARK
 from BibleReferences import BibleAnchorReference
 
 
-INTERNAL_SFMS_TO_REMOVE = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+INTERNAL_SFMS_TO_REMOVE = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
 INTERNAL_SFMS_TO_REMOVE = sorted( INTERNAL_SFMS_TO_REMOVE, key=len, reverse=True ) # List longest first
 
 nfvnCount = owfvnCount = rtsCount = sahtCount = 0

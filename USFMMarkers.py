@@ -3,7 +3,7 @@
 #
 # USFMMarkers.py
 #
-# Module handling USFMMarkers
+# Module handling Unified Standard Format Markers (USFMs)
 #
 # Copyright (C) 2011-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -25,6 +25,8 @@
 """
 Module handling USFMMarkers.
 
+See http://paratext.org/about/usfm
+
 Contains functions:
     removeUSFMCharacterField( marker, originalText, closedFlag )
     replaceUSFMCharacterFields( replacements, originalText )
@@ -34,10 +36,10 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-21' # by RJH
+LastModifiedDate = '2015-06-11' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -481,26 +483,34 @@ class USFMMarkers:
     # end of USFMMarkers.getInternalMarkersList
 
 
-    def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
+    def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, includeNestedMarkers=False, expandNumberableMarkers=False ):
         """
         Returns a list of all possible character markers.
         These are fields that need to be displayed inline with the text, albeit with special formatting.
         This excludes footnote and xref markers.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #print( marker, self.markerOccursIn(marker) )
             if self.markerOccursIn(marker) in ("Text","Canonical Text","Poetry","Table row","Introduction",):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
+                if includeNestedMarkers:
+                    nestedMarker = '\\+'+marker if includeBackslash else '+'+marker
+                    result.append( nestedMarker )
                 if includeEndMarkers:
                     assert( self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row" )
                     result.append( adjMarker + '*' )
+                    if includeNestedMarkers: result.append( nestedMarker + '*' )
                 if expandNumberableMarkers and self.isNumberableMarker( marker ):
                     for digit in ('1','2','3',):
                         result.append( adjMarker+digit )
+                        if includeNestedMarkers: result.append( nestedMarker+digit )
                         if includeEndMarkers:
                             result.append( adjMarker + digit + '*' )
+                            if includeNestedMarkers: result.append( nestedMarker + digit + '*' )
         return result
     # end of USFMMarkers.getCharacterMarkersList
 
@@ -711,8 +721,12 @@ def demo():
     print( "\nCanonical text New line markers are", len(pm), pm )
     im = um.getInternalMarkersList()
     print( "\nInternal (character) markers are", len(im), im )
+
     cm = um.getCharacterMarkersList()
-    print( "\nCharacter markers are", len(cm), cm )
+    print( "\nCharacter markers (standard) are", len(cm), cm )
+    cm = um.getCharacterMarkersList( includeNestedMarkers=True )
+    print( "\nCharacter markers (incl. nested) are", len(cm), cm )
+
     nm = um.getNoteMarkersList()
     print( "\nNote markers are", len(nm), nm )
     for m in ('ab', 'h', 'toc1', 'toc4', 'toc5', 'q', 'q1', 'q2', 'q3', 'q4', 'q5', 'p', 'p1', 'P', 'f', 'f1', 'f*' ):
