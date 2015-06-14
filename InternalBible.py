@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-14' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -468,9 +468,15 @@ class InternalBible:
         Using the dictionary at self.suppliedMetadata[applyMetadataType],
             load the fields into self.settingsDict
             and try to standardise it at the same time.
+
+        Note that this function also takes 'SSF' as a special case
+            since it's a commonly used subset of self.suppliedMetadata['PTX'].
+
+        Note that some importers might prefer to supply their own function instead.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata( {} )").format( applyMetadataType ) )
+            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','TheWord','Unbound','VerseView', ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )

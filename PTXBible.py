@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-14' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.03'
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -206,6 +206,8 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
 
 
 
+# The following loadPTX...() functions are placed here because
+#   they are also used by the DBL and/or other Bible importers
 def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     """
     Process the Paratext SSF data file from the given filepath into SSFDict.
@@ -315,7 +317,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
 
 
 
-def loadPTXLanguages( self ):
+def loadPTXLanguages( BibleObject ):
     """
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
@@ -323,8 +325,8 @@ def loadPTXLanguages( self ):
         print( t("loadPTXLanguagess()") )
 
     languageFilenames = []
-    for something in os.listdir( self.sourceFilepath ):
-        somepath = os.path.join( self.sourceFilepath, something )
+    for something in os.listdir( BibleObject.sourceFilepath ):
+        somepath = os.path.join( BibleObject.sourceFilepath, something )
         if os.path.isfile(somepath) and something.upper().endswith('.LDS'): languageFilenames.append( something )
     #if len(languageFilenames) > 1:
         #logging.error( "Got more than one language file: {}".format( languageFilenames ) )
@@ -334,7 +336,7 @@ def loadPTXLanguages( self ):
     for languageFilename in languageFilenames:
         languageName = languageFilename[:-4] # Remove the .lds
 
-        languageFilepath = os.path.join( self.sourceFilepath, languageFilename )
+        languageFilepath = os.path.join( BibleObject.sourceFilepath, languageFilename )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading language from {}...".format( languageFilepath ) )
 
         assert( languageName not in PTXLanguages )
@@ -375,7 +377,7 @@ def loadPTXLanguages( self ):
 
 
 
-def loadPTXVersifications( self ):
+def loadPTXVersifications( BibleObject ):
     """
     Load the versification files (which is a text file)
         and parse it into the dictionary PTXVersifications.
@@ -384,14 +386,14 @@ def loadPTXVersifications( self ):
         print( t("loadPTXVersifications()") )
 
     #versificationFilename = 'versification.vrs'
-    #versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
+    #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
     #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
 
     #PTXVersifications = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
     versificationFilenames = []
-    for something in os.listdir( self.sourceFilepath ):
-        somepath = os.path.join( self.sourceFilepath, something )
+    for something in os.listdir( BibleObject.sourceFilepath ):
+        somepath = os.path.join( BibleObject.sourceFilepath, something )
         if os.path.isfile(somepath) and something.upper().endswith('.VRS'): versificationFilenames.append( something )
     #if len(versificationFilenames) > 1:
         #logging.error( "Got more than one versification file: {}".format( versificationFilenames ) )
@@ -401,7 +403,7 @@ def loadPTXVersifications( self ):
     for versificationFilename in versificationFilenames:
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
-        versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
+        versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
 
         assert( versificationName not in PTXVersifications )
@@ -576,6 +578,7 @@ class PTXBible( Bible ):
         self.loadPTXProjectUsers() # from XML (if it exists)
         self.loadPTXLexicon() # from XML (if it exists)
         self.loadPTXSpellingStatus() # from XML (if it exists)
+        self.loadPTXComments() # from XML (if they exist)
         self.loadPTXAutocorrects() # from text file (if it exists)
         self.loadPTXStyles() # from text files (if they exist)
         result = loadPTXVersifications( self ) # from text file (if it exists)
@@ -857,7 +860,7 @@ class PTXBible( Bible ):
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}...".format( spellingStatusFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading spelling status data from {}...".format( spellingStatusFilepath ) )
         self.tree = ElementTree().parse( spellingStatusFilepath )
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
@@ -912,10 +915,109 @@ class PTXBible( Bible ):
                 else:
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(spellingStatusDict['SpellingWords']) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         #print( "spellingStatusDict", spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX']['SpellingStatus'] = spellingStatusDict
     # end of PTXBible.loadPTXSpellingStatus
+
+
+    def loadPTXComments( self ):
+        """
+        Load the Comments.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("loadPTXComments()") )
+
+        commentFilenames = []
+        for something in os.listdir( self.sourceFilepath ):
+            somethingUPPER = something.upper()
+            somepath = os.path.join( self.sourceFilepath, something )
+            if os.path.isfile(somepath) and somethingUPPER.startswith('COMMENTS_') and somethingUPPER.endswith('.XML'):
+                commentFilenames.append( something )
+        #if len(commentFilenames) > 1:
+            #logging.error( "Got more than one comment file: {}".format( commentFilenames ) )
+
+        if commentFilenames:
+            commentsDict = {}
+            #loadErrors = []
+
+        for commentFilename in commentFilenames:
+            commenterName = commentFilename[9:-4] # Remove the .xml
+            assert( commenterName not in commentsDict )
+            commentsDict[commenterName] = []
+
+            commentFilepath = os.path.join( self.sourceFilepath, commentFilename )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading comments from {}...".format( commentFilepath ) )
+
+            self.tree = ElementTree().parse( commentFilepath )
+            assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+
+            # Find the main container
+            if self.tree.tag=='CommentList':
+                location = "PTX {} file for {}".format( self.tree.tag, commenterName )
+                BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, location )
+                BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
+                BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+
+                ## Process the attributes first
+                #peerSharing = None
+                #for attrib,value in self.tree.items():
+                    #if attrib=='PeerSharing': peerSharing = value
+                    #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                #commentsDict['PeerSharing'] = peerSharing
+
+                # Now process the actual entries
+                for element in self.tree:
+                    sublocation = element.tag + ' in ' + location
+                    #print( "Processing {}...".format( sublocation ) )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+
+                    # Now process the subelements
+                    if element.tag == 'Comment':
+                        commentDict = {}
+                        ## Process the user attributes first
+                        #word = state = None
+                        #for attrib,value in element.items():
+                            #if attrib=='Word': word = value
+                            #elif attrib=='State': state = value
+                            #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                        #if 'SpellingWords' not in commentsDict: commentsDict['SpellingWords'] = {}
+                        #assert( word not in commentsDict['SpellingWords'] ) # no duplicates allowed presumably
+
+                        for subelement in element:
+                            sub2location = subelement.tag + ' ' + sublocation
+                            #print( "  Processing {}...".format( sub2location ) )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
+                            BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
+                            assert( subelement.tag not in commentDict ) # No duplicates please
+                            if subelement.tag in ( 'Thread', 'User', 'Date', 'VerseRef', 'SelectedText', 'StartPosition', 'ContextBefore', 'ContextAfter', 'Status', 'Type' ):
+                                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
+                                commentDict[subelement.tag] = subelement.text # can be None
+                            elif subelement.tag == 'Contents':
+                                contentsText = ''
+                                if subelement.text: contentsText += subelement.text.lstrip()
+                                for sub2element in subelement:
+                                    sub3location = sub2element.tag + ' ' + sub2location
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
+                                    if sub2element.text:
+                                        contentsText += '<{}>{}</{}>'.format( sub2element.tag, sub2element.text, sub2element.tag )
+                                    else: contentsText += '<{}/>'.format( sub2element.tag )
+                                #print( 'contentsText', repr(contentsText) )
+                                commentDict[subelement.tag] = contentsText
+                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
+                    else:
+                        logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
+                    #print( "commentDict", commentDict )
+                    commentsDict[commenterName].append( commentDict )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} commenters.".format( len(commentsDict) ) )
+        #print( "commentsDict", commentsDict )
+        if commentsDict: self.suppliedMetadata['PTX']['Comments'] = commentsDict
+    # end of PTXBible.loadPTXComments
 
 
     def loadPTXAutocorrects( self ):
@@ -1024,8 +1126,8 @@ class PTXBible( Bible ):
                                     if name in currentStyle: # already
                                         logging.error( "loadPTXStyles found duplicate {!r}={!r} in {} {} at line #{}".format( name, value, styleName, styleMarker, lineCount ) )
                                     currentStyle[name] = value
-                                else: print( "What's this style marker? {!r}".format( line ) )
-                            else: print( "What's this style line? {!r}".format( line ) )
+                                else: logging.error( "What's this style marker? {!r}".format( line ) )
+                            else: logging.error( "What's this style line? {!r}".format( line ) )
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
                     logging.error( _("loadPTXStyles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )

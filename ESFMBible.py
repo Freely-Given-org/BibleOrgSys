@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-12' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.58'
@@ -223,8 +223,8 @@ class ESFMBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "ESFM Bible object"
-        self.objectTypeString = "ESFM"
+        self.objectNameString = 'ESFM Bible object'
+        self.objectTypeString = 'ESFM'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation = sourceFolder, givenName, givenAbbreviation

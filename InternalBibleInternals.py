@@ -43,10 +43,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-22' # by RJH
+LastModifiedDate = '2015-06-12' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.60'
+ProgVersion = '0.61'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -71,17 +71,19 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp~', )
+BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
 """
-    c~  anything after the chapter number on a \c line
+    c~  anything after the chapter number on a \c line is split off into here --
+            note that it can be blank (but have extras) if the chapter number is footnoted
     c#  the chapter number in the correct position to be printed
             This is usually a duplicate of the c field, but may have come from the cp field instead
             Usually only one of c or c# is used for exports
-    v~  verse text -- anything after the verse number on a \v line
-    p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.)
-    cl¤ used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
-    vp~ used for the vp (character field) when it is converted to a separate (newline) field
-            This is inserted BEFORE the v (and v~) marker(s)
+    v~  verse text -- anything after the verse number on a \v line is split off into here
+    p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.) is split off into here
+    cl¤ used to rename cl markers BEFORE the '\c 1' marker --
+                            represents the text for "chapter" to be used throughout the book
+    vp# used for the vp (character field) when it is copied and converted to a separate (newline) field
+            This is inserted BEFORE the v (and v~) marker(s) that contained the vp (character) field.
 
     NOTE: Don't use any of the following symbols here: = ¬ or slashes.
 """
@@ -911,19 +913,19 @@ class InternalBibleIndex:
 
                     # Check the various series of markers
                     if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
-                    elif marker == 'c#': assert( nextMarker in ( 'v', 'vp~', ) )
+                    elif marker == 'c#': assert( nextMarker in ( 'v', 'vp#', ) )
                     elif marker == 'v':
                         if foundMarkers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    elif marker == 'vp~': assert( nextMarker == 'v' )
+                    elif marker == 'vp#': assert( nextMarker == 'v' )
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
-                        if marker=='p' and nextMarker not in ('v','p~','vp~','c#','¬p'):
+                        if marker=='p' and nextMarker not in ('v','p~','vp#','c#','¬p'):
                             if lastKey: print( "InternalBibleIndex.checkIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey ) )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey ) )

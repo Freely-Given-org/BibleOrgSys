@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-12' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -502,7 +502,7 @@ class BibleWriter( InternalBible ):
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
-                if pseudoMarker in ('c#','vp~',):
+                if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #value = cleanText # (temp)
@@ -513,7 +513,7 @@ class BibleWriter( InternalBible ):
                             USFM += '\n\\v {}'.format( vNum )
                     value1 = value2 = None
 
-                if pseudoMarker == 'vp~': continue
+                if pseudoMarker == 'vp#': continue
                 elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     #if BibleOrgSysGlobals.debugFlag: assert( value )
                     if pseudoMarker=='v' and removeVerseBridges:
@@ -651,7 +651,7 @@ class BibleWriter( InternalBible ):
                                 if BibleOrgSysGlobals.debugFlag: halt
                         ESFMLine = ' ' * indentLevel * indentSize
 
-                        if pseudoMarker in ('c#','vp~',):
+                        if pseudoMarker in ('c#','vp#',):
                             ignoredMarkers.add( pseudoMarker )
                             continue
 
@@ -663,7 +663,7 @@ class BibleWriter( InternalBible ):
                                     ESFMLine += '\n\\v {}'.format( vNum )
                             value1 = value2 = None
 
-                        if pseudoMarker == 'vp~': continue
+                        if pseudoMarker == 'vp#': continue
                         elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                             #if BibleOrgSysGlobals.debugFlag: assert( value )
                             if pseudoMarker=='v' and 0 and removeVerseBridges:
@@ -783,7 +783,7 @@ class BibleWriter( InternalBible ):
                         C = text
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n\nChapter {}".format( text ) )
-                    elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                         gotVP = text # Just remember it for now
                     elif marker == 'v':
                         V = text
@@ -1170,7 +1170,7 @@ class BibleWriter( InternalBible ):
                         C, V = adjText, '0'
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n\nChapter {}".format( adjText ) )
-                    elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                         gotVP = adjText # Just remember it for now
                     elif marker == 'v':
                         V = adjText
@@ -1401,7 +1401,7 @@ class BibleWriter( InternalBible ):
                     if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
                 elif marker == 'c#': # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
                     #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
@@ -2165,7 +2165,7 @@ class BibleWriter( InternalBible ):
                     # Put verse 1 id here on the chapter number (since we don't output a v1 number)
                     writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','CT'+text)] )
                     writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
@@ -2247,7 +2247,7 @@ class BibleWriter( InternalBible ):
                     if text or extras:
                         writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','verseText'), noTextCheck=True )
 
-                elif marker in ('nb','cl','vp~',): # These are the markers that we can safely ignore for this export
+                elif marker in ('nb','cl','vp#',): # These are the markers that we can safely ignore for this export
                     if BibleOrgSysGlobals.debugFlag and marker=='nb': assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 else:
@@ -2816,7 +2816,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'CS'+C, text )
                     #thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
                     thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     if vOpen: lastHTML += '</span>'; vOpen = False
@@ -3404,7 +3404,7 @@ class BibleWriter( InternalBible ):
                     xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
                     V = adjText
@@ -3851,7 +3851,7 @@ class BibleWriter( InternalBible ):
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
                     V = adjText
@@ -4549,7 +4549,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker=='v':
                     if gotVP: # this is the verse number to be published
@@ -4835,7 +4835,7 @@ class BibleWriter( InternalBible ):
                     haveOpenChapter = True
                 elif marker == 'c#': # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
@@ -5010,7 +5010,7 @@ class BibleWriter( InternalBible ):
                     haveOpenChapter = True
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
@@ -5173,7 +5173,7 @@ class BibleWriter( InternalBible ):
                     haveOpenChapter = True
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
@@ -5795,7 +5795,7 @@ class BibleWriter( InternalBible ):
                     writeIndexEntry( writerObject, ix )
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker=='v':
                     if gotVP: # this is the verse number to be published
@@ -6561,7 +6561,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
-                if marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                if marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v': # handle versification differences here
                     vCount += 1
@@ -6943,7 +6943,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'c': C, V = text, '0'
                 elif marker in ('c#',):
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
@@ -7112,7 +7112,7 @@ class BibleWriter( InternalBible ):
                     C, V = text, '0'
                 elif marker in ( 'c#', ): # Just ignore these unneeded fields
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     started = True
@@ -7650,7 +7650,7 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n' + cleanText
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = cleanText # Just remember it for now
                 elif marker == 'v':
                     V = cleanText
@@ -8853,7 +8853,7 @@ class BibleWriter( InternalBible ):
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
                     documentText.insertString( textCursor, " ", False )
                     textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
                     V = adjText
@@ -9212,7 +9212,7 @@ class BibleWriter( InternalBible ):
                         elif marker=='c#':
                             allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
                             bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
-                        elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                        elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                             gotVP = text # Just remember it for now
                         elif marker=='v':
                             V = text

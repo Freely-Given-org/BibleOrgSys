@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-12' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.93'
@@ -653,11 +653,11 @@ class InternalBibleBook:
 
             # Save it all and finish off
             if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
-            if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
-                #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
+            if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
+                #print( "InternalBibleBook.processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
                 if BibleOrgSysGlobals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
                 vEntry = self._processedLines.pop() # because the v field has already been written
-                self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
+                self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
             # Get ready for the next loop
             ixFN = adjText.find( '\\f ' )
@@ -1071,7 +1071,7 @@ class InternalBibleBook:
                 C, V = text, '0'
                 if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
                 openMarkers.append( marker )
-            elif marker == 'vp~':
+            elif marker == 'vp#':
                 if BibleOrgSysGlobals.debugFlag: assert( nextMarker == 'v' )
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
@@ -1815,7 +1815,7 @@ class InternalBibleBook:
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp#',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )
@@ -2665,7 +2665,7 @@ class InternalBibleBook:
             elif marker == 'c#':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
-            elif marker == 'vp~':
+            elif marker == 'vp#':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
                 continue
             else: # it's not our (non-USFM) c~,c#,v~ markers
