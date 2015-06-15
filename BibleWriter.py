@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-12' # by RJH
+LastModifiedDate = '2015-06-15' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -513,8 +513,7 @@ class BibleWriter( InternalBible ):
                             USFM += '\n\\v {}'.format( vNum )
                     value1 = value2 = None
 
-                if pseudoMarker == 'vp#': continue
-                elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     #if BibleOrgSysGlobals.debugFlag: assert( value )
                     if pseudoMarker=='v' and removeVerseBridges:
                         vString = value

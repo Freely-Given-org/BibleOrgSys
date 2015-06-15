@@ -33,17 +33,17 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-15' # by RJH
+LastModifiedDate = '2015-06-16' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.05'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
-import os, logging
+import os, sys, logging
 from collections import OrderedDict
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
@@ -330,6 +330,7 @@ def loadPTXLanguages( BibleObject ):
         if os.path.isfile(somepath) and something.upper().endswith('.LDS'): languageFilenames.append( something )
     #if len(languageFilenames) > 1:
         #logging.error( "Got more than one language file: {}".format( languageFilenames ) )
+    if not languageFilenames: return
 
     PTXLanguages = {}
 
@@ -397,6 +398,7 @@ def loadPTXVersifications( BibleObject ):
         if os.path.isfile(somepath) and something.upper().endswith('.VRS'): versificationFilenames.append( something )
     #if len(versificationFilenames) > 1:
         #logging.error( "Got more than one versification file: {}".format( versificationFilenames ) )
+    if not versificationFilenames: return
 
     PTXVersifications = {}
 
@@ -574,18 +576,49 @@ class PTXBible( Bible ):
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
 
-        self.loadPTXBooksNames() # from XML (if it exists)
-        self.loadPTXProjectUsers() # from XML (if it exists)
-        self.loadPTXLexicon() # from XML (if it exists)
-        self.loadPTXSpellingStatus() # from XML (if it exists)
-        self.loadPTXComments() # from XML (if they exist)
-        self.loadPTXBiblicalTerms() # from XML (if they exist)
-        self.loadPTXAutocorrects() # from text file (if it exists)
-        self.loadPTXStyles() # from text files (if they exist)
-        result = loadPTXVersifications( self ) # from text file (if it exists)
-        if result: self.suppliedMetadata['PTX']['Versifications'] = result
-        result = loadPTXLanguages( self ) # from INI file (if it exists)
-        if result: self.suppliedMetadata['PTX']['Languages'] = result
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            # Load the paratext metadata (and stop if any of them fail)
+            self.loadPTXBooksNames() # from XML (if it exists)
+            self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
+            self.loadPTXLexicon() # from XML (if it exists)
+            self.loadPTXSpellingStatus() # from XML (if it exists)
+            self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
+            self.loadPTXBiblicalTerms() # from XML (if they exist)
+            self.loadPTXProgress() # from XML (if it exists)
+            self.loadPTXAutocorrects() # from text file (if it exists)
+            self.loadPTXStyles() # from text files (if they exist)
+            result = loadPTXVersifications( self ) # from text file (if it exists)
+            if result: self.suppliedMetadata['PTX']['Versifications'] = result
+            result = loadPTXLanguages( self ) # from INI file (if it exists)
+            if result: self.suppliedMetadata['PTX']['Languages'] = result
+        else: # normal operation
+            # Put all of these in try blocks so they don't crash us if they fail
+            try: self.loadPTXBooksNames() # from XML (if it exists)
+            except Exception as err: logging.warning( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
+            except Exception as err: logging.warning( 'loadPTXProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXLexicon() # from XML (if it exists)
+            except Exception as err: logging.warning( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXSpellingStatus() # from XML (if it exists)
+            except Exception as err: logging.warning( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
+            except Exception as err: logging.warning( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXBiblicalTerms() # from XML (if they exist)
+            except Exception as err: logging.warning( 'loadPTXBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXProgress() # from XML (if it exists)
+            except Exception as err: logging.warning( 'loadPTXProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXAutocorrects() # from text file (if it exists)
+            except Exception as err: logging.warning( 'loadPTXAutocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXStyles() # from text files (if they exist)
+            except Exception as err: logging.warning( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:
+                result = loadPTXVersifications( self ) # from text file (if it exists)
+                if result: self.suppliedMetadata['PTX']['Versifications'] = result
+            except Exception as err: logging.warning( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:
+                result = loadPTXLanguages( self ) # from INI file (if it exists)
+                if result: self.suppliedMetadata['PTX']['Languages'] = result
+            except Exception as err: logging.warning( 'loadPTXLanguages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
     # end of PTXBible.preload
@@ -937,10 +970,10 @@ class PTXBible( Bible ):
                 commentFilenames.append( something )
         #if len(commentFilenames) > 1:
             #logging.error( "Got more than one comment file: {}".format( commentFilenames ) )
+        if not commentFilenames: return
 
-        if commentFilenames:
-            commentsList = {}
-            #loadErrors = []
+        commentsList = {}
+        #loadErrors = []
 
         for commentFilename in commentFilenames:
             commenterName = commentFilename[9:-4] # Remove the .xml
@@ -1028,28 +1061,28 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("loadPTXBiblicalTerms()") )
 
-        commentFilenames = []
+        BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
             somethingUPPER = something.upper()
             somepath = os.path.join( self.sourceFilepath, something )
             if os.path.isfile(somepath) and somethingUPPER.startswith('BIBLICALTERMS') and somethingUPPER.endswith('.XML'):
-                commentFilenames.append( something )
-        #if len(commentFilenames) > 1:
-            #logging.error( "Got more than one comment file: {}".format( commentFilenames ) )
+                BiblicalTermsFilenames.append( something )
+        #if len(BiblicalTermsFilenames) > 1:
+            #logging.error( "Got more than one BiblicalTerms file: {}".format( BiblicalTermsFilenames ) )
+        if not BiblicalTermsFilenames: return
 
-        if commentFilenames:
-            BiblicalTermsDict = {}
-            #loadErrors = []
+        BiblicalTermsDict = {}
+        #loadErrors = []
 
-        for commentFilename in commentFilenames:
-            versionName = commentFilename[13:-4] # Remove the .xml
+        for BiblicalTermsFilename in BiblicalTermsFilenames:
+            versionName = BiblicalTermsFilename[13:-4] # Remove the .xml
             assert( versionName not in BiblicalTermsDict )
             BiblicalTermsDict[versionName] = {}
 
-            commentFilepath = os.path.join( self.sourceFilepath, commentFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading BiblicalTerms from {}...".format( commentFilepath ) )
+            BiblicalTermsFilepath = os.path.join( self.sourceFilepath, BiblicalTermsFilename )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading BiblicalTerms from {}...".format( BiblicalTermsFilepath ) )
 
-            self.tree = ElementTree().parse( commentFilepath )
+            self.tree = ElementTree().parse( BiblicalTermsFilepath )
             assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
             # Find the main container
@@ -1132,6 +1165,160 @@ class PTXBible( Bible ):
     # end of PTXBible.loadPTXBiblicalTerms
 
 
+    def loadPTXProgress( self ):
+        """
+        Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("loadPTXProgress()") )
+
+        progressFilenames = []
+        for something in os.listdir( self.sourceFilepath ):
+            somethingUPPER = something.upper()
+            somepath = os.path.join( self.sourceFilepath, something )
+            if os.path.isfile(somepath) and somethingUPPER.startswith('PROGRESS') and somethingUPPER.endswith('.XML'):
+                progressFilenames.append( something )
+        #if len(progressFilenames) > 1:
+            #logging.error( "Got more than one progress file: {}".format( progressFilenames ) )
+        if not progressFilenames: return
+
+        ProgressDict = {}
+        #loadErrors = []
+
+        for progressFilename in progressFilenames:
+            versionName = progressFilename[8:-4] # Remove the .xml
+            assert( versionName not in ProgressDict )
+            ProgressDict[versionName] = {}
+
+            progressFilepath = os.path.join( self.sourceFilepath, progressFilename )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading Progress from {}...".format( progressFilepath ) )
+
+            self.tree = ElementTree().parse( progressFilepath )
+            assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+
+            # Find the main container
+            if self.tree.tag=='ProjectProgress':
+                treeLocation = "PTX {} file for {}".format( self.tree.tag, versionName )
+                BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+                # Now process the actual entries
+                for element in self.tree:
+                    elementLocation = element.tag + ' in ' + treeLocation
+                    #print( "Processing {}...".format( elementLocation ) )
+
+                    # Now process the subelements
+                    if element.tag in ( 'ProgressBase', 'GetTextStage', 'ScrTextName' ):
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
+                        ProgressDict[versionName][element.tag] = element.text
+                    elif element.tag == 'StageNames':
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
+                        ProgressDict[versionName][element.tag] = []
+                        for subelement in element:
+                            sublocation = subelement.tag + ' ' + elementLocation
+                            #print( "  Processing {}...".format( sublocation ) )
+                            if subelement.tag == 'string':
+                                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                                ProgressDict[versionName][element.tag].append( subelement.text )
+                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                    elif element.tag == 'PlannedBooks':
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        for subelement in element:
+                            sublocation = subelement.tag + ' ' + elementLocation
+                            #print( "  Processing {}...".format( sublocation ) )
+                            if subelement.tag == 'Books':
+                                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                                assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
+                                ProgressDict[versionName][element.tag] = subelement.text
+                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                    elif element.tag == 'BookStatusList':
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        assert( 'BookStatusDict' not in ProgressDict[versionName] )
+                        ProgressDict[versionName]['BookStatusDict'] = {}
+                        for subelement in element:
+                            sublocation = subelement.tag + ' ' + elementLocation
+                            #print( "  Processing {}...".format( sublocation ) )
+                            bookStatusDict = {}
+                            if subelement.tag == 'BookStatus':
+                                BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                                # Process the BookStatus attributes first
+                                bookNumber = None
+                                for attrib,value in subelement.items():
+                                    if attrib=='BookNum': bookNumber = value
+                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                assert( 'BookNumber' not in bookStatusDict )
+                                bookStatusDict['BookNumber'] = bookNumber
+                                for sub2element in subelement:
+                                    sub2location = sub2element.tag + ' ' + sublocation
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                    assert( subelement.tag not in bookStatusDict ) # No duplicates please
+                                    if sub2element.tag in ( 'Versification', 'StageContents', 'Summaries' ):
+                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
+                                        bookStatusDict[sub2element.tag] = sub2element.text # can be None
+                                    elif sub2element.tag == 'StageStatus':
+                                        BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
+                                        assert( sub2element.tag not in bookStatusDict )
+                                        bookStatusDict[sub2element.tag] = []
+                                        for sub3element in sub2element:
+                                            sub3location = sub3element.tag + ' ' + sub2location
+                                            if sub3element.tag == 'VerseSet':
+                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
+                                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
+                                                # Process the VerseSet attributes first
+                                                references = None
+                                                for attrib,value in sub3element.items():
+                                                    if attrib=='References': references = value
+                                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                bookStatusDict[sub2element.tag].append( (references,sub3element.text) )
+                                            else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                    elif sub2element.tag == 'VersesPerDay':
+                                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
+                                        BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                        assert( sub2element.tag not in bookStatusDict )
+                                        bookStatusDict[sub2element.tag] = []
+                                        for sub3element in sub2element:
+                                            sub3location = sub3element.tag + ' ' + sub2location
+                                            if sub3element.tag == 'int':
+                                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
+                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
+                                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
+                                                bookStatusDict[sub2element.tag].append( sub3element.text )
+                                            else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                    else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            #print( "bookStatusDict", bookStatusDict )
+                            bookNumber = bookStatusDict['BookNumber']
+                            del bookStatusDict['BookNumber']
+                            ProgressDict[versionName]['BookStatusDict'][bookNumber] = bookStatusDict
+                    else:
+                        logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    #print( "bookStatusDict", bookStatusDict )
+                    #ProgressDict[versionName].append( bookStatusDict )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(ProgressDict) ) )
+        #print( "ProgressDict", ProgressDict )
+        if ProgressDict: self.suppliedMetadata['PTX']['Progress'] = ProgressDict
+    # end of PTXBible.loadPTXProgress
+
+
     def loadPTXAutocorrects( self ):
         """
         Load the AutoCorrect.txt file (which is a text file)
@@ -1142,8 +1329,9 @@ class PTXBible( Bible ):
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading autocorrect from {}...".format( autocorrectFilepath ) )
+        if not os.path.exists( autocorrectFilepath ): return
 
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading autocorrect from {}...".format( autocorrectFilepath ) )
         PTXAutocorrects = {}
 
         lineCount = 0
@@ -1190,6 +1378,7 @@ class PTXBible( Bible ):
             if os.path.isfile(somepath) and something.upper().endswith('.STY'): styleFilenames.append( something )
         #if len(styleFilenames) > 1:
             #logging.error( "Got more than one style file: {}".format( styleFilenames ) )
+        if not styleFilenames: return
 
         PTXStyles = {}
 
@@ -1392,7 +1581,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
                             "Tests/DataFilesForTests/USFMTest2/",
                             "Tests/DataFilesForTests/USFMTest3/",
