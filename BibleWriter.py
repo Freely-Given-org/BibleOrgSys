@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-15' # by RJH
+LastModifiedDate = '2015-06-16' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -6341,7 +6341,12 @@ class BibleWriter( InternalBible ):
 
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
-        cursor.execute( exeStr, values )
+
+        if BibleOrgSysGlobals.debugFlag: cursor.execute( exeStr, values )
+        else: # Not debugging
+            try: cursor.execute( exeStr, values )
+            except sqlite3.InterfaceError:
+                logging.critical( "SQLite3 Interface error executing {} with {}".format( exeStr, values ) )
 
         # Now create and fill the Bible table
         cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT, Primary Key(Book,Chapter,Verse))' )

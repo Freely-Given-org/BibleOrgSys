@@ -162,7 +162,8 @@ class InternalBible:
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
-        if BibleOrgSysGlobals.verbosityLevel > 3 and self.suppliedMetadata:
+        if (BibleOrgSysGlobals.debugFlag or debuggingThisModule) and BibleOrgSysGlobals.verbosityLevel > 3 \
+        and self.suppliedMetadata and self.objectTypeString!='PTX': # There's too much potential Paratext metadata
             for metadataType in self.suppliedMetadata:
                 for fieldName in self.suppliedMetadata[metadataType]:
                     if fieldName not in set3:
