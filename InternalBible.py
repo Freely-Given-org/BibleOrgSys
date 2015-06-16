@@ -405,13 +405,13 @@ class InternalBible:
                 but check for duplicates first.
             """
             if fieldName in self.suppliedMetadata['File']: # We have a duplicate
-                logging.warning("About to replace {}={} from supplied metadata file".format( repr(fieldName), repr(self.suppliedMetadata['File'][fieldName]) ) )
+                logging.warning("About to replace {!r}={!r} from supplied metadata file with {!r}".format( fieldName, self.suppliedMetadata['File'][fieldName], contents ) )
             else: # Also check for "duplicates" with a different case
                 ucFieldName = fieldName.upper()
                 for key in self.suppliedMetadata['File']:
                     ucKey = key.upper()
                     if ucKey == ucFieldName:
-                        logging.warning("About to add {} from supplied metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
+                        logging.warning("About to add {!r} from supplied metadata file even though already have {!r}".format( fieldName, key ) )
                         break
             self.suppliedMetadata['File'][fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
         # end of loadMetadataTextFile.saveMetadataField
