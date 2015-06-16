@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-14' # by RJH
+LastModifiedDate = '2015-06-16' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.64'
@@ -1402,6 +1402,7 @@ class InternalBible:
         errorDictionary = self.getErrors( givenBookList )
         if givenBookList is None: givenBookList = self.books # this is an OrderedDict
 
+        # Note that this requires a CSS file called Overall.css
         if webPageTemplate is None:
             webPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

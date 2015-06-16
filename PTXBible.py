@@ -585,6 +585,7 @@ class PTXBible( Bible ):
             self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             self.loadPTXBiblicalTerms() # from XML (if they exist)
             self.loadPTXProgress() # from XML (if it exists)
+            self.loadPTXPrintConfig()  # from XML (if it exists)
             self.loadPTXAutocorrects() # from text file (if it exists)
             self.loadPTXStyles() # from text files (if they exist)
             result = loadPTXVersifications( self ) # from text file (if it exists)
@@ -594,31 +595,33 @@ class PTXBible( Bible ):
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadPTXBooksNames() # from XML (if it exists)
-            except Exception as err: logging.warning( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
-            except Exception as err: logging.warning( 'loadPTXProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXLexicon() # from XML (if it exists)
-            except Exception as err: logging.warning( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXSpellingStatus() # from XML (if it exists)
-            except Exception as err: logging.warning( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
-            except Exception as err: logging.warning( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXBiblicalTerms() # from XML (if they exist)
-            except Exception as err: logging.warning( 'loadPTXBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXProgress() # from XML (if it exists)
-            except Exception as err: logging.warning( 'loadPTXProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXPrintConfig() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTXPrintConfig failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXAutocorrects() # from text file (if it exists)
-            except Exception as err: logging.warning( 'loadPTXAutocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXAutocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXStyles() # from text files (if they exist)
-            except Exception as err: logging.warning( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTXVersifications( self ) # from text file (if it exists)
                 if result: self.suppliedMetadata['PTX']['Versifications'] = result
-            except Exception as err: logging.warning( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTXLanguages( self ) # from INI file (if it exists)
                 if result: self.suppliedMetadata['PTX']['Languages'] = result
-            except Exception as err: logging.warning( 'loadPTXLanguages failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTXLanguages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
     # end of PTXBible.preload
@@ -662,7 +665,7 @@ class PTXBible( Bible ):
                         elif attrib=='abbr': bnAbbr = value
                         elif attrib=='short': bnShort = value
                         elif attrib=='long': bnLong = value
-                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     #print( bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert( len(bnCode)==3 )
                     try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bnCode )
@@ -672,7 +675,7 @@ class PTXBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert( BBB not in booksNamesDict )
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
                 else:
-                    logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         #print( "booksNamesDict", booksNamesDict )
@@ -707,7 +710,7 @@ class PTXBible( Bible ):
             peerSharing = None
             for attrib,value in self.tree.items():
                 if attrib=='PeerSharing': peerSharing = value
-                else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
             projectUsersDict['PeerSharing'] = peerSharing
 
             # Now process the actual entries
@@ -724,7 +727,7 @@ class PTXBible( Bible ):
                     for attrib,value in element.items():
                         if attrib=='UserName': userName = value
                         elif attrib=='FirstUser': firstUserFlag = value
-                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     if 'Users' not in projectUsersDict: projectUsersDict['Users'] = {}
                     assert( userName not in projectUsersDict['Users'] ) # no duplicates allowed presumably
                     projectUsersDict['Users'][userName] = {}
@@ -740,9 +743,9 @@ class PTXBible( Bible ):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
                             assert( subelement.tag not in projectUsersDict['Users'][userName] )
                             projectUsersDict['Users'][userName][subelement.tag] = subelement.text
-                        else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
-                    logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         #print( "projectUsersDict", projectUsersDict )
@@ -788,7 +791,7 @@ class PTXBible( Bible ):
                         if attrib=='Type': lexemeType = value
                         elif attrib=='Form': lexemeForm = value
                         elif attrib=='Homograph': lexemeHomograph = value
-                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, elementLocation ) )
+                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, elementLocation ) )
                     #print( "Lexeme {} form={!r} homograph={}".format( lexemeType, lexemeForm, lexemeHomograph ) )
                     assert( lexemeType in ( 'Word', 'Phrase', ) )
                     if lexemeType not in lexiconDict['Entries']: lexiconDict['Entries'][lexemeType] = {}
@@ -808,7 +811,7 @@ class PTXBible( Bible ):
                             senseID = None
                             for attrib,value in sub2element.items():
                                 if attrib=='Id': senseID = value
-                                else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             #print( 'senseID={!r}'.format( senseID ) )
                             assert( senseID and senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs'] )
                             for sub3element in sub2element:
@@ -821,13 +824,13 @@ class PTXBible( Bible ):
                                     glossLanguage = None
                                     for attrib,value in sub3element.items():
                                         if attrib=='Language': glossLanguage = value
-                                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
-                                else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub2location ) )
+                                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub2location ) )
                                 assert( senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs'] )
                                 lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs'][senseID] = (sub3element.text, glossLanguage)
-                        else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sublocation ) )
+                        else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sublocation ) )
                 else:
-                    logging.warning( _("Unprocessed {} subelement in {}").format( subelement.tag, elementLocation ) )
+                    logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, elementLocation ) )
             #print( "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
         # end of processLexiconItem
 
@@ -843,7 +846,7 @@ class PTXBible( Bible ):
             #peerSharing = None
             #for attrib,value in self.tree.items():
                 #if attrib=='PeerSharing': peerSharing = value
-                #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                #else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
             #lexiconDict['PeerSharing'] = peerSharing
 
             # Now process the actual entries
@@ -874,9 +877,9 @@ class PTXBible( Bible ):
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                             processLexiconItem( subelement, sublocation )
-                        else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
-                    logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
         #print( "lexiconDict", lexiconDict )
@@ -912,7 +915,7 @@ class PTXBible( Bible ):
             #peerSharing = None
             #for attrib,value in self.tree.items():
                 #if attrib=='PeerSharing': peerSharing = value
-                #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                #else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
             #spellingStatusDict['PeerSharing'] = peerSharing
 
             # Now process the actual entries
@@ -929,7 +932,7 @@ class PTXBible( Bible ):
                     for attrib,value in element.items():
                         if attrib=='Word': word = value
                         elif attrib=='State': state = value
-                        else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     if 'SpellingWords' not in spellingStatusDict: spellingStatusDict['SpellingWords'] = {}
                     assert( word not in spellingStatusDict['SpellingWords'] ) # no duplicates allowed presumably
                     spellingStatusDict['SpellingWords'][word] = {}
@@ -945,9 +948,9 @@ class PTXBible( Bible ):
                             #if BibleOrgSysGlobals.debugFlag: assert( subelement.text ) # These can be blank!
                             assert( subelement.tag not in spellingStatusDict['SpellingWords'][word] )
                             spellingStatusDict['SpellingWords'][word][subelement.tag] = subelement.text
-                        else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
-                    logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         #print( "spellingStatusDict", spellingStatusDict )
@@ -997,7 +1000,7 @@ class PTXBible( Bible ):
                 #peerSharing = None
                 #for attrib,value in self.tree.items():
                     #if attrib=='PeerSharing': peerSharing = value
-                    #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    #else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                 #commentsList['PeerSharing'] = peerSharing
 
                 # Now process the actual entries
@@ -1016,7 +1019,7 @@ class PTXBible( Bible ):
                         #for attrib,value in element.items():
                             #if attrib=='Word': word = value
                             #elif attrib=='State': state = value
-                            #else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            #else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                         #if 'SpellingWords' not in commentsList: commentsList['SpellingWords'] = {}
                         #assert( word not in commentsList['SpellingWords'] ) # no duplicates allowed presumably
 
@@ -1042,9 +1045,9 @@ class PTXBible( Bible ):
                                     else: contentsText += '<{}/>'.format( sub2element.tag )
                                 #print( 'contentsText', repr(contentsText) )
                                 commentDict[subelement.tag] = contentsText
-                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                     else:
-                        logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "commentDict", commentDict )
                     commentsList[commenterName].append( commentDict )
 
@@ -1142,19 +1145,19 @@ class PTXBible( Bible ):
                                                 versification = None
                                                 for attrib,value in sub3element.items():
                                                     if attrib=='Versification': versification = value
-                                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                    else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub3location ) )
                                                 termRenderingDict[sub2element.tag].append( (sub3element.text,versification) )
-                                            else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
                                             #print( "termRenderingDict", termRenderingDict ); halt
-                                    else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
-                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                    else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                             #print( "termRenderingDict", termRenderingDict )
                             Id = termRenderingDict['Id']
                             del termRenderingDict['Id']
                             assert( Id not in BiblicalTermsDict[versionName] ) # No duplicate ids allowed
                             BiblicalTermsDict[versionName][Id] = termRenderingDict
                     else:
-                        logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "termRenderingDict", termRenderingDict )
                     #BiblicalTermsDict[versionName].append( termRenderingDict )
 
@@ -1182,13 +1185,13 @@ class PTXBible( Bible ):
             #logging.error( "Got more than one progress file: {}".format( progressFilenames ) )
         if not progressFilenames: return
 
-        ProgressDict = {}
+        progressDict = {}
         #loadErrors = []
 
         for progressFilename in progressFilenames:
             versionName = progressFilename[8:-4] # Remove the .xml
-            assert( versionName not in ProgressDict )
-            ProgressDict[versionName] = {}
+            assert( versionName not in progressDict )
+            progressDict[versionName] = {}
 
             progressFilepath = os.path.join( self.sourceFilepath, progressFilename )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading Progress from {}...".format( progressFilepath ) )
@@ -1213,14 +1216,14 @@ class PTXBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
-                        assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
-                        ProgressDict[versionName][element.tag] = element.text
+                        assert( element.tag not in progressDict[versionName] ) # Detect duplicates
+                        progressDict[versionName][element.tag] = element.text
                     elif element.tag == 'StageNames':
                         BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
-                        assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
-                        ProgressDict[versionName][element.tag] = []
+                        assert( element.tag not in progressDict[versionName] ) # Detect duplicates
+                        progressDict[versionName][element.tag] = []
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
                             #print( "  Processing {}...".format( sublocation ) )
@@ -1228,8 +1231,8 @@ class PTXBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
-                                ProgressDict[versionName][element.tag].append( subelement.text )
-                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                progressDict[versionName][element.tag].append( subelement.text )
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                     elif element.tag == 'PlannedBooks':
                         BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -1241,15 +1244,15 @@ class PTXBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
-                                assert( element.tag not in ProgressDict[versionName] ) # Detect duplicates
-                                ProgressDict[versionName][element.tag] = subelement.text
-                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                assert( element.tag not in progressDict[versionName] ) # Detect duplicates
+                                progressDict[versionName][element.tag] = subelement.text
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                     elif element.tag == 'BookStatusList':
                         BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
-                        assert( 'BookStatusDict' not in ProgressDict[versionName] )
-                        ProgressDict[versionName]['BookStatusDict'] = {}
+                        assert( 'BookStatusDict' not in progressDict[versionName] )
+                        progressDict[versionName]['BookStatusDict'] = {}
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
                             #print( "  Processing {}...".format( sublocation ) )
@@ -1261,7 +1264,7 @@ class PTXBible( Bible ):
                                 bookNumber = None
                                 for attrib,value in subelement.items():
                                     if attrib=='BookNum': bookNumber = value
-                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                                 assert( 'BookNumber' not in bookStatusDict )
                                 bookStatusDict['BookNumber'] = bookNumber
                                 for sub2element in subelement:
@@ -1285,9 +1288,9 @@ class PTXBible( Bible ):
                                                 references = None
                                                 for attrib,value in sub3element.items():
                                                     if attrib=='References': references = value
-                                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                    else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub3location ) )
                                                 bookStatusDict[sub2element.tag].append( (references,sub3element.text) )
-                                            else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
                                     elif sub2element.tag == 'VersesPerDay':
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
@@ -1301,22 +1304,108 @@ class PTXBible( Bible ):
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                                 bookStatusDict[sub2element.tag].append( sub3element.text )
-                                            else: logging.warning( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
-                                    else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
-                            else: logging.warning( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                            else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                    else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                             #print( "bookStatusDict", bookStatusDict )
                             bookNumber = bookStatusDict['BookNumber']
                             del bookStatusDict['BookNumber']
-                            ProgressDict[versionName]['BookStatusDict'][bookNumber] = bookStatusDict
+                            progressDict[versionName]['BookStatusDict'][bookNumber] = bookStatusDict
                     else:
-                        logging.warning( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "bookStatusDict", bookStatusDict )
-                    #ProgressDict[versionName].append( bookStatusDict )
+                    #progressDict[versionName].append( bookStatusDict )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(ProgressDict) ) )
-        #print( "ProgressDict", ProgressDict )
-        if ProgressDict: self.suppliedMetadata['PTX']['Progress'] = ProgressDict
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(progressDict) ) )
+        #print( "progressDict", progressDict )
+        if progressDict: self.suppliedMetadata['PTX']['Progress'] = progressDict
     # end of PTXBible.loadPTXProgress
+
+
+    def loadPTXPrintConfig( self ):
+        """
+        Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( t("loadPTXPrintConfig()") )
+
+        printConfigFilenames = []
+        for something in os.listdir( self.sourceFilepath ):
+            somethingUPPER = something.upper()
+            somepath = os.path.join( self.sourceFilepath, something )
+            if os.path.isfile(somepath) and somethingUPPER.startswith('PRINT') and somethingUPPER.endswith('.XML'):
+                printConfigFilenames.append( something )
+        #if len(printConfigFilenames) > 1:
+            #logging.error( "Got more than one printConfig file: {}".format( printConfigFilenames ) )
+        if not printConfigFilenames: return
+
+        printConfigDict = {}
+        #loadErrors = []
+
+        for printConfigFilename in printConfigFilenames:
+            printConfigType = printConfigFilename[5:-4] # Remove the .xml
+            assert( printConfigType not in printConfigDict )
+            printConfigDict[printConfigType] = {}
+
+            printConfigFilepath = os.path.join( self.sourceFilepath, printConfigFilename )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading PrintConfig from {}...".format( printConfigFilepath ) )
+
+            self.tree = ElementTree().parse( printConfigFilepath )
+            assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+
+            # Find the main container
+            if self.tree.tag=='PrintDraftConfiguration':
+                treeLocation = "PTX {} file for {}".format( self.tree.tag, printConfigType )
+                BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+                # Now process the actual entries
+                for element in self.tree:
+                    elementLocation = element.tag + ' in ' + treeLocation
+                    #print( "Processing {}...".format( elementLocation ) )
+
+                    # Now process the subelements
+                    if element.tag in ( 'Stylesheet', 'PaperWidth', 'PaperHeight', 'MarginUnit', 'TopMarginFactor',
+                                    'BottomMarginFactor', 'SideMarginFactor', 'TitleColumns', 'IntroColumns',
+                                    'BodyColumns', 'LineSpacing', 'LineSpacingFactor', 'FontSize', 'FontSizeUnit',
+                                    'FontRegular', 'FontRegularFace', 'FontBold', 'FontBoldFace', 'FontItalic',
+                                    'FontItalicFace', 'FontBoldItalic', 'FontBoldItalicFace', 'ScriptName',
+                                    'LangID', 'CombineBooks', 'JustifyParagraphs', 'Hyphenate', 'Remark',
+                                    'HeaderPosition', 'FooterPosition', 'HeaderInside', 'HeaderCenter',
+                                    'HeaderOutside', 'HeaderMirrorLayout', 'HeaderIncludeVerseRefs', 'IncludeFigures',
+                                    'FigurePath', 'DigitStyle', 'ChooseBooks', 'OneBook', 'PrintedBooks', 'TextBooks',
+                                    'FirstChapterSelectedIndex', 'LastChapterSelectedIndex', 'LastChapterCount',
+                                    'FirstChapterText', 'LastChapterText', 'HyphenPenalty', 'XetexFontStylefontRegular',
+                                    'XetexFontStylefontBold', 'XetexFontStylefontItalic', 'XetexFontBoldItalic' ):
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        assert( element.tag not in printConfigDict[printConfigType] ) # Detect duplicates
+                        printConfigDict[printConfigType][element.tag] = element.text
+                    elif element.tag == 'SelectedBooks':
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                        for subelement in element:
+                            sublocation = subelement.tag + ' ' + elementLocation
+                            #print( "  Processing {}...".format( sublocation ) )
+                            if subelement.tag == 'Books':
+                                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                                assert( element.tag not in printConfigDict[printConfigType] ) # Detect duplicates
+                                printConfigDict[printConfigType][element.tag] = subelement.text
+                            else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                    else:
+                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    #print( "bookStatusDict", bookStatusDict )
+                    #printConfigDict[printConfigType].append( bookStatusDict )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
+        #print( "printConfigDict", printConfigDict )
+        if printConfigDict: self.suppliedMetadata['PTX']['PrintConfig'] = printConfigDict
+    # end of PTXBible.loadPTXPrintConfig
 
 
     def loadPTXAutocorrects( self ):
