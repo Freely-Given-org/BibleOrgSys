@@ -36,7 +36,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-06-16' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1053,7 +1053,8 @@ class PTXBible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} commenters.".format( len(commentsList) ) )
         #print( "commentsList", commentsList )
-        if commentsList: self.suppliedMetadata['PTX']['Comments'] = commentsList
+        # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
+        if commentsList: self.suppliedMetadata['PTX']['PTXComments'] = commentsList
     # end of PTXBible.loadPTXComments
 
 
