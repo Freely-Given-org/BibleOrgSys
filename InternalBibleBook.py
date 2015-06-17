@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-12' # by RJH
+LastModifiedDate = '2015-06-17' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.93'
@@ -274,7 +274,7 @@ class InternalBibleBook:
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                         logging.warning( "InternalBibleBook.addLine: Possibly needed to strip {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
                     else: # we've reached our limit
-                        logging.warning( _('Additional "Possibly needed to strip" messages suppressed...') )
+                        logging.warning( _('Additional "Possibly needed to strip" messages for {} {} suppressed...').format( self.objectTypeString, self.BBB ) )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )

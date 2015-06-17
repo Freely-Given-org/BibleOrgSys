@@ -74,7 +74,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-11' # by RJH
+LastModifiedDate = '2015-06-17' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.59'
@@ -1093,7 +1093,8 @@ def demo():
 
 
 setVerbosity( verbosityString )
-if __name__ != '__main__': # Load global Bible data sets
+if __name__ != '__main__':
+    # Load Bible data sets that are globally useful
     from BibleBooksCodes import BibleBooksCodes
     BibleBooksCodes = BibleBooksCodes().loadData()
     from USFMMarkers import USFMMarkers

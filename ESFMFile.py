@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMFile.py
-#   Last modified: 2014-10-18 (also update ProgVersion below)
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,9 +33,16 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 """
 
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-06-17' # by RJH
+ShortProgName = "ESFMFile"
 ProgName = "ESFM File loader"
-ProgVersion = "0.86"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.86'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, sys
@@ -135,7 +141,7 @@ class ESFMFile:
             try:
                 for line in ourFile:
                     lineCount += 1
-                    if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "ESFMFile: Detected UTF-16 Byte Order Marker in {}".format( esfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character

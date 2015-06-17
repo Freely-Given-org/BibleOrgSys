@@ -484,7 +484,7 @@ class InternalBible:
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
                 print( "  {} = {!r}".format( key, value ) )
 
-        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView', ):
+        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
             nameChangeDict['File'] = {}
@@ -493,6 +493,7 @@ class InternalBible:
             nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
             nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
             nameChangeDict['VerseView'] = { 'Title':'FullName', }
+            nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
@@ -610,6 +611,7 @@ class InternalBible:
 
         else:
             logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
+            halt
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel>3:

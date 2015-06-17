@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-20' # by RJH
+LastModifiedDate = '2015-06-17' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
 ProgVersion = '0.84'
@@ -126,7 +126,7 @@ class SFMLines:
             try:
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character

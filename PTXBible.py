@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-16' # by RJH
+LastModifiedDate = '2015-06-17' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.08'
@@ -520,7 +520,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("preload() from {}").format( self.sourceFolder ) )
 
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        #if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
