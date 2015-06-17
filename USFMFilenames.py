@@ -28,10 +28,10 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-08' # by RJH
+LastModifiedDate = '2015-06-17' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
-ProgVersion = '0.65'
+ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -494,12 +494,14 @@ class USFMFilenames:
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
-    def getMaximumPossibleFilenameTuples( self ):
+    def getMaximumPossibleFilenameTuples( self, strictCheck=False ):
         """
         Find the method that finds the maximum number of USFM Bible files.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
+        #if BibleOrgSysGlobals.debugFlag: print( "getMaximumPossibleFilenameTuples( {} )".format( strictCheck ) )
+
         resultString, resultList = "Confirmed", self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
         if len(resultListExt) > len(resultList):
@@ -508,6 +510,19 @@ class USFMFilenames:
         if len(resultListInt) > len(resultList):
             resultString, resultList = "Internal", resultListInt
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
+
+        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+            #if BibleOrgSysGlobals.debugFlag: print( "  getMaximumPossibleFilenameTuples doing strictCheck..." )
+            for BBB,filename in resultList[:]:
+                firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
+                #print( 'UFN', repr(firstLine) )
+                if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
+                if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                    logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( filename ) )
+                    firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                if not firstLine or firstLine[0] != '\\': # don't allow a blank first line and must start with a backslash
+                    resultList.remove( (BBB,filename) )
+
         self.lastTupleList = resultList
         #print( "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
@@ -592,6 +607,7 @@ def demo():
             result = UFns.getPossibleFilenameTuplesInt(); print( "\nPossibleInt:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
             result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMaxPoss:", len(result), result )
+            result = UFns.getMaximumPossibleFilenameTuples( strictCheck=True ); print( "\nMaxPoss (strict):", len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
             result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
         else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )

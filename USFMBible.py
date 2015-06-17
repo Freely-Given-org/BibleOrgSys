@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2015-06-19' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -94,7 +94,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if autoLoad is true and exactly one USFM Bible is found,
         returns the loaded USFMBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
 
@@ -112,15 +112,24 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ): foundFolders.append( something )
-        elif os.path.isfile( somepath ):
-            somethingUpper = something.upper()
-            somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-            ignore = False
-            for ending in filenameEndingsToIgnore:
-                if somethingUpper.endswith( ending): ignore=True; break
-            if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                foundFiles.append( something )
+        #elif os.path.isfile( somepath ):
+            #somethingUpper = something.upper()
+            #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+            #ignore = False
+            #for ending in filenameEndingsToIgnore:
+                #if somethingUpper.endswith( ending): ignore=True; break
+            #if ignore: continue
+            #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
+            #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
+                ##print( 'U1', repr(firstLine) )
+                #if firstLine is None: continue # seems we couldn't decode the file
+                #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                    #logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( something ) )
+                    #firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                #if not firstLine: continue # don't allow a blank first line
+                #if firstLine[0] != '\\': continue # Must start with a backslash
+            #foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
@@ -128,7 +137,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     numFound = 0
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-    filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+    filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
     if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
     if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
         print( "  Found {} USFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
@@ -155,25 +164,35 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("USFMBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USFMBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
-        foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                ignore = False
-                for ending in filenameEndingsToIgnore:
-                    if somethingUpper.endswith( ending): ignore=True; break
-                if ignore: continue
-                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                    foundSubfiles.append( something )
+        #if 0:
+            #if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USFMBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+            #foundSubfolders, foundSubfiles = [], []
+            #for something in os.listdir( tryFolderName ):
+                #somepath = os.path.join( givenFolderName, thisFolderName, something )
+                #if os.path.isdir( somepath ): foundSubfolders.append( something )
+                #elif os.path.isfile( somepath ):
+                    #somethingUpper = something.upper()
+                    #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    #ignore = False
+                    #for ending in filenameEndingsToIgnore:
+                        #if somethingUpper.endswith( ending): ignore=True; break
+                    #if ignore: continue
+                    #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
+                    #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                        #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
+                        ##print( 'U2', repr(firstLine) )
+                        #if firstLine is None: continue # seems we couldn't decode the file
+                        #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                            #logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( something ) )
+                            #firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                        #if not firstLine: continue # don't allow a blank first line
+                        #if firstLine[0] != '\\': continue # Must start with a backslash
+                    #foundSubfiles.append( something )
 
         # See if there's an USFM Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-        filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+        filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
             print( "  Found {} USFM files: {}".format( len(filenameTuples), filenameTuples ) )

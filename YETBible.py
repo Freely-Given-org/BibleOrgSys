@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
@@ -61,15 +60,19 @@ Limitations:
     Currently ignores encoded verse references in cross-references
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-06-17' # by RJH
+ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
-ProgVersion = "0.06"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.07'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, re
-from gettext import gettext as _
 import multiprocessing
 from collections import OrderedDict
 
@@ -93,7 +96,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if autoLoad is true and exactly one YET Bible is found,
         returns the loaded YETBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 

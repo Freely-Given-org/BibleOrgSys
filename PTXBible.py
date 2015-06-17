@@ -89,7 +89,7 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns the loaded PTXBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "PTXBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+        print( "PTXBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag:
         assert( givenFolderName and isinstance( givenFolderName, str ) )
         assert( strictCheck in (True,False,) )
@@ -560,7 +560,7 @@ class PTXBible( Bible ):
                 SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
                 if SSFDict:
                     self.suppliedMetadata['PTX']['SSF'] = SSFDict
-                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+                    self.applySuppliedMetadata( 'SSF' ) # Copy some to self.settingsDict
 
         #self.name = self.givenName
         #if self.name is None:
