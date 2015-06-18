@@ -70,10 +70,10 @@ vplType 4 (SwordSearcher)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-06-18' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -292,7 +292,7 @@ class VPLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
         global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 

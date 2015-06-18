@@ -1,0 +1,2241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of Bible chapters/verses including
+    An English book name (as a comment only)
+        (This table should be language agnostic although English is used as a meta-language.)
+    A three character reference abbreviation (upper case, no spaces, begins with a letter, matches BibleBooksCodes.xml)
+    The number of chapters in the book (must be a valid integer)
+    The number of verses in each chapter of the book
+    Optional attributes:
+        A list of omitted verses (often with a footnote saying not in original manuscripts)
+        A list of combined verses (for translations)
+        A list of reordered verses (for translations)
+All books (including Deutero-canonical/Apocryphal and combined books) can be included even if normally unused.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+-->
+
+<!DOCTYPE BibleVersificationSystem [
+    <!ELEMENT BibleVersificationSystem (header,BibleBookVersification+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier*,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|cre|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT BibleBookVersification (nameEnglish,referenceAbbreviation,numChapters,numVerses+)>
+            <!ELEMENT nameEnglish (#PCDATA)>
+            <!ELEMENT referenceAbbreviation (#PCDATA)>
+            <!ELEMENT numChapters (#PCDATA)>
+            <!ELEMENT numVerses (#PCDATA)>
+                <!ATTLIST numVerses
+                    chapter CDATA #REQUIRED
+                    omittedVerses CDATA #IMPLIED
+                    combinedVerses CDATA #IMPLIED
+                    reorderedVerses CDATA #IMPLIED>
+]>
+
+<BibleVersificationSystem>
+
+  <header>
+    <work>
+      <version>0.02</version>
+      <date>2015-06-18</date>
+      <title>Bible Maximum Reference system</title>
+      <contributor role="cre">Robert Hunt</contributor>
+      <rights>Public Domain</rights>
+    </work>
+  </header>
+
+  <BibleBookVersification>
+    <nameEnglish>Genesis / 1 Moses</nameEnglish>
+    <referenceAbbreviation>GEN</referenceAbbreviation>
+    <numChapters>50</numChapters>
+    <numVerses chapter="1">31</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">26</numVerses>
+    <numVerses chapter="5">32</numVerses>
+    <numVerses chapter="6">22</numVerses>
+    <numVerses chapter="7">24</numVerses>
+    <numVerses chapter="8">22</numVerses>
+    <numVerses chapter="9">29</numVerses>
+    <numVerses chapter="10">32</numVerses>
+    <numVerses chapter="11">32</numVerses>
+    <numVerses chapter="12">20</numVerses>
+    <numVerses chapter="13">18</numVerses>
+    <numVerses chapter="14">24</numVerses>
+    <numVerses chapter="15">21</numVerses>
+    <numVerses chapter="16">16</numVerses>
+    <numVerses chapter="17">27</numVerses>
+    <numVerses chapter="18">33</numVerses>
+    <numVerses chapter="19">38</numVerses>
+    <numVerses chapter="20">18</numVerses>
+    <numVerses chapter="21">34</numVerses>
+    <numVerses chapter="22">24</numVerses>
+    <numVerses chapter="23">20</numVerses>
+    <numVerses chapter="24">67</numVerses>
+    <numVerses chapter="25">34</numVerses>
+    <numVerses chapter="26">35</numVerses>
+    <numVerses chapter="27">46</numVerses>
+    <numVerses chapter="28">22</numVerses>
+    <numVerses chapter="29">35</numVerses>
+    <numVerses chapter="30">43</numVerses>
+    <numVerses chapter="31">55</numVerses>
+    <numVerses chapter="32">33</numVerses>
+    <numVerses chapter="33">20</numVerses>
+    <numVerses chapter="34">31</numVerses>
+    <numVerses chapter="35">29</numVerses>
+    <numVerses chapter="36">43</numVerses>
+    <numVerses chapter="37">36</numVerses>
+    <numVerses chapter="38">30</numVerses>
+    <numVerses chapter="39">23</numVerses>
+    <numVerses chapter="40">23</numVerses>
+    <numVerses chapter="41">57</numVerses>
+    <numVerses chapter="42">38</numVerses>
+    <numVerses chapter="43">34</numVerses>
+    <numVerses chapter="44">34</numVerses>
+    <numVerses chapter="45">28</numVerses>
+    <numVerses chapter="46">34</numVerses>
+    <numVerses chapter="47">31</numVerses>
+    <numVerses chapter="48">22</numVerses>
+    <numVerses chapter="49">33</numVerses>
+    <numVerses chapter="50">26</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Exodus / 2 Moses</nameEnglish>
+    <referenceAbbreviation>EXO</referenceAbbreviation>
+    <numChapters>40</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">22</numVerses>
+    <numVerses chapter="4">31</numVerses>
+    <numVerses chapter="5">24</numVerses>
+    <numVerses chapter="6">30</numVerses>
+    <numVerses chapter="7">29</numVerses>
+    <numVerses chapter="8">32</numVerses>
+    <numVerses chapter="9">35</numVerses>
+    <numVerses chapter="10">29</numVerses>
+    <numVerses chapter="11">10</numVerses>
+    <numVerses chapter="12">51</numVerses>
+    <numVerses chapter="13">22</numVerses>
+    <numVerses chapter="14">31</numVerses>
+    <numVerses chapter="15">27</numVerses>
+    <numVerses chapter="16">36</numVerses>
+    <numVerses chapter="17">16</numVerses>
+    <numVerses chapter="18">27</numVerses>
+    <numVerses chapter="19">25</numVerses>
+    <numVerses chapter="20">26</numVerses>
+    <numVerses chapter="21">37</numVerses>
+    <numVerses chapter="22">31</numVerses>
+    <numVerses chapter="23">33</numVerses>
+    <numVerses chapter="24">18</numVerses>
+    <numVerses chapter="25">40</numVerses>
+    <numVerses chapter="26">37</numVerses>
+    <numVerses chapter="27">21</numVerses>
+    <numVerses chapter="28">43</numVerses>
+    <numVerses chapter="29">46</numVerses>
+    <numVerses chapter="30">38</numVerses>
+    <numVerses chapter="31">18</numVerses>
+    <numVerses chapter="32">35</numVerses>
+    <numVerses chapter="33">23</numVerses>
+    <numVerses chapter="34">35</numVerses>
+    <numVerses chapter="35">35</numVerses>
+    <numVerses chapter="36">38</numVerses>
+    <numVerses chapter="37">29</numVerses>
+    <numVerses chapter="38">31</numVerses>
+    <numVerses chapter="39">43</numVerses>
+    <numVerses chapter="40">38</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Leviticus / 3 Moses</nameEnglish>
+    <referenceAbbreviation>LEV</referenceAbbreviation>
+    <numChapters>27</numChapters>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">16</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">35</numVerses>
+    <numVerses chapter="5">26</numVerses>
+    <numVerses chapter="6">30</numVerses>
+    <numVerses chapter="7">38</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">24</numVerses>
+    <numVerses chapter="10">20</numVerses>
+    <numVerses chapter="11">47</numVerses>
+    <numVerses chapter="12">8</numVerses>
+    <numVerses chapter="13">59</numVerses>
+    <numVerses chapter="14">57</numVerses>
+    <numVerses chapter="15">33</numVerses>
+    <numVerses chapter="16">34</numVerses>
+    <numVerses chapter="17">16</numVerses>
+    <numVerses chapter="18">30</numVerses>
+    <numVerses chapter="19">37</numVerses>
+    <numVerses chapter="20">27</numVerses>
+    <numVerses chapter="21">24</numVerses>
+    <numVerses chapter="22">33</numVerses>
+    <numVerses chapter="23">44</numVerses>
+    <numVerses chapter="24">23</numVerses>
+    <numVerses chapter="25">55</numVerses>
+    <numVerses chapter="26">46</numVerses>
+    <numVerses chapter="27">34</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Numbers / 4 Moses</nameEnglish>
+    <referenceAbbreviation>NUM</referenceAbbreviation>
+    <numChapters>36</numChapters>
+    <numVerses chapter="1">54</numVerses>
+    <numVerses chapter="2">34</numVerses>
+    <numVerses chapter="3">51</numVerses>
+    <numVerses chapter="4">49</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">27</numVerses>
+    <numVerses chapter="7">89</numVerses>
+    <numVerses chapter="8">26</numVerses>
+    <numVerses chapter="9">23</numVerses>
+    <numVerses chapter="10">36</numVerses>
+    <numVerses chapter="11">35</numVerses>
+    <numVerses chapter="12">16</numVerses>
+    <numVerses chapter="13">33</numVerses>
+    <numVerses chapter="14">45</numVerses>
+    <numVerses chapter="15">41</numVerses>
+    <numVerses chapter="16">50</numVerses>
+    <numVerses chapter="17">28</numVerses>
+    <numVerses chapter="18">32</numVerses>
+    <numVerses chapter="19">22</numVerses>
+    <numVerses chapter="20">29</numVerses>
+    <numVerses chapter="21">35</numVerses>
+    <numVerses chapter="22">41</numVerses>
+    <numVerses chapter="23">30</numVerses>
+    <numVerses chapter="24">25</numVerses>
+    <numVerses chapter="25">18</numVerses>
+    <numVerses chapter="26">65</numVerses>
+    <numVerses chapter="27">23</numVerses>
+    <numVerses chapter="28">31</numVerses>
+    <numVerses chapter="29">40</numVerses>
+    <numVerses chapter="30">17</numVerses>
+    <numVerses chapter="31">54</numVerses>
+    <numVerses chapter="32">42</numVerses>
+    <numVerses chapter="33">56</numVerses>
+    <numVerses chapter="34">29</numVerses>
+    <numVerses chapter="35">34</numVerses>
+    <numVerses chapter="36">13</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Deuteronomy / 5 Moses</nameEnglish>
+    <referenceAbbreviation>DEU</referenceAbbreviation>
+    <numChapters>34</numChapters>
+    <numVerses chapter="1">46</numVerses>
+    <numVerses chapter="2">37</numVerses>
+    <numVerses chapter="3">29</numVerses>
+    <numVerses chapter="4">49</numVerses>
+    <numVerses chapter="5">33</numVerses>
+    <numVerses chapter="6">25</numVerses>
+    <numVerses chapter="7">26</numVerses>
+    <numVerses chapter="8">20</numVerses>
+    <numVerses chapter="9">29</numVerses>
+    <numVerses chapter="10">22</numVerses>
+    <numVerses chapter="11">32</numVerses>
+    <numVerses chapter="12">32</numVerses>
+    <numVerses chapter="13">19</numVerses>
+    <numVerses chapter="14">29</numVerses>
+    <numVerses chapter="15">23</numVerses>
+    <numVerses chapter="16">22</numVerses>
+    <numVerses chapter="17">20</numVerses>
+    <numVerses chapter="18">22</numVerses>
+    <numVerses chapter="19">21</numVerses>
+    <numVerses chapter="20">20</numVerses>
+    <numVerses chapter="21">23</numVerses>
+    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="23">26</numVerses>
+    <numVerses chapter="24">22</numVerses>
+    <numVerses chapter="25">19</numVerses>
+    <numVerses chapter="26">19</numVerses>
+    <numVerses chapter="27">26</numVerses>
+    <numVerses chapter="28">69</numVerses>
+    <numVerses chapter="29">29</numVerses>
+    <numVerses chapter="30">20</numVerses>
+    <numVerses chapter="31">30</numVerses>
+    <numVerses chapter="32">52</numVerses>
+    <numVerses chapter="33">29</numVerses>
+    <numVerses chapter="34">12</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Joshua</nameEnglish>
+    <referenceAbbreviation>JOS</referenceAbbreviation>
+    <numChapters>24</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">24</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">24</numVerses>
+    <numVerses chapter="5">15</numVerses>
+    <numVerses chapter="6">27</numVerses>
+    <numVerses chapter="7">26</numVerses>
+    <numVerses chapter="8">35</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">43</numVerses>
+    <numVerses chapter="11">23</numVerses>
+    <numVerses chapter="12">24</numVerses>
+    <numVerses chapter="13">33</numVerses>
+    <numVerses chapter="14">15</numVerses>
+    <numVerses chapter="15">63</numVerses>
+    <numVerses chapter="16">10</numVerses>
+    <numVerses chapter="17">18</numVerses>
+    <numVerses chapter="18">28</numVerses>
+    <numVerses chapter="19">51</numVerses>
+    <numVerses chapter="20">9</numVerses>
+    <numVerses chapter="21">45</numVerses>
+    <numVerses chapter="22">34</numVerses>
+    <numVerses chapter="23">16</numVerses>
+    <numVerses chapter="24">33</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Judges</nameEnglish>
+    <referenceAbbreviation>JDG</referenceAbbreviation>
+    <numChapters>21</numChapters>
+    <numVerses chapter="1">36</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">31</numVerses>
+    <numVerses chapter="4">24</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">40</numVerses>
+    <numVerses chapter="7">25</numVerses>
+    <numVerses chapter="8">35</numVerses>
+    <numVerses chapter="9">57</numVerses>
+    <numVerses chapter="10">18</numVerses>
+    <numVerses chapter="11">40</numVerses>
+    <numVerses chapter="12">15</numVerses>
+    <numVerses chapter="13">25</numVerses>
+    <numVerses chapter="14">20</numVerses>
+    <numVerses chapter="15">20</numVerses>
+    <numVerses chapter="16">31</numVerses>
+    <numVerses chapter="17">13</numVerses>
+    <numVerses chapter="18">31</numVerses>
+    <numVerses chapter="19">30</numVerses>
+    <numVerses chapter="20">48</numVerses>
+    <numVerses chapter="21">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Ruth</nameEnglish>
+    <referenceAbbreviation>RUT</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">18</numVerses>
+    <numVerses chapter="4">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Samuel / 1 Kingdoms / 1 Kings</nameEnglish>
+    <referenceAbbreviation>SA1</referenceAbbreviation>
+    <numChapters>31</numChapters>
+    <numVerses chapter="1">28</numVerses>
+    <numVerses chapter="2">36</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">22</numVerses>
+    <numVerses chapter="5">12</numVerses>
+    <numVerses chapter="6">21</numVerses>
+    <numVerses chapter="7">17</numVerses>
+    <numVerses chapter="8">22</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">27</numVerses>
+    <numVerses chapter="11">15</numVerses>
+    <numVerses chapter="12">25</numVerses>
+    <numVerses chapter="13">23</numVerses>
+    <numVerses chapter="14">52</numVerses>
+    <numVerses chapter="15">35</numVerses>
+    <numVerses chapter="16">23</numVerses>
+    <numVerses chapter="17">58</numVerses>
+    <numVerses chapter="18">30</numVerses>
+    <numVerses chapter="19">24</numVerses>
+    <numVerses chapter="20">42</numVerses>
+    <numVerses chapter="21">16</numVerses>
+    <numVerses chapter="22">23</numVerses>
+    <numVerses chapter="23">29</numVerses>
+    <numVerses chapter="24">23</numVerses>
+    <numVerses chapter="25">44</numVerses>
+    <numVerses chapter="26">25</numVerses>
+    <numVerses chapter="27">12</numVerses>
+    <numVerses chapter="28">25</numVerses>
+    <numVerses chapter="29">11</numVerses>
+    <numVerses chapter="30">31</numVerses>
+    <numVerses chapter="31">13</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Samuel / 2 Kingdoms / 2 Kings</nameEnglish>
+    <referenceAbbreviation>SA2</referenceAbbreviation>
+    <numChapters>24</numChapters>
+    <numVerses chapter="1">27</numVerses>
+    <numVerses chapter="2">32</numVerses>
+    <numVerses chapter="3">39</numVerses>
+    <numVerses chapter="4">12</numVerses>
+    <numVerses chapter="5">25</numVerses>
+    <numVerses chapter="6">23</numVerses>
+    <numVerses chapter="7">29</numVerses>
+    <numVerses chapter="8">18</numVerses>
+    <numVerses chapter="9">13</numVerses>
+    <numVerses chapter="10">19</numVerses>
+    <numVerses chapter="11">27</numVerses>
+    <numVerses chapter="12">31</numVerses>
+    <numVerses chapter="13">39</numVerses>
+    <numVerses chapter="14">33</numVerses>
+    <numVerses chapter="15">37</numVerses>
+    <numVerses chapter="16">23</numVerses>
+    <numVerses chapter="17">29</numVerses>
+    <numVerses chapter="18">32</numVerses>
+    <numVerses chapter="19">44</numVerses>
+    <numVerses chapter="20">26</numVerses>
+    <numVerses chapter="21">22</numVerses>
+    <numVerses chapter="22">51</numVerses>
+    <numVerses chapter="23">39</numVerses>
+    <numVerses chapter="24">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Kings / 3 Kingdoms / 3 Kings</nameEnglish>
+    <referenceAbbreviation>KI1</referenceAbbreviation>
+    <numChapters>22</numChapters>
+    <numVerses chapter="1">53</numVerses>
+    <numVerses chapter="2">46</numVerses>
+    <numVerses chapter="3">28</numVerses>
+    <numVerses chapter="4">34</numVerses>
+    <numVerses chapter="5">32</numVerses>
+    <numVerses chapter="6">38</numVerses>
+    <numVerses chapter="7">51</numVerses>
+    <numVerses chapter="8">66</numVerses>
+    <numVerses chapter="9">28</numVerses>
+    <numVerses chapter="10">29</numVerses>
+    <numVerses chapter="11">43</numVerses>
+    <numVerses chapter="12">33</numVerses>
+    <numVerses chapter="13">34</numVerses>
+    <numVerses chapter="14">31</numVerses>
+    <numVerses chapter="15">34</numVerses>
+    <numVerses chapter="16">34</numVerses>
+    <numVerses chapter="17">24</numVerses>
+    <numVerses chapter="18">46</numVerses>
+    <numVerses chapter="19">21</numVerses>
+    <numVerses chapter="20">29</numVerses>
+    <numVerses chapter="21">43</numVerses>
+    <numVerses chapter="22">54</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Kings / 4 Kingdoms / 4 Kings</nameEnglish>
+    <referenceAbbreviation>KI2</referenceAbbreviation>
+    <numChapters>25</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">27</numVerses>
+    <numVerses chapter="4">44</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">33</numVerses>
+    <numVerses chapter="7">20</numVerses>
+    <numVerses chapter="8">29</numVerses>
+    <numVerses chapter="9">37</numVerses>
+    <numVerses chapter="10">36</numVerses>
+    <numVerses chapter="11">21</numVerses>
+    <numVerses chapter="12">22</numVerses>
+    <numVerses chapter="13">25</numVerses>
+    <numVerses chapter="14">29</numVerses>
+    <numVerses chapter="15">38</numVerses>
+    <numVerses chapter="16">20</numVerses>
+    <numVerses chapter="17">41</numVerses>
+    <numVerses chapter="18">37</numVerses>
+    <numVerses chapter="19">37</numVerses>
+    <numVerses chapter="20">21</numVerses>
+    <numVerses chapter="21">26</numVerses>
+    <numVerses chapter="22">20</numVerses>
+    <numVerses chapter="23">37</numVerses>
+    <numVerses chapter="24">20</numVerses>
+    <numVerses chapter="25">30</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Chronicles/Paralipomenon</nameEnglish>
+    <referenceAbbreviation>CH1</referenceAbbreviation>
+    <numChapters>29</numChapters>
+    <numVerses chapter="1">54</numVerses>
+    <numVerses chapter="2">55</numVerses>
+    <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">43</numVerses>
+    <numVerses chapter="5">41</numVerses>
+    <numVerses chapter="6">81</numVerses>
+    <numVerses chapter="7">40</numVerses>
+    <numVerses chapter="8">40</numVerses>
+    <numVerses chapter="9">44</numVerses>
+    <numVerses chapter="10">14</numVerses>
+    <numVerses chapter="11">47</numVerses>
+    <numVerses chapter="12">41</numVerses>
+    <numVerses chapter="13">14</numVerses>
+    <numVerses chapter="14">17</numVerses>
+    <numVerses chapter="15">29</numVerses>
+    <numVerses chapter="16">43</numVerses>
+    <numVerses chapter="17">27</numVerses>
+    <numVerses chapter="18">17</numVerses>
+    <numVerses chapter="19">19</numVerses>
+    <numVerses chapter="20">8</numVerses>
+    <numVerses chapter="21">30</numVerses>
+    <numVerses chapter="22">19</numVerses>
+    <numVerses chapter="23">32</numVerses>
+    <numVerses chapter="24">31</numVerses>
+    <numVerses chapter="25">31</numVerses>
+    <numVerses chapter="26">32</numVerses>
+    <numVerses chapter="27">34</numVerses>
+    <numVerses chapter="28">21</numVerses>
+    <numVerses chapter="29">30</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Chronicles/Paralipomenon</nameEnglish>
+    <referenceAbbreviation>CH2</referenceAbbreviation>
+    <numChapters>36</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">18</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">22</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">42</numVerses>
+    <numVerses chapter="7">22</numVerses>
+    <numVerses chapter="8">18</numVerses>
+    <numVerses chapter="9">31</numVerses>
+    <numVerses chapter="10">19</numVerses>
+    <numVerses chapter="11">23</numVerses>
+    <numVerses chapter="12">16</numVerses>
+    <numVerses chapter="13">23</numVerses>
+    <numVerses chapter="14">14</numVerses>
+    <numVerses chapter="15">19</numVerses>
+    <numVerses chapter="16">14</numVerses>
+    <numVerses chapter="17">19</numVerses>
+    <numVerses chapter="18">34</numVerses>
+    <numVerses chapter="19">11</numVerses>
+    <numVerses chapter="20">37</numVerses>
+    <numVerses chapter="21">20</numVerses>
+    <numVerses chapter="22">12</numVerses>
+    <numVerses chapter="23">21</numVerses>
+    <numVerses chapter="24">27</numVerses>
+    <numVerses chapter="25">28</numVerses>
+    <numVerses chapter="26">23</numVerses>
+    <numVerses chapter="27">9</numVerses>
+    <numVerses chapter="28">27</numVerses>
+    <numVerses chapter="29">36</numVerses>
+    <numVerses chapter="30">27</numVerses>
+    <numVerses chapter="31">21</numVerses>
+    <numVerses chapter="32">33</numVerses>
+    <numVerses chapter="33">25</numVerses>
+    <numVerses chapter="34">33</numVerses>
+    <numVerses chapter="35">27</numVerses>
+    <numVerses chapter="36">23</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Ezra</nameEnglish>
+    <referenceAbbreviation>EZR</referenceAbbreviation>
+    <numChapters>23</numChapters>
+    <numVerses chapter="1">11</numVerses>
+    <numVerses chapter="2">70</numVerses>
+    <numVerses chapter="3">13</numVerses>
+    <numVerses chapter="4">24</numVerses>
+    <numVerses chapter="5">17</numVerses>
+    <numVerses chapter="6">22</numVerses>
+    <numVerses chapter="7">28</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">15</numVerses>
+    <numVerses chapter="10">44</numVerses>
+    <numVerses chapter="11">11</numVerses>
+    <numVerses chapter="12">20</numVerses>
+    <numVerses chapter="13">32</numVerses>
+    <numVerses chapter="14">23</numVerses>
+    <numVerses chapter="15">19</numVerses>
+    <numVerses chapter="16">19</numVerses>
+    <numVerses chapter="17">73</numVerses>
+    <numVerses chapter="18">18</numVerses>
+    <numVerses chapter="19">38</numVerses>
+    <numVerses chapter="20">39</numVerses>
+    <numVerses chapter="21">36</numVerses>
+    <numVerses chapter="22">47</numVerses>
+    <numVerses chapter="23">31</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Nehemiah</nameEnglish>
+    <referenceAbbreviation>NEH</referenceAbbreviation>
+    <numChapters>13</numChapters>
+    <numVerses chapter="1">11</numVerses>
+    <numVerses chapter="2">20</numVerses>
+    <numVerses chapter="3">32</numVerses>
+    <numVerses chapter="4">23</numVerses>
+    <numVerses chapter="5">19</numVerses>
+    <numVerses chapter="6">19</numVerses>
+    <numVerses chapter="7">73</numVerses>
+    <numVerses chapter="8">18</numVerses>
+    <numVerses chapter="9">38</numVerses>
+    <numVerses chapter="10">39</numVerses>
+    <numVerses chapter="11">36</numVerses>
+    <numVerses chapter="12">47</numVerses>
+    <numVerses chapter="13">31</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Esther</nameEnglish>
+    <referenceAbbreviation>EST</referenceAbbreviation>
+    <numChapters>10</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">15</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">14</numVerses>
+    <numVerses chapter="7">10</numVerses>
+    <numVerses chapter="8">17</numVerses>
+    <numVerses chapter="9">32</numVerses>
+    <numVerses chapter="10">3</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Job</nameEnglish>
+    <referenceAbbreviation>JOB</referenceAbbreviation>
+    <numChapters>42</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">13</numVerses>
+    <numVerses chapter="3">26</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">30</numVerses>
+    <numVerses chapter="7">21</numVerses>
+    <numVerses chapter="8">22</numVerses>
+    <numVerses chapter="9">35</numVerses>
+    <numVerses chapter="10">22</numVerses>
+    <numVerses chapter="11">20</numVerses>
+    <numVerses chapter="12">25</numVerses>
+    <numVerses chapter="13">28</numVerses>
+    <numVerses chapter="14">22</numVerses>
+    <numVerses chapter="15">35</numVerses>
+    <numVerses chapter="16">22</numVerses>
+    <numVerses chapter="17">16</numVerses>
+    <numVerses chapter="18">21</numVerses>
+    <numVerses chapter="19">29</numVerses>
+    <numVerses chapter="20">29</numVerses>
+    <numVerses chapter="21">34</numVerses>
+    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="23">17</numVerses>
+    <numVerses chapter="24">25</numVerses>
+    <numVerses chapter="25">6</numVerses>
+    <numVerses chapter="26">14</numVerses>
+    <numVerses chapter="27">23</numVerses>
+    <numVerses chapter="28">28</numVerses>
+    <numVerses chapter="29">25</numVerses>
+    <numVerses chapter="30">31</numVerses>
+    <numVerses chapter="31">40</numVerses>
+    <numVerses chapter="32">22</numVerses>
+    <numVerses chapter="33">33</numVerses>
+    <numVerses chapter="34">37</numVerses>
+    <numVerses chapter="35">16</numVerses>
+    <numVerses chapter="36">33</numVerses>
+    <numVerses chapter="37">24</numVerses>
+    <numVerses chapter="38">41</numVerses>
+    <numVerses chapter="39">30</numVerses>
+    <numVerses chapter="40">32</numVerses>
+    <numVerses chapter="41">26</numVerses>
+    <numVerses chapter="42">17</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Psalms / Gallicanum / Psalms A</nameEnglish>
+    <referenceAbbreviation>PSA</referenceAbbreviation>
+    <numChapters>151</numChapters>
+    <numVerses chapter="1">6</numVerses>
+    <numVerses chapter="2">12</numVerses>
+    <numVerses chapter="3">9</numVerses>
+    <numVerses chapter="4">9</numVerses>
+    <numVerses chapter="5">13</numVerses>
+    <numVerses chapter="6">11</numVerses>
+    <numVerses chapter="7">18</numVerses>
+    <numVerses chapter="8">10</numVerses>
+    <numVerses chapter="9">39</numVerses>
+    <numVerses chapter="10">7</numVerses>
+    <numVerses chapter="11">9</numVerses>
+    <numVerses chapter="12">6</numVerses>
+    <numVerses chapter="13">7</numVerses>
+    <numVerses chapter="14">5</numVerses>
+    <numVerses chapter="15">11</numVerses>
+    <numVerses chapter="16">15</numVerses>
+    <numVerses chapter="17">51</numVerses>
+    <numVerses chapter="18">15</numVerses>
+    <numVerses chapter="19">10</numVerses>
+    <numVerses chapter="20">14</numVerses>
+    <numVerses chapter="21">32</numVerses>
+    <numVerses chapter="22">6</numVerses>
+    <numVerses chapter="23">10</numVerses>
+    <numVerses chapter="24">22</numVerses>
+    <numVerses chapter="25">12</numVerses>
+    <numVerses chapter="26">14</numVerses>
+    <numVerses chapter="27">9</numVerses>
+    <numVerses chapter="28">11</numVerses>
+    <numVerses chapter="29">13</numVerses>
+    <numVerses chapter="30">25</numVerses>
+    <numVerses chapter="31">11</numVerses>
+    <numVerses chapter="32">22</numVerses>
+    <numVerses chapter="33">23</numVerses>
+    <numVerses chapter="34">28</numVerses>
+    <numVerses chapter="35">13</numVerses>
+    <numVerses chapter="36">40</numVerses>
+    <numVerses chapter="37">23</numVerses>
+    <numVerses chapter="38">14</numVerses>
+    <numVerses chapter="39">18</numVerses>
+    <numVerses chapter="40">14</numVerses>
+    <numVerses chapter="41">12</numVerses>
+    <numVerses chapter="42">5</numVerses>
+    <numVerses chapter="43">27</numVerses>
+    <numVerses chapter="44">18</numVerses>
+    <numVerses chapter="45">12</numVerses>
+    <numVerses chapter="46">10</numVerses>
+    <numVerses chapter="47">15</numVerses>
+    <numVerses chapter="48">21</numVerses>
+    <numVerses chapter="49">23</numVerses>
+    <numVerses chapter="50">21</numVerses>
+    <numVerses chapter="51">11</numVerses>
+    <numVerses chapter="52">7</numVerses>
+    <numVerses chapter="53">9</numVerses>
+    <numVerses chapter="54">24</numVerses>
+    <numVerses chapter="55">14</numVerses>
+    <numVerses chapter="56">12</numVerses>
+    <numVerses chapter="57">12</numVerses>
+    <numVerses chapter="58">18</numVerses>
+    <numVerses chapter="59">14</numVerses>
+    <numVerses chapter="60">9</numVerses>
+    <numVerses chapter="61">13</numVerses>
+    <numVerses chapter="62">12</numVerses>
+    <numVerses chapter="63">11</numVerses>
+    <numVerses chapter="64">14</numVerses>
+    <numVerses chapter="65">20</numVerses>
+    <numVerses chapter="66">8</numVerses>
+    <numVerses chapter="67">36</numVerses>
+    <numVerses chapter="68">37</numVerses>
+    <numVerses chapter="69">6</numVerses>
+    <numVerses chapter="70">24</numVerses>
+    <numVerses chapter="71">20</numVerses>
+    <numVerses chapter="72">28</numVerses>
+    <numVerses chapter="73">23</numVerses>
+    <numVerses chapter="74">11</numVerses>
+    <numVerses chapter="75">13</numVerses>
+    <numVerses chapter="76">21</numVerses>
+    <numVerses chapter="77">72</numVerses>
+    <numVerses chapter="78">13</numVerses>
+    <numVerses chapter="79">20</numVerses>
+    <numVerses chapter="80">17</numVerses>
+    <numVerses chapter="81">8</numVerses>
+    <numVerses chapter="82">19</numVerses>
+    <numVerses chapter="83">13</numVerses>
+    <numVerses chapter="84">14</numVerses>
+    <numVerses chapter="85">17</numVerses>
+    <numVerses chapter="86">7</numVerses>
+    <numVerses chapter="87">19</numVerses>
+    <numVerses chapter="88">53</numVerses>
+    <numVerses chapter="89">17</numVerses>
+    <numVerses chapter="90">17</numVerses>
+    <numVerses chapter="91">16</numVerses>
+    <numVerses chapter="92">15</numVerses>
+    <numVerses chapter="93">23</numVerses>
+    <numVerses chapter="94">23</numVerses>
+    <numVerses chapter="95">13</numVerses>
+    <numVerses chapter="96">12</numVerses>
+    <numVerses chapter="97">9</numVerses>
+    <numVerses chapter="98">9</numVerses>
+    <numVerses chapter="99">5</numVerses>
+    <numVerses chapter="100">8</numVerses>
+    <numVerses chapter="101">29</numVerses>
+    <numVerses chapter="102">28</numVerses>
+    <numVerses chapter="103">35</numVerses>
+    <numVerses chapter="104">45</numVerses>
+    <numVerses chapter="105">48</numVerses>
+    <numVerses chapter="106">43</numVerses>
+    <numVerses chapter="107">14</numVerses>
+    <numVerses chapter="108">31</numVerses>
+    <numVerses chapter="109">7</numVerses>
+    <numVerses chapter="110">10</numVerses>
+    <numVerses chapter="111">10</numVerses>
+    <numVerses chapter="112">9</numVerses>
+    <numVerses chapter="113">26</numVerses>
+    <numVerses chapter="114">9</numVerses>
+    <numVerses chapter="115">10</numVerses>
+    <numVerses chapter="116">2</numVerses>
+    <numVerses chapter="117">29</numVerses>
+    <numVerses chapter="118">176</numVerses>
+    <numVerses chapter="119">7</numVerses>
+    <numVerses chapter="120">8</numVerses>
+    <numVerses chapter="121">9</numVerses>
+    <numVerses chapter="122">9</numVerses>
+    <numVerses chapter="123">8</numVerses>
+    <numVerses chapter="124">8</numVerses>
+    <numVerses chapter="125">6</numVerses>
+    <numVerses chapter="126">5</numVerses>
+    <numVerses chapter="127">6</numVerses>
+    <numVerses chapter="128">8</numVerses>
+    <numVerses chapter="129">8</numVerses>
+    <numVerses chapter="130">3</numVerses>
+    <numVerses chapter="131">18</numVerses>
+    <numVerses chapter="132">3</numVerses>
+    <numVerses chapter="133">3</numVerses>
+    <numVerses chapter="134">21</numVerses>
+    <numVerses chapter="135">26</numVerses>
+    <numVerses chapter="136">9</numVerses>
+    <numVerses chapter="137">8</numVerses>
+    <numVerses chapter="138">24</numVerses>
+    <numVerses chapter="139">14</numVerses>
+    <numVerses chapter="140">10</numVerses>
+    <numVerses chapter="141">8</numVerses>
+    <numVerses chapter="142">12</numVerses>
+    <numVerses chapter="143">15</numVerses>
+    <numVerses chapter="144">21</numVerses>
+    <numVerses chapter="145">10</numVerses>
+    <numVerses chapter="146">11</numVerses>
+    <numVerses chapter="147">9</numVerses>
+    <numVerses chapter="148">14</numVerses>
+    <numVerses chapter="149">9</numVerses>
+    <numVerses chapter="150">6</numVerses>
+    <numVerses chapter="151">7</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Proverbs</nameEnglish>
+    <referenceAbbreviation>PRO</referenceAbbreviation>
+    <numChapters>31</numChapters>
+    <numVerses chapter="1">33</numVerses>
+    <numVerses chapter="2">22</numVerses>
+    <numVerses chapter="3">35</numVerses>
+    <numVerses chapter="4">27</numVerses>
+    <numVerses chapter="5">23</numVerses>
+    <numVerses chapter="6">35</numVerses>
+    <numVerses chapter="7">27</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">32</numVerses>
+    <numVerses chapter="11">31</numVerses>
+    <numVerses chapter="12">28</numVerses>
+    <numVerses chapter="13">25</numVerses>
+    <numVerses chapter="14">35</numVerses>
+    <numVerses chapter="15">33</numVerses>
+    <numVerses chapter="16">33</numVerses>
+    <numVerses chapter="17">28</numVerses>
+    <numVerses chapter="18">22</numVerses>
+    <numVerses chapter="19">29</numVerses>
+    <numVerses chapter="20">30</numVerses>
+    <numVerses chapter="21">31</numVerses>
+    <numVerses chapter="22">29</numVerses>
+    <numVerses chapter="23">35</numVerses>
+    <numVerses chapter="24">34</numVerses>
+    <numVerses chapter="25">28</numVerses>
+    <numVerses chapter="26">28</numVerses>
+    <numVerses chapter="27">27</numVerses>
+    <numVerses chapter="28">28</numVerses>
+    <numVerses chapter="29">27</numVerses>
+    <numVerses chapter="30">33</numVerses>
+    <numVerses chapter="31">31</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Ecclesiastes/Qoholeth</nameEnglish>
+    <referenceAbbreviation>ECC</referenceAbbreviation>
+    <numChapters>12</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">26</numVerses>
+    <numVerses chapter="3">22</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">19</numVerses>
+    <numVerses chapter="6">12</numVerses>
+    <numVerses chapter="7">29</numVerses>
+    <numVerses chapter="8">17</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">20</numVerses>
+    <numVerses chapter="11">10</numVerses>
+    <numVerses chapter="12">14</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Song of Solomon / Song of Songs / Canticles</nameEnglish>
+    <referenceAbbreviation>SNG</referenceAbbreviation>
+    <numChapters>8</numChapters>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">11</numVerses>
+    <numVerses chapter="4">16</numVerses>
+    <numVerses chapter="5">16</numVerses>
+    <numVerses chapter="6">12</numVerses>
+    <numVerses chapter="7">14</numVerses>
+    <numVerses chapter="8">14</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Isaiah</nameEnglish>
+    <referenceAbbreviation>ISA</referenceAbbreviation>
+    <numChapters>66</numChapters>
+    <numVerses chapter="1">31</numVerses>
+    <numVerses chapter="2">21</numVerses>
+    <numVerses chapter="3">26</numVerses>
+    <numVerses chapter="4">6</numVerses>
+    <numVerses chapter="5">30</numVerses>
+    <numVerses chapter="6">13</numVerses>
+    <numVerses chapter="7">25</numVerses>
+    <numVerses chapter="8">23</numVerses>
+    <numVerses chapter="9">20</numVerses>
+    <numVerses chapter="10">34</numVerses>
+    <numVerses chapter="11">16</numVerses>
+    <numVerses chapter="12">6</numVerses>
+    <numVerses chapter="13">22</numVerses>
+    <numVerses chapter="14">32</numVerses>
+    <numVerses chapter="15">9</numVerses>
+    <numVerses chapter="16">14</numVerses>
+    <numVerses chapter="17">14</numVerses>
+    <numVerses chapter="18">7</numVerses>
+    <numVerses chapter="19">25</numVerses>
+    <numVerses chapter="20">6</numVerses>
+    <numVerses chapter="21">17</numVerses>
+    <numVerses chapter="22">25</numVerses>
+    <numVerses chapter="23">18</numVerses>
+    <numVerses chapter="24">23</numVerses>
+    <numVerses chapter="25">12</numVerses>
+    <numVerses chapter="26">21</numVerses>
+    <numVerses chapter="27">13</numVerses>
+    <numVerses chapter="28">29</numVerses>
+    <numVerses chapter="29">24</numVerses>
+    <numVerses chapter="30">33</numVerses>
+    <numVerses chapter="31">9</numVerses>
+    <numVerses chapter="32">20</numVerses>
+    <numVerses chapter="33">24</numVerses>
+    <numVerses chapter="34">17</numVerses>
+    <numVerses chapter="35">10</numVerses>
+    <numVerses chapter="36">22</numVerses>
+    <numVerses chapter="37">38</numVerses>
+    <numVerses chapter="38">22</numVerses>
+    <numVerses chapter="39">8</numVerses>
+    <numVerses chapter="40">31</numVerses>
+    <numVerses chapter="41">29</numVerses>
+    <numVerses chapter="42">25</numVerses>
+    <numVerses chapter="43">28</numVerses>
+    <numVerses chapter="44">28</numVerses>
+    <numVerses chapter="45">25</numVerses>
+    <numVerses chapter="46">13</numVerses>
+    <numVerses chapter="47">15</numVerses>
+    <numVerses chapter="48">22</numVerses>
+    <numVerses chapter="49">26</numVerses>
+    <numVerses chapter="50">11</numVerses>
+    <numVerses chapter="51">23</numVerses>
+    <numVerses chapter="52">15</numVerses>
+    <numVerses chapter="53">12</numVerses>
+    <numVerses chapter="54">17</numVerses>
+    <numVerses chapter="55">13</numVerses>
+    <numVerses chapter="56">11</numVerses>
+    <numVerses chapter="57">21</numVerses>
+    <numVerses chapter="58">14</numVerses>
+    <numVerses chapter="59">21</numVerses>
+    <numVerses chapter="60">22</numVerses>
+    <numVerses chapter="61">11</numVerses>
+    <numVerses chapter="62">12</numVerses>
+    <numVerses chapter="63">19</numVerses>
+    <numVerses chapter="64">11</numVerses>
+    <numVerses chapter="65">25</numVerses>
+    <numVerses chapter="66">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Jeremiah</nameEnglish>
+    <referenceAbbreviation>JER</referenceAbbreviation>
+    <numChapters>52</numChapters>
+    <numVerses chapter="1">19</numVerses>
+    <numVerses chapter="2">37</numVerses>
+    <numVerses chapter="3">25</numVerses>
+    <numVerses chapter="4">31</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">30</numVerses>
+    <numVerses chapter="7">34</numVerses>
+    <numVerses chapter="8">23</numVerses>
+    <numVerses chapter="9">25</numVerses>
+    <numVerses chapter="10">25</numVerses>
+    <numVerses chapter="11">23</numVerses>
+    <numVerses chapter="12">17</numVerses>
+    <numVerses chapter="13">27</numVerses>
+    <numVerses chapter="14">22</numVerses>
+    <numVerses chapter="15">21</numVerses>
+    <numVerses chapter="16">21</numVerses>
+    <numVerses chapter="17">27</numVerses>
+    <numVerses chapter="18">23</numVerses>
+    <numVerses chapter="19">15</numVerses>
+    <numVerses chapter="20">18</numVerses>
+    <numVerses chapter="21">14</numVerses>
+    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="23">40</numVerses>
+    <numVerses chapter="24">10</numVerses>
+    <numVerses chapter="25">20</numVerses>
+    <numVerses chapter="26">28</numVerses>
+    <numVerses chapter="27">46</numVerses>
+    <numVerses chapter="28">64</numVerses>
+    <numVerses chapter="29">7</numVerses>
+    <numVerses chapter="30">33</numVerses>
+    <numVerses chapter="31">44</numVerses>
+    <numVerses chapter="32">38</numVerses>
+    <numVerses chapter="33">24</numVerses>
+    <numVerses chapter="34">22</numVerses>
+    <numVerses chapter="35">17</numVerses>
+    <numVerses chapter="36">32</numVerses>
+    <numVerses chapter="37">24</numVerses>
+    <numVerses chapter="38">40</numVerses>
+    <numVerses chapter="39">44</numVerses>
+    <numVerses chapter="40">13</numVerses>
+    <numVerses chapter="41">22</numVerses>
+    <numVerses chapter="42">19</numVerses>
+    <numVerses chapter="43">32</numVerses>
+    <numVerses chapter="44">21</numVerses>
+    <numVerses chapter="45">28</numVerses>
+    <numVerses chapter="46">18</numVerses>
+    <numVerses chapter="47">16</numVerses>
+    <numVerses chapter="48">18</numVerses>
+    <numVerses chapter="49">22</numVerses>
+    <numVerses chapter="50">13</numVerses>
+    <numVerses chapter="51">35</numVerses>
+    <numVerses chapter="52">34</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Lamentations</nameEnglish>
+    <referenceAbbreviation>LAM</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">22</numVerses>
+    <numVerses chapter="3">66</numVerses>
+    <numVerses chapter="4">22</numVerses>
+    <numVerses chapter="5">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Ezekiel</nameEnglish>
+    <referenceAbbreviation>EZE</referenceAbbreviation>
+    <numChapters>48</numChapters>
+    <numVerses chapter="1">28</numVerses>
+    <numVerses chapter="2">10</numVerses>
+    <numVerses chapter="3">27</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">17</numVerses>
+    <numVerses chapter="6">14</numVerses>
+    <numVerses chapter="7">27</numVerses>
+    <numVerses chapter="8">18</numVerses>
+    <numVerses chapter="9">11</numVerses>
+    <numVerses chapter="10">22</numVerses>
+    <numVerses chapter="11">25</numVerses>
+    <numVerses chapter="12">28</numVerses>
+    <numVerses chapter="13">23</numVerses>
+    <numVerses chapter="14">23</numVerses>
+    <numVerses chapter="15">8</numVerses>
+    <numVerses chapter="16">63</numVerses>
+    <numVerses chapter="17">24</numVerses>
+    <numVerses chapter="18">32</numVerses>
+    <numVerses chapter="19">14</numVerses>
+    <numVerses chapter="20">49</numVerses>
+    <numVerses chapter="21">37</numVerses>
+    <numVerses chapter="22">31</numVerses>
+    <numVerses chapter="23">49</numVerses>
+    <numVerses chapter="24">27</numVerses>
+    <numVerses chapter="25">17</numVerses>
+    <numVerses chapter="26">21</numVerses>
+    <numVerses chapter="27">36</numVerses>
+    <numVerses chapter="28">26</numVerses>
+    <numVerses chapter="29">21</numVerses>
+    <numVerses chapter="30">26</numVerses>
+    <numVerses chapter="31">18</numVerses>
+    <numVerses chapter="32">32</numVerses>
+    <numVerses chapter="33">33</numVerses>
+    <numVerses chapter="34">31</numVerses>
+    <numVerses chapter="35">15</numVerses>
+    <numVerses chapter="36">38</numVerses>
+    <numVerses chapter="37">28</numVerses>
+    <numVerses chapter="38">23</numVerses>
+    <numVerses chapter="39">29</numVerses>
+    <numVerses chapter="40">49</numVerses>
+    <numVerses chapter="41">26</numVerses>
+    <numVerses chapter="42">20</numVerses>
+    <numVerses chapter="43">27</numVerses>
+    <numVerses chapter="44">31</numVerses>
+    <numVerses chapter="45">25</numVerses>
+    <numVerses chapter="46">24</numVerses>
+    <numVerses chapter="47">23</numVerses>
+    <numVerses chapter="48">35</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Daniel</nameEnglish>
+    <referenceAbbreviation>DAN</referenceAbbreviation>
+    <numChapters>12</numChapters>
+    <numVerses chapter="1">21</numVerses>
+    <numVerses chapter="2">49</numVerses>
+    <numVerses chapter="3">97</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">29</numVerses>
+    <numVerses chapter="7">28</numVerses>
+    <numVerses chapter="8">27</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">45</numVerses>
+    <numVerses chapter="12">13</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Hosea</nameEnglish>
+    <referenceAbbreviation>HOS</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">11</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">5</numVerses>
+    <numVerses chapter="4">19</numVerses>
+    <numVerses chapter="5">15</numVerses>
+    <numVerses chapter="6">11</numVerses>
+    <numVerses chapter="7">16</numVerses>
+    <numVerses chapter="8">14</numVerses>
+    <numVerses chapter="9">17</numVerses>
+    <numVerses chapter="10">15</numVerses>
+    <numVerses chapter="11">12</numVerses>
+    <numVerses chapter="12">15</numVerses>
+    <numVerses chapter="13">16</numVerses>
+    <numVerses chapter="14">10</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Joel</nameEnglish>
+    <referenceAbbreviation>JOL</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">20</numVerses>
+    <numVerses chapter="2">32</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Amos</nameEnglish>
+    <referenceAbbreviation>AMO</referenceAbbreviation>
+    <numChapters>9</numChapters>
+    <numVerses chapter="1">15</numVerses>
+    <numVerses chapter="2">16</numVerses>
+    <numVerses chapter="3">15</numVerses>
+    <numVerses chapter="4">13</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">14</numVerses>
+    <numVerses chapter="7">17</numVerses>
+    <numVerses chapter="8">14</numVerses>
+    <numVerses chapter="9">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Obadiah</nameEnglish>
+    <referenceAbbreviation>OBA</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Jonah</nameEnglish>
+    <referenceAbbreviation>JNA</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">11</numVerses>
+    <numVerses chapter="3">10</numVerses>
+    <numVerses chapter="4">11</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Micah</nameEnglish>
+    <referenceAbbreviation>MIC</referenceAbbreviation>
+    <numChapters>7</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">13</numVerses>
+    <numVerses chapter="3">12</numVerses>
+    <numVerses chapter="4">14</numVerses>
+    <numVerses chapter="5">15</numVerses>
+    <numVerses chapter="6">16</numVerses>
+    <numVerses chapter="7">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Nahum</nameEnglish>
+    <referenceAbbreviation>NAH</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">15</numVerses>
+    <numVerses chapter="2">14</numVerses>
+    <numVerses chapter="3">19</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Habakkuk</nameEnglish>
+    <referenceAbbreviation>HAB</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">20</numVerses>
+    <numVerses chapter="3">19</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Zephaniah</nameEnglish>
+    <referenceAbbreviation>ZEP</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">15</numVerses>
+    <numVerses chapter="3">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Haggai</nameEnglish>
+    <referenceAbbreviation>HAG</referenceAbbreviation>
+    <numChapters>2</numChapters>
+    <numVerses chapter="1">15</numVerses>
+    <numVerses chapter="2">23</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Zechariah</nameEnglish>
+    <referenceAbbreviation>ZEC</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">21</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">10</numVerses>
+    <numVerses chapter="4">14</numVerses>
+    <numVerses chapter="5">11</numVerses>
+    <numVerses chapter="6">15</numVerses>
+    <numVerses chapter="7">14</numVerses>
+    <numVerses chapter="8">23</numVerses>
+    <numVerses chapter="9">17</numVerses>
+    <numVerses chapter="10">12</numVerses>
+    <numVerses chapter="11">17</numVerses>
+    <numVerses chapter="12">14</numVerses>
+    <numVerses chapter="13">9</numVerses>
+    <numVerses chapter="14">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Malachi</nameEnglish>
+    <referenceAbbreviation>MAL</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">14</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">6</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Matthew</nameEnglish>
+    <referenceAbbreviation>MAT</referenceAbbreviation>
+    <numChapters>28</numChapters>
+    <numVerses chapter="1">25</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">25</numVerses>
+    <numVerses chapter="5">48</numVerses>
+    <numVerses chapter="6">34</numVerses>
+    <numVerses chapter="7">29</numVerses>
+    <numVerses chapter="8">34</numVerses>
+    <numVerses chapter="9">38</numVerses>
+    <numVerses chapter="10">42</numVerses>
+    <numVerses chapter="11">30</numVerses>
+    <numVerses chapter="12">50</numVerses>
+    <numVerses chapter="13">58</numVerses>
+    <numVerses chapter="14">36</numVerses>
+    <numVerses chapter="15">39</numVerses>
+    <numVerses chapter="16">28</numVerses>
+    <numVerses chapter="17">27</numVerses>
+    <numVerses chapter="18">35</numVerses>
+    <numVerses chapter="19">30</numVerses>
+    <numVerses chapter="20">34</numVerses>
+    <numVerses chapter="21">46</numVerses>
+    <numVerses chapter="22">46</numVerses>
+    <numVerses chapter="23">39</numVerses>
+    <numVerses chapter="24">51</numVerses>
+    <numVerses chapter="25">46</numVerses>
+    <numVerses chapter="26">75</numVerses>
+    <numVerses chapter="27">66</numVerses>
+    <numVerses chapter="28">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Mark</nameEnglish>
+    <referenceAbbreviation>MRK</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">45</numVerses>
+    <numVerses chapter="2">28</numVerses>
+    <numVerses chapter="3">35</numVerses>
+    <numVerses chapter="4">41</numVerses>
+    <numVerses chapter="5">43</numVerses>
+    <numVerses chapter="6">56</numVerses>
+    <numVerses chapter="7">37</numVerses>
+    <numVerses chapter="8">38</numVerses>
+    <numVerses chapter="9">50</numVerses>
+    <numVerses chapter="10">52</numVerses>
+    <numVerses chapter="11">33</numVerses>
+    <numVerses chapter="12">44</numVerses>
+    <numVerses chapter="13">37</numVerses>
+    <numVerses chapter="14">72</numVerses>
+    <numVerses chapter="15">47</numVerses>
+    <numVerses chapter="16">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Luke</nameEnglish>
+    <referenceAbbreviation>LUK</referenceAbbreviation>
+    <numChapters>24</numChapters>
+    <numVerses chapter="1">80</numVerses>
+    <numVerses chapter="2">52</numVerses>
+    <numVerses chapter="3">38</numVerses>
+    <numVerses chapter="4">44</numVerses>
+    <numVerses chapter="5">39</numVerses>
+    <numVerses chapter="6">49</numVerses>
+    <numVerses chapter="7">50</numVerses>
+    <numVerses chapter="8">56</numVerses>
+    <numVerses chapter="9">62</numVerses>
+    <numVerses chapter="10">42</numVerses>
+    <numVerses chapter="11">54</numVerses>
+    <numVerses chapter="12">59</numVerses>
+    <numVerses chapter="13">35</numVerses>
+    <numVerses chapter="14">35</numVerses>
+    <numVerses chapter="15">32</numVerses>
+    <numVerses chapter="16">31</numVerses>
+    <numVerses chapter="17">37</numVerses>
+    <numVerses chapter="18">43</numVerses>
+    <numVerses chapter="19">48</numVerses>
+    <numVerses chapter="20">47</numVerses>
+    <numVerses chapter="21">38</numVerses>
+    <numVerses chapter="22">71</numVerses>
+    <numVerses chapter="23">56</numVerses>
+    <numVerses chapter="24">53</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>John</nameEnglish>
+    <referenceAbbreviation>JHN</referenceAbbreviation>
+    <numChapters>21</numChapters>
+    <numVerses chapter="1">51</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">36</numVerses>
+    <numVerses chapter="4">54</numVerses>
+    <numVerses chapter="5">47</numVerses>
+    <numVerses chapter="6">71</numVerses>
+    <numVerses chapter="7">53</numVerses>
+    <numVerses chapter="8">59</numVerses>
+    <numVerses chapter="9">41</numVerses>
+    <numVerses chapter="10">42</numVerses>
+    <numVerses chapter="11">57</numVerses>
+    <numVerses chapter="12">50</numVerses>
+    <numVerses chapter="13">38</numVerses>
+    <numVerses chapter="14">31</numVerses>
+    <numVerses chapter="15">27</numVerses>
+    <numVerses chapter="16">33</numVerses>
+    <numVerses chapter="17">26</numVerses>
+    <numVerses chapter="18">40</numVerses>
+    <numVerses chapter="19">42</numVerses>
+    <numVerses chapter="20">31</numVerses>
+    <numVerses chapter="21">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Acts</nameEnglish>
+    <referenceAbbreviation>ACT</referenceAbbreviation>
+    <numChapters>28</numChapters>
+    <numVerses chapter="1">26</numVerses>
+    <numVerses chapter="2">47</numVerses>
+    <numVerses chapter="3">26</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">42</numVerses>
+    <numVerses chapter="6">15</numVerses>
+    <numVerses chapter="7">60</numVerses>
+    <numVerses chapter="8">40</numVerses>
+    <numVerses chapter="9">43</numVerses>
+    <numVerses chapter="10">48</numVerses>
+    <numVerses chapter="11">30</numVerses>
+    <numVerses chapter="12">25</numVerses>
+    <numVerses chapter="13">52</numVerses>
+    <numVerses chapter="14">28</numVerses>
+    <numVerses chapter="15">41</numVerses>
+    <numVerses chapter="16">40</numVerses>
+    <numVerses chapter="17">34</numVerses>
+    <numVerses chapter="18">28</numVerses>
+    <numVerses chapter="19">41</numVerses>
+    <numVerses chapter="20">38</numVerses>
+    <numVerses chapter="21">40</numVerses>
+    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="23">35</numVerses>
+    <numVerses chapter="24">27</numVerses>
+    <numVerses chapter="25">27</numVerses>
+    <numVerses chapter="26">32</numVerses>
+    <numVerses chapter="27">44</numVerses>
+    <numVerses chapter="28">31</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Romans</nameEnglish>
+    <referenceAbbreviation>ROM</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">32</numVerses>
+    <numVerses chapter="2">29</numVerses>
+    <numVerses chapter="3">31</numVerses>
+    <numVerses chapter="4">25</numVerses>
+    <numVerses chapter="5">21</numVerses>
+    <numVerses chapter="6">23</numVerses>
+    <numVerses chapter="7">25</numVerses>
+    <numVerses chapter="8">39</numVerses>
+    <numVerses chapter="9">33</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">36</numVerses>
+    <numVerses chapter="12">21</numVerses>
+    <numVerses chapter="13">14</numVerses>
+    <numVerses chapter="14">23</numVerses>
+    <numVerses chapter="15">33</numVerses>
+    <numVerses chapter="16">27</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Corinthians</nameEnglish>
+    <referenceAbbreviation>CO1</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">31</numVerses>
+    <numVerses chapter="2">16</numVerses>
+    <numVerses chapter="3">23</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">13</numVerses>
+    <numVerses chapter="6">20</numVerses>
+    <numVerses chapter="7">40</numVerses>
+    <numVerses chapter="8">13</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">33</numVerses>
+    <numVerses chapter="11">34</numVerses>
+    <numVerses chapter="12">31</numVerses>
+    <numVerses chapter="13">13</numVerses>
+    <numVerses chapter="14">40</numVerses>
+    <numVerses chapter="15">58</numVerses>
+    <numVerses chapter="16">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Corinthians</nameEnglish>
+    <referenceAbbreviation>CO2</referenceAbbreviation>
+    <numChapters>13</numChapters>
+    <numVerses chapter="1">24</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">18</numVerses>
+    <numVerses chapter="4">18</numVerses>
+    <numVerses chapter="5">21</numVerses>
+    <numVerses chapter="6">18</numVerses>
+    <numVerses chapter="7">16</numVerses>
+    <numVerses chapter="8">24</numVerses>
+    <numVerses chapter="9">15</numVerses>
+    <numVerses chapter="10">18</numVerses>
+    <numVerses chapter="11">33</numVerses>
+    <numVerses chapter="12">21</numVerses>
+    <numVerses chapter="13">14</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Galatians</nameEnglish>
+    <referenceAbbreviation>GAL</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">24</numVerses>
+    <numVerses chapter="2">21</numVerses>
+    <numVerses chapter="3">29</numVerses>
+    <numVerses chapter="4">31</numVerses>
+    <numVerses chapter="5">26</numVerses>
+    <numVerses chapter="6">18</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Ephesians</nameEnglish>
+    <referenceAbbreviation>EPH</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">23</numVerses>
+    <numVerses chapter="2">22</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">32</numVerses>
+    <numVerses chapter="5">33</numVerses>
+    <numVerses chapter="6">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Philippians</nameEnglish>
+    <referenceAbbreviation>PHP</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">30</numVerses>
+    <numVerses chapter="2">30</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">23</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Colossians</nameEnglish>
+    <referenceAbbreviation>COL</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">29</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">25</numVerses>
+    <numVerses chapter="4">18</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Thessalonians</nameEnglish>
+    <referenceAbbreviation>TH1</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">10</numVerses>
+    <numVerses chapter="2">20</numVerses>
+    <numVerses chapter="3">13</numVerses>
+    <numVerses chapter="4">18</numVerses>
+    <numVerses chapter="5">28</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Thessalonians</nameEnglish>
+    <referenceAbbreviation>TH2</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">12</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">18</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Timothy</nameEnglish>
+    <referenceAbbreviation>TI1</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">20</numVerses>
+    <numVerses chapter="2">15</numVerses>
+    <numVerses chapter="3">16</numVerses>
+    <numVerses chapter="4">16</numVerses>
+    <numVerses chapter="5">25</numVerses>
+    <numVerses chapter="6">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Timothy</nameEnglish>
+    <referenceAbbreviation>TI2</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">18</numVerses>
+    <numVerses chapter="2">26</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Titus</nameEnglish>
+    <referenceAbbreviation>TIT</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">15</numVerses>
+    <numVerses chapter="3">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Philemon</nameEnglish>
+    <referenceAbbreviation>PHM</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Hebrews</nameEnglish>
+    <referenceAbbreviation>HEB</referenceAbbreviation>
+    <numChapters>13</numChapters>
+    <numVerses chapter="1">14</numVerses>
+    <numVerses chapter="2">18</numVerses>
+    <numVerses chapter="3">19</numVerses>
+    <numVerses chapter="4">16</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">20</numVerses>
+    <numVerses chapter="7">28</numVerses>
+    <numVerses chapter="8">13</numVerses>
+    <numVerses chapter="9">28</numVerses>
+    <numVerses chapter="10">39</numVerses>
+    <numVerses chapter="11">40</numVerses>
+    <numVerses chapter="12">29</numVerses>
+    <numVerses chapter="13">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>James</nameEnglish>
+    <referenceAbbreviation>JAM</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">27</numVerses>
+    <numVerses chapter="2">26</numVerses>
+    <numVerses chapter="3">18</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Peter</nameEnglish>
+    <referenceAbbreviation>PE1</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">25</numVerses>
+    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="3">22</numVerses>
+    <numVerses chapter="4">19</numVerses>
+    <numVerses chapter="5">14</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Peter</nameEnglish>
+    <referenceAbbreviation>PE2</referenceAbbreviation>
+    <numChapters>3</numChapters>
+    <numVerses chapter="1">21</numVerses>
+    <numVerses chapter="2">22</numVerses>
+    <numVerses chapter="3">18</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 John</nameEnglish>
+    <referenceAbbreviation>JN1</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">10</numVerses>
+    <numVerses chapter="2">29</numVerses>
+    <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 John</nameEnglish>
+    <referenceAbbreviation>JN2</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">13</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>3 John</nameEnglish>
+    <referenceAbbreviation>JN3</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Jude</nameEnglish>
+    <referenceAbbreviation>JDE</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Revelation of John / Apocalypse of St. John</nameEnglish>
+    <referenceAbbreviation>REV</referenceAbbreviation>
+    <numChapters>22</numChapters>
+    <numVerses chapter="1">20</numVerses>
+    <numVerses chapter="2">29</numVerses>
+    <numVerses chapter="3">22</numVerses>
+    <numVerses chapter="4">11</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">17</numVerses>
+    <numVerses chapter="7">17</numVerses>
+    <numVerses chapter="8">13</numVerses>
+    <numVerses chapter="9">21</numVerses>
+    <numVerses chapter="10">11</numVerses>
+    <numVerses chapter="11">19</numVerses>
+    <numVerses chapter="12">18</numVerses>
+    <numVerses chapter="13">18</numVerses>
+    <numVerses chapter="14">20</numVerses>
+    <numVerses chapter="15">8</numVerses>
+    <numVerses chapter="16">21</numVerses>
+    <numVerses chapter="17">18</numVerses>
+    <numVerses chapter="18">24</numVerses>
+    <numVerses chapter="19">21</numVerses>
+    <numVerses chapter="20">15</numVerses>
+    <numVerses chapter="21">27</numVerses>
+    <numVerses chapter="22">21</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Tobit/Tobias</nameEnglish>
+    <referenceAbbreviation>TOB</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">14</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">23</numVerses>
+    <numVerses chapter="6">19</numVerses>
+    <numVerses chapter="7">18</numVerses>
+    <numVerses chapter="8">21</numVerses>
+    <numVerses chapter="9">6</numVerses>
+    <numVerses chapter="10">14</numVerses>
+    <numVerses chapter="11">19</numVerses>
+    <numVerses chapter="12">22</numVerses>
+    <numVerses chapter="13">18</numVerses>
+    <numVerses chapter="14">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Judith</nameEnglish>
+    <referenceAbbreviation>JDT</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">28</numVerses>
+    <numVerses chapter="3">10</numVerses>
+    <numVerses chapter="4">15</numVerses>
+    <numVerses chapter="5">24</numVerses>
+    <numVerses chapter="6">21</numVerses>
+    <numVerses chapter="7">32</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">14</numVerses>
+    <numVerses chapter="10">23</numVerses>
+    <numVerses chapter="11">23</numVerses>
+    <numVerses chapter="12">20</numVerses>
+    <numVerses chapter="13">20</numVerses>
+    <numVerses chapter="14">19</numVerses>
+    <numVerses chapter="15">14</numVerses>
+    <numVerses chapter="16">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Greek Esther / Additions to Esther</nameEnglish>
+    <referenceAbbreviation>ESG</referenceAbbreviation>
+    <numChapters>10</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">15</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">14</numVerses>
+    <numVerses chapter="7">10</numVerses>
+    <numVerses chapter="8">17</numVerses>
+    <numVerses chapter="9">32</numVerses>
+    <numVerses chapter="10">3</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Wisdom of Solomon</nameEnglish>
+    <referenceAbbreviation>WIS</referenceAbbreviation>
+    <numChapters>19</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">24</numVerses>
+    <numVerses chapter="3">19</numVerses>
+    <numVerses chapter="4">20</numVerses>
+    <numVerses chapter="5">23</numVerses>
+    <numVerses chapter="6">25</numVerses>
+    <numVerses chapter="7">30</numVerses>
+    <numVerses chapter="8">21</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">26</numVerses>
+    <numVerses chapter="12">27</numVerses>
+    <numVerses chapter="13">19</numVerses>
+    <numVerses chapter="14">31</numVerses>
+    <numVerses chapter="15">19</numVerses>
+    <numVerses chapter="16">29</numVerses>
+    <numVerses chapter="17">21</numVerses>
+    <numVerses chapter="18">25</numVerses>
+    <numVerses chapter="19">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Sirach/Qoholeth/Ecclesiasticus</nameEnglish>
+    <referenceAbbreviation>SIR</referenceAbbreviation>
+    <numChapters>51</numChapters>
+    <numVerses chapter="1">30</numVerses>
+    <numVerses chapter="2">18</numVerses>
+    <numVerses chapter="3">31</numVerses>
+    <numVerses chapter="4">31</numVerses>
+    <numVerses chapter="5">15</numVerses>
+    <numVerses chapter="6">37</numVerses>
+    <numVerses chapter="7">36</numVerses>
+    <numVerses chapter="8">19</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">31</numVerses>
+    <numVerses chapter="11">34</numVerses>
+    <numVerses chapter="12">18</numVerses>
+    <numVerses chapter="13">26</numVerses>
+    <numVerses chapter="14">27</numVerses>
+    <numVerses chapter="15">20</numVerses>
+    <numVerses chapter="16">30</numVerses>
+    <numVerses chapter="17">32</numVerses>
+    <numVerses chapter="18">33</numVerses>
+    <numVerses chapter="19">30</numVerses>
+    <numVerses chapter="20">32</numVerses>
+    <numVerses chapter="21">28</numVerses>
+    <numVerses chapter="22">27</numVerses>
+    <numVerses chapter="23">28</numVerses>
+    <numVerses chapter="24">34</numVerses>
+    <numVerses chapter="25">26</numVerses>
+    <numVerses chapter="26">29</numVerses>
+    <numVerses chapter="27">30</numVerses>
+    <numVerses chapter="28">26</numVerses>
+    <numVerses chapter="29">28</numVerses>
+    <numVerses chapter="30">25</numVerses>
+    <numVerses chapter="31">31</numVerses>
+    <numVerses chapter="32">24</numVerses>
+    <numVerses chapter="33">33</numVerses>
+    <numVerses chapter="34">31</numVerses>
+    <numVerses chapter="35">26</numVerses>
+    <numVerses chapter="36">31</numVerses>
+    <numVerses chapter="37">31</numVerses>
+    <numVerses chapter="38">34</numVerses>
+    <numVerses chapter="39">35</numVerses>
+    <numVerses chapter="40">30</numVerses>
+    <numVerses chapter="41">27</numVerses>
+    <numVerses chapter="42">25</numVerses>
+    <numVerses chapter="43">33</numVerses>
+    <numVerses chapter="44">23</numVerses>
+    <numVerses chapter="45">26</numVerses>
+    <numVerses chapter="46">20</numVerses>
+    <numVerses chapter="47">25</numVerses>
+    <numVerses chapter="48">25</numVerses>
+    <numVerses chapter="49">16</numVerses>
+    <numVerses chapter="50">29</numVerses>
+    <numVerses chapter="51">30</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
+    <referenceAbbreviation>BAR</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">35</numVerses>
+    <numVerses chapter="3">38</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">9</numVerses>
+    <numVerses chapter="6">72</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Epistle of Jeremiah / Lamentations of Jeremiah / Letter of Jeremiah</nameEnglish>
+    <referenceAbbreviation>LJE</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">73</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Prayer of Azariah</nameEnglish>
+    <referenceAbbreviation>PAZ</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">68</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Susanna</nameEnglish>
+    <referenceAbbreviation>SUS</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">64</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Bel and the dragon</nameEnglish>
+    <referenceAbbreviation>BEL</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">42</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA1</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">64</numVerses>
+    <numVerses chapter="2">70</numVerses>
+    <numVerses chapter="3">60</numVerses>
+    <numVerses chapter="4">61</numVerses>
+    <numVerses chapter="5">68</numVerses>
+    <numVerses chapter="6">63</numVerses>
+    <numVerses chapter="7">50</numVerses>
+    <numVerses chapter="8">32</numVerses>
+    <numVerses chapter="9">73</numVerses>
+    <numVerses chapter="10">89</numVerses>
+    <numVerses chapter="11">74</numVerses>
+    <numVerses chapter="12">53</numVerses>
+    <numVerses chapter="13">53</numVerses>
+    <numVerses chapter="14">49</numVerses>
+    <numVerses chapter="15">41</numVerses>
+    <numVerses chapter="16">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA2</referenceAbbreviation>
+    <numChapters>15</numChapters>
+    <numVerses chapter="1">36</numVerses>
+    <numVerses chapter="2">32</numVerses>
+    <numVerses chapter="3">40</numVerses>
+    <numVerses chapter="4">50</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">31</numVerses>
+    <numVerses chapter="7">42</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">29</numVerses>
+    <numVerses chapter="10">38</numVerses>
+    <numVerses chapter="11">38</numVerses>
+    <numVerses chapter="12">45</numVerses>
+    <numVerses chapter="13">26</numVerses>
+    <numVerses chapter="14">46</numVerses>
+    <numVerses chapter="15">39</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>3 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA3</referenceAbbreviation>
+    <numChapters>7</numChapters>
+    <numVerses chapter="1">29</numVerses>
+    <numVerses chapter="2">33</numVerses>
+    <numVerses chapter="3">30</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">51</numVerses>
+    <numVerses chapter="6">41</numVerses>
+    <numVerses chapter="7">23</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>4 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA4</referenceAbbreviation>
+    <numChapters>18</numChapters>
+    <numVerses chapter="1">35</numVerses>
+    <numVerses chapter="2">24</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">26</numVerses>
+    <numVerses chapter="5">38</numVerses>
+    <numVerses chapter="6">35</numVerses>
+    <numVerses chapter="7">23</numVerses>
+    <numVerses chapter="8">29</numVerses>
+    <numVerses chapter="9">32</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">27</numVerses>
+    <numVerses chapter="12">19</numVerses>
+    <numVerses chapter="13">27</numVerses>
+    <numVerses chapter="14">20</numVerses>
+    <numVerses chapter="15">32</numVerses>
+    <numVerses chapter="16">25</numVerses>
+    <numVerses chapter="17">24</numVerses>
+    <numVerses chapter="18">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Esdras / Ezra-Nehemiah</nameEnglish>
+    <referenceAbbreviation>GES</referenceAbbreviation>
+    <numChapters>9</numChapters>
+    <numVerses chapter="1">58</numVerses>
+    <numVerses chapter="2">30</numVerses>
+    <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">63</numVerses>
+    <numVerses chapter="5">73</numVerses>
+    <numVerses chapter="6">34</numVerses>
+    <numVerses chapter="7">15</numVerses>
+    <numVerses chapter="8">96</numVerses>
+    <numVerses chapter="9">55</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Esdras / Latin Esdras</nameEnglish>
+    <referenceAbbreviation>LES</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">40</numVerses>
+    <numVerses chapter="2">48</numVerses>
+    <numVerses chapter="3">36</numVerses>
+    <numVerses chapter="4">52</numVerses>
+    <numVerses chapter="5">56</numVerses>
+    <numVerses chapter="6">59</numVerses>
+    <numVerses chapter="7">140</numVerses>
+    <numVerses chapter="8">63</numVerses>
+    <numVerses chapter="9">47</numVerses>
+    <numVerses chapter="10">59</numVerses>
+    <numVerses chapter="11">46</numVerses>
+    <numVerses chapter="12">51</numVerses>
+    <numVerses chapter="13">58</numVerses>
+    <numVerses chapter="14">48</numVerses>
+    <numVerses chapter="15">63</numVerses>
+    <numVerses chapter="16">78</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Prayer of Manasses / Prayer of Manasseh</nameEnglish>
+    <referenceAbbreviation>MAN</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Psalm 151</nameEnglish>
+    <referenceAbbreviation>PS2</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">7</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Odes/Odae</nameEnglish>
+    <referenceAbbreviation>ODE</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">19</numVerses>
+    <numVerses chapter="2">43</numVerses>
+    <numVerses chapter="3">10</numVerses>
+    <numVerses chapter="4">19</numVerses>
+    <numVerses chapter="5">12</numVerses>
+    <numVerses chapter="6">8</numVerses>
+    <numVerses chapter="7">20</numVerses>
+    <numVerses chapter="8">37</numVerses>
+    <numVerses chapter="9">22</numVerses>
+    <numVerses chapter="10">9</numVerses>
+    <numVerses chapter="11">11</numVerses>
+    <numVerses chapter="12">15</numVerses>
+    <numVerses chapter="13">4</numVerses>
+    <numVerses chapter="14">46</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Additional Psalms of Solomon</nameEnglish>
+    <referenceAbbreviation>PSS</referenceAbbreviation>
+    <numChapters>18</numChapters>
+    <numVerses chapter="1">8</numVerses>
+    <numVerses chapter="2">37</numVerses>
+    <numVerses chapter="3">12</numVerses>
+    <numVerses chapter="4">25</numVerses>
+    <numVerses chapter="5">19</numVerses>
+    <numVerses chapter="6">6</numVerses>
+    <numVerses chapter="7">10</numVerses>
+    <numVerses chapter="8">34</numVerses>
+    <numVerses chapter="9">11</numVerses>
+    <numVerses chapter="10">8</numVerses>
+    <numVerses chapter="11">9</numVerses>
+    <numVerses chapter="12">6</numVerses>
+    <numVerses chapter="13">12</numVerses>
+    <numVerses chapter="14">10</numVerses>
+    <numVerses chapter="15">13</numVerses>
+    <numVerses chapter="16">15</numVerses>
+    <numVerses chapter="17">46</numVerses>
+    <numVerses chapter="18">12</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Greek Daniel / Additions to Daniel</nameEnglish>
+    <referenceAbbreviation>DNG</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">21</numVerses>
+    <numVerses chapter="2">49</numVerses>
+    <numVerses chapter="3">97</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">28</numVerses>
+    <numVerses chapter="7">28</numVerses>
+    <numVerses chapter="8">27</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">45</numVerses>
+    <numVerses chapter="12">13</numVerses>
+    <numVerses chapter="13">64</numVerses>
+    <numVerses chapter="14">42</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Syriac Psalms 152-155</nameEnglish>
+    <referenceAbbreviation>PS3</referenceAbbreviation>
+    <numChapters>4</numChapters>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">20</numVerses>
+    <numVerses chapter="3">6</numVerses>
+    <numVerses chapter="4">6</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Baruch / Apocalypse of Baruch</nameEnglish>
+    <referenceAbbreviation>BA2</referenceAbbreviation>
+    <numChapters>77</numChapters>
+    <numVerses chapter="1">5</numVerses>
+    <numVerses chapter="2">2</numVerses>
+    <numVerses chapter="3">9</numVerses>
+    <numVerses chapter="4">7</numVerses>
+    <numVerses chapter="5">7</numVerses>
+    <numVerses chapter="6">10</numVerses>
+    <numVerses chapter="7">2</numVerses>
+    <numVerses chapter="8">5</numVerses>
+    <numVerses chapter="9">1</numVerses>
+    <numVerses chapter="10">19</numVerses>
+    <numVerses chapter="11">7</numVerses>
+    <numVerses chapter="12">5</numVerses>
+    <numVerses chapter="13">12</numVerses>
+    <numVerses chapter="14">19</numVerses>
+    <numVerses chapter="15">8</numVerses>
+    <numVerses chapter="16">1</numVerses>
+    <numVerses chapter="17">4</numVerses>
+    <numVerses chapter="18">2</numVerses>
+    <numVerses chapter="19">8</numVerses>
+    <numVerses chapter="20">6</numVerses>
+    <numVerses chapter="21">26</numVerses>
+    <numVerses chapter="22">8</numVerses>
+    <numVerses chapter="23">7</numVerses>
+    <numVerses chapter="24">4</numVerses>
+    <numVerses chapter="25">4</numVerses>
+    <numVerses chapter="26">1</numVerses>
+    <numVerses chapter="27">15</numVerses>
+    <numVerses chapter="28">7</numVerses>
+    <numVerses chapter="29">8</numVerses>
+    <numVerses chapter="30">5</numVerses>
+    <numVerses chapter="31">5</numVerses>
+    <numVerses chapter="32">9</numVerses>
+    <numVerses chapter="33">3</numVerses>
+    <numVerses chapter="34">1</numVerses>
+    <numVerses chapter="35">5</numVerses>
+    <numVerses chapter="36">10</numVerses>
+    <numVerses chapter="37">1</numVerses>
+    <numVerses chapter="38">4</numVerses>
+    <numVerses chapter="39">8</numVerses>
+    <numVerses chapter="40">4</numVerses>
+    <numVerses chapter="41">6</numVerses>
+    <numVerses chapter="42">8</numVerses>
+    <numVerses chapter="43">3</numVerses>
+    <numVerses chapter="44">15</numVerses>
+    <numVerses chapter="45">2</numVerses>
+    <numVerses chapter="46">7</numVerses>
+    <numVerses chapter="47">2</numVerses>
+    <numVerses chapter="48">50</numVerses>
+    <numVerses chapter="49">3</numVerses>
+    <numVerses chapter="50">4</numVerses>
+    <numVerses chapter="51">16</numVerses>
+    <numVerses chapter="52">8</numVerses>
+    <numVerses chapter="53">12</numVerses>
+    <numVerses chapter="54">22</numVerses>
+    <numVerses chapter="55">8</numVerses>
+    <numVerses chapter="56">16</numVerses>
+    <numVerses chapter="57">3</numVerses>
+    <numVerses chapter="58">2</numVerses>
+    <numVerses chapter="59">12</numVerses>
+    <numVerses chapter="60">2</numVerses>
+    <numVerses chapter="61">8</numVerses>
+    <numVerses chapter="62">8</numVerses>
+    <numVerses chapter="63">11</numVerses>
+    <numVerses chapter="64">10</numVerses>
+    <numVerses chapter="65">2</numVerses>
+    <numVerses chapter="66">8</numVerses>
+    <numVerses chapter="67">9</numVerses>
+    <numVerses chapter="68">8</numVerses>
+    <numVerses chapter="69">5</numVerses>
+    <numVerses chapter="70">10</numVerses>
+    <numVerses chapter="71">3</numVerses>
+    <numVerses chapter="72">6</numVerses>
+    <numVerses chapter="73">7</numVerses>
+    <numVerses chapter="74">4</numVerses>
+    <numVerses chapter="75">8</numVerses>
+    <numVerses chapter="76">5</numVerses>
+    <numVerses chapter="77">26</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Letter of Baruch</nameEnglish>
+    <referenceAbbreviation>LBA</referenceAbbreviation>
+    <numChapters>9</numChapters>
+    <numVerses chapter="78">7</numVerses>
+    <numVerses chapter="79">3</numVerses>
+    <numVerses chapter="80">7</numVerses>
+    <numVerses chapter="81">4</numVerses>
+    <numVerses chapter="82">9</numVerses>
+    <numVerses chapter="83">23</numVerses>
+    <numVerses chapter="84">11</numVerses>
+    <numVerses chapter="85">15</numVerses>
+    <numVerses chapter="86">3</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Jubilees</nameEnglish>
+    <referenceAbbreviation>JUB</referenceAbbreviation>
+    <numChapters>34</numChapters>
+    <numVerses chapter="1">26</numVerses>
+    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">19</numVerses>
+    <numVerses chapter="4">24</numVerses>
+    <numVerses chapter="5">36</numVerses>
+    <numVerses chapter="6">34</numVerses>
+    <numVerses chapter="7">37</numVerses>
+    <numVerses chapter="8">40</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">48</numVerses>
+    <numVerses chapter="11">39</numVerses>
+    <numVerses chapter="12">56</numVerses>
+    <numVerses chapter="13">34</numVerses>
+    <numVerses chapter="14">55</numVerses>
+    <numVerses chapter="15">20</numVerses>
+    <numVerses chapter="16">28</numVerses>
+    <numVerses chapter="17">30</numVerses>
+    <numVerses chapter="18">31</numVerses>
+    <numVerses chapter="19">59</numVerses>
+    <numVerses chapter="20">66</numVerses>
+    <numVerses chapter="21">30</numVerses>
+    <numVerses chapter="22">38</numVerses>
+    <numVerses chapter="23">59</numVerses>
+    <numVerses chapter="24">30</numVerses>
+    <numVerses chapter="25">50</numVerses>
+    <numVerses chapter="26">48</numVerses>
+    <numVerses chapter="27">37</numVerses>
+    <numVerses chapter="28">38</numVerses>
+    <numVerses chapter="29">27</numVerses>
+    <numVerses chapter="30">29</numVerses>
+    <numVerses chapter="31">31</numVerses>
+    <numVerses chapter="32">24</numVerses>
+    <numVerses chapter="33">30</numVerses>
+    <numVerses chapter="34">20</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Enoch</nameEnglish>
+    <referenceAbbreviation>ENO</referenceAbbreviation>
+    <numChapters>42</numChapters>
+    <numVerses chapter="1">28</numVerses>
+    <numVerses chapter="2">42</numVerses>
+    <numVerses chapter="3">30</numVerses>
+    <numVerses chapter="4">88</numVerses>
+    <numVerses chapter="5">40</numVerses>
+    <numVerses chapter="6">42</numVerses>
+    <numVerses chapter="7">39</numVerses>
+    <numVerses chapter="8">46</numVerses>
+    <numVerses chapter="9">42</numVerses>
+    <numVerses chapter="10">16</numVerses>
+    <numVerses chapter="11">19</numVerses>
+    <numVerses chapter="12">40</numVerses>
+    <numVerses chapter="13">34</numVerses>
+    <numVerses chapter="14">35</numVerses>
+    <numVerses chapter="15">45</numVerses>
+    <numVerses chapter="16">41</numVerses>
+    <numVerses chapter="17">69</numVerses>
+    <numVerses chapter="18">42</numVerses>
+    <numVerses chapter="19">29</numVerses>
+    <numVerses chapter="20">53</numVerses>
+    <numVerses chapter="21">57</numVerses>
+    <numVerses chapter="22">14</numVerses>
+    <numVerses chapter="23">26</numVerses>
+    <numVerses chapter="24">16</numVerses>
+    <numVerses chapter="25">30</numVerses>
+    <numVerses chapter="26">37</numVerses>
+    <numVerses chapter="27">21</numVerses>
+    <numVerses chapter="28">34</numVerses>
+    <numVerses chapter="29">28</numVerses>
+    <numVerses chapter="30">23</numVerses>
+    <numVerses chapter="31">29</numVerses>
+    <numVerses chapter="32">82</numVerses>
+    <numVerses chapter="33">59</numVerses>
+    <numVerses chapter="34">49</numVerses>
+    <numVerses chapter="35">36</numVerses>
+    <numVerses chapter="36">30</numVerses>
+    <numVerses chapter="37">34</numVerses>
+    <numVerses chapter="38">36</numVerses>
+    <numVerses chapter="39">24</numVerses>
+    <numVerses chapter="40">40</numVerses>
+    <numVerses chapter="41">22</numVerses>
+    <numVerses chapter="42">16</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Meqabyan/Makabian / Mekabis of Benjamin</nameEnglish>
+    <referenceAbbreviation>MQ1</referenceAbbreviation>
+    <numChapters>36</numChapters>
+    <numVerses chapter="1">28</numVerses>
+    <numVerses chapter="2">28</numVerses>
+    <numVerses chapter="3">38</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">39</numVerses>
+    <numVerses chapter="6">38</numVerses>
+    <numVerses chapter="7">33</numVerses>
+    <numVerses chapter="8">35</numVerses>
+    <numVerses chapter="9">10</numVerses>
+    <numVerses chapter="10">8</numVerses>
+    <numVerses chapter="11">8</numVerses>
+    <numVerses chapter="12">44</numVerses>
+    <numVerses chapter="13">27</numVerses>
+    <numVerses chapter="14">23</numVerses>
+    <numVerses chapter="15">20</numVerses>
+    <numVerses chapter="16">9</numVerses>
+    <numVerses chapter="17">8</numVerses>
+    <numVerses chapter="18">12</numVerses>
+    <numVerses chapter="19">17</numVerses>
+    <numVerses chapter="20">4</numVerses>
+    <numVerses chapter="21">31</numVerses>
+    <numVerses chapter="22">11</numVerses>
+    <numVerses chapter="23">7</numVerses>
+    <numVerses chapter="24">22</numVerses>
+    <numVerses chapter="25">18</numVerses>
+    <numVerses chapter="26">5</numVerses>
+    <numVerses chapter="27">20</numVerses>
+    <numVerses chapter="28">49</numVerses>
+    <numVerses chapter="29">17</numVerses>
+    <numVerses chapter="30">16</numVerses>
+    <numVerses chapter="31">7</numVerses>
+    <numVerses chapter="32">4</numVerses>
+    <numVerses chapter="33">11</numVerses>
+    <numVerses chapter="34">18</numVerses>
+    <numVerses chapter="35">8</numVerses>
+    <numVerses chapter="36">46</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Meqabyan/Makabian / Mekabis of Moab</nameEnglish>
+    <referenceAbbreviation>MQ2</referenceAbbreviation>
+    <numChapters>20</numChapters>
+    <numVerses chapter="1">13</numVerses>
+    <numVerses chapter="2">11</numVerses>
+    <numVerses chapter="3">29</numVerses>
+    <numVerses chapter="4">32</numVerses>
+    <numVerses chapter="5">18</numVerses>
+    <numVerses chapter="6">24</numVerses>
+    <numVerses chapter="7">9</numVerses>
+    <numVerses chapter="8">24</numVerses>
+    <numVerses chapter="9">27</numVerses>
+    <numVerses chapter="10">28</numVerses>
+    <numVerses chapter="11">25</numVerses>
+    <numVerses chapter="12">15</numVerses>
+    <numVerses chapter="13">14</numVerses>
+    <numVerses chapter="14">36</numVerses>
+    <numVerses chapter="15">21</numVerses>
+    <numVerses chapter="16">15</numVerses>
+    <numVerses chapter="17">12</numVerses>
+    <numVerses chapter="18">14</numVerses>
+    <numVerses chapter="19">15</numVerses>
+    <numVerses chapter="20">14</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>3 Meqabyan/Makabian</nameEnglish>
+    <referenceAbbreviation>MQ3</referenceAbbreviation>
+    <numChapters>10</numChapters>
+    <numVerses chapter="1">24</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">11</numVerses>
+    <numVerses chapter="4">36</numVerses>
+    <numVerses chapter="5">16</numVerses>
+    <numVerses chapter="6">16</numVerses>
+    <numVerses chapter="7">5</numVerses>
+    <numVerses chapter="8">12</numVerses>
+    <numVerses chapter="9">36</numVerses>
+    <numVerses chapter="10">29</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Reproof</nameEnglish>
+    <referenceAbbreviation>REP</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">28</numVerses>
+    <numVerses chapter="2">28</numVerses>
+    <numVerses chapter="3">27</numVerses>
+    <numVerses chapter="4">28</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Rest of the Words of Baruch</nameEnglish>
+    <referenceAbbreviation>BA4</referenceAbbreviation>
+    <numChapters>5</numChapters>
+    <numVerses chapter="1">30</numVerses>
+    <numVerses chapter="2">29</numVerses>
+    <numVerses chapter="3">30</numVerses>
+    <numVerses chapter="4">33</numVerses>
+    <numVerses chapter="5">62</numVerses>
+  </BibleBookVersification>
+
+</BibleVersificationSystem>
