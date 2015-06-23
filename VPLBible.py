@@ -88,7 +88,7 @@ from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
-BOS = None
+BOS66 = BOS81 = BOSx = None
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', ) # Must be UPPERCASE
@@ -291,8 +291,10 @@ class VPLBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
-        global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC' )
+        global BOS66, BOS81, BOSx
+        if BOS66 is None: BOS66 = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS81 is None: BOS81 = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
+        if BOSx is None: BOSx = BibleOrganizationalSystem( 'GENERIC-ENG' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
@@ -422,8 +424,6 @@ class VPLBible( Bible ):
                     verseNumber = int( verseNumberString )
 
                     if bookCode != lastBookCode: # We've started a new book
-                        #if lastBookCode != -1: # Better save the last book
-                            #self.saveBook( thisBook )
                         #if bookCode in ('Ge',): BBB = 'GEN'
                         if bookCode in ('Le',): BBB = 'LEV'
                         elif bookCode in ('Jud',): BBB = 'JDG'
@@ -431,26 +431,12 @@ class VPLBible( Bible ):
                         #elif bookCode in ('Pr',): BBB = 'PRO'
                         elif bookCode in ('So',): BBB = 'SNG'
                         elif bookCode in ('La',): BBB = 'LAM'
-                        elif bookCode in ('Jude',): BBB = 'JDE'
+                        #elif bookCode in ('Jude',): BBB = 'JDE'
                         else:
-                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
-                        #if BBB:
-                            #thisBook = BibleBook( self, BBB )
-                            #thisBook.objectNameString = "VPL Bible Book object"
-                            #thisBook.objectTypeString = "VPL"
-                            #lastBookCode = bookCode
-                            #lastChapterNumber = lastVerseNumber = -1
-                        #else:
-                            #logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
-                            #if BibleOrgSysGlobals.debugFlag: halt
-
-                    #if chapterNumber != lastChapterNumber: # We've started a new chapter
-                        #if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
-                        #if chapterNumber == 0:
-                            #logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                        #thisBook.addLine( 'c', chapterNumberString )
-                        #lastChapterNumber = chapterNumber
-                        #lastVerseNumber = -1
+                            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                            BBB = BOS66.getBBB( bookCode )  # Try to guess
+                            if not BBB: BBB = BOS81.getBBB( bookCode )  # Try to guess
+                            if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
 
                     # Handle special formatting
                     #   [brackets] are for Italicized words
@@ -515,6 +501,13 @@ class VPLBible( Bible ):
                                 #print( "metadataName", repr(metadataName) )
                                 metadataContents = ''
                         else: # let's assume it's a BCV reference
+                            pointer = pointer.replace( '1 K','1K' ).replace( '2 K','2K' ) \
+                                            .replace( '1 Chr','1Chr' ).replace( '2 Chr','2Chr' ) \
+                                            .replace( '1 Cor','1Cor' ).replace( '2 Cor','2Cor' ) \
+                                            .replace( '1 Thess','1Thess' ).replace( '2 Thess','2Thess' ) \
+                                            .replace( '1 Tim','1Tim' ).replace( '2 Tim','2Tim' ) \
+                                            .replace( '1 Pet','1Pet' ).replace( '2 Pet','2Pet' ) \
+                                            .replace( '1 J','1J' ).replace( '2 J','2J' ).replace( '3 J','3J' )
                             B_CV_Bits = pointer.split( ' ', 1 )
                             if len(B_CV_Bits) == 2 and ':' in B_CV_Bits[1]:
                                 bookCode, CVString = B_CV_Bits
@@ -522,8 +515,6 @@ class VPLBible( Bible ):
                                 chapterNumber = int( chapterNumberString )
                                 verseNumber = int( verseNumberString )
                                 if bookCode != lastBookCode: # We've started a new book
-                                    #if lastBookCode != -1: # Better save the last book
-                                        #self.saveBook( thisBook )
                                     if bookCode in ('Ge',): BBB = 'GEN'
                                     elif bookCode in ('Le',): BBB = 'LEV'
                                     elif bookCode in ('La',): BBB = 'LAM'
@@ -533,7 +524,12 @@ class VPLBible( Bible ):
                                     #elif bookCode in ('La',): BBB = 'LAM'
                                     #elif bookCode in ('Jude',): BBB = 'JDE'
                                     else:
-                                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                                        #print( "4BookCode =", repr(bookCode) )
+                                        #BBB = BOS.getBBB( bookCode )  # Try to guess
+                                        BBB = BOS66.getBBB( bookCode )  # Try to guess
+                                        if not BBB: BBB = BOS81.getBBB( bookCode )  # Try to guess
+                                        if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
+                                        #print( "4BBB =", repr(BBB) )
                             else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
                         continue # Just save the pointer information which refers to the text on the next line
                     else: # it's not a $$ line
@@ -564,45 +560,47 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = "VPL Bible Book object"
                             thisBook.objectTypeString = "VPL"
-                            verseList = BOS.getNumVersesList( BBB )
+                            verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCode = bookCode
                             lastChapterNumber = lastVerseNumber = -1
                         else:
-                            logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
+                            logging.critical( "VPLBible{} could not figure out {!r} book code".format( vplType, bookCode ) )
                             if BibleOrgSysGlobals.debugFlag: halt
 
-                    if chapterNumber != lastChapterNumber: # We've started a new chapter
-                        if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
-                        if chapterNumber == 0:
-                            logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                        elif chapterNumber > numChapters:
-                            logging.error( "Have high chapter number in {} {} {} {}:{} (expected max of {})".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, numChapters ) )
-                        thisBook.addLine( 'c', chapterNumberString )
-                        lastChapterNumber = chapterNumber
-                        lastVerseNumber = -1
+                    if BBB:
+                        if chapterNumber != lastChapterNumber: # We've started a new chapter
+                            if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                            if chapterNumber == 0:
+                                logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                            elif chapterNumber > numChapters:
+                                logging.error( "Have high chapter number in {} {} {} {}:{} (expected max of {})".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, numChapters ) )
+                            thisBook.addLine( 'c', chapterNumberString )
+                            lastChapterNumber = chapterNumber
+                            lastVerseNumber = -1
 
-                    # Handle the verse info
-                    if verseNumber==lastVerseNumber and vText==lastVText:
-                        logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                        continue
-                    if verseNumber < lastVerseNumber:
-                        logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    elif verseNumber == lastVerseNumber:
-                        if vText == lastVText:
-                            logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                        else:
-                            logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        # Handle the verse info
+                        if verseNumber==lastVerseNumber and vText==lastVText:
+                            logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                            continue
+                        if verseNumber < lastVerseNumber:
+                            logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        elif verseNumber == lastVerseNumber:
+                            if vText == lastVText:
+                                logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                            else:
+                                logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
-                    # Check for paragraph markers
-                    if vText and vText[0]=='¶':
-                        thisBook.addLine( 'p', '' )
-                        vText = vText[1:].lstrip()
+                        # Check for paragraph markers
+                        if vText and vText[0]=='¶':
+                            thisBook.addLine( 'p', '' )
+                            vText = vText[1:].lstrip()
 
-                    #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
-                    thisBook.addLine( 'v', verseNumberString + ' ' + vText )
-                    lastVText = vText
-                    lastVerseNumber = verseNumber
+                        #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
+                        thisBook.addLine( 'v', verseNumberString + ' ' + vText )
+                        lastVText = vText
+                        lastVerseNumber = verseNumber
+
                 else: # No bookCode yet
                     logging.warning( "VPLBible.load{} is skipping unknown pre-book line: {}".format( vplType, line ) )
 
@@ -666,8 +664,10 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for testFolder in ( "Tests/DataFilesForTests/VPLTest1/",
-                            "Tests/DataFilesForTests/VPLTest2/", ):
+        for testFolder in (
+                    "Tests/DataFilesForTests/VPLTest1/",
+                    "Tests/DataFilesForTests/VPLTest2/",
+                    ):
             result1 = VPLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA1", result1 )
 

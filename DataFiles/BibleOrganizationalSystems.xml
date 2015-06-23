@@ -63,7 +63,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.25</version>
-      <date>2016-06-18</date>
+      <date>2016-06-24</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -1998,7 +1998,7 @@ See the supplied ReadMe.txt for more details.
     <versificationSystem>KJV</versificationSystem>
     <punctuationSystem>English</punctuationSystem>
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
-    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <booksNamesSystem>eng_deuterocanon</booksNamesSystem>
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
                     TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
@@ -2128,7 +2128,25 @@ See the supplied ReadMe.txt for more details.
     <versificationSystem>KJV</versificationSystem>
     <punctuationSystem>None</punctuationSystem>
     <bookOrderSystem>ALL</bookOrderSystem>
-    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <booksNamesSystem>eng_extensive</booksNamesSystem>
+    <includesBooks>PRF ACK INT FRT TOC
+                    MOS GEN EXO LEV NUM DEU JOS JDG RUT SAM SA1 SA2 KGS KI1 KI2 CHR CH1 CH2 EZR EZN NEH EST ESA ESC JOB
+                        PSA PB1 PB2 PB3 PB4 PB5 PSB PS2 PS3 PSS PRO ECC SNG ISA JER LAM EZE DAN DNG DNA DNC P12 HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJB LBA LB2 BA2 BA3 BA4 LJE PAZ SUS BEL MAC MA1 MA2 MA3 MA4 MA5 GES LES EZA EZ5 EZ6 MAN ODE PSO PJE WSI TTP JUB ENO EN2 REP CL1 CL2 SHE DID
+                    MAT MRK LUK JHN LKA ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV LAO
+                    COP CO3 EUT DOJ LBB MQ1 MQ2 MQ3 TAD LAE ASS TSO TJB MAI AEZ EZT EUP PEU VAM LAR ARI ABL ART CLM ELM HRE LPR EPL TEO RVE
+                    GHE GTR GMA GMC GTW GPH GTH GJU GBA AJA WJC
+                    GLS CNC TPC IXN IXP IXT BAK MAP XXA XXB XXC XXD XXE XXF XXG</includesBooks>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-ENG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>BibMaxRef</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>ALL</bookOrderSystem>
+    <booksNamesSystem>eng_extensive</booksNamesSystem>
     <includesBooks>PRF ACK INT FRT TOC
                     MOS GEN EXO LEV NUM DEU JOS JDG RUT SAM SA1 SA2 KGS KI1 KI2 CHR CH1 CH2 EZR EZN NEH EST ESA ESC JOB
                         PSA PB1 PB2 PB3 PB4 PB5 PSB PS2 PS3 PSS PRO ECC SNG ISA JER LAM EZE DAN DNG DNA DNC P12 HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL

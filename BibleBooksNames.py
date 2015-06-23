@@ -28,10 +28,10 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-04' # by RJH
+LastModifiedDate = '2015-06-24' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
-ProgVersion = '0.36'
+ProgVersion = '0.37'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -123,15 +123,15 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     # Secondly make a set of the given allowed names
     divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
     for divAbbrev in divisionsNamesDict.keys():
-        for field in divisionsNamesDict[divAbbrev]["inputFields"]:
+        for field in divisionsNamesDict[divAbbrev]['inputFields']:
             UCField = field.upper()
             if UCField in divNameInputDict or UCField in bkNameInputDict:
                 logging.warning( _("Have duplicate entries of {!r} in divisionsNames for {}").format( UCField, systemName ) )
                 ambigSet.add( UCField )
             divNameInputDict[UCField] = divAbbrev # Store the index into divisionsNamesDict
     for refAbbrev in bookNamesDict.keys():
-        if refAbbrev in bookList:
-            for field in bookNamesDict[refAbbrev]["inputFields"]: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
+        if refAbbrev in bookList and isinstance(bookNamesDict[refAbbrev], dict) :
+            for field in bookNamesDict[refAbbrev]['inputFields']: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
                 UCField = field.upper()
                 if UCField in divNameInputDict or UCField in bkNameInputDict:
                     logging.warning( _("Have duplicate entries of {!r} in divisions and book names for {}").format( UCField, systemName ) )
@@ -374,7 +374,10 @@ class BibleBooksNamesSystems:
                 if found: divisionsNamesDictCopy[divAbbrev] = divisionsNamesDict[divAbbrev]
             bookNamesDictCopy = {}
             for BBB in bookList:
-                bookNamesDictCopy[BBB] = bookNamesDict[BBB]
+                try: bookNamesDictCopy[BBB] = bookNamesDict[BBB]
+                except KeyError: # We don't have a name for this book
+                    logging.error( "Bookname for {} is missing in {} bookname system".format( BBB, systemName ) )
+                    bookNamesDictCopy[BBB] = BBB
 
             if BibleOrgSysGlobals.strictCheckingFlag: # check that this system contains all the books we need
                 missingList = []
