@@ -38,10 +38,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17'
+LastModifiedDate = '2015-06-18'
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -238,7 +238,8 @@ class CSVBible( Bible ):
                 if len(bits) == 4:
                     bString, chapterNumberString, verseNumberString, vText = bits
                     #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
-                else: print( "Unexpected number of bits", self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits )
+                else:
+                    logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
 
                 # Remove quote marks from these strings
                 if quoted:
@@ -264,8 +265,8 @@ class CSVBible( Bible ):
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )  # Try to guess
                     assert( BBB )
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "CSV Bible Book object"
-                    thisBook.objectTypeString = "CSV"
+                    thisBook.objectNameString = 'CSV Bible Book object'
+                    thisBook.objectTypeString = 'CSV'
                     lastBookNumber = bookNumber
                     lastChapterNumber = lastVerseNumber = -1
 
@@ -310,18 +311,18 @@ class CSVBible( Bible ):
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
-                    logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                     continue
                 if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
                     # Move Psalm titles to verse zero
                     verseNumber = 0
                 if verseNumber < lastVerseNumber:
-                    logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                 elif verseNumber == lastVerseNumber:
                     if vText == lastVText:
-                        logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                     else:
-                        logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                 thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -377,25 +378,29 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "Tests/DataFilesForTests/CSVTest1/"
-    #testFolder = "Tests/DataFilesForTests/CSVTest2/"
+    testFolders =  ( "Tests/DataFilesForTests/CSVTest1/",
+                    "Tests/DataFilesForTests/CSVTest2/" )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = CSVBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA1", result1 )
+        for testFolder in testFolders:
+            result1 = CSVBibleFileCheck( testFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA1", result1 )
 
-        result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA2", result2 )
-        #result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
-        if BibleOrgSysGlobals.strictCheckingFlag:
-            result2.check()
-            #print( UsfmB.books['GEN']._processedLines[0:40] )
-            vBErrors = result2.getErrors()
-            # print( vBErrors )
-        if BibleOrgSysGlobals.commandLineOptions.export:
-            ##result2.toDrupalBible()
-            result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA2", result2 )
+
+            result3 = CSVBibleFileCheck( testFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA3", result3 )
+            #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                result3.check()
+                #print( UsfmB.books['GEN']._processedLines[0:40] )
+                vBErrors = result3.getErrors()
+                # print( vBErrors )
+            if BibleOrgSysGlobals.commandLineOptions.export:
+                ##result3.toDrupalBible()
+                result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
     if 0: # all discovered modules in the test folder

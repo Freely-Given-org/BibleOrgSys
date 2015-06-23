@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-06-18' # by RJH
 ShortProgName = "TheWordBible"
 ProgName = "TheWord Bible format handler"
-ProgVersion = '0.43'
+ProgVersion = '0.44'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -689,7 +689,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if line is None: # We don't have an entry for this C:V
         return
 
-    if line.startswith( '<CM>' ):
+    if line.startswith( '<CM>' ) and debuggingThisModule:
         print( "Why does TheWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
 
     # Fix apparent encoding errors in particular modules
@@ -1199,6 +1199,8 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = TheWordBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+        result3 = TheWordBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
 
 
     if 1: # all discovered modules in the round-trip folder

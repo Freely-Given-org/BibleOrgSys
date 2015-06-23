@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-06-18' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -359,10 +359,10 @@ class OSISXMLBible( Bible ):
                         logging.warning( "New variety of osisRefWork: {!r}".format( self.osisRefWork ) )
                         loadErrors.append( "New variety of osisRefWork: {!r}".format( self.osisRefWork ) )
                 if self.lang:
-                    if self.lang in ('en','he',): # Only specifically recognise these ones so far (English, Hebrew)
+                    if self.lang in ('en','de','he',): # Only specifically recognise these ones so far (English, German, Hebrew)
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Language is {!r}".format( self.lang ) )
                     else:
-                        logging.info( "Discovered an unknown {!r} language".format( self.lang ) )
+                        logging.info( "Discovered unknown {!r} language".format( self.lang ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  osisIDWork is {!r}".format( self.osisIDWork ) )
 
                 # Find (and move) the header container
@@ -1005,7 +1005,7 @@ class OSISXMLBible( Bible ):
                     if BibleOrgSysGlobals.debugFlag: assert( canonical == "true" )
                     chapterMilestone = OSISChapterID
                 else:
-                    print( repr(OSISChapterID), repr(sID), repr(eID) )
+                    print( 'SQUIGGLE', repr(OSISChapterID), repr(sID), repr(eID) )
                     logging.error( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
                     loadErrors.append( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
 
@@ -1030,7 +1030,7 @@ class OSISXMLBible( Bible ):
                             cmBBB = cmBBB[0]
                         if cmBBB and cmBBB != BBB: # We've started on a new book
                             #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
-                            print( "here", cmBBB, BBB, repr(chapterMilestone), len(self.thisBook._rawLines) )
+                            print( "here MAGIC", cmBBB, BBB, repr(chapterMilestone), len(self.thisBook._rawLines) )
                             if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
                                 #print( verseMilestone )
                                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Saving previous {}{} book into results...".format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
@@ -1647,7 +1647,7 @@ class OSISXMLBible( Bible ):
                             elif noteType=='footnote':
                                 self.thisBook.addLine( 'v~', anchor ) # There's no USFM for this
                             else:
-                                print( sublocation, verseMilestone, noteType, referenceType, referenceText )
+                                print( 'CATERPILLAR', sublocation, verseMilestone, noteType, referenceType, referenceText )
                                 if BibleOrgSysGlobals.debugFlag: halt
                     if noteType=='crossReference' and referenceType=='source':
                         #assert( not noteText and not referenceTail )
@@ -2535,7 +2535,7 @@ class OSISXMLBible( Bible ):
                         location = value + ' ' + location
                     elif attrib=='canonical':
                         divCanonical = value
-                        assert( divCanonical == 'false' )
+                        #assert( divCanonical == 'false' )
                     elif attrib=="scope":
                         divScope = value
                     else:
@@ -3102,7 +3102,7 @@ class OSISXMLBible( Bible ):
                                         loadErrors.append( "Unprocessed {!r} sub-element {} in {} at {} (05kq)".format( sub2element.tag, repr(sub2element.text), sublocation, verseMilestone ) )
                                         if BibleOrgSysGlobals.debugFlag: halt
                             elif verseMilestone and verseMilestone.startswith('verseContents#'): # it must have been a container -- process the string
-                                print( "verseContents", verseMilestone )
+                                #print( "verseContents", verseMilestone )
                                 bits = verseMilestone.split( '#', 2 )
                                 if BibleOrgSysGlobals.debugFlag: assert( len(bits) == 3 )
                                 if BibleOrgSysGlobals.debugFlag: assert( bits[0] == 'verseContents' )
@@ -3113,7 +3113,7 @@ class OSISXMLBible( Bible ):
                                 #assert( bits[2].strip() )
                                 self.thisBook.addLine( 'v', thisData )
                                 #print( USFMResults[-4:] )
-                                print( self.thisBook._rawLines[-4:] )
+                                #print( 'CHOCOLATE', self.thisBook._rawLines[-4:] )
                         else:
                             logging.error( "4s9j Unprocessed {!r} sub-element {} in {} at {}".format( subelement.tag, repr(subelement.text), location, verseMilestone ) )
                             loadErrors.append( "Unprocessed {!r} sub-element {} in {} at {} (4s9j)".format( subelement.tag, repr(subelement.text), location, verseMilestone ) )
@@ -3239,8 +3239,8 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            "Tests/DataFilesForTests/OSISTest1/", # Matigsalug test sample
-            "Tests/DataFilesForTests/OSISTest2/", # Full KJV from Crosswire
+            'Tests/DataFilesForTests/OSISTest1/', # Matigsalug test sample
+            'Tests/DataFilesForTests/OSISTest2/', # Full KJV from Crosswire
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",

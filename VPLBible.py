@@ -70,10 +70,10 @@ vplType 4 (SwordSearcher)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18' # by RJH
+LastModifiedDate = '2015-06-24' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -297,9 +297,10 @@ class VPLBible( Bible ):
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
         lastLine, lineCount = '', 0
-        vplType = BBB = metadataName = None
+        vplType = bookCode = BBB = metadataName = None
         lastBookCode = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
+        thisBook = None
         settingsDict = {}
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
@@ -387,12 +388,16 @@ class VPLBible( Bible ):
                         string = line[15:].strip()
                         if string: settingsDict['HAS_FOOTNOTES'] = string
                         continue
+                    elif line.startswith( '; HAS FOOTNOTES' ):
+                        string = line[14:].strip()
+                        if string: settingsDict['HAS_FOOTNOTES'] = string
+                        continue
                     elif line.startswith( '; HAS REDLETTER:' ):
                         string = line[15:].strip()
                         if string: settingsDict['HAS_REDLETTER'] = string
                         continue
                     elif line[0]==';':
-                        logging.warning( "VPLBible.load {} is skipping unknown line: {}".format( vplType, line ) )
+                        logging.warning( "VPLBible.load{} is skipping unknown header/comment line: {}".format( vplType, line ) )
                         continue # Just discard comment lines
 
                 # Process the main segment
@@ -548,58 +553,61 @@ class VPLBible( Bible ):
                     logging.critical( 'Unknown VPL type {}'.format( vplType ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
-                if bookCode != lastBookCode: # We've started a new book
-                    if lastBookCode != -1: # Better save the last book
-                        self.saveBook( thisBook )
-                    if BBB:
-                        if BBB in self:
-                            logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
-                        if BibleOrgSysGlobals.debugFlag: assert( BBB not in self )
-                        thisBook = BibleBook( self, BBB )
-                        thisBook.objectNameString = "VPL Bible Book object"
-                        thisBook.objectTypeString = "VPL"
-                        verseList = BOS.getNumVersesList( BBB )
-                        numChapters, numVerses = len(verseList), verseList[0]
-                        lastBookCode = bookCode
-                        lastChapterNumber = lastVerseNumber = -1
-                    else:
-                        logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
-                        if BibleOrgSysGlobals.debugFlag: halt
+                if bookCode:
+                    if bookCode != lastBookCode: # We've started a new book
+                        if lastBookCode != -1: # Better save the last book
+                            self.saveBook( thisBook )
+                        if BBB:
+                            if BBB in self:
+                                logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
+                            if BibleOrgSysGlobals.debugFlag: assert( BBB not in self )
+                            thisBook = BibleBook( self, BBB )
+                            thisBook.objectNameString = "VPL Bible Book object"
+                            thisBook.objectTypeString = "VPL"
+                            verseList = BOS.getNumVersesList( BBB )
+                            numChapters, numVerses = len(verseList), verseList[0]
+                            lastBookCode = bookCode
+                            lastChapterNumber = lastVerseNumber = -1
+                        else:
+                            logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
+                            if BibleOrgSysGlobals.debugFlag: halt
 
-                if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
-                    if chapterNumber == 0:
-                        logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    elif chapterNumber > numChapters:
-                        logging.error( "Have high chapter number in {} {} {} {}:{} (expected max of {})".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, numChapters ) )
-                    thisBook.addLine( 'c', chapterNumberString )
-                    lastChapterNumber = chapterNumber
-                    lastVerseNumber = -1
+                    if chapterNumber != lastChapterNumber: # We've started a new chapter
+                        if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                        if chapterNumber == 0:
+                            logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        elif chapterNumber > numChapters:
+                            logging.error( "Have high chapter number in {} {} {} {}:{} (expected max of {})".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, numChapters ) )
+                        thisBook.addLine( 'c', chapterNumberString )
+                        lastChapterNumber = chapterNumber
+                        lastVerseNumber = -1
 
-                # Handle the verse info
-                if verseNumber==lastVerseNumber and vText==lastVText:
-                    logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    continue
-                if verseNumber < lastVerseNumber:
-                    logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                elif verseNumber == lastVerseNumber:
-                    if vText == lastVText:
-                        logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    else:
-                        logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    # Handle the verse info
+                    if verseNumber==lastVerseNumber and vText==lastVText:
+                        logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        continue
+                    if verseNumber < lastVerseNumber:
+                        logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    elif verseNumber == lastVerseNumber:
+                        if vText == lastVText:
+                            logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        else:
+                            logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
-                # Check for paragraph markers
-                if vText and vText[0]=='¶':
-                    thisBook.addLine( 'p', '' )
-                    vText = vText[1:].lstrip()
+                    # Check for paragraph markers
+                    if vText and vText[0]=='¶':
+                        thisBook.addLine( 'p', '' )
+                        vText = vText[1:].lstrip()
 
-                #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
-                thisBook.addLine( 'v', verseNumberString + ' ' + vText )
-                lastVText = vText
-                lastVerseNumber = verseNumber
+                    #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
+                    thisBook.addLine( 'v', verseNumberString + ' ' + vText )
+                    lastVText = vText
+                    lastVerseNumber = verseNumber
+                else: # No bookCode yet
+                    logging.warning( "VPLBible.load{} is skipping unknown pre-book line: {}".format( vplType, line ) )
 
         # Save the final book
-        self.saveBook( thisBook )
+        if thisBook is not None: self.saveBook( thisBook )
 
         # Clean up
         if settingsDict:

@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-16' # by RJH
+LastModifiedDate = '2015-06-19' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -2345,30 +2345,30 @@ class BibleWriter( InternalBible ):
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in dir(self): self.discover()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_CustomBible_" + ("Reexport/" if self.objectTypeString=="CustomBible" else "Export/")
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_CustomBible_' + ('Reexport/' if self.objectTypeString=='CustomBible' else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
         CBDataFormatVersion = 1 # Increment this when the data files / arrays change
         jsonIndent = 1 # Keep files small for small phones
 
-        bookOutputFolderJSON = os.path.join( outputFolder, "ByBook.{}.JSON".format( CBDataFormatVersion ) )
+        bookOutputFolderJSON = os.path.join( outputFolder, 'ByBook.{}.JSON/'.format( CBDataFormatVersion ) )
         if not os.access( bookOutputFolderJSON, os.F_OK ): os.makedirs( bookOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        chapterOutputFolderJSON = os.path.join( outputFolder, "ByChapter.{}.JSON".format( CBDataFormatVersion ) )
+        chapterOutputFolderJSON = os.path.join( outputFolder, 'ByChapter.{}.JSON/'.format( CBDataFormatVersion ) )
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        bookOutputFolderHTML = os.path.join( outputFolder, "BySection.{}.HTML".format( CBDataFormatVersion ) )
+        bookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.HTML/'.format( CBDataFormatVersion ) )
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
-        debugBookOutputFolderHTML = os.path.join( outputFolder, "BySection.{}.debug.HTML".format( CBDataFormatVersion ) )
+        debugBookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.debug.HTML/'.format( CBDataFormatVersion ) )
         if not os.access( debugBookOutputFolderHTML, os.F_OK ): os.makedirs( debugBookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
         headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
         divisionNamesFilepath = os.path.join( outputFolder, 'CBDivisionNames.{}.json'.format( CBDataFormatVersion ) )
         bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
-        compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
-        destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
-        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
+        compressionDictFilepath = os.path.join( outputFolder, 'CBCmprnDict.{}.json'.format( CBDataFormatVersion ) )
+        destinationIndexFilepath = os.path.join( outputFolder, 'CB-BCV-index.{}.json'.format( CBDataFormatVersion ) )
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, 'CBBook.{}.{}.html'.format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, 'CBBook.{}C{}V{}.{}.html'.format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
@@ -2610,6 +2610,7 @@ class BibleWriter( InternalBible ):
             lastC = '0'
             for dataLine in bookData:
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
+                marker = marker.replace( '¬', '~' ) # Encodes cleaner in JSON
                 if marker == 'c':
                     C = text
                     writeCBChapter( BBB, lastC, chapterOutputData )
@@ -2623,13 +2624,17 @@ class BibleWriter( InternalBible ):
                 if extrasList:
                     chapterOutputData.append( (marker,text,extrasList) )
                     outputData.append( (marker,text,extrasList) )
-                else: # Try to keep filesizes down for mobile devices by omitting this often empty field
+                elif text is None: # Try to keep filesizes down for mobile devices by omitting this often empty field
+                    chapterOutputData.append( (marker,) )
+                    outputData.append( (marker,) )
+                else:
                     chapterOutputData.append( (marker,text) )
                     outputData.append( (marker,text) )
                 #print( outputData )
             writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
             filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
+            print( "Ouch", repr(BBB), repr(CBDataFormatVersion), repr(filepath) ); halt
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}...").format( BBB, filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
                 json.dump( outputData, jsonFile, indent=jsonIndent )
