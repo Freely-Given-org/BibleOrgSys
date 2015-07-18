@@ -2596,6 +2596,8 @@ class BibleWriter( InternalBible ):
 
         def writeCBBookAsJSON( BBB, bookData ):
             """
+            Creates json data files for the entire book in one folder,
+                and for each chapter (for RAM challenged devices) in another folder.
             """
             def writeCBChapter( BBB, chapter, cData ):
                 """
@@ -2634,7 +2636,6 @@ class BibleWriter( InternalBible ):
             writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
             filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
-            print( "Ouch", repr(BBB), repr(CBDataFormatVersion), repr(filepath) ); halt
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}...").format( BBB, filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
                 json.dump( outputData, jsonFile, indent=jsonIndent )
