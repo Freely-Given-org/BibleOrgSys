@@ -31,11 +31,11 @@ from gettext import gettext as _
 LastModifiedDate = '2015-08-18' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
