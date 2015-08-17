@@ -370,14 +370,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
-                ("BDB", "/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/SFB_2014_test_2.2015-08-18_01.43_0.83401300_1439819036/YourSourceFiles/Unzipped/",),
-                #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
-                #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 ) # You can put your USX test folder here
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for name, testFolder in testData:
-            print( "\nTestfolder is: {}".format( testFolder ) )
+            print( "\nA: Testfolder is: {}".format( testFolder ) )
             result1 = USXXMLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA1", result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
@@ -385,8 +384,9 @@ def demo():
             result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA3", result3 )
 
-    if 0:
+    if 1:
         for name, testFolder in testData:
+            print( "\nB: Testfolder is: {} ({})".format( testFolder, name ) )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
