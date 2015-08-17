@@ -64,10 +64,10 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-08-11' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,6 +87,21 @@ filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
                     'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'STY', 'SSF', 'TXT', 'USFM', 'USFX', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -459,13 +474,13 @@ class ZefaniaXMLBible( Bible ):
                 bookName = value
             elif attrib=="bsname":
                 bookShortName = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
+            else: logging.error( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
             try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
-            except KeyError:
-                logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
+            except (KeyError, ValueError):
+                logging.critical( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
                                                                         .format( bookNumber, bookName, bookShortName ) )
-        elif bookName:
+        if BBB is None and bookName:
             BBB = self.genericBOS.getBBB( bookName )
 
         if BBB:
@@ -592,12 +607,14 @@ class ZefaniaXMLBible( Bible ):
                             else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
                         if BibleOrgSysGlobals.debugFlag: assert( css or idStyle )
                         SFM = None
-                        if css == "font-style:italic": SFM = '\\it'
+                        if css=='font-style:italic' or css=='font-style:italic;': SFM = '\\it'
                         elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                         elif css == "color:#FF0000": SFM = '\\em'
                         elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                         elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                        else: print( "css is", css, "idStyle is", idStyle ); halt
+                        else:
+                            logging.error( "Ignored1 css is {!r} idStyle is {!r}".format( css, idStyle ) )
+                            if BibleOrgSysGlobals.debugFlag: halt
                         sText, sTail = subsubelement.text.strip(), subsubelement.tail
                         if BibleOrgSysGlobals.debugFlag: assert( sText )
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
@@ -617,17 +634,21 @@ class ZefaniaXMLBible( Bible ):
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( css or idStyle )
                 SFM = None
-                if css == "font-style:italic": SFM = '\\it'
+                if css=='font-style:italic' or css=='font-style:italic;': SFM = '\\it'
                 elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                 elif css == "color:#FF0000": SFM = '\\em'
                 elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                 elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                else: print( "css is", css, "idStyle is", idStyle ); halt
-                sText, sTail = subelement.text.strip(), subelement.tail
+                else:
+                    logging.error( "Ignored2 css is {!r} idStyle is {!r}".format( css, idStyle ) )
+                    if BibleOrgSysGlobals.debugFlag: halt
+                #sText, sTail = subelement.text.strip(), subelement.tail
+                sText = subelement.text.strip() if subelement.text else ''
+                sTail = subelement.tail.strip() if subelement.tail else None
                 if BibleOrgSysGlobals.debugFlag: assert( sText )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
-                else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
-                if sTail: vText += sTail.strip()
+                else: vText += '\\sc ' + '['+(css if css else '')+']' + sText + '\\sc* ' # Use sc for unknown styles
+                if sTail: vText += sTail
 
             elif subelement.tag == ZefaniaXMLBible.breakTag:
                 sublocation = "line break in " + location
@@ -651,7 +672,7 @@ class ZefaniaXMLBible( Bible ):
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                logging.warning( "ZefaniaXMLBible.__validateAndExtractVerse: newline in vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText )
     # end of ZefaniaXMLBible.__validateAndExtractVerse
@@ -667,8 +688,16 @@ def demo():
     if 1: # demo the file checking code
         testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
         #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
-        print( "TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        print( "TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        print( "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        print( "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        print( "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+
+    if 1: # demo the file checking code
+        testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
+        #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
+        print( "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        print( "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        print( "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     if 1:
         testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
@@ -684,7 +713,40 @@ def demo():
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ B{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ C{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
+            zb = ZefaniaXMLBible( testFolder, testFilename )
+            zb.load() # Load and process the XML
+            print( zb ) # Just print a summary
+            #print( zb.books['JDE']._processedLines )
+            if 1: # Test verse lookup
+                import VerseReferences
+                for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                                    ('OT','DAN','1','21'),
+                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+                    (t, b, c, v) = reference
+                    if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
+                    if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
+                    if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
+                    svk = VerseReferences.SimpleVerseKey( b, c, v )
+                    #print( svk, ob.getVerseDataList( reference ) )
+                    try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+                    except KeyError: print( testFilename, reference, "doesn't exist" )
+
+    if 1:
+        testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
+        fileList = []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if something.endswith( '.xml') and os.path.isfile( somepath ):
+                fileList.append( something )
+
+        for j, testFilename in enumerate( fileList ):
+            testFilepath = os.path.join( testFolder, testFilename )
+
+            # Demonstrate the XML Bible class
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ D{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML

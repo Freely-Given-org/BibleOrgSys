@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-19' # by RJH
+LastModifiedDate = '2015-08-17' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -476,6 +476,7 @@ class BibleWriter( InternalBible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        includeEmptyVersesFlag = True
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_USFM_" + ("Reexport/" if self.objectTypeString=="USFM" else "Export/")
@@ -491,6 +492,14 @@ class BibleWriter( InternalBible ):
             #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+
+            if includeEmptyVersesFlag:
+                try:
+                    verseList = self.genericBOS.getNumVersesList( BBB )
+                    numC, numV = len(verseList), verseList[0]
+                except KeyError:
+                    if BibleOrgSysGlobals.debugFlag: assert( BBB in ('FRT','GLS',) )
+                    numC = numV = 0
 
             USFM = ""
             inField = None
@@ -4795,33 +4804,80 @@ class BibleWriter( InternalBible ):
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeHeader( writerObject ):
-            """Writes the Zefania header to the Zefania XML writerObject."""
+            """
+            Writes the Zefania header to the Zefania XML writerObject.
+            """
             writerObject.writeLineOpen( 'INFORMATION' )
-            if "ZefaniaTitle" in controlDict and controlDict["ZefaniaTitle"]: writerObject.writeLineOpenClose( 'title' , controlDict["ZefaniaTitle"] )
-            if "ZefaniaSubject" in controlDict and controlDict["ZefaniaSubject"]: writerObject.writeLineOpenClose( 'subject', controlDict["ZefaniaSubject"] )
-            if "ZefaniaDescription" in controlDict and controlDict["ZefaniaDescription"]: writerObject.writeLineOpenClose( 'description', controlDict["ZefaniaDescription"] )
-            if "ZefaniaPublisher" in controlDict and controlDict["ZefaniaPublisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["ZefaniaPublisher"] )
-            if "ZefaniaContributors" in controlDict and controlDict["ZefaniaContributors"]: writerObject.writeLineOpenClose( 'contributors', controlDict["ZefaniaContributors"] )
-            if "ZefaniaIdentifier" in controlDict and controlDict["ZefaniaIdentifier"]: writerObject.writeLineOpenClose( 'identifier', controlDict["ZefaniaIdentifier"] )
-            if "ZefaniaSource" in controlDict and controlDict["ZefaniaSource"]: writerObject.writeLineOpenClose( 'identifier', controlDict["ZefaniaSource"] )
-            if "ZefaniaCoverage" in controlDict and controlDict["ZefaniaCoverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["ZefaniaCoverage"] )
+            if 'ZefaniaTitle' in controlDict and controlDict['ZefaniaTitle']: writerObject.writeLineOpenClose( 'title' , controlDict['ZefaniaTitle'] )
+            if 'ZefaniaSubject' in controlDict and controlDict['ZefaniaSubject']: writerObject.writeLineOpenClose( 'subject', controlDict['ZefaniaSubject'] )
+            if 'ZefaniaDescription' in controlDict and controlDict['ZefaniaDescription']: writerObject.writeLineOpenClose( 'description', controlDict['ZefaniaDescription'] )
+            if 'ZefaniaPublisher' in controlDict and controlDict['ZefaniaPublisher']: writerObject.writeLineOpenClose( 'publisher', controlDict['ZefaniaPublisher'] )
+            if 'ZefaniaContributors' in controlDict and controlDict['ZefaniaContributors']: writerObject.writeLineOpenClose( 'contributors', controlDict['ZefaniaContributors'] )
+            if 'ZefaniaIdentifier' in controlDict and controlDict['ZefaniaIdentifier']: writerObject.writeLineOpenClose( 'identifier', controlDict['ZefaniaIdentifier'] )
+            if 'ZefaniaSource' in controlDict and controlDict['ZefaniaSource']: writerObject.writeLineOpenClose( 'identifier', controlDict['ZefaniaSource'] )
+            if 'ZefaniaCoverage' in controlDict and controlDict['ZefaniaCoverage']: writerObject.writeLineOpenClose( 'coverage', controlDict['ZefaniaCoverage'] )
             writerObject.writeLineOpenClose( 'format', 'Zefania XML Bible Markup Language' )
             writerObject.writeLineOpenClose( 'date', datetime.now().date().isoformat() )
             writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
             writerObject.writeLineOpenClose( 'type', 'bible text' )
-            if "ZefaniaLanguage" in controlDict and controlDict["ZefaniaLanguage"]: writerObject.writeLineOpenClose( 'language', controlDict["ZefaniaLanguage"] )
-            if "ZefaniaRights" in controlDict and controlDict["ZefaniaRights"]: writerObject.writeLineOpenClose( 'rights', controlDict["ZefaniaRights"] )
+            if 'ZefaniaLanguage' in controlDict and controlDict['ZefaniaLanguage']: writerObject.writeLineOpenClose( 'language', controlDict['ZefaniaLanguage'] )
+            if 'ZefaniaRights' in controlDict and controlDict['ZefaniaRights']: writerObject.writeLineOpenClose( 'rights', controlDict['ZefaniaRights'] )
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toZefaniaXML.writeHeader
 
         def writeZefBook( writerObject, BBB, bkData ):
-            """Writes a book to the Zefania XML writerObject."""
+            """
+            Writes a book to the Zefania XML writerObject.
+            """
             #print( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
             if not OSISAbbrev:
                 logging.error( "toZefania: Can't write {} Zefania book because no OSIS code available".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
+
+            def handleVerseNumber( BBB, C, V, givenText ):
+                """
+                Given verse text, return two strings to be used later.
+                """
+                endVerseNumberString = None
+                if givenText.isdigit():
+                    verseNumberString = givenText
+                else:
+                    verseNumberString  = givenText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        ix = verseNumberString.find( bridgeChar )
+                        if ix != -1:
+                            value = verseNumberString[:ix] # Remove verse bridges
+                            vEnd = verseNumberString[ix+1:]
+                            #print( BBB, repr(value), repr(vEnd) )
+                            try: value1 = int( value )
+                            except ValueError: # Not an integer
+                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
+                                value1 = value
+                            try: value2 = int( vEnd )
+                            except ValueError: # Not an integer
+                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
+                                value2 = vEnd
+                            #print( ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, value1, value2 ) )
+                            return value1, value2
+                return verseNumberString, endVerseNumberString
+            # end of handleVerseNumber
+
+            def convertInternals( BBB, C, V, givenText ):
+                """
+                Do formatting of character styles and footnotes/cross-references, etc.
+
+                Returns the adjusted text.
+                """
+                newText = givenText
+                newText = newText.replace( '\\nd ', '<STYLE fs="divineName">' ).replace( '\\nd*', '</STYLE>' )
+                newText = newText.replace( '\\bd ', '<STYLE fs="bold">' ).replace( '\\bd*', '</STYLE>' )
+                newText = newText.replace( '\\it ', '<STYLE fs="italic">' ).replace( '\\it*', '</STYLE>' )
+                newText = newText.replace( '\\sc ', '<STYLE fs="small-caps">' ).replace( '\\sc*', '</STYLE>' )
+                return newText
+            # end of convertInternals
+
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
             C = V = '0'
@@ -4849,7 +4905,7 @@ class BibleWriter( InternalBible ):
                         gotVP = None
                     #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
-                    verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    verseNumberString, endVerseNumberString = handleVerseNumber( BBB, C, V, text )
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
@@ -4865,14 +4921,15 @@ class BibleWriter( InternalBible ):
                 elif marker == 'v~':
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
                     #print( "Text {!r}".format( text ) )
-                    if not text: logging.warning( "toZefaniaXML: Missing text for v~" ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if not text: # this is an empty (untranslated) verse
+                         #logging.warning( "toZefaniaXML: Missing text for v~" )
                         text = '- - -' # but we'll put in a filler
-                    writerObject.writeLineOpenClose ( 'VERS', text, ('vnumber',verseNumberString) )
+                    else: text = convertInternals( BBB, C, V, text )
+                    writerObject.writeLineOpenClose ( 'VERS', text,
+                            ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)] )
                 elif marker == 'p~':
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
+                    text = convertInternals( BBB, C, V, text )
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
                 else:
                     if text:
@@ -4907,12 +4964,12 @@ class BibleWriter( InternalBible ):
 # TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
         try: zBN = controlDict['ZefaniaBibleName']
         except KeyError: zBN = 'ExportedBible'
-        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible" ), ('biblename',zBN) ] )
+        xw.writeLineOpen( 'XMLBIBLE', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type','x-bible' ), ('biblename',zBN) ] )
         if True: #if controlDict["ZefaniaFiles"]=="byBible":
             writeHeader( xw )
             for BBB,bookData in self.books.items():
                 writeZefBook( xw, BBB, bookData )
-        xw.writeLineClose( 'XMLBible' )
+        xw.writeLineClose( 'XMLBIBLE' )
         xw.close()
 
         if ignoredMarkers:
@@ -9440,17 +9497,49 @@ class BibleWriter( InternalBible ):
                 print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
-            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
-                assert( len(results) == len(self.__outputFolders) )
-                PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
-                    listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
-                    USFMExportResult, ESFMExportResult, textExportResult, \
-                    markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
-                    USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
-                    swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
-                        = results
+            # With no timeout safeguard
+            #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                #results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
+                #if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+                #assert( len(results) == len(self.__outputFolders) )
+                #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
+                    #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
+                    #USFMExportResult, ESFMExportResult, textExportResult, \
+                    #markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
+                    #USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
+                    #swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
+                        #= results
+            # With safety timeout -- more complex
+            timeoutSeconds = 1200 # 20 minutes
+            pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
+            asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
+            #print( "async results1 are", asyncResultObject )
+            pool.close() # Can't add more workers to the pool now
+            asyncResultObject.wait( timeoutSeconds ) # Wait for every worker to finish
+            # Once the timeout has finished we can try to get the results
+            if asyncResultObject.ready():
+                results = asyncResultObject.get()
+            else:
+                print( "BibleWriter.doAllExports: Got a timeout after {} seconds".format( timeoutSeconds ) )
+                pool.terminate() # No results available now
+                #pool.join()
+                #results = asyncResultObject.get() # Should work now
+                result = timeoutSeconds # Will count as True yet be different
+                results = [result if wantPhotoBible else None, # Just have to assume everything worked
+                                    result if wantODFs else None,
+                                    result if wantPDFs else None,
+                                    result, result, result, result, result, result, result, result, result, result, result,
+                                    result, result, result, result, result, result, result, result, result, result, result, ]
+            #print( "async results2 are", results )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+            assert( len(results) == len(self.__outputFolders) )
+            PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
+                listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
+                USFMExportResult, ESFMExportResult, textExportResult, \
+                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
+                USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
+                swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
+                    = results
 
         else: # Just single threaded and not debugging
             try: listOutputResult = self.makeLists( listOutputFolder )

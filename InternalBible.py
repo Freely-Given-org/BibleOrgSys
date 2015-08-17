@@ -56,17 +56,17 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-16' # by RJH
+LastModifiedDate = '2015-08-17' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.64'
+ProgVersion = '0.65'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-import os, logging
+import os, logging, multiprocessing
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
@@ -929,6 +929,13 @@ class InternalBible:
     # end of InternalBible.getAddedUnits
 
 
+    def _discoverBookMP( self, BBB ):
+        """
+        """
+        # TODO: Make this a lambda function
+        return self.books[BBB]._discover()
+    # end of _discoverBookMP
+
     def discover( self ):
         """
         Runs a series of checks and count on each book of the Bible
@@ -950,9 +957,20 @@ class InternalBible:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Running discover on {}...").format( self.name ) )
-        for BBB in self.books: # Do individual book prechecks
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
-            self.books[BBB]._discover( self.discoveryResults )
+        # TODO: Work out why multiprocessing is slower here!
+        if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( t("Prechecking {} books using {} CPUs...").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+                print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
+                assert( len(results) == len(self.books) )
+                for j,BBB in enumerate( self.books ):
+                    self.discoveryResults[BBB] = results[j] # Saves them in the correct order
+        else: # Just single threaded
+            for BBB in self.books: # Do individual book prechecks
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
+                self.discoveryResults[BBB] = self.books[BBB]._discover()
 
         self._aggregateDiscoveryResults()
     # end of InternalBible.discover

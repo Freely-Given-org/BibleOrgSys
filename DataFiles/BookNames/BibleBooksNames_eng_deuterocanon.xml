@@ -72,7 +72,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.25</version>
-      <date>2015-06-24</date>
+      <date>2015-07-26</date>
       <title>Traditional English Bible books names list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -545,7 +545,7 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Mlchi</inputAbbreviation>
   </BibleBookNames>
 
-  <BibleBookNames referenceAbbreviation="">
+  <BibleBookNames referenceAbbreviation="MAT">
     <defaultName>Matthew</defaultName>
     <defaultAbbreviation>Mat</defaultAbbreviation>
     <inputAbbreviation>Mtthw</inputAbbreviation>
@@ -1119,4 +1119,4 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>ExtraG</defaultAbbreviation>
   </BibleBookNames>
 
-  </BibleBooksNames>
+</BibleBooksNames>

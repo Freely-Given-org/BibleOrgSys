@@ -42,10 +42,10 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-08-17' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.93'
+ProgVersion = '0.94'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2100,7 +2100,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getVersificationIfNecessary
 
 
-    def _discover( self, resultDictionary ):
+    def _discover( self ):
         """
         Do a precheck on the book to try to determine its features.
 
@@ -2108,6 +2108,8 @@ class InternalBibleBook:
 
         Called from InternalBible.py (which first creates the Bible-wide dictionary
             and then consolidates the individual results).
+
+        Returns a dictionary containing the results for the book.
         """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'discover'" )
@@ -2306,8 +2308,7 @@ class InternalBibleBook:
             bkDict['crossReferencesPeriodFlag'] = bkDict['crossReferencesPeriodRatio'] > 0.7
         #print( self.BBB, bkDict['sectionReferencesParenthesisRatio'] )
 
-        # Put the result for this book into the main dictionary
-        resultDictionary[self.BBB] = bkDict
+        return bkDict
     # end of InternalBibleBook._discover
 
 

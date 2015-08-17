@@ -28,14 +28,14 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-08-18' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
@@ -101,7 +101,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     numFound = 0
     UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-    filenameTuples = UFns.getConfirmedFilenames()
+    filenameTuples = UFns.getPossibleFilenameTuples()
     if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
     if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
@@ -129,10 +129,10 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             if os.path.isdir( somepath ): foundSubfolders.append( something )
             elif os.path.isfile( somepath ): foundSubfiles.append( something )
 
-        # See if there's an USX Bible here in this folder
+        # See if there's an USX Bible with standard Paratext style filenames here in this folder
         UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-        filenameTuples = UFns.getConfirmedFilenames()
+        filenameTuples = UFns.getPossibleFilenameTuples()
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
@@ -178,7 +178,6 @@ class USXXMLBible( Bible ):
 
     def preload( self ):
         """
-        Loads the SSF file if it can be found.
         Tries to determine USX filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
@@ -191,7 +190,7 @@ class USXXMLBible( Bible ):
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
         self.possibleFilenameDict = {}
-        for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+        for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
             self.possibleFilenameDict[BBB] = filename
 
         if 0: # we don't have a getSSFFilenames function :(
@@ -287,7 +286,7 @@ class USXXMLBible( Bible ):
         # DON'T KNOW WHY THIS DOESN'T WORK
         if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
             parameters = []
-            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
             #print( "parameters", parameters )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -306,7 +305,8 @@ class USXXMLBible( Bible ):
                         self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
         else: # Just single threaded
-            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+            #print( self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
+            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.givenFolderName, self.encoding )
                 UBB.validateMarkers()
@@ -369,29 +369,41 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
-                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
-                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                ("BDB", "/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/SFB_2014_test_2.2015-08-18_01.43_0.83401300_1439819036/YourSourceFiles/Unzipped/",),
+                #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+                #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 ) # You can put your USX test folder here
 
-    for name, testFolder in testData:
-        if os.access( testFolder, os.R_OK ):
-            UB = USXXMLBible( testFolder, name )
-            UB.load()
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
-            if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-            if BibleOrgSysGlobals.commandLineOptions.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            #UBErrors = UB.getErrors()
-            # print( UBErrors )
-            #print( UB.getVersification () )
-            #print( UB.getAddedUnits () )
-            #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                ##print( "Looking for", ref )
-                #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        for name, testFolder in testData:
+            print( "\nTestfolder is: {}".format( testFolder ) )
+            result1 = USXXMLBibleFileCheck( testFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA1", result1 )
+            result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA2", result2 )
+            result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA3", result3 )
 
-    #if BibleOrgSysGlobals.commandLineOptions.export:
-    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
-    #       pass
+    if 0:
+        for name, testFolder in testData:
+            if os.access( testFolder, os.R_OK ):
+                UB = USXXMLBible( testFolder, name )
+                UB.load()
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
+                if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+                if BibleOrgSysGlobals.commandLineOptions.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                #UBErrors = UB.getErrors()
+                # print( UBErrors )
+                #print( UB.getVersification () )
+                #print( UB.getAddedUnits () )
+                #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                    ##print( "Looking for", ref )
+                    #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+            else: print( "B: Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+
+        #if BibleOrgSysGlobals.commandLineOptions.export:
+        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
+        #       pass
 
 if __name__ == '__main__':
     # Configure basic set-up
