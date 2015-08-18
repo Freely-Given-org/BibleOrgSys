@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 ProgName = "ML Writer"
-ProgVersion = "0.31"
+ProgVersion = '0.31'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 

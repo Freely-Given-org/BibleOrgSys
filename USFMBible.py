@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-17' # by RJH
+LastModifiedDate = '2015-08-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.68'
@@ -247,10 +247,12 @@ class USFMBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("preload() from {}").format( self.sourceFolder ) )
+        assert( self.sourceFolder is not None )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
+            #print( repr(something) )
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
@@ -283,6 +285,7 @@ class USFMBible( Bible ):
                 from PTXBible import loadPTXSSFData
                 SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
                 if SSFDict:
+                    if self.suppliedMetadata is None: self.suppliedMetadata = {}
                     if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
                     self.suppliedMetadata['PTX']['SSF'] = SSFDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict

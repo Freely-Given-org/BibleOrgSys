@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-08-18' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -69,7 +69,8 @@ from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
-from OnlineBible import OnlineBibleFileCheck, OnlineBible
+try: from OnlineBible import OnlineBibleFileCheck, OnlineBible
+except ImportError: pass # if not available
 from SwordBible import SwordBibleFileCheck, SwordBible
 from CSVBible import CSVBibleFileCheck, CSVBible
 from VPLBible import VPLBibleFileCheck, VPLBible
@@ -178,7 +179,8 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
 
             # Search for Online Bibles
-            OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            try: OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            except NameError: OnlineBibleStrictCount = None
             if OnlineBibleStrictCount:
                 totalBibleStrictCount += OnlineBibleStrictCount
                 totalBibleStrictTypes += 1
@@ -362,7 +364,8 @@ class UnknownBible:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
 
         # Search for Online Bibles
-        OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        try: OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        except NameError: OnlineBibleCount = None
         if OnlineBibleCount:
             totalBibleCount += OnlineBibleCount
             totalBibleTypes += 1
