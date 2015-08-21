@@ -30,10 +30,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2015-08-19' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -114,16 +114,18 @@ class SwordInterface():
     # end of SwordInterface.__init__
 
 
-    def getAvailableModuleCodes( self ):
+    def getAvailableModuleCodes( self, onlyModuleTypes=None ):
         """
         Returns a list of available Sword module codes.
+
+        Module type is a list of strings for the type(s) of modules to include.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("SwordResources.getAvailableModuleCodes()") )
         if SwordType == "CrosswireLibrary":
             availableModuleCodes = []
             for j,moduleBuffer in enumerate(self.library.getModules()):
                 moduleID = moduleBuffer.getRawData()
-                #module = library.getModule( moduleID )
+                #module = self.library.getModule( moduleID )
                 #if 0:
                     #print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
                     #try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
@@ -132,8 +134,35 @@ class SwordInterface():
                 availableModuleCodes.append( moduleID )
             return availableModuleCodes
         elif SwordType == "OurCode":
-            return self.library.getAvailableModuleCodes()
+            return self.library.getAvailableModuleCodes( onlyModuleTypes )
     # end of SwordInterface.getAvailableModuleCodes
+
+
+    def getAvailableModuleCodeTuples( self, onlyModuleTypes=None ):
+        """
+        Returns a list of available Sword module codes.
+
+        Module type is a list of strings for the type(s) of modules to include.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("SwordResources.getAvailableModuleCodeTuples()") )
+        if SwordType == "CrosswireLibrary":
+            availableModuleCodes = []
+            for j,moduleBuffer in enumerate(self.library.getModules()):
+                moduleID = moduleBuffer.getRawData()
+                module = self.library.getModule( moduleID )
+                moduleType = module.getType()
+                #if 1:
+                    #print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
+                    #try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                    #except UnicodeDecodeError: print( "   Description is not Unicode!" )
+                #print( "moduleID", repr(moduleID), repr(moduleType) )
+                assert( moduleType in ( 'Biblical Texts', 'Commentaries', 'Lexicons / Dictionaries', 'Generic Books' ) )
+                if onlyModuleTypes is None or moduleType in onlyModuleTypes:
+                    availableModuleCodes.append( (moduleID,moduleType) )
+            return availableModuleCodes
+        elif SwordType == "OurCode":
+            return self.library.getAvailableModuleCodeTuples( onlyModuleTypes )
+    # end of SwordInterface.getAvailableModuleCodeTuples
 
 
     def getModule( self, moduleAbbreviation='KJV' ):

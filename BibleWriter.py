@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-17' # by RJH
+LastModifiedDate = '2015-08-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -1257,7 +1257,9 @@ class BibleWriter( InternalBible ):
             """Writes a book to the Door43 writerObject."""
 
             def processXRefsAndFootnotes( verse, extras ):
-                """Convert cross-references and footnotes and return the adjusted verse text."""
+                """
+                Convert cross-references and footnotes and return the adjusted verse text.
+                """
 
                 def processXRef( USFMxref ):
                     """
@@ -1273,7 +1275,7 @@ class BibleWriter( InternalBible ):
                     """
                     nonlocal BBB
                     toWikiMediaGlobals["XRefNum"] += 1
-                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toWikiMediaGlobals["verseRef"], toWikiMediaGlobals["verseRef"], toWikiMediaGlobals["XRefNum"] )
+                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["XRefNum"] )
                     for j,token in enumerate(USFMxref.split('\\')):
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
@@ -1284,7 +1286,7 @@ class BibleWriter( InternalBible ):
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
                             if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                             adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
-                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals["verseRef"] )
+                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef,token[3:] )
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
@@ -1294,7 +1296,7 @@ class BibleWriter( InternalBible ):
                             finalPunct = ''
                             while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
-                            osisRef = BRL.parseToOSIS( xrefText, toWikiMediaGlobals["verseRef"] )
+                            osisRef = BRL.parseToOSIS( xrefText, toWikiMediaGlobals['verseRef'] )
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef, xrefText+finalPunct )
                         elif token.startswith('x '): # another whole xref entry follows
@@ -1303,7 +1305,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} xref {!r}").format( token, toWikiMediaGlobals["verseRef"], USFMxref ) )
+                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} xref {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toDoor43.processXRef
@@ -1320,7 +1322,7 @@ class BibleWriter( InternalBible ):
                     <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
                     """
                     toWikiMediaGlobals["FootnoteNum"] += 1
-                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toWikiMediaGlobals["verseRef"], toWikiMediaGlobals["verseRef"], toWikiMediaGlobals["FootnoteNum"] )
+                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["FootnoteNum"] )
                     for j,token in enumerate(USFMfootnote.split('\\')):
                         #print( "processFootnote", j, token, USFMfootnote )
                         if j==0: continue # ignore the + for now
@@ -1328,7 +1330,7 @@ class BibleWriter( InternalBible ):
                             adjToken = token[3:].strip()
                             if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                             adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
-                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals["verseRef"] )
+                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
                             if osisRef is not None:
                                 OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format( osisRef, token[3:] )
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
@@ -1340,7 +1342,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} footnote {!r}").format( token, toWikiMediaGlobals["verseRef"], USFMfootnote ) )
+                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} footnote {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMfootnote ) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -1352,7 +1354,7 @@ class BibleWriter( InternalBible ):
                     if ix2 == -1: # Didn't find it so must be no space after the asterisk
                         ix2 = verse.index('\\x*')
                         ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( _("toDoor43: No space after xref entry in {}").format( toWikiMediaGlobals["verseRef"] ) )
+                        logging.warning( _("toDoor43: No space after xref entry in {}").format( toWikiMediaGlobals['verseRef'] ) )
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
@@ -1365,7 +1367,7 @@ class BibleWriter( InternalBible ):
 #                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
 #                        ix2 = verse.index('\\f*')
 #                        ix2b = ix2 + 3 # Where the footnote ends
-#                        #logging.warning( 'toDoor43: No space after footnote entry in {}'.format(toWikiMediaGlobals["verseRef"] )
+#                        #logging.warning( 'toDoor43: No space after footnote entry in {}'.format(toWikiMediaGlobals['verseRef'] )
 #                    else: ix2b = ix2 + 4
                     footnote = verse[ix1+3:ix2]
                     osisFootnote = processFootnote( footnote )
@@ -4151,11 +4153,14 @@ class BibleWriter( InternalBible ):
 
 
         def writeOSISBook( writerObject, BBB, bkData ):
-            """Writes a book to the OSIS XML writerObject.
+            """
+            Writes a book to the OSIS XML writerObject.
             """
 
             def checkText( textToCheck, checkLeftovers=True ):
-                """Handle some general backslash codes and warn about any others still unprocessed."""
+                """
+                Handle some general backslash codes and warn about any others still unprocessed.
+                """
 
                 def checkTextHelper( marker, helpText ):
                     """ Adjust the text to make the number of start and close markers equal. """
@@ -4172,7 +4177,7 @@ class BibleWriter( InternalBible ):
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
-                    logging.warning( _("toOSIS: Unexpected double angle brackets in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    logging.warning( _("toOSIS: Unexpected double angle brackets in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
@@ -4187,22 +4192,24 @@ class BibleWriter( InternalBible ):
                 if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the OSIS (for now at least)
                     ix1 = adjText.find( '\\fig ' )
                     ix2 = adjText.find( '\\fig*' )
-                    if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     else:
                         if BibleOrgSysGlobals.debugFlag: assert( ix2 > ix1 )
                         #print( "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
                         #print( "now {!r}".format( adjText ) )
-                        logging.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: {!r} field").format( toOSISGlobals["verseRef"], marker ) )
+                        logging.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: {!r} field").format( toOSISGlobals['verseRef'], marker ) )
                 if checkLeftovers and '\\' in adjText:
-                    logging.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
-                    #print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    logging.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
+                    #print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toOSISXML.checkText
 
             def processXRefsAndFootnotes( verse, extras, offset=0 ):
-                """Convert cross-references and footnotes and return the adjusted verse text."""
+                """
+                Convert cross-references and footnotes and return the adjusted verse text.
+                """
 
                 def processXRef( USFMxref ):
                     """
@@ -4218,7 +4225,7 @@ class BibleWriter( InternalBible ):
                     """
                     #nonlocal BBB
                     toOSISGlobals["XRefNum"] += 1
-                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toOSISGlobals["verseRef"], toOSISGlobals["verseRef"], toOSISGlobals["XRefNum"] )
+                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toOSISGlobals['verseRef'], toOSISGlobals['verseRef'], toOSISGlobals["XRefNum"] )
                     for j,token in enumerate(USFMxref.split('\\')):
                         #print( "toOSIS:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         lcToken = token.lower()
@@ -4247,7 +4254,7 @@ class BibleWriter( InternalBible ):
                                     if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                                     adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
                                     selfReference = adjToken
-                            osisRef = BRL.parseToOSIS( adjToken, toOSISGlobals["verseRef"] )
+                            osisRef = BRL.parseToOSIS( adjToken, toOSISGlobals['verseRef'] )
                             if osisRef is not None:
                                 #print( "  osisRef = {}".format( osisRef ) )
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
@@ -4258,7 +4265,7 @@ class BibleWriter( InternalBible ):
                             finalPunct = ''
                             while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
-                            osisRef = BRL.parseToOSIS( xrefText, toOSISGlobals["verseRef"] )
+                            osisRef = BRL.parseToOSIS( xrefText, toOSISGlobals['verseRef'] )
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
                         elif lcToken.startswith('x '): # another whole xref entry follows
@@ -4267,7 +4274,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken in ('xo*','xt*','x*',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} xref {!r}").format( token, toOSISGlobals["verseRef"], USFMxref ) )
+                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} xref {!r}").format( token, toOSISGlobals['verseRef'], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toOSISXML.processXRef
@@ -4284,7 +4291,7 @@ class BibleWriter( InternalBible ):
                     <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
                     """
                     toOSISGlobals["FootnoteNum"] += 1
-                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toOSISGlobals["verseRef"], toOSISGlobals["verseRef"], toOSISGlobals["FootnoteNum"] )
+                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toOSISGlobals['verseRef'], toOSISGlobals['verseRef'], toOSISGlobals["FootnoteNum"] )
                     for j,token in enumerate(USFMfootnote.split('\\')):
                         #print( "processFootnote", j, token, USFMfootnote )
                         lcToken = token.lower()
@@ -4293,7 +4300,7 @@ class BibleWriter( InternalBible ):
                             adjToken = token[3:].strip()
                             if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                             adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
-                            osisRef = BRL.parseToOSIS( adjToken, toOSISGlobals["verseRef"] ) # Note that this may return None
+                            osisRef = BRL.parseToOSIS( adjToken, toOSISGlobals['verseRef'] ) # Note that this may return None
                             if osisRef is not None:
                                 OSISfootnote += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
@@ -4305,7 +4312,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken in ('fr*','fr* ','ft*','ft* ','fq*','fq* ','fqa*','fqa* ',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} footnote {!r}").format(token, toOSISGlobals["verseRef"], USFMfootnote) )
+                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} footnote {!r}").format(token, toOSISGlobals['verseRef'], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     #if currentChapterNumberString=='5' and verseNumberString=='29': halt
@@ -4320,10 +4327,10 @@ class BibleWriter( InternalBible ):
                         adjIndex = extraIndex - offset
                         lenV = len( verse )
                         if adjIndex > lenV: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                            logging.warning( _("toOSIS: Space before note at end of verse in {} has been lost").format( toOSISGlobals["verseRef"] ) )
+                            logging.warning( _("toOSIS: Space before note at end of verse in {} has been lost").format( toOSISGlobals['verseRef'] ) )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
-                            print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals["verseRef"], extraIndex, offset, len(verse), adjIndex ) )
+                            print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals['verseRef'], extraIndex, offset, len(verse), adjIndex ) )
                             print( "  Verse={!r}".format( verse ) )
                             print( "  Extras={!r}".format( extras ) )
                         #assert( 0 <= adjIndex <= len(verse) )
@@ -4377,24 +4384,24 @@ class BibleWriter( InternalBible ):
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
                     if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
-                    toOSISGlobals["verseRef"]  = chapterRef + '.' + bits[0]
+                    toOSISGlobals['verseRef']  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
-                    sID    = toOSISGlobals["verseRef"] + '-' + verseRef2
-                    osisID = toOSISGlobals["verseRef"] + ' ' + verseRef2
+                    sID    = toOSISGlobals['verseRef'] + '-' + verseRef2
+                    osisID = toOSISGlobals['verseRef'] + ' ' + verseRef2
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
                     if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
-                    sID = toOSISGlobals["verseRef"] = chapterRef + '.' + bits[0]
+                    sID = toOSISGlobals['verseRef'] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
                     #print( "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
-                    sID = osisID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString
+                    sID = osisID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
                     logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
-                    tempID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString # Try it anyway
+                    tempID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString # Try it anyway
                     sID = osisID = tempID.replace('<','').replace('>','').replace('"','') # But remove anything that'll cause a big XML problem later
                 #print( "here SID={!r} osisID={!r}".format( sID, osisID ) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
@@ -4416,19 +4423,19 @@ class BibleWriter( InternalBible ):
                 nonlocal haveOpenL, haveOpenLG, haveOpenParagraph, haveOpenSubsection
                 nonlocal haveOpenSection
                 if haveOpenL:
-                    logging.error( "toOSIS: closeAnyOpenSection: Why was L open at {}?".format( toOSISGlobals["verseRef"] ) )
+                    logging.error( "toOSIS: closeAnyOpenSection: Why was L open at {}?".format( toOSISGlobals['verseRef'] ) )
                     writerObject.writeLineClose( 'l' )
                     haveOpenL = False
                 if haveOpenLG:
-                    logging.error( "toOSIS: closeAnyOpenSection: Why was LG open at {}?".format( toOSISGlobals["verseRef"] ) )
+                    logging.error( "toOSIS: closeAnyOpenSection: Why was LG open at {}?".format( toOSISGlobals['verseRef'] ) )
                     writerObject.writeLineClose( 'lg' )
                     haveOpenLG = False
                 if haveOpenParagraph:
-                    logging.error( "toOSIS: closeAnyOpenSection: Why was paragraph open at {}?".format( toOSISGlobals["verseRef"] ) )
+                    logging.error( "toOSIS: closeAnyOpenSection: Why was paragraph open at {}?".format( toOSISGlobals['verseRef'] ) )
                     writerObject.writeLineClose( 'p' )
                     haveOpenParagraph = False
                 if haveOpenSubsection:
-                    logging.error( "toOSIS: closeAnyOpenSection: Why was subsection open at {}?".format( toOSISGlobals["verseRef"] ) )
+                    logging.error( "toOSIS: closeAnyOpenSection: Why was subsection open at {}?".format( toOSISGlobals['verseRef'] ) )
                     writerObject.writeLineClose( 'div' )
                     haveOpenSubsection = False
                 if haveOpenSection:
@@ -4456,7 +4463,7 @@ class BibleWriter( InternalBible ):
                 """ Close a <lg> if it's open. """
                 nonlocal haveOpenLG
                 if haveOpenLG:
-                    #print( "closeAnyOpenLG", toOSISGlobals["verseRef"] )
+                    #print( "closeAnyOpenLG", toOSISGlobals['verseRef'] )
                     writerObject.writeLineClose( 'lg' )
                     haveOpenLG = False
             # end of toOSISXML.closeAnyOpenLG
@@ -4475,7 +4482,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             chapterRef = bookRef + '.0' # Not used by OSIS
-            toOSISGlobals["verseRef"] = chapterRef + '.0' # Not used by OSIS
+            toOSISGlobals['verseRef'] = chapterRef + '.0' # Not used by OSIS
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = False
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
@@ -4502,10 +4509,10 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
                         haveOpenIntro = True
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text),('level',marker[-1]) ) # Introduction heading
-                    logging.error( _("toOSIS: {} Have a blank {} field—ignoring it").format( toOSISGlobals["verseRef"], marker ) )
+                    logging.error( _("toOSIS: {} Have a blank {} field—ignoring it").format( toOSISGlobals['verseRef'], marker ) )
                 elif marker=='ip':
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( _("toOSIS: {} Have an ip not in an introduction section—ignoring it").format( toOSISGlobals["verseRef"] ) )
+                        logging.error( _("toOSIS: {} Have an ip not in an introduction section—ignoring it").format( toOSISGlobals['verseRef'] ) )
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
                         haveOpenIntro = True
                     closeAnyOpenParagraph()
@@ -4513,7 +4520,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = True
                 elif marker=='iot':
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( _("toOSIS: {} Have an iot not in an introduction section").format( toOSISGlobals["verseRef"] ) )
+                        logging.error( _("toOSIS: {} Have an iot not in an introduction section").format( toOSISGlobals['verseRef'] ) )
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
                         haveOpenIntro = True
                     if haveOpenSection or haveOpenOutline: logging.error( "toOSIS: Not handled yet iot in {} hOS={} hOO={}".format(BBB,haveOpenSection,haveOpenOutline) )
@@ -4524,11 +4531,11 @@ class BibleWriter( InternalBible ):
                     haveOpenOutline = True
                 elif marker in ('io1','io2','io3','io4',):
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( _("toOSIS: {} Have an {} not in an introduction section").format( toOSISGlobals["verseRef"], marker ) )
+                        logging.error( _("toOSIS: {} Have an {} not in an introduction section").format( toOSISGlobals['verseRef'], marker ) )
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
                         haveOpenIntro = True
                     if not haveOpenOutline: # Shouldn't happen but we'll try our best
-                        logging.warning( _("toOSIS: {} Have an {} not in an outline section").format( toOSISGlobals["verseRef"], marker ) )
+                        logging.warning( _("toOSIS: {} Have an {} not in an outline section").format( toOSISGlobals['verseRef'], marker ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpen( 'div', ('type',"outline") )
                         writerObject.writeLineOpen( 'list' )
@@ -4540,12 +4547,12 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
                         haveOpenVsID = False
                     if haveOpenOutline:
-                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals["verseRef"], text ) )
+                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals['verseRef'], text ) )
                         writerObject.writeLineClose( 'list' )
                         writerObject.writeLineClose( 'div' )
                         haveOpenOutline = False
                     if haveOpenIntro:
-                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals["verseRef"], text ) )
+                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals['verseRef'], text ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineClose( 'div' )
                         haveOpenIntro = False
@@ -4586,10 +4593,10 @@ class BibleWriter( InternalBible ):
                     haveOpenMajorSection = True
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
                     else:
-                        logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
+                        logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals['verseRef'] ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals['verseRef']) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
                 elif marker == 'd':
                     #if BibleOrgSysGlobals.debugFlag:
@@ -4616,11 +4623,11 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
                 elif marker=='r':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'r' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'r' marker after {}").format(toOSISGlobals['verseRef']) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='sr':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'sr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'sr' marker after {}").format(toOSISGlobals['verseRef']) )
                     if text:
                         writerObject.writeLineOpen( 'title', ('type','scope') )
                         writerObject.writeLineOpenClose( 'reference', checkText(text) )
@@ -4801,6 +4808,23 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
+        # Set-up our Bible reference system
+        #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter:toOSISXML publicationCode =", controlDict["PublicationCode"] )
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        booksNamesSystemName = BOS.getOrganizationalSystemValue( 'booksNamesSystem' )
+        if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
+            getBookNameFunction = BOS.getBookName
+            getBookAbbreviationFunction = BOS.getBookAbbreviation
+        else: # else use our local functions from our deduced book names
+            getBookNameFunction = self.getAssumedBookName # from USFMBible (which gets it from USFMBibleBook)
+            getBookAbbreviationFunction = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation
+
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeHeader( writerObject ):
@@ -4824,6 +4848,8 @@ class BibleWriter( InternalBible ):
             if 'ZefaniaRights' in controlDict and controlDict['ZefaniaRights']: writerObject.writeLineOpenClose( 'rights', controlDict['ZefaniaRights'] )
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toZefaniaXML.writeHeader
+
+        toZefGlobals = { 'verseRef':'', 'XRefNum':0, 'FootnoteNum':0, 'lastRef':'', 'OneChapterOSISBookCodes':BibleOrgSysGlobals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
         def writeZefBook( writerObject, BBB, bkData ):
             """
@@ -4862,21 +4888,232 @@ class BibleWriter( InternalBible ):
                             #print( ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, value1, value2 ) )
                             return value1, value2
                 return verseNumberString, endVerseNumberString
-            # end of handleVerseNumber
+            # end of toZefaniaXML.handleVerseNumber
 
-            def convertInternals( BBB, C, V, givenText ):
+            def checkText( textToCheck, checkLeftovers=True ):
                 """
-                Do formatting of character styles and footnotes/cross-references, etc.
+                Handle some general backslash codes and warn about any others still unprocessed.
+                """
 
-                Returns the adjusted text.
+                def checkTextHelper( marker, helpText ):
+                    """ Adjust the text to make the number of start and close markers equal. """
+                    count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers
+                    while count1 < count2:
+                        helpText = '\\'+marker+' ' + helpText
+                        count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
+                    while count1 > count2:
+                        helpText += '\\'+marker+'*'
+                        count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
+                    if BibleOrgSysGlobals.debugFlag: assert( count1 == count2 )
+                    return helpText
+                # end of checkTextHelper
+
+                adjText = textToCheck
+                if '<<' in adjText or '>>' in adjText:
+                    logging.warning( _("toZefania: Unexpected double angle brackets in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
+                    adjText = adjText.replace('<<','“' ).replace('>>','”' )
+                #if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
+                #if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
+                if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<STYLE fs="italic">').replace('\\add*','</STYLE>') # ???
+                if '\\nd ' in adjText: adjText = checkTextHelper('nd',adjText).replace('\\nd ','<STYLE fs="divineName">').replace('\\nd*','</STYLE>')
+                #if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<q who="Jesus" marker="">').replace('\\wj*','</q>')
+                if '\\sig ' in adjText: adjText = checkTextHelper('sig',adjText).replace('\\sig ','<STYLE fs="italic">').replace('\\sig*','</STYLE>') # ???
+                if '\\it ' in adjText: adjText = checkTextHelper('it',adjText).replace('\\it ','<STYLE fs="italic">').replace('\\it*','</STYLE>')
+                if '\\bd ' in adjText: adjText = checkTextHelper('bd',adjText).replace('\\bd ','<STYLE fs="bold">').replace('\\bd*','</STYLE>')
+                if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<STYLE fs="bold">').replace('\\em*','</STYLE>') # ???
+                if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<STYLE fs="small-caps">').replace('\\sc*','</STYLE>')
+                if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the Zefania (for now at least)
+                    ix1 = adjText.find( '\\fig ' )
+                    ix2 = adjText.find( '\\fig*' )
+                    if ix2 == -1: logging.error( _("toZefania: Missing fig end marker for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
+                    else:
+                        if BibleOrgSysGlobals.debugFlag: assert( ix2 > ix1 )
+                        #print( "was {!r}".format( adjText ) )
+                        adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
+                        #print( "now {!r}".format( adjText ) )
+                        logging.warning( _("toZefania: Figure reference removed for Zefania generation in {}: {!r} field").format( toZefGlobals['verseRef'], marker ) )
+                if checkLeftovers and '\\' in adjText:
+                    logging.error( _("toZefania: We still have some unprocessed backslashes for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
+                    #print( _("toZefania: We still have some unprocessed backslashes for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
+                    adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
+                return adjText
+            # end of toZefaniaXML.checkText
+
+            #def convertInternals( BBB, C, V, givenText ):
+                #"""
+                #Do formatting of character styles and footnotes/cross-references, etc.
+
+                #Returns the adjusted text.
+                #"""
+                #newText = givenText
+                #newText = newText.replace( '\\nd ', '<STYLE fs="divineName">' ).replace( '\\nd*', '</STYLE>' )
+                #newText = newText.replace( '\\bd ', '<STYLE fs="bold">' ).replace( '\\bd*', '</STYLE>' )
+                #newText = newText.replace( '\\it ', '<STYLE fs="italic">' ).replace( '\\it*', '</STYLE>' )
+                #newText = newText.replace( '\\sc ', '<STYLE fs="small-caps">' ).replace( '\\sc*', '</STYLE>' )
+                #return newText
+            ## end of toZefaniaXML.convertInternals
+
+            def processXRefsAndFootnotes( verse, extras, offset=0 ):
                 """
-                newText = givenText
-                newText = newText.replace( '\\nd ', '<STYLE fs="divineName">' ).replace( '\\nd*', '</STYLE>' )
-                newText = newText.replace( '\\bd ', '<STYLE fs="bold">' ).replace( '\\bd*', '</STYLE>' )
-                newText = newText.replace( '\\it ', '<STYLE fs="italic">' ).replace( '\\it*', '</STYLE>' )
-                newText = newText.replace( '\\sc ', '<STYLE fs="small-caps">' ).replace( '\\sc*', '</STYLE>' )
-                return newText
-            # end of convertInternals
+                Convert cross-references and footnotes and return the adjusted verse text.
+                """
+
+                def processXRef( USFMxref ):
+                    """
+                    Return the OSIS code for the processed cross-reference (xref).
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
+                    \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
+                    """
+                    toZefGlobals["XRefNum"] += 1
+                    ZefXref = '' #'<XREF>'
+                    for j,token in enumerate(USFMxref.split('\\')):
+                        #print( "toZefania:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        lcToken = token.lower()
+                        if j==0: # The first token (but the x has already been removed)
+                            rest = token.strip()
+                            if rest != '-': logging.warning( _("toZefania: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
+                        elif lcToken.startswith('xo '): # xref reference follows
+                            adjToken = token[3:].strip()
+                            #print( "toZefania:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
+                            if j==1:
+                                if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
+                                    suffixLetter = adjToken[-1]
+                                    adjToken = adjToken[:-2] # Remove any suffix (occurs when a cross-reference has multiple (a and b) parts
+                                if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
+                                adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
+                                selfReference = adjToken
+                            else: # j > 1 -- this xo field may possibly only contain a letter suffix
+                                if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
+                                    adjToken = selfReference
+                                else: # Could be another complete reference
+                                    #print( "<<< Programming error here in toZefaniaXML:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
+                                    #print( "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
+                                    if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
+                                        suffixLetter = adjToken[-1]
+                                        adjToken = adjToken[:-2] # Remove any suffix (occurs when a cross-reference has multiple (a and b) parts
+                                    if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
+                                    adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
+                                    selfReference = adjToken
+                            osisRef = BRL.parseToOSIS( adjToken, toZefGlobals['verseRef'] )
+                            if osisRef is not None:
+                                #print( "  osisRef = {}".format( osisRef ) )
+                                if not ZefXref: ZefXref = '<XREF '
+                                ZefXref += 'vref="{}">'.format( V )
+# Temp disabled
+#                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
+#                                    logging.error( _("toZefania: Cross-reference at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
+                        elif lcToken.startswith('xt '): # xref text follows
+                            xrefText = token[3:]
+                            finalPunct = ''
+                            while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
+                            osisRef = BRL.parseToOSIS( xrefText, toZefGlobals['verseRef'] )
+                            if osisRef is not None:
+                                #ZefXref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
+                                ZefXref += xrefText
+                        elif lcToken.startswith('x '): # another whole xref entry follows
+                            rest = token[2:].strip()
+                            if rest != '-': logging.warning( _("toZefania: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
+                        elif lcToken in ('xo*','xt*','x*',):
+                            pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( _("toZefania: Unprocessed {!r} token in {} xref {!r}").format( token, toZefGlobals['verseRef'], USFMxref ) )
+                    ZefXref += '</XREF>'
+                    #print( ' ZefXref', repr(ZefXref) )
+                    return ZefXref
+                # end of toZefaniaXML.processXRef
+
+                def processFootnote( USFMfootnote ):
+                    """
+                    Return the OSIS code for the processed footnote.
+
+                    NOTE: The parameter here already has the /f and /f* removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <note n="1">1:20 Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Crosswire)
+                    <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
+                    """
+                    toZefGlobals["FootnoteNum"] += 1
+                    ZefFootnote = '' #<NOTE osisRef="{}" osisID="{}!footnote.{}">'.format( toZefGlobals['verseRef'], toZefGlobals['verseRef'], toZefGlobals["FootnoteNum"] )
+                    for j,token in enumerate(USFMfootnote.split('\\')):
+                        #print( "processFootnote", j, token, USFMfootnote )
+                        lcToken = token.lower()
+                        if j==0: continue # ignore the + for now
+                        elif lcToken.startswith('fr '): # footnote reference follows
+                            adjToken = token[3:].strip()
+                            if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
+                            adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
+                            osisRef = BRL.parseToOSIS( adjToken, toZefGlobals['verseRef'] ) # Note that this may return None
+                            if osisRef is not None:
+                                if not ZefFootnote: ZefFootnote = '<NOTE '
+                                #print( repr(osisRef), repr(token[3:]) )
+                                ZefFootnote += 'ref={}>'.format( osisRef.replace('.',',') )
+# Temp disabled
+#                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
+#                                    logging.error( _("toZefania: Footnote at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
+                        elif lcToken.startswith('ft ') or lcToken.startswith('fr* '): # footnote text follows
+                            ZefFootnote += token[3:]
+                        elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
+                            ZefFootnote += '{}'.format(token[3:]) # Note that the trailing space goes in the catchword here -- seems messy
+                        elif lcToken in ('fr*','fr* ','ft*','ft* ','fq*','fq* ','fqa*','fqa* ',):
+                            pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( _("toZefania: Unprocessed {!r} token in {} footnote {!r}").format(token, toZefGlobals['verseRef'], USFMfootnote) )
+                    ZefFootnote += '</NOTE>'
+                    #print( ' ZefFootnote', repr(ZefFootnote) )
+                    #if currentChapterNumberString=='5' and verseNumberString=='29': halt
+                    return ZefFootnote
+                # end of toZefaniaXML.processFootnote
+
+                # Main code for toZefaniaXML.processXRefsAndFootnotes
+                if extras:
+                    #print( '\n', chapterRef )
+                    if BibleOrgSysGlobals.debugFlag: assert( offset >= 0 )
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
+                        adjIndex = extraIndex - offset
+                        lenV = len( verse )
+                        if adjIndex > lenV: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                            logging.warning( _("toZefania: Space before note at end of verse in {} has been lost").format( toZefGlobals['verseRef'] ) )
+                            # No need to adjust adjIndex because the code below still works
+                        elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
+                            print( "toZefania: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toZefGlobals['verseRef'], extraIndex, offset, len(verse), adjIndex ) )
+                            print( "  Verse={!r}".format( verse ) )
+                            print( "  Extras={!r}".format( extras ) )
+                        #assert( 0 <= adjIndex <= len(verse) )
+                        adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        if extraType == 'fn':
+                            extra = processFootnote( adjText )
+                            #print( "fn got", extra )
+                        elif extraType == 'xr':
+                            extra = processXRef( adjText )
+                            #print( "xr got", extra )
+                        elif extraType == 'fig':
+                            logging.critical( "OSISXML figure not handled yet" )
+                            extra = "" # temp
+                            #extra = processFigure( extraText )
+                            #print( "fig got", extra )
+                        elif extraType == 'str':
+                            extra = "" # temp
+                        elif extraType == 'sem':
+                            extra = "" # temp
+                        elif extraType == 'vp':
+                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
+                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( extraType ); halt
+                        #print( "was", verse )
+                        verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
+                        offset -= len( extra )
+                        #print( "now", verse )
+                return verse
+            # end of toZefaniaXML.processXRefsAndFootnotes
 
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
@@ -4890,6 +5127,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 'c':
                     C, V = text, '0'
+                    toZefGlobals['verseRef'] = '{},{},{}'.format( BBB, C, V )
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
@@ -4900,11 +5138,12 @@ class BibleWriter( InternalBible ):
                     gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
+                    toZefGlobals['verseRef'] = '{},{},{}'.format( BBB, C, V )
                     if gotVP: # this is the verse number to be published
                         text = gotVP
                         gotVP = None
                     #print( "Text {!r}".format( text ) )
-                    if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
+                    if not text: logging.warning( "toZefania: Missing text for v" ); continue
                     verseNumberString, endVerseNumberString = handleVerseNumber( BBB, C, V, text )
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
 
@@ -4922,14 +5161,17 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
                     #print( "Text {!r}".format( text ) )
                     if not text: # this is an empty (untranslated) verse
-                         #logging.warning( "toZefaniaXML: Missing text for v~" )
+                         #logging.warning( "toZefania: Missing text for v~" )
                         text = '- - -' # but we'll put in a filler
-                    else: text = convertInternals( BBB, C, V, text )
+                    else:
+                        text = processXRefsAndFootnotes( text, extras )
+                        #text = convertInternals( BBB, C, V, text )
                     writerObject.writeLineOpenClose ( 'VERS', text,
                             ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)] )
                 elif marker == 'p~':
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
-                    text = convertInternals( BBB, C, V, text )
+                    text = processXRefsAndFootnotes( text, extras )
+                    #text = convertInternals( BBB, C, V, text )
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
                 else:
                     if text:
@@ -5508,7 +5750,7 @@ class BibleWriter( InternalBible ):
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
-                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: {!r} field is {!r}").format(toSwordGlobals["verseRef"],marker,textToCheck) )
+                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: {!r} field is {!r}").format(toSwordGlobals['verseRef'],marker,textToCheck) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
@@ -5521,13 +5763,15 @@ class BibleWriter( InternalBible ):
                 if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<hi type="bold">').replace('\\em*','</hi>')
                 if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<hi type="SMALLCAPS">').replace('\\sc*','</hi>') # XXXXXX temp ....
                 if '\\' in adjText:
-                    logging.error( _("toSwordModule: We still have some unprocessed backslashes for Sword in {}: {!r} field is {!r}").format(toSwordGlobals["verseRef"],marker,textToCheck) )
+                    logging.error( _("toSwordModule: We still have some unprocessed backslashes for Sword in {}: {!r} field is {!r}").format(toSwordGlobals['verseRef'],marker,textToCheck) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toSwordModule.checkText
 
             def processXRefsAndFootnotes( verse, extras ):
-                """Convert cross-references and footnotes and return the adjusted verse text."""
+                """
+                Convert cross-references and footnotes and return the adjusted verse text.
+                """
 
                 def processXRef( USFMxref ):
                     """
@@ -5543,7 +5787,7 @@ class BibleWriter( InternalBible ):
                     """
                     nonlocal BBB
                     toSwordGlobals["XRefNum"] += 1
-                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format(toSwordGlobals["verseRef"],toSwordGlobals["verseRef"],toSwordGlobals["XRefNum"])
+                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format(toSwordGlobals['verseRef'],toSwordGlobals['verseRef'],toSwordGlobals["XRefNum"])
                     for j,token in enumerate(USFMxref.split('\\')):
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
@@ -5575,7 +5819,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} xref {!r}").format(token, toSwordGlobals["verseRef"], USFMxref) )
+                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} xref {!r}").format(token, toSwordGlobals['verseRef'], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toSwordModule.processXRef
@@ -5592,7 +5836,7 @@ class BibleWriter( InternalBible ):
                     <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
                     """
                     toSwordGlobals["FootnoteNum"] += 1
-                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format(toSwordGlobals["verseRef"],toSwordGlobals["verseRef"],toSwordGlobals["FootnoteNum"])
+                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format(toSwordGlobals['verseRef'],toSwordGlobals['verseRef'],toSwordGlobals["FootnoteNum"])
                     for j,token in enumerate(USFMfootnote.split('\\')):
                         #print( "processFootnote", j, token, USFMfootnote )
                         if j==0: continue # ignore the + for now
@@ -5612,7 +5856,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} footnote {!r}").format(token, toSwordGlobals["verseRef"], USFMfootnote) )
+                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} footnote {!r}").format(token, toSwordGlobals['verseRef'], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -5624,7 +5868,7 @@ class BibleWriter( InternalBible ):
                     if ix2 == -1: # Didn't find it so must be no space after the asterisk
                         ix2 = verse.index('\\x*')
                         ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( _("toSwordModule: No space after xref entry in {}").format(toSwordGlobals["verseRef"]) )
+                        logging.warning( _("toSwordModule: No space after xref entry in {}").format(toSwordGlobals['verseRef']) )
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
@@ -5637,7 +5881,7 @@ class BibleWriter( InternalBible ):
 #                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
 #                        ix2 = verse.index('\\f*')
 #                        ix2b = ix2 + 3 # Where the footnote ends
-#                        #logging.warning( 'toSwordModule: No space after footnote entry in {}'.format(toSwordGlobals["verseRef"] )
+#                        #logging.warning( 'toSwordModule: No space after footnote entry in {}'.format(toSwordGlobals['verseRef'] )
 #                    else: ix2b = ix2 + 4
                     footnote = verse[ix1+3:ix2]
                     osisFootnote = processFootnote( footnote )
@@ -5659,7 +5903,7 @@ class BibleWriter( InternalBible ):
                     <verse sID="Esth.9.16-Esth.9.17" osisID="Esth.9.16 Esth.9.17" n="16-17"/>text<verse eID="Esth.9.16-Esth.9.17"/> (Snowfall)
                 """
                 nonlocal haveOpenVsID
-                osisID = sID = toSwordGlobals["verseRef"] # default
+                osisID = sID = toSwordGlobals['verseRef'] # default
                 if haveOpenVsID != False: # Close the previous verse
                     writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
                 #verseNumberString = text.split()[0] # Get the first token which is the first number
@@ -5668,22 +5912,22 @@ class BibleWriter( InternalBible ):
                     bits = verseNumberString.split('-')
                     if (len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit()):
                         logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
-                    toSwordGlobals["verseRef"]  = chapterRef + '.' + bits[0]
+                    toSwordGlobals['verseRef']  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
-                    sID    = toSwordGlobals["verseRef"] + '-' + verseRef2
-                    osisID = toSwordGlobals["verseRef"] + ' ' + verseRef2
+                    sID    = toSwordGlobals['verseRef'] + '-' + verseRef2
+                    osisID = toSwordGlobals['verseRef'] + ' ' + verseRef2
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
                     if (len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit()):
                         logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
-                    sID = toSwordGlobals["verseRef"] = chapterRef + '.' + bits[0]
+                    sID = toSwordGlobals['verseRef'] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
                     #print( "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
-                    sID = osisID = toSwordGlobals["verseRef"] = chapterRef + '.' + verseNumberString
+                    sID = osisID = toSwordGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
                     logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
@@ -5784,13 +6028,13 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen( 'div', [getSID(), ('type',"introduction")] )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('level',marker[-1]) ) # Introduction heading
                     else:
-                        logging.error( _("toSwordModule: {} Have a blank {} field—ignoring it").format( toSwordGlobals["verseRef"], marker ) )
+                        logging.error( _("toSwordModule: {} Have a blank {} field—ignoring it").format( toSwordGlobals['verseRef'], marker ) )
                     haveOpenIntro = True
                     chapterRef = bookRef + '.0' # Not used by OSIS
-                    toSwordGlobals["verseRef"] = chapterRef + '.0' # Not used by OSIS
+                    toSwordGlobals['verseRef'] = chapterRef + '.0' # Not used by OSIS
                 elif marker=='ip':
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( "toSwordModule: {} Have an ip not in an introduction section—opening an intro section".format( toSwordGlobals["verseRef"] ) )
+                        logging.error( "toSwordModule: {} Have an ip not in an introduction section—opening an intro section".format( toSwordGlobals['verseRef'] ) )
                         writerObject.writeLineOpen( 'div', ('type',"introduction") )
                         haveOpenIntro = True
                     closeAnyOpenParagraph()
@@ -5799,7 +6043,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = True
                 elif marker=='iot':
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( "toSwordModule: {} Have a iot not in an introduction section—opening an intro section".format( toSwordGlobals["verseRef"] ) )
+                        logging.error( "toSwordModule: {} Have a iot not in an introduction section—opening an intro section".format( toSwordGlobals['verseRef'] ) )
                         writerObject.writeLineOpen( 'div', ('type',"introduction") )
                         haveOpenIntro = True
                     if haveOpenOutline:
@@ -5807,7 +6051,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"outline")] )
                         haveOpenOutline = False
                     if haveOpenSection:
-                        logging.error( "toSwordModule: {} Not handled yet iot".format( toSwordGlobals["verseRef"] ) )
+                        logging.error( "toSwordModule: {} Not handled yet iot".format( toSwordGlobals['verseRef'] ) )
                     closeAnyOpenParagraph()
                     writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"outline")] )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
@@ -5819,11 +6063,11 @@ class BibleWriter( InternalBible ):
                     #    writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"introduction")] )
                     #    haveOpenIntro = False
                     if not haveOpenIntro: # Shouldn't happen but we'll try our best
-                        logging.error( "toSwordModule: {} Have an {} not in an introduction section—opening an intro section".format( toSwordGlobals["verseRef"], marker ) )
+                        logging.error( "toSwordModule: {} Have an {} not in an introduction section—opening an intro section".format( toSwordGlobals['verseRef'], marker ) )
                         writerObject.writeLineOpen( 'div', ('type',"introduction") )
                         haveOpenIntro = True
                     if not haveOpenOutline: # Shouldn't happen but we'll try our best
-                        logging.warning( _("toSwordModule: {} Have an {} not in an outline section—opening an outline section".format( toSwordGlobals["verseRef"], marker ) ) )
+                        logging.warning( _("toSwordModule: {} Have an {} not in an outline section—opening an outline section".format( toSwordGlobals['verseRef'], marker ) ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"outline")] )
                         writerObject.writeLineOpen( 'list' )
@@ -5833,13 +6077,13 @@ class BibleWriter( InternalBible ):
                 elif marker=='c':
                     if haveOpenOutline:
                         if text!='1' and not text.startswith('1 '):
-                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals["verseRef"], text ) )
+                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals['verseRef'], text ) )
                         writerObject.writeLineClose( 'list' )
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"outline")] )
                         haveOpenOutline = False
                     if haveOpenIntro:
                         if text!='1' and not text.startswith('1 '):
-                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals["verseRef"], text ) )
+                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals['verseRef'], text ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"introduction")] )
                         haveOpenIntro = False
@@ -5882,10 +6126,10 @@ class BibleWriter( InternalBible ):
                     haveOpenMajorSection = True
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Major section heading
                     else:
-                        logging.info( _("toSwordModule: {} Blank ms1 section heading encountered").format( toSwordGlobals["verseRef"] ) )
+                        logging.info( _("toSwordModule: {} Blank ms1 section heading encountered").format( toSwordGlobals['verseRef'] ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals['verseRef']) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
                 elif marker == 'd':
                     #if BibleOrgSysGlobals.debugFlag:
@@ -5911,11 +6155,11 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
                 elif marker=='r':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'r' marker after {}").format(toSwordGlobals["verseRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'r' marker after {}").format(toSwordGlobals['verseRef']) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='sr':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'sr' marker after {}").format(toSwordGlobals["verseRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'sr' marker after {}").format(toSwordGlobals['verseRef']) )
                     if text:
                         writerObject.writeLineOpen( 'title', ('type','scope') )
                         writerObject.writeLineOpenClose( 'reference', checkText(text) )
@@ -9748,7 +9992,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toPhotoBible(); halt
+                #UB.toZefaniaXML(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files

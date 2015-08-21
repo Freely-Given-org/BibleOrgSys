@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-17' # by RJH
+LastModifiedDate = '2015-08-21' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -2116,7 +2116,6 @@ class InternalBibleBook:
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
         #print( "InternalBibleBook:discover", self.BBB )
-        if BibleOrgSysGlobals.debugFlag: assert( isinstance( resultDictionary, dict ) )
 
         bkDict = {}
         bkDict['chapterCount'] = bkDict['verseCount'] = bkDict['percentageProgress'] = None
