@@ -502,24 +502,26 @@ class BibleWriter( InternalBible ):
                     numC = numV = 0
 
             USFM = ''
+            if pseudoUSFMData.contains( 'id', 1 ) is None:
+                USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoUSFMData.contains( 'h', 8 ) is None:
+                    try:
+                        h = self.suppliedMetadata['File'][BBB+'ShortName']
+                        if h: USFM += '\n\\h {}'.format( h )
+                    except KeyError: pass # ok, we've got nothing to add
+                if pseudoUSFMData.contains( 'mt1', 12 ) is None:
+                    try:
+                        mt = self.suppliedMetadata['File'][BBB+'LongName']
+                        if mt: USFM += '\n\\mt1 {}'.format( mt )
+                    except KeyError: pass # ok, we've got nothing to add
             inField = None
             value1 = value2 = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(value) )
-                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoUSFMData.contains( 'h', 8 ) is None:
-                    try:
-                        h = self.suppliedMetadata['File'][BBB+'ShortName']
-                        USFM += '\\h {}'.format( h )
-                    except KeyError: pass # ok, we've got nothing to add
-                if pseudoUSFMData.contains( 'mt1', 12 ) is None:
-                    try:
-                        mt = self.suppliedMetadata['File'][BBB+'LongName']
-                        USFM += '\\mt1 {}'.format( mt )
-                    except KeyError: pass # ok, we've got nothing to add
+                #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
+                    #USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
