@@ -43,10 +43,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-12' # by RJH
+LastModifiedDate = '2015-08-28' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.61'
+ProgVersion = '0.62'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -506,6 +506,22 @@ class InternalBibleEntryList:
         assert( isinstance( newList, InternalBibleEntryList ) )
         self.data.extend( newList )
     # end of InternalBibleEntryList.extend
+
+
+    def contains( self, searchMarker, maxLines=None ):
+        """
+        Search some or all of the entries and return the index of the first line containing the given marker.
+
+        maxLines is the integer maxLines to search
+            or None to search them all (very slow).
+
+        Returns None if no match is found
+        """
+        for j,entry in enumerate( self.data ):
+            if entry.marker == searchMarker: return j
+            if maxLines is not None:
+                if j >= maxLines: break
+    # end of InternalBibleEntryList.contains
 # end of class InternalBibleEntryList
 
 

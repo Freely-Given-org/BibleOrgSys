@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-17' # by RJH
+LastModifiedDate = '2015-08-28' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.65'
@@ -487,7 +487,7 @@ class InternalBible:
         if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
-            nameChangeDict['File'] = {}
+            nameChangeDict['File'] = {} # This is metadata submitted by the user in a separate text file
             nameChangeDict['BCV'] = {}
             nameChangeDict['Online'] = { 'LongName':'FullName', }
             nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
@@ -512,9 +512,10 @@ class InternalBible:
                 self.settingsDict[newKey] = value
 
         elif applyMetadataType == 'Project':
-            # Available fields include: ContactName, EmailAddress, Goals, Permission, ProjectCode, ProjectName,
-            #                           SubmittedBibleFileInfo, SubmittedMetadataFileInfo,
-            #                           WantODFs, WantPDFs, WantPhotoBible
+            # This is user-submitted project metadata -- available fields include:
+            #   ContactName, EmailAddress, Goals, Permission, ProjectCode, ProjectName,
+            #   SubmittedBibleFileInfo, SubmittedMetadataFileInfo,
+            #   WantODFs, WantPDFs, WantPhotoBible
             wantedDict = { 'ProjectName':'ProjectName', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )

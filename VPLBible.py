@@ -61,7 +61,7 @@ vplType 4 (SwordSearcher)
     <p>That's all!</p>
 
     $$ Ge 1:1
-    ¶ In the beginning God made the heavens and the earth.
+    ¶ In the beginning God{Heb: Elohim} made the heavens and the earth.
     $$ Ge 1:2
     And everything was great.
     $$ Ge 1:3
@@ -70,10 +70,10 @@ vplType 4 (SwordSearcher)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-24' # by RJH
+LastModifiedDate = '2015-08-28' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -164,6 +164,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                     logging.info( "VPLBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( thisFilename ) )
                     firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                # Try to identify the VPL type
                 match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
                 if match: vplType = 1
                 else:
@@ -225,6 +226,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "VPLBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( thisFilename ) )
                         firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                    # Try to identify the VPL type
                     match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
                     if match: vplType = 1
                     else:
@@ -313,6 +315,7 @@ class VPLBible( Bible ):
                     if self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    # Try to identify the VPL type
                     match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', line )
                     if match: vplType = 1
                     else:
@@ -544,6 +547,16 @@ class VPLBible( Bible ):
                             vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
                             vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
                             #if '\\' in vText: print( 'VPL vText', repr(vText) )
+                            if vplType == 4: # SwordSearcher
+                                #print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                match = re.search( '\\{(.+?)\\}', vText )
+                                while match:
+                                    footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
+                                    vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
+                                    #print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    match = re.search( '\\{(.+?)\\}', vText )
+                                if '{' in vText or '}' in vText:
+                                    logging.warning( "Found remaining braces in SwordSearcher {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
 
                 else:
                     logging.critical( 'Unknown VPL type {}'.format( vplType ) )
@@ -669,7 +682,7 @@ def demo():
                     "Tests/DataFilesForTests/VPLTest2/",
                     ):
             result1 = VPLBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nVPL TestA1", result1 )
 
             result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )

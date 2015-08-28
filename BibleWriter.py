@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-21' # by RJH
+LastModifiedDate = '2015-08-28' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -501,7 +501,7 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag: assert( BBB in ('FRT','GLS',) )
                     numC = numV = 0
 
-            USFM = ""
+            USFM = ''
             inField = None
             value1 = value2 = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
@@ -510,6 +510,16 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(value) )
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoUSFMData.contains( 'h', 8 ) is None:
+                    try:
+                        h = self.suppliedMetadata['File'][BBB+'ShortName']
+                        USFM += '\\h {}'.format( h )
+                    except KeyError: pass # ok, we've got nothing to add
+                if pseudoUSFMData.contains( 'mt1', 12 ) is None:
+                    try:
+                        mt = self.suppliedMetadata['File'][BBB+'LongName']
+                        USFM += '\\mt1 {}'.format( mt )
+                    except KeyError: pass # ok, we've got nothing to add
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
