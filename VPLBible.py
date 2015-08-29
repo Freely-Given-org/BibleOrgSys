@@ -442,9 +442,9 @@ class VPLBible( Bible ):
                             if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
 
                     # Handle special formatting
-                    #   [brackets] are for Italicized words
-                    #   <brackets> are for the Words of Christ in Red
-                    #   «brackets»  are for the Titles in the Book  of Psalms.
+                    #   [square-brackets] are for Italicized words
+                    #   <angle-brackets> are for the Words of Christ in Red
+                    #   «chevrons»  are for the Titles in the Book  of Psalms.
                     vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
                         .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
                     if vText and vText[0]=='«':
@@ -559,10 +559,9 @@ class VPLBible( Bible ):
                                 # Convert [stuff] to added fields
                                 match = re.search( '\\[(.+?)\\]', vText )
                                 while match:
-                                    #addText = '\\add {}\\add*'.format( chapterNumber, verseNumber, match.group(1) )
+                                    addText = '\\add {}\\add*'.format( chapterNumber, verseNumber, match.group(1) )
                                     vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                                    print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                    halt
+                                    #print( BBB, chapterNumber, verseNumber, repr(vText) )
                                     match = re.search( '\\[(.+?)\\]', vText )
                                 for badChar in '{}[]':
                                     if badChar in vText:

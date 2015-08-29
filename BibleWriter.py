@@ -893,7 +893,8 @@ class BibleWriter( InternalBible ):
                     haveP = False
                     for entry in pseudoUSFMData:
                         marker, text = entry.getMarker(), entry.getCleanText()
-                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS:
+                            continue # Just ignore added markers -- not needed here
                         if marker in ('c#','vp#',):
                             ignoredMarkers.add( marker )
                             continue
@@ -925,13 +926,13 @@ class BibleWriter( InternalBible ):
                                 gotVP = None
                             if textBuffer: myFile.write( "{}\n".format( textBuffer ) ); textBuffer = ''
                             myFile.write( "\n$$ {} {}:{}\n".format( BBB, C, V ) )
-                            if haveP: textBuffer += '¶ '; haveP = False
+                            if haveP: textBuffer = '¶'; haveP = False
                         elif marker == 'p':
                             haveP = True
                         elif marker in ('pi1','pi2','pi3','pi4', 's1','s2','s3','s4', 'ms1','ms2','ms3','ms4',): # Drop out these fields
                             ignoredMarkers.add( marker )
                         elif text:
-                            print( "do Marker", repr(marker), repr(text) )
+                            #print( "do Marker", repr(marker), repr(text) )
                             textBuffer += (' ' if textBuffer else '') + text
                     if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
@@ -940,7 +941,7 @@ class BibleWriter( InternalBible ):
                                 #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
             if ignoredMarkers:
-                print( "Ignored", ignoredMarkers )
+                #print( "Ignored", ignoredMarkers )
                 logging.info( "toVPL: Ignored markers were {}".format( ignoredMarkers ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
