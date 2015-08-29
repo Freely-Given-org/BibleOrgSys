@@ -397,7 +397,7 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
+        for j,testFolder in enumerate( ("Tests/DataFilesForTests/USFMTest1/",
                             "Tests/DataFilesForTests/USFMTest2/",
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
@@ -406,29 +406,37 @@ def demo():
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
                             "MadeUpFolder/",
-                            ):
-            print( "\nTestfolder is: {}".format( testFolder ) )
+                            ) ):
+            print( "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )
             result1 = USFMBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAa", result1 )
             result2 = USFMBibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA2", result2 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAb", result2 )
             result3 = USFMBibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestA3", result3 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAc", result3 )
+            if result3 is not None:
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result3.check()
+                    #print( UsfmB.books['GEN']._processedLines[0:40] )
+                    UsfmBErrors = UsfmB.getErrors()
+                    # print( UBErrors )
+                if BibleOrgSysGlobals.commandLineOptions.export:
+                    result3.pickle()
+                    ##UsfmB.toDrupalBible()
+                    result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
     if 1: # Load and process some of our test versions
-        count = 0
-        for name, encoding, testFolder in (
+        for j,(name, encoding, testFolder) in enumerate( (
                                         ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"),
                                         ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"),
                                         ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest3/"),
                                         ("WEB+", "utf-8", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
                                         ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"),
                                         ("Exported", "utf-8", "Tests/BOS_USFM_Export/"),
-                                        ):
-            count += 1
+                                        ) ):
             if os.access( testFolder, os.R_OK ):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( count ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( j+1 ) )
                 UsfmB = USFMBible( testFolder, name, encoding=encoding )
                 UsfmB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:

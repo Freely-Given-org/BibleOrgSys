@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-28' # by RJH
+LastModifiedDate = '2015-08-29' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.65'
@@ -655,7 +655,7 @@ class InternalBible:
             for metadataType in self.suppliedMetadata:
                 if settingName in self.suppliedMetadata[metadataType]:
                     return self.suppliedMetadata[metadataType][settingName]
-    # end of InternalBible.getAssumedBookName
+    # end of InternalBible.getSetting
 
 
     def getAssumedBookName( self, BBB ):
@@ -668,7 +668,9 @@ class InternalBible:
 
 
     def getLongTOCName( self, BBB ):
-        """Gets the long table of contents book name for the given book reference code."""
+        """
+        Gets the long table of contents book name for the given book reference code.
+        """
         if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].longTOCName
         except (KeyError, AttributeError): return None
@@ -734,6 +736,8 @@ class InternalBible:
         #print( (self.abbreviation), repr(self.name) )
         if filename is None:
             filename = self.abbreviation if self.abbreviation else self.name
+        if filename is None:
+            filename = self.objectTypeString
         if BibleOrgSysGlobals.debugFlag: assert( filename )
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
         if BibleOrgSysGlobals.verbosityLevel > 2:

@@ -49,7 +49,7 @@ vplType 2-3
     41001003	Due egpanguleyi diye te mammara ne inged ne kene egkeugpaan ne egkahi : ‘ Andama niyu ka dalan te Magbebaye . Tul-ira niyu ka egbayaan din ! ’ ”
     41001004	Ne natuman sika te pegginguma ni Huwan diye te mammara ne inged ne kene egkeugpaan ne migpamewutismu wey migwali ne migkahi , “ Inniyuhi niyu ka me sale niyu wey pabewutismu kew eyew egpasayluwen te Manama ka me sale niyu . ”
 or
-vplType 4 (SwordSearcher)
+vplType 4 (Forge for SwordSearcher -- see http://www.swordsearcher.com/forge/index.html)
     ; TITLE: Some new version
     ; ABBREVIATION: SNV
     ; HAS ITALICS
@@ -70,10 +70,10 @@ vplType 4 (SwordSearcher)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-28' # by RJH
+LastModifiedDate = '2015-08-29' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -547,16 +547,27 @@ class VPLBible( Bible ):
                             vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
                             vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
                             #if '\\' in vText: print( 'VPL vText', repr(vText) )
-                            if vplType == 4: # SwordSearcher
+                            if vplType == 4: # Forge for SwordSearcher
                                 #print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                # Convert {stuff} to footnotes
                                 match = re.search( '\\{(.+?)\\}', vText )
                                 while match:
                                     footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
                                     vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
                                     #print( BBB, chapterNumber, verseNumber, repr(vText) )
                                     match = re.search( '\\{(.+?)\\}', vText )
-                                if '{' in vText or '}' in vText:
-                                    logging.warning( "Found remaining braces in SwordSearcher {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
+                                # Convert [stuff] to added fields
+                                match = re.search( '\\[(.+?)\\]', vText )
+                                while match:
+                                    #addText = '\\add {}\\add*'.format( chapterNumber, verseNumber, match.group(1) )
+                                    vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
+                                    print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    halt
+                                    match = re.search( '\\[(.+?)\\]', vText )
+                                for badChar in '{}[]':
+                                    if badChar in vText:
+                                        logging.warning( "Found remaining braces or brackets in SwordSearcher Forge VPL {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
+                                        break
 
                 else:
                     logging.critical( 'Unknown VPL type {}'.format( vplType ) )
