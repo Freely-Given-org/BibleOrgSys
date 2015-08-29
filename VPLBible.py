@@ -70,7 +70,7 @@ vplType 4 (Forge for SwordSearcher -- see http://www.swordsearcher.com/forge/ind
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-29' # by RJH
+LastModifiedDate = '2015-08-30' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -559,7 +559,7 @@ class VPLBible( Bible ):
                                 # Convert [stuff] to added fields
                                 match = re.search( '\\[(.+?)\\]', vText )
                                 while match:
-                                    addText = '\\add {}\\add*'.format( chapterNumber, verseNumber, match.group(1) )
+                                    addText = '\\add {}\\add*'.format( match.group(1) )
                                     vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
                                     #print( BBB, chapterNumber, verseNumber, repr(vText) )
                                     match = re.search( '\\[(.+?)\\]', vText )

@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-29' # by RJH
+LastModifiedDate = '2015-08-30' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -866,23 +866,24 @@ class BibleWriter( InternalBible ):
             thisOutputFolder = os.path.join( outputFolder, VPLFormat+'/' )
             if not os.access( thisOutputFolder, os.F_OK ): os.makedirs( thisOutputFolder ) # Make the empty folder if there wasn't already one there
 
-            columnWidth = 80
+            #print( 'VPL', repr(self.name), repr(self.shortName), repr(self.projectName), repr(self.abbreviation) )
+            abbreviation = self.abbreviation if self.abbreviation else 'Unknown'
+            title = self.name if self.name else self.projectName
+
+            ForgeBookNames = { 'GEN':'Ge',
+                              'MAT':'Mt', 'JDE':'Jude' }
 
             # Write the plain text files
             for BBB,bookObject in self.books.items():
+                bookName = ForgeBookNames[BBB] if BBB in ForgeBookNames else BBB
                 pseudoUSFMData = bookObject._processedLines
 
-                filename = "BOS-BibleWriter-{}.txt".format( BBB )
+                filename = "BOS-BibleWriter-{}.txt".format( bookName )
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt' ) as myFile:
                     # Write the intro stuff
-                    abbreviation = self.getBooknameAbbreviation( BBB )
-                    print( 'VPL', repr(abbreviation), repr(self.abbreviation) )
-                    shortName = self.getShortTOCName( BBB )
-                    longName = self.getAssumedBookName( BBB )
-                    title = longName if longName else shortName
                     myFile.write( '; TITLE: {}\n'.format( title ) )
                     myFile.write( '; ABBREVIATION: {}\n'.format( abbreviation ) )
                     myFile.write( '; HAS ITALICS\n' )
@@ -925,7 +926,7 @@ class BibleWriter( InternalBible ):
                                 text = gotVP
                                 gotVP = None
                             if textBuffer: myFile.write( "{}\n".format( textBuffer ) ); textBuffer = ''
-                            myFile.write( "\n$$ {} {}:{}\n".format( BBB, C, V ) )
+                            myFile.write( "\n$$ {} {}:{}\n".format( bookName, C, V ) )
                             if haveP: textBuffer = '¶'; haveP = False
                         elif marker == 'p':
                             haveP = True

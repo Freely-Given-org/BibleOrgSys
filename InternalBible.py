@@ -312,7 +312,7 @@ class InternalBible:
         if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
         if not self.shortName and 'ShortName' in self.settingsDict: self.shortName = self.settingsDict['ShortName']
         if not self.shortName and 'Name' in self.settingsDict: self.shortName = self.settingsDict['Name']
-        self.projectName = self.name if self.name else "Unknown"
+        self.projectName = self.name if self.name else 'Unknown'
 
         if self.settingsDict: # we have metadata loaded
             for BBB in self.books:

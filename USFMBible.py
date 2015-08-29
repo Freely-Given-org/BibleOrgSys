@@ -414,7 +414,7 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAb", result2 )
             result3 = USFMBibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAc", result3 )
-            if result3 is not None:
+            if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
