@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-18' # by RJH
+LastModifiedDate = '2015-08-30' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -69,10 +69,10 @@ from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
-try: from OnlineBible import OnlineBibleFileCheck, OnlineBible
-except ImportError: pass # if not available
+from OnlineBible import OnlineBibleFileCheck, OnlineBible
 from SwordBible import SwordBibleFileCheck, SwordBible
 from CSVBible import CSVBibleFileCheck, CSVBible
+from ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck, ForgeForSwordSearcherBible
 from VPLBible import VPLBibleFileCheck, VPLBible
 #from SwordResources import SwordInterface # What about these?
 
@@ -315,6 +315,14 @@ class UnknownBible:
                 typesStrictlyFound.append( 'CSV:' + str(CSVBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
 
+            # Search for Forge for SwordSearcher VPL text Bibles
+            F4SSBibleStrictCount = ForgeForSwordSearcherBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if F4SSBibleStrictCount:
+                totalBibleStrictCount += F4SSBibleStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'Forge:' + str(F4SSBibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
+
             # Search for VPL text Bibles
             VPLBibleStrictCount = VPLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
             if VPLBibleStrictCount:
@@ -500,6 +508,14 @@ class UnknownBible:
             typesFound.append( 'CSV:' + str(CSVBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: CSVBibleCount", CSVBibleCount )
 
+        # Search for Forge for SwordSearcher text Bibles
+        F4SSBibleCount = ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if F4SSBibleCount:
+            totalBibleCount += F4SSBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Forge:' + str(F4SSBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
+
         # Search for VPL text Bibles
         VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if VPLBibleCount:
@@ -604,6 +620,10 @@ class UnknownBible:
                 self.foundType = "CSV Bible"
                 if autoLoad: return CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif F4SSBibleCount == 1:
+                self.foundType = "Forge Bible"
+                if autoLoad: return ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             elif VPLBibleCount == 1:
                 self.foundType = "VPL Bible"
                 if autoLoad: return VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
@@ -650,34 +670,34 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
-    testFolders = ( #"/home/robert/Logs", # Shouldn't have any Bibles here
-                    #"Tests/DataFilesForTests/PTXTest/",
-                    #"Tests/DataFilesForTests/DBLTest/",
-                    ##"../../../../../Data/Work/Bibles/theWord modules/",
-                    ##"../../../../../Data/Work/Bibles/Biola Unbound modules/",
-                    ##"../../../../../Data/Work/Bibles/OpenSong Bibles/",
-                    ##"../../../../../Data/Work/Bibles/Zefania modules/",
-                    ##"../../../../../Data/Work/Bibles/YET modules/",
-                    ##"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                    ##"../../../../AutoProcesses/Processed/",
-                    #"Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
-                    #"Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
-                    #"Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
-                    ##"Tests/DataFilesForTests/DBLTest/",
-                    #"Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
-                    #"Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
-                    #"Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
-                    #"Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
-                    #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
-                    #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/VerseViewXML/",
-                    #"Tests/DataFilesForTests/e-SwordTest/",
-                    #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
-                    #"Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
-                    #"Tests/DataFilesForTests/OnlineBible/",
-                    ##"Tests/DataFilesForTests/DrupalTest/",
-                    #"Tests/DataFilesForTests/CSVTest1/", "Tests/DataFilesForTests/CSVTest2/",
-                    "Tests/DataFilesForTests/VPLTest1/", "Tests/DataFilesForTests/VPLTest2/",
-                    ##"Tests/DataFilesForTests/", # Up a level
+    testFolders = ( #'/home/robert/Logs', # Shouldn't have any Bibles here
+                    #'Tests/DataFilesForTests/PTXTest/',
+                    #'Tests/DataFilesForTests/DBLTest/',
+                    ##'../../../../../Data/Work/Bibles/theWord modules/',
+                    ##'../../../../../Data/Work/Bibles/Biola Unbound modules/',
+                    ##'../../../../../Data/Work/Bibles/OpenSong Bibles/',
+                    ##'../../../../../Data/Work/Bibles/Zefania modules/',
+                    ##'../../../../../Data/Work/Bibles/YET modules/',
+                    ##'../../../../../Data/Work/Matigsalug/Bible/MBTV/',
+                    ##'../../../../AutoProcesses/Processed/',
+                    #'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
+                    #'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
+                    #'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
+                    ##'Tests/DataFilesForTests/DBLTest/',
+                    #'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
+                    #'Tests/DataFilesForTests/USFXTest1/', 'Tests/DataFilesForTests/USFXTest2/',
+                    #'Tests/DataFilesForTests/USFX-ASV/', 'Tests/DataFilesForTests/USFX-WEB/',
+                    #'Tests/DataFilesForTests/OSISTest1/', 'Tests/DataFilesForTests/OSISTest2/',
+                    #'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/HaggaiTest/',
+                    #'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/VerseViewXML/',
+                    #'Tests/DataFilesForTests/e-SwordTest/',
+                    #'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
+                    #'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
+                    #'Tests/DataFilesForTests/OnlineBible/',
+                    ##'Tests/DataFilesForTests/DrupalTest/',
+                    #'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',
+                    'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
+                    ##'Tests/DataFilesForTests/', # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-29' # by RJH
+LastModifiedDate = '2015-08-30' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.65'
@@ -484,7 +484,7 @@ class InternalBible:
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
                 print( "  {} = {!r}".format( key, value ) )
 
-        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView','VPL' ):
+        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView','Forge4SS','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
             nameChangeDict['File'] = {} # This is metadata submitted by the user in a separate text file
@@ -493,7 +493,8 @@ class InternalBible:
             nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
             nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
             nameChangeDict['VerseView'] = { 'Title':'FullName', }
-            nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML', }
+            nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML', }
+            nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', } # Not sure if these two are needed here???
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
@@ -612,7 +613,6 @@ class InternalBible:
 
         else:
             logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
-            halt
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel>3:

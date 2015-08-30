@@ -870,7 +870,7 @@ class BibleWriter( InternalBible ):
             abbreviation = self.abbreviation if self.abbreviation else 'Unknown'
             title = self.name if self.name else self.projectName
 
-            ForgeBookNames = { 'GEN':'Ge',
+            ForgeBookNames = { 'GEN':'Ge', 'LEV':'Le', 'LAM':'La',
                               'MAT':'Mt', 'JDE':'Jude' }
 
             # Write the plain text files
@@ -883,6 +883,10 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt' ) as myFile:
+                    try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
+                    except UnicodeEncodeError: # why does this fail on Windows???
+                        logging.critical( t("toForgeForSwordSearcher: Unable to write BOM to file") )
+
                     # Write the intro stuff
                     myFile.write( '; TITLE: {}\n'.format( title ) )
                     myFile.write( '; ABBREVIATION: {}\n'.format( abbreviation ) )

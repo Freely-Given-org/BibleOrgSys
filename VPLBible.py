@@ -173,9 +173,9 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     else:
                         match = re.search( '^# language_name:\\s', firstLine )
                         if match: vplType = 3
-                        else:
-                            match = re.search( '^; TITLE:\\s', firstLine )
-                            if match: vplType = 4
+                        #else:
+                            #match = re.search( '^; TITLE:\\s', firstLine )
+                            #if match: vplType = 4
                 if match:
                     if BibleOrgSysGlobals.debugFlag:
                         print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
@@ -235,9 +235,9 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                         else:
                             match = re.search( '^# language_name:\\s', firstLine )
                             if match: vplType = 3
-                            else:
-                                match = re.search( '^; TITLE:\\s', firstLine )
-                                if match: vplType = 4
+                            #else:
+                                #match = re.search( '^; TITLE:\\s', firstLine )
+                                #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
@@ -324,9 +324,9 @@ class VPLBible( Bible ):
                         else:
                             match = re.search( '^# language_name:\\s', line )
                             if match: vplType = 3
-                            else:
-                                match = re.search( '^; TITLE:\\s', line )
-                                if match: vplType = 4
+                            #else:
+                                #match = re.search( '^; TITLE:\\s', line )
+                                #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
@@ -376,34 +376,34 @@ class VPLBible( Bible ):
                     elif line[0]=='#':
                         logging.warning( "VPLBible.load {} is skipping unknown line: {}".format( vplType, line ) )
                         continue # Just discard comment lines
-                elif vplType == 4:
-                    if line.startswith( '; TITLE:' ):
-                        string = line[8:].strip()
-                        if string: settingsDict['TITLE'] = string
-                        continue
-                    elif line.startswith( '; ABBREVIATION:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['ABBREVIATION'] = string
-                        continue
-                    elif line.startswith( '; HAS ITALICS:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_ITALICS'] = string
-                        continue
-                    elif line.startswith( '; HAS FOOTNOTES:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_FOOTNOTES'] = string
-                        continue
-                    elif line.startswith( '; HAS FOOTNOTES' ):
-                        string = line[14:].strip()
-                        if string: settingsDict['HAS_FOOTNOTES'] = string
-                        continue
-                    elif line.startswith( '; HAS REDLETTER:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_REDLETTER'] = string
-                        continue
-                    elif line[0]==';':
-                        logging.warning( "VPLBible.load{} is skipping unknown header/comment line: {}".format( vplType, line ) )
-                        continue # Just discard comment lines
+                #elif vplType == 4:
+                    #if line.startswith( '; TITLE:' ):
+                        #string = line[8:].strip()
+                        #if string: settingsDict['TITLE'] = string
+                        #continue
+                    #elif line.startswith( '; ABBREVIATION:' ):
+                        #string = line[15:].strip()
+                        #if string: settingsDict['ABBREVIATION'] = string
+                        #continue
+                    #elif line.startswith( '; HAS ITALICS:' ):
+                        #string = line[15:].strip()
+                        #if string: settingsDict['HAS_ITALICS'] = string
+                        #continue
+                    #elif line.startswith( '; HAS FOOTNOTES:' ):
+                        #string = line[15:].strip()
+                        #if string: settingsDict['HAS_FOOTNOTES'] = string
+                        #continue
+                    #elif line.startswith( '; HAS FOOTNOTES' ):
+                        #string = line[14:].strip()
+                        #if string: settingsDict['HAS_FOOTNOTES'] = string
+                        #continue
+                    #elif line.startswith( '; HAS REDLETTER:' ):
+                        #string = line[15:].strip()
+                        #if string: settingsDict['HAS_REDLETTER'] = string
+                        #continue
+                    #elif line[0]==';':
+                        #logging.warning( "VPLBible.load{} is skipping unknown header/comment line: {}".format( vplType, line ) )
+                        #continue # Just discard comment lines
 
                 # Process the main segment
                 if vplType == 1:
@@ -491,82 +491,77 @@ class VPLBible( Bible ):
                         if 1 <= bookCode <= 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookCode )
                         else: BBB = bnDict[bookCode]
 
-                elif vplType == 4:
-                    if line.startswith( '$$ ' ):
-                        if metadataName and metadataContents:
-                            settingsDict[metadataName] = metadataContents
-                            metadataName = None
-                        pointer = line[3:]
-                        #print( "pointer", repr(pointer) )
-                        if pointer and pointer[0]=='{' and pointer[-1]=='}':
-                            metadataName = pointer[1:-1]
-                            if metadataName:
-                                #print( "metadataName", repr(metadataName) )
-                                metadataContents = ''
-                        else: # let's assume it's a BCV reference
-                            pointer = pointer.replace( '1 K','1K' ).replace( '2 K','2K' ) \
-                                            .replace( '1 Chr','1Chr' ).replace( '2 Chr','2Chr' ) \
-                                            .replace( '1 Cor','1Cor' ).replace( '2 Cor','2Cor' ) \
-                                            .replace( '1 Thess','1Thess' ).replace( '2 Thess','2Thess' ) \
-                                            .replace( '1 Tim','1Tim' ).replace( '2 Tim','2Tim' ) \
-                                            .replace( '1 Pet','1Pet' ).replace( '2 Pet','2Pet' ) \
-                                            .replace( '1 J','1J' ).replace( '2 J','2J' ).replace( '3 J','3J' )
-                            B_CV_Bits = pointer.split( ' ', 1 )
-                            if len(B_CV_Bits) == 2 and ':' in B_CV_Bits[1]:
-                                bookCode, CVString = B_CV_Bits
-                                chapterNumberString, verseNumberString = CVString.split( ':' )
-                                chapterNumber = int( chapterNumberString )
-                                verseNumber = int( verseNumberString )
-                                if bookCode != lastBookCode: # We've started a new book
-                                    if bookCode in ('Ge',): BBB = 'GEN'
-                                    elif bookCode in ('Le',): BBB = 'LEV'
-                                    elif bookCode in ('La',): BBB = 'LAM'
-                                    ##elif bookCode in ('Es',): BBB = 'EST'
-                                    ##elif bookCode in ('Pr',): BBB = 'PRO'
-                                    #elif bookCode in ('So',): BBB = 'SNG'
+                #elif vplType == 4:
+                    #if line.startswith( '$$ ' ):
+                        #if metadataName and metadataContents:
+                            #settingsDict[metadataName] = metadataContents
+                            #metadataName = None
+                        #pointer = line[3:]
+                        ##print( "pointer", repr(pointer) )
+                        #if pointer and pointer[0]=='{' and pointer[-1]=='}':
+                            #metadataName = pointer[1:-1]
+                            #if metadataName:
+                                ##print( "metadataName", repr(metadataName) )
+                                #metadataContents = ''
+                        #else: # let's assume it's a BCV reference
+                            #pointer = pointer.replace( '1 K','1K' ).replace( '2 K','2K' ) \
+                                            #.replace( '1 Chr','1Chr' ).replace( '2 Chr','2Chr' ) \
+                                            #.replace( '1 Cor','1Cor' ).replace( '2 Cor','2Cor' ) \
+                                            #.replace( '1 Thess','1Thess' ).replace( '2 Thess','2Thess' ) \
+                                            #.replace( '1 Tim','1Tim' ).replace( '2 Tim','2Tim' ) \
+                                            #.replace( '1 Pet','1Pet' ).replace( '2 Pet','2Pet' ) \
+                                            #.replace( '1 J','1J' ).replace( '2 J','2J' ).replace( '3 J','3J' )
+                            #B_CV_Bits = pointer.split( ' ', 1 )
+                            #if len(B_CV_Bits) == 2 and ':' in B_CV_Bits[1]:
+                                #bookCode, CVString = B_CV_Bits
+                                #chapterNumberString, verseNumberString = CVString.split( ':' )
+                                #chapterNumber = int( chapterNumberString )
+                                #verseNumber = int( verseNumberString )
+                                #if bookCode != lastBookCode: # We've started a new book
+                                    #if bookCode in ('Ge',): BBB = 'GEN'
+                                    #elif bookCode in ('Le',): BBB = 'LEV'
                                     #elif bookCode in ('La',): BBB = 'LAM'
-                                    #elif bookCode in ('Jude',): BBB = 'JDE'
-                                    else:
-                                        #print( "4BookCode =", repr(bookCode) )
-                                        #BBB = BOS.getBBB( bookCode )  # Try to guess
-                                        BBB = BOS66.getBBB( bookCode )  # Try to guess
-                                        if not BBB: BBB = BOS81.getBBB( bookCode )  # Try to guess
-                                        if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
-                                        #print( "4BBB =", repr(BBB) )
-                            else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
-                        continue # Just save the pointer information which refers to the text on the next line
-                    else: # it's not a $$ line
-                        text = line
-                        #print( "text", repr(text) )
-                        if metadataName:
-                            metadataContents += ('\n' if metadataContents else '') + text
-                            continue
-                        else:
-                            vText = text
-                            # Handle bits like (<scripref>Pr 2:7</scripref>)
-                            vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
-                            vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
-                            #if '\\' in vText: print( 'VPL vText', repr(vText) )
-                            if vplType == 4: # Forge for SwordSearcher
-                                #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                # Convert {stuff} to footnotes
-                                match = re.search( '\\{(.+?)\\}', vText )
-                                while match:
-                                    footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
-                                    vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
-                                    #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                    match = re.search( '\\{(.+?)\\}', vText )
-                                # Convert [stuff] to added fields
-                                match = re.search( '\\[(.+?)\\]', vText )
-                                while match:
-                                    addText = '\\add {}\\add*'.format( match.group(1) )
-                                    vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                                    #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                    match = re.search( '\\[(.+?)\\]', vText )
-                                for badChar in '{}[]':
-                                    if badChar in vText:
-                                        logging.warning( "Found remaining braces or brackets in SwordSearcher Forge VPL {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
-                                        break
+                                    #else:
+                                        ##print( "4BookCode =", repr(bookCode) )
+                                        ##BBB = BOS.getBBB( bookCode )  # Try to guess
+                                        #BBB = BOS66.getBBB( bookCode )  # Try to guess
+                                        #if not BBB: BBB = BOS81.getBBB( bookCode )  # Try to guess
+                                        #if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
+                                        ##print( "4BBB =", repr(BBB) )
+                            #else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
+                        #continue # Just save the pointer information which refers to the text on the next line
+                    #else: # it's not a $$ line
+                        #text = line
+                        ##print( "text", repr(text) )
+                        #if metadataName:
+                            #metadataContents += ('\n' if metadataContents else '') + text
+                            #continue
+                        #else:
+                            #vText = text
+                            ## Handle bits like (<scripref>Pr 2:7</scripref>)
+                            #vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
+                            #vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
+                            ##if '\\' in vText: print( 'VPL vText', repr(vText) )
+                            #if vplType == 4: # Forge for SwordSearcher
+                                ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                ## Convert {stuff} to footnotes
+                                #match = re.search( '\\{(.+?)\\}', vText )
+                                #while match:
+                                    #footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
+                                    #vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
+                                    ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    #match = re.search( '\\{(.+?)\\}', vText )
+                                ## Convert [stuff] to added fields
+                                #match = re.search( '\\[(.+?)\\]', vText )
+                                #while match:
+                                    #addText = '\\add {}\\add*'.format( match.group(1) )
+                                    #vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
+                                    ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    #match = re.search( '\\[(.+?)\\]', vText )
+                                #for badChar in '{}[]':
+                                    #if badChar in vText:
+                                        #logging.warning( "Found remaining braces or brackets in SwordSearcher Forge VPL {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
+                                        #break
 
                 else:
                     logging.critical( 'Unknown VPL type {}'.format( vplType ) )
@@ -688,8 +683,9 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in (
-                    "Tests/DataFilesForTests/VPLTest1/",
-                    "Tests/DataFilesForTests/VPLTest2/",
+                    'Tests/DataFilesForTests/VPLTest1/',
+                    'Tests/DataFilesForTests/VPLTest2/',
+                    'Tests/DataFilesForTests/VPLTest2/',
                     ):
             result1 = VPLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nVPL TestA1", result1 )
