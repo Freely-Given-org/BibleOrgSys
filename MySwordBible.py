@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-09-25' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -68,7 +68,7 @@ import multiprocessing
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-from TheWordBible import handleLine
+from theWordBible import handleLine
 
 
 
@@ -160,7 +160,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 if somethingUpperExt in filenameEndingsToAccept:
                     foundSubfiles.append( something )
 
-        # See if there's an TW project here in this folder
+        # See if there's an MySword project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
@@ -333,14 +333,16 @@ class MySwordBible( Bible ):
 
 
 
-def testMySwB( MySwBfolder, MySwBfilename ):
-    # Crudely demonstrate the MySword Bible class
+def testMySwB( indexString, MySwBfolder, MySwBfilename ):
+    """
+    Crudely demonstrate the MySword Bible class.
+    """
     #print( "tMSB", MySwBfolder )
     import VerseReferences
     #testFolder = "../../../../../Data/Work/Bibles/MySword modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class {}...").format( indexString) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
     MySwB.load() # Load and process the file
@@ -393,8 +395,9 @@ def demo():
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw B{}/ Trying {}".format( j+1, fullname ) )
-            testMySwB( testFolder, fullname )
+            indexString = 'B' + str( j+1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+            testMySwB( indexString, testFolder, fullname )
 
 
     if 1: # individual modules in the output folder
@@ -404,8 +407,9 @@ def demo():
             fullname = name + '.bbl.mybible'
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw C{}/ Trying {}".format( j+1, fullname ) )
-                testMySwB( testFolder, fullname )
+                indexString = 'C' + str( j+1 )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                testMySwB( indexString, testFolder, fullname )
 
 
     if 1: # all discovered modules in the test folder
@@ -420,7 +424,7 @@ def demo():
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-            parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
+            parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
@@ -441,13 +445,14 @@ def demo():
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-            parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
+            parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw E{}/ Trying {}".format( j+1, someFile ) )
+                indexString = 'E' + str( j+1 )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( testFolder, someFile )
                 #break # only do the first one.........temp

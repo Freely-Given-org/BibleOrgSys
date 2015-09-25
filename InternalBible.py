@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-30' # by RJH
+LastModifiedDate = '2015-09-25' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.65'
@@ -257,7 +257,7 @@ class InternalBible:
                               'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
                               'toOpenSongXML', 'toPhotoBible', 'toPickle', 'toPseudoUSFM', 'toSwordModule',
                               'toSwordSearcher', 'toTeX', 'toText', 'toUSFM', 'toUSFXXML', 'toUSXXML',
-                              'toZefaniaXML', 'toTheWord', 'doAllExports', 'doExportHelper',
+                              'toZefaniaXML', 'totheWord', 'doAllExports', 'doExportHelper',
                               '_BibleWriter__adjustControlDict', '_BibleWriter__formatHTMLVerseText',
                               '_BibleWriter__setupWriter', '_writeSwordLocale',
                               'ipHTMLClassDict', 'pqHTMLClassDict', 'doneSetupGeneric', ):
@@ -477,20 +477,20 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','TheWord','Unbound','VerseView','VPL' ) )
+            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','VPL' ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
                 print( "  {} = {!r}".format( key, value ) )
 
-        if applyMetadataType in ( 'File', 'BCV','Online','TheWord','Unbound','VerseView','Forge4SS','VPL' ):
+        if applyMetadataType in ( 'File', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
             nameChangeDict = {}
             nameChangeDict['File'] = {} # This is metadata submitted by the user in a separate text file
             nameChangeDict['BCV'] = {}
             nameChangeDict['Online'] = { 'LongName':'FullName', }
-            nameChangeDict['TheWord'] = { 'description':'FullName', 'short.title':'ShortName', }
+            nameChangeDict['theWord'] = { 'description':'FullName', 'short.title':'ShortName', }
             nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
             nameChangeDict['VerseView'] = { 'Title':'FullName', }
             nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML', }

@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-09-25' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -127,9 +127,9 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
-            twB = ESwordBible( givenFolderName, lastFilenameFound )
-            if autoLoadBooks: twB.load() # Load and process the file
-            return twB
+            eSB = ESwordBible( givenFolderName, lastFilenameFound )
+            if autoLoadBooks: eSB.load() # Load and process the file
+            return eSB
         return numFound
     elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
@@ -157,7 +157,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                 if somethingUpperExt in filenameEndingsToAccept:
                     foundSubfiles.append( something )
 
-        # See if there's an TW project here in this folder
+        # See if there's an e-Sword project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
@@ -167,9 +167,9 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if numFound == 1 and (autoLoad and autoLoadBooks):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
             if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
-            twB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
-            if autoLoadBooks: twB.load() # Load and process the file
-            return twB
+            eSB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
+            if autoLoadBooks: eSB.load() # Load and process the file
+            return eSB
         return numFound
 # end of ESwordBibleFileCheck
 
