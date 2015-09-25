@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-30' # by RJH
+LastModifiedDate = '2015-09-25' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.26'
@@ -65,7 +65,7 @@ from VerseViewXMLBible import VerseViewXMLBibleFileCheck, VerseViewXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from DrupalBible import DrupalBibleFileCheck, DrupalBible
 from YETBible import YETBibleFileCheck, YETBible
-from TheWordBible import TheWordBibleFileCheck, TheWordBible
+from theWordBible import theWordBibleFileCheck, theWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
@@ -146,13 +146,13 @@ class UnknownBible:
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
-            # Search for TheWord Bibles
-            theWordBibleStrictCount = TheWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            # Search for theWord Bibles
+            theWordBibleStrictCount = theWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
             if theWordBibleStrictCount:
                 totalBibleStrictCount += theWordBibleStrictCount
                 totalBibleStrictTypes += 1
                 typesStrictlyFound.append( 'theWord:' + str(theWordBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "TheWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
 
             # Search for MySword Bibles
             MySwordBibleStrictCount = MySwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -339,13 +339,13 @@ class UnknownBible:
         # We first do a normal (non-strict) check (unless strict was requested by the caller)
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
-        # Search for TheWord Bibles
-        theWordBibleCount = TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        # Search for theWord Bibles
+        theWordBibleCount = theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if theWordBibleCount:
             totalBibleCount += theWordBibleCount
             totalBibleTypes += 1
             typesFound.append( 'theWord:' + str(theWordBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "TheWordBible.search: theWordBibleCount", theWordBibleCount )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.search: theWordBibleCount", theWordBibleCount )
 
         # Search for MySword Bibles
         MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -565,7 +565,7 @@ class UnknownBible:
             # Put the binary formats first here because they can be detected more reliably
             if theWordBibleCount == 1:
                 self.foundType = "theWord Bible"
-                if autoLoad: return TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                if autoLoad: return theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif MySwordBibleCount == 1:
                 self.foundType = "MySword Bible"

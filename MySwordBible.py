@@ -413,7 +413,7 @@ def demo():
 
 
     if 1: # all discovered modules in the test folder
-        testFolder = "Tests/DataFilesForTests/TheWordRoundtripTestFiles/"
+        testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
