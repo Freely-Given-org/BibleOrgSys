@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-18' # by RJH
+LastModifiedDate = '2015-10-07' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.27'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -257,7 +257,7 @@ class USXXMLBible( Bible ):
         Load the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USXXMLBible: Loading books {} from {}...").format( self.name, self.givenFolderName ) )
+            print( _("USXXMLBible: Loading {} books from {}...").format( self.name, self.givenFolderName ) )
 
         if not self.preloadDone: self.preload()
 
@@ -371,22 +371,23 @@ def demo():
 
     testData = (
                 ("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
-                ("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                #("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
                 ) # You can put your USX test folder here
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for name, testFolder in testData:
-            print( "\nA: Testfolder is: {}".format( testFolder ) )
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+        for j, (name, testFolder) in enumerate( testData ):
+            print( "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
             result1 = USXXMLBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}a".format( j+1 ), result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA2", result2 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}b".format( j+1 ), result2 )
             result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA3", result3 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}c".format( j+1 ), result3 )
 
     if 1:
-        for name, testFolder in testData:
-            print( "\nB: Testfolder is: {} ({})".format( testFolder, name ) )
+        for j, (name, testFolder) in enumerate( testData ):
+            print( "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
@@ -400,7 +401,7 @@ def demo():
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-            else: print( "B: Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: print( "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
 
         #if BibleOrgSysGlobals.commandLineOptions.export:
         #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
@@ -408,12 +409,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
 # end of USXXMLBible.py

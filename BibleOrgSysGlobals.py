@@ -74,10 +74,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-10-05' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.59'
+ProgVersion = '0.60'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -140,15 +140,15 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( ProgName, ProgVersion, folderPath=None ):
+def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folderPath) ) )
-    filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
+        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ShortProgName), repr(ProgVersion), repr(folderPath) ) )
+    filename = ShortProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folderPath, filename )
 
@@ -904,7 +904,7 @@ def unpickleObject( filename, folderName=None ):
 #
 # Default program setup routine
 
-def setup( ProgName, ProgVersion, loggingFolderPath=None ):
+def setup( ShortProgName, ProgVersion, loggingFolderPath=None ):
     """
     Does the initial set-up for our scripts / programs.
 
@@ -915,9 +915,9 @@ def setup( ProgName, ProgVersion, loggingFolderPath=None ):
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(loggingFolderPath) ) )
-    setupLoggingToFile( ProgName, ProgVersion, folderPath=loggingFolderPath )
-    logging.info( "{} v{} started".format( ProgName, ProgVersion ) )
+        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(ShortProgName), repr(ProgVersion), repr(loggingFolderPath) ) )
+    setupLoggingToFile( ShortProgName, ProgVersion, folderPath=loggingFolderPath )
+    logging.info( "{} v{} started".format( ShortProgName, ProgVersion ) )
 
     if verbosityLevel > 2:
         print( "  This program comes with ABSOLUTELY NO WARRANTY." )
@@ -1116,12 +1116,12 @@ if __name__ == '__main__':
     import multiprocessing
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = setup( ProgName, ProgVersion )
+    parser = setup( ShortProgName, ProgVersion )
     addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    closedown( ProgName, ProgVersion )
+    closedown( ShortProgName, ProgVersion )
 # end of BibleOrgSysGlobals.py

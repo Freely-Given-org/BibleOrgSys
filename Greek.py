@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # Greek.py
-#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2014 Robert Hunt
+# Copyright (C) 2012-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,9 +26,14 @@
 Module handling Greek language particularities.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-10-04' # by RJH
+ShortProgName = "GreekLanguageHandler"
 ProgName = "Greek language handler"
-ProgVersion = "0.02"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.02'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 

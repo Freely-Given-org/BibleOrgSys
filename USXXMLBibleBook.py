@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-24' # by RJH
+LastModifiedDate = '2015-10-08' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.15'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,10 +87,12 @@ class USXXMLBibleBook( BibleBook ):
         def loadParagraph( paragraphXML, paragraphlocation ):
             """
             Load a paragraph from the USX XML.
+            In this context, paragraph means heading and intro lines,
+                as well as paragraphs of verses.
 
-            Uses (and updates) c,v information from the containing function.
+            Uses (and updates) C,V information from the containing function.
             """
-            nonlocal c, v
+            nonlocal C, V
 
             # Process the attributes first
             paragraphStyle = None
@@ -101,12 +103,14 @@ class USXXMLBibleBook( BibleBook ):
                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
 
             # Now process the paragraph text (or write a paragraph marker anyway)
-            self.addLine( paragraphStyle, paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else '' )
+            paragraphText = paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else ''
+            if version is None: paragraphText = paragraphText.rstrip() # Don't need to strip extra spaces in v2
+            self.addLine( paragraphStyle, paragraphText )
 
             # Now process the paragraph subelements
             for element in paragraphXML:
                 location = element.tag + ' ' + paragraphlocation
-                #print( "USXXMLBibleBook.load", c, v, element.tag, location )
+                #print( "USXXMLBibleBook.load", C, V, element.tag, location )
                 if element.tag == 'verse': # milestone (not a container)
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
@@ -114,17 +118,18 @@ class USXXMLBibleBook( BibleBook ):
                     verseStyle = None
                     for attrib,value in element.items():
                         if attrib=='number':
-                            v = value
+                            V = value
                         elif attrib=='style':
                             verseStyle = value
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if verseStyle != 'v':
-                        logging.warning( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
-                    self.addLine( verseStyle, v + ' ' )
+                        logging.error( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
+                    self.addLine( verseStyle, V + ' ' )
                     # Now process the tail (if there's one) which is the verse text
                     if element.tail:
-                        vText = element.tail.strip()
+                        vText = element.tail
+                        if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
                         if vText:
                             #print( repr(vText) )
                             self.appendToLastLine( vText )
@@ -137,12 +142,12 @@ class USXXMLBibleBook( BibleBook ):
                             #print( "  charStyle", charStyle )
                             assert( not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     charLine = "\\{} {} ".format( charStyle, element.text )
                     # Now process the subelements -- chars are one of the few multiply embedded fields in USX
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + location
-                        #print( c, v, element.tag )
+                        #print( '{} {}:{} {}'.format( self.BBB, C, V, element.tag ) )
                         if subelement.tag == 'char': # milestone (not a container)
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                             # Process the attributes first
@@ -153,16 +158,22 @@ class USXXMLBibleBook( BibleBook ):
                                     assert( value=='false' )
                                     charClosed = False
                                 else:
-                                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             charLine += "\\{} {}".format( subCharStyle, subelement.text )
                             if charClosed: charLine += "\\{}*".format( subCharStyle )
-                            charLine += '' if subelement.tail is None else subelement.tail.strip()
+                            #if subelement.tail is not None: print( "  tail1", repr(subelement.tail) )
+                            charLine += '' if subelement.tail is None else subelement.tail
                         else:
-                            logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, c, v, sublocation ) )
-                            self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
+                            logging.error( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
+                            self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                     # A character field must be added to the previous field
-                    charLine += "\\{}*{}".format( charStyle, '' if element.tail is None else element.tail.strip() )
-                    if debuggingThisModule: print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(charLine) )
+                    #if element.tail is not None: print( " tail2", repr(element.tail) )
+                    charTail = ''
+                    if element.tail:
+                        charTail = element.tail
+                        if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
+                    charLine += "\\{}*{}".format( charStyle, charTail )
+                    if debuggingThisModule: print( "USX.loadParagraph:", C, V, paragraphStyle, charStyle, repr(charLine) )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     #print( "NOTE", BibleOrgSysGlobals.elementStr( element ) )
@@ -174,7 +185,8 @@ class USXXMLBibleBook( BibleBook ):
                             assert( noteStyle in ('x','f',) )
                         elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
                     assert( noteStyle and noteCaller ) # both compulsory
                     noteLine = "\\{} {} ".format( noteStyle, noteCaller )
                     if element.text:
@@ -183,7 +195,7 @@ class USXXMLBibleBook( BibleBook ):
                     # Now process the subelements -- notes are one of the few multiply embedded fields in USX
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + location
-                        #print( c, v, element.tag )
+                        #print( C, V, element.tag )
                         if subelement.tag == 'char': # milestone (not a container)
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                             # Process the attributes first
@@ -198,7 +210,10 @@ class USXXMLBibleBook( BibleBook ):
                                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             noteLine += "\\{} {}".format( charStyle, subelement.text )
                             if charClosed: noteLine += "\\{}*".format( charStyle )
-                            noteLine += '' if subelement.tail is None else subelement.tail.strip()
+                            if subelement.tail:
+                                charTail = subelement.tail
+                                if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts cross reference parts on a new line
+                                noteLine += charTail
                         elif subelement.tag == 'unmatched': # Used to denote errors in the source text
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -209,15 +224,17 @@ class USXXMLBibleBook( BibleBook ):
                                     unmmatchedMarker = value
                                 else:
                                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
-                            self.addPriorityError( 2, c, v, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
+                            self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
                         else:
-                            logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, c, v, sublocation ) )
-                            self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
+                            logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
+                            self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                         if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
                     #noteLine += "\\{}*".format( charStyle )
                     noteLine += "\\{}*".format( noteStyle )
                     if element.tail:
-                        noteTail = element.tail.strip()
+                        #if '\n' in element.tail: halt
+                        noteTail = element.tail
+                        if noteTail[0]=='\n': noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
                         noteLine += noteTail
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'link': # Used to include extra resources
@@ -236,16 +253,16 @@ class USXXMLBibleBook( BibleBook ):
                             linkTarget = value # e.g., some reference
                         else:
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                    self.addPriorityError( 3, c, v, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
+                    self.addPriorityError( 3, C, V, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
-                    self.addPriorityError( 2, c, v, _("Unmatched element in {}").format( location) )
+                    self.addPriorityError( 2, C, V, _("Unmatched element in {}").format( location) )
                 else:
-                    logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, c, v, location ) )
-                    self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
+                    logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
+                    self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._rawLines[x] )
                     if BibleOrgSysGlobals.debugFlag: halt
         # end of loadParagraph
@@ -259,7 +276,7 @@ class USXXMLBibleBook( BibleBook ):
         self.tree = ElementTree().parse( self.sourceFilepath )
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
-        c = v = '0'
+        C = V = '0'
         loadErrors = []
         lastMarker = None
 
@@ -301,7 +318,7 @@ class USXXMLBibleBook( BibleBook ):
                     if element.text and element.text.strip(): idLine += ' ' + element.text
                     self.addLine( 'id', idLine )
                 elif element.tag == 'chapter': # milestone (not a container)
-                    v = '0'
+                    V = '0'
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
@@ -309,14 +326,14 @@ class USXXMLBibleBook( BibleBook ):
                     chapterStyle = None
                     for attrib,value in element.items():
                         if attrib=='number':
-                            c = value
+                            C = value
                         elif attrib=='style':
                             chapterStyle = value
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if chapterStyle != 'c':
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
-                    self.addLine( 'c', c )
+                    self.addLine( 'c', C )
                 elif element.tag == 'para':
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
@@ -328,38 +345,43 @@ class USXXMLBibleBook( BibleBook ):
                         text = element.text
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:
-                            print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, c, v, USFMMarker, text ) )
+                            print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
                             #halt # Not checked yet
                         if text:
-                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, c, v, USFMMarker, text ) )
-                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, c, v, text ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
+                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, C, V, text ) )
                         else: # no text
-                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM Marker at beginning of line (with no text)").format( self.BBB, c, v, USFMMarker ) )
-                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, c, v ) )
-                        self.addPriorityError( 97, c, v, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM Marker at beginning of line (with no text)").format( self.BBB, C, V, USFMMarker ) )
+                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
+                        self.addPriorityError( 97, C, V, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                         lastText =  '\\' + USFMMarker + ' ' + text
-                        #print( "{} {} {} Now have {}:{!r}".format( self.BBB, c, v, lastMarker, lastText ) )
+                        #print( "{} {} {} Now have {}:{!r}".format( self.BBB, C, V, lastMarker, lastText ) )
                     else: # the line begins with an unknown USFM Marker
+                        try: status = element.attrib['status']
+                        except KeyError: status = None
                         text = element.text
                         if text:
-                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {}").format( self.BBB, c, v, USFMMarker, text ) )
-                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, c, v, text ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
+                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, C, V, text ) )
                         else: # no text
-                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, c, v, USFMMarker ) )
-                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, c, v ) )
-                        self.addPriorityError( 100, c, v, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
-                        for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
-                            if USFMMarker.startswith( tryMarker ): # Let's try changing it
-                                if lastMarker: self.addLine( lastMarker, lastText )
-                                lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
-                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, c, v, USFMMarker, tryMarker, text ) )
-                                logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, c, v, text ) )
-                                break
+                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
+                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
+                        self.addPriorityError( 100, C, V, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
+                        if status == 'unknown': # USX exporter already knew it was a bad marker
+                            pass # Just drop it completely
+                        else:
+                            for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
+                                if USFMMarker.startswith( tryMarker ): # Let's try changing it
+                                    if lastMarker: self.addLine( lastMarker, lastText )
+                                    lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
+                                    loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, C, V, USFMMarker, tryMarker, text ) )
+                                    logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
+                                    break
                         # Otherwise, don't bother processing this line -- it'll just cause more problems later on
                 else:
-                    logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, c, v, sublocation ) )
-                    self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
+                    logging.error( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, sublocation ) )
+                    self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
     # end of USXXMLBibleBook.load
@@ -472,10 +494,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
 # end of USXXMLBibleBook.py

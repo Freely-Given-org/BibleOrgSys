@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-21' # by RJH
+LastModifiedDate = '2015-10-08' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -238,6 +238,7 @@ class InternalBibleBook:
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
             logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
+            halt
         if BibleOrgSysGlobals.debugFlag:
             assert( not self._processedFlag )
             assert( marker and isinstance( marker, str ) )
@@ -283,9 +284,13 @@ class InternalBibleBook:
 
 
     def appendToLastLine( self, additionalText, expectedLastMarker=None ):
-        """ Append some extra text to the previous line in self._rawLines
+        """
+        Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
-            (Used by USXXMLBibleBook.py) """
+            (Used by USXXMLBibleBook.py)
+
+        No return value.
+        """
         forceDebugHere = False
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
             print( " InternalBibleBook.appendToLastLine( {!r}, {!r} )".format( additionalText, expectedLastMarker ) )
@@ -293,6 +298,7 @@ class InternalBibleBook:
             assert( self._rawLines ) # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
             logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
+            halt
         if BibleOrgSysGlobals.debugFlag:
             assert( not self._processedFlag )
             assert( additionalText and isinstance( additionalText, str ) )
@@ -307,6 +313,7 @@ class InternalBibleBook:
         #if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
         if forceDebugHere: print( "  newText for {!r} is {!r}".format( marker, text ) )
+        #if 'there is no longer any that is' in text: halt
         self._rawLines[-1] = (marker, text,)
     # end of InternalBibleBook.appendToLastLine
 
