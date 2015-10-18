@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-09-25' # by RJH
+LastModifiedDate = '2015-10-10' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.65'
+ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -502,7 +502,7 @@ class InternalBible:
                     logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                 newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
-                    logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                    logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
                 else: # Also check for "duplicates" with a different case
                     ucNewKey = newKey.upper()
                     for key in self.settingsDict:
@@ -526,13 +526,13 @@ class InternalBible:
                         logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
                                 break
                     self.settingsDict[newKey] = value
 
@@ -545,13 +545,13 @@ class InternalBible:
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
@@ -579,13 +579,13 @@ class InternalBible:
                     if BibleOrgSysGlobals.debugFlag: assert( value )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
                                 break
                     self.settingsDict[newKey] = value
 
@@ -601,13 +601,13 @@ class InternalBible:
                         logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file".format( newKey, self.settingsDict[newKey], applyMetadataType ) )
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
                                 break
                     self.settingsDict[newKey] = value
 

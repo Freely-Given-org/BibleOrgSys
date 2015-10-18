@@ -522,12 +522,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
 # end of USFMBible.py

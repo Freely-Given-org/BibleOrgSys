@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18' # by RJH
+LastModifiedDate = '2015-10-10' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1527,61 +1527,6 @@ class PTXBible( Bible ):
         #print( 'PTXStyles', PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX']['Styles'] = PTXStyles
     # end of PTXBible.loadPTXStyles
-
-
-    def xxxapplySuppliedMetadata( self, applyMetadataType ): # Overrides the default one in InternalBible.py
-        """
-        Using the dictionary at self.suppliedMetadata,
-            load the fields into self.settingsDict
-            and try to standardise it at the same time.
-        """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( t("applySuppliedMetadata({} )").format( applyMetadataType ) )
-        assert( applyMetadataType == 'PTX' )
-
-        self.name = self.suppliedMetadata['PTX']['identification']['name']
-        self.abbreviation = self.suppliedMetadata['PTX']['identification']['abbreviation']
-
-        # Now we'll flatten the supplied metadata and remove empty values
-        flattenedMetadata = {}
-        for mainKey,value in self.suppliedMetadata['PTX'].items():
-            #print( "Got {} = {}".format( mainKey, value ) )
-            if not value: pass # ignore empty ones
-            elif isinstance( value, str ): flattenedMetadata[mainKey] = value # Straight copy
-            elif isinstance( value, dict ): # flatten this
-                for subKey,subValue in value.items():
-                    #print( "  Got2 {}--{} = {}".format( mainKey, subKey, subValue ) )
-                    if not subValue: pass # ignore empty ones
-                    elif isinstance( subValue, str ):
-                        flattenedMetadata[mainKey+'--'+subKey] = subValue # Straight copy
-                    elif isinstance( subValue, dict ): # flatten this
-                        for sub2Key,sub2Value in subValue.items():
-                            #print( "    Got3 {}--{}--{} = {}".format( mainKey, subKey, sub2Key, sub2Value ) )
-                            if not sub2Value:  pass # ignore empty ones
-                            elif isinstance( sub2Value, str ):
-                                flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key] = sub2Value # Straight copy
-                            elif isinstance( sub2Value, list ):
-                                assert( sub2Key == 'books' )
-                                flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key] = sub2Value # Straight copy
-                            else: print( "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
-                    else: print( "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
-            else: print( "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
-        #print( "\nflattenedMetadata", flattenedMetadata )
-
-        nameChangeDict = {} # not done yet
-        for oldKey,value in flattenedMetadata.items():
-            newKey = nameChangeDict[oldKey] if oldKey in nameChangeDict else oldKey
-            if newKey in self.settingsDict: # We have a duplicate
-                logging.warning("About to replace {}={} from metadata file".format( repr(newKey), repr(self.settingsDict[newKey]) ) )
-            else: # Also check for "duplicates" with a different case
-                ucNewKey = newKey.upper()
-                for key in self.settingsDict:
-                    ucKey = key.upper()
-                    if ucKey == ucNewKey:
-                        logging.warning("About to copy {} from metadata file even though already have {}".format( repr(newKey), repr(key) ) )
-                        break
-            self.settingsDict[newKey] = value
-    # end of PTXBible.applySuppliedMetadata
 
 
     def loadBook( self, BBB, filename=None ):

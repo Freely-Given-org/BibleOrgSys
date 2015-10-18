@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-08' # by RJH
+LastModifiedDate = '2015-10-10' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -480,39 +480,40 @@ class InternalBibleBook:
             #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
         if self.objectTypeString in ('USFM','USX',):
-            # Fix up quote marks
-            if '<' in adjText or '>' in adjText:
-                if not self.givenAngleBracketWarning: # Just give the warning once (per book)
+            if originalMarker not in ('id','ide','h','rem',):
+                # Fix up quote marks
+                if '<' in adjText or '>' in adjText:
+                    if not self.givenAngleBracketWarning: # Just give the warning once (per book)
+                        if self.replaceAngleBracketsFlag:
+                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
+                            logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
+                            self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
+                        else:
+                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
+                            logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
+                            self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
+                        self.givenAngleBracketWarning = True
                     if self.replaceAngleBracketsFlag:
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
-                        logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
-                        self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
-                    else:
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
-                        logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
-                        self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
-                    self.givenAngleBracketWarning = True
-                if self.replaceAngleBracketsFlag:
-                    adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
-            if '"' in adjText:
-                if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
+                        adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
+                if '"' in adjText:
+                    if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
+                        if self.replaceStraightDoubleQuotesFlag:
+                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
+                            logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                            self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
+                        else: # we're not attempting to replace them
+                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
+                            logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                            self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
+                        self.givenDoubleQuoteWarning = True
                     if self.replaceStraightDoubleQuotesFlag:
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
-                        logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
-                    else: # we're not attempting to replace them
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
-                        logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
-                    self.givenDoubleQuoteWarning = True
-                if self.replaceStraightDoubleQuotesFlag:
-                    if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
-                    adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
-                    adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
-                    adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
-                    adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
-                    if '"' in adjText:
-                        logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:{!r}".format( originalMarker, adjText ) )
+                        if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
+                        adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
+                        adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
+                        adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
+                        adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
+                        if '"' in adjText:
+                            logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:{!r}".format( originalMarker, adjText ) )
 
             # Do XML/HTML common character replacements
             adjText = adjText.replace( '&', '&amp;' )
