@@ -517,13 +517,12 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in (
-                    #'Tests/DataFilesForTests/VPLTest1/',
-                    #'Tests/DataFilesForTests/VPLTest2/',
-                    #'Tests/DataFilesForTests/VPLTest2/',
-                    '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Lith_SKD_Romans.2015-10-31_09.35_0.25620100_1446237346/YourSourceFiles/Unzipped/',
+                    'Tests/DataFilesForTests/VPLTest1/',
+                    'Tests/DataFilesForTests/VPLTest2/',
+                    'Tests/DataFilesForTests/VPLTest2/',
                     ):
             result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ForgeForSwordSearcher TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nForgeForSwordSearcher TestA1", result1 )
 
             result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "ForgeForSwordSearcher TestA2", result2 )
