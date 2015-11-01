@@ -207,7 +207,8 @@ class SFMRecords:
 
 
     def read( self, sfm_filename, key=None, ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' ):
-        """Read a simple SFM (Standard Format Marker) file into a list of lists of tuples.
+        """
+        Read a simple SFM (Standard Format Marker) file into a list of lists of tuples.
 
         @param sfm_filename: The filename
         @type sfm_filename: string

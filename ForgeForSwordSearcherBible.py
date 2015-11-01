@@ -42,14 +42,20 @@ Forge for SwordSearcher -- see http://www.swordsearcher.com/forge/index.html
     And everything was great.
     $$ Ge 1:3
     And God rested.
+
+Formatting includes:
+    [added words]
+    {footnotes}
+    <scriptref>Cross references</scripref>
+    +r/This text is red-letter-r/
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-30' # by RJH
+LastModifiedDate = '2015-11-02' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -86,14 +92,14 @@ def t( messageString ):
 
 def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
-    Given a folder, search for VPL Bible files or folders in the folder and in the next level down.
+    Given a folder, search for ForgeForSwordSearcher Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one VPL Bible is found,
+    if autoLoad is true and exactly one ForgeForSwordSearcher Bible is found,
         returns the loaded ForgeForSwordSearcherBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
@@ -143,7 +149,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
                 match = re.search( '^; TITLE:\\s', firstLine )
                 if match:
                     if BibleOrgSysGlobals.debugFlag:
-                        print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                        print( "ForgeForSwordSearcherBibleFileCheck First line got {!r} match from {!r}".format( match.group(0), firstLine ) )
                 else:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -194,7 +200,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
                     match = re.search( '^; TITLE:\\s', firstLine )
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                            print( "ForgeForSwordSearcherBibleFileCheck First line got type {!r} match from {!r}".format( match.group(0), firstLine ) )
                     else:
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -255,7 +261,7 @@ class ForgeForSwordSearcherBible( Bible ):
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
         lastLine, lineCount = '', 0
-        vplType = bookCode = BBB = metadataName = None
+        bookCode = BBB = metadataName = None
         lastBookCode = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
         thisBook = None
@@ -272,81 +278,43 @@ class ForgeForSwordSearcherBible( Bible ):
                     match = re.search( '^; TITLE:\\s', line )
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
+                            print( "First line got type {!r} match from {!r}".format( match.group(0), line ) )
                     else:
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
-                    #print( 'vplType', vplType )
 
-                #print ( 'VPL file line is "' + line + '"' )
+                #print ( 'ForgeForSwordSearcher file line is "' + line + '"' )
                 lastLine = line
 
                 # Process header stuff
-                if vplType == 3:
-                    if   line.startswith( '# language_name:' ):
-                        string = line[16:].strip()
-                        if string and string != 'Not available': settingsDict['LanguageName'] = string
-                        continue
-                    elif line.startswith( '# closest ISO 639-3:' ):
-                        string = line[20:].strip()
-                        if string and string != 'Not available': settingsDict['ISOLanguageCode'] = string
-                        continue
-                    elif line.startswith( '# year_short:' ):
-                        string = line[13:].strip()
-                        if string and string != 'Not available': settingsDict['Year.short'] = string
-                        continue
-                    elif line.startswith( '# year_long:' ):
-                        string = line[12:].strip()
-                        if string and string != 'Not available': settingsDict['Year.long'] = string
-                        continue
-                    elif line.startswith( '# title:' ):
-                        string = line[8:].strip()
-                        if string and string != 'Not available': settingsDict['WorkTitle'] = string
-                        continue
-                    elif line.startswith( '# URL:' ):
-                        string = line[6:].strip()
-                        if string and string != 'Not available': settingsDict['URL'] = string
-                        continue
-                    elif line.startswith( '# copyright_short:' ):
-                        string = line[18:].strip()
-                        if string and string != 'Not available': settingsDict['Copyright.short'] = string
-                        continue
-                    elif line.startswith( '# copyright_long:' ):
-                        string = line[17:].strip()
-                        if string and string != 'Not available': settingsDict['Copyright.long'] = string
-                        continue
-                    elif line[0]=='#':
-                        logging.warning( "ForgeForSwordSearcherBible.load {} is skipping unknown line: {}".format( vplType, line ) )
-                        continue # Just discard comment lines
-                elif vplType == 4:
-                    if line.startswith( '; TITLE:' ):
-                        string = line[8:].strip()
-                        if string: settingsDict['TITLE'] = string
-                        continue
-                    elif line.startswith( '; ABBREVIATION:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['ABBREVIATION'] = string
-                        continue
-                    elif line.startswith( '; HAS ITALICS:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_ITALICS'] = string
-                        continue
-                    elif line.startswith( '; HAS FOOTNOTES:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_FOOTNOTES'] = string
-                        continue
-                    elif line.startswith( '; HAS FOOTNOTES' ):
-                        string = line[14:].strip()
-                        if string: settingsDict['HAS_FOOTNOTES'] = string
-                        continue
-                    elif line.startswith( '; HAS REDLETTER:' ):
-                        string = line[15:].strip()
-                        if string: settingsDict['HAS_REDLETTER'] = string
-                        continue
-                    elif line[0]==';':
-                        logging.warning( "ForgeForSwordSearcherBible.load{} is skipping unknown header/comment line: {}".format( vplType, line ) )
-                        continue # Just discard comment lines
+                if line.startswith( '; TITLE:' ):
+                    string = line[8:].strip()
+                    if string: settingsDict['TITLE'] = string
+                    continue
+                elif line.startswith( '; ABBREVIATION:' ):
+                    string = line[15:].strip()
+                    if string: settingsDict['ABBREVIATION'] = string
+                    continue
+                elif line.startswith( '; HAS ITALICS' ):
+                    string = line[14:].strip()
+                    if string: settingsDict['HAS_ITALICS'] = string
+                    continue
+                elif line.startswith( '; HAS FOOTNOTES:' ):
+                    string = line[15:].strip()
+                    if string: settingsDict['HAS_FOOTNOTES'] = string
+                    continue
+                elif line.startswith( '; HAS FOOTNOTES' ):
+                    string = line[14:].strip()
+                    if string: settingsDict['HAS_FOOTNOTES'] = string
+                    continue
+                elif line.startswith( '; HAS REDLETTER' ):
+                    string = line[14:].strip()
+                    if string: settingsDict['HAS_REDLETTER'] = string
+                    continue
+                elif line[0]==';':
+                    logging.warning( "ForgeForSwordSearcherBible.load is skipping unknown header/comment line: {}".format( line ) )
+                    continue # Just discard comment lines
 
                 # Process the main segment
                 if line.startswith( '$$ ' ):
@@ -403,27 +371,34 @@ class ForgeForSwordSearcherBible( Bible ):
                         # Handle bits like (<scripref>Pr 2:7</scripref>)
                         vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
                         vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
-                        #if '\\' in vText: print( 'VPL vText', repr(vText) )
-                        if vplType == 4: # Forge for SwordSearcher
+                        #if '\\' in vText: print( 'ForgeForSwordSearcher vText', repr(vText) )
+                        #print( BBB, chapterNumber, verseNumber, repr(vText) )
+                        # Convert {stuff} to footnotes
+                        match = re.search( '\\{(.+?)\\}', vText )
+                        while match:
+                            footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
+                            vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
                             #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                            # Convert {stuff} to footnotes
                             match = re.search( '\\{(.+?)\\}', vText )
-                            while match:
-                                footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
-                                vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
-                                #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                match = re.search( '\\{(.+?)\\}', vText )
-                            # Convert [stuff] to added fields
+                        # Convert [stuff] to added fields
+                        match = re.search( '\\[(.+?)\\]', vText )
+                        while match:
+                            addText = '\\add {}\\add*'.format( match.group(1) )
+                            vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
+                            #print( BBB, chapterNumber, verseNumber, repr(vText) )
                             match = re.search( '\\[(.+?)\\]', vText )
-                            while match:
-                                addText = '\\add {}\\add*'.format( match.group(1) )
-                                vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                                #print( BBB, chapterNumber, verseNumber, repr(vText) )
-                                match = re.search( '\\[(.+?)\\]', vText )
-                            for badChar in '{}[]':
-                                if badChar in vText:
-                                    logging.warning( "Found remaining braces or brackets in SwordSearcher Forge VPL {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
-                                    break
+                        # Convert +r/This text is red-letter-r/ to wj fields
+                        match = re.search( '\\+r/(.+?)-r/', vText )
+                        while match:
+                            addText = '\\wj {}\\wj*'.format( match.group(1) )
+                            vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
+                            #print( BBB, chapterNumber, verseNumber, repr(vText) )
+                            match = re.search( '\\+r/(.+?)-r/', vText )
+                        # Final check for unexpected remaining formatting
+                        for badChar in '{}[]/':
+                            if badChar in vText:
+                                logging.warning( "Found remaining braces,brackets or slashes in SwordSearcher Forge VPL {} {}:{} {!r}".format( BBB, chapterNumberString, verseNumberString, vText ) )
+                                break
 
 
                 if bookCode:
@@ -435,14 +410,14 @@ class ForgeForSwordSearcherBible( Bible ):
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
                             if BibleOrgSysGlobals.debugFlag: assert( BBB not in self )
                             thisBook = BibleBook( self, BBB )
-                            thisBook.objectNameString = "VPL Bible Book object"
-                            thisBook.objectTypeString = "VPL"
+                            thisBook.objectNameString = "ForgeForSwordSearcher Bible Book object"
+                            thisBook.objectTypeString = "ForgeForSwordSearcher"
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCode = bookCode
                             lastChapterNumber = lastVerseNumber = -1
                         else:
-                            logging.critical( "ForgeForSwordSearcherBible{} could not figure out {!r} book code".format( vplType, bookCode ) )
+                            logging.critical( "ForgeForSwordSearcherBible could not figure out {!r} book code".format( bookCode ) )
                             if BibleOrgSysGlobals.debugFlag: halt
 
                     if BBB:
@@ -479,14 +454,14 @@ class ForgeForSwordSearcherBible( Bible ):
                         lastVerseNumber = verseNumber
 
                 else: # No bookCode yet
-                    logging.warning( "ForgeForSwordSearcherBible.load{} is skipping unknown pre-book line: {}".format( vplType, line ) )
+                    logging.warning( "ForgeForSwordSearcherBible.load is skipping unknown pre-book line: {}".format( line ) )
 
         # Save the final book
         if thisBook is not None: self.saveBook( thisBook )
 
         # Clean up
         if settingsDict:
-            #print( "VPL settingsDict", settingsDict )
+            #print( "ForgeForSwordSearcher settingsDict", settingsDict )
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['Forge4SS'] = settingsDict
             self.applySuppliedMetadata( 'Forge4SS' ) # Copy some to self.settingsDict
@@ -542,15 +517,16 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in (
-                    'Tests/DataFilesForTests/VPLTest1/',
-                    'Tests/DataFilesForTests/VPLTest2/',
-                    'Tests/DataFilesForTests/VPLTest2/',
+                    #'Tests/DataFilesForTests/VPLTest1/',
+                    #'Tests/DataFilesForTests/VPLTest2/',
+                    #'Tests/DataFilesForTests/VPLTest2/',
+                    '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Lith_SKD_Romans.2015-10-31_09.35_0.25620100_1446237346/YourSourceFiles/Unzipped/',
                     ):
             result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nForge TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ForgeForSwordSearcher TestA1", result1 )
 
             result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Forge TestA2", result2 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "ForgeForSwordSearcher TestA2", result2 )
             if result2 is not None:
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -579,7 +555,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testForge4SS( someFolder )
 # end of demo

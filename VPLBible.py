@@ -50,6 +50,7 @@ vplType 2-3
     41001004	Ne natuman sika te pegginguma ni Huwan diye te mammara ne inged ne kene egkeugpaan ne migpamewutismu wey migwali ne migkahi , “ Inniyuhi niyu ka me sale niyu wey pabewutismu kew eyew egpasayluwen te Manama ka me sale niyu . ”
 or
 vplType 4 (Forge for SwordSearcher -- see http://www.swordsearcher.com/forge/index.html)
+NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
     ; TITLE: Some new version
     ; ABBREVIATION: SNV
     ; HAS ITALICS
@@ -70,7 +71,7 @@ vplType 4 (Forge for SwordSearcher -- see http://www.swordsearcher.com/forge/ind
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-30' # by RJH
+LastModifiedDate = '2015-10-31' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -175,6 +176,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                         if match: vplType = 3
                         #else:
                             #match = re.search( '^; TITLE:\\s', firstLine )
+                            # NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
                             #if match: vplType = 4
                 if match:
                     if BibleOrgSysGlobals.debugFlag:
@@ -237,6 +239,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                             if match: vplType = 3
                             #else:
                                 #match = re.search( '^; TITLE:\\s', firstLine )
+                                # NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
                                 #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
