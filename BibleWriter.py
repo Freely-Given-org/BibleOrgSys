@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-09-25' # by RJH
+LastModifiedDate = '2015-11-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -520,7 +520,7 @@ class BibleWriter( InternalBible ):
                         if mt: USFM += '\n\\mt1 {}'.format( mt )
                     except KeyError: pass # ok, we've got nothing to add
             inField = None
-            value1 = value2 = None # For printing missing (bridged) verse numbers
+            vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
@@ -534,10 +534,10 @@ class BibleWriter( InternalBible ):
                 #value = cleanText # (temp)
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
-                    if value1 and value2:
-                        for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                    if vBridgeStartInt and vBridgeEndInt:
+                        for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
                             USFM += '\n\\v {}'.format( vNum )
-                    value1 = value2 = None
+                    vBridgeStartInt = vBridgeEndInt = None
 
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     #if BibleOrgSysGlobals.debugFlag: assert( value )
@@ -549,13 +549,13 @@ class BibleWriter( InternalBible ):
                                 value = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
                                 #print( BBB, repr(value), repr(vEnd) )
-                                try: value1, value2 = int( value ), int( vEnd )
+                                try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                 except ValueError:
                                     print( "toUSFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
-                                    value1 = value2 = None # One of them isn't an integer
-                                #print( ' ', BBB, repr(value1), repr(value2) )
+                                    vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
+                                #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
-                    if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                    if value and value[-1]!=' ': value += ' ' # Append a space since it didn't have one
                 elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
@@ -638,7 +638,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             indentLevel, indentSize =  0, 2
             inField = None
-            value1 = value2 = None # For printing missing (bridged) verse numbers
+            vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             initialMarkers = [verseDataEntry.getMarker() for verseDataEntry in pseudoUSFMData[:4]]
             #print( BBB, initialMarkers )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output..." ) )
@@ -683,10 +683,10 @@ class BibleWriter( InternalBible ):
                         #value = cleanText # (temp)
                         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                         if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
-                            if value1 and value2:
-                                for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                            if vBridgeStartInt and vBridgeEndInt:
+                                for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
                                     ESFMLine += '\n\\v {}'.format( vNum )
-                            value1 = value2 = None
+                            vBridgeStartInt = vBridgeEndInt = None
 
                         if pseudoMarker == 'vp#': continue
                         elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
@@ -699,11 +699,11 @@ class BibleWriter( InternalBible ):
                                         value = vString[:ix] # Remove verse bridges
                                         vEnd = vString[ix+1:]
                                         #print( BBB, repr(value), repr(vEnd) )
-                                        try: value1, value2 = int( value ), int( vEnd )
+                                        try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                         except ValueError:
                                             print( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
-                                            value1 = value2 = None # One of them isn't an integer
-                                        #print( ' ', BBB, repr(value1), repr(value2) )
+                                            vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
+                                        #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                         break
                             if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                         elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
@@ -3212,6 +3212,165 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toEasyWorshipBible( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a simple plain-text format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        import zlib, struct
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible..." )
+        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_EasyWorshipBible_Export/'
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        # Set-up their Bible reference system
+        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+
+        ignoredMarkers = set()
+
+        # Before we write the file, let's compress all our books
+        compressedDictionary = {}
+        for BBB,bookObject in self.books.items():
+            if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF',): continue # Ignore these books
+            pseudoUSFMData = bookObject._processedLines
+
+            textBuffer = ''
+            #vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
+            for entry in pseudoUSFMData:
+                marker, text = entry.getMarker(), entry.getCleanText()
+                #print( BBB, marker, text )
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                elif marker == 'c':
+                    C = text
+                    V = lastVWritten = '0'
+                elif marker == 'v':
+                    V = text.replace( '–', '-' ).replace( '—', '-' ) # Replace endash, emdash with hyphen
+                    # This format seems to handle bridges ok
+                    #for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        #ix = V.find( bridgeChar )
+                        #if ix != -1:
+                            #value = V[:ix] # Remove verse bridges
+                            #vEnd = V[ix+1:]
+                            ##print( BBB, repr(value), repr(vEnd) )
+                            #try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
+                            #except ValueError:
+                                #print( "toEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
+                                #vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
+                            ##print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                            #V = value
+                            #break
+                elif marker == 'v~':
+                    try:
+                        if int(V) <= int(lastVWritten):
+                            print( 'toEasyWorshipBible: Skipping {}:{} after {} with {}'.format( C, V, lastVWritten, text ) )
+                            continue
+                    except ValueError: pass # had a verse bridge
+                    textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} {}'.format( C, V, text )
+                    #if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
+                        #for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
+                            #textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
+                        #lastVWritten = str( vBridgeEndInt )
+                        #vBridgeStartInt = vBridgeEndInt = None
+                    #else:
+                    lastVWritten = V
+                elif marker == 'p~':
+                    assert( textBuffer )
+                    textBuffer += ' {}'.format( text ) # continuation of the same verse
+                else:
+                    ignoredMarkers.add( marker )
+            #print( BBB, textBuffer )
+            bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), 9 ) # Highest compression level
+            #from binascii import hexlify
+            #print( BBB, hexlify(bookBytes[:20]), bookBytes )
+            assert( bookBytes[0]==0x78 and bookBytes[1]==0xda ) # Zlib compression header
+            compressedDictionary[BBB] = bookBytes
+
+        # Get the "compressed" (osfuscated) module name
+        #name = self.name if self.name else self.abbreviation
+        ##print( 'sn', repr(self.shortName) )
+        #if len(name)>18:
+            #if self.shortName: name = shortName
+            #elif name.endswith( ' Version' ): name = name[:-8]
+        #name = name.replace( ' ', '' )
+        #if not name.startswith( 'ezFree' ): name = 'ezFree' + name
+        name = 'ezFree' + self.abbreviation
+        if len(name)>16: name = name[:16] # Shorten
+        encodedNameBytes = zlib.compress( name.encode( 'utf8' ), 9 ) # Highest compression level
+        if BibleOrgSysGlobals.debugFlag:
+            print( 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
+        assert( encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda ) # Zlib compression header
+        assert( len(encodedNameBytes) <= 26 )
+
+        filename = "{}.ewb".format( self.abbreviation )
+        filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        bookAddress = startingBookAddress = 0x3a21 + len(encodedNameBytes)
+        vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
+        with open( filepath, 'wb' ) as myFile:
+            # Write the header info to binary file
+            myFile.write( b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' )
+            nameBytes = self.name.encode( 'utf8' )
+            myFile.write( nameBytes + b'\x00' * (56 - len(nameBytes)) )
+
+            # Write the numChapters,numVerses info along with the file position and length
+            for BBB in BOS.getBookList():
+                bookAbbrev = self.getBooknameAbbreviation( BBB )
+                if bookAbbrev: bookAbbrev += '.'
+                bookAbbrevBytes = bookAbbrev.encode( 'utf8' )
+                myFile.write( bookAbbrevBytes + b'\x00' * (51 - len(bookAbbrevBytes)) )
+
+                numVersesList = BOS.getNumVersesList( BBB )
+                numChapters = len( numVersesList )
+                myFile.write( struct.pack( 'B', numChapters ) )
+                for verseCount in numVersesList: myFile.write( struct.pack( 'B', verseCount ) )
+                myFile.write( b'\x00' * (157 - numChapters - 1) )
+
+                bookBytes = compressedDictionary[BBB] # if it exists
+                myFile.write( struct.pack( '<Q', bookAddress ) )
+                #myFile.write( b'\x00' * 4 )
+                myFile.write( struct.pack( '<Q', len(bookBytes) ) )
+                #myFile.write( b'\x00' * 4 )
+                bookAddress += len(bookBytes)
+
+            # Write the "compressed" (osfuscated) module name
+            myFile.write( struct.pack( '<I', len(encodedNameBytes) + 5 ) )
+            myFile.write( encodedNameBytes )
+            #myFile.write( b'\x00' * (30 - len(encodedNameBytes) - 4) )
+            myFile.write( b'\x00\x00\x00\x08\x00' ) # Not sure what this means
+            if BibleOrgSysGlobals.debugFlag: print( "At", myFile.tell(), 'want', startingBookAddress )
+            assert( myFile.tell() == startingBookAddress )
+
+            # Write the book info to the binary files
+            for BBB in BOS.getBookList():
+                if BBB in compressedDictionary:
+                    myFile.write( compressedDictionary[BBB] ) # Write zlib output
+                else:
+                    print( 'Book {} is not available'.format( BBB ) )
+
+            # Write the end of file stuff
+            myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
+
+        if ignoredMarkers:
+            logging.info( "toEasyWorshipBible: Ignored markers were {}".format( ignoredMarkers ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toEasyWorshipBible markers were {}").format( ignoredMarkers ) )
+
+        # Now create a zipped version
+        filepath = os.path.join( outputFolder, filename )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} EWB file...".format( filename ) )
+        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        zf.write( filepath, filename )
+        zf.close()
+
+        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+            print( "  BibleWriter.toEasyWorshipBible finished successfully." )
+        return True
+    # end of BibleWriter.toEasyWorshipBible
+
+
+
     def toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
@@ -5013,16 +5172,16 @@ class BibleWriter( InternalBible ):
                             value = verseNumberString[:ix] # Remove verse bridges
                             vEnd = verseNumberString[ix+1:]
                             #print( BBB, repr(value), repr(vEnd) )
-                            try: value1 = int( value )
+                            try: vBridgeStartInt = int( value )
                             except ValueError: # Not an integer
                                 print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
-                                value1 = value
-                            try: value2 = int( vEnd )
+                                vBridgeStartInt = value
+                            try: vBridgeEndInt = int( vEnd )
                             except ValueError: # Not an integer
                                 print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
-                                value2 = vEnd
-                            #print( ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, value1, value2 ) )
-                            return value1, value2
+                                vBridgeEndInt = vEnd
+                            #print( ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, vBridgeStartInt, vBridgeEndInt ) )
+                            return vBridgeStartInt, vBridgeEndInt
                 return verseNumberString, endVerseNumberString
             # end of toZefaniaXML.handleVerseNumber
 
@@ -9786,6 +9945,7 @@ class BibleWriter( InternalBible ):
         D43OutputFolder = os.path.join( givenOutputFolderName, 'BOS_Door43_' + ('Reexport/' if self.objectTypeString=='Door43' else 'Export/' ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, 'BOS_HTML5_Export/' )
         CBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_CustomBible_' + 'Export/' )
+        EWBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_EasyWorshipBible_' + 'Export/' )
         USXOutputFolder = os.path.join( givenOutputFolderName, 'BOS_USX_' + ('Reexport/' if self.objectTypeString=='USX' else 'Export/' ) )
         USFXOutputFolder = os.path.join( givenOutputFolderName, 'BOS_USFX_' + ('Reexport/' if self.objectTypeString=='USFX' else 'Export/' ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, 'BOS_OSIS_' + ('Reexport/' if self.objectTypeString=='OSIS' else 'Export/' ) )
@@ -9836,6 +9996,7 @@ class BibleWriter( InternalBible ):
             D43ExportResult = self.toDoor43( D43OutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             CBExportResult = self.toCustomBible( CBOutputFolder )
+            EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
             USFXExportResult = self.toUSFXXML( USFXOutputFolder )
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
@@ -9860,7 +10021,8 @@ class BibleWriter( InternalBible ):
                                     self.toTeX if wantPDFs else None,
                                     self.makeLists, self.toBOSBCV, self.toPseudoUSFM,
                                     self.toUSFM, self.toESFM, self.toText, self.toVPL,
-                                    self.toMarkdown, self.toDoor43, self.toHTML5, self.toCustomBible,
+                                    self.toMarkdown, self.toDoor43, self.toHTML5,
+                                    self.toCustomBible, self.toEasyWorshipBible,
                                     self.toUSXXML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
@@ -9870,7 +10032,7 @@ class BibleWriter( InternalBible ):
                                     USFMOutputFolder, ESFMOutputFolder,
                                     textOutputFolder, VPLOutputFolder,
                                     markdownOutputFolder, D43OutputFolder,
-                                    htmlOutputFolder, CBOutputFolder,
+                                    htmlOutputFolder, CBOutputFolder, EWBOutputFolder,
                                     USXOutputFolder, USFXOutputFolder, OSISOutputFolder,
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
                                     swOutputFolder, tWOutputFolder, MySwOutputFolder, ESwOutputFolder,
@@ -9888,7 +10050,7 @@ class BibleWriter( InternalBible ):
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                     #USFMExportResult, ESFMExportResult, textExportResult, \
-                    #markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
+                    #markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
                     #USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
                         #= results
@@ -9911,7 +10073,7 @@ class BibleWriter( InternalBible ):
                 results = [result if wantPhotoBible else None, # Just have to assume everything worked
                                     result if wantODFs else None,
                                     result if wantPDFs else None,
-                                    result, result, result, result, result, result, result, result, result, result, result,
+                                    result, result, result, result, result, result, result, result, result, result, result, result,
                                     result, result, result, result, result, result, result, result, result, result, result, ]
             #print( "async results2 are", results )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
@@ -9919,7 +10081,7 @@ class BibleWriter( InternalBible ):
             PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                 listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                 USFMExportResult, ESFMExportResult, textExportResult, VPLExportResult, \
-                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
+                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
                 USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                 swExportResult, tWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
                     = results
@@ -9980,6 +10142,11 @@ class BibleWriter( InternalBible ):
                 CBExportResult = False
                 print("BibleWriter.doAllExports.toCustomBible Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toCustomBible: Oops, failed!" )
+            try: EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
+            except Exception as err:
+                EWBExportResult = False
+                print("BibleWriter.doAllExports.toEasyWorshipBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toEasyWorshipBible: Oops, failed!" )
             try: USXExportResult = self.toUSXXML( USXOutputFolder )
             except Exception as err:
                 USXExportResult = False
@@ -10062,7 +10229,8 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             if pickleResult and listOutputResult and BCVExportResult \
             and pseudoUSFMExportResult and USFMExportResult and ESFMExportResult and textExportResult \
-            and VPLExportResult and markdownExportResult and D43ExportResult and htmlExportResult and CBExportResult \
+            and VPLExportResult and markdownExportResult and D43ExportResult and htmlExportResult \
+            and CBExportResult and EWBExportResult \
             and USXExportResult and USFXExportResult and OSISExportResult \
             and ZefExportResult and HagExportResult and OSExportResult \
             and swExportResult and tWExportResult and MySwExportResult and ESwExportResult \
@@ -10070,12 +10238,13 @@ class BibleWriter( InternalBible ):
             and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={} VPL={}  md={} D43={}  "
-                    "HTML={} CB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
+                    "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
                     "tW={} MySw={} eSw={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
                     .format( pickleResult, listOutputResult, BCVExportResult,
                             pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
                             textExportResult, VPLExportResult,
-                            markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult,
+                            markdownExportResult, D43ExportResult, htmlExportResult,
+                            CBExportResult, EWBExportResult,
                             USXExportResult, USFXExportResult, OSISExportResult,
                             ZefExportResult, HagExportResult, OSExportResult,
                             swExportResult, tWExportResult, MySwExportResult, ESwExportResult,
@@ -10084,8 +10253,8 @@ class BibleWriter( InternalBible ):
         return { 'Pickle':pickleResult, 'listOutput':listOutputResult, 'BCVOutput':BCVExportResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
-                'markdownExport':markdownExportResult, 'D43Export':D43ExportResult,
-                'htmlExport':htmlExportResult, 'CustomBibleExport':CBExportResult,
+                'markdownExport':markdownExportResult, 'D43Export':D43ExportResult, 'htmlExport':htmlExportResult,
+                'CustomBibleExport':CBExportResult, 'EasyWorshipBibleExport':EWBExportResult,
                 'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult,
                 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                 'swExport':swExportResult,
@@ -10138,7 +10307,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toZefaniaXML(); halt
+                UB.toEasyWorshipBible(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files

@@ -37,6 +37,7 @@ Contains functions:
     makeSafeString( someString )
     removeAccents( someString )
 
+    backupAnyExistingFile( filenameOrFilepath )
     peekIntoFile( filenameOrFilepath, folderName=None, numLines=1 )
 
     totalSize( o, handlers={} )
@@ -74,10 +75,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-05' # by RJH
+LastModifiedDate = '2015-11-16' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.60'
+ProgVersion = '0.61'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -159,7 +160,7 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
         if debuggingThisModule or __name__ == '__main__':
-            print ( "setupLoggingToFile: {} already exists -- renaming it first!".format( repr(filepath) ) )
+            print( "setupLoggingToFile: {} already exists -- renaming it first!".format( repr(filepath) ) )
         if os.access( filepath+'.bak', os.F_OK ):
             os.remove( filepath+'.bak' )
         os.rename( filepath, filepath+'.bak' )
@@ -213,7 +214,7 @@ def addLogfile( projectName, folderName=None ):
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
         if __name__ == '__main__':
-            print ( filepath, 'already exists -- renaming it first!' )
+            print( filepath, 'already exists -- renaming it first!' )
         if os.access( filepath+'.bak', os.F_OK ):
             os.remove( filepath+'.bak' )
         os.rename( filepath, filepath+'.bak' )
@@ -332,6 +333,25 @@ def removeAccents( someString ):
         resultString += accentDict[char] if char in accentDict else char
     return resultString
 # end of BibleOrgSysGlobals.makeSafeString
+
+
+##########################################################################################################
+#
+# Make a backup copy of a file
+
+def backupAnyExistingFile( filenameOrFilepath ):
+    """
+    Make a backup copy of a file if it exists.
+    """
+
+    if debugFlag: assert( not filenameOrFilepath.endswith( '.bak' ) )
+    if os.access( filenameOrFilepath, os.F_OK ):
+        if debugFlag:
+            logging.info( "backupAnyExistingFile: {} already exists -- renaming it first!".format( repr(filenameOrFilepath) ) )
+        if os.access( filenameOrFilepath+'.bak', os.F_OK ):
+            os.remove( filenameOrFilepath+'.bak' )
+        os.rename( filenameOrFilepath, filenameOrFilepath+'.bak' )
+# end of BibleOrgSysGlobals.backupAnyExistingFile
 
 
 ##########################################################################################################
@@ -1042,7 +1062,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
 
 
 def printAllGlobals( indent=None ):
-    """ Print all global variables. """
+    """ Print all global variables (for debugging usually). """
     if indent is None: indent = 2
     print( "{}commandLineOptions: {}".format( ' '*indent, commandLineOptions ) )
     print( "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )

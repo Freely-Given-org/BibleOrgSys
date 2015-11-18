@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-07' # by RJH
+LastModifiedDate = '2015-11-14' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.26'
+ProgVersion = '0.27'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -330,15 +330,17 @@ class USXXMLBible( Bible ):
                 # Look for BBB in the ID line (which should be the first line in a USX file)
                 isUSX = False
                 thisPath = os.path.join( self.givenFolderName, thisFilename )
-                with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
-                    for line in possibleUSXFile:
-                        if line.startswith( '\\id ' ):
-                            USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
-                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
-                            isUSX = True
-                        break # We only look at the first line
+                try:
+                    with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
+                        for line in possibleUSXFile:
+                            if line.startswith( '\\id ' ):
+                                USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
+                                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
+                                isUSX = True
+                            break # We only look at the first line
+                except UnicodeDecodeError: isUSX = False
                 if isUSX:
                     UBB = USXXMLBibleBook( self, BBB )
                     UBB.load( self.givenFolderName, thisFilename, self.encoding )

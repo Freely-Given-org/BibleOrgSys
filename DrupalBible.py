@@ -74,10 +74,10 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2015-11-15' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -181,6 +181,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
                         continue
+                #print( "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
@@ -188,7 +189,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
-            uB = DrupalBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB = DrupalBible( foundProjects[0][0], foundProjects[0][1][:-3] ) # Remove the end of the actual filename ".bc"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
@@ -204,6 +205,10 @@ class DrupalBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DrupalBible__init__ ( {!r}, {!r}, {!r} )").format( sourceFolder, givenName, encoding ) )
+        assert( sourceFolder )
+        assert( givenName )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = "DrupalBible Bible object"

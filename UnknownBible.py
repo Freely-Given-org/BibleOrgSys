@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-09-25' # by RJH
+LastModifiedDate = '2015-11-14' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.26'
+ProgVersion = '0.27'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -70,6 +70,7 @@ from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
 from OnlineBible import OnlineBibleFileCheck, OnlineBible
+from EasyWorshipBible import EasyWorshipBibleFileCheck, EasyWorshipBible
 from SwordBible import SwordBibleFileCheck, SwordBible
 from CSVBible import CSVBibleFileCheck, CSVBible
 from ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck, ForgeForSwordSearcherBible
@@ -179,13 +180,20 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
 
             # Search for Online Bibles
-            try: OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            except NameError: OnlineBibleStrictCount = None
+            OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
             if OnlineBibleStrictCount:
                 totalBibleStrictCount += OnlineBibleStrictCount
                 totalBibleStrictTypes += 1
                 typesStrictlyFound.append( 'Online:' + str(OnlineBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OnlineBibleStrictCount", OnlineBibleStrictCount )
+
+            # Search for EasyWorship Bibles
+            EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if EasyWorshipBibleStrictCount:
+                totalBibleStrictCount += EasyWorshipBibleStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'EasyWorship:' + str(EasyWorshipBibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
 
             # Search for Sword Bibles
             SwordBibleStrictCount = SwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -372,13 +380,20 @@ class UnknownBible:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
 
         # Search for Online Bibles
-        try: OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        except NameError: OnlineBibleCount = None
+        OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if OnlineBibleCount:
             totalBibleCount += OnlineBibleCount
             totalBibleTypes += 1
             typesFound.append( 'Online:' + str(OnlineBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OnlineBibleCount", OnlineBibleCount )
+
+        # Search for EasyWorship Bibles
+        EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if EasyWorshipBibleCount:
+            totalBibleCount += EasyWorshipBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'EasyWorship:' + str(EasyWorshipBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
 
         # Search for Sword Bibles
         SwordBibleCount = SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -583,6 +598,10 @@ class UnknownBible:
                 self.foundType = "Online Bible"
                 if autoLoad: return OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif EasyWorshipBibleCount == 1:
+                self.foundType = "EasyWorship Bible"
+                if autoLoad: return EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             elif SwordBibleCount == 1:
                 self.foundType = "Sword Bible"
                 if autoLoad: return SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
@@ -670,34 +689,36 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
-    testFolders = ( #'/home/robert/Logs', # Shouldn't have any Bibles here
-                    #'Tests/DataFilesForTests/PTXTest/',
-                    #'Tests/DataFilesForTests/DBLTest/',
-                    ##'../../../../../Data/Work/Bibles/theWord modules/',
-                    ##'../../../../../Data/Work/Bibles/Biola Unbound modules/',
-                    ##'../../../../../Data/Work/Bibles/OpenSong Bibles/',
-                    ##'../../../../../Data/Work/Bibles/Zefania modules/',
-                    ##'../../../../../Data/Work/Bibles/YET modules/',
-                    ##'../../../../../Data/Work/Matigsalug/Bible/MBTV/',
-                    ##'../../../../AutoProcesses/Processed/',
-                    #'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
-                    #'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
-                    #'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
-                    ##'Tests/DataFilesForTests/DBLTest/',
-                    #'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
-                    #'Tests/DataFilesForTests/USFXTest1/', 'Tests/DataFilesForTests/USFXTest2/',
-                    #'Tests/DataFilesForTests/USFX-ASV/', 'Tests/DataFilesForTests/USFX-WEB/',
-                    #'Tests/DataFilesForTests/OSISTest1/', 'Tests/DataFilesForTests/OSISTest2/',
-                    #'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/HaggaiTest/',
-                    #'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/VerseViewXML/',
-                    #'Tests/DataFilesForTests/e-SwordTest/',
-                    #'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
-                    #'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
-                    #'Tests/DataFilesForTests/OnlineBible/',
-                    ##'Tests/DataFilesForTests/DrupalTest/',
-                    #'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',
+    testFolders = ( '/home/robert/Logs', # Shouldn't have any Bibles here
+                    'Tests/DataFilesForTests/PTXTest/',
+                    'Tests/DataFilesForTests/DBLTest/',
+                    '../../../../../Data/Work/Bibles/theWord modules/',
+                    '../../../../../Data/Work/Bibles/Biola Unbound modules/',
+                    '../../../../../Data/Work/Bibles/EasyWorship Bibles/',
+                    '../../../../../Data/Work/Bibles/OpenSong Bibles/',
+                    '../../../../../Data/Work/Bibles/Zefania modules/',
+                    '../../../../../Data/Work/Bibles/YET modules/',
+                    '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
+                    '../../../../AutoProcesses/Processed/',
+                    'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
+                    'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
+                    'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
+                    'Tests/DataFilesForTests/DBLTest/',
+                    'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
+                    'Tests/DataFilesForTests/USFXTest1/', 'Tests/DataFilesForTests/USFXTest2/',
+                    'Tests/DataFilesForTests/USFX-ASV/', 'Tests/DataFilesForTests/USFX-WEB/',
+                    'Tests/DataFilesForTests/OSISTest1/', 'Tests/DataFilesForTests/OSISTest2/',
+                    'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/HaggaiTest/',
+                    'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/VerseViewXML/',
+                    'Tests/DataFilesForTests/e-SwordTest/',
+                    'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
+                    'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
+                    'Tests/DataFilesForTests/OnlineBible/',
+                    'Tests/DataFilesForTests/EasyWorshipBible/',
+                    'Tests/DataFilesForTests/DrupalTest/',
+                    'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',
                     'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
-                    ##'Tests/DataFilesForTests/', # Up a level
+                    'Tests/DataFilesForTests/', # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):

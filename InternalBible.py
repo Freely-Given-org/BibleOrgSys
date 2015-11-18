@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-10' # by RJH
+LastModifiedDate = '2015-11-14' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.66'
@@ -477,7 +477,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','VPL' ) )
+            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -486,6 +486,7 @@ class InternalBible:
 
         if applyMetadataType in ( 'File', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
+            # The dictionary entries map from the left-hand type to the right-hand type
             nameChangeDict = {}
             nameChangeDict['File'] = {} # This is metadata submitted by the user in a separate text file
             nameChangeDict['BCV'] = {}
