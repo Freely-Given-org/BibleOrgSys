@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-08-28' # by RJH
+LastModifiedDate = '2015-12-03' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.62'
@@ -64,12 +64,15 @@ from BibleReferences import BibleAnchorReference
 
 
 # Define allowed punctuation
-LEADING_WORD_PUNCT_CHARS = """“«"‘¿¡‹'([{<"""
+LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '—–' # em-dash and en-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
-
+##import unicodedata
+#BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
+#BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
+#halt
 
 BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
 """

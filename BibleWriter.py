@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-13' # by RJH
+LastModifiedDate = '2015-11-19' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -10307,7 +10307,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                UB.toEasyWorshipBible(); halt
+                #UB.toUSFM(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
