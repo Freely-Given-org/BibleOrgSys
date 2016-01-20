@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-01-21' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -182,7 +182,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     if foundFolderCount == len(compulsoryTopFolders):
         assert( foundFileCount == 0 )
         foundConfNames = confirmThisFolder( givenFolderName )
-        numFound = len(foundConfNames)
+        numFound = 0 if foundConfNames is None else len(foundConfNames)
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "SwordBibleFileCheck got", numFound, givenFolderName, foundConfNames )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -214,9 +214,10 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         if foundFolderCount == len(compulsoryTopFolders):
             assert( foundFileCount == 0 )
             foundConfNames = confirmThisFolder( tryFolderName )
-            for confName in foundConfNames:
-                foundProjects.append( (tryFolderName,confName) )
-                numFound += 1
+            if foundConfNames:
+                for confName in foundConfNames:
+                    foundProjects.append( (tryFolderName,confName) )
+                    numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "SwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
