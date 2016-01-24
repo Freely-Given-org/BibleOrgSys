@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-09' # by RJH
+LastModifiedDate = '2016-01-21' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.66'
@@ -346,14 +346,28 @@ class InternalBible:
         except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
         except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
         self.triedLoadingBook[BBB] = True
+
+        self.reProcessBook( BBB )
+    # end of InternalBible.reloadBook
+
+
+    def reProcessBook( self, BBB ):
+        """
+        Tries to re-index a loaded book.
+        """
+        if BibleOrgSysGlobals.debugFlag:
+            print( ex("reProcessBook( {} )...").format( BBB ) )
+            assert( BBB in self.books )
+
         #try: del self.discoveryResults # These are now out-of-date
         #except KeyError:
             #if BibleOrgSysGlobals.debugFlag: print( ex("reloadBook has no discoveryResults to delete") )
+
         if 'discoveryResults' in dir(self): # need to update them
             # Need to double-check that this doesn't cause any double-ups .....................XXXXXXXXXXXXXXXXXXXXXX
             self.books[BBB]._discover( self.discoveryResults )
             self._aggregateDiscoveryResults()
-    # end of InternalBible.loadBookIfNecessary
+    # end of InternalBible.reProcessBook
 
 
     def doPostLoadProcessing( self ):

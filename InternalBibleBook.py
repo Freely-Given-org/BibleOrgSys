@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-10' # by RJH
+LastModifiedDate = '2016-01-21' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -75,7 +75,7 @@ nfvnCount = owfvnCount = rtsCount = sahtCount = 0
 
 
 
-def t( messageString ):
+def ex( messageString ):
     """
     Prepends the module name to a error or warning message string if we are in debug mode.
     Returns the new string.
@@ -85,7 +85,7 @@ def t( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+# end of ex
 
 
 
@@ -2097,12 +2097,12 @@ class InternalBibleBook:
 
         Stores it in self.versification and self.missingVersesList
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getVersificationIfNecessary()") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getVersificationIfNecessary()") )
         if self.versificationList is None:
             assert( self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None ) # also
             versificationResult = self.getVersification()
             #print( self.BBB, versificationResult )
-            if versificationResult is None: logging.critical( t("getVersificationIfNecessary() got nothing!") )
+            if versificationResult is None: logging.critical( ex("getVersificationIfNecessary() got nothing!") )
             else:
                 self.versificationList, self.omittedVersesList, self.combinedVersesList, self.reorderedVersesList = versificationResult
     # end of InternalBibleBook.getVersificationIfNecessary
@@ -2641,7 +2641,6 @@ class InternalBibleBook:
 
             # Check for markers that shouldn't be empty
             if markerEmpty and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
-                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} should always have text").format( originalMarker ) )
                 #if self.objectTypeString in ('USFM','USX',):
                     #if sahtCount != -1:
                         #sahtCount += 1
@@ -2653,6 +2652,8 @@ class InternalBibleBook:
                 self.addPriorityError( emptyFieldPriority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if emptyFieldPriority >= HIGH_EMPTY_FIELD_PRIORITY:
                     newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} has no content").format( marker ) )
+                else:
+                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} should always have text").format( originalMarker ) )
                 if logger is not None:
                     logger( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
 
@@ -3057,7 +3058,7 @@ class InternalBibleBook:
                     except ValueError: unicodeCharName = simpleCharName
                     try: unicodeLCCharName = unicodedata.name( lcChar )
                     except (ValueError,TypeError):
-                        logging.error( t("InternalBibleBook.countCharacters has error getting Unicode name of {!r} (from {!r})").format( lcChar, char ) )
+                        logging.error( ex("InternalBibleBook.countCharacters has error getting Unicode name of {!r} (from {!r})").format( lcChar, char ) )
                         unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
@@ -3949,7 +3950,7 @@ class InternalBibleBook:
         """
         Returns the number of chapters (int) in this book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumChapters()") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getNumChapters()") )
         self.getVersificationIfNecessary()
         #print( self.getVersification() )
         lastChapterNumberString =  self.versificationList[-1][0] # The last chapter number
@@ -3966,9 +3967,9 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumVerses( {!r} )").format( C ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getNumVerses( {!r} )").format( C ) )
         if isinstance( C, int ): # Just double-check the parameter
-            logging.debug( t("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
+            logging.debug( ex("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
             C = str( C )
         self.getVersificationIfNecessary()
         for thisC,thisNumVerses in self.versificationList:
