@@ -5,7 +5,7 @@
 #
 # Module handling "theWord" Bible module files
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-09-25' # by RJH
+LastModifiedDate = '2016-01-25' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.45'
@@ -65,7 +65,7 @@ import logging, os, re
 import multiprocessing
 
 import BibleOrgSysGlobals
-from InternalBible import OT39BookList, NT27BookList
+from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -79,7 +79,7 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 # These are the verses per book in the traditional KJV versification (but only for the 66 books)
 #       (They must precede the Bible import)
 theWordOTBookCount = 39
-theWordOTBooks = OT39BookList
+theWordOTBooks = OT39_BOOKLIST
 assert( len( theWordOTBooks ) == theWordOTBookCount )
 theWordOTTotalLines = 23145
 theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
@@ -90,7 +90,7 @@ for count in theWordOTBookLines: total += count
 assert( total == theWordOTTotalLines )
 
 theWordNTBookCount = 27
-theWordNTBooks = NT27BookList
+theWordNTBooks = NT27_BOOKLIST
 assert( len( theWordNTBooks ) == theWordNTBookCount )
 theWordNTTotalLines = 7957
 theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
@@ -108,6 +108,22 @@ assert( len( theWordBookLines ) == theWordBookCount )
 total=0
 for count in theWordBookLines: total += count
 assert( total == theWordTotalLines )
+
+
+#def exp( messageString ):
+    #"""
+    #Expands the message string in debug mode.
+    #Prepends the module name to a error or warning message string
+        #if we are in debug mode.
+    #Returns the new string.
+    #"""
+    #try: nameBit, errorBit = messageString.split( ': ', 1 )
+    #except ValueError: nameBit, errorBit = '', messageString
+    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        #nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    #return '{}{}'.format( nameBit, _(errorBit) )
+## end of exp
+
 
 
 def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):

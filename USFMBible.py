@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-09' # by RJH
+LastModifiedDate = '2016-01-25' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -53,7 +53,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
                     'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
-def ex( messageString ):
+def exp( messageString ):
     """
     Expands the message string in debug mode.
     Prepends the module name to a error or warning message string
@@ -65,7 +65,7 @@ def ex( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
-# end of ex
+# end of exp
 
 
 
@@ -102,10 +102,10 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( ex("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( exp("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( ex("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( exp("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -150,7 +150,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( ex("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
@@ -208,7 +208,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( ex("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
@@ -248,7 +248,7 @@ class USFMBible( Bible ):
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( ex("preload() from {}").format( self.sourceFolder ) )
+            print( exp("preload() from {}").format( self.sourceFolder ) )
         assert( self.sourceFolder is not None )
 
         # Do a preliminary check on the contents of our folder
@@ -258,7 +258,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( ex("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( exp("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -266,9 +266,9 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( ex("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( ex("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -282,7 +282,7 @@ class USFMBible( Bible ):
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             #print( "ssfFilepathList", ssfFilepathList )
             if len(ssfFilepathList) > 1:
-                logging.error( ex("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+                logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             if len(ssfFilepathList) >= 1: # Seems we found the right one
                 from PTXBible import loadPTXSSFData
                 SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
@@ -324,6 +324,7 @@ class USFMBible( Bible ):
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
+        self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
@@ -343,12 +344,13 @@ class USFMBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( ex("loadBookMP( {} )").format( BBB_Filename_tuple ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("loadBookMP( {} )").format( BBB_Filename_tuple ) )
         BBB, filename = BBB_Filename_tuple
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
+        self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( '  ' + ex("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( '  ' + exp("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -361,7 +363,7 @@ class USFMBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( ex("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -369,7 +371,7 @@ class USFMBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( ex("Loading {} USFM books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    print( exp("Loading {} USFM books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -382,7 +384,7 @@ class USFMBible( Bible ):
                         #print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( ex("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of USFMBible.loadBooks

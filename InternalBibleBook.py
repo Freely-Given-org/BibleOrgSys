@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-21' # by RJH
+LastModifiedDate = '2016-01-25' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -75,7 +75,7 @@ nfvnCount = owfvnCount = rtsCount = sahtCount = 0
 
 
 
-def ex( messageString ):
+def exp( messageString ):
     """
     Prepends the module name to a error or warning message string if we are in debug mode.
     Returns the new string.
@@ -85,7 +85,7 @@ def ex( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
-# end of ex
+# end of exp
 
 
 
@@ -845,7 +845,7 @@ class InternalBibleBook:
                     #print( "Ok. Still have < in:", adjText )
                     ixStart += 1 # So it steps past fields that we don't remove, e.g., <divineName>xx</divineName>
             #print( "aT", adjText )
-            #print( "ex", extras )
+            #print( "exp", extras )
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
 
         # Check trailing spaces again now
@@ -2097,12 +2097,12 @@ class InternalBibleBook:
 
         Stores it in self.versification and self.missingVersesList
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getVersificationIfNecessary()") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getVersificationIfNecessary()") )
         if self.versificationList is None:
             assert( self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None ) # also
             versificationResult = self.getVersification()
             #print( self.BBB, versificationResult )
-            if versificationResult is None: logging.critical( ex("getVersificationIfNecessary() got nothing!") )
+            if versificationResult is None: logging.critical( exp("getVersificationIfNecessary() got nothing!") )
             else:
                 self.versificationList, self.omittedVersesList, self.combinedVersesList, self.reorderedVersesList = versificationResult
     # end of InternalBibleBook.getVersificationIfNecessary
@@ -3058,7 +3058,7 @@ class InternalBibleBook:
                     except ValueError: unicodeCharName = simpleCharName
                     try: unicodeLCCharName = unicodedata.name( lcChar )
                     except (ValueError,TypeError):
-                        logging.error( ex("InternalBibleBook.countCharacters has error getting Unicode name of {!r} (from {!r})").format( lcChar, char ) )
+                        logging.error( exp("InternalBibleBook.countCharacters has error getting Unicode name of {!r} (from {!r})").format( lcChar, char ) )
                         unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
@@ -3950,7 +3950,7 @@ class InternalBibleBook:
         """
         Returns the number of chapters (int) in this book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getNumChapters()") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumChapters()") )
         self.getVersificationIfNecessary()
         #print( self.getVersification() )
         lastChapterNumberString =  self.versificationList[-1][0] # The last chapter number
@@ -3967,9 +3967,9 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( ex("getNumVerses( {!r} )").format( C ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumVerses( {!r} )").format( C ) )
         if isinstance( C, int ): # Just double-check the parameter
-            logging.debug( ex("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
+            logging.debug( exp("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
             C = str( C )
         self.getVersificationIfNecessary()
         for thisC,thisNumVerses in self.versificationList:
