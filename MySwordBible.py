@@ -5,7 +5,7 @@
 #
 # Module handling "MySword" Bible module files
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-09-25' # by RJH
+LastModifiedDate = '2016-01-26' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.18'
@@ -72,8 +72,24 @@ from theWordBible import handleLine
 
 
 
-filenameEndingsToAccept = ('.MYBIBLE',) # Must be UPPERCASE
-BibleFilenameEndingsToAccept = ('.BBL.MYBIBLE',) # Must be UPPERCASE
+FILENAME_ENDINGS_TO_ACCEPT = ('.MYBIBLE',) # Must be UPPERCASE
+BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBL.MYBIBLE',) # Must be UPPERCASE
+
+
+
+#def exp( messageString ):
+    #"""
+    #Expands the message string in debug mode.
+    #Prepends the module name to a error or warning message string
+        #if we are in debug mode.
+    #Returns the new string.
+    #"""
+    #try: nameBit, errorBit = messageString.split( ': ', 1 )
+    #except ValueError: nameBit, errorBit = '', messageString
+    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        #nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    #return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+## end of exp
 
 
 
@@ -115,7 +131,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 #if somethingUpper.endswith( ending): ignore=True; break
             #if ignore: continue
             #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-            if somethingUpperExt in filenameEndingsToAccept:
+            if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
@@ -157,7 +173,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                     #if somethingUpper.endswith( ending): ignore=True; break
                 #if ignore: continue
                 #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                if somethingUpperExt in filenameEndingsToAccept:
+                if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                     foundSubfiles.append( something )
 
         # See if there's an MySword project here in this folder
@@ -214,9 +230,9 @@ class MySwordBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
         fileExtensionUpper = self.fileExtension.upper()
-        if fileExtensionUpper not in filenameEndingsToAccept:
+        if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
             logging.critical( "{} doesn't appear to be a MySword file".format( self.sourceFilename ) )
-        elif not self.sourceFilename.upper().endswith( BibleFilenameEndingsToAccept[0] ):
+        elif not self.sourceFilename.upper().endswith( BIBLE_FILENAME_ENDINGS_TO_ACCEPT[0] ):
             logging.critical( "{} doesn't appear to be a MySword Bible file".format( self.sourceFilename ) )
 
         connection = sqlite3.connect( self.sourceFilepath )

@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-19' # by RJH
+LastModifiedDate = '2016-01-26' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -103,8 +103,9 @@ ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expan
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
+    Expands the message string in debug mode.
     Prepends the module name to a error or warning message string
         if we are in debug mode.
     Returns the new string.
@@ -113,8 +114,8 @@ def t( messageString ):
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -196,7 +197,7 @@ class BibleWriter( InternalBible ):
         Do some global name replacements in the given control dictionary.
         """
         if BibleOrgSysGlobals.debugFlag: assert( isinstance( existingControlDict, dict ) )
-        if not existingControlDict: logging.warning( t("adjustControlDict: The control dictionary is empty!") )
+        if not existingControlDict: logging.warning( exp("adjustControlDict: The control dictionary is empty!") )
         for entry in existingControlDict:
             existingControlDict[entry] = existingControlDict[entry].replace( '__PROJECT_NAME__', self.projectName )
                 #.replace( '__PROJECT_NAME__', BibleOrgSysGlobals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
@@ -885,7 +886,7 @@ class BibleWriter( InternalBible ):
                 with open( filepath, 'wt' ) as myFile:
                     try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
                     except UnicodeEncodeError: # why does this fail on Windows???
-                        logging.critical( t("toForgeForSwordSearcher: Unable to write BOM to file") )
+                        logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
 
                     # Write the intro stuff
                     myFile.write( '; TITLE: {}\n'.format( title ) )
@@ -5967,7 +5968,7 @@ class BibleWriter( InternalBible ):
                 with open( os.path.join( defaultControlFolder, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
             except FileNotFoundError:
                 print( "dCF", defaultControlFolder )
-                logging.critical( t("toSwordModule: Unable to read sample conf file SwordProject.conf") )
+                logging.critical( exp("toSwordModule: Unable to read sample conf file SwordProject.conf") )
                 confText = ''
             # Do common text replacements
             # Unfortunately, we can only really make wild guesses without more detailed metadata
@@ -6704,7 +6705,7 @@ class BibleWriter( InternalBible ):
         with open( filepath, 'wt' ) as myFile:
             try: myFile.write('\ufeff') # theWord needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
-                logging.critical( t("totheWord: Unable to write BOM to file") )
+                logging.critical( exp("totheWord: Unable to write BOM to file") )
             BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
             while True: # Write each Bible book in the KJV order
                 writetWBook( myFile, BBB, mySettings )

@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-01-26' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.66'
@@ -44,8 +44,9 @@ import os, logging
 import BibleOrgSysGlobals
 
 
-def t( messageString ):
+def exp( messageString ):
     """
+    Expands the message string in debug mode.
     Prepends the module name to a error or warning message string
         if we are in debug mode.
     Returns the new string.
@@ -53,12 +54,14 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( __name__, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
+
 
 
 # The filenames produced by the Bibledit program seem to have a .usfm extension (Info below is from gtk/src/bookdata.cpp 2012-07-11)
-BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_Deuteronomy', '6_Joshua', '7_Judges', '8_Ruth', '9_1_Samuel', '10_2_Samuel',
+BIBLEDIT_FILENAMES = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_Deuteronomy', '6_Joshua', '7_Judges', '8_Ruth', '9_1_Samuel', '10_2_Samuel',
     '11_1_Kings', '12_2_Kings', '13_1_Chronicles', '14_2_Chronicles', '15_Ezra', '16_Nehemiah', '17_Esther', '18_Job', '19_Psalms', '20_Proverbs', '21_Ecclesiastes',
     '22_Song_of_Solomon', '23_Isaiah', '24_Jeremiah', '25_Lamentations', '26_Ezekiel', '27_Daniel', '28_Hosea', '29_Joel', '30_Amos', '31_Obadiah', '32_Jonah',
     '33_Micah', '34_Nahum', '35_Habakkuk', '36_Zephaniah', '37_Haggai', '38_Zechariah', '39_Malachi',
@@ -68,7 +71,7 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '67_Front_Matter', '68_Back_Matter', '69_Other_Material', '70_Tobit', '71_Judith', '72_Esther_(Greek)', '73_Wisdom_of_Solomon', '74_Sirach', '75_Baruch',
     '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
-AlternateFilenames = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', '05-Deuteronomy', '06-Joshua', '07-Judges', '08-Ruth', '09-1 Samuel', '10-2 Samuel',
+ALTERNATE_FILENAMES = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', '05-Deuteronomy', '06-Joshua', '07-Judges', '08-Ruth', '09-1 Samuel', '10-2 Samuel',
     '11-1 Kings', '12-2 Kings', '13-1 Chronicles', '14-2 Chronicles', '15-Ezra', '16-Nehemiah', '17-Esther', '18-Job', '19-Psalms', '20-Proverbs', '21-Ecclesiastes',
     '22-Song-of-Solomon', '23-Isaiah', '24-Jeremiah', '25-Lamentations', '26-Ezekiel', '27-Daniel', '28-Hosea', '29-Joel', '30-Amos', '31-Obadiah', '32-Jonah',
     '33-Micah', '34-Nahum', '35-Habakkuk', '36-Zephaniah', '37-Haggai', '38-Zechariah', '39-Malachi',
@@ -81,10 +84,10 @@ AlternateFilenames = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', 
     )
 
 # All of the following must be all UPPER CASE
-filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
+FILENAMES_TO_IGNORE = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
 # NOTE: Extensions ending in ~ are also ignored
-extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
                     'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
@@ -128,13 +131,13 @@ class USFMFilenames:
         self.lastTupleList = None
         for possibleFilename in os.listdir( self.givenFolderName ):
             pFUpper = possibleFilename.upper()
-            if pFUpper in filenamesToIgnore: continue
+            if pFUpper in FILENAMES_TO_IGNORE: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if pFUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                         self.fileList.append( possibleFilename )
@@ -151,7 +154,7 @@ class USFMFilenames:
             if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
                 for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
-                    if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames and foundExtBit == '.usfm':
+                    if BibleditSignature in foundFileBit and foundFileBit in BIBLEDIT_FILENAMES and foundExtBit == '.usfm':
                         digitsIndex = foundFileBit.index( BibleditSignature )
                         if digitsIndex == 0:
                             self.languageIndex = None
@@ -164,7 +167,7 @@ class USFMFilenames:
                             break
             elif '-' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
                 for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
-                    if foundFileBit in AlternateFilenames and foundExtBit == '.usfm':
+                    if foundFileBit in ALTERNATE_FILENAMES and foundExtBit == '.usfm':
                         if foundFilename[0:2].isdigit:
                             self.languageIndex = None
                             self.languageCode = None
@@ -271,7 +274,7 @@ class USFMFilenames:
 
     def getUSFMIDFromFile( self, folder, thisFilename, filepath, encoding=None ):
         """ Try to intelligently get the USFMId from the first line in the file (which should be the \\id line). """
-        #print( t("getUSFMIDFromFile( {} {} {} {} )").format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        #print( exp("getUSFMIDFromFile( {} {} {} {} )").format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
@@ -307,7 +310,7 @@ class USFMFilenames:
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.warning( t("getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}").format( filepath ) ) # Could be binary or a different encoding
+                logging.warning( exp("getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}").format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -318,7 +321,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
 
         # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
@@ -327,13 +330,13 @@ class USFMFilenames:
         folderFilenames = os.listdir( givenFolder )
         for possibleFilename in folderFilenames:
             pFUpper = possibleFilename.upper()
-            if pFUpper in filenamesToIgnore: continue
+            if pFUpper in FILENAMES_TO_IGNORE: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if pFUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 filepath = os.path.join( givenFolder, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
@@ -394,16 +397,16 @@ class USFMFilenames:
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultList = []
-        if self.pattern and self.fileExtension.upper() not in extensionsToIgnore:
+        if self.pattern and self.fileExtension.upper() not in EXTENSIONS_TO_IGNORE:
             if self.pattern == "Dd_BEName": # they are Bibledit style
                 for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
-                    for BEFilename in BibleditFilenames: # this doesn't seem very efficient, but it does work
+                    for BEFilename in BIBLEDIT_FILENAMES: # this doesn't seem very efficient, but it does work
                         if BEFilename.startswith( BibleditSignature ):
                             resultList.append( (BBB,BEFilename+'.'+self.fileExtension,) )
                             break
             elif self.pattern == "dd-OEBName":
-                for AltFilename in AlternateFilenames:
+                for AltFilename in ALTERNATE_FILENAMES:
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
                     resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
@@ -459,15 +462,15 @@ class USFMFilenames:
         resultList = []
         for possibleFilename in self.fileList:
             pFUpper = possibleFilename.upper()
-            if pFUpper in filenamesToIgnore: continue
+            if pFUpper in FILENAMES_TO_IGNORE: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                 ignore = False
-                for ending in filenameEndingsToIgnore:
+                for ending in FILENAME_ENDINGS_TO_IGNORE:
                     if pFUpper.endswith( ending): ignore=True; break
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
-                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                         self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )

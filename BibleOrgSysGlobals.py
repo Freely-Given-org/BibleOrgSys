@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -75,7 +75,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-16' # by RJH
+LastModifiedDate = '2016-01-26' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.61'
@@ -378,9 +378,9 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
                 if numLines==1: return line # Always returns the first line
                 lines.append( line )
                 if lineNumber >= numLines: return lines
-    except UnicodeDecodeError:
+    except UnicodeDecodeError: # Could be binary or a different encoding
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        logging.warning( "{}Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
+        logging.warning( "{}peekIntoFile: Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.' if debugFlag else '', filepath ) )
 # end of BibleOrgSysGlobals.peekIntoFile
 
 
