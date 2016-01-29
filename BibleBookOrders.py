@@ -5,7 +5,7 @@
 #
 # Module handling BibleBookOrderSystems
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2016-01-29' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -46,18 +46,19 @@ import BibleOrgSysGlobals
 
 
 
-def t( messageString ):
-    """
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+#def exp( messageString ):
+    #"""
+    #Expands the message string in debug mode.
+    #Prepends the module name to a error or warning message string
+        #if we are in debug mode.
+    #Returns the new string.
+    #"""
+    #try: nameBit, errorBit = messageString.split( ': ', 1 )
+    #except ValueError: nameBit, errorBit = '', messageString
+    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        #nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    #return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+## end of exp
 
 
 

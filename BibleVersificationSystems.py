@@ -5,7 +5,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,14 +29,45 @@ Module to load, use, determine, and compare various Bible versification systems.
 
 NOTE: We still lack a REFERENCE Bible versification system
         with back-and-forth mappings. This is a MAJOR outstanding deficiency.
+
+BibleVersificationSystems class:
+    __init__( self ) # We can't give this parameters because of the singleton
+    loadData( self, XMLFolder=None )
+    __str__( self )
+    __len__( self )
+    __contains__( self, systemName )
+    getAvailableVersificationSystemNames( self )
+    isValidVersificationSystemName( self, systemName )
+    getVersificationSystem( self, systemName )
+    compareVersificationSystems( self, system1Name, system2Name=None )
+    checkVersificationSystem( self, thisSystemName, versificationSchemeToCheck, extraVerseInfoToCheck=None )
+
+BibleVersificationSystem class:
+    __init__( self, systemName )
+    __str__( self )
+    __len__( self )
+    __contains__( self, BBB )
+    numAvailableBooks( self )
+    getVersificationSystemName( self )
+    getNumChapters( self, BBB )
+    getNumVerses( self, BBB, C )
+    isSingleChapterBook( self, BBB )
+    getNumVersesList( self, BBB )
+    getOmittedVerseList( self, BBB, fullRefs=False )
+    isOmittedVerse( self, referenceTuple )
+    getAuxilliaryVerseList( self, listName )
+    isValidBCVRef( self, referenceTuple, referenceString=None, extended=False )
+    expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
+    convertToReferenceVersification( self, BBB, C, V, S=None )
+    convertFromReferenceVersification( self, refBBB, refC, refV, refS=None )
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2016-01-29' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.54'
+ProgVersion = '0.55'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -142,6 +173,12 @@ class BibleVersificationSystems:
         """ Returns the number of systems loaded. """
         return len( self.__DataDict )
     # end of BibleVersificationSystems.__len__
+
+
+    def __contains__( self, systemName ):
+        """ Returns True/False if the systemName is in this system. """
+        return systemName in self.__DataDict
+    # end of BibleVersificationSystems.__contains__
 
 
     def getAvailableVersificationSystemNames( self ):
@@ -569,9 +606,18 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__len__
 
 
+    def __contains__( self, BBB ):
+        """ Returns True/False if the book is in this system. """
+        return BBB in self.__chapterDataDict
+    # end of BibleVersificationSystem.__contains__
+
+
     def numAvailableBooks( self ):
-        """ Returns the number of available books in the versification system.
-            NOTE: This value is not useful for finding the number of books in a particular Bible. """
+        """
+        Returns the number of available books in the versification system.
+
+        NOTE: This value is not useful for finding the number of books in a particular Bible.
+        """
         return len( self.__chapterDataDict )
     # end of BibleVersificationSystem.numAvailableBooks
 

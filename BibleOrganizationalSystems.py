@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,11 +24,37 @@
 
 """
 Module handling BibleOrganizationalSystems.
+
+BibleOrganizationalSystems class:
+    __init__( self ) # We can't give this parameters because of the singleton
+    loadData( self, XMLFilepath=None )
+    __str__( self )
+    __len__( self )
+    getAvailableOrganizationalSystemNames( self, extended=False )
+    getOrganizationalSystem( self, systemName, suppressErrors=False )
+    getOrganizationalSystemValue( self, systemName, valueName, suppressErrors=False )
+
+BibleOrganizationalSystem class:
+    __init__( self, systemName )
+    __str__( self )
+    getOrganizationalSystemName( self )
+    getOrganizationalSystemType( self )
+    getMoreBasicTypes( self )
+    getOrganizationalSystemValue( self, valueName )
+    getBookList( self )
+    containsBook( self, BBB )
+    getFirstBookCode( self )
+    getPreviousBookCode( self, BBB )
+    getNextBookCode( self, BBB )
+    isValidBCVRef( self, referenceTuple, referenceString, extended=False )
+    __makeAbsoluteVerseList( self )
+    getAbsoluteVerseNumber( self, BBB, C, V )
+    convertAbsoluteVerseNumber( self, avNumber )
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-18' # by RJH
+LastModifiedDate = '2016-01-29' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -52,8 +78,9 @@ from VerseReferences import SimpleVerseKey
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
+    Expands the message string in debug mode.
     Prepends the module name to a error or warning message string
         if we are in debug mode.
     Returns the new string.
@@ -62,8 +89,8 @@ def t( messageString ):
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -447,7 +474,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Extended flag allows chapter and verse numbers of zero.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("isValidBCVRef( {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
+            print( exp("isValidBCVRef( {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
             assert( isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey ) )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
 
