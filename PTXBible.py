@@ -6,7 +6,7 @@
 # Module handling UBS Paratext (PTX) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-10' # by RJH
+LastModifiedDate = '2016-01-31' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -62,17 +62,19 @@ MARKER_FILE_EXTENSIONS = ( '.SSF', '.VRS', '.LDS' ) # Must all be UPPER-CASE plu
 MARKER_THRESHOLD = 3 # How many of the above must be found
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -215,7 +217,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     Returns a dictionary.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( t("Loading Paratext SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
+        print( exp("Loading Paratext SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
     #if encoding is None: encoding = 'utf-8'
     BibleObject.ssfFilepath = ssfFilepath
 
@@ -226,7 +228,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         for line in myFile:
             lineCount += 1
             if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                logging.info( t("loadPTXSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
+                logging.info( exp("loadPTXSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
                 line = line[1:] # Remove the Byte Order Marker
             if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
             line = line.strip() # Remove leading and trailing whitespace
@@ -289,7 +291,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         status = 9
     if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + t("Got {} SSF entries:").format( len(SSFDict) ) )
+        print( "  " + exp("Got {} SSF entries:").format( len(SSFDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(SSFDict):
                 try: print( "    {}: {}".format( key, SSFDict[key] ) )
@@ -303,13 +305,13 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         #if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
         #else:
             #if BibleOrgSysGlobals.verbosityLevel > 0:
-                #print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+                #print( exp("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
             #if ssfEncoding.isdigit():
                 #BibleObject.encoding = 'cp' + ssfEncoding
                 #if BibleOrgSysGlobals.verbosityLevel > 0:
-                    #print( t("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
+                    #print( exp("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
             #else:
-                #logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+                #logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
 
     #print( 'SSFDict', SSFDict )
     return SSFDict
@@ -322,7 +324,7 @@ def loadPTXLanguages( BibleObject ):
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( t("loadPTXLanguagess()") )
+        print( exp("loadPTXLanguagess()") )
 
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
@@ -384,7 +386,7 @@ def loadPTXVersifications( BibleObject ):
         and parse it into the dictionary PTXVersifications.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( t("loadPTXVersifications()") )
+        print( exp("loadPTXVersifications()") )
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
@@ -501,7 +503,7 @@ class PTXBible( Bible ):
                 logging.error( "PTXBible: Folder '{}' is unreadable".format( self.sourceFolder ) )
             self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         else: self.sourceFilepath = self.sourceFolder
-        if not os.access( self.sourceFilepath, os.R_OK ):
+        if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
             logging.error( "PTXBible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.ssfFilepath = None
@@ -518,7 +520,7 @@ class PTXBible( Bible ):
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload() from {}").format( self.sourceFolder ) )
+            print( exp("preload() from {}").format( self.sourceFolder ) )
 
         #if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
@@ -528,7 +530,7 @@ class PTXBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( t("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( exp("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -536,9 +538,9 @@ class PTXBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( t("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( t("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -554,7 +556,7 @@ class PTXBible( Bible ):
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             #print( "ssfFilepathList", ssfFilepathList )
             if len(ssfFilepathList) > 1:
-                logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+                logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             if len(ssfFilepathList) >= 1: # Seems we found the right one
                 from PTXBible import loadPTXSSFData
                 SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
@@ -632,7 +634,7 @@ class PTXBible( Bible ):
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXBooksNames()") )
+            print( exp("loadPTXBooksNames()") )
 
         bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
         if not os.path.exists( bookNamesFilepath ): return
@@ -688,7 +690,7 @@ class PTXBible( Bible ):
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXProjectUsers()") )
+            print( exp("loadPTXProjectUsers()") )
 
         projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUsers.xml' )
         if not os.path.exists( projectUsersFilepath ): return
@@ -758,7 +760,7 @@ class PTXBible( Bible ):
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXLexicon()") )
+            print( exp("loadPTXLexicon()") )
 
         lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
         if not os.path.exists( lexiconFilepath ): return
@@ -892,7 +894,7 @@ class PTXBible( Bible ):
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXSpellingStatus()") )
+            print( exp("loadPTXSpellingStatus()") )
 
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
@@ -963,7 +965,7 @@ class PTXBible( Bible ):
         Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXComments()") )
+            print( exp("loadPTXComments()") )
 
         commentFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1063,7 +1065,7 @@ class PTXBible( Bible ):
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXBiblicalTerms()") )
+            print( exp("loadPTXBiblicalTerms()") )
 
         BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1174,7 +1176,7 @@ class PTXBible( Bible ):
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXProgress()") )
+            print( exp("loadPTXProgress()") )
 
         progressFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1328,7 +1330,7 @@ class PTXBible( Bible ):
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXPrintConfig()") )
+            print( exp("loadPTXPrintConfig()") )
 
         printConfigFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1415,7 +1417,7 @@ class PTXBible( Bible ):
             and parse it into the ordered dictionary PTXAutocorrects.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXAutocorrects()") )
+            print( exp("loadPTXAutocorrects()") )
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -1460,7 +1462,7 @@ class PTXBible( Bible ):
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("loadPTXStyles()") )
+            print( exp("loadPTXStyles()") )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1560,12 +1562,12 @@ class PTXBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( t("loadBookMP( {} )").format( BBB_Filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("loadBookMP( {} )").format( BBB_Filename ) )
         BBB, filename = BBB_Filename
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( '  ' + t("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( '  ' + exp("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -1578,7 +1580,7 @@ class PTXBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -1586,7 +1588,7 @@ class PTXBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( t("Loading {} PTX books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    print( exp("Loading {} PTX books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -1599,7 +1601,7 @@ class PTXBible( Bible ):
                         #print( _("  PTXBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( t("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of PTXBible.loadBooks
