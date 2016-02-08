@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-05' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -361,7 +361,7 @@ class USFMBible( Bible ):
 
     def loadBooks( self ):
         """
-        Load all the books.
+        Load all the Bible books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}...").format( self.name, self.sourceFolder ) )
 

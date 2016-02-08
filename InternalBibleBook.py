@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-05' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -2151,7 +2151,8 @@ class InternalBibleBook:
 
 
         def countWords( marker, segment, location ):
-            """ Breaks the segment into words and counts them.
+            """
+            Breaks the segment into words and counts them.
             """
             def stripWordPunctuation( word ):
                 """Removes leading and trailing punctuation from a word.
@@ -2164,6 +2165,7 @@ class InternalBibleBook:
                 return word
             # end of stripWordPunctuation
 
+            # countWords() main code
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
             for j,rawWord in enumerate(words):
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
@@ -2202,7 +2204,7 @@ class InternalBibleBook:
         # end of countWords
 
 
-        # discover main code
+        # _discover() main code
         C = V = '0'
         lastMarker = None
         for entry in self._processedLines:
@@ -3358,7 +3360,9 @@ class InternalBibleBook:
 
 
     def doCheckWords( self ):
-        """Runs a number of checks on the words used."""
+        """
+        Runs a number of checks on the words used.
+        """
 
         def countWords( marker, segment, lastWordTuple=None ):
             """Breaks the segment into words and counts them.
@@ -3466,7 +3470,9 @@ class InternalBibleBook:
 
 
     def doCheckFileControls( self ):
-        """Runs a number of checks on headings and section cross-references."""
+        """
+        Runs a number of checks on headings and section cross-references.
+        """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckFileControls'" )
             self.processLines()
@@ -3490,7 +3496,9 @@ class InternalBibleBook:
 
 
     def doCheckHeadings( self, discoveryDict ):
-        """Runs a number of checks on headings and section cross-references."""
+        """
+        Runs a number of checks on headings and section cross-references.
+        """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckHeadings'" )
             self.processLines()
@@ -3639,7 +3647,9 @@ class InternalBibleBook:
 
 
     def doCheckNotes( self, discoveryDict ):
-        """Runs a number of checks on footnotes and cross-references."""
+        """
+        Runs a number of checks on footnotes and cross-references.
+        """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckNotes'" )
             self.processLines()
@@ -3941,7 +3951,9 @@ class InternalBibleBook:
 
 
     def getErrors( self ):
-        """Returns the error dictionary."""
+        """
+        Returns the error dictionary for the book.
+        """
         if 'Priority Errors' in self.errorDictionary and not self.errorDictionary['Priority Errors']:
             self.errorDictionary.pop( 'Priority Errors' ) # Remove empty dictionary entry if unused
         return self.errorDictionary
