@@ -5,7 +5,7 @@
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-19' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.14'
@@ -299,9 +299,9 @@ class DBPBibles:
         self.volumeNameDict = OrderedDict()
         if self.volumeList: # Create a list of resource types
             for j, volume in enumerate(self.volumeList):
-                assert( volume['language_name'] and volume['volume_name'] )
+                assert volume['language_name'] and volume['volume_name']
                 ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
-                assert( volume['media'] and volume['delivery'] and volume['collection_code'] )
+                assert volume['media'] and volume['delivery'] and volume['collection_code']
                 if volume['media'] == 'text':
                     if 'web' in volume['delivery']:
                         #ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
@@ -311,7 +311,7 @@ class DBPBibles:
                             #ix = self.volumeNameDict[ourName]
                             #oldVolume = self.volumeList[ix]
                             ##print( "Old", ix, oldVolume )
-                            #assert( len(volume) == len(oldVolume) )
+                            #assert len(volume) == len(oldVolume)
                             #for someKey in volume:
                                 #if volume[someKey] != oldVolume[someKey]:
                                     #if someKey not in ('dam_id','fcbh_id','sku','updated_on','collection_name',):
@@ -356,12 +356,12 @@ class DBPBibles:
         self.EnglishVolumeNameDict = OrderedDict()
         if self.volumeList: # Create a list of resource types
             for j, volume in enumerate(self.volumeList):
-                assert( volume['language_family_code'] )
+                assert volume['language_family_code']
                 if volume['language_family_code'] == 'ENG':
-                    assert( volume['volume_name'] )
+                    assert volume['volume_name']
                     ourName= '{}: {}'.format( volume['version_code'], volume['volume_name'] )
                     #ourName = volume['volume_name']
-                    assert( volume['media'] and volume['delivery'] and volume['collection_code'] )
+                    assert volume['media'] and volume['delivery'] and volume['collection_code']
                     if volume['media'] == 'text':
                         if 'web' in volume['delivery']:
                             self.EnglishVolumeNameDict[ourName] = volume['dam_id'][:6] # Just remember the 6-character damRoot
@@ -391,9 +391,9 @@ class DBPBibles:
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
                 ##print( "bookCodeDictList", len(bookCodeDictList), bookCodeDictList )
                 ## Not sure why it comes back as a dictionary in a one-element list
-                #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
+                #assert isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1
                 #bookCodeDict = bookCodeDictList[0]
-                #assert( isinstance( bookCodeDict, dict ) )
+                #assert isinstance( bookCodeDict, dict )
                 #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
     ## end of DBPBibles.load
 
@@ -460,7 +460,7 @@ class DBPBibles:
                     if BibleOrgSysGlobals.debugFlag:
                         print( t("DAM: {}").format( DAM ) )
                         if BibleOrgSysGlobals.debugFlag:
-                            assert( DAM.endswith('2ET') or DAM.endswith('1ET') ) # O2 (OT) or N2 (NT), plus ET for text
+                            assert DAM.endswith('2ET') or DAM.endswith('1ET') # O2 (OT) or N2 (NT), plus ET for text
                     resultsList.append( (refNumber,DAM,) )
         return resultsList
     # end of DBPBibles.searchNames
@@ -481,7 +481,7 @@ class DBPBible:
                 4-6: Version code, e.g., ESV
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.__init__( {} )").format( repr(damRoot) ) )
-        assert( damRoot and isinstance( damRoot, str ) and len(damRoot)==6 )
+        assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
         self.damRoot = damRoot
 
          # Setup and initialise the base class first
@@ -508,9 +508,9 @@ class DBPBible:
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
                 ## Not sure why it comes back as a dictionary in a one-element list
-                #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
+                #assert isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1
                 #bookCodeDict = bookCodeDictList[0]
-                #assert( isinstance( bookCodeDict, dict ) )
+                #assert isinstance( bookCodeDict, dict )
                 #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
 
         self.books = OrderedDict()
@@ -555,7 +555,7 @@ class DBPBible:
         This method checks whether the Bible contains the BBB book.
         Returns True or False.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
+        if BibleOrgSysGlobals.debugFlag: assert isinstance(BBB,str) and len(BBB)==3
         return BBB in self.books
     # end of DBPBible.__contains__
 
@@ -608,7 +608,7 @@ class DBPBible:
             if isinstance( rawData, list ) and len(rawData)==1:
                 rawDataDict = rawData[0]
                 #print( len(rawDataDict), rawDataDict )
-                assert( len(rawDataDict)==8 and isinstance( rawDataDict, dict ) )
+                assert len(rawDataDict)==8 and isinstance( rawDataDict, dict )
                 resultList.append( ('p#','p#',rawDataDict['paragraph_number'],rawDataDict['paragraph_number'],[]) ) # Must be first for Biblelator
                 if key.getVerseNumber()=='1': resultList.append( ('c#','c#',rawDataDict['chapter_id'],rawDataDict['chapter_id'],[]) )
                 resultList.append( ('v','v',rawDataDict['verse_id'],rawDataDict['verse_id'],[]) )

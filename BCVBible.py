@@ -5,7 +5,7 @@
 #
 # Module handling Bibles where each verse is stored in a separate file.
 #
-# Copyright (C) 2014-2015 Robert Hunt
+# Copyright (C) 2014-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -81,8 +81,8 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns the loaded BCVBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "BCVBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -274,7 +274,7 @@ class BCVBible( Bible ):
                     except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
 
         if 'BCVVersion' in self.suppliedMetadata['BCV']:
-            assert( self.suppliedMetadata['BCV']['BCVVersion'] == '1.0' )
+            assert self.suppliedMetadata['BCV']['BCVVersion'] == '1.0'
 
         #if 'ProjectName' in self.suppliedMetadata['BCV']:
             #self.projectName = self.suppliedMetadata['BCV']['ProjectName']
@@ -337,7 +337,7 @@ class BCVBible( Bible ):
         Parameter is a 2-tuple containing BBB and the filename.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3: print( t("loadBookMP( {} )").format( BBB ) )
-        assert( BBB not in self.books )
+        assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -366,7 +366,7 @@ class BCVBible( Bible ):
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
-                    assert( len(results) == len(self.givenBookList) )
+                    assert len(results) == len(self.givenBookList)
                     for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -522,7 +522,7 @@ class BCVBibleBook( BibleBook ):
                         line = line[1:] # Remove the Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     #print( CV, "line", line )
-                    assert( line and line[0]=='\\' )
+                    assert line and line[0]=='\\'
                     ixEQ = line.find( '=' )
                     ixLL = line.find( '<<' )
                     if ixEQ == -1: ixEQ = DUMMY_VALUE
@@ -541,7 +541,7 @@ class BCVBibleBook( BibleBook ):
                     #print( 'text', repr(text) )
 
                     if marker[0] == '¬':
-                        assert( originalMarker is None and text is None )
+                        assert originalMarker is None and text is None
                         adjText = extras = None
                     else:
                         if originalMarker is None: originalMarker = marker
@@ -614,7 +614,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testBCV, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nBCV D{}/ Trying {}".format( j+1, someFolder ) )

@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-03' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.34'
@@ -95,7 +95,7 @@ class BibleBooksNamesConverter:
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.__XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
-                    assert( self.__XMLSystems[booksNamesSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                    assert self.__XMLSystems[booksNamesSystemCode]["tree"] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
                     if self.__XMLSystems[booksNamesSystemCode]["tree"].tag  == self.treeTag:
@@ -139,8 +139,8 @@ class BibleBooksNamesConverter:
         """
         Checks for basic formatting/content errors in a Bible book name system.
         """
-        assert( systemName )
-        assert( self.__XMLSystems[systemName]["tree"] )
+        assert systemName
+        assert self.__XMLSystems[systemName]["tree"]
 
         if len(self.__XMLSystems[systemName]["languageCode"]) != 3:
             logging.error( _("Couldn't find 3-letter language code in {!r} book names system").format( systemName ) )
@@ -271,10 +271,10 @@ class BibleBooksNamesConverter:
 
         Saves divisions name and book name ordered dictionaries, all UPPER CASE, sorted with longest first.
         """
-        assert( bookList )
-        assert( self.__XMLSystems )
+        assert bookList
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
         if self.__expandedInputSystems: return # No need to do this again
 
         if bookList is not None:
@@ -296,7 +296,7 @@ class BibleBooksNamesConverter:
 
         Returns two dictionaries which should each contain entries for each named system.
         """
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         if self.__BookNamesSystemsDict: # We've already done an import/restructuring -- no need to repeat it
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
@@ -371,9 +371,9 @@ class BibleBooksNamesConverter:
         """
         import pickle
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
@@ -391,7 +391,7 @@ class BibleBooksNamesConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            assert( isinstance( theDict, dict ) )
+            assert isinstance( theDict, dict )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
                 break # We only check the first (random) entry we get
@@ -403,7 +403,7 @@ class BibleBooksNamesConverter:
 
         def exportPythonOrderedDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            assert( isinstance( theDict, OrderedDict ) )
+            assert isinstance( theDict, OrderedDict )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
                 break # We only check the first (random) entry we get
@@ -415,7 +415,7 @@ class BibleBooksNamesConverter:
 
         def exportPythonList( theFile, theList, listName, fieldsComment ):
             """Exports theList to theFile."""
-            assert( isinstance( theList, list ) )
+            assert isinstance( theList, list )
             fieldsCount = len( theList[0] ) if isinstance( theList[0], (tuple,dict,list) ) else 1
             theFile.write( '  "{}": [\n    # Fields ({}) are: {}\n'.format( listName, fieldsCount, fieldsComment ) )
             for j,entry in enumerate(theList):
@@ -425,9 +425,9 @@ class BibleBooksNamesConverter:
 
         from datetime import datetime
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
 
         raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
@@ -478,9 +478,9 @@ class BibleBooksNamesConverter:
         """
         import pickle
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
@@ -500,9 +500,9 @@ class BibleBooksNamesConverter:
         from datetime import datetime
         import json
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -547,9 +547,9 @@ class BibleBooksNamesConverter:
 
         from datetime import datetime
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
+        assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.__filenameBase + "_Tables.h" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )

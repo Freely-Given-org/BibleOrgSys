@@ -6,8 +6,10 @@
 #
 # Taken from http://en.wikipedia.org/wiki/Singleton_pattern
 #
-# Can be used as a Python decorator in order to force a class to only ever has one instance
+# Can be used as a Python decorator in order to force a class to only ever have one instance
+#
 #       from singleton import singleton
+#
 #       @singleton
 #       class MyClass:
 #           ...

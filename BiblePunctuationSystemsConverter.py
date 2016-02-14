@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystemsConverter.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,6 +26,9 @@
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-13' # by RJH
 ProgName = "Bible Punctuation Systems handler"
 ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -95,7 +97,7 @@ class BiblePunctuationSystemsConverter:
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} punctuation system from {}...").format( punctuationSystemCode, filename ) )
                     self._XMLSystems[punctuationSystemCode] = {}
                     self._XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
-                    assert( self._XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                    assert self._XMLSystems[punctuationSystemCode]["tree"] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
                     if self._XMLSystems[punctuationSystemCode]["tree"].tag  == self.treeTag:
@@ -138,7 +140,7 @@ class BiblePunctuationSystemsConverter:
     def _validateSystem( self, punctuationTree, systemName ):
         """
         """
-        assert( punctuationTree )
+        assert punctuationTree
 
         uniqueDict = {}
         for elementName in self.uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -239,7 +241,7 @@ class BiblePunctuationSystemsConverter:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         if self._DataDict: # We've already done an import/restructuring -- no need to repeat it
             return self._DataDict
 
@@ -284,9 +286,9 @@ class BiblePunctuationSystemsConverter:
         """
         import pickle
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self._DataDict )
+        assert self._DataDict
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
@@ -310,9 +312,9 @@ class BiblePunctuationSystemsConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self._DataDict )
+        assert self._DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -341,9 +343,9 @@ class BiblePunctuationSystemsConverter:
         """
         import json
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self._DataDict )
+        assert self._DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -398,9 +400,9 @@ class BiblePunctuationSystemsConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self._DataDict )
+        assert self._DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
@@ -447,9 +449,9 @@ class BiblePunctuationSystemsConverter:
         Check the given punctuation scheme against all the loaded systems.
         Create a new punctuation file if it doesn't match any.
         """
-        assert( systemName )
-        assert( punctuationSchemeToCheck )
-        assert( self.Lists )
+        assert systemName
+        assert punctuationSchemeToCheck
+        assert self.Lists
         #print( systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []

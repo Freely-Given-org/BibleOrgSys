@@ -54,7 +54,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -191,8 +191,8 @@ class BibleOrganizationalSystems:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "getOrganizationalSystem( {} )".format( repr(systemName) ) )
-        assert( systemName )
-        assert( isinstance( systemName, str ) )
+        assert systemName
+        assert isinstance( systemName, str )
 
         #for x in sorted(self.__dataDict): print( "dD", repr(x) )
         if systemName in self.__dataDict: # we found the combined name
@@ -223,12 +223,12 @@ class BibleOrganizationalSystems:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "getOrganizationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
-        assert( systemName and isinstance( systemName, str ) )
-        assert( valueName and isinstance( valueName, str ) )
+        assert systemName and isinstance( systemName, str )
+        assert valueName and isinstance( valueName, str )
         thisSystem = self.getOrganizationalSystem( systemName, suppressErrors )
         #if systemName=='KJV-1611': print( thisSystem ); halt
         if thisSystem is not None:
-            assert( thisSystem )
+            assert thisSystem
             if valueName in thisSystem: return thisSystem[valueName]
             # else maybe we can find the value in a derived text
             if 'usesText' in thisSystem:
@@ -238,7 +238,7 @@ class BibleOrganizationalSystems:
                 #print( "\nKeys:", self.__dataDict.keys() )
                 #print( "\nindexDict", self.__indexDict )
                 #print( "\ncombinedIndexDict", self.__combinedIndexDict )
-                assert( isinstance( trySystemNames, list ) ) # Maybe this can also be a string???
+                assert isinstance( trySystemNames, list ) # Maybe this can also be a string???
                 for possibleType in reversed( allowedTypes ):
                     #print( 'possibleType', possibleType )
                     for trySystemName in trySystemNames:
@@ -302,7 +302,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         # end of getOrganizationalSystemValue
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading {!r} system".format( systemName ) )
-        assert( systemName and isinstance( systemName, str ) )
+        assert systemName and isinstance( systemName, str )
         self.__boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganizationalSystem( systemName )
         if result is None:
@@ -363,14 +363,14 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
     def getOrganizationalSystemName( self ):
         """ Return the system name. """
-        assert( self.__systemName )
+        assert self.__systemName
         return self.__systemName
     # end of BibleOrganizationalSystem.getOrganizationalSystemName
 
 
     def getOrganizationalSystemType( self ):
         """ Return the system type. """
-        assert( self.__dataDict )
+        assert self.__dataDict
         return self.__dataDict["type"]
     # end of BibleOrganizationalSystem.getOrganizationalSystemType
 
@@ -385,8 +385,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     def getOrganizationalSystemValue( self, valueName ):
         """ Gets a value for the system. """
         #print( "getOrganizationalSystemValue( {} )".format( repr(valueName) ) )
-        assert( self.__dataDict )
-        assert( valueName and isinstance( valueName, str ) )
+        assert self.__dataDict
+        assert valueName and isinstance( valueName, str )
 
         if valueName in self.__dataDict: return self.__dataDict[valueName]
         # else maybe we can find the value in a derived text
@@ -430,7 +430,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
     def containsBook( self, BBB ):
         """ Returns True or False if this book is in this system. """
-        assert( BBB and isinstance( BBB, str ) and len(BBB)==3 )
+        assert BBB and isinstance( BBB, str ) and len(BBB)==3
         return BBB in self.getBookList()
     # end of BibleOrganizationalSystem.containsBook
 
@@ -475,16 +475,16 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("isValidBCVRef( {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
-            assert( isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey ) )
+            assert isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
 
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
-        assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-        assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+        assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+        assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
             return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended )
         logging.error( _("{} {}:{} is invalid book for reference {!r} in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
@@ -535,7 +535,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
         Returns None for invalid or missing values.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( 1 <= avNumber <= 99999 )
+        if BibleOrgSysGlobals.debugFlag: assert 1 <= avNumber <= 99999
         if not BibleOrganizationalSystem.__absoluteVerseDict: self.__makeAbsoluteVerseList()
         for (BBB,C),(rangeStart, rangeEnd) in BibleOrganizationalSystem.__absoluteVerseDict.items():
             #print( BBB, C, rangeStart, rangeEnd )

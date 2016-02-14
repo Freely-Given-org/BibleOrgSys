@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-02' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.34'
@@ -103,8 +103,8 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
         returns the loaded ForgeForSwordSearcherBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -211,7 +211,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = ForgeForSwordSearcherBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -408,7 +408,7 @@ class ForgeForSwordSearcherBible( Bible ):
                         if BBB:
                             if BBB in self:
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
-                            if BibleOrgSysGlobals.debugFlag: assert( BBB not in self )
+                            if BibleOrgSysGlobals.debugFlag: assert BBB not in self
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = "ForgeForSwordSearcher Bible Book object"
                             thisBook.objectTypeString = "ForgeForSwordSearcher"
@@ -422,7 +422,7 @@ class ForgeForSwordSearcherBible( Bible ):
 
                     if BBB:
                         if chapterNumber != lastChapterNumber: # We've started a new chapter
-                            if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                            if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                             if chapterNumber == 0:
                                 logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                             elif chapterNumber > numChapters:
@@ -551,7 +551,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testForge4SS, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )

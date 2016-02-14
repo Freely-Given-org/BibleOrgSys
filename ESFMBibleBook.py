@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-24' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
@@ -105,7 +105,7 @@ class ESFMBibleBook( BibleBook ):
                 """
                 """
                 #print( "saveWord( {}, {}:{}, {} )".format( BBB, C, V, repr(word) ) )
-                assert( word and ' ' not in word  )
+                assert word and ' ' not in word
             # end of saveWord
 
             def saveSemanticTag( BBB, C, V, word, tag ):
@@ -115,8 +115,8 @@ class ESFMBibleBook( BibleBook ):
                 """
                 #if C=='4' and V in ('11','12'):
                 #print( "saveSemanticTag( {}, {}:{}, {}, {} )".format( BBB, C, V, repr(word), repr(tag) ) )
-                assert( word and ' ' not in word  )
-                assert( tag and tag[0]=='=' and len(tag)>=2 )
+                assert word and ' ' not in word
+                assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
 
                 thisDict = self.containerBibleObject.semanticDict
@@ -153,8 +153,8 @@ class ESFMBibleBook( BibleBook ):
                 """
                 #if C=='4' and V in ('11','12'):
                 #print( "saveStrongsTag( {}, {}:{}, {}, {} )".format( BBB, C, V, repr(word), repr(tag) ) )
-                assert( word and ' ' not in word  )
-                assert( tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3 )
+                assert word and ' ' not in word
+                assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
                 tagMarker, tagContent = tag[2], tag[3:]
 
                 thisDict = self.containerBibleObject.StrongsDict
@@ -207,7 +207,7 @@ class ESFMBibleBook( BibleBook ):
                     if char == ' ':
                         if lastChar == '_':
                             hangingUnderlineFlag = True
-                            assert( text[-1] == ' ' )
+                            assert text[-1] == ' '
                             text = text[:-1] # Remove the space from the underline otherwise we'll get two spaces
                         if lastChar != '_' and (not underlineGroupFlag) and (not hangingUnderlineFlag):
                             #if underlineGroup: print( "underlineGroup was: {}".format( repr(underlineGroup) ) )
@@ -218,7 +218,7 @@ class ESFMBibleBook( BibleBook ):
                         if char == '}': bracedGroupFlag = False
                         else: bracedGroup += char if char!=' ' else '_'
                     if tag:
-                        if BibleOrgSysGlobals.debugFlag: assert( tag[0] == '=' )
+                        if BibleOrgSysGlobals.debugFlag: assert tag[0] == '='
                         if char in ' _=' or char in ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
                             if underlineGroupFlag:
                                 underlineGroup += word

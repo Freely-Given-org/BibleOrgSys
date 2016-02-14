@@ -75,7 +75,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.61'
@@ -110,7 +110,7 @@ if debuggingThisModule:
 # Some language independant punctuation help
 OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # The length and order of these two strings must match
 CLOSING_SPEECH_CHARACTERS = """”»"’›?!"""
-assert( len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS) )
+assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
 MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
 MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
@@ -344,7 +344,7 @@ def backupAnyExistingFile( filenameOrFilepath ):
     Make a backup copy of a file if it exists.
     """
 
-    if debugFlag: assert( not filenameOrFilepath.endswith( '.bak' ) )
+    if debugFlag: assert not filenameOrFilepath.endswith( '.bak' )
     if os.access( filenameOrFilepath, os.F_OK ):
         if debugFlag:
             logging.info( "backupAnyExistingFile: {} already exists -- renaming it first!".format( repr(filenameOrFilepath) ) )
@@ -364,7 +364,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
         unless more than one line is requested
         in which case a list of strings is returned (including empty strings for empty lines).
     """
-    if debugFlag: assert( 1 <= numLines < 5 )
+    if debugFlag: assert 1 <= numLines < 5
     if encoding is None: encoding = 'utf-8'
     filepath = os.path.join( folderName, filenameOrFilepath ) if folderName else filenameOrFilepath
     lines = []
@@ -845,7 +845,7 @@ def applyStringAdjustments( originalText, adjustmentList ):
     offset = 0
     for ix, findStr, replaceStr in sorted(adjustmentList): # sorted with lowest index first
         lenFS, lenRS = len(findStr), len(replaceStr)
-        if debugFlag: assert( text[ix+offset:ix+offset+lenFS] == findStr ) # Our find string must be there
+        if debugFlag: assert text[ix+offset:ix+offset+lenFS] == findStr # Our find string must be there
         elif text[ix+offset:ix+offset+lenFS] != findStr:
             logging.error( "applyStringAdjustments programming error -- given bad data for {!r}: {}".format( originalText, adjustmentList ) )
         #print( "before", repr(text) )
@@ -869,8 +869,8 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
 
     disassembleObjectFlag is used to find segfaults by pickling the object piece by piece.
     """
-    assert( theObject is not None )
-    assert( filename )
+    assert theObject is not None
+    assert filename
     if folderName is None: folderName = DEFAULT_CACHE_FOLDER
     filepath = filename # default
     if folderName:
@@ -911,7 +911,7 @@ def unpickleObject( filename, folderName=None ):
 
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
-    assert( filename )
+    assert filename
     if folderName is None: folderName = DEFAULT_CACHE_FOLDER
     filepath = os.path.join( folderName, filename )
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )

@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2015 Robert Hunt
+# Copyright (C) 2014-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18'
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.28'
@@ -73,8 +73,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns the loaded CSVBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -166,7 +166,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = CSVBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -252,9 +252,9 @@ class CSVBible( Bible ):
                 #if not bookCode and not chapterNumberString and not verseNumberString:
                     #print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     #continue
-                #if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
-                #if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
-                #if BibleOrgSysGlobals.debugFlag: assert( verseNumberString.isdigit() )
+                #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
+                #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
+                #if BibleOrgSysGlobals.debugFlag: assert verseNumberString.isdigit()
                 bookNumber = int( bString )
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
@@ -263,7 +263,7 @@ class CSVBible( Bible ):
                     if lastBookNumber != -1: # Better save the last book
                         self.saveBook( thisBook )
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )  # Try to guess
-                    assert( BBB )
+                    assert BBB
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'CSV Bible Book object'
                     thisBook.objectTypeString = 'CSV'
@@ -271,7 +271,7 @@ class CSVBible( Bible ):
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                    if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                     if chapterNumber == 0:
                         logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                     thisBook.addLine( 'c', chapterNumberString )
@@ -303,7 +303,7 @@ class CSVBible( Bible ):
                 #vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
                     #.replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
                 #if vText and vText[0]=='«':
-                    #assert( BBB=='PSA' and verseNumberString=='1' )
+                    #assert BBB=='PSA' and verseNumberString=='1'
                     #vBits = vText[1:].split( '»' )
                     ##print( "vBits", vBits )
                     #thisBook.addLine( 'd', vBits[0] ) # Psalm title
@@ -415,7 +415,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testCSV, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )

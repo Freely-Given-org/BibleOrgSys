@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,8 +28,8 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18' # by RJH
-ShortProgName = "USFMBible"
+LastModifiedDate = '2016-02-13' # by RJH
+ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
@@ -100,8 +100,8 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         returns the loaded ESFMBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -345,7 +345,7 @@ class ESFMBible( Bible ):
                         #processed = True
                     #elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                         #bits = fieldname.split( None, 1 )
-                        #if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                        #if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
                         #fieldname = bits[0]
                         #attributes = bits[1]
                         ##print( "attributes = {!r}".format( attributes) )
@@ -362,7 +362,7 @@ class ESFMBible( Bible ):
                             #processed = True
                         #elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             #bits = fieldname.split( None, 1 )
-                            #if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
+                            #if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
                             #fieldname = bits[0]
                             #attributes = bits[1]
                             ##print( "attributes = {!r}".format( attributes) )
@@ -483,7 +483,7 @@ class ESFMBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "ESFMBible.loadBookMP( {} )".format( BBB_Filename ) )
         BBB, filename = BBB_Filename
-        assert( BBB not in self.books )
+        assert BBB not in self.books
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -515,7 +515,7 @@ class ESFMBible( Bible ):
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
-                    assert( len(results) == len(self.maximumPossibleFilenameTuples) )
+                    assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
                         if bBook is not None: self.saveBook( bBook ) # Saves them in the correct order
             else: # Just single threaded

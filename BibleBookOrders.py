@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -111,7 +111,7 @@ class BibleBookOrderSystems:
                 bboc = BibleBookOrdersConverter()
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        assert( len(self.__DataDicts) == len(self.__DataLists) )
+        assert len(self.__DataDicts) == len(self.__DataLists)
         if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:
             print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self
@@ -133,7 +133,7 @@ class BibleBookOrderSystems:
 
     def __len__( self ):
         """ Returns the number of systems loaded. """
-        assert( len(self.__DataDicts) == len(self.__DataLists) )
+        assert len(self.__DataDicts) == len(self.__DataLists)
         return len( self.__DataDicts )
     # end of BibleBookOrderSystems.__len__
 
@@ -184,9 +184,9 @@ class BibleBookOrderSystems:
         Create a new book order file if it doesn't match any.
         Returns the number of matched systems (which can also be used as a True/False "matched" flag).
         """
-        assert( thisSystemName )
-        assert( bookOrderSchemeToCheck )
-        assert( self.__DataLists )
+        assert thisSystemName
+        assert bookOrderSchemeToCheck
+        assert self.__DataLists
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
             if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
@@ -308,14 +308,14 @@ class BibleBookOrderSystem:
 
     def __contains__( self, BBB ):
         """ Returns True/False if the book is in this system. """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         return BBB in self.__BookOrderList
     # end of BibleBookOrderSystem.__contains__
 
 
     def containsBook( self, BBB ):
         """ Return True/False if the book is in this system. """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         return BBB in self.__BookOrderList
     # end of BibleBookOrderSystem.containsBook
 
@@ -327,7 +327,7 @@ class BibleBookOrderSystem:
 
     def getBookOrderPosition( self, BBB ):
         """ Returns the book position number (1..n). """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         return self.__BookOrderBookDict[BBB]
     # end of BibleBookOrderSystem.getBookOrderPosition
 
@@ -349,7 +349,7 @@ class BibleBookOrderSystem:
         Returns the book (if any) before the given one.
         Otherwise returns None.
         """
-        assert( len(BBB)==3 )
+        assert len(BBB)==3
         previousPosition = self.__BookOrderBookDict[BBB] - 1
         if previousPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[previousPosition]
     # end of BibleBookOrderSystem.getNextBookCode
@@ -357,7 +357,7 @@ class BibleBookOrderSystem:
 
     def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
-        assert( len(BBB)==3 )
+        assert len(BBB)==3
         nextPosition = self.__BookOrderBookDict[BBB] + 1
         if nextPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[nextPosition]
     # end of BibleBookOrderSystem.getNextBookCode
@@ -365,8 +365,8 @@ class BibleBookOrderSystem:
 
     def correctlyOrdered( self, BBB1, BBB2 ):
         """ Returns True/False if the two books are in the correct order. """
-        assert( BBB1 and len(BBB1)==3 )
-        assert( BBB2 and len(BBB2)==3 )
+        assert BBB1 and len(BBB1)==3
+        assert BBB2 and len(BBB2)==3
         return self.__BookOrderBookDict[BBB1] < self.__BookOrderBookDict[BBB2]
     # end of BibleBookOrderSystem.correctlyOrdered
 # end of BibleBookOrderSystem class

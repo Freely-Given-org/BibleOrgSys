@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleStylesheets.py
-#   Last modified: 2015-02-03 (also update ProgVersion below)
 #
 # Module handling Bible (including Paratext) stylesheets
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -26,6 +25,9 @@
 """
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
 ProgVersion = '0.07'
@@ -131,11 +133,11 @@ class BibleStylesheet():
     def load( self, sourceFolder, filename ):
         self.sourceFolder = sourceFolder
         self.filename = filename
-        assert( os.path.exists( self.sourceFolder ) )
-        assert( os.path.exists( self.sourceFolder ) )
+        assert os.path.exists( self.sourceFolder )
+        assert os.path.exists( self.sourceFolder )
         self.filepath = os.path.join( self.sourceFolder, self.filename )
-        assert( os.path.exists( self.filepath ) )
-        assert( os.path.exists( self.filepath ) )
+        assert os.path.exists( self.filepath )
+        assert os.path.exists( self.filepath )
         self.name = os.path.splitext( self.filename )[0]
 
         recordsDB = SFMFile.SFMRecords()
@@ -154,7 +156,7 @@ class BibleStylesheet():
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("validate"), USFMMarker, styleData )
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
-            assert( USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS )
+            assert USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
     # end of BibleStylesheet.load
 
 
@@ -258,11 +260,11 @@ class ParatextStylesheet():
         self.sourceFolder = sourceFolder
         self.filename = filename
         self.encoding = encoding
-        assert( os.path.exists( self.sourceFolder ) )
-        assert( os.path.exists( self.sourceFolder ) )
+        assert os.path.exists( self.sourceFolder )
+        assert os.path.exists( self.sourceFolder )
         self.filepath = os.path.join( self.sourceFolder, self.filename )
-        assert( os.path.exists( self.filepath ) )
-        assert( os.path.exists( self.filepath ) )
+        assert os.path.exists( self.filepath )
+        assert os.path.exists( self.filepath )
         self.name = os.path.splitext( self.filename )[0]
         recordsDB = SFMFile.SFMRecords()
         recordsDB.read( self.filepath, 'Marker', encoding=self.encoding )

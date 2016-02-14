@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-31' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.78'
@@ -118,7 +118,7 @@ class BibleBooksCodes:
 
     def __len__( self ):
         """ Return the number of available codes. """
-        assert( len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"]) )
+        assert len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"])
         return len(self.__DataDicts["referenceAbbreviationDict"])
 
 
@@ -167,11 +167,11 @@ class BibleBooksCodes:
                 Your list can simply be a list of BBB strings, or a list of tuples with the BBB as the first entry in the tuple. """
         if myList is None: return self.__DataDicts["sequenceList"]
         # They must have given us their list of books
-        assert( isinstance( myList, list ) )
+        assert isinstance( myList, list )
         if not myList: return [] # Return an empty list if that's what they gave
         for something in myList: # Something can be a BBB string or a tuple
             BBB = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
-            assert( self.isValidReferenceAbbreviation( BBB ) ) # Check the supplied list
+            assert self.isValidReferenceAbbreviation( BBB ) # Check the supplied list
         resultList = []
         for BBB1 in self.__DataDicts["sequenceList"]:
             for something in myList:
@@ -179,7 +179,7 @@ class BibleBooksCodes:
                 if BBB2 == BBB1:
                     resultList.append( something )
                     break
-        assert( len(resultList) == len(myList) )
+        assert len(resultList) == len(myList)
         #if resultList == myList: print( "getSequenceList made no change to the order" )
         #else: print( "getSequenceList: {} produced {}".format( myList, resultList ) )
         return resultList
@@ -260,7 +260,7 @@ class BibleBooksCodes:
 
     def getBBBFromUSFM( self, USFMAbbreviation, strict=False ):
         """ Return the reference abbreviation string for the given USFM book code string. """
-        assert( len(USFMAbbreviation) == 3 )
+        assert len(USFMAbbreviation) == 3
         #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
         result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
@@ -286,7 +286,7 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( someText and isinstance( someText, str ) )
+        if BibleOrgSysGlobals.debugFlag: assert someText and isinstance( someText, str )
         SomeUppercaseText = someText.upper()
         #print( '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
         if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:

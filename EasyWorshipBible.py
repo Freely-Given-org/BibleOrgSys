@@ -5,7 +5,7 @@
 #
 # Module handling EasyWorship Bible files
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-13' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.02'
@@ -65,8 +65,8 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         returns the loaded EasyWorshipBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "EasyWorshipBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -126,7 +126,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "EasyWorshipBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = EasyWorshipBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
@@ -196,7 +196,7 @@ class EasyWorshipBible( Bible ):
         # Skipped some (important?) binary here
         index += 32
         if BibleOrgSysGlobals.debugFlag: print( 'hString', repr(hString), index )
-        assert( hString == 'EasyWorship Bible Text' )
+        assert hString == 'EasyWorship Bible Text'
 
         #print( 'block2', hexlify( fileBytes[index:index+56] ), fileBytes[index:index+56] )
         keep['block2'] = fileBytes[index:index+56]
@@ -242,7 +242,7 @@ class EasyWorshipBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 print( '  bookLength', bookLength, bookStart+bookLength )
             bookBytes = fileBytes[bookStart:bookStart+bookLength]
-            assert( bookBytes[0]==0x78 and bookBytes[1]==0xda ) # Zlib compression header
+            assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
             rawBooks.append( (bookAbbrev, numChapters, numVerses, bookStart, bookLength, bookBytes) )
 
         if BibleOrgSysGlobals.debugFlag: print( 'unknown block3', index, hexlify( fileBytes[index:index+30] ) )
@@ -265,14 +265,14 @@ class EasyWorshipBible( Bible ):
         keep['block5'] = block5
         index += len( block5 )
         #if self.abbreviation in ( 'TB', ): # Why don't the others work
-        assert( index == rawBooks[0][3] ) # Should now be at the start of the first book (already fetched above)
+        assert index == rawBooks[0][3] # Should now be at the start of the first book (already fetched above)
 
-        assert( len(rawBooks) == 66 )
+        assert len(rawBooks) == 66
         # Look at extra stuff at end
         endBytes = fileBytes[bookStart+bookLength:]
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( 'endBytes', len(endBytes), hexlify(endBytes), endBytes )
-        assert( len(endBytes) == 16 )
+        assert len(endBytes) == 16
         keep['block9'] = endBytes
         # Skipped some binary and some text here
         del fileBytes
@@ -287,7 +287,7 @@ class EasyWorshipBible( Bible ):
                 logging.warning( "Replacing tab characters in {} = {}".format( BBB, bookAbbrev ) )
                 textResult = textResult.replace( '\t', ' ' )
             #print( textResult )
-            if BibleOrgSysGlobals.strictCheckingFlag: assert( '  ' not in textResult )
+            if BibleOrgSysGlobals.strictCheckingFlag: assert '  ' not in textResult
 
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "EasyWorship Bible Book object"
@@ -299,15 +299,15 @@ class EasyWorshipBible( Bible ):
                 if not line: continue # skip blank lines
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( 'Processing {} {} line: {!r}'.format( self.abbreviation, BBB, line ) )
-                assert( line[0].isdigit() )
-                assert( ':' in line[:4] )
+                assert line[0].isdigit()
+                assert ':' in line[:4]
                 CV,verseText = line.split( ' ', 1 )
                 newC,newV = CV.split( ':' )
                 #print( newC, V, repr(verseText) )
                 if newC != C:
                     if self.abbreviation=='hcsb' and BBB in ('SA2',): # Handle a bad bug -- chapter 24 has verses out of order
                         print( "Skipping error for out-of-order chapters in {}!".format( BBB ) )
-                    else: assert( int(newC) > int(C) )
+                    else: assert int(newC) > int(C)
                     C, V = newC, '0'
                     thisBook.addLine( 'c', C )
                 if self.abbreviation=='TB' and BBB=='JOL': # Handle a bug -- chapter 3 repeats
@@ -321,7 +321,7 @@ class EasyWorshipBible( Bible ):
                 elif self.abbreviation=='msg' and BBB in ('NUM','JDG','SA2','CH2','EZE','ACT',): # Handle a bug -- chapter 24 has verses out of order
                     print( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 else:
-                    try: assert( int(newV) > int(V) )
+                    try: assert int(newV) > int(V)
                     except ValueError:
                         if BibleOrgSysGlobals.debugFlag:
                             print( "Something's not an integer around {} {}:{} {}".format( BBB, C, V, verseText ) )
@@ -452,7 +452,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testEWB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nEasyWorship E{}/ Trying {}".format( j+1, someFolder ) )

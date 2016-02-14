@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -77,7 +77,6 @@ ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
-
 
 OSISNameSpace = "http://www.bibletechnologies.net/2003/OSIS/namespace"
 OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
@@ -160,7 +159,7 @@ class BibleWriter( InternalBible ):
         filename = self.abbreviation if self.abbreviation else self.name
         if filename is None:
             filename = self.objectTypeString
-        if BibleOrgSysGlobals.debugFlag: assert( filename )
+        if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
         filepath = os.path.join( outputFolder, filename )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
@@ -182,7 +181,7 @@ class BibleWriter( InternalBible ):
         Unfortunately, I don't know how to do this in the _init__ function
             coz it uses self (which isn't actualised yet in init).
         """
-        if BibleOrgSysGlobals.debugFlag: assert( not self.doneSetupGeneric )
+        if BibleOrgSysGlobals.debugFlag: assert not self.doneSetupGeneric
         #if 'discoveryResults' not in dir(self): self.discover()
         if not self.doneSetupGeneric:
             self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
@@ -196,7 +195,7 @@ class BibleWriter( InternalBible ):
         """
         Do some global name replacements in the given control dictionary.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( isinstance( existingControlDict, dict ) )
+        if BibleOrgSysGlobals.debugFlag: assert isinstance( existingControlDict, dict )
         if not existingControlDict: logging.warning( exp("adjustControlDict: The control dictionary is empty!") )
         for entry in existingControlDict:
             existingControlDict[entry] = existingControlDict[entry].replace( '__PROJECT_NAME__', self.projectName )
@@ -214,7 +213,7 @@ class BibleWriter( InternalBible ):
         """
         import InternalBibleBook
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:makeLists..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in dir(self): self.discover()
@@ -292,11 +291,11 @@ class BibleWriter( InternalBible ):
                             htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
                             htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
                             for word in sortedWords:
-                                if BibleOrgSysGlobals.debugFlag: assert( ' ' not in word )
+                                if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
                                 txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                                 csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
                                 #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
-                                #if BibleOrgSysGlobals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                                #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
                                 xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
                                 htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
                             xmlFile.write( '</entries>' ) # close root element
@@ -314,10 +313,10 @@ class BibleWriter( InternalBible ):
                             htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
                             htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
                             for word in sorted(sortedWords, key=dictionary.get):
-                                if BibleOrgSysGlobals.debugFlag: assert( ' ' not in word )
+                                if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
                                 txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                                 csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                                #if BibleOrgSysGlobals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                                #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
                                 xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
                                 htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
                             xmlFile.write( '</entries>' ) # close root element
@@ -348,14 +347,14 @@ class BibleWriter( InternalBible ):
                     #for extra in extras: # do any footnotes and cross-references
                         #extraType, extraIndex, extraText, cleanExtraText = extra
                         #if BibleOrgSysGlobals.debugFlag:
-                            #assert( extraText ) # Shouldn't be blank
-                            ##assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                            #assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                            #assert extraText # Shouldn't be blank
+                            ##assert extraText[0] != '\\' # Shouldn't start with backslash code
+                            #assert extraText[-1] != '\\' # Shouldn't end with backslash code
                             ##print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                            #assert( extraIndex >= 0 )
-                            ##assert( 0 <= extraIndex <= len(text)+3 )
-                            ##assert( extraType in ('fn','xr',) )
-                            #assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                            #assert extraIndex >= 0
+                            ##assert 0 <= extraIndex <= len(text)+3
+                            ##assert extraType in ('fn','xr',)
+                            #assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
                         #countWords( extraType, cleanExtraText, "notes" )
 
         # Now sort the lists and write them each twice (sorted by word and sorted by count)
@@ -375,7 +374,7 @@ class BibleWriter( InternalBible ):
         Write the internal pseudoUSFM out directly with one file per verse.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSBCV..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_BCV_Export/'
@@ -408,7 +407,7 @@ class BibleWriter( InternalBible ):
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPseudoUSFM..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PseudoUSFM_Export/'
@@ -456,8 +455,8 @@ class BibleWriter( InternalBible ):
                         indentLevel += 1
                     elif indentLevel and marker[0]=='¬': indentLevel -= 1
                     if indentLevel > 7: print( "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}".format( BBB, C, V, indentLevel, marker ) )
-                    if BibleOrgSysGlobals.debugFlag: assert( indentLevel <= 7 ) # Should only be 7: e.g., chapters c s1 p v list li1
-            if BibleOrgSysGlobals.debugFlag: assert( indentLevel == 0 )
+                    if BibleOrgSysGlobals.debugFlag: assert indentLevel <= 7 # Should only be 7: e.g., chapters c s1 p v list li1
+            if BibleOrgSysGlobals.debugFlag: assert indentLevel == 0
 
         # Now create a zipped collection
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PseudoUSFM files..." )
@@ -480,14 +479,14 @@ class BibleWriter( InternalBible ):
         Adjust the pseudo USFM and write the USFM files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
         includeEmptyVersesFlag = True
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_USFM_' + ('Reexport/' if self.objectTypeString=="USFM" else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
-        #assert( controlDict and isinstance( controlDict, dict ) )
+        #assert controlDict and isinstance( controlDict, dict )
 
         ignoredMarkers = set()
 
@@ -503,7 +502,7 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    if BibleOrgSysGlobals.debugFlag: assert( BBB in ('FRT','GLS',) )
+                    if BibleOrgSysGlobals.debugFlag: assert BBB in ('FRT','GLS',)
                     numC = numV = 0
 
             USFM = ''
@@ -541,7 +540,7 @@ class BibleWriter( InternalBible ):
                     vBridgeStartInt = vBridgeEndInt = None
 
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    #if BibleOrgSysGlobals.debugFlag: assert( value )
+                    #if BibleOrgSysGlobals.debugFlag: assert value
                     if pseudoMarker=='v' and removeVerseBridges:
                         vString = value
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
@@ -564,7 +563,7 @@ class BibleWriter( InternalBible ):
 
                 if pseudoMarker[-1] == '~':
                     #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
-                    if BibleOrgSysGlobals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
+                    if BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
                     USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
                 else: # not a continuation marker
                     adjValue = value
@@ -616,13 +615,13 @@ class BibleWriter( InternalBible ):
         Adjust the pseudo ESFM and write the ESFM files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESFM..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_ESFM_' + ('Reexport/' if self.objectTypeString=="ESFM" else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
-        #assert( controlDict and isinstance( controlDict, dict ) )
+        #assert controlDict and isinstance( controlDict, dict )
 
         ignoredMarkers = set()
 
@@ -691,7 +690,7 @@ class BibleWriter( InternalBible ):
 
                         if pseudoMarker == 'vp#': continue
                         elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                            #if BibleOrgSysGlobals.debugFlag: assert( value )
+                            #if BibleOrgSysGlobals.debugFlag: assert value
                             if pseudoMarker=='v' and 0 and removeVerseBridges:
                                 vString = value
                                 for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
@@ -714,7 +713,7 @@ class BibleWriter( InternalBible ):
 
                         if pseudoMarker[-1] == '~':
                             #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
-                            if BibleOrgSysGlobals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
+                            if BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
                             ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
                         else: # not a continuation marker
                             adjValue = value
@@ -768,7 +767,7 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toText..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PlainText_Export/'
@@ -854,7 +853,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toVPL..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_VersePerLine_Export/'
@@ -974,7 +973,7 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMarkdown..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Markdown_Export/'
@@ -987,7 +986,7 @@ class BibleWriter( InternalBible ):
             Format character codes within the text into Markdown
             """
             #print( "__formatMarkdownVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-            if BibleOrgSysGlobals.debugFlag: assert( givenText or extras )
+            if BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
             def handleExtras( text, extras ):
                 """
@@ -1033,7 +1032,7 @@ class BibleWriter( InternalBible ):
                     <p id="FNote1" class="footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
                     <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                     """
-                    assert( noteType in ('footnote','endnote',) )
+                    assert noteType in ('footnote','endnote',)
                     markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
                     #print( "formatMarkdownVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                     if noteType == 'footnote':
@@ -1082,7 +1081,7 @@ class BibleWriter( InternalBible ):
                         bits = rawFootnoteContents.split( ' ', 1 )
                         if len(bits)==2: # assume the caller is the first bit
                             caller = bits[0]
-                            if BibleOrgSysGlobals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                            if BibleOrgSysGlobals.debugFlag: assert len(caller) == 1 # Normally a +
                             fnText = fnTitle = bits[1]
                         else: # no idea really what the format was
                             fnText = fnTitle = rawFootnoteContents
@@ -1210,7 +1209,7 @@ class BibleWriter( InternalBible ):
                             print( "formatMarkdownVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
                             print( "  Verse={!r}".format( text ) )
                             print( "  Extras={!r}".format( extras ) )
-                        #assert( 0 <= adjIndex <= len(verse) )
+                        #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
@@ -1362,7 +1361,7 @@ class BibleWriter( InternalBible ):
                 which used to be MediaWiki but is now DokuWiki.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDoor43..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Door43_Export/'
@@ -1552,7 +1551,7 @@ class BibleWriter( InternalBible ):
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
                     #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
-                    #    if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList() )
+                    #    if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
                     #    chapterNumberString = '1'
                     #    chapterRef = bookRef + '.' + chapterNumberString
                     V = adjText
@@ -1588,7 +1587,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'v~':
                     #print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
-                    assert( adjText or extras )
+                    assert adjText or extras
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
                     if not adjText: # this is an empty (untranslated) verse
                         adjText = '- - -' # but we'll put in a filler
@@ -1597,7 +1596,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
                 elif marker == 'p~':
                     #print( "Ouch", marker, repr(adjText), chapterRef, verseNumberString )
-                    assert( adjText or extras )
+                    assert adjText or extras
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
                     adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
@@ -1691,7 +1690,7 @@ class BibleWriter( InternalBible ):
         Called by toHTML5 and toCustomBible
         """
         #print( "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-        if BibleOrgSysGlobals.debugFlag: assert( givenText or extras )
+        if BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
         def handleExtras( text, extras, ourGlobals ):
             """
@@ -1736,7 +1735,7 @@ class BibleWriter( InternalBible ):
                 <p id="FNote1" class="footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
                 <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                 """
-                assert( noteType in ('footnote','endnote',) )
+                assert noteType in ('footnote','endnote',)
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
                 #print( "formatHTMLVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                 if noteType == 'footnote':
@@ -1785,7 +1784,7 @@ class BibleWriter( InternalBible ):
                     bits = rawFootnoteContents.split( ' ', 1 )
                     if len(bits)==2: # assume the caller is the first bit
                         caller = bits[0]
-                        if BibleOrgSysGlobals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                        if BibleOrgSysGlobals.debugFlag: assert len(caller) == 1 # Normally a +
                         fnText = fnTitle = bits[1]
                     else: # no idea really what the format was
                         fnText = fnTitle = rawFootnoteContents
@@ -1913,7 +1912,7 @@ class BibleWriter( InternalBible ):
                     print( "formatHTMLVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
                     print( "  Verse={!r}".format( text ) )
                     print( "  Extras={!r}".format( extras ) )
-                #assert( 0 <= adjIndex <= len(verse) )
+                #assert 0 <= adjIndex <= len(verse)
                 #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                 #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                 if extraType == 'fn':
@@ -1989,8 +1988,8 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
         if BibleOrgSysGlobals.debugFlag:
             #print( self )
-            assert( self.books )
-            assert( self.name )
+            assert self.books
+            assert self.name
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_HTML5_Export/'
@@ -2137,8 +2136,8 @@ class BibleWriter( InternalBible ):
                 convert it to an HTML link.
             """
             #print( "toHTML5.convertToPageReference( {} )".format( refTuple ) )
-            assert( refTuple and len(refTuple)==4 )
-            assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
+            assert refTuple and len(refTuple)==4
+            assert refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) #BBB
             if refTuple[0] in filenameDict:
                 return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
             else: logging.error( "toHTML5.convertToPageReference can't find book: {}".format( repr(refTuple[0]) ) )
@@ -2278,17 +2277,17 @@ class BibleWriter( InternalBible ):
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','introductionOutlineTitle') )
                 elif marker in ('io1','io2','io3','io4',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not haveOpenParagraph )
+                    if BibleOrgSysGlobals.debugFlag: assert not haveOpenParagraph
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','introductionOutlineEntry'+marker[2]), noTextCheck=True )
                 elif marker == 'ib':
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','introductionBlankParagraph') )
                 elif marker == 'periph':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( BBB in ('FRT','INT','BAK','OTH',) )
-                        assert( text and not extras )
+                        assert BBB in ('FRT','INT','BAK','OTH',)
+                        assert text and not extras
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','peripheralContent') )
                 elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -2344,7 +2343,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]) )
                 elif marker in ('r', 'sr', 'mr',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not haveOpenVerse )
+                    if BibleOrgSysGlobals.debugFlag: assert not haveOpenVerse
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if not haveOpenSection:
                         logging.warning( "toHTML5: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
@@ -2374,18 +2373,18 @@ class BibleWriter( InternalBible ):
                     if not haveOpenList or m not in haveOpenList or not haveOpenList[m]:
                         writerObject.writeLineOpen( 'p', ('class',pClass) ); haveOpenList[m] = True
                     if marker.startswith('li'):
-                        if BibleOrgSysGlobals.debugFlag: assert( not text )
+                        if BibleOrgSysGlobals.debugFlag: assert not text
                         writerObject.writeLineOpen( 'span', ('class',iClass) ); haveOpenListItem = True
                     elif text: writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class',iClass) )
                 elif marker == 'b':
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','blankParagraph') )
 
                 # Character markers
                 elif marker in ('v~','p~',):
-                    #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert( haveOpenVerse )
+                    #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert haveOpenVerse
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
@@ -2395,7 +2394,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','verseText'), noTextCheck=True )
 
                 elif marker in ('nb','cl','vp#',): # These are the markers that we can safely ignore for this export
-                    if BibleOrgSysGlobals.debugFlag and marker=='nb': assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag and marker=='nb': assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
                     if text:
@@ -2489,14 +2488,14 @@ class BibleWriter( InternalBible ):
         Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) CustomBible (Android) app.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toCustomBible..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in dir(self): self.discover()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_CustomBible_' + ('Reexport/' if self.objectTypeString=='CustomBible' else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
-        #assert( controlDict and isinstance( controlDict, dict ) )
+        #assert controlDict and isinstance( controlDict, dict )
 
         CBDataFormatVersion = 1 # Increment this when the data files / arrays change
         jsonIndent = 1 # Keep files small for small phones
@@ -2810,7 +2809,7 @@ class BibleWriter( InternalBible ):
                 """
                 nonlocal numCBSections
                 #print( "  toCustomBible.handleSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
-                assert( sectionHTML )
+                assert sectionHTML
                 numCBSections += 1
                 #if BBB == 'GLS': print( BBB, sectionHTML ); halt
                 if '\\' in sectionHTML: # shouldn't happen
@@ -2920,23 +2919,23 @@ class BibleWriter( InternalBible ):
                     if text or extras:
                         thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'ib':
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     thisHTML += '<p class="introductionBlankParagraph"></p>'
                 elif marker == 'periph':
                     if pOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( sOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert sOpen
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( BBB in ('FRT','INT','BAK','OTH',) )
-                        assert( text and not extras )
+                        assert BBB in ('FRT','INT','BAK','OTH',)
+                        assert text and not extras
                     thisHTML += '<p class="peripheralContent">{}</p>'.format( text )
                 elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
                     if pOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( sOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert sOpen
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
-                    if BibleOrgSysGlobals.debugFlag: assert( sOpen )
+                    if BibleOrgSysGlobals.debugFlag: assert sOpen
                     thisHTML += '<h1 class="endTitle{}">{}</h1>'.format( marker[3], text )
 
                 # Now markers in the main text
@@ -3004,7 +3003,7 @@ class BibleWriter( InternalBible ):
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
-                    if BibleOrgSysGlobals.debugFlag: assert( haveSectionHeadings )
+                    if BibleOrgSysGlobals.debugFlag: assert haveSectionHeadings
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if marker == 's1':
                         if pOpen: lastHTML += '</p>'; pOpen = False
@@ -3022,7 +3021,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                 elif marker in ('r', 'sr', 'mr',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not vOpen )
+                    if BibleOrgSysGlobals.debugFlag: assert not vOpen
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
                         logging.warning( "toCustomBible: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
@@ -3043,7 +3042,7 @@ class BibleWriter( InternalBible ):
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( sOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert sOpen
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     elif not sOpen:
@@ -3056,11 +3055,11 @@ class BibleWriter( InternalBible ):
                             currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
                         thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
-                    if BibleOrgSysGlobals.debugFlag: assert( not text )
+                    if BibleOrgSysGlobals.debugFlag: assert not text
                     thisHTML += '<p class="{}">'.format( BibleWriter.pqHTMLClassDict[marker] )
                     pOpen = True
                 elif marker in ('v~','p~',):
-                    #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert( vOpen )
+                    #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert vOpen
                     if text or extras:
                         if not vOpen:
                             thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V+'b' ); vOpen = True
@@ -3077,21 +3076,21 @@ class BibleWriter( InternalBible ):
                     if not listOpen or level not in listOpen or not listOpen[level]:
                         thisHTML += '<p class="{}">'.format( pClass ); listOpen[level] = True
                     if marker.startswith('li'):
-                        if BibleOrgSysGlobals.debugFlag: assert( not text )
+                        if BibleOrgSysGlobals.debugFlag: assert not text
                         thisHTML += '<span class="{}">'.format( iClass )
                     elif text: thisHTML += '<span class="{}">{}</span>'.format( iClass, BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                     sJustOpened = False
                 elif marker == 'b':
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( sOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert sOpen
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     thisHTML += '<p class="blankParagraph"></p>'
 
                 elif marker in ('nb','cl',): # These are the markers that we can safely ignore for this export
-                    if BibleOrgSysGlobals.debugFlag and marker=='nb': assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag and marker=='nb': assert not text and not extras
                 else:
                     if text:
                         logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -3155,7 +3154,7 @@ class BibleWriter( InternalBible ):
             def toInt( CVstring ):
                 try: return int( CVstring )
                 except ValueError:
-                    #if BibleOrgSysGlobals.debugFlag: assert( CVstring )
+                    #if BibleOrgSysGlobals.debugFlag: assert CVstring
                     newCV = '0'
                     for char in CVstring:
                         if char.isdigit(): newCV += char
@@ -3220,7 +3219,7 @@ class BibleWriter( InternalBible ):
         """
         import zlib, struct
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_EasyWorshipBible_Export/'
@@ -3277,7 +3276,7 @@ class BibleWriter( InternalBible ):
                     #else:
                     lastVWritten = V
                 elif marker == 'p~':
-                    assert( textBuffer )
+                    assert textBuffer
                     textBuffer += ' {}'.format( text ) # continuation of the same verse
                 else:
                     ignoredMarkers.add( marker )
@@ -3285,7 +3284,7 @@ class BibleWriter( InternalBible ):
             bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), 9 ) # Highest compression level
             #from binascii import hexlify
             #print( BBB, hexlify(bookBytes[:20]), bookBytes )
-            assert( bookBytes[0]==0x78 and bookBytes[1]==0xda ) # Zlib compression header
+            assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
             compressedDictionary[BBB] = bookBytes
 
         # Get the "compressed" (osfuscated) module name
@@ -3301,8 +3300,8 @@ class BibleWriter( InternalBible ):
         encodedNameBytes = zlib.compress( name.encode( 'utf8' ), 9 ) # Highest compression level
         if BibleOrgSysGlobals.debugFlag:
             print( 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
-        assert( encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda ) # Zlib compression header
-        assert( len(encodedNameBytes) <= 26 )
+        assert encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda # Zlib compression header
+        assert len(encodedNameBytes) <= 26
 
         filename = "{}.ewb".format( self.abbreviation )
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -3341,7 +3340,7 @@ class BibleWriter( InternalBible ):
             #myFile.write( b'\x00' * (30 - len(encodedNameBytes) - 4) )
             myFile.write( b'\x00\x00\x00\x08\x00' ) # Not sure what this means
             if BibleOrgSysGlobals.debugFlag: print( "At", myFile.tell(), 'want', startingBookAddress )
-            assert( myFile.tell() == startingBookAddress )
+            assert myFile.tell() == startingBookAddress
 
             # Write the book info to the binary files
             for BBB in BOS.getBookList():
@@ -3380,7 +3379,7 @@ class BibleWriter( InternalBible ):
         If a schema is given (either a path or URL), the XML output files are validated.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSXXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_USX_Export/'
@@ -3465,7 +3464,7 @@ class BibleWriter( InternalBible ):
                                 .format( token.rstrip() )
                         elif lcToken.startswith('xo '): # xref reference follows
                             if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
-                                if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not xtOpen
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
                                 xoOpen = False
                             if xtOpen: # if we have multiple cross-references one after the other
@@ -3475,12 +3474,12 @@ class BibleWriter( InternalBible ):
                             USXxrefXML += '<char style="xo"'
                             xoOpen = True
                         elif lcToken.startswith('xo*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( xoOpen and not xtOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert xoOpen and not xtOpen
                             USXxrefXML += '>' + adjToken + '</char>'
                             xoOpen = False
                         elif lcToken.startswith('xt '): # xref text follows
                             if xtOpen: # Multiple xt's in a row
-                                if BibleOrgSysGlobals.debugFlag: assert( not xoOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not xoOpen
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
                             if xoOpen:
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -3489,7 +3488,7 @@ class BibleWriter( InternalBible ):
                             USXxrefXML += '<char style="xt"'
                             xtOpen = True
                         elif lcToken.startswith('xt*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( xtOpen and not xoOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
                             USXxrefXML += '>' + adjToken + '</char>'
                             xtOpen = False
                         #elif lcToken in ('xo*','xt*','x*',):
@@ -3497,7 +3496,7 @@ class BibleWriter( InternalBible ):
                         else:
                             logging.warning( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USXxref ) )
                     if xoOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert not xtOpen
                         USXxrefXML += ' closed="false">' + adjToken + '</char>'
                         xoOpen = False
                     if xtOpen:
@@ -3525,27 +3524,27 @@ class BibleWriter( InternalBible ):
                             USXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
                             if fTextOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 fTextOpen = False
-                            if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                             adjToken = token[3:]
                             USXfootnoteXML += '<char style="fr"'
                             frOpen = True
                         elif lcToken.startswith('fr* '):
-                            if BibleOrgSysGlobals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert frOpen and not fTextOpen and not fCharOpen
                             USXfootnoteXML += '>' + adjToken + '</char>'
                             frOpen = False
                         elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
                             if fCharOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                 USXfootnoteXML += '>' + adjToken + '</char>'
                                 fCharOpen = False
                             if frOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 frOpen = False
                             if fTextOpen:
@@ -3557,7 +3556,7 @@ class BibleWriter( InternalBible ):
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
                             USXfootnoteXML += '>' + adjToken + '</char>'
                             fTextOpen = False
                         else: # Could be character formatting (or closing of character formatting)
@@ -3566,11 +3565,11 @@ class BibleWriter( InternalBible ):
                             #print( "ft", firstToken )
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
-                                    if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                    if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     USXfootnoteXML += '>' + adjToken + '</char>'
                                     fCharOpen = False
                                 if frOpen:
-                                    if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen )
+                                    if BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                                     USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                     frOpen = False
                                 USXfootnoteXML += '<char style="{}"'.format( firstToken )
@@ -3579,7 +3578,7 @@ class BibleWriter( InternalBible ):
                             else: # The problem is that a closing marker doesn't have to be followed by a space
                                 if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
-                                        if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                        if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                             logging.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                         USXfootnoteXML += '>' + adjToken + '</char>'
@@ -3590,7 +3589,7 @@ class BibleWriter( InternalBible ):
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
-                                            if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                            if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                                 logging.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                             USXfootnoteXML += '>' + adjToken + '</char>'
@@ -3603,7 +3602,7 @@ class BibleWriter( InternalBible ):
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logging.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
-                        if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen and not fTextOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
                         USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     if fCharOpen: logging.warning( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -3629,7 +3628,7 @@ class BibleWriter( InternalBible ):
                             print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
                             print( "  Verse={!r}".format( text ) )
                             print( "  Extras={!r}".format( extras ) )
-                        #assert( 0 <= adjIndex <= len(verse) )
+                        #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
@@ -3754,7 +3753,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
-                    #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if markerShouldHaveContent != 'A':
                         logging.error( "BibleWriter.toUSXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
                     if haveOpenPara:
@@ -3838,7 +3837,7 @@ class BibleWriter( InternalBible ):
         If a schema is given (either a path or URL), the XML output files are validated.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFXXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_USFX_Export/'
@@ -3921,7 +3920,7 @@ class BibleWriter( InternalBible ):
                                 .format( token.rstrip() )
                         elif lcToken.startswith('xo '): # xref reference follows
                             if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
-                                if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not xtOpen
                                 USFXxrefXML += ' closed="false">' + adjToken + '</char>'
                                 xoOpen = False
                             if xtOpen: # if we have multiple cross-references one after the other
@@ -3931,12 +3930,12 @@ class BibleWriter( InternalBible ):
                             USFXxrefXML += '<char style="xo"'
                             xoOpen = True
                         elif lcToken.startswith('xo*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( xoOpen and not xtOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert xoOpen and not xtOpen
                             USFXxrefXML += '>' + adjToken + '</char>'
                             xoOpen = False
                         elif lcToken.startswith('xt '): # xref text follows
                             if xtOpen: # Multiple xt's in a row
-                                if BibleOrgSysGlobals.debugFlag: assert( not xoOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not xoOpen
                                 USFXxrefXML += ' closed="false">' + adjToken + '</char>'
                             if xoOpen:
                                 USFXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -3945,7 +3944,7 @@ class BibleWriter( InternalBible ):
                             USFXxrefXML += '<char style="xt"'
                             xtOpen = True
                         elif lcToken.startswith('xt*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( xtOpen and not xoOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
                             USFXxrefXML += '>' + adjToken + '</char>'
                             xtOpen = False
                         #elif lcToken in ('xo*','xt*','x*',):
@@ -3953,7 +3952,7 @@ class BibleWriter( InternalBible ):
                         else:
                             logging.warning( _("toUSFXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USFXxref ) )
                     if xoOpen:
-                        if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert not xtOpen
                         USFXxrefXML += ' closed="false">' + adjToken + '</char>'
                         xoOpen = False
                     if xtOpen:
@@ -3981,27 +3980,27 @@ class BibleWriter( InternalBible ):
                             USFXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 logging.error( _("toUSFXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USFXfootnote ) )
                             if fTextOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                 USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 fTextOpen = False
-                            if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                             adjToken = token[3:]
                             USFXfootnoteXML += '<char style="fr"'
                             frOpen = True
                         elif lcToken.startswith('fr* '):
-                            if BibleOrgSysGlobals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert frOpen and not fTextOpen and not fCharOpen
                             USFXfootnoteXML += '>' + adjToken + '</char>'
                             frOpen = False
                         elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
                             if fCharOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                 USFXfootnoteXML += '>' + adjToken + '</char>'
                                 fCharOpen = False
                             if frOpen:
-                                if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
+                                if BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 frOpen = False
                             if fTextOpen:
@@ -4013,7 +4012,7 @@ class BibleWriter( InternalBible ):
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            if BibleOrgSysGlobals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
+                            if BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
                             USFXfootnoteXML += '>' + adjToken + '</char>'
                             fTextOpen = False
                         else: # Could be character formatting (or closing of character formatting)
@@ -4022,11 +4021,11 @@ class BibleWriter( InternalBible ):
                             #print( "ft", firstToken )
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
-                                    if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                    if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     USFXfootnoteXML += '>' + adjToken + '</char>'
                                     fCharOpen = False
                                 if frOpen:
-                                    if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen )
+                                    if BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                                     USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                     frOpen = False
                                 USFXfootnoteXML += '<char style="{}"'.format( firstToken )
@@ -4035,7 +4034,7 @@ class BibleWriter( InternalBible ):
                             else: # The problem is that a closing marker doesn't have to be followed by a space
                                 if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
-                                        if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                        if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                             logging.warning( _("toUSFXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
                                         USFXfootnoteXML += '>' + adjToken + '</char>'
@@ -4046,7 +4045,7 @@ class BibleWriter( InternalBible ):
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
-                                            if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
+                                            if BibleOrgSysGlobals.debugFlag: assert not frOpen
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                                 logging.warning( _("toUSFXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
                                             USFXfootnoteXML += '>' + adjToken + '</char>'
@@ -4059,7 +4058,7 @@ class BibleWriter( InternalBible ):
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logging.warning( _("toUSFXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USFXfootnote) )
-                        if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen and not fTextOpen )
+                        if BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
                         USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     if fCharOpen: logging.warning( _("toUSFXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USFXfootnote) )
                     if fTextOpen: USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -4085,7 +4084,7 @@ class BibleWriter( InternalBible ):
                             print( "toUSFXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
                             print( "  Verse={!r}".format( text ) )
                             print( "  Extras={!r}".format( extras ) )
-                        #assert( 0 <= adjIndex <= len(verse) )
+                        #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
@@ -4200,7 +4199,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineOpenText( originalMarker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
-                    #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if markerShouldHaveContent != 'A':
                         logging.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
                     if haveOpenPara:
@@ -4302,7 +4301,7 @@ class BibleWriter( InternalBible ):
                 if BBB in self.books:
                     swordAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getSwordAbbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).upper()
-                    #assert( vernacularName not in abbreviationList )
+                    #assert vernacularName not in abbreviationList
                     if vernacularName in abbreviationList:
                         if BibleOrgSysGlobals.debugFlag:
                             print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
@@ -4311,7 +4310,7 @@ class BibleWriter( InternalBible ):
                     abbreviationList.append( vernacularName )
                     if ' ' in vernacularName:
                         vernacularAbbrev = vernacularName.replace( ' ', '' )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( vernacularAbbrev not in abbreviationList )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert vernacularAbbrev not in abbreviationList
                         SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                         abbreviationList.append( vernacularAbbrev )
             for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
@@ -4369,7 +4368,7 @@ class BibleWriter( InternalBible ):
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOSISXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_OSIS_Export/'
@@ -4467,7 +4466,7 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    if BibleOrgSysGlobals.debugFlag: assert( count1 == count2 )
+                    if BibleOrgSysGlobals.debugFlag: assert count1 == count2
                     return helpText
                 # end of checkTextHelper
 
@@ -4490,7 +4489,7 @@ class BibleWriter( InternalBible ):
                     ix2 = adjText.find( '\\fig*' )
                     if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     else:
-                        if BibleOrgSysGlobals.debugFlag: assert( ix2 > ix1 )
+                        if BibleOrgSysGlobals.debugFlag: assert ix2 > ix1
                         #print( "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
                         #print( "now {!r}".format( adjText ) )
@@ -4617,7 +4616,7 @@ class BibleWriter( InternalBible ):
 
                 if extras:
                     #print( '\n', chapterRef )
-                    if BibleOrgSysGlobals.debugFlag: assert( offset >= 0 )
+                    if BibleOrgSysGlobals.debugFlag: assert offset >= 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
                         adjIndex = extraIndex - offset
@@ -4629,7 +4628,7 @@ class BibleWriter( InternalBible ):
                             print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals['verseRef'], extraIndex, offset, len(verse), adjIndex ) )
                             print( "  Verse={!r}".format( verse ) )
                             print( "  Extras={!r}".format( extras ) )
-                        #assert( 0 <= adjIndex <= len(verse) )
+                        #assert 0 <= adjIndex <= len(verse)
                         adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
                         #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
@@ -4901,7 +4900,7 @@ class BibleWriter( InternalBible ):
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
                         #print( BBB, C, V, repr(adjustedText) )
-                        if BibleOrgSysGlobals.debugFlag: assert( BBB in ('PSA','PS2',) )
+                        if BibleOrgSysGlobals.debugFlag: assert BBB in ('PSA','PS2',)
                         writerObject.writeLineOpenClose( 'title', checkText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
                 elif marker in ('s1','s2','s3','s4',):
                     if haveOpenParagraph:
@@ -4966,12 +4965,12 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineText( checkText(text), noTextCheck=True )
                 elif marker in ('b','ib'): # Blank line
                     #print( 'b', BBB, C, V )
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
                     #print( 'nb', BBB, C, V ); halt
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
                     if text:
@@ -5092,7 +5091,7 @@ class BibleWriter( InternalBible ):
             but more fields can be discovered by looking at downloaded files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toZefaniaXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Zefania_Export/'
@@ -5200,7 +5199,7 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    if BibleOrgSysGlobals.debugFlag: assert( count1 == count2 )
+                    if BibleOrgSysGlobals.debugFlag: assert count1 == count2
                     return helpText
                 # end of checkTextHelper
 
@@ -5223,7 +5222,7 @@ class BibleWriter( InternalBible ):
                     ix2 = adjText.find( '\\fig*' )
                     if ix2 == -1: logging.error( _("toZefania: Missing fig end marker for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
                     else:
-                        if BibleOrgSysGlobals.debugFlag: assert( ix2 > ix1 )
+                        if BibleOrgSysGlobals.debugFlag: assert ix2 > ix1
                         #print( "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
                         #print( "now {!r}".format( adjText ) )
@@ -5371,7 +5370,7 @@ class BibleWriter( InternalBible ):
                 # Main code for toZefaniaXML.processXRefsAndFootnotes
                 if extras:
                     #print( '\n', chapterRef )
-                    if BibleOrgSysGlobals.debugFlag: assert( offset >= 0 )
+                    if BibleOrgSysGlobals.debugFlag: assert offset >= 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
                         adjIndex = extraIndex - offset
@@ -5383,7 +5382,7 @@ class BibleWriter( InternalBible ):
                             print( "toZefania: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toZefGlobals['verseRef'], extraIndex, offset, len(verse), adjIndex ) )
                             print( "  Verse={!r}".format( verse ) )
                             print( "  Extras={!r}".format( extras ) )
-                        #assert( 0 <= adjIndex <= len(verse) )
+                        #assert 0 <= adjIndex <= len(verse)
                         adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
                         #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
@@ -5448,13 +5447,13 @@ class BibleWriter( InternalBible ):
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
-                    if BibleOrgSysGlobals.debugFlag: assert( text or extras )
+                    if BibleOrgSysGlobals.debugFlag: assert text or extras
                     #print( "Text {!r}".format( text ) )
                     if not text: # this is an empty (untranslated) verse
                          #logging.warning( "toZefania: Missing text for v~" )
@@ -5465,7 +5464,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenClose ( 'VERS', text,
                             ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)] )
                 elif marker == 'p~':
-                    if BibleOrgSysGlobals.debugFlag: assert( text or extras )
+                    if BibleOrgSysGlobals.debugFlag: assert text or extras
                     text = processXRefsAndFootnotes( text, extras )
                     #text = convertInternals( BBB, C, V, text )
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
@@ -5547,7 +5546,7 @@ class BibleWriter( InternalBible ):
             but more fields can be discovered by looking at downloaded files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHaggaiXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Haggai_Export/'
@@ -5632,13 +5631,13 @@ class BibleWriter( InternalBible ):
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
-                    if BibleOrgSysGlobals.debugFlag: assert( text or extras )
+                    if BibleOrgSysGlobals.debugFlag: assert text or extras
                     #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toHaggaiXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
@@ -5646,7 +5645,7 @@ class BibleWriter( InternalBible ):
                         text = '- - -' # but we'll put in a filler
                     writerObject.writeLineOpenClose ( 'VERSE', text, ('vnumber',verseNumberString) )
                 elif marker == 'p~':
-                    if BibleOrgSysGlobals.debugFlag: assert( text or extras )
+                    if BibleOrgSysGlobals.debugFlag: assert text or extras
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
                 else:
@@ -5729,7 +5728,7 @@ class BibleWriter( InternalBible ):
             but more fields can be discovered by looking at downloaded files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOpenSongXML..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_OpenSong_Export/'
@@ -5757,7 +5756,7 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
-                #if text: assert( text[0] != ' ' )
+                #if text: assert text[0] != ' '
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
@@ -5793,13 +5792,13 @@ class BibleWriter( InternalBible ):
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~',):
-                    if BibleOrgSysGlobals.debugFlag: assert( text or extras )
+                    if BibleOrgSysGlobals.debugFlag: assert text or extras
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
                     if startedFlag: accumulator += (' ' if accumulator else '') + BibleOrgSysGlobals.makeSafeXML( text )
@@ -5875,7 +5874,7 @@ class BibleWriter( InternalBible ):
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordModule..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Sword_Export/'
@@ -5888,7 +5887,7 @@ class BibleWriter( InternalBible ):
         self.__adjustControlDict( controlDict )
 
         import struct
-        if BibleOrgSysGlobals.debugFlag: assert( struct.calcsize("IH") == 6 ) # Six-byte format
+        if BibleOrgSysGlobals.debugFlag: assert struct.calcsize("IH") == 6 # Six-byte format
 
         # Set-up our Bible reference system
         if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
@@ -6040,7 +6039,7 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    if BibleOrgSysGlobals.debugFlag: assert( count1 == count2 )
+                    if BibleOrgSysGlobals.debugFlag: assert count1 == count2
                     return helpText
                 # end of toSwordModule.checkTextHelper
 
@@ -6404,7 +6403,7 @@ class BibleWriter( InternalBible ):
                         text = gotVP
                         gotVP = None
                     #if not chapterNumberString: # Some single chapter books don't have an explicit c marker
-                    #    if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList() )
+                    #    if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
                     verseNumberString = text
                     if not haveOpenL: closeAnyOpenLG()
                     V = text
@@ -6433,7 +6432,7 @@ class BibleWriter( InternalBible ):
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
-                        if BibleOrgSysGlobals.debugFlag: assert( BBB == 'PSA' )
+                        if BibleOrgSysGlobals.debugFlag: assert BBB == 'PSA'
                         writerObject.writeLineOpenClose( 'title', checkText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
                 elif marker in ('s1','s2','s3','s4'):
                     if haveOpenParagraph:
@@ -6502,12 +6501,12 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if text: writerObject.writeLineText( checkText(text) )
                 elif marker in ('b','ib'): # Blank line
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
                     #print( 'nb', BBB, C, V ); halt
-                    if BibleOrgSysGlobals.debugFlag: assert( not text and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
                     if text:
@@ -6596,7 +6595,7 @@ class BibleWriter( InternalBible ):
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, resettheWordMargins, theWordHandleIntroduction, theWordComposeVerseLine
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:totheWord..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_theWord_' + ('Reexport/' if self.objectTypeString=="theWord" else 'Export/')
@@ -6651,10 +6650,10 @@ class BibleWriter( InternalBible ):
                             verseData.extend( verseData18 )
                         except KeyError: pass #  just ignore it
                 if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
-                assert( '\n' not in composedLine ) # This would mess everything up
+                assert '\n' not in composedLine # This would mess everything up
                 #print( BBB, C, V, repr(composedLine) )
                 if C!=1 or V!=1: # Stay one line behind (because paragraph indicators get appended to the previous line)
-                    assert( '\n' not in ourGlobals['lastLine'] ) # This would mess everything up
+                    assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
                     writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
                     lineCount += 1
                 ourGlobals['lastLine'] = composedLine
@@ -6667,7 +6666,7 @@ class BibleWriter( InternalBible ):
                         numV = verseList[C-1]
                         V = 1
             # Write the last line of the file
-            assert( '\n' not in ourGlobals['lastLine'] ) # This would mess everything up
+            assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
             writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
             lineCount += 1
         # end of totheWord.writetWBook
@@ -6782,7 +6781,7 @@ class BibleWriter( InternalBible ):
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_MySword_' + ('Reexport/' if self.objectTypeString=="MySword" else 'Export/')
@@ -6856,7 +6855,7 @@ class BibleWriter( InternalBible ):
                         else: # next chapter only
                             numV = verseList[C-1]
                             V = 1
-                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+                #assert not ourGlobals['line'] and not ourGlobals['lastLine'] #  We should have written everything
 
             # Write the last line of the file
             if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
@@ -6998,7 +6997,7 @@ class BibleWriter( InternalBible ):
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=="e-Sword" else 'Export/')
@@ -7037,7 +7036,7 @@ class BibleWriter( InternalBible ):
                         ##print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
                         ##print( "was", "'"+line+"'" )
                         #ix = line.find( '\\'+marker+' ' )
-                        #assert( ix != -1 )
+                        #assert ix != -1
                         #ixEnd = line.find( '\\', ix+len(marker)+2 )
                         #if ixEnd == -1: # no following marker so assume field stops at the end of the line
                             #line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
@@ -7114,7 +7113,7 @@ class BibleWriter( InternalBible ):
                 try: result = bookData.getContextVerseData( (BBB,'0',str(V),) ) # Currently this only gets one line
                 except KeyError: break # Reached the end of the introduction
                 verseData, context = result
-                assert( len(verseData ) == 1 ) # in the introductory section
+                assert len(verseData ) == 1 # in the introductory section
                 marker, text = verseData[0].getMarker(), verseData[0].getFullText()
                 if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
                     if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -7176,7 +7175,7 @@ class BibleWriter( InternalBible ):
                         if text != str(V):
                             composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
                     elif vCount > 1: # We have an additional verse number
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( text != str(V) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
                         composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
                     lastMarker = marker
                     continue
@@ -7186,7 +7185,7 @@ class BibleWriter( InternalBible ):
                     logging.error( "toESword.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                     print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+                        assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
                 if marker == 'ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                 elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -7201,7 +7200,7 @@ class BibleWriter( InternalBible ):
                         text = '(' + text + ')'
                     composedLine += '<TS3><i>'+adjustLine(BBB,C,V,text)+'</i><Ts>'
                 elif marker in ( 'm', ):
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                     #if text:
@@ -7214,45 +7213,45 @@ class BibleWriter( InternalBible ):
                         #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'p', 'b', ):
                     #print( marker, text )
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                     #else: composedLine += '~^~line '
                     #composedLine += adjustLine(BBB,C,V,text)
                 elif marker in ( 'pi1', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'pi2', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'pi3', 'pmc', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'pi4', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'pc', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'pr', 'pmr', 'cls', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'b','nb','ib', 'mi', 'pm', 'pmo', ):
-                    assert( not text )
+                    assert not text
                 elif marker in ( 'q1', 'qm1', ):
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
                     else: composedLine += '~^~line '
                     #composedLine += adjustLine(BBB,C,V,text)
                 elif marker in ( 'q2', 'qm2', ):
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
                     else: composedLine += '~^~line '
                     #composedLine += '~^~line<PI2>'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'q3', 'qm3', ):
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
                     else: composedLine += '~^~line '
                     #composedLine += '~^~line<PI3>'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'q4', 'qm4', ):
-                    assert( not text )
+                    assert not text
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
                     else: composedLine += '~^~line '
@@ -7363,7 +7362,7 @@ class BibleWriter( InternalBible ):
                         else: # next chapter only
                             numV = verseList[C-1]
                             V = 1
-                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+                #assert not ourGlobals['line'] and not ourGlobals['lastLine'] #  We should have written everything
 
             # Write the last line of the file
             if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
@@ -7510,7 +7509,7 @@ class BibleWriter( InternalBible ):
                             'HEB':'Heb', 'JAM':'Jas', 'PE1':'1Pe', 'PE2':'2Pe',
                             'JN1':'1Jo', 'JN2':'2Jo', 'JN3':'3Jo', 'JDE':'Jude', 'REV':'Re' }
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordSearcher..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_SwordSearcher_Export/'
@@ -7566,10 +7565,10 @@ class BibleWriter( InternalBible ):
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert( not text )
+                    if BibleOrgSysGlobals.debugFlag: assert not text
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not text )
+                    if BibleOrgSysGlobals.debugFlag: assert not text
                     ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~',):
                     if started: accumulator += (' ' if accumulator else '') + text
@@ -7626,7 +7625,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into the DrupalBible format.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDrupalBible..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_DrupalBible_' + ('Reexport/' if self.objectTypeString=="DrupalBible" else 'Export/')
@@ -7743,10 +7742,10 @@ class BibleWriter( InternalBible ):
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert( not text )
+                    if BibleOrgSysGlobals.debugFlag: assert not text
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not text )
+                    if BibleOrgSysGlobals.debugFlag: assert not text
                     ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~', 'tr',):
                     if started: accumulator += (' ' if accumulator else '') + text
@@ -7813,7 +7812,7 @@ class BibleWriter( InternalBible ):
         """
         import unicodedata
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PhotoBible_Export/'
@@ -7827,8 +7826,8 @@ class BibleWriter( InternalBible ):
         if pixelWidthManualSetting: pixelWidth = int( pixelWidthManualSetting )
         pixelHeightManualSetting = self.getSetting( 'PBPixelHeight' )
         if pixelHeightManualSetting: pixelWidth = int( pixelHeightManualSetting )
-        assert( 240 <= pixelWidth <= 1080 )
-        assert( 320 <= pixelHeight <= 1920 )
+        assert 240 <= pixelWidth <= 1080
+        assert 320 <= pixelHeight <= 1920
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
         # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
         #       Available colors are at http://www.imagemagick.org/script/color.php
@@ -7846,8 +7845,8 @@ class BibleWriter( InternalBible ):
         if maxLineCharactersManualSetting: maxLineCharacters = int( maxLineCharactersManualSetting )
         maxLinesManualSetting = self.getSetting( 'BPMaxLines' )
         if maxLinesManualSetting: maxLines = int( maxLinesManualSetting )
-        assert( 20 <= maxLineCharacters <= 40 )
-        assert( 10 <= maxLines <= 20 )
+        assert 20 <= maxLineCharacters <= 40
+        assert 10 <= maxLines <= 20
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         if BibleOrgSysGlobals.verbosityLevel > 2:
@@ -8003,7 +8002,7 @@ class BibleWriter( InternalBible ):
                 elif '_I3_' in line: indenter, extraLineIndent = '_I3_', 3; line = line.replace( '_I3_', '', 1 )
                 elif '_I4_' in line: indenter, extraLineIndent = '_I4_', 4; line = line.replace( '_I4_', '', 1 )
                 if BibleOrgSysGlobals.debugFlag: # Should only be one
-                    assert( '_I1_' not in line and '_I2_' not in line and '_I3_' not in line and '_I4_' not in line )
+                    assert '_I1_' not in line and '_I2_' not in line and '_I3_' not in line and '_I4_' not in line
 
                 #verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
 
@@ -8055,7 +8054,7 @@ class BibleWriter( InternalBible ):
                             word = word[:vix]+word[vix+3:]
                             for digit,newDigit in verseDigitSubstitutions.items():
                                 word = word.replace( digit, newDigit )
-                        #assert( 'VvV' not in word )
+                        #assert 'VvV' not in word
 
                         if down >= maxDown - leading \
                         or outputLineCount == maxLines - 1: lastLine = True
@@ -8083,7 +8082,7 @@ class BibleWriter( InternalBible ):
 
                         potentialLength = len(lineBuffer) + len(word) + offset
                         if lastLine and isVerseNumber: # We would have to include the next word also
-                            if BibleOrgSysGlobals.debugFlag: assert( w < len(words)-1 )
+                            if BibleOrgSysGlobals.debugFlag: assert w < len(words)-1
                             potentialLength += len(words[w+1]) + 1
                             for letter in words[w+1]:
                                 if unicodedata.combining(letter): potentialLength -= 1
@@ -8268,7 +8267,7 @@ class BibleWriter( InternalBible ):
                     numVerses += 1
 
                 elif marker in ('d','sp','cd', 'lit',):
-                    #assert( cleanText or extras )
+                    #assert cleanText or extras
                     textBuffer += '\n' + cleanText
                 elif marker in ('r','sr','mr',):
                     #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
@@ -8289,15 +8288,15 @@ class BibleWriter( InternalBible ):
                     #if marker == 'q2': textBuffer += ' '
                     #elif marker == 'q3': textBuffer += '  '
                     if marker in ('ip','ipi','ili1','ili2','ili3','ili4',): textBuffer += cleanText
-                    elif BibleOrgSysGlobals.debugFlag: assert( not cleanText )
+                    elif BibleOrgSysGlobals.debugFlag: assert not cleanText
                 elif marker == 'tr':
-                    #assert( cleanText or extras )
+                    #assert cleanText or extras
                     textBuffer += '\n' + cleanText
                 elif marker in ('v~','p~',):
-                    #assert( cleanText or extras )
+                    #assert cleanText or extras
                     textBuffer += cleanText
                 elif marker in ('b','nb','ib',):
-                    if BibleOrgSysGlobals.debugFlag: assert( not cleanText )
+                    if BibleOrgSysGlobals.debugFlag: assert not cleanText
                     textBuffer += '\n'
                     textBuffer += '\n'
                 else:
@@ -8370,7 +8369,7 @@ class BibleWriter( InternalBible ):
         from time import sleep
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_ODF_Export/'
@@ -9123,7 +9122,7 @@ class BibleWriter( InternalBible ):
             Format character codes within the text into ODF
             """
             #print( "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-            if BibleOrgSysGlobals.debugFlag: assert( givenText or extras )
+            if BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
             def handleExtras( text, extras ):
                 """
@@ -9159,7 +9158,7 @@ class BibleWriter( InternalBible ):
 
                 \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
                 """
-                assert( noteType in ('fn','en',) )
+                assert noteType in ('fn','en',)
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
                 #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                 note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
@@ -9189,7 +9188,7 @@ class BibleWriter( InternalBible ):
                     bits = rawFootnoteContents.split( ' ', 1 )
                     if len(bits)==2: # assume the caller is the first bit
                         caller = bits[0]
-                        if BibleOrgSysGlobals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                        if BibleOrgSysGlobals.debugFlag: assert len(caller) == 1 # Normally a +
                         note.insertString( noteCursor, bits[1],  False )
                     else: # no idea really what the format was
                         note.insertString( noteCursor, rawFootnoteContents,  False )
@@ -9283,7 +9282,7 @@ class BibleWriter( InternalBible ):
                             textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
                             documentText.insertString( textCursor, txt, 0 )
                         elif marker in charODFStyleDict and nextSignificantChar=='-': # it's a closing nesting marker
-                            assert(context )
+                            assertcontext
                             #print( "  BibleWriter.toODF: 3dc3", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[context[0]] )
                             documentText.insertString( textCursor, txt, 0 )
@@ -9299,7 +9298,7 @@ class BibleWriter( InternalBible ):
                                 logging.critical( "toODF: {} character style doesn't seem to exist".format( repr(csn) ) )
                             documentText.insertString( textCursor, '('+txt+')', 0 )
                         elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
-                            assert( not txt )
+                            assert not txt
                             logging.warning( "toODF: ignored blank {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
                         else:
                             logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
@@ -9519,16 +9518,16 @@ class BibleWriter( InternalBible ):
                     styleName += "List Item {}".format( marker[-1] )
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('v~','p~',):
-                    if BibleOrgSysGlobals.debugFlag: assert( inTextParagraph )
+                    if BibleOrgSysGlobals.debugFlag: assert inTextParagraph
                     if adjText or extras:
                         insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
                     startingNewParagraphFlag = False
                 elif marker in ( 'b', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert( not adjText and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                     textCursor.setPropertyValue( "ParaStyleName", 'Blank Line Paragraph' if marker=='b' else 'Introduction Blank Line Paragraph' )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
-                    if BibleOrgSysGlobals.debugFlag: assert( not adjText and not extras )
+                    if BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('cp',): # We can safely ignore these markers for the ODF export
                     ignoredMarkers.add( marker )
@@ -9591,7 +9590,7 @@ class BibleWriter( InternalBible ):
         """
         import subprocess
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX..." )
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_TeX_Export/'
@@ -9715,7 +9714,7 @@ class BibleWriter( InternalBible ):
             """
             Call xelatex to make the Bible PDF file(s) from the .tex file.
             """
-            assert( texFilepath.endswith( '.tex' ) )
+            assert texFilepath.endswith( '.tex' )
             mainFilepath = texFilepath[:-4] # Remove the .tex bit
 
             # Work through the various class files for different styles of Bible layouts
@@ -9838,11 +9837,11 @@ class BibleWriter( InternalBible ):
                             allFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
                             bookFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
                         elif marker in pMarkerTranslate:
-                            assert( not text )
+                            assert not text
                             allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
                             bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
                         elif marker in listMarkerTranslate:
-                            assert( not text )
+                            assert not text
                             allFile.write( "\\BibleParagraphStyle{}\n".format( listMarkerTranslate[marker] ) )
                             bookFile.write( "\\BibleParagraphStyle{}\n".format( listMarkerTranslate[marker] ) )
                         elif marker in ('v~','p~',):
@@ -9928,7 +9927,7 @@ class BibleWriter( InternalBible ):
             if not os.access( givenOutputFolderName, os.F_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
-        if BibleOrgSysGlobals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
+        if BibleOrgSysGlobals.debugFlag: assert givenOutputFolderName and isinstance( givenOutputFolderName, str )
         if not os.access( givenOutputFolderName, os.W_OK ): # Then our output folder is not writeable!
             logging.critical( "BibleWriter.doAllExports: " + _("Given {!r} folder is unwritable" ).format( givenOutputFolderName ) )
             return False
@@ -10038,7 +10037,7 @@ class BibleWriter( InternalBible ):
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
                                     swOutputFolder, tWOutputFolder, MySwOutputFolder, ESwOutputFolder,
                                     SwSOutputFolder, DrOutputFolder, ]
-            assert( len(self.__outputFolders) == len(self.__outputProcesses) )
+            assert len(self.__outputFolders) == len(self.__outputProcesses)
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -10047,7 +10046,7 @@ class BibleWriter( InternalBible ):
             #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 #results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 #if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
-                #assert( len(results) == len(self.__outputFolders) )
+                #assert len(results) == len(self.__outputFolders)
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                     #USFMExportResult, ESFMExportResult, textExportResult, \
@@ -10078,7 +10077,7 @@ class BibleWriter( InternalBible ):
                                     result, result, result, result, result, result, result, result, result, result, result, ]
             #print( "async results2 are", results )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
-            assert( len(results) == len(self.__outputFolders) )
+            assert len(results) == len(self.__outputFolders)
             PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                 listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                 USFMExportResult, ESFMExportResult, textExportResult, VPLExportResult, \

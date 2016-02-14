@@ -5,7 +5,7 @@
 #
 # Module handling DrupalBible Bible files
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-15' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.09'
@@ -109,8 +109,8 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns the loaded DrupalBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -188,7 +188,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = DrupalBible( foundProjects[0][0], foundProjects[0][1][:-3] ) # Remove the end of the actual filename ".bc"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -206,8 +206,8 @@ class DrupalBible( Bible ):
         Constructor: just sets up the Bible object.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DrupalBible__init__ ( {!r}, {!r}, {!r} )").format( sourceFolder, givenName, encoding ) )
-        assert( sourceFolder )
-        assert( givenName )
+        assert sourceFolder
+        assert givenName
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -266,7 +266,7 @@ class DrupalBible( Bible ):
                     else: # Get the book name details
                         bits = line.split( '|' )
                         bookCode, bookFullName, bookShortName, numChapters = bits
-                        assert( bookShortName == bookCode )
+                        assert bookShortName == bookCode
                         BBBresult = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                         BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                         bookDetails[BBB] = bookFullName, bookShortName, numChapters
@@ -379,7 +379,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testDB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )

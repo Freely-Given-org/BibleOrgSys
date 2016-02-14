@@ -5,7 +5,7 @@
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-02' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
 ProgVersion = '0.83'
@@ -95,7 +95,7 @@ class BibleBookOrdersConverter:
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
                     self._XMLSystems[bookOrderSystemCode] = {}
                     self._XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
-                    assert( self._XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                    assert self._XMLSystems[bookOrderSystemCode]["tree"] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
                     if self._XMLSystems[bookOrderSystemCode]["tree"].tag  == self.treeTag:
@@ -139,7 +139,7 @@ class BibleBookOrdersConverter:
 
     def __validateSystem( self, bookOrderTree, systemName ):
         """ Do a semi-automatic check of the XML file validity. """
-        assert( bookOrderTree )
+        assert bookOrderTree
 
         uniqueDict = {}
         for elementName in self.uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -254,7 +254,7 @@ class BibleBookOrdersConverter:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         if self.__DataDicts and self.__DataLists: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts, self.__DataLists
 
@@ -277,8 +277,8 @@ class BibleBookOrdersConverter:
                     logging.error( _("Duplicate {} ID (book index) numbers in {!r} book order system").format( intID, bookOrderSystemCode ) )
                 idDataDict[intID] = bookRA
                 BBBList.append( bookRA )
-            assert( len(bookDataDict) == len(idDataDict) )
-            assert( len(bookDataDict) == len(BBBList) )
+            assert len(bookDataDict) == len(idDataDict)
+            assert len(bookDataDict) == len(BBBList)
 
             if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataLists:
@@ -311,9 +311,9 @@ class BibleBookOrdersConverter:
         """
         import pickle
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self.__DataDicts and self.__DataLists )
+        assert self.__DataDicts and self.__DataLists
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
@@ -338,9 +338,9 @@ class BibleBookOrdersConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self.__DataDicts and self.__DataLists )
+        assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -376,9 +376,9 @@ class BibleBookOrdersConverter:
         """
         import json
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self.__DataDicts and self.__DataLists )
+        assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -433,9 +433,9 @@ class BibleBookOrdersConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLSystems )
+        assert self._XMLSystems
         self.importDataToPython()
-        assert( self.__DataDicts and self.__DataLists )
+        assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
@@ -484,9 +484,9 @@ class BibleBookOrdersConverter:
         #Check the given book order scheme against all the loaded systems.
         #Create a new book order file if it doesn't match any.
         #"""
-        #assert( systemName )
-        #assert( bookOrderSchemeToCheck )
-        #assert( self.Lists )
+        #assert systemName
+        #assert bookOrderSchemeToCheck
+        #assert self.Lists
         ##print( systemName, bookOrderSchemeToCheck )
 
         #matchedBookOrderSystemCodes = []

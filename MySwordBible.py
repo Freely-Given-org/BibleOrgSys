@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.18'
@@ -106,8 +106,8 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         returns the loaded MySwordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -184,7 +184,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             twB = MySwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: twB.load() # Load and process the file
             return twB
@@ -443,7 +443,7 @@ def demo():
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw D{}/ Trying {}".format( j+1, someFile ) )
@@ -464,7 +464,7 @@ def demo():
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )

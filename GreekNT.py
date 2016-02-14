@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2014-12-17 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2014 Robert Hunt
+# Copyright (C) 2012-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -43,13 +42,15 @@ Module handling xxx to produce C and Python data tables.
     010102 V- 3AAI-S-- ἐγέννησεν ἐγέννησεν ἐγέννησε(ν) γεννάω
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-13' # by RJH
 ProgName = "Greek NT format handler"
 ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
-from gettext import gettext as _
 
 import BibleOrgSysGlobals, Greek
 from Bible import Bible, BibleBook
@@ -156,7 +157,7 @@ class GreekNT( Bible ):
             #       180102 P- -------- κατ’ κατ’ κατά κατά
             #       180102 N- ----DSF- ἐκκλησίᾳ· ἐκκλησίᾳ ἐκκλησίᾳ ἐκκλησία
             bits = line.split()
-            assert( len(bits) == 7 )
+            assert len(bits) == 7
             #print( bits )
 
             bn, cn, vn = bits[0][0:2], bits[0][2:4], bits[0][4:6]
@@ -166,22 +167,22 @@ class GreekNT( Bible ):
             #print( b, c, v )
 
             POSCode = bits[1]
-            assert( len(POSCode) == 2 )
-            assert( POSCode in Greek.POSCodes.keys() )
+            assert len(POSCode) == 2
+            assert POSCode in Greek.POSCodes.keys()
 
             parsingCode = bits[2]
-            assert( len(parsingCode) == 8 )
+            assert len(parsingCode) == 8
             #print( parsingCode )
             for j,char in enumerate(parsingCode):
-                assert( char in Greek.parsingCodes[j] )
-            assert( parsingCode[0] in Greek.personCodes )
-            assert( parsingCode[1] in Greek.tenseCodes )
-            assert( parsingCode[2] in Greek.voiceCodes )
-            assert( parsingCode[3] in Greek.modeCodes )
-            assert( parsingCode[4] in Greek.caseCodes )
-            assert( parsingCode[5] in Greek.numberCodes )
-            assert( parsingCode[6] in Greek.genderCodes )
-            assert( parsingCode[7] in Greek.degreeCodes )
+                assert char in Greek.parsingCodes[j]
+            assert parsingCode[0] in Greek.personCodes
+            assert parsingCode[1] in Greek.tenseCodes
+            assert parsingCode[2] in Greek.voiceCodes
+            assert parsingCode[3] in Greek.modeCodes
+            assert parsingCode[4] in Greek.caseCodes
+            assert parsingCode[5] in Greek.numberCodes
+            assert parsingCode[6] in Greek.genderCodes
+            assert parsingCode[7] in Greek.degreeCodes
 
             return (bn,cn,vn,), (POSCode,parsingCode,), (bits[3],bits[4],bits[5],bits[6],)
         # end of unpackLine
@@ -257,7 +258,7 @@ class GreekNT( Bible ):
                     for oldRefList,oldnormalizedWord in previous:
                         #print( "  oRL", oldRefList, "oP", oldnormalizedWord )
                         if normalizedWord == oldnormalizedWord:
-                            assert( not found )
+                            assert not found
                             if reference not in oldRefList:
                                 oldRefList.append( reference )
                                 newList.append( (oldRefList,oldnormalizedWord,) )
@@ -283,7 +284,7 @@ class GreekNT( Bible ):
                     for oldRefList,oldActualWord in previous:
                         #print( "  oRL", oldRefList, "oP", oldActualWord )
                         if actualWord == oldActualWord:
-                            assert( not found )
+                            assert not found
                             if reference not in oldRefList:
                                 oldRefList.append( reference )
                                 newList.append( (oldRefList,oldActualWord,) )
@@ -307,7 +308,7 @@ class GreekNT( Bible ):
                     for oldRefList,oldParsing in previous:
                         #print( "  oRL", oldRefList, "oP", oldParsing )
                         if parsing == oldParsing:
-                            assert( not found )
+                            assert not found
                             if reference not in oldRefList:
                                 oldRefList.append( reference )
                                 newList.append( (oldRefList,oldParsing,) )
@@ -332,7 +333,7 @@ class GreekNT( Bible ):
                     for oldRefList,oldnormalizedWord in previous:
                         #print( "  oRL", oldRefList, "oP", oldnormalizedWord )
                         if normalizedWord == oldnormalizedWord:
-                            assert( not found )
+                            assert not found
                             if reference not in oldRefList:
                                 oldRefList.append( reference )
                                 newList.append( (oldRefList,oldnormalizedWord,) )
@@ -378,12 +379,12 @@ class GreekNT( Bible ):
 
     #def xgetVerseData( self, reference ):
         #""" Return the text for the verse with some adjustments. """
-        #assert( len(reference) == 3 ) # BBB,C,V
+        #assert len(reference) == 3 # BBB,C,V
         #BBB, chapterString, verseString = reference
-        #assert( isinstance(BBB,str) and len(BBB)==3 )
-        #assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-        #assert( isinstance( chapterString, str ) )
-        #assert( isinstance( verseString, str ) )
+        #assert isinstance(BBB,str) and len(BBB)==3
+        #assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+        #assert isinstance( chapterString, str )
+        #assert isinstance( verseString, str )
         #data = []
         #if BBB in self.books:
             #for stuff in self.books[BBB]: # Stuff is: reference,parsing,words

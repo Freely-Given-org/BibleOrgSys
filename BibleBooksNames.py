@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-24' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.37'
@@ -61,8 +61,8 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
         Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
             trying to find unambiguous shortcuts which the user could use.
         """
-        assert( UCString)
-        assert( originalDict )
+        assert UCString
+        assert originalDict
 
         # Drop off final letters and remove internal spaces
         tempString = UCString
@@ -104,9 +104,9 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             tempString = tempString[:-1] # Drop off another letter
     # end of expandAbbrevs
 
-    assert( systemName )
-    assert( divisionsNamesDict ); assert( booknameLeadersDict ); assert( bookNamesDict )
-    assert( bookList )
+    assert systemName
+    assert divisionsNamesDict and booknameLeadersDict and bookNamesDict
+    assert bookList
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)...").format( systemName, len(bookList) ) )
 
@@ -115,7 +115,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     #print( "bnLD", len(booknameLeadersDict), booknameLeadersDict )
     for leader in booknameLeadersDict:
         UCLeader = leader.upper()
-        assert( UCLeader not in UCBNLeadersDict )
+        assert UCLeader not in UCBNLeadersDict
         UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
         #UCBNLeadersDict[UCLeader].append( UCLeader ) # We have to add ourselves to this list
     #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
@@ -179,12 +179,12 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
     for field in tempDNDict:
         if field not in ambigSet:
-            assert( field not in divNameInputDict )
+            assert field not in divNameInputDict
             divNameInputDict[field] = tempDNDict[field]
     #print( "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
     for field in tempBNDict:
         if field not in ambigSet:
-            assert( field not in bkNameInputDict )
+            assert field not in bkNameInputDict
             bkNameInputDict[field] = tempBNDict[field]
         #else: print( "Didn't add {!r}", field )
     #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
@@ -260,7 +260,7 @@ class BibleBooksNamesSystems:
         @rtype: string
         """
         result = "BibleBooksNamesSystems object"
-        if self.__ExpandedDicts: assert( len(self.__DataDicts) == len(self.__ExpandedDicts) )
+        if self.__ExpandedDicts: assert len(self.__DataDicts) == len(self.__ExpandedDicts)
         result += ('\n' if result else '') + '  ' + _("Number of loaded bookname systems = {}").format( len(self.__DataDicts) )
         return result
     # end of BibleBooksNamesSystems.__str__
@@ -286,7 +286,7 @@ class BibleBooksNamesSystems:
         if languageCode is None:
             return [systemName for systemName in self.__DataDicts]
         # else -- we were given a language code
-        assert( len(languageCode) == 3 ) # ISO 639-3
+        assert len(languageCode) == 3 # ISO 639-3
         search = languageCode + '_'
         result = []
         for systemName in self.__DataDicts:
@@ -301,7 +301,7 @@ class BibleBooksNamesSystems:
         """
         result = set()
         for systemName in self.__DataDicts:
-            assert( len(systemName) >= 3 )
+            assert len(systemName) >= 3
             languageCode = systemName[:3]
             result.add( languageCode )
         return result
@@ -315,7 +315,7 @@ class BibleBooksNamesSystems:
 
         Tries all the known Bible Books Names systems.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( bookNameOrAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert bookNameOrAbbreviation
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
 
         for systemName in self.__DataDicts:
@@ -351,11 +351,11 @@ class BibleBooksNamesSystems:
                     logging.error( _("Invalid {!r} in booklist requested for {} books names system").format( BBB, systemName ) )
 
         if systemName in self.__DataDicts:
-            assert( len(self.__DataDicts[systemName]) == 3 )
+            assert len(self.__DataDicts[systemName]) == 3
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__DataDicts[systemName] # unpack it so it's clearer what we're doing here
             if bookList is None:
                 if self.__ExpandedDicts:
-                    assert( len(self.__ExpandedDicts[systemName]) == 2 )
+                    assert len(self.__ExpandedDicts[systemName]) == 2
                     return divisionsNamesDict, booknameLeadersDict, bookNamesDict, self.__ExpandedDicts[systemName][0], self.__ExpandedDicts[systemName][1]
                 # else we haven't done any previous input abbreviation expansion
                 return divisionsNamesDict, booknameLeadersDict, bookNamesDict, OrderedDict(), OrderedDict()
@@ -459,7 +459,7 @@ class BibleBooksNamesSystem:
         """
         Get the default book name from the given referenceAbbreviation.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
+        if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
@@ -468,7 +468,7 @@ class BibleBooksNamesSystem:
         """
         Get the default book abbreviation from the given referenceAbbreviation.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
+        if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
         return self.__bookNamesDict[BBB]['defaultAbbreviation']
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
@@ -478,7 +478,7 @@ class BibleBooksNamesSystem:
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
         """
-        if BibleOrgSysGlobals.debugFlag: assert( bookNameOrAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert bookNameOrAbbreviation
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         try:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
@@ -504,7 +504,7 @@ class BibleBooksNamesSystem:
         Get the division standardAbbreviation from the given division name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
         """
-        if BibleOrgSysGlobals.debugFlag: assert( divisionNameOrAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert divisionNameOrAbbreviation
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
             #print( self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
@@ -524,7 +524,7 @@ class BibleBooksNamesSystem:
         Returns the booklist for the division given the division standardAbbreviation
                                                 or else given a vernacular inputAbbreviation.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( divisionAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert divisionAbbreviation
         if divisionAbbreviation in self.__divisionsNamesDict:
             return self.__divisionsNamesDict[divisionAbbreviation]['includedBooks']
         # else it might be a vernacular value

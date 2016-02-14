@@ -5,7 +5,7 @@
 #
 # Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,7 +31,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-05-21' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleVersificationSystemsConverter"
 ProgName = "Bible Versification Systems converter"
 ProgVersion = '0.50'
@@ -97,7 +97,7 @@ class BibleVersificationSystemsConverter:
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading{} versification system from {}...").format( versificationSystemCode, filename ) )
                     self.__XMLSystems[versificationSystemCode] = {}
                     self.__XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
-                    assert( self.__XMLSystems[versificationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                    assert self.__XMLSystems[versificationSystemCode]["tree"] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
                     if self.__XMLSystems[versificationSystemCode]["tree"].tag  == self.__treeTag:
@@ -137,7 +137,7 @@ class BibleVersificationSystemsConverter:
     def _validateSystem( self, versificationTree ):
         """
         """
-        assert( versificationTree )
+        assert versificationTree
 
         uniqueDict = {}
         for elementName in self.__uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -258,7 +258,7 @@ class BibleVersificationSystemsConverter:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         if self.__DataDict: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDict
 
@@ -284,7 +284,7 @@ class BibleVersificationSystemsConverter:
                 for chapterElement in bookElement.findall("numVerses"):
                     chapter = chapterElement.get("chapter")
                     numVerses = chapterElement.text
-                    assert( chapter not in chapterData )
+                    assert chapter not in chapterData
                     chapterData[chapter] = numVerses
                     omittedVerses = chapterElement.get( "omittedVerses" )
                     if omittedVerses is not None:
@@ -298,7 +298,7 @@ class BibleVersificationSystemsConverter:
                     if reorderedVerses is not None:
                         reorderedVersesData.append( (chapter, reorderedVerses,) )
                 # Save it by book reference abbreviation
-                #assert( BBB not in bookData )
+                #assert BBB not in bookData
                 #bookData[BBB] = (chapterData, omittedVersesData,)
                 if BBB in chapterDataDict:
                     logging.error( _("Duplicate {} in {}").format( BBB, versificationSystemCode ) )
@@ -351,7 +351,7 @@ class BibleVersificationSystemsConverter:
 
         Checks that the BibMaxRef versification system contains the most books / chapters / verses.
         """
-        assert( self.__DataDict )
+        assert self.__DataDict
         referenceCode = "BibMaxRef"
         referenceVersificationSystem = self.__DataDict[referenceCode]
 
@@ -365,9 +365,9 @@ class BibleVersificationSystemsConverter:
                     if thisSystem == secondSystem: logging.warning( _("The {} and {} systems are identical.").format( versificationSystemCode, versificationSystemCode2 ) )
 
             if versificationSystemCode == referenceCode:
-                assert( not thisSystem['omitted'] )
-                assert( not thisSystem['combined'] )
-                assert( not thisSystem['reordered'] )
+                assert not thisSystem['omitted']
+                assert not thisSystem['combined']
+                assert not thisSystem['reordered']
             else:
                 for BBB in thisSystem['CV']:
                     #print( BBB )
@@ -398,9 +398,9 @@ class BibleVersificationSystemsConverter:
         """
         import pickle
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__DataDict )
+        assert self.__DataDict
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
@@ -425,9 +425,9 @@ class BibleVersificationSystemsConverter:
         # end of exportPythonDict
 
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__DataDict )
+        assert self.__DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -468,9 +468,9 @@ class BibleVersificationSystemsConverter:
         """
         import json
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__DataDict )
+        assert self.__DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -575,9 +575,9 @@ class BibleVersificationSystemsConverter:
         # end of XXXexportPythonDict
 
 
-        assert( self.__XMLSystems )
+        assert self.__XMLSystems
         self.importDataToPython()
-        assert( self.__DataDict )
+        assert self.__DataDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'

@@ -5,7 +5,7 @@
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,7 +30,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-10' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
 ProgVersion = '0.09'
@@ -40,8 +40,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os.path
-from xml.etree.ElementTree import ElementTree
+import os.path
 
 import BibleOrgSysGlobals
 from InternalBibleBook import InternalBibleBook
@@ -150,8 +149,8 @@ class BibleBook ( InternalBibleBook ):
         #"""
         #Append the stuff tuple to a Bible book.
         #"""
-        #if BibleOrgSysGlobals.debugFlag: assert( len(stuff) == 2 )
-        #if BibleOrgSysGlobals.debugFlag: assert( stuff[0] in self.textCodes )
+        #if BibleOrgSysGlobals.debugFlag: assert len(stuff) == 2
+        #if BibleOrgSysGlobals.debugFlag: assert stuff[0] in self.textCodes
         #self.text.append( stuff )
     ## end of append
 
@@ -269,7 +268,7 @@ class Bible( BibleWriter ):
             #if adjText.endswith( '\\' ): logging.error( "Unexpected field ending with backslash: {!r}".format( text ) )
             #while '\\' in adjText:
                 #ix = adjText.find( '\\' )
-                #assert( ix != -1 )
+                #assert ix != -1
                 #ch1 = adjText[ix+1] if ix+1<len(adjText) else ''
                 #ch2 = adjText[ix+2] if ix+2<len(adjText) else ''
                 #if ch2 != ' ': logging.error( "Unexpected characters after backslash: {!r}".format( text ) )
@@ -284,8 +283,8 @@ class Bible( BibleWriter ):
                     #endString = endString[:-1] # without the final space
                     #eix = adjText.find( endString )
                 #if eix == -1: logging.error( "Can't find end of backslash field in {!r}".format( text ) )
-                #part1 = adjText[:ix]; assert( part1 )
-                #part2 = adjText[ix+3:eix]; assert( part2 )
+                #part1 = adjText[:ix]; assert part1
+                #part2 = adjText[ix+3:eix]; assert part2
                 #adjText = adjText[eix+len(endString):]
                 ##print( "\n{!r}  {!r}  {!r}".format( part1, part2, adjText ) )
                 #store.append( ('Txt', part1,) )

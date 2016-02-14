@@ -110,7 +110,7 @@ class BibleReferencesLinks:
         #"""
         #Return the number of available codes.
         #"""
-        #assert( len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
+        #assert len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
         #return len(self.__DataList["referenceAbbreviationDict"])
 
 
@@ -248,7 +248,7 @@ class BibleReferencesLinks:
         ##"""
         ##Return the number of available codes.
         ##"""
-        ##assert( len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
+        ##assert len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
         ##return len(self.__DataList["referenceAbbreviationDict"])
 
 

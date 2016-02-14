@@ -122,13 +122,13 @@ class BibleReferencesLinksConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        assert( XMLFilepath )
+        assert XMLFilepath )
         self.__XMLFilepath = XMLFilepath
-        assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
+        assert self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleReferencesLinks XML file from {!r}...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
-        assert( self._XMLtree ) # Fail here if we didn't load anything at all
+        assert self._XMLtree ) # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag == self._treeTag:
             header = self._XMLtree[0]
@@ -165,7 +165,7 @@ class BibleReferencesLinksConverter:
         """
         Check/validate the loaded data.
         """
-        assert( self._XMLtree )
+        assert self._XMLtree )
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -287,7 +287,7 @@ class BibleReferencesLinksConverter:
             Returns a list containing all parameters. Parameter1 may already be a list.
             """
             if isinstance( parameter1, list ):
-                #assert( parameter2 not in parameter1 )
+                #assert parameter2 not in parameter1 )
                 parameter1.append( parameter2 )
                 return parameter1
             else:
@@ -295,7 +295,7 @@ class BibleReferencesLinksConverter:
         # end of makeList
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         if self.__DataList: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataList, self.__DataDict
 
@@ -308,7 +308,7 @@ class BibleReferencesLinksConverter:
             # Get these first for helpful error messages
             sourceReference = element.find('sourceReference').text
             sourceComponent = element.find('sourceComponent').text
-            assert( sourceComponent in ('Section','Verses','Verse',) )
+            assert sourceComponent in ('Section','Verses','Verse',) )
 
             BibleOrgSysGlobals.checkXMLNoText( element, sourceReference, 'kls1' )
             BibleOrgSysGlobals.checkXMLNoAttributes( element, sourceReference, 'kd21' )
@@ -329,9 +329,9 @@ class BibleReferencesLinksConverter:
 
                     targetReference = subelement.find('targetReference').text
                     targetComponent = subelement.find('targetComponent').text
-                    assert( targetComponent in ('Section','Verses','Verse',) )
+                    assert targetComponent in ('Section','Verses','Verse',) )
                     linkType = subelement.find('linkType').text
-                    assert( linkType in ('TSK','QuotedOTReference','AlludedOTReference','PossibleOTReference',) )
+                    assert linkType in ('TSK','QuotedOTReference','AlludedOTReference','PossibleOTReference',) )
 
                     actualRawLinksList.append( (targetReference,targetComponent,linkType,) )
                     actualLinkCount += 1
@@ -363,7 +363,7 @@ class BibleReferencesLinksConverter:
             parsedSourceReference = FlexibleVersesKey( sourceReference )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( j, sourceComponent, sourceReference, parsedSourceReference )
-                #assert( parsedSourceReference.getShortText().replace(' ','_') == sourceReference )
+                #assert parsedSourceReference.getShortText().replace(' ','_') == sourceReference )
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
                 # Just do some testing first
@@ -385,7 +385,7 @@ class BibleReferencesLinksConverter:
                     parsedTargetReference = None
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( ' ', targetComponent, targetReference, parsedTargetReference )
-                    #assert( parsedTargetReference.getShortText().replace(' ','_',1) == targetReference )
+                    #assert parsedTargetReference.getShortText().replace(' ','_',1) == targetReference )
 
                 actualLinksList.append( (targetReference,targetComponent,parsedTargetReference,linkType,) )
                 actualLinkCount += 1
@@ -407,7 +407,7 @@ class BibleReferencesLinksConverter:
             #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for verseRef in parsedSourceReference.getIncludedVerses():
                 #print( verseRef )
-                assert( isinstance( verseRef, SimpleVerseKey ) )
+                assert isinstance( verseRef, SimpleVerseKey ) )
                 if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
             #print( myRefLinkDict ); halt
@@ -423,7 +423,7 @@ class BibleReferencesLinksConverter:
                 if parsedTargetReference is not None:
                     for verseRef in parsedTargetReference.getIncludedVerses():
                         #print( verseRef )
-                        assert( isinstance( verseRef, SimpleVerseKey ) )
+                        assert isinstance( verseRef, SimpleVerseKey ) )
                         if linkType == 'TSK': reverseLinkType = 'TSKQuoted'
                         elif linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
                         elif linkType == 'AlludedOTReference': reverseLinkType = 'OTReferenceAlluded'
@@ -458,10 +458,10 @@ class BibleReferencesLinksConverter:
         """
         import pickle
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         self.importDataToPython()
-        assert( self.__DataList )
-        assert( self.__DataDict )
+        assert self.__DataList )
+        assert self.__DataDict )
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -482,10 +482,10 @@ class BibleReferencesLinksConverter:
         """
         import pickle
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         self.importDataToPython()
-        assert( self.__DataList )
-        assert( self.__DataDict )
+        assert self.__DataList )
+        assert self.__DataDict )
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -501,7 +501,7 @@ class BibleReferencesLinksConverter:
                 #print( " ", refList )
                 length = myFile.write( pickle.dumps( refList ) )
                 #print( " ", filePosition, length )
-                assert( vKey not in index )
+                assert vKey not in index )
                 index[vKey] = (filePosition, length )
                 filePosition += length
         with open( indexFilepath, 'wb' ) as myFile:
@@ -515,7 +515,7 @@ class BibleReferencesLinksConverter:
         """
         def exportPythonDictOrList( theFile, theDictOrList, dictName, keyComment, fieldsComment ):
             """Exports theDictOrList to theFile."""
-            assert( theDictOrList )
+            assert theDictOrList )
             raise Exception( "Not written yet" )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] )
@@ -527,10 +527,10 @@ class BibleReferencesLinksConverter:
         # end of exportPythonDictOrList
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         self.importDataToPython()
-        assert( self.__DataList )
-        assert( self.__DataDict )
+        assert self.__DataList )
+        assert self.__DataDict )
 
         print( "Export to Python not written yet!" )
         halt
@@ -566,10 +566,10 @@ class BibleReferencesLinksConverter:
         """
         import json
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         self.importDataToPython()
-        assert( self.__DataList )
-        assert( self.__DataDict )
+        assert self.__DataList )
+        assert self.__DataDict )
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -640,9 +640,9 @@ class BibleReferencesLinksConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree )
         self.importDataToPython()
-        assert( self.__DataList )
+        assert self.__DataList )
 
         print( "Export to C not written yet!" )
         halt

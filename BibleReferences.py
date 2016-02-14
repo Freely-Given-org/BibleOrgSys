@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -119,7 +119,7 @@ class BibleReferenceBase:
             Optional Bible object is a loaded Bible (based on InternalBible).
                 We can use this to guess book names.
         """
-        assert( BOSObject )
+        assert BOSObject
         self._BibleOrganizationalSystem = BOSObject
         if BibleOrgSysGlobals.debugFlag:
             print( "BibleReferenceBase: org={}".format( BOSObject.getOrganizationalSystemName() ) )
@@ -128,11 +128,11 @@ class BibleReferenceBase:
         punctuationSystemName = BOSObject.getOrganizationalSystemValue( 'punctuationSystem' )
         #print( 'pSN', punctuationSystemName )
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': # default (if we know the punctuation system)
-            assert( BibleObject is None )
+            assert BibleObject is None
             self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
         else: # else use a very generic punctuation system
-            assert( BibleObject is not None )
+            assert BibleObject is not None
             self.punctuationDict = { 'spaceAllowedAfterBCS': 'E',
                                     'booknameCase': 'ME',
                                     'booknameLength': '3',
@@ -149,13 +149,13 @@ class BibleReferenceBase:
         booksNamesSystemName = BOSObject.getOrganizationalSystemValue( 'booksNamesSystem' )
         #print( 'bNSN', booksNamesSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
-            #assert( BibleObject is not None )
+            #assert BibleObject is not None
             self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
             self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book code from the vernacular name or abbreviation
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
-            assert( BibleObject is not None )
+            assert BibleObject is not None
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
             getBookAbbreviationFunction = None
             self.getBBB = BibleObject.guessXRefBBB
@@ -178,7 +178,7 @@ class BibleSingleReference( BibleReferenceBase ):
 
     def __init__( self, BOSObject, BibleObject=None ):
         """ Initialize the object with necessary sub-systems. """
-        assert( BOSObject )
+        assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
         self.objectNameString = "Bible single reference object"
         self.objectTypeString = "BibleSingleReference"
@@ -201,7 +201,7 @@ class BibleSingleReference( BibleReferenceBase ):
         """
         Returns a 6-tuple with True/False result, haveWarnings, BBB, C, V, S
         """
-        assert( referenceString )
+        assert referenceString
         haveWarnings, haveErrors = False, False
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
@@ -215,7 +215,7 @@ class BibleSingleReference( BibleReferenceBase ):
         for nn, char in enumerate(adjustedReferenceString):
             nnn = referenceString.find( char, nn ) # Best guess of where this char might be in the original reference string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
-                assert( adjustedReferenceString != referenceString ) # but this can happen if we messed with the string
+                assert adjustedReferenceString != referenceString # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+referenceString+"'", "'"+adjustedReferenceString+"'" )
             #if referenceString.startswith('Num 22'):
             #print( "  BSR status: {}:{} -- got {!r}".format(status, statusList[status],char), haveErrors, haveWarnings )
@@ -373,7 +373,7 @@ class BibleSingleReferences( BibleReferenceBase ):
 
     def __init__( self, BOSObject, BibleObject=None ):
         """ Initialize the object with necessary sub-systems. """
-        assert( BOSObject )
+        assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
         self.objectNameString = "Bible single references object"
         self.objectTypeString = "BibleSingleReferences"
@@ -414,7 +414,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         # end of saveReference
 
         #print( "Processing {!r}".format( referenceString ) )
-        assert( referenceString )
+        assert referenceString
         haveWarnings, haveErrors = False, False
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
@@ -428,7 +428,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         for nn, char in enumerate(adjustedReferenceString):
             nnn = referenceString.find( char, nn ) # Best guess of where this char might be in the original reference string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
-                assert( adjustedReferenceString != referenceString ) # but this can happen if we messed with the string
+                assert adjustedReferenceString != referenceString # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+referenceString+"'", "'"+adjustedReferenceString+"'" )
             #if referenceString.startswith('Num 22'):
             #print( "  BSRs status: {}:{} -- got {!r}".format(status, statusList[status],char), haveErrors, haveWarnings )
@@ -654,7 +654,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 Optional Bible object is a loaded Bible (based on InternalBible).
                     We can use this to guess book names.
         """
-        assert( BOSObject )
+        assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
         self.objectNameString = "Bible reference list object"
         self.objectTypeString = "BibleReferenceList"
@@ -677,7 +677,7 @@ class BibleReferenceList( BibleReferenceBase ):
         """
         Makes a string out of a reference tuple
         """
-        assert( refTuple )
+        assert refTuple
         lenRef = len( refTuple )
         if lenRef == 2: (BBB, C), V, S = refTuple, '', ''
         elif lenRef == 3: (BBB, C, V), S = refTuple, ''
@@ -689,7 +689,7 @@ class BibleReferenceList( BibleReferenceBase ):
         CVS = self.punctuationDict['chapterVerseSeparator'] if isinstance(self.punctuationDict['chapterVerseSeparator'],str) else self.punctuationDict['chapterVerseSeparator'][0]
 
         if BBB[0].isdigit(): # Have a book name like 1SA
-            assert( "Should never happen I think" == BBB )
+            assert "Should never happen I think" == BBB
             BBBstr = BBB[0] + ( BBB[1:] if BnC=='U' else BBB[1:].lower() if BnC=='L' else BBB[1:].capitalize() )
         else:
             BBBstr = BBB if BnC=='U' else BBB.lower() if BnC=='L' else BBB.capitalize()
@@ -765,10 +765,10 @@ class BibleReferenceList( BibleReferenceBase ):
             elif not V.isdigit():
                 logging.error( _("saveReferenceRange: Non-digit {} V parameter from {} Bible reference {!r}").format( repr(V), BBB, referenceString ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                assert( BBB is None or len(BBB) == 3 )
-                assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
-                assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-                assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+                assert BBB is None or len(BBB) == 3
+                assert not C or C.isdigit() # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+                assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+                assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
 
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
@@ -791,8 +791,8 @@ class BibleReferenceList( BibleReferenceBase ):
         if location is None: location = '(unknown)'
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleReferences.parseReferenceString {!r} from {}".format( referenceString, location ) )
-        assert( referenceString and isinstance( referenceString, str ) )
-        assert( location and isinstance( location, str ) )
+        assert referenceString and isinstance( referenceString, str )
+        assert location and isinstance( location, str )
         haveWarnings, haveErrors, totalVerseList = False, False, []
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
@@ -807,7 +807,7 @@ class BibleReferenceList( BibleReferenceBase ):
         for nn, char in enumerate(adjustedReferenceString):
             nnn = referenceString.find( char, nn ) # Best guess of where this char might be in the original reference string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
-                assert( adjustedReferenceString != referenceString ) # but this can happen if we messed with the string
+                assert adjustedReferenceString != referenceString # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+referenceString+"'", "'"+adjustedReferenceString+"'" )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 #if referenceString.startswith('Num 22'):
@@ -1106,7 +1106,7 @@ class BibleReferenceList( BibleReferenceBase ):
                     elif char in self.punctuationDict['bookSeparator']:
                         bookNameOrAbbreviation, BBB, C = '', None, ''
                         status = 0
-                    else: assert( "Should never happen" == 123 )
+                    else: assert "Should never happen" == 123
                 else:
                     logging.error( _("Unexpected {!r} character when getting second chapter/verse number at position {} in Bible reference {!r}").format( char, nnn, referenceString ) )
                     haveErrors = True
@@ -1293,7 +1293,7 @@ class BibleReferenceList( BibleReferenceBase ):
                     e.g., Gen.1.1-Gen.1.2 or Gen.1.1-Gen.2.3 (inclusive).
 
             We simply ignore the single lower-case letter verse suffixes. """
-        assert( self.referenceList )
+        assert self.referenceList
 
         result = ''
         lastBk, lastC, lastV = '', '', ''
@@ -1329,7 +1329,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
     #def XXXUnusedXXXMaybeUntestedXXXcontainsReferenceTuple( self, refTuple ):
         #""" Returns True/False if the internal reference list contains the given reference tuple. """
-        #assert( refTuple and len(refTuple)==4 )
+        #assert refTuple and len(refTuple)==4
         #if not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}".format(refTuple[0],refTuple[1],refTuple[2],refTuple[3]) ):
             #haveErrors = True
 
@@ -1347,10 +1347,10 @@ class BibleReferenceList( BibleReferenceBase ):
     def containsReference( self, BBB, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
         #if BibleOrgSysGlobals.verbosityLevel > 3: print( "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
-        assert( BBB and len(BBB)==3 )
-        assert( C )
+        assert BBB and len(BBB)==3
+        assert C
         if not C.isdigit(): print( "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
-        assert( V ) # May contain a list or range here
+        assert V # May contain a list or range here
 
         # First find out what we were given
         if V.isdigit(): # it's simple
@@ -1377,7 +1377,7 @@ class BibleReferenceList( BibleReferenceBase ):
                         status, myV = 1, ''
                     logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
                 elif status == 1: # Getting the end of a verse range
-                    assert( startTuple )
+                    assert startTuple
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         endTuple = (BBB, C, myV, S)
@@ -1436,16 +1436,16 @@ class BibleAnchorReference:
         """
         self.objectNameString = "Bible anchor reference object"
         self.objectTypeString = "BibleAnchorReference"
-        assert( BBB )
+        assert BBB
         self.BBB = BBB
-        assert( chapterString )
+        assert chapterString
         self.chapterString = chapterString
-        assert( verseString )
+        assert verseString
         self.verseString = verseString
         self.suffixString = '' if suffixString is None else suffixString
         self.homeTuple = (self.BBB,self.chapterString,self.verseString,self.suffixString,)
 
-        assert( BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ) )
+        assert BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB )
         self.isSingleChapterBook = BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.allowedVerseSuffixes = ( 'a', 'b', 'c', 'd', 'e', )
         self.allowedCVSeparators = ( ':', '.', )
@@ -1486,8 +1486,8 @@ class BibleAnchorReference:
             print( "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if location is None: location = '(unknown)'
         #print( "Processing {!r} from {}".format( anchorString, location ) )
-        assert( anchorString and isinstance( anchorString, str ) )
-        assert( location and isinstance( location, str ) )
+        assert anchorString and isinstance( anchorString, str )
+        assert location and isinstance( location, str )
 
 
         def saveReference( BBB, C, V, S, refList ):
@@ -1529,12 +1529,12 @@ class BibleAnchorReference:
             if BibleOrgSysGlobals.debugFlag:
                 print( "saveReferenceRange( {}, {} {}:{} {!r}, {} )".format( startTuple, BBB, C, V, S, refList ) )
                 #print( startTuple, BBB, C, V, S, refList )
-                assert( len(BBB) == 3 )
-                assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+                assert len(BBB) == 3
+                assert not C or C.isdigit() # Should be no suffix on C (although it can be blank if the reference is for a whole book)
                 if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                     S = V[-1]; V = V[:-1]
-                assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-                assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+                assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+                assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
 
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
@@ -1570,7 +1570,7 @@ class BibleAnchorReference:
         for nn, char in enumerate(adjustedAnchorString):
             nnn = anchorString.find( char, nn ) # Best guess of where this char might be in the original anchor string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
-                assert( adjustedAnchorString != anchorString ) # but this can happen if we messed with the string
+                assert adjustedAnchorString != anchorString # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+anchorString+"'", "'"+adjustedAnchorString+"'" )
             #if referenceString.startswith('Num 22'):
             #print( "  BAR status: {}:{} -- got {!r}".format(status, statusList[status],char), haveErrors, haveWarnings, self.referenceList )
@@ -1683,7 +1683,7 @@ class BibleAnchorReference:
                     V = S = ''
                     if char in self.allowedChapterSeparators:
                         status,C = 1, ''
-                    else: assert( "Should never happen" == 123 )
+                    else: assert "Should never happen" == 123
                 else:
                     logging.error( _("Unexpected {!r} character when getting second chapter/verse number at position {} in Bible reference {!r}{}").format( char, nnn, anchorString, '' if location is None else " at {}".format(location) ) )
                     haveErrors = True
@@ -1799,9 +1799,9 @@ class BibleAnchorReference:
 
     #def xxxcontainsReference( self, BBB, C, V, S=None ):
         #""" Returns True/False if the internal reference list contains the given reference. """
-        #assert( BBB and len(BBB)==3 )
-        #assert( C and C.isdigit() )
-        #assert( V ) # May contain a list or range here
+        #assert BBB and len(BBB)==3
+        #assert C and C.isdigit()
+        #assert V # May contain a list or range here
 
         ## First find out what we were given
         #if V.isdigit(): # it's simple
@@ -1828,7 +1828,7 @@ class BibleAnchorReference:
                         #status, myV = 1, ''
                     #logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
                 #elif status == 1: # Getting the end of a verse range
-                    #assert( startTuple )
+                    #assert startTuple
                     #if char.isdigit(): myV += char
                     #elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         #endTuple = (BBB, C, myV, S)
@@ -1863,19 +1863,19 @@ class BibleAnchorReference:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
-        assert( anchorString )
+        assert anchorString
 
         adjAnchorString = anchorString.strip()
         if adjAnchorString[-2:]==' a': adjAnchorString = adjAnchorString[:-2] # Remove any trailing subnote letter
         if adjAnchorString[-1]==':': adjAnchorString = adjAnchorString[:-1] # Remove any trailing punctuation
-        assert( adjAnchorString ) # Make sure there's still something left
+        assert adjAnchorString # Make sure there's still something left
         #print( "  Parsing {!r}".format( adjAnchorString ) )
         haveErrors, haveWarnings, resultList = self.parseAnchorString( adjAnchorString, location )
         #print( "  From {!r} got {} {} {}".format( anchorString, haveErrors, haveWarnings, resultList ) )
         result = self.getReferenceList( expanded=True )
         #print( "  From {!r} got {}".format( adjAnchorString, result ) )
         for rBBB, rC, rV, rS in result:
-            assert( rBBB == self.BBB )
+            assert rBBB == self.BBB
             if rC == self.chapterString:
                 if rV == self.verseString: # the easy case -- an exact match
                     return True # We don't care about suffixes

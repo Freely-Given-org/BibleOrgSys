@@ -64,7 +64,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.55'
@@ -145,7 +145,7 @@ class BibleVersificationSystems:
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for systemName in self.__DataDict:
                 CVData, OVData, CombVData, ReordVData = self.__DataDict[systemName]['CV'], self.__DataDict[systemName]['omitted'], self.__DataDict[systemName]['combined'], self.__DataDict[systemName]['reordered']
-                # No longer true: assert( len(CVData) == len(OVData) == len(CombVData) == len(ReordVData) )
+                # No longer true: assert len(CVData) == len(OVData) == len(CombVData) == len(ReordVData)
                 if BibleOrgSysGlobals.verbosityLevel > 3:
                     numChapters = 0
                     for BBB,bookData in CVData.items():
@@ -208,16 +208,16 @@ class BibleVersificationSystems:
             system2Name can be a string or a list of strings.
         Prints the output of the comparison(s).
         """
-        assert( system1Name in self.__DataDict )
+        assert system1Name in self.__DataDict
         if system2Name is None: compareList = self.getAvailableVersificationSystemNames()
         elif isinstance( system2Name, list ):
             for name in system2Name:
-                assert( name != system1Name )
-                assert( name in self.__DataDict )
+                assert name != system1Name
+                assert name in self.__DataDict
             compareList = system2Name
         elif isinstance( system2Name, str ):
-            assert( system2Name != system1Name )
-            assert( system2Name in self.__DataDict )
+            assert system2Name != system1Name
+            assert system2Name in self.__DataDict
             compareList = [system2Name]
         else: raise Exception( "compareVersificationSystems parameter error" )
 
@@ -344,8 +344,8 @@ class BibleVersificationSystems:
         Create a new versification file if it doesn't match any.
         Returns the number of matched systems (which can also be used as a True/False "matched" flag).
         """
-        assert( self.__DataDict )
-        assert( versificationSchemeToCheck )
+        assert self.__DataDict
+        assert versificationSchemeToCheck
         omittedVersesToCheck, combinedVersesToCheck, reorderedVersesToCheck = {}, {}, {}
         if extraVerseInfoToCheck is not None:
             if "omitted" in extraVerseInfoToCheck: omittedVersesToCheck = extraVerseInfoToCheck["omitted"]
@@ -556,7 +556,7 @@ class BibleVersificationSystem:
         result = self._bvss.getVersificationSystem( self._systemName )
         if result is not None:
             self.__chapterDataDict, self.__omittedVersesDict, self.__combinedVersesDict, self.__reorderedVersesDict = result['CV'], result['omitted'], result['combined'], result['reordered']
-            # no longer true: assert( len(self.__chapterDataDict) == len(self.__omittedVersesDict) == len(self.__combinedVersesDict) == len(self.__reorderedVersesDict) )
+            # no longer true: assert len(self.__chapterDataDict) == len(self.__omittedVersesDict) == len(self.__combinedVersesDict) == len(self.__reorderedVersesDict)
     # end of BibleVersificationSystem.__init__
 
 
@@ -633,7 +633,7 @@ class BibleVersificationSystem:
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have any chapter information for this book.
         """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
@@ -647,7 +647,7 @@ class BibleVersificationSystem:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.getNumVerses( {}, {} )".format( BBB, repr(C) ) )
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
@@ -661,7 +661,7 @@ class BibleVersificationSystem:
         Returns True/False to indicate if this book only contains a single chapter.
         Returns None if we don't have any chapter information for this book.
         """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
@@ -671,7 +671,7 @@ class BibleVersificationSystem:
 
     def getNumVersesList( self, BBB ):
         """ Returns a list containing an integer for each chapter indicating the number of verses. """
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         myList = []
         for x in self.__chapterDataDict[BBB].keys():
             if x!='numChapters': myList.append( int( self.__chapterDataDict[BBB][x] ) )
@@ -707,7 +707,7 @@ class BibleVersificationSystem:
 
     def getAuxilliaryVerseList( self, listName ):
         """ gets a list of auxilliary verse information for "omitted", "combined", or "reordered" verses. """
-        assert( listName in ["omitted", "combined", "reordered"] )
+        assert listName in ["omitted", "combined", "reordered"]
         if listName=="omitted": return self.__omittedVersesDict
         if listName=="combined": return self.__combinedVersesDict
         if listName=="reordered": return self.__reorderedVersesDict
@@ -723,11 +723,11 @@ class BibleVersificationSystem:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
-        assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-        assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+        assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+        assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
         myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
@@ -750,8 +750,8 @@ class BibleVersificationSystem:
         """ Returns a list containing all valid references (inclusive) between the given values. """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
-        assert( startRef and len(startRef)==4 )
-        assert( endRef and len(endRef)==4 )
+        assert startRef and len(startRef)==4
+        assert endRef and len(endRef)==4
 
         haveErrors, haveWarnings = False, False
         myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''

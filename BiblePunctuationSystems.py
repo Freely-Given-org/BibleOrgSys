@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystems.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,15 @@
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-13' # by RJH
 ProgName = "Bible Punctuation Systems handler"
 ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 #from singleton import singleton
@@ -94,7 +95,7 @@ class BiblePunctuationSystems:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        assert( self.__DataDict )
+        assert self.__DataDict
         result = "BiblePunctuationSystems object"
         result += ('\n  ' if result else '  ') + _("Number of systems = {}").format( len(self.__DataDict) )
         return result
@@ -112,21 +113,21 @@ class BiblePunctuationSystems:
 
     def getAvailablePunctuationSystemNames( self ):
         """ Returns a list of available system name strings. """
-        assert( self.__DataDict )
+        assert self.__DataDict
         return [x for x in self.__DataDict]
     # end of getAvailablePunctuationSystemNames
 
     def isValidPunctuationSystemName( self, systemName ):
         """ Returns True or False. """
-        assert( self.__DataDict )
-        assert( systemName )
+        assert self.__DataDict
+        assert systemName
         return systemName in self.__DataDict
     # end of isValidPunctuationSystemName
 
     def getPunctuationSystem( self, systemName ):
         """ Returns the corresponding dictionary."""
-        assert( self.__DataDict )
-        assert( systemName )
+        assert self.__DataDict
+        assert systemName
         if systemName in self.__DataDict:
             return self.__DataDict[systemName]
         # else
@@ -139,9 +140,9 @@ class BiblePunctuationSystems:
         Check the given punctuation scheme against all the loaded systems.
         Create a new punctuation file if it doesn't match any.
         """
-        assert( systemName )
-        assert( punctuationSchemeToCheck )
-        assert( self.Lists )
+        assert systemName
+        assert punctuationSchemeToCheck
+        assert self.Lists
         #print( systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []
@@ -197,7 +198,7 @@ class BiblePunctuationSystem:
         """
         Constructor:
         """
-        assert( systemName )
+        assert systemName
         self.__systemName = systemName
         self.__bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         self.__punctuationDict = self.__bpss.getPunctuationSystem( self.__systemName )
@@ -227,7 +228,7 @@ class BiblePunctuationSystem:
 
     def __contains__( self, name ):
         """ Returns True/False if the name is in this system. """
-        assert( name )
+        assert name
         return name in self.__punctuationDict
     # end of __contains__
 
@@ -248,7 +249,7 @@ class BiblePunctuationSystem:
 
     def getPunctuationValue( self, name ):
         """ Returns the value for the name. """
-        assert( name )
+        assert name
         return self.__punctuationDict[name]
         ##print( "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]

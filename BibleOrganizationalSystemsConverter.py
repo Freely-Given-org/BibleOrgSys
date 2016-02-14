@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,6 +26,9 @@
 Module handling BibleOrganizationalSystems.xml to produce C and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
 ProgVersion = "0.25"
@@ -34,7 +36,6 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os.path
-from gettext import gettext as _
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -136,13 +137,13 @@ class BibleOrganizationalSystemsConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        assert( XMLFilepath )
+        assert XMLFilepath
         self.__XMLFilepath = XMLFilepath
-        assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
+        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from {!r}...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
-        assert( self._XMLtree ) # Fail here if we didn't load anything at all
+        assert self._XMLtree # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag  == self._treeTag:
             header = self._XMLtree[0]
@@ -172,7 +173,7 @@ class BibleOrganizationalSystemsConverter:
         """
         Check/validate the loaded data.
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -257,7 +258,7 @@ class BibleOrganizationalSystemsConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
         if self.__dataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__dataDicts
 
@@ -301,11 +302,11 @@ class BibleOrganizationalSystemsConverter:
             if referenceAbbreviation in combinedIndexDict: combinedIndexDict[referenceAbbreviation].append( extendedRA )
             else: combinedIndexDict[referenceAbbreviation] = [extendedRA]
             if extendedRA != referenceAbbreviation:
-                #assert( extendedRA not in combinedIndexDict )
+                #assert extendedRA not in combinedIndexDict
                 if extendedRA in combinedIndexDict: logging.error( _("Found {} in combinedIndexDict").format( extendedRA ) )
                 combinedIndexDict[extendedRA] = [extendedRA]
-        assert( len(indexDict) <= len(dataDict) )
-        assert( len(combinedIndexDict) >= len(indexDict) )
+        assert len(indexDict) <= len(dataDict)
+        assert len(combinedIndexDict) >= len(indexDict)
 
         if BibleOrgSysGlobals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():
@@ -324,7 +325,7 @@ class BibleOrganizationalSystemsConverter:
                                     if usesTextExtended in dataDict:
                                         foundOne = usesTextExtended
                                         found += 1
-                                assert( found > 0 )
+                                assert found > 0
                                 if found==1: # ah, it's not actually ambiguous
                                     if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Adjusted text used for {} from the ambiguous {!r} to the extended name {!r}").format( extendedReferenceAbbreviation, textAbbrev, foundOne ) )
                                     data['usesText'].remove( textAbbrev)
@@ -364,9 +365,9 @@ class BibleOrganizationalSystemsConverter:
         """
         import pickle
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__dataDicts )
+        assert self.__dataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -391,9 +392,9 @@ class BibleOrganizationalSystemsConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__dataDicts )
+        assert self.__dataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -421,9 +422,9 @@ class BibleOrganizationalSystemsConverter:
         """
         import json
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__dataDicts )
+        assert self.__dataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -469,9 +470,9 @@ class BibleOrganizationalSystemsConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__dataDicts )
+        assert self.__dataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.h" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )

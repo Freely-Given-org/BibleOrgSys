@@ -5,7 +5,7 @@
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2015 Robert Hunt
+# Copyright (C) 2012-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling Greek language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-04' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "GreekLanguageHandler"
 ProgName = "Greek language handler"
 ProgVersion = '0.02'
@@ -50,7 +50,7 @@ alpha = 'α'
 beta = 'β'
 gamma = ''
 normalConsonants = ( alpha, beta, gamma, )
-assert( len(normalConsonants) == 3 )
+assert len(normalConsonants) == 3
 #finalConsonants = ( memFinal, nunFinal, tsadiFinal, qofFinal, )
 #consonants = normalConsonants + finalConsonants
 #allFinalConsonants = ( alef, bet, gimel, dalet, he, waw, zayin, het, tet, yod, kaf, lamed, memFinal, nunFinal, samekh, ayin, pe, tsadiFinal, qofFinal, resh, sinShin, taw, )
@@ -71,28 +71,28 @@ assert( len(normalConsonants) == 3 )
 if 0 and BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
         #print( j, letter )
-        assert( normalConsonants.count(letter)==1 )
-        assert( letter not in vowelPoints )
-        assert( letter not in otherMarks )
-        assert( letter not in cantillationMarks )
+        assert normalConsonants.count(letter)==1
+        assert letter not in vowelPoints
+        assert letter not in otherMarks
+        assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
         #print( j, mark )
-        assert( vowelPoints.count(mark)==1 )
-        assert( mark not in normalConsonants )
-        assert( mark not in otherMarks )
-        assert( mark not in cantillationMarks )
+        assert vowelPoints.count(mark)==1
+        assert mark not in normalConsonants
+        assert mark not in otherMarks
+        assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
         #print( j, mark )
-        assert( otherMarks.count(mark)==1 )
-        assert( mark not in normalConsonants )
-        assert( mark not in vowelPoints )
-        assert( mark not in cantillationMarks )
+        assert otherMarks.count(mark)==1
+        assert mark not in normalConsonants
+        assert mark not in vowelPoints
+        assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
         #print( j, mark )
-        assert( cantillationMarks.count(mark)==1 )
-        assert( mark not in normalConsonants )
-        assert( mark not in vowelPoints )
-        assert( mark not in otherMarks )
+        assert cantillationMarks.count(mark)==1
+        assert mark not in normalConsonants
+        assert mark not in vowelPoints
+        assert mark not in otherMarks
 
 
 # Filenames for morphgnt

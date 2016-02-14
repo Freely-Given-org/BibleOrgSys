@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-31' # by RJH
+LastModifiedDate = '2016-02-01' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.11'
@@ -1449,7 +1449,7 @@ class PTXBible( Bible ):
                     bits = line.split( '-->', 1 )
                     #print( 'bits', bits )
                     PTXAutocorrects[bits[0]] = bits[1]
-                else: logging.error( "Unknown {!r} autocorrect line in PTXBible.loading autocorrect".format( line ) )
+                else: logging.error( "Invalid {!r} autocorrect line in PTXBible.loading autocorrect".format( line ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         #print( 'PTXAutocorrects', PTXAutocorrects )

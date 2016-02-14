@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-13' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.16'
@@ -102,8 +102,8 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns the loaded ESwordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -182,7 +182,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             eSB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: eSB.load() # Load and process the file
             return eSB
@@ -239,7 +239,7 @@ class ESwordBible( Bible ):
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
                 print( "ESwordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
-            assert( originalLine is None or ('\n' not in originalLine and '\r' not in originalLine ) )
+            assert originalLine is None or ('\n' not in originalLine and '\r' not in originalLine )
         #print( BBB, C, V, repr(originalLine) )
         line = originalLine
 
@@ -360,7 +360,7 @@ class ESwordBible( Bible ):
         if '#$#' in line: # We need to break the original line into different USFM markers
             #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
             segments = line.split( '#$#' )
-            assert( len(segments) >= 2 )
+            assert len(segments) >= 2
             #print( " segments (split by backslash):", segments )
             leftovers = ''
             for segment in segments:
@@ -377,7 +377,7 @@ class ESwordBible( Bible ):
                             logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
                             #halt
                     else:
-                        assert( len(bits) == 2 )
+                        assert len(bits) == 2
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
                             print( "line", repr(line) )
@@ -386,7 +386,7 @@ class ESwordBible( Bible ):
                             print( "bits", bits )
                             print( "marker", marker )
                             print( "leftovers", repr(leftovers) )
-                            assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
+                            assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r')
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             bookObject.addLine( marker, bits[1] )
                         elif not writtenV:
@@ -405,7 +405,7 @@ class ESwordBible( Bible ):
                         #bookObject.addLine( 'p', '' )
                         #myGlobals['haveParagraph'] = False
             if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
-            if BibleOrgSysGlobals.debugFlag: assert( not leftovers )
+            if BibleOrgSysGlobals.debugFlag: assert not leftovers
             #halt
         else: # no newlines in the middle
             if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
@@ -419,7 +419,7 @@ class ESwordBible( Bible ):
 
         cursor.execute('select * from Bible' )
         for row in cursor:
-            assert( len(row) == 4 )
+            assert len(row) == 4
             BBBn, C, V, text = row # First three are integers, the last is a string
             #print( repr(BBBn), repr(C), repr(V), repr(text) )
             if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
@@ -501,7 +501,7 @@ class ESwordBible( Bible ):
                 rows = cursor.fetchall()
                 print( "rows", len(rows) )
                 for row in rows:
-                    assert( len(row) == 4 )
+                    assert len(row) == 4
                     BBBn, C, V, text = row # First three are integers, the last is a string
                     print( BBBn, C, V, repr(text) )
                     if C==2: break
@@ -709,7 +709,7 @@ def demo():
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw E{}/ Trying {}".format( j+1, someFile ) )
@@ -730,7 +730,7 @@ def demo():
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw F{}/ Trying {}".format( j+1, someFile ) )
