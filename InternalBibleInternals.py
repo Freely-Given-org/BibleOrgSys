@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-29' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.62'
@@ -161,16 +161,16 @@ class InternalBibleExtra:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
-            assert( myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES ) # Mustn't be blank
-            assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
-            assert( isinstance( index, int ) and index >= 0 )
-            assert( noteText and isinstance( noteText, str ) ) # Mustn't be blank
-            assert( '\n' not in noteText and '\r' not in noteText )
+            assert myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES # Mustn't be blank
+            assert '\\' not in myType and ' ' not in myType and '*' not in myType
+            assert isinstance( index, int ) and index >= 0
+            assert noteText and isinstance( noteText, str ) # Mustn't be blank
+            assert '\n' not in noteText and '\r' not in noteText
             for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
-                assert( '\\'+letters+' ' not in noteText )
-                assert( '\\'+letters+'*' not in noteText )
-            assert( cleanNoteText and isinstance( cleanNoteText, str ) ) # Mustn't be blank
-            assert( '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText )
+                assert '\\'+letters+' ' not in noteText
+                assert '\\'+letters+'*' not in noteText
+            assert cleanNoteText and isinstance( cleanNoteText, str ) # Mustn't be blank
+            assert '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText
         self.myType, self.index, self.noteText, self.cleanNoteText = myType, index, noteText, cleanNoteText
     # end of InternalBibleExtra.__init__
 
@@ -222,8 +222,8 @@ class InternalBibleExtraList:
                 for something in initialData:
                     self.append( something )
             else: logging.critical( "InternalBibleExtraList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
-        if initialData: assert( len(self.data) == len(initialData) )
-        else: assert( not self.data )
+        if initialData: assert len(self.data) == len(initialData)
+        else: assert not self.data
     # end of InternalBibleExtraList.__init__
 
 
@@ -245,7 +245,7 @@ class InternalBibleExtraList:
         else:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, InternalBibleExtra ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, InternalBibleExtra )
                 result += "\n  {} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
@@ -258,7 +258,7 @@ class InternalBibleExtraList:
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
             #print( "ki2", keyIndex )
-            #assert( keyIndex.step is None )
+            #assert keyIndex.step is None
             #print( "param", *keyIndex.indices(len(self)) )
             return InternalBibleExtraList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
@@ -281,7 +281,7 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.summary
 
     def append( self, newExtraEntry ):
-        assert( isinstance( newExtraEntry, InternalBibleExtra ) )
+        assert isinstance( newExtraEntry, InternalBibleExtra )
         self.data.append( newExtraEntry )
     # end of InternalBibleExtraList.append
 
@@ -291,7 +291,7 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.append
 
     def extend( self, newExtraList ):
-        assert( isinstance( newExtraList, InternalBibleExtraList ) )
+        assert isinstance( newExtraList, InternalBibleExtraList )
         self.data.extend( newExtraList )
     # end of InternalBibleExtraList.extend
 # end of class InternalBibleExtraList
@@ -321,26 +321,26 @@ class InternalBibleEntry:
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
                         #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
                         #originalText[:35]+('...' if len(originalText)>35 else '') ) )
-            assert( marker and isinstance( marker, str ) ) # Mustn't be blank
-            assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
-            assert( isinstance( cleanText, str ) )
-            assert( '\n' not in cleanText and '\r' not in cleanText )
+            assert marker and isinstance( marker, str ) # Mustn't be blank
+            assert '\\' not in marker and ' ' not in marker and '*' not in marker
+            assert isinstance( cleanText, str )
+            assert '\n' not in cleanText and '\r' not in cleanText
 
             if marker[0] == '¬' \
             or marker in BOS_ALL_ADDED_NESTING_MARKERS and originalMarker is None: # It's an end marker or an added marker
-                assert( originalMarker is None and adjustedText is None and extras is None and originalText is None )
+                assert originalMarker is None and adjustedText is None and extras is None and originalText is None
             else: # it's not an end marker
-                assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
-                assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
-                assert( isinstance( adjustedText, str ) )
-                assert( '\n' not in adjustedText and '\r' not in adjustedText )
+                assert originalMarker and isinstance( originalMarker, str ) # Mustn't be blank
+                assert '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker
+                assert isinstance( adjustedText, str )
+                assert '\n' not in adjustedText and '\r' not in adjustedText
                 if '\\' in cleanText:
                     logging.critical( "Clean text {!r} at {} from {!r}".format( cleanText, marker, originalText ) )
-                assert( '\\' not in cleanText )
-                assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
-                assert( isinstance( originalText, str ) )
-                assert( '\n' not in originalText and '\r' not in originalText )
-                #assert( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
+                assert '\\' not in cleanText
+                assert extras is None or isinstance( extras, InternalBibleExtraList )
+                assert isinstance( originalText, str )
+                assert '\n' not in originalText and '\r' not in originalText
+                #assert marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
                 if marker not in BibleOrgSysGlobals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle {!r} marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
@@ -428,7 +428,7 @@ class InternalBibleEntry:
             #print( "\nWe're giving {!r}".format( result ) )
             #print( "   Should be {!r}".format( self.originalText.strip() ) )
             #print( "        From {!r}".format( self.originalText ) )
-        #if BibleOrgSysGlobals.debugFlag: assert( result == self.originalText.strip() )
+        #if BibleOrgSysGlobals.debugFlag: assert result == self.originalText.strip()
         return result
     # end of InternalBibleEntry.getFullText
 # end of class InternalBibleEntry
@@ -452,8 +452,8 @@ class InternalBibleEntryList:
                 for something in initialData:
                     self.append( something )
             else: logging.critical( "InternalBibleEntryList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
-        if initialData: assert( len(self.data) == len(initialData) )
-        else: assert( not self.data )
+        if initialData: assert len(self.data) == len(initialData)
+        else: assert not self.data
     # end of InternalBibleEntryList.__init__
 
 
@@ -475,7 +475,7 @@ class InternalBibleEntryList:
         else:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, InternalBibleEntry )
                 cleanAbbreviation = entry.cleanText if entry.cleanText is None or len(entry.cleanText)<100 \
                                                     else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation), " + extras" if entry.extras else '' )
@@ -490,7 +490,7 @@ class InternalBibleEntryList:
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
             #print( "ki2", keyIndex )
-            #assert( keyIndex.step is None )
+            #assert keyIndex.step is None
             #print( "param", *keyIndex.indices(len(self)) )
             return InternalBibleEntryList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
@@ -498,7 +498,7 @@ class InternalBibleEntryList:
 
 
     def append( self, newBibleEntry ):
-        assert( isinstance( newBibleEntry, InternalBibleEntry ) )
+        assert isinstance( newBibleEntry, InternalBibleEntry )
         self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append
 
@@ -508,7 +508,7 @@ class InternalBibleEntryList:
     # end of InternalBibleEntryList.append
 
     def extend( self, newList ):
-        assert( isinstance( newList, InternalBibleEntryList ) )
+        assert isinstance( newList, InternalBibleEntryList )
         self.data.extend( newList )
     # end of InternalBibleEntryList.extend
 
@@ -681,7 +681,7 @@ class InternalBibleIndex:
             if saveCV and saveJ is not None:
                 #print( "saveAnythingOutstanding", self.BBB, saveCV, saveJ, lineCount, context )
                 #if saveCV == ('0','0'): halt
-                #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
+                #assert 1 <= lineCount <= 120 # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.indexData: # we already have an index entry for this C:V
                     #print( "makeIndex.saveAnythingOutstanding: already have an index entry @ {} {}:{}".format( self.BBB, strC, strV ) )
                     errorData.append( ( self.BBB,strC,strV,) )
@@ -733,17 +733,17 @@ class InternalBibleIndex:
                 #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
-                    assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                    assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
                 if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
                     # Save anything before the first verse number as verse "zero"
                     strC, strV = entry.getCleanText(), '0'
-                    assert( strC != '0' )
+                    assert strC != '0'
                     saveCV, saveJ = (strC,strV,), j
                     lineCount += 1
                 elif marker == 'v':
-                    assert( strC != '0' ) # Should be in a chapter by now
+                    assert strC != '0' # Should be in a chapter by now
                     # Go back and look what we passed that might actually belong with this verse
                     revertToJ = j
                     if revertToJ >= 1: # we have a processedLine to go back to
@@ -753,7 +753,7 @@ class InternalBibleIndex:
                                 # Anything else gets pulled down into this next verse
                                 #   especially p & q markers and section heading & references
                                 revertToJ -= 1
-                                assert( lineCount > 0 )
+                                assert lineCount > 0
                                 lineCount -= 1
                                 if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
                                 aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
@@ -766,19 +766,19 @@ class InternalBibleIndex:
                         else: # the first non-digit in the verse "number"
                             if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                             break # ignore the rest
-                    #assert( strV != '0' or self.BBB=='PSA' ) # Not really handled properly yet
+                    #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                     saveCV, saveJ = (strC,digitV,), revertToJ
                     lineCount += (j-revertToJ) + 1 # For the v
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
-                    assert( saveCV is None and saveJ is None )
+                    assert saveCV is None and saveJ is None
                     self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
                     #print( "makeIndex", printIndexEntry( self.indexData[(strC,strV)] ) )
                     Vi = int( strV )
-                    assert( Vi == j )
+                    assert Vi == j
                     strV = str( Vi + 1 ) # Increment the verse number
                     lastJ = j
-                    assert( lineCount == 0 )
+                    assert lineCount == 0
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
                 if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
@@ -793,17 +793,17 @@ class InternalBibleIndex:
                 #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
-                    assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                    assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
                 if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
                     # Save anything before the first verse number as verse "zero"
                     strC, strV = entry.getCleanText(), '0'
-                    assert( strC != '0' )
+                    assert strC != '0'
                     #saveCV, saveJ = (strC,strV,), j
                     lineCount += 1
                 elif marker == 'v':
-                    assert( strC != '0' ) # Should be in a chapter by now
+                    assert strC != '0' # Should be in a chapter by now
                     print( "Why do we have a verse number in a {} book?".format( self.BBB ) )
                     print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                     saveAnythingOutstanding() # with the adjusted lineCount
@@ -816,18 +816,18 @@ class InternalBibleIndex:
                             else: # the first non-digit in the verse "number"
                                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 break # ignore the rest
-                        #assert( strV != '0' or self.BBB=='PSA' ) # Not really handled properly yet
+                        #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         saveCV, saveJ = (strC,digitV,), revertToJ
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
-                    assert( saveCV is None and saveJ is None )
+                    assert saveCV is None and saveJ is None
                     self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
                     #print( "makeIndexIntro", printIndexEntry( self.indexData[(strC,strV)] ) )
                     Vi = int( strV )
-                    assert( Vi == j )
+                    assert Vi == j
                     strV = str( Vi + 1 ) # Increment the verse number
                     lastJ = j
-                    assert( lineCount == 0 )
+                    assert lineCount == 0
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
                 if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
@@ -837,7 +837,7 @@ class InternalBibleIndex:
             lastBBB = None
             errorDataString = ''
             for BBB,C,V in errorData:
-                assert( BBB == self.BBB ) # We didn't really need to save this
+                assert BBB == self.BBB # We didn't really need to save this
                 if BBB != lastBBB:
                     errorDataString += (' ' if errorDataString else '') + BBB
                     lastBBB, lastC = BBB, None
@@ -896,7 +896,7 @@ class InternalBibleIndex:
             for entry in entries:
                 marker = entry.getMarker()
                 foundMarkers.append( marker )
-                if marker[0]=='¬': assert( marker in BOS_END_MARKERS )
+                if marker[0]=='¬': assert marker in BOS_END_MARKERS
                 if marker not in ('c','v'): # These always have to have text
                     if entry.getCleanText(): anyText = True
                     if entry.getExtras(): anyExtras = True
@@ -911,8 +911,8 @@ class InternalBibleIndex:
                 if V == '0':
                     if 'c' not in foundMarkers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( 'c' in foundMarkers )
-                else: assert( 'v' in foundMarkers )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert 'c' in foundMarkers
+                else: assert 'v' in foundMarkers
                 if 'p' in foundMarkers:
                     if 'p~' not in foundMarkers and 'v' not in foundMarkers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable (early in chapter) p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
@@ -933,13 +933,13 @@ class InternalBibleIndex:
                         offset += 1
 
                     # Check the various series of markers
-                    if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
-                    elif marker == 'c#': assert( nextMarker in ( 'v', 'vp#', ) )
+                    if marker == 'cp': assert previousMarker in ('c','c~',None) # WEB Ps 151 gives None -- not totally sure why yet?
+                    elif marker == 'c#': assert nextMarker in ( 'v', 'vp#', )
                     elif marker == 'v':
                         if foundMarkers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    elif marker == 'vp#': assert( nextMarker == 'v' )
+                    elif marker == 'vp#': assert nextMarker == 'v'
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )
@@ -991,7 +991,7 @@ class InternalBibleIndex:
                             #if 's1'  in foundMarkers or 'r' in foundMarkers or 'p' in foundMarkers or 'q1' in foundMarkers:
                                 #print( "xyz", key, entries )
                             #if self.name != '1974_TB':
-                                #assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
+                                #assert 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers
 
             # Check that C,V entries match
             for entry in entries:

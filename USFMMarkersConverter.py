@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2014-02-24 (also update ProgVersion below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,16 @@
 Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-20' # by RJH
+ShortProgName = "USFMMarkersConverter"
 ProgName = "USFM Markers converter"
 ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os.path
-from gettext import gettext as _
 from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
@@ -99,13 +101,13 @@ class USFMMarkersConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        assert( XMLFilepath )
+        assert XMLFilepath
         self.__XMLFilepath = XMLFilepath
-        assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
+        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFMMarkers XML file from {!r}...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
-        assert( self._XMLtree ) # Fail here if we didn't load anything at all
+        assert self._XMLtree # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag == self._treeTag:
             header = self._XMLtree[0]
@@ -141,7 +143,7 @@ class USFMMarkersConverter:
         """
         Check/validate the loaded data.
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -244,7 +246,7 @@ class USFMMarkersConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
@@ -296,11 +298,11 @@ class USFMMarkersConverter:
             #if closed is not None and closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
             #if level=="Character" and closed is None: logging.error( _("Entry for character marker {!r} doesn't have a \"closed\" field").format( marker ) )
             description = None if element.find("description") is None else element.find("description").text
-            if description is not None: assert( description )
+            if description is not None: assert description
 
             # Now put it into my dictionaries and lists for easy access
             #   The marker is lowercase by definition
-            if "marker" in self._uniqueElements: assert( marker not in rawMarkerDict ) # Shouldn't be any duplicates
+            if "marker" in self._uniqueElements: assert marker not in rawMarkerDict # Shouldn't be any duplicates
             rawMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag, "nestsFlag":nestsFlag,
                                         "hasContent":hasContent, "occursIn":occursIn, "printedFlag":printedFlag, "closed":closed, "deprecatedFlag":deprecatedFlag,
                                         "description":description, "nameEnglish":nameEnglish }
@@ -341,9 +343,9 @@ class USFMMarkersConverter:
         """
         import pickle
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -360,7 +362,7 @@ class USFMMarkersConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            assert( isinstance( theDict, dict ) )
+            assert isinstance( theDict, dict )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
                 break # We only check the first (random) entry we get
@@ -372,7 +374,7 @@ class USFMMarkersConverter:
 
         def exportPythonOrderedDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            assert( isinstance( theDict, OrderedDict ) )
+            assert isinstance( theDict, OrderedDict )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
                 break # We only check the first (random) entry we get
@@ -384,7 +386,7 @@ class USFMMarkersConverter:
 
         def exportPythonList( theFile, theList, listName, dummy, fieldsComment ):
             """Exports theList to theFile."""
-            assert( isinstance( theList, list ) )
+            assert isinstance( theList, list )
             fieldsCount = len( theList[0] ) if isinstance( theList[0], (tuple,dict,list) ) else 1
             theFile.write( '{} = [\n    # Fields ({}) are: {}\n'.format( listName, fieldsCount, fieldsComment ) )
             for j,entry in enumerate(theList):
@@ -392,9 +394,9 @@ class USFMMarkersConverter:
             theFile.write( "], # end of {} ({} entries)\n\n".format( listName, len(theList) ) )
         # end of exportPythonList
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -433,9 +435,9 @@ class USFMMarkersConverter:
         """
         import json
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
@@ -496,9 +498,9 @@ class USFMMarkersConverter:
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         raise Exception( "C export not written yet, sorry." )
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables" )

@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-05' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -127,8 +127,8 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 ##print( 'U1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
                 #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
-                    #logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( something ) )
-                    #firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
+                    #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if not firstLine: continue # don't allow a blank first line
                 #if firstLine[0] != '\\': continue # Must start with a backslash
             #foundFiles.append( something )
@@ -185,8 +185,8 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                         ##print( 'U2', repr(firstLine) )
                         #if firstLine is None: continue # seems we couldn't decode the file
                         #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
-                            #logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( something ) )
-                            #firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                            #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
+                            #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                         #if not firstLine: continue # don't allow a blank first line
                         #if firstLine[0] != '\\': continue # Must start with a backslash
                     #foundSubfiles.append( something )
@@ -479,8 +479,8 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "USFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line

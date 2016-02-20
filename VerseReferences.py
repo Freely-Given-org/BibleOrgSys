@@ -5,7 +5,7 @@
 #
 # Class handling Bible verse references
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,7 +66,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-11' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.34'
@@ -198,7 +198,7 @@ class SimpleVerseKey():
         self.ignoreParseErrors = ignoreParseErrors
         if C is None and V is None and S is None: # assume it's a string to be parsed
             #if BibleOrgSysGlobals.debugFlag:
-            #    assert( isinstance( BBB, str ) and 7<=len(BBB)<=16 )
+            #    assert isinstance( BBB, str ) and 7<=len(BBB)<=16
             parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
             if not parseFunction( BBB ):
                 raise TypeError
@@ -207,16 +207,16 @@ class SimpleVerseKey():
             if isinstance( C, int ): C = str( C ) # Make sure we have strings
             if isinstance( V, int ): V = str( V )
             if BibleOrgSysGlobals.debugFlag:
-                assert( isinstance( BBB, str ) and len(BBB) == 3 )
-                assert( isinstance( C, str ) and 1<=len(C)<=3 )
-                assert( isinstance( V, str ) and 1<=len(V)<=3 )
-                assert( isinstance( S, str ) and len(S)<3 )
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   ' )
+                assert isinstance( BBB, str ) and len(BBB) == 3
+                assert isinstance( C, str ) and 1<=len(C)<=3
+                assert isinstance( V, str ) and 1<=len(V)<=3
+                assert isinstance( S, str ) and len(S)<3
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   '
                 for checkChar in ( ' -,.:' ):
-                    assert( checkChar not in BBB )
-                    assert( checkChar not in C )
-                    assert( checkChar not in V or ( C=='0' and V=='-1' ) ) # 0:-1 means the last bit of the book intro
-                    assert( checkChar not in S )
+                    assert checkChar not in BBB
+                    assert checkChar not in C
+                    assert checkChar not in V or ( C=='0' and V=='-1' ) # 0:-1 means the last bit of the book intro
+                    assert checkChar not in S
             self.BBB, self.C, self.V, self.S = BBB, C, V, S
             self.keyType = 'AssignedBVCS'
     # end of SimpleVerseKey.__init__
@@ -320,7 +320,7 @@ class SimpleVerseKey():
             if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( self.BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.keyType = 'ParsedBVCS'
             #print( self.getShortText() )
             return True
@@ -348,7 +348,7 @@ class SimpleVerseKey():
             if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( self.BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.keyType = 'ParsedBVCS'
             #print( self.getShortText() )
             return True
@@ -381,7 +381,7 @@ class SimpleVersesKey():
             print( t("__init__( {!r} )").format( referenceString ) )
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
-        #    assert( isinstance( referenceString, str ) and 7<=len(referenceString)<=16 )
+        #    assert isinstance( referenceString, str ) and 7<=len(referenceString)<=16
         self.keyType, self.verseKeysList = None, []
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
@@ -454,9 +454,9 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
                 print( "QWEQW", referenceString )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
+                assert int(V2)>int(V1)+1 or S2!=S1
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
             return True
@@ -470,7 +470,7 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
@@ -485,10 +485,10 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
                 print( "SDADQ", referenceString )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3)]
             self.keyType = '3V'
             return True
@@ -503,7 +503,7 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2), SimpleVerseKey(BBB,C3,V3,S3)]
             self.keyType = '3CV'
             return True
@@ -519,11 +519,11 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
                 print( "CCVSD", referenceString )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4)]
             self.keyType = '4V'
@@ -541,11 +541,11 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5)]
             self.keyType = '5V'
@@ -564,12 +564,12 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5), SimpleVerseKey(BBB,C,V6,S6)]
             self.keyType = '6V'
@@ -589,13 +589,13 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
-                assert( int(V7)>int(V6)+1 or S7!=S6 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
+                assert int(V7)>int(V6)+1 or S7!=S6
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5), SimpleVerseKey(BBB,C,V6,S6),
                                   SimpleVerseKey(BBB,C,V7,S7)]
@@ -617,14 +617,14 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
-                assert( int(V7)>int(V6)+1 or S7!=S6 )
-                assert( int(V8)>int(V7)+1 or S8!=S7 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
+                assert int(V7)>int(V6)+1 or S7!=S6
+                assert int(V8)>int(V7)+1 or S8!=S7
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5), SimpleVerseKey(BBB,C,V6,S6),
                                   SimpleVerseKey(BBB,C,V7,S7), SimpleVerseKey(BBB,C,V8,S8)]
@@ -647,15 +647,15 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
-                assert( int(V7)>int(V6)+1 or S7!=S6 )
-                assert( int(V8)>int(V7)+1 or S8!=S7 )
-                assert( int(V9)>int(V8)+1 or S9!=S8 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
+                assert int(V7)>int(V6)+1 or S7!=S6
+                assert int(V8)>int(V7)+1 or S8!=S7
+                assert int(V9)>int(V8)+1 or S9!=S8
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3),
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5), SimpleVerseKey(BBB,C,V6,S6),
                                   SimpleVerseKey(BBB,C,V7,S7), SimpleVerseKey(BBB,C,V8,S8), SimpleVerseKey(BBB,C,V9,S9)]
@@ -686,8 +686,8 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
             return True
@@ -701,7 +701,7 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
@@ -716,9 +716,9 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
             self.keyType = '3V'
             return True
         match = re.search( OSIS_VERSES3C_RE, referenceString )
@@ -732,7 +732,7 @@ class SimpleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.keyType = '3CV'
             return True
         # else:
@@ -766,7 +766,7 @@ class VerseRangeKey():
             print( t("__init__( {!r} )").format( referenceString ) )
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
-        #    assert( isinstance( referenceString, str ) and 7<=len(referenceString)<=16 )
+        #    assert isinstance( referenceString, str ) and 7<=len(referenceString)<=16
         self.keyType = None
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
@@ -830,8 +830,8 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
             self.rangeStart = SimpleVerseKey( BBB, C, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C, V2, S2 )
             self.verseKeysList = []
@@ -839,7 +839,7 @@ class VerseRangeKey():
             V = V1
             if BibleOrgSysGlobals.debugFlag:
                 print( "  Expanding range from {} to {}...".format( self.rangeStart.getShortText(), self.rangeEnd.getShortText() ) )
-            assert( int(V2)>int(V1) or S2!=S1 )
+            assert int(V2)>int(V1) or S2!=S1
             while True:
                 V = str( int(V) + 1 )
                 if V==V2:
@@ -858,7 +858,7 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.rangeStart = SimpleVerseKey( BBB, C1, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C2, V2, S2 )
             self.verseKeysList = []
@@ -881,7 +881,7 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.rangeStart = SimpleVerseKey( BBB, C, '1' )
             self.rangeEnd = SimpleVerseKey( BBB, C, '999' )
             self.keyType = 'C'
@@ -912,7 +912,7 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.rangeStart = SimpleVerseKey( BBB, C, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C, V2, S2 )
             self.verseKeysList = []
@@ -935,7 +935,7 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.rangeStart = SimpleVerseKey( BBB, C1, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C2, V2, S2 )
             self.verseKeysList = []
@@ -958,7 +958,7 @@ class VerseRangeKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
             self.rangeStart = SimpleVerseKey( BBB, C, '1' )
             self.rangeEnd = SimpleVerseKey( BBB, C, '999' )
             self.keyType = 'C'
@@ -993,7 +993,7 @@ class FlexibleVersesKey():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("__init__( {!r} )").format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
-            assert( isinstance( referenceString, str ) and 5<=len(referenceString)<=20 )
+            assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
         self.keyType, self.verseKeyObjectList = None, []
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
@@ -1086,9 +1086,9 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1106,10 +1106,10 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1129,11 +1129,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1155,12 +1155,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1180,9 +1180,9 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V2, '!' if S2 else '', S2, V3, '!' if S3 else '', S3 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1201,11 +1201,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4) or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4) or S5!=S4
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V2, '!' if S2 else '', S2, V3, '!' if S3 else '', S3 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V4, '!' if S4 else '', S4, V5, '!' if S5 else '', S5 ), ignoreParseErrors=True )
@@ -1227,12 +1227,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5) or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5) or S6!=S5
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V2, S2 ) )
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
@@ -1254,11 +1254,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4) or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4) or S5!=S4
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1280,12 +1280,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5) or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5) or S6!=S5
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1306,10 +1306,10 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V2, S2 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
@@ -1329,11 +1329,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4) or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4) or S5!=S4
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V2, S2 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1355,12 +1355,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4) or S5!=S4 )
-                assert( int(V6)>int(V5) or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4) or S5!=S4
+                assert int(V6)>int(V5) or S6!=S5
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V2, S2 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1381,10 +1381,10 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V2, '!' if S2 else '', S2, V3, '!' if S3 else '', S3 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1404,11 +1404,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V2, S2 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
@@ -1428,10 +1428,10 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey1 )
@@ -1451,11 +1451,11 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey1 )
@@ -1477,12 +1477,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5)+1 or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5)+1 or S6!=S5
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey1 )
@@ -1506,12 +1506,12 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5) or S6!=S5 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5) or S6!=S5
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
             resultKey3 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V5, '!' if S5 else '', S5, V6, '!' if S6 else '', S6 ), ignoreParseErrors=True )
@@ -1536,14 +1536,14 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
-                assert( int(V4)>int(V3) or S4!=S3 )
-                assert( int(V5)>int(V4)+1 or S5!=S4 )
-                assert( int(V6)>int(V5) or S6!=S5 )
-                assert( int(V7)>int(V6)+1 or S7!=S6 )
-                assert( int(V8)>int(V7) or S8!=S7 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
+                assert int(V4)>int(V3) or S4!=S3
+                assert int(V5)>int(V4)+1 or S5!=S4
+                assert int(V6)>int(V5) or S6!=S5
+                assert int(V7)>int(V6)+1 or S7!=S6
+                assert int(V8)>int(V7) or S8!=S7
             resultKey1 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             resultKey2 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V3, '!' if S3 else '', S3, V4, '!' if S4 else '', S4 ), ignoreParseErrors=True )
             resultKey3 = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V5, '!' if S5 else '', S5, V6, '!' if S6 else '', S6 ), ignoreParseErrors=True )
@@ -1598,9 +1598,9 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1) or S2!=S1 )
-                assert( int(V3)>int(V2)+1 or S3!=S2 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1) or S2!=S1
+                assert int(V3)>int(V2)+1 or S3!=S2
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V1, '!' if S1 else '', S1, V2, '!' if S2 else '', S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
@@ -1617,9 +1617,9 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V2, '!' if S2 else '', S2, V3, '!' if S3 else '', S3 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1637,10 +1637,10 @@ class FlexibleVersesKey():
             if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "FlexibleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-                assert( int(V2)>int(V1)+1 or S2!=S1 )
-                assert( int(V3)>int(V2) or S3!=S2 )
-                assert( int(V4)>int(V3)+1 or S4!=S3 )
+                assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+                assert int(V2)>int(V1)+1 or S2!=S1
+                assert int(V3)>int(V2) or S3!=S2
+                assert int(V4)>int(V3)+1 or S4!=S3
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             resultKey = VerseRangeKey( '{}_{}:{}{}{}-{}{}{}'.format( BBB, C, V2, '!' if S2 else '', S2, V3, '!' if S3 else '', S3 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1676,7 +1676,7 @@ def demo():
             print( "  Testing SimpleVerseKey with good {!r}".format( someGoodString ) )
             vK = SimpleVerseKey( someGoodString )
             print( '   ', vK )
-            assert( vK.getVerseKeyText() == someGoodString )
+            assert vK.getVerseKeyText() == someGoodString
         print( '  BAD STUFF...' )
         for someBadString in badVerseStrings:
             print( "  Testing SimpleVerseKey with bad {!r}".format( someBadString ) )
@@ -1691,7 +1691,7 @@ def demo():
             print( "  Testing SimpleVersesKey with good {!r}".format( someGoodString ) )
             vK = SimpleVersesKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
-            #assert( vK.getVerseKeyText() == someGoodString )
+            #assert vK.getVerseKeyText() == someGoodString
         print( '  BAD STUFF...' )
         for someBadString in badVersesStrings:
             print( "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
@@ -1706,7 +1706,7 @@ def demo():
             print( "  Testing VerseRangeKey with good {!r}".format( someGoodString ) )
             vK = VerseRangeKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
-            #assert( vK.getVerseKeyText() == someGoodString )
+            #assert vK.getVerseKeyText() == someGoodString
         print( '  BAD STUFF...' )
         for someBadString in badRangeStrings:
             print( "  Testing VerseRangeKey with bad {!r}".format( someBadString ) )
@@ -1722,7 +1722,7 @@ def demo():
             print( "  Testing FlexibleVersesKey with good {!r}".format( someGoodString ) )
             vK = FlexibleVersesKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
-            #assert( vK.getVerseKeyText() == someGoodString )
+            #assert vK.getVerseKeyText() == someGoodString
         print( '  BAD STUFF...' )
         for someBadString in badFlexibleStrings:
             print( "  Testing FlexibleVersesKey with bad {!r}".format( someBadString ) )

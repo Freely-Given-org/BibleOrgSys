@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.66'
@@ -77,10 +77,10 @@ from InternalBibleBook import BCV_VERSION
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
         'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
         'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
-assert( len(OT39_BOOKLIST) == 39 )
+assert len(OT39_BOOKLIST) == 39
 NT27_BOOKLIST = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
         'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
-assert( len(NT27_BOOKLIST) == 27 )
+assert len(NT27_BOOKLIST) == 27
 
 
 def exp( messageString ):
@@ -196,7 +196,7 @@ class InternalBible:
 
         Returns True or False.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
+        if BibleOrgSysGlobals.debugFlag: assert isinstance(BBB,str) and len(BBB)==3
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not self.loadedAllBooks:
             logging.critical( exp("__contains__ result is unreliable because all books not loaded!") )
         return BBB in self.books
@@ -360,7 +360,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag:
             print( exp("reProcessBook( {} )...").format( BBB ) )
-            assert( BBB in self.books )
+            assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
         #except KeyError:
@@ -455,7 +455,7 @@ class InternalBible:
                         logging.warning( exp("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {}").format( repr(line) ) )
                     else: # Seems like a field=something type line
                         bits = line.split( '=', 1 )
-                        assert( len(bits) == 2 )
+                        assert len(bits) == 2
                         fieldName = bits[0]
                         fieldContents = bits[1]
                         if fieldContents.endswith( '\\' ):
@@ -496,7 +496,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert( applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ) )
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -596,7 +596,7 @@ class InternalBible:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
-                    if BibleOrgSysGlobals.debugFlag: assert( value )
+                    if BibleOrgSysGlobals.debugFlag: assert value
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
                         logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
@@ -680,7 +680,7 @@ class InternalBible:
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
         except (KeyError, AttributeError): return None
@@ -691,7 +691,7 @@ class InternalBible:
         """
         Gets the long table of contents book name for the given book reference code.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
         try: return self.books[BBB].longTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getLongTOCName
@@ -699,7 +699,7 @@ class InternalBible:
 
     def getShortTOCName( self, BBB ):
         """Gets the short table of contents book name for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
         try: return self.books[BBB].shortTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getShortTOCName
@@ -707,7 +707,7 @@ class InternalBible:
 
     def getBooknameAbbreviation( self, BBB ):
         """Gets the book abbreviation for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
         try: return self.books[BBB].booknameAbbreviation
         except (KeyError, AttributeError): return None
     # end of InternalBible.getBooknameAbbreviation
@@ -758,7 +758,7 @@ class InternalBible:
             filename = self.abbreviation if self.abbreviation else self.name
         if filename is None:
             filename = self.objectTypeString
-        if BibleOrgSysGlobals.debugFlag: assert( filename )
+        if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("pickle: Saving {} to {}...") \
@@ -773,25 +773,25 @@ class InternalBible:
                 a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
-        if BibleOrgSysGlobals.debugFlag: assert( referenceString and isinstance( referenceString, str ) )
+        if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
         result = BibleOrgSysGlobals.BibleBooksCodes.getBBB( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
         if adjRefString in self.combinedBookNameDict:
             BBB = self.combinedBookNameDict[adjRefString]
-            #assert( BBB not in self.reverseDict )
+            #assert BBB not in self.reverseDict
             self.reverseDict[BBB] = referenceString
             return BBB # Found a whole name match
         if adjRefString in self.bookAbbrevDict:
             BBB = self.bookAbbrevDict[adjRefString]
             #print( referenceString, adjRefString, BBB, self.reverseDict )
-            #assert( BBB not in self.reverseDict )
+            #assert BBB not in self.reverseDict
             self.reverseDict[BBB] = referenceString
             return BBB # Found a whole abbreviation match
 
         # Do a program check
-        for BBB in self.reverseDict: assert( self.reverseDict[BBB] != referenceString )
+        for BBB in self.reverseDict: assert self.reverseDict[BBB] != referenceString
 
         # See if a book name starts with this string
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1..." )
@@ -918,7 +918,7 @@ class InternalBible:
             The third list contains an entry for combined verses in the book.
             The fourth list contains an entry for reordered verses in the book.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
         totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books.keys():
             versification, omittedVerses, combinedVerses, reorderedVerses = self.books[BBB].getVersification()
@@ -934,7 +934,7 @@ class InternalBible:
         """
         Get the added units in the Bible text, such as section headings, paragraph breaks, and section references.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert self.books
         haveParagraphs = haveQParagraphs = haveSectionHeadings = haveSectionReferences = haveWordsOfJesus = False
         AllParagraphs, AllQParagraphs, AllSectionHeadings, AllSectionReferences, AllWordsOfJesus = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books:
@@ -989,7 +989,7 @@ class InternalBible:
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
-                assert( len(results) == len(self.books) )
+                assert len(results) == len(self.books)
                 for j,BBB in enumerate( self.books ):
                     self.discoveryResults[BBB] = results[j] # Saves them in the correct order
         else: # Just single threaded
@@ -1008,7 +1008,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:_aggregateDiscoveryResults()" )
         aggregateResults = {}
-        if BibleOrgSysGlobals.debugFlag: assert( 'ALL' not in self.discoveryResults )
+        if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
             #print( "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
@@ -1086,10 +1086,10 @@ class InternalBible:
                 elif key.endswith( 'WordCounts' ): # We need to combine these word count dictionaries
                     #print( "wcGot", BBB, key )
                     if key not in aggregateResults: aggregateResults[key] = {}
-                    assert( isinstance( value, dict ) )
+                    assert isinstance( value, dict )
                     for word in value:
-                        assert( isinstance( word, str ) )
-                        assert( isinstance( value[word], int ) )
+                        assert isinstance( word, str )
+                        assert isinstance( value[word], int )
                         if word not in aggregateResults[key]: aggregateResults[key][word] = 0
                         aggregateResults[key][word] += value[word]
                 elif isinstance( value, float ): # e.g., crossReferencesPeriodRatio
@@ -1137,7 +1137,7 @@ class InternalBible:
             # Create summaries of lists with entries for various books
             #print( "check", arKey, aggregateResults[arKey] )
             if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
-                if BibleOrgSysGlobals.debugFlag: assert( arKey.endswith( 'Ratio' ) )
+                if BibleOrgSysGlobals.debugFlag: assert arKey.endswith( 'Ratio' )
                 #print( "this", arKey, aggregateResults[arKey] )
                 aggregateRatio = round( sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] ), 2 )
                 aggregateFlag = None
@@ -1216,7 +1216,7 @@ class InternalBible:
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if BibleOrgSysGlobals.debugFlag: assert( self.discoveryResults )
+        if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running checks on {}...").format( self.name ) )
         if givenBookList is None:
             givenBookList = self.books # this is an OrderedDict
@@ -1264,12 +1264,12 @@ class InternalBible:
             """Appends a list to the ALL BOOKS errors."""
             #print( "  appendList", BBB, firstKey, secondKey )
             if secondKey is None:
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], list ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], list )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = []
                 errorDict['All Books'][firstKey].extend( errorDict[BBB][firstKey] )
             else: # We have an extra level
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], list ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], dict )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey][secondKey], list )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = []
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
@@ -1279,13 +1279,13 @@ class InternalBible:
             """Merges the counts together."""
             #print( "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], dict )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = {}
                 for something in errorDict[BBB][firstKey]:
                     errorDict['All Books'][firstKey][something] = 1 if something not in errorDict['All Books'][firstKey] else errorDict[BBB][firstKey][something] + 1
             else:
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) ) )
-                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], dict ) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) )
+                if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey][secondKey], dict )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = {}
                 for something in errorDict[BBB][firstKey][secondKey]:
@@ -1305,13 +1305,13 @@ class InternalBible:
 
             if total < lcTotal:
                 tcWord = lcWord.title() # NOTE: This can make in-enew into In-Enew
-                if BibleOrgSysGlobals.debugFlag: assert( tcWord != lcWord )
+                if BibleOrgSysGlobals.debugFlag: assert tcWord != lcWord
                 tcCount = wordDict[tcWord] if tcWord in wordDict else 0
                 if tcCount: tempResult.append( (tcCount,tcWord,) ); total += tcCount
             if total < lcTotal:
                 TcWord = lcWord[0].upper() + lcWord[1:] # NOTE: This can make in-enew into In-enew
                 #print( lcWord, tcWord, TcWord )
-                #assert( TcWord != lcWord )
+                #assert TcWord != lcWord
                 if TcWord!=lcWord and TcWord!=tcWord: # The first two can be equal if the first char is non-alphabetic
                     TcCount = wordDict[TcWord] if TcWord in wordDict else 0
                     if TcCount: tempResult.append( (TcCount,TcWord,) ); total += TcCount
@@ -1322,7 +1322,7 @@ class InternalBible:
                     if tCCount: tempResult.append( (tCCount,tCWord,) ); total += tCCount
             if total < lcTotal:
                 UCWord = lcWord.upper()
-                if BibleOrgSysGlobals.debugFlag: assert( UCWord!=lcWord )
+                if BibleOrgSysGlobals.debugFlag: assert UCWord!=lcWord
                 if UCWord != TcWord:
                     UCCount = wordDict[UCWord] if UCWord in wordDict else 0
                     if UCCount: tempResult.append( (UCCount,UCWord,) ); total += UCCount
@@ -1378,7 +1378,7 @@ class InternalBible:
                 for thisKey in errors['ByBook'][BBB]:
                     #print( "thisKey", BBB, thisKey )
                     if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
-                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
+                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errors['ByBook'][BBB][thisKey], list )
                         appendList( BBB, errors['ByBook'], thisKey )
                         errors['ByCategory'][thisKey].extend( errors['ByBook'][BBB][thisKey] )
                     elif thisKey.endswith('Counts'):
@@ -1388,7 +1388,7 @@ class InternalBible:
                         for anotherKey in errors['ByBook'][BBB][thisKey]:
                             #print( " anotherKey", BBB, anotherKey )
                             if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list )
                                 appendList( BBB, errors['ByBook'], thisKey, anotherKey )
                                 if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
                                 if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
@@ -1505,21 +1505,21 @@ class InternalBible:
                     print( "HEY 0—Should not have had blank entry for", BBB )
                 BBBPart = ""
                 for thisKey in errorDictionary['ByBook'][BBB]:
-                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( thisKey, str ) )
+                    if BibleOrgSysGlobals.debugFlag: assert isinstance( thisKey, str )
                     if not errorDictionary['ByBook'][BBB][thisKey]: print( "HEY 1—Should not have had", BBB, thisKey )
                     #print( 'ByBook', BBB, thisKey )
                     if errorDictionary['ByBook'][BBB][thisKey]:
                         BBBPart += "<h1>{}</h1>".format( thisKey )
                         if thisKey == 'Priority Errors': # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                             count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
                             #for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], reverse=True ): # Sorts by the first tuple value which is priority
                             for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
                             #for priority,errorText,ref in errorDictionary['ByBook'][BBB][thisKey]: # Sorts by the first tuple value which is priority
                                 #print( 'BBB', priority,errorText,ref )
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( priority, int ) and 0 <= priority <= 100 )
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorText, str ) and errorText )
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( ref, tuple ) and len(ref)==3 )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( priority, int ) and 0 <= priority <= 100
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( errorText, str ) and errorText
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( ref, tuple ) and len(ref)==3
                                 bk, ch, vs = ref
                                 if errorText != lastError:
                                     if count: BBBPart += '</p>'
@@ -1536,24 +1536,24 @@ class InternalBible:
                                 if vs: lastVs = vs
                                 lastError = errorText
                         elif thisKey.endswith('Errors'): # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                             for error in errorDictionary['ByBook'][BBB][thisKey]:
                                 #print( "nice1", 'ByBook', BBB, thisKey, error )
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 BBBPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('List'): # it should be a list
                             NEVER_HAPPENS
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                             BBBPart += "<h1>{}</h1>".format( thisKey )
                             for error in errorDictionary['ByBook'][BBB][thisKey]:
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 BBBPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('Lines'): # it should be a list
                             NEVER_HAPPENS
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                         elif thisKey.endswith('Counts'): # it should be an ordered dict
                             NEVER_HAPPENS
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], (dict, OrderedDict,) ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], (dict, OrderedDict,) )
                             for subCategory in errorDictionary['ByBook'][BBB][thisKey]:
                                 #print( "subCategory1", subCategory )
                                 if subCategory.endswith('Errors'):
@@ -1572,18 +1572,18 @@ class InternalBible:
                                 if errorDictionary['ByBook'][BBB][thisKey][secondKey]:
                                     if secondKey.endswith('Errors'): # it should be a list
                                         #print( "BBB Have ..Errors", BBB, thisKey, secondKey )
-                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         BBBPart += "<h2>{}</h2>".format( secondKey )
                                         for error in errorDictionary['ByBook'][BBB][thisKey][secondKey]:
-                                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                            if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                             BBBPart += "<p>{}</p>".format( error )
                                     elif secondKey.endswith('List'): # it should be a list
                                         #print( "BBB Have ..List", BBB, thisKey, secondKey, len(errorDictionary['ByBook'][BBB][thisKey][secondKey]), len(errorDictionary['ByBook'][BBB][thisKey][secondKey][0]) )
-                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         if secondKey == "Modified Marker List" and len(errorDictionary['ByBook'][BBB][thisKey][secondKey])>60: # Put onto a separate page
                                             ListPart = '<p>'
                                             for jj,entry in enumerate( errorDictionary['ByBook'][BBB][thisKey][secondKey] ):
-                                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                                if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, str )
                                                 if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
                                                     if BBB!='All Books': continue # Don't display the BBB book reference code
                                                     if BBB=='All Books' and jj: ListPart += "</p>\n<p>" # Start each new book on a new line
@@ -1600,7 +1600,7 @@ class InternalBible:
                                         else: # Just show it inline
                                             BBBPart += "<h2>{}</h2><p>".format( secondKey )
                                             for jj,entry in enumerate( errorDictionary['ByBook'][BBB][thisKey][secondKey] ):
-                                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                                if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, str )
                                                 if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
                                                     if BBB!='All Books': continue # Don't display the BBB book reference code
                                                     if BBB=='All Books' and jj: BBBPart += "</p>\n<p>" # Start each new book on a new line
@@ -1608,19 +1608,19 @@ class InternalBible:
                                             BBBPart += '</p>'
                                     elif secondKey.endswith('Lines'): # it should be a list
                                         #print( "BBB Have ..Lines", BBB, thisKey, secondKey )
-                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         BBBPart += "<h2>{}</h2><table>".format( secondKey )
                                         for line in errorDictionary['ByBook'][BBB][thisKey][secondKey]: # Line them up nicely in a table
                                             #print( "line {} {!r}".format( len(line), line ) )
-                                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( line, str ) and line[-1]=="'" )
+                                            if BibleOrgSysGlobals.debugFlag: assert isinstance( line, str ) and line[-1]=="'"
                                             #if line[-1] != "'": print( BBB, thisKey, secondKey, line )
-                                            bits = line[:-1].split( " '", 1 ); assert( len(bits) == 2 ) # Remove the final quote and split at the first quote
+                                            bits = line[:-1].split( " '", 1 ); assert len(bits) == 2 # Remove the final quote and split at the first quote
                                             if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
                                             BBBPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
                                         BBBPart += '</table>'
                                     elif secondKey.endswith('Counts'): # it should be an ordered dict
                                         #print( "BBB Have ..Counts", BBB, thisKey, secondKey )
-                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], (dict, OrderedDict,) ) )
+                                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], (dict, OrderedDict,) )
                                         if len(errorDictionary['ByBook'][BBB][thisKey][secondKey]) < 50: # Small list -- just include it in this page
                                             BBBPart += "<h2>{}</h2>".format( secondKey ) + "<p>"
                                             for something, count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[0].lower() ): # Sort by lower-case values
@@ -1673,15 +1673,15 @@ class InternalBible:
                 categoryPart = ""
                 categoryPart += "<h1>{}</h1>".format( category )
                 if category == 'Priority Errors': # it should be a list
-                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category], list ) )
+                    if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category], list )
                     count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
                     #for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], reverse=True ): # Sorts by the first tuple value which is priority
                     for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
                     #for priority,errorText,ref in errorDictionary['ByCategory'][category]: # Sorts by the first tuple value which is priority
                         #print( 'cat', priority,errorText,ref )
-                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( priority, int ) and 0 <= priority <= 100 )
-                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorText, str ) and errorText )
-                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( ref, tuple ) and len(ref)==3 )
+                        if BibleOrgSysGlobals.debugFlag: assert isinstance( priority, int ) and 0 <= priority <= 100
+                        if BibleOrgSysGlobals.debugFlag: assert isinstance( errorText, str ) and errorText
+                        if BibleOrgSysGlobals.debugFlag: assert isinstance( ref, tuple ) and len(ref)==3
                         bk, ch, vs = ref
                         if errorText != lastError:
                             if count: categoryPart += '</p>'
@@ -1698,25 +1698,25 @@ class InternalBible:
                         if vs: lastVs = vs
                         lastError = errorText
                 elif category.endswith('Errors'): # it should be a list
-                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category], list ) )
+                    if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category], list )
                     for error in errorDictionary['ByCategory'][category]:
-                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                        if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                         categoryPart += "<p>{}</p>".format( error )
                 elif category.endswith('Counts'): # it should be an ordered dict
                     NEVER_HAPPENS
                     for thisKey in errorDictionary['ByCategory'][category]:
                         if thisKey.endswith('Errors'): # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             for error in errorDictionary['ByCategory'][category][thisKey]:
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 categoryPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('Counts'): # it should be a list
                             print( "Counts key", thisKey )
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
-                            #        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                            #        if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                             #        categoryPart += "<p>{}</p>".format( error )
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], (dict, OrderedDict,) ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
@@ -1738,26 +1738,26 @@ class InternalBible:
                 else: # it's a subcategory
                     for thisKey in errorDictionary['ByCategory'][category]:
                         if thisKey.endswith('Errors'): # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             for error in errorDictionary['ByCategory'][category][thisKey]:
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 categoryPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('List'): # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
                             categoryPart += "<h2>{}</h2><p>".format( thisKey )
                             for jj,entry in enumerate( errorDictionary['ByCategory'][category][thisKey] ):
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, str )
                                 if thisKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']' and jj:
                                     categoryPart += "</p>\n<p>" # Start each new book on a new line
                                 categoryPart += "{} ".format( entry )
                             categoryPart += '</p>'
                         elif thisKey.endswith('Lines'): # it should be a list
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
                             categoryPart += "<h2>{}</h2><table>".format( thisKey )
                             for line in errorDictionary['ByCategory'][category][thisKey]: # Line them up nicely in a table
-                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( line, str ) and line[-1]=="'" )
-                                bits = line[:-1].split( " '", 1 ); assert( len(bits) == 2 ) # Remove the final quote and split at the first quote
+                                if BibleOrgSysGlobals.debugFlag: assert isinstance( line, str ) and line[-1]=="'"
+                                bits = line[:-1].split( " '", 1 ); assert len(bits) == 2 # Remove the final quote and split at the first quote
                                 if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
                                 categoryPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
                             categoryPart += '</table>'
@@ -1766,7 +1766,7 @@ class InternalBible:
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
-                            #        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                            #        if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                             #        categoryPart += "<p>{}</p>".format( error )
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], (dict, OrderedDict,) ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
@@ -1867,7 +1867,7 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumChapters( {} )").format( BBB ) )
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
@@ -1882,7 +1882,7 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
-        assert( len(BBB) == 3 )
+        assert len(BBB) == 3
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
@@ -1928,16 +1928,16 @@ class InternalBible:
         #print( "  gVD", self.name, key, verseData )
         if result is None:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
-            #if BibleOrgSysGlobals.debugFlag: assert( BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' ) # Why did we get nothing???
+            #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' # Why did we get nothing???
         else:
             verseData, context = result
             if BibleOrgSysGlobals.debugFlag:
-                assert( isinstance( verseData, InternalBibleEntryList ) )
+                assert isinstance( verseData, InternalBibleEntryList )
                 # The following numbers include end markers, i.e., \q1 xyz becomes q1,p~ xyz,¬q1
                 if len(verseData)<1 or len(verseData)>30: print( "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
                 if len(verseData)>35: print( verseData )
                 if self.abbreviation not in ('mhl','sua',): # This version has Matt 1:1-11 combined! 57 entries
-                    assert( 1 <= len(verseData) <= 35 ) # Smallest is just a chapter number line
+                    assert 1 <= len(verseData) <= 35 # Smallest is just a chapter number line
             return verseData
     # end of InternalBible.getVerseData
 
@@ -1954,8 +1954,8 @@ class InternalBible:
         if result is not None:
             verseData, context = result
             #print( "gVT", self.name, BCVReference, verseData )
-            assert( isinstance( verseData, InternalBibleEntryList ) )
-            #if BibleOrgSysGlobals.debugFlag: assert( 1 <= len(verseData) <= 5 )
+            assert isinstance( verseData, InternalBibleEntryList )
+            #if BibleOrgSysGlobals.debugFlag: assert 1 <= len(verseData) <= 5
             verseText, firstWord = '', False
             for entry in verseData:
                 marker, cleanText = entry.getMarker(), entry.getOriginalText() if fullTextFlag else entry.getCleanText()

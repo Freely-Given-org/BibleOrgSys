@@ -5,7 +5,7 @@
 #
 # Module handling VerseView XML Bibles
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -98,8 +98,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
         returns the loaded VerseViewXMLBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "VerseViewXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -191,7 +191,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "VerseViewXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = VerseViewXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
@@ -252,7 +252,7 @@ class VerseViewXMLBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['VerseView'] = {}
@@ -302,7 +302,7 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'hjk7' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'bh09' )
-                    if BibleOrgSysGlobals.debugFlag: assert( element.text == '1' )
+                    if BibleOrgSysGlobals.debugFlag: assert element.text == '1'
                 elif element.tag == VerseViewXMLBible.bookTag:
                     sublocation = "book in " + location
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
@@ -420,7 +420,7 @@ class VerseViewXMLBible( Bible ):
             if attrib=="n":
                 verseNumber = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
-        if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
+        if BibleOrgSysGlobals.debugFlag: assert verseNumber
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
         vText = '' if verse.text is None else verse.text
@@ -456,7 +456,7 @@ class VerseViewXMLBible( Bible ):
                             #elif attrib=="css": css = value
                             #elif attrib=="id": idStyle = value
                             else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
-                        if BibleOrgSysGlobals.debugFlag: assert( fs or css or idStyle )
+                        if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
                         SFM = None
                         if fs == 'italic': SFM = '\\it'
                         elif fs == 'super': SFM = '\\bdit'
@@ -469,7 +469,7 @@ class VerseViewXMLBible( Bible ):
                         #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         #else: print( "css is", css, "idStyle is", idStyle ); halt
                         sText, sTail = subsubelement.text.strip(), subsubelement.tail
-                        if BibleOrgSysGlobals.debugFlag: assert( sText )
+                        if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
@@ -484,7 +484,7 @@ class VerseViewXMLBible( Bible ):
                     #elif attrib=="css": css = value
                     #elif attrib=="id": idStyle = value
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
-                if BibleOrgSysGlobals.debugFlag: assert( fs )
+                if BibleOrgSysGlobals.debugFlag: assert fs
                 SFM = None
                 if fs == 'super': SFM = '\\bdit'
                 elif fs == 'emphasis': SFM = '\\em'
@@ -496,7 +496,7 @@ class VerseViewXMLBible( Bible ):
                 #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                 #else: print( "css is", css, "idStyle is", idStyle ); halt
                 sText, sTail = subelement.text.strip(), subelement.tail
-                if BibleOrgSysGlobals.debugFlag: assert( sText )
+                if BibleOrgSysGlobals.debugFlag: assert sText
                 #print( BBB, chapterNumber, sublocation )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
@@ -511,9 +511,9 @@ class VerseViewXMLBible( Bible ):
                     if attrib=="art":
                         art = value
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
-                if BibleOrgSysGlobals.debugFlag: assert( art == 'x-nl' )
+                if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
                 #print( BBB, chapterNumber, verseNumber )
-                #assert( vText )
+                #assert vText
                 if vText:
                     thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
                     vText = ''

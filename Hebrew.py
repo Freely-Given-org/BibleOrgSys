@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # Hebrew.py
-#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,6 +26,10 @@
 Module handling Hebrew language particularities.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-20' # by RJH
+ShortProgName = "Hebrew"
 ProgName = "Hebrew language handler"
 ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -35,7 +38,6 @@ debuggingThisModule = False
 
 
 import os, unicodedata
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 
@@ -64,7 +66,7 @@ resh = 'ר'
 sinShin = 'ש'
 taw = 'ת'
 normalConsonants = ( alef, bet, gimel, dalet, he, waw, zayin, het, tet, yod, kaf, lamed, mem, nun, samekh, ayin, pe, tsadi, qof, resh, sinShin, taw, )
-assert( len(normalConsonants) == 22 )
+assert len(normalConsonants) == 22
 finalConsonants = ( memFinal, nunFinal, tsadiFinal, qofFinal, )
 consonants = normalConsonants + finalConsonants
 allFinalConsonants = ( alef, bet, gimel, dalet, he, waw, zayin, het, tet, yod, kaf, lamed, memFinal, nunFinal, samekh, ayin, pe, tsadiFinal, qofFinal, resh, sinShin, taw, )
@@ -140,28 +142,28 @@ sofPasuq = '׃'
 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
     for j,letter in enumerate( consonants ):
         #print( j, letter )
-        assert( consonants.count(letter)==1 )
-        assert( letter not in vowelPoints )
-        assert( letter not in otherMarks )
-        assert( letter not in cantillationMarks )
+        assert consonants.count(letter)==1
+        assert letter not in vowelPoints
+        assert letter not in otherMarks
+        assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
         #print( j, mark )
-        assert( vowelPoints.count(mark)==1 )
-        assert( mark not in consonants )
-        assert( mark not in otherMarks )
-        assert( mark not in cantillationMarks )
+        assert vowelPoints.count(mark)==1
+        assert mark not in consonants
+        assert mark not in otherMarks
+        assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
         #print( j, mark )
-        assert( otherMarks.count(mark)==1 )
-        assert( mark not in consonants )
-        assert( mark not in vowelPoints )
-        assert( mark not in cantillationMarks )
+        assert otherMarks.count(mark)==1
+        assert mark not in consonants
+        assert mark not in vowelPoints
+        assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
         #print( j, mark )
-        assert( cantillationMarks.count(mark)==1 )
-        assert( mark not in consonants )
-        assert( mark not in vowelPoints )
-        assert( mark not in otherMarks )
+        assert cantillationMarks.count(mark)==1
+        assert mark not in consonants
+        assert mark not in vowelPoints
+        assert mark not in otherMarks
 
     BibleOrgSysGlobals.printUnicodeInfo( vowelPoints, "Vowel points" )
     BibleOrgSysGlobals.printUnicodeInfo( cantillationMarks, "Cantillation marks" )

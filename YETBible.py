@@ -5,7 +5,7 @@
 #
 # Module handling YET Bible files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -97,8 +97,8 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns the loaded YETBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -175,7 +175,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = YETBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -237,7 +237,7 @@ class YETBible( Bible ):
             verseString = re.sub( r'@<f([0-9])@>@/', r'\\ff\1', verseString )
             verseString = re.sub( r'@<x([0-9])@>@/', r'\\xx\1', verseString )
             #print( repr( verseString ) )
-            assert( '@' not in verseString )
+            assert '@' not in verseString
             return verseString
         # end of decodeVerse
 
@@ -250,8 +250,8 @@ class YETBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      YETBible.load: Detected UTF-16 Byte Order Marker" )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "      YETBible.load: Detected Unicode Byte Order Marker (BOM)" )
+                    #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
@@ -260,7 +260,7 @@ class YETBible( Bible ):
                 bits = line.split( '\t' )
                 #print( self.givenName, BBB, bits )
                 if bits[0] == 'info':
-                    assert( len(bits) == 3 )
+                    assert len(bits) == 3
                     if bits[1] == 'shortName':
                         shortName = bits[2]
                         self.name = shortName
@@ -270,14 +270,14 @@ class YETBible( Bible ):
                         description = bits[2]
                     elif bits[1] == 'locale':
                         locale = bits[2]
-                        assert( 2 <= len(locale) <= 3 )
+                        assert 2 <= len(locale) <= 3
                         if locale == 'in': locale = 'id' # Fix a quirk in the locale encoding
                     else:
                         logging.warning( _("YETBible: unknown {} info field in {} {} {}:{}") \
                             .format( repr(bits[1]), BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 elif bits[0] == 'book_name':
-                    assert( 3 <= len(bits) <= 4 )
+                    assert 3 <= len(bits) <= 4
                     thisBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bits[1] )
                     if len(bits) == 3:
                         bookNameDict[thisBBB] = bits[2], ''
@@ -285,71 +285,71 @@ class YETBible( Bible ):
                         bookNameDict[thisBBB] = bits[2], bits[3]
                     continue
                 elif bits[0] == 'verse':
-                    assert( len(bits) == 5 )
+                    assert len(bits) == 5
                     bookNumberString, chapterNumberString, verseNumberString, encodedVerseString = bits[1:]
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( bookNumberString.isdigit() )
-                        assert( chapterNumberString.isdigit() )
-                        assert( verseNumberString.isdigit() )
+                        assert bookNumberString.isdigit()
+                        assert chapterNumberString.isdigit()
+                        assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     #print( "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
                             bookDict[lastBBB] = bookLines
-                        assert( BBB in bookNameDict )
+                        assert BBB in bookNameDict
                         bookLines = OrderedDict() # Keys are (C,V) strings
                     verseString = decodeVerse( encodedVerseString )
                     bookLines[(chapterNumberString,verseNumberString)] = verseString # Just store it for now
                     lastBBB = BBB
                     continue
                 elif bits[0] == 'pericope':
-                    assert( len(bits) == 5 )
+                    assert len(bits) == 5
                     bookNumberString, chapterNumberString, verseNumberString, encodedHeadingString = bits[1:]
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( bookNumberString.isdigit() )
-                        assert( chapterNumberString.isdigit() )
-                        assert( verseNumberString.isdigit() )
+                        assert bookNumberString.isdigit()
+                        assert chapterNumberString.isdigit()
+                        assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     headingString = encodedHeadingString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     #print( repr(encodedHeadingString), repr(headingString) )
-                    assert( '@' not in headingString )
+                    assert '@' not in headingString
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = headingString, [] # Blank refList
                     continue
                 elif bits[0] == 'parallel': # These lines optionally follow pericope lines
-                    assert( len(bits) == 2 )
+                    assert len(bits) == 2
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
                     refList.append( bits[1] )
                     #print( "parallel2", repr(heading), refList )
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = heading, refList
                     continue
                 elif bits[0] == 'xref':
-                    assert( len(bits) == 6 )
+                    assert len(bits) == 6
                     bookNumberString, chapterNumberString, verseNumberString, indexNumberString, encodedNoteString = bits[1:]
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( bookNumberString.isdigit() )
-                        assert( chapterNumberString.isdigit() )
-                        assert( verseNumberString.isdigit() )
-                        assert( indexNumberString.isdigit() )
+                        assert bookNumberString.isdigit()
+                        assert chapterNumberString.isdigit()
+                        assert verseNumberString.isdigit()
+                        assert indexNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     noteString = re.sub( r'@<ta(.+?)@>', r'', noteString ) # Get rid of these encoded BCV references for now
                     noteString = re.sub( r'@<to(.+?)@>', r'', noteString ) # Get rid of these OSIS BCV references for now
                     noteString = noteString.replace( '@/', '' )
                     #print( repr(encodedNoteString), repr(noteString) )
-                    assert( '@' not in noteString )
+                    assert '@' not in noteString
                     xrefDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
                 elif bits[0] == 'footnote':
-                    assert( len(bits) == 6 )
+                    assert len(bits) == 6
                     bookNumberString, chapterNumberString, verseNumberString, indexNumberString, encodedNoteString = bits[1:]
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( bookNumberString.isdigit() )
-                        assert( chapterNumberString.isdigit() )
-                        assert( verseNumberString.isdigit() )
-                        assert( indexNumberString.isdigit() )
+                        assert bookNumberString.isdigit()
+                        assert chapterNumberString.isdigit()
+                        assert verseNumberString.isdigit()
+                        assert indexNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
-                    assert( '@' not in noteString )
+                    assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
                 else: print( "YETBible: Unknown line type", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
@@ -367,7 +367,7 @@ class YETBible( Bible ):
                     #lastChapterNumber = lastVerseNumber = -1
 
                 #if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    #if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                    #if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                     #if chapterNumber == 0:
                         #logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     #thisBook.addLine( 'c', chapterNumberString )
@@ -418,7 +418,7 @@ class YETBible( Bible ):
                     fIx = verseString.index( '\\ff' )
                     caller = verseString[fIx+3]
                     #print( "fcaller", repr(caller) )
-                    assert( caller.isdigit() )
+                    assert caller.isdigit()
                     note = footnoteDict[(BBB,chapterNumberString,verseNumberString,caller)]
                     #print( "fnote", repr(note) )
                     verseString = verseString[:fIx] + '\\f + \\ft ' + note + '\\f*' + verseString[fIx+4:]
@@ -428,7 +428,7 @@ class YETBible( Bible ):
                     fIx = verseString.index( '\\xx' )
                     caller = verseString[fIx+3]
                     #print( "xcaller", repr(caller) )
-                    assert( caller.isdigit() )
+                    assert caller.isdigit()
                     note = xrefDict[(BBB,chapterNumberString,verseNumberString,caller)]
                     #print( "xnote", repr(note) )
                     verseString = verseString[:fIx] + '\\x - \\xt ' + note + '\\x*' + verseString[fIx+4:]
@@ -444,7 +444,7 @@ class YETBible( Bible ):
                     else: halt
                     #print( '', '\\'+marker )
                     thisBook.addLine( marker, '' )
-                assert( not verseString.startswith( '\\\\' ) )
+                assert not verseString.startswith( '\\\\' )
                 bits = verseString.split( '\\\\' ) # Split on paragraph markers (but not character markers)
                 for j,bit in enumerate(bits):
                     #print( "loop", j, repr(bit), repr(verseString) )
@@ -539,7 +539,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testYB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nYET D{}/ Trying {}".format( j+1, someFolder ) )

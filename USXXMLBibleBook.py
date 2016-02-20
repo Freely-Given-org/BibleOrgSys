@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2015 Robert Hunt
+# Copyright (C) 2012-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-08' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.17'
@@ -140,7 +140,7 @@ class USXXMLBibleBook( BibleBook ):
                         if attrib=='style':
                             charStyle = value # This is basically the USFM character marker name
                             #print( "  charStyle", charStyle )
-                            assert( not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle ) )
+                            assert not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle )
                         else:
                             logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     charLine = "\\{} {} ".format( charStyle, element.text )
@@ -155,7 +155,7 @@ class USXXMLBibleBook( BibleBook ):
                             for attrib,value in subelement.items():
                                 if attrib=='style': subCharStyle = value
                                 elif attrib=='closed':
-                                    assert( value=='false' )
+                                    assert value=='false'
                                     charClosed = False
                                 else:
                                     logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
@@ -182,12 +182,12 @@ class USXXMLBibleBook( BibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             noteStyle = value # This is basically the USFM marker name
-                            assert( noteStyle in ('x','f',) )
+                            assert noteStyle in ('x','f',)
                         elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
                             logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
-                    assert( noteStyle and noteCaller ) # both compulsory
+                    assert noteStyle and noteCaller # both compulsory
                     noteLine = "\\{} {} ".format( noteStyle, noteCaller )
                     if element.text:
                         noteText = element.text.strip()
@@ -204,7 +204,7 @@ class USXXMLBibleBook( BibleBook ):
                                 if attrib=='style':
                                     charStyle = value
                                 elif attrib=='closed':
-                                    assert( value=='false' )
+                                    assert value=='false'
                                     charClosed = False
                                 else:
                                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
@@ -246,7 +246,7 @@ class USXXMLBibleBook( BibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             linkStyle = value
-                            assert( linkStyle in ('jmp',) )
+                            assert linkStyle in ('jmp',)
                         elif attrib=='display':
                             linkDisplay = value # e.g., "click here"
                         elif attrib=='target':
@@ -274,7 +274,7 @@ class USXXMLBibleBook( BibleBook ):
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         self.tree = ElementTree().parse( self.sourceFilepath )
-        assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         C = V = '0'
         loadErrors = []

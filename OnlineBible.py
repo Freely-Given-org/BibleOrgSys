@@ -5,7 +5,7 @@
 #
 # Module handling Online Bible files
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-18' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.16'
@@ -70,8 +70,8 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns the loaded OnlineBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "OnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -127,7 +127,7 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "OnlineBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = OnlineBible( foundProjects[0] )
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
@@ -200,8 +200,8 @@ class OnlineBible( Bible ):
                         for line in myFile:
                             lineCount += 1
                             if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                                logging.info( "loadOnlineBibleMetadata: Detected UTF-16 Byte Order Marker in {}".format( filepath ) )
-                                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                                logging.info( "loadOnlineBibleMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
+                                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             #if not line: continue # Just discard blank lines
                             lines.append( line )
@@ -295,7 +295,7 @@ class OnlineBible( Bible ):
             key, size = versionBytes[0], versionBytes[1]
             #print( "  prelude length = {:04x} {}".format( size, size ) )
             #print( "    Key={}, line entry size={}".format( key, size ) )
-            assert( key == 8 )
+            assert key == 8
 
             index, length = 1, 12
             vHeader1 = versionBytes[index:index+length]; index += length
@@ -305,19 +305,19 @@ class OnlineBible( Bible ):
             unknown1, = struct.unpack( "<H", vHeader1[3:5] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      unknown1 is {:04x}={:,}".format( unknown1, unknown1 ) )
-                #assert( ntOffset == 23146 )
+                #assert ntOffset == 23146
             unknown2, = struct.unpack( "<H", vHeader1[5:7] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      unknown2 is {:04x}={:,}".format( unknown2, unknown2 ) )
-                #assert( ntOffset == 23146 )
+                #assert ntOffset == 23146
             ntOffset, = struct.unpack( "<H", vHeader1[7:9] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      NT offset is {:04x}={:,}".format( ntOffset, ntOffset ) )
-                assert( ntOffset == 23146 )
+                assert ntOffset == 23146
             unknownFlag1 = vHeader1[-1]
             if BibleOrgSysGlobals.debugFlag:
                 print( "      Unknown flag1 is {}".format( unknownFlag1 ) )
-                assert( unknownFlag1 in (0,1) )
+                assert unknownFlag1 in (0,1)
 
             length = 10 # 1 length byte and 9 max characters
             strings1 = []
@@ -331,7 +331,7 @@ class OnlineBible( Bible ):
                     vString = vBytes[1:vLen+1].decode()
                     #print( 'Vstring', vString )
                     #print( "    vBl1 {} {!r}".format( vLen, vString ), end='' )
-                    assert( not vString[0].islower() )
+                    assert not vString[0].islower()
                     strings1.append( vString )
                 index += length
             numStrings1 = len( strings1 )
@@ -339,30 +339,30 @@ class OnlineBible( Bible ):
                 print( "    {}={:04x} 8-bit capitalized common words loaded".format( numStrings1, numStrings1 ) )
                 print( '     ', strings1 )
             #print( "  index = {:04x}={}".format( index, index ) )
-            assert( 118 <= numStrings1 <= 123 )
+            assert 118 <= numStrings1 <= 123
 
-            assert( index == 0x4db )
+            assert index == 0x4db
             length = 137
             vHeader2 = versionBytes[index:index+length]; index += length
-            assert( vHeader2[0] == 5 )
-            for ix in range( 1, 8+1 ): assert( vHeader2[ix] == 0 )
+            assert vHeader2[0] == 5
+            for ix in range( 1, 8+1 ): assert vHeader2[ix] == 0
             vHeader2 = vHeader2[9:]
             if BibleOrgSysGlobals.debugFlag:
                 print( "    {} vBH2 {} {}".format( self.abbreviation, len(vHeader2), hexlify(vHeader2) ) )
                 VBH2s[self.abbreviation] = hexlify(vHeader2)
 
-            assert( index == 0x564 )
+            assert index == 0x564
             length = 44
             vHeader3 = versionBytes[index:index+length]; index += length
             #print( "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
-            assert( vHeader3[0] == 8 )
+            assert vHeader3[0] == 8
             vHeaderDate = vHeader3[1:8+1]
             #print( "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
             year, month, date = int(vHeaderDate[:4]), int(vHeaderDate[4:6]), int(vHeaderDate[6:])
             if BibleOrgSysGlobals.debugFlag:
                 print( "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
             vHeader3 = vHeader3[9:]
-            for ix in range( 0, 11+1 ): assert( vHeader3[ix] == 0 )
+            for ix in range( 0, 11+1 ): assert vHeader3[ix] == 0
             vHeader3 = vHeader3[12:]
             if BibleOrgSysGlobals.debugFlag:
                 print( "    {} vBH3 {} {}".format( self.abbreviation, len(vHeader3), hexlify(vHeader3) ) )
@@ -370,31 +370,31 @@ class OnlineBible( Bible ):
             self.StrongsOffset, = struct.unpack( "<H", vHeader3[0:2] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      Strongs' offset is {:04x}={:,}".format( self.StrongsOffset, self.StrongsOffset ) )
-                assert( self.StrongsOffset in ( 0xffff, 0x5d5c ) )
+                assert self.StrongsOffset in ( 0xffff, 0x5d5c )
             self.haveStrongsFlag = vHeader3[4] != 0
             if BibleOrgSysGlobals.debugFlag:
                 print( "      Have Strongs flag is {}".format( self.haveStrongsFlag ) )
-                assert( self.haveStrongsFlag in (0,1) )
+                assert self.haveStrongsFlag in (0,1)
             numBooks, = struct.unpack( "<H", vHeader3[5:7] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      numBooks is {:04x}={:,}".format( numBooks, numBooks ) )
-                assert( numBooks == 66 )
+                assert numBooks == 66
             numChapters, = struct.unpack( "<H", vHeader3[9:11] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      numChapters is {:04x}={:,}".format( numChapters, numChapters ) )
-                assert( numChapters == 1189 )
+                assert numChapters == 1189
             numVerses, = struct.unpack( "<H", vHeader3[17:19] )
             if BibleOrgSysGlobals.debugFlag:
                 print( "      numVerses is {:04x}={:,}".format( numVerses, numVerses ) )
-                assert( numVerses == 31102 )
+                assert numVerses == 31102
             unknownFlag2 = vHeader3[-2]
             if BibleOrgSysGlobals.debugFlag:
                 print( "      Unknown flag2 is {:1x}".format( unknownFlag2 ) )
-                assert( unknownFlag2 in (1,15) )
+                assert unknownFlag2 in (1,15)
 
             #vHeader3 = versionBytes[0x4db:0x564]
             #print( "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
-            #assert( versionBytes[0x564] == 8 )
+            #assert versionBytes[0x564] == 8
             #vHeaderDate = versionBytes[0x565:0x56d]
             ##print( "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
             #year, month, date = int(vHeaderDate[:4]), int(vHeaderDate[4:6]), int(vHeaderDate[6:])
@@ -403,7 +403,7 @@ class OnlineBible( Bible ):
             #print( "    vBH4 {} {}".format( len(vHeader3), hexlify(vHeader4) ) )
             #print( "  index = {:04x}={}".format( index, index ) )
 
-            assert( index == 0x590 )
+            assert index == 0x590
             length = 19 # 1 length byte and 9 max characters
             strings2 = []
             while index < len(versionBytes):
@@ -420,7 +420,7 @@ class OnlineBible( Bible ):
                     vString += chr( char16 )
                 #vString = vBytes[2:vLen+1].decode( 'utf-16' )
                 #print( "    vBl2 {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
-                assert( not vString[0].islower() )
+                assert not vString[0].islower()
                 strings2.append( vString )
                 index += length
             numStrings2 = len( strings2 )
@@ -461,11 +461,11 @@ class OnlineBible( Bible ):
                 tokenBytes = myFile.read()
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} token bytes read".format( len(tokenBytes) ) )
             #print( "vB {} {}".format( len(tokenBytes), hexlify(tokenBytes[:40]) ) )
-            assert( tokenBytes[0] == 32 )
-            assert( tokenBytes[1] in (0,32) )
+            assert tokenBytes[0] == 32
+            assert tokenBytes[1] in (0,32)
             if BibleOrgSysGlobals.debugFlag:
-                if self.characterBitSize == 8: assert( tokenBytes[1] == 32 ) # Space
-                elif self.characterBitSize == 16: assert( tokenBytes[1] == 0 )
+                if self.characterBitSize == 8: assert tokenBytes[1] == 32 # Space
+                elif self.characterBitSize == 16: assert tokenBytes[1] == 0
                 else: halt
 
             index = 0
@@ -503,16 +503,16 @@ class OnlineBible( Bible ):
             numTextIndexBytes = len(textIndexBytes)
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} text index bytes read".format( numTextIndexBytes ) )
             #print( "tIB {} {}".format( len(textIndexBytes), hexlify(textIndexBytes[:99]) ) )
-            assert( numTextIndexBytes in (34055,49623,) ) # Divisible by 35 or 51 = 973
+            assert numTextIndexBytes in (34055,49623,) # Divisible by 35 or 51 = 973
 
             key, size = textIndexBytes[0], textIndexBytes[1]
             #print( "  prelude length = {:04x} {}".format( size, size ) )
             #print( "    Key={}, line entry size={}".format( key, size ) )
-            assert( key == 1 )
-            assert( size in (35,51,) ) # 35-3=32, 51-3=48
+            assert key == 1
+            assert size in (35,51,) # 35-3=32, 51-3=48
             vTIHeader = textIndexBytes[3:size+3]
             #print( "tIB header {} {}".format( len(vTIHeader), hexlify(vTIHeader) ) )
-            for something in vTIHeader: assert( something == 0 ) # It's just filler
+            for something in vTIHeader: assert something == 0 # It's just filler
             index = size
 
             self.textIndex = []
@@ -520,14 +520,14 @@ class OnlineBible( Bible ):
             lastPointer = -1
             while index < numTextIndexBytes:
                 indexEntry = textIndexBytes[index:index+size]; index += size
-                assert( len(indexEntry) == size )
+                assert len(indexEntry) == size
                 iE0, iE1, iE2 = indexEntry[0], indexEntry[1], indexEntry[2]
                 iE = (iE2<<16) + (iE1<<8) + iE0 # IE starts at 0, increases by 1200-1800 each time, up to 1,393,772
-                assert( iE > lastIE or ( iE==0 and lastIE==0) )
+                assert iE > lastIE or ( iE==0 and lastIE==0)
                 indexEntry = indexEntry[3:]
                 lineOffset = iE - lastIE
                 #print( '{} iE={} lastIE={} lineOffset={} total={}'.format( len(self.textIndex), iE, lastIE, lineOffset, total ) )
-                assert( total == lineOffset )
+                assert total == lineOffset
                 #print( '{:3} +{:4}={:4} {} {}'.format( len(self.textIndex), lineOffset, iE, hexlify(indexEntry), indexEntry ) )
                 total = 0
                 if size == 35: # One byte per entry (handles offsets in range 0..256)
@@ -537,7 +537,7 @@ class OnlineBible( Bible ):
                             #print( "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
                             pointer = total + iE
                             #print( "pointer={} lastPointer={}".format( pointer, lastPointer ) )
-                            assert( pointer > lastPointer )
+                            assert pointer > lastPointer
                             self.textIndex.append( pointer )
                             lastPointer = pointer
                         #else:
@@ -560,7 +560,7 @@ class OnlineBible( Bible ):
                                 #print( "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
                                 pointer = total + iE
                                 #print( "pointer={} lastPointer={}".format( pointer, lastPointer ) )
-                                assert( pointer > lastPointer )
+                                assert pointer > lastPointer
                                 self.textIndex.append( pointer )
                                 lastPointer = pointer
                             #else:
@@ -568,16 +568,16 @@ class OnlineBible( Bible ):
                 else: halt
                 lastIE = iE
                 count += 1
-            assert( index == numTextIndexBytes )
+            assert index == numTextIndexBytes
 
             numTextIndexEntries = len(self.textIndex)
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "    {:,} text-index entries loaded from {} lines".format( numTextIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
-                assert( numTextIndexEntries == 31102 or self.abbreviation in ( 'Darby','Wey', 'Williams',) ) # Darby has 31,099 (3 less)
+                assert numTextIndexEntries == 31102 or self.abbreviation in ( 'Darby','Wey', 'Williams',) # Darby has 31,099 (3 less)
                 print( "    Final accumulated total was {:,} (should equal length of Text.Dat)".format( total + iE ) )
                 #for index in (0, 1, 2, 3, 23145, -4, -3, -2, -1 ): print( "      {}={}".format( index, self.textIndex[index] ) )
-                #assert( self.textIndex[-2]==self.textIndex[-3] and self.textIndex[-1]==self.textIndex[-3] ) # Two zero entries at end
+                #assert self.textIndex[-2]==self.textIndex[-3] and self.textIndex[-1]==self.textIndex[-3] # Two zero entries at end
         # end of load.loadVerseTextIndex
 
 
@@ -603,7 +603,7 @@ class OnlineBible( Bible ):
                 self.textBytes = myFile.read()
             numTextBytes = len(self.textBytes)
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} text bytes read".format( numTextBytes ) )
-            if BibleOrgSysGlobals.debugFlag: assert( numTextBytes == self.textIndex[-1] )
+            if BibleOrgSysGlobals.debugFlag: assert numTextBytes == self.textIndex[-1]
         # end of load.loadBibleText
 
 
@@ -634,10 +634,10 @@ class OnlineBible( Bible ):
             index = 0
             key, size, zero1, zero2 = optBytes[0], optBytes[1], optBytes[2], optBytes[3]
             if BibleOrgSysGlobals.debugFlag: print( "    TextOpt: key={} size={}".format( key, size ) )
-            assert( key == 255 )
-            assert( size == 3 )
-            assert( zero1 == 0 )
-            assert( zero2 == 0 )
+            assert key == 255
+            assert size == 3
+            assert zero1 == 0
+            assert zero2 == 0
             index += 4
 
             # Load pointers -- what do they mean?
@@ -649,7 +649,7 @@ class OnlineBible( Bible ):
                 pointer = (stuff[1]<<8) + stuff[0]
                 #print( "      {} {:04x} {} pointer={:04x}={}".format( len(self.optStuff1), index, hexlify(stuff), pointer, pointer ) )
                 if stuff[2]!=0 or stuff[3]!=0: break # something changes here
-                assert( pointer > lastPointer )
+                assert pointer > lastPointer
                 if lastPointer == -1: firstPointer = pointer
                 index += 4
                 self.optStuff1.append( pointer )
@@ -660,17 +660,17 @@ class OnlineBible( Bible ):
                 for ix in (0, 1, 2, 3, -4, -3, -2, -1 ):
                     print( "      {}={:04x}={}".format( ix, self.optStuff1[ix], self.optStuff1[ix] ) )
                 #print( self.optStuff1 )
-                assert( len(self.optStuff1) == 896 )
+                assert len(self.optStuff1) == 896
 
             # Load more stuff -- what does it mean?
             #print( 'index={}={:04x}'.format( index, index ) )
-            assert( index == 0xe04 )
+            assert index == 0xe04
             startIndex = index
             self.optStuff2 = []
             while True:
                 stuff = optBytes[index]; index += 1
                 #print( "      {} {:04x} {}".format( len(self.optStuff2), index, hexlify(stuff) ) )
-                assert( stuff==0 or stuff==1 )
+                assert stuff==0 or stuff==1
                 self.optStuff2.append( stuff )
                 if len(self.optStuff2) >= len(self.optStuff1): break
             if BibleOrgSysGlobals.debugFlag:
@@ -678,12 +678,12 @@ class OnlineBible( Bible ):
                 #print( "  index = {:04x}={}".format( index, index ) )
                 #print( self.optStuff2 )
                 for ix in (0, 1, 2, -2, -1 ): print( "      {}: {:02x}={!r}".format( ix, self.optStuff2[ix], self.optStuff2[ix] ) )
-                assert( len(self.optStuff2) == len(self.optStuff1) )
+                assert len(self.optStuff2) == len(self.optStuff1)
 
             # Now load these capitalized commonish words -- how are they referenced?
             # (Don't seem to overlap with the more common capitalized words in Version.Dat)
             # Seems that ASV has 8-bit chars, but most others have 16-bit chars
-            assert( index == 0x1184 )
+            assert index == 0x1184
             startIndex = index
             self.optWords = []
             while index < len(optBytes):
@@ -701,7 +701,7 @@ class OnlineBible( Bible ):
                         vString += chr( char8 )
                     #print( 'vString', repr(vString) )
                     index += 10
-                    assert( not vString[0].islower() )
+                    assert not vString[0].islower()
                     self.optWords.append( vString )
                 elif self.characterBitSize == 16:
                     # Nine 16-bit characters
@@ -715,13 +715,13 @@ class OnlineBible( Bible ):
                     #vString = vBytes[2:vLen+1].decode( 'utf-16' )
                     #print( "    tO {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
                     index += 19
-                    assert( not vString[0].islower() )
+                    assert not vString[0].islower()
                     self.optWords.append( vString )
             numOptWords = len( self.optWords )
             if BibleOrgSysGlobals.debugFlag:
                 print( "    {}={:04x} 19-byte text-opt capitalized words loaded from {:04x} onwards".format( numOptWords, numOptWords, startIndex ) )
                 print( '     ', self.optWords )
-                assert( numOptWords == len(self.optStuff1) )
+                assert numOptWords == len(self.optStuff1)
         # end of load.loadTextOpt
 
 
@@ -756,31 +756,31 @@ class OnlineBible( Bible ):
             #print( "  prelude length = {:04x} {}".format( size, size ) )
             if BibleOrgSysGlobals.debugFlag:
                 print( "    Key={}, line entry size {}+{}={} index size={} tokenBlkSize={}*2={}".format( key, size0, size1, size, indexSize, tokenBlkSize, tokenBlkSize*2 ) )
-            assert( key == 2 )
-            assert( size0 == 35 ) # 35-3=32
-            assert( size1 == 67 ) # 67-3=64
-            assert( size == 102 )
-            assert( indexSize == 0 )
-            assert( 90 <= tokenBlkSize <= 215 ) # AV=195, YLT=206, CEV=186
+            assert key == 2
+            assert size0 == 35 # 35-3=32
+            assert size1 == 67 # 67-3=64
+            assert size == 102
+            assert indexSize == 0
+            assert 90 <= tokenBlkSize <= 215 # AV=195, YLT=206, CEV=186
             index = 7
             header = xrefIndexBytes[index:size]
             if BibleOrgSysGlobals.debugFlag:
                 print( "xIB2 header {} {}".format( len(header), hexlify(header) ) )
             index = size
 
-            assert( index == 102 )
+            assert index == 102
             self.xrefIndex = []
             lastPointer = total = count = 0
             while index < numXrefIndexBytes:
                 indexEntry = xrefIndexBytes[index:index+size]; index += size
                 #print( '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
-                assert( len(indexEntry) == size )
+                assert len(indexEntry) == size
                 indexEntry1, indexEntry2 = indexEntry[:size0], indexEntry[size0:]
-                assert( len(indexEntry1)==size0 and len(indexEntry2)==size1 )
+                assert len(indexEntry1)==size0 and len(indexEntry2)==size1
                 # Seems part a starts with a 3-byte pointer to something
                 diskPointer1 = (indexEntry1[2]<<16) + (indexEntry1[1]<<8) + indexEntry1[0]
                 diskPointer2 = (indexEntry2[2]<<16) + (indexEntry2[1]<<8) + indexEntry2[0]
-                assert( diskPointer2 == total )
+                assert diskPointer2 == total
                 count1 = indexEntry1[3]
                 if 0 and len(self.xrefIndex) < 10:
                     print( '  {} {:06x}={} {}'.format( len(self.xrefIndex), diskPointer1, diskPointer1, count1 ) )
@@ -790,20 +790,20 @@ class OnlineBible( Bible ):
                 for x in range( 0, 32 ):
                     b1, w2 = indexEntry1[x+3], (indexEntry2[2*x+3+1]<<8) + indexEntry2[2*x+3]
                     if b1 == 0:
-                        assert( w2 == 0 )
+                        assert w2 == 0
                         break
                     #print( 'b1={:02x}={} w2={:04x}={}'.format( b1, b1, w2, w2 ) )
                     total += w2
                     self.xrefIndex.append( (b1,diskPointer2+w2) )
                 #if len(self.xrefIndex) > 10: print(); halt
                 count += 1
-            assert( index == numXrefIndexBytes )
+            assert index == numXrefIndexBytes
             numXrefIndexEntries = len(self.xrefIndex)
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "    {:,} xref index duples loaded from {} double lines".format( numXrefIndexEntries, count ) )
             #print( self.xrefIndex )
-            assert( 231 <= count <= 428 ) # AV=417, YLT=385, CEV=338
-            assert( 7365 <= numXrefIndexEntries <= 13694 ) # AV=13,316, YLT=12,289, CEV=10,796
+            assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
+            assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
             #print( "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
             #for index in range( 0, 150 ):
                 #print( "      {}: {:02x} @ {:04x}={}".format( index, self.xrefIndex[index][0], self.xrefIndex[index][1], self.xrefIndex[index][1] ) )
@@ -846,28 +846,28 @@ class OnlineBible( Bible ):
             #print( "  prelude length = {:04x} {}".format( size, size ) )
             if BibleOrgSysGlobals.debugFlag:
                 print( "    Key={}, line entry size {}".format( key, size0 ) )
-            assert( key == 1 )
-            assert( size0 == 67 ) # 67-3=64
-            assert( size1 == 0 )
-            assert( indexSize == 0 )
-            assert( tokenBlkSize == 0 )
+            assert key == 1
+            assert size0 == 67 # 67-3=64
+            assert size1 == 0
+            assert indexSize == 0
+            assert tokenBlkSize == 0
             index = 7
             header = xrefIndexBytes[index:size0]
             #print( "xIB2 header {} {}".format( len(header), hexlify(header) ) )
-            for something in header: assert( something == 0 ) # It's just filler
+            for something in header: assert something == 0 # It's just filler
             index = size0
 
-            assert( index == 67 )
+            assert index == 67
             self.StrongsIndex = []
             lastPointer = total = count = 0
             while index < numXrefIndexBytes:
                 indexEntry = xrefIndexBytes[index:index+size0]; index += size0
                 #print( '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
-                assert( len(indexEntry) == size0 )
+                assert len(indexEntry) == size0
                 # Seems part a starts with a 3-byte pointer to something
                 diskPointer = (indexEntry[2]<<16) + (indexEntry[1]<<8) + indexEntry[0]
                 if total == 0: total = diskPointer # Starts part way through
-                assert( diskPointer == total )
+                assert diskPointer == total
                 if 0 and len(self.xrefIndex) < 10:
                     print( '  {} {:06x}={}'.format( len(self.xrefIndex), diskPointer, diskPointer ) )
                     print( '    {} {} {}'.format( len(indexEntry), hexlify(indexEntry), indexEntry[3:] ) )
@@ -879,14 +879,14 @@ class OnlineBible( Bible ):
                     self.StrongsIndex.append( (total) )
                 #if len(self.xrefIndex) > 10: print(); halt
                 count += 1
-            assert( index == numXrefIndexBytes )
+            assert index == numXrefIndexBytes
             numStrongsIndexEntries = len(self.StrongsIndex)
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "    {:,} Strongs index entries loaded from {} lines".format( numStrongsIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
                 #print( self.StrongsIndex )
-                assert( count == 277 )
-                assert( numStrongsIndexEntries == 8850 )
+                assert count == 277
+                assert numStrongsIndexEntries == 8850
                 #print( "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
                 for index in (0, 1, 2, 3, -4, -3, -2, -1 ): print( "      {}={}".format( index, self.StrongsIndex[index] ) )
         # end of load.loadStrongsIndex
@@ -908,12 +908,12 @@ class OnlineBible( Bible ):
             numXrefBytes = len(self.xrefBytes)
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} xref bytes read".format( numXrefBytes ) )
             if BibleOrgSysGlobals.debugFlag:
-                if 'StrongsIndex' in dir(self): assert( numXrefBytes == self.StrongsIndex[-1] )
+                if 'StrongsIndex' in dir(self): assert numXrefBytes == self.StrongsIndex[-1]
                 else: # Not all versions have Strongs
                     print( "lastXref", self.xrefIndex[-1], self.xrefIndex[-2] )
                     # XXXXX Why does this fail for CEVUK?
                     if self.abbreviation not in ('ASV', 'AKJV', 'CEVUK', 'Darby', 'KJ21', 'Webster', 'Wey', 'Williams', ):
-                        assert( numXrefBytes == self.xrefIndex[-1][1] )
+                        assert numXrefBytes == self.xrefIndex[-1][1]
 
             if 0:
                 lastPointer = 0
@@ -942,7 +942,7 @@ class OnlineBible( Bible ):
             #print( 'wi', wordIndex )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 print( '    {} common words added to dictionary from {} to {}={:02x}'.format( len(self.commonWords), startWordIndex, wordIndex-1, wordIndex-1 ) )
-            assert( wordIndex == 128 )
+            assert wordIndex == 128
             del self.commonWords
 
             # Add in the compressed words
@@ -967,7 +967,7 @@ class OnlineBible( Bible ):
                 startWordIndex = self.StrongsOffset
                 wordIndex = startWordIndex
                 for j, xrefPointer in enumerate( self.StrongsIndex ):
-                    assert( j < 14298 )
+                    assert j < 14298
                     word = '\\str {}\\str*'.format( j )
                     self.dictionary[wordIndex] = (word,xrefPointer)
                     wordIndex += 1
@@ -982,10 +982,10 @@ class OnlineBible( Bible ):
             """
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
-                #assert( 0 <= absoluteVerseNumber < len(self.textIndex) )
+                #assert 0 <= absoluteVerseNumber < len(self.textIndex)
             startAt = 0 if absoluteVerseNumber==0 else self.textIndex[absoluteVerseNumber-1]
             endAt = self.textIndex[absoluteVerseNumber]
-            assert( endAt > startAt )
+            assert endAt > startAt
             byteStrip = self.textBytes[startAt:endAt]
             #print( 'Verse {} {} {} {}'.format( absoluteVerseNumber, len(byteStrip), hexlify(byteStrip), byteStrip[-1] ) )
             return byteStrip
@@ -998,7 +998,7 @@ class OnlineBible( Bible ):
             """
             if BibleOrgSysGlobals.debugFlag:
                 #print( "getWord( {}={:04x} )".format( wordIndex, wordIndex ) )
-                assert( 5 <= wordIndex <= 0x7FFF )
+                assert 5 <= wordIndex <= 0x7FFF
 
             if self.haveStrongsFlag and wordIndex >= self.StrongsOffset:
                 return '\\str {}\\str*'.format( wordIndex - self.StrongsOffset )
@@ -1044,7 +1044,7 @@ class OnlineBible( Bible ):
                 #print( 'a {:02x} {} {} {!r}'.format( something, saved, capsFlag, resultString ) )
                 word = None
                 if saved is None:
-                    if something > 0x7F: assert( saved is None ); saved = something & 0x7F
+                    if something > 0x7F: assert saved is None; saved = something & 0x7F
                     elif something == 0: footnoteFlag = not footnoteFlag; word = '\\f' if footnoteFlag else '\\f*'
                     elif something == 1: capsFlag = True
                     elif something == 2:
@@ -1061,13 +1061,13 @@ class OnlineBible( Bible ):
                     saved = None
                     word = getWord( something, capsFlag ) # 15-bit index
                 if word:
-                    assert( saved is None )
+                    assert saved is None
                     resultString += (' ' if resultString else '') + (word.title() if capsFlag else word)
                     capsFlag = False
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                assert( not capsFlag ) # Should be off at the end of the verse
-                assert( not footnoteFlag ) # Should be off at the end of the verse
-                assert( not headingFlag ) # Should be off at the end of the verse
+                assert not capsFlag # Should be off at the end of the verse
+                assert not footnoteFlag # Should be off at the end of the verse
+                assert not headingFlag # Should be off at the end of the verse
 
             # Now scan for open and close fields
             #if reference==('SA2','23','8'): print( reference, repr(resultString) ); halt
@@ -1092,7 +1092,7 @@ class OnlineBible( Bible ):
                     print( 'Unexpected {!r} close code'.format( closeCode )  ); halt
             #if BibleOrgSysGlobals.debugFlag: # final check
                 #print( reference, repr(resultString), resultString )
-                #assert( '\\x' not in repr(resultString) )  Makes no sense for special characters
+                #assert '\\x' not in repr(resultString)  Makes no sense for special characters
 
             # Now do our final clean-up
             for old,new in ( ('   ',''), ('  ',''),
@@ -1111,7 +1111,7 @@ class OnlineBible( Bible ):
                 resultString = resultString.replace( '  ', ' ' )
             if BibleOrgSysGlobals.debugFlag: # final check
                 #print( repr(resultString) )
-                assert( '  ' not in resultString )
+                assert '  ' not in resultString
 
             return resultString.strip()
         #end of load.getBibleText
@@ -1125,12 +1125,12 @@ class OnlineBible( Bible ):
             """
             if BibleOrgSysGlobals.debugFlag:
                 #print( "getStrongsBytes( {} )".format( StrongsNumber ) )
-                assert( 1 <= StrongsNumber <= 8850 )
+                assert 1 <= StrongsNumber <= 8850
             startAt = self.StrongsIndex[StrongsNumber-1]
             endAt = startAt + 120
             #try: endAt = self.StrongsIndex[StrongsNumber]
             #except IndexError: endAt = startAt + 999
-            assert( endAt > startAt )
+            assert endAt > startAt
             byteStrip = self.xrefBytes[startAt:endAt]
             #print( StrongsNumber, startAt, endAt, byteStrip )
             #print( 'Strongs {} {} {} {!r}'.format( StrongsNumber, len(byteStrip), hexlify(byteStrip), byteStrip ) )
@@ -1359,7 +1359,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testOB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOnline E{}/ Trying {}".format( j+1, someFolder ) )

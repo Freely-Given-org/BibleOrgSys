@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-25' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.45'
@@ -80,34 +80,34 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 #       (They must precede the Bible import)
 theWordOTBookCount = 39
 theWordOTBooks = OT39_BOOKLIST
-assert( len( theWordOTBooks ) == theWordOTBookCount )
+assert len( theWordOTBooks ) == theWordOTBookCount
 theWordOTTotalLines = 23145
 theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
                         915, 222, 117, 1292, 1364, 154, 1273, 357, 197, 73, 146, 21, 48, 105, 47, 56, 53, 38, 211, 55 )
-assert( len( theWordOTBookLines ) == theWordOTBookCount )
+assert len( theWordOTBookLines ) == theWordOTBookCount
 total=0
 for count in theWordOTBookLines: total += count
-assert( total == theWordOTTotalLines )
+assert total == theWordOTTotalLines
 
 theWordNTBookCount = 27
 theWordNTBooks = NT27_BOOKLIST
-assert( len( theWordNTBooks ) == theWordNTBookCount )
+assert len( theWordNTBooks ) == theWordNTBookCount
 theWordNTTotalLines = 7957
 theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
-assert( len( theWordNTBookLines ) == theWordNTBookCount )
+assert len( theWordNTBookLines ) == theWordNTBookCount
 total=0
 for count in theWordNTBookLines: total += count
-assert( total == theWordNTTotalLines )
+assert total == theWordNTTotalLines
 
 theWordBookCount = 66
 theWordTotalLines = 31102
 theWordBooks = theWordOTBooks + theWordNTBooks
-assert( len( theWordBooks ) == theWordBookCount )
+assert len( theWordBooks ) == theWordBookCount
 theWordBookLines = theWordOTBookLines + theWordNTBookLines
-assert( len( theWordBookLines ) == theWordBookCount )
+assert len( theWordBookLines ) == theWordBookCount
 total=0
 for count in theWordBookLines: total += count
-assert( total == theWordTotalLines )
+assert total == theWordTotalLines
 
 
 #def exp( messageString ):
@@ -139,8 +139,8 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         returns the loaded theWordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -217,7 +217,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             twB = theWordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: twB.load() # Load and process the file
             return twB
@@ -235,8 +235,8 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
 
     if lineNumber is beyond the verse lines, returns BBB='MDA' for metadata
     """
-    assert( 0 <= lineNumber < 32000 )
-    assert( volumeType in ('OT','NT','BOTH',) )
+    assert 0 <= lineNumber < 32000
+    assert volumeType in ('OT','NT','BOTH',)
 
     global BOS
     if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
@@ -293,8 +293,8 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "      theWordFileCompare: Detected UTF-16 Byte Order Marker in file1" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
             lines1.append( line )
@@ -304,8 +304,8 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "      theWordFileCompare: Detected UTF-16 Byte Order Marker in file2" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
             line = line.replace( "ʼ", "'" ) # Change back to a straight apostrophe for comparison
@@ -367,7 +367,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
         try: result = bookData.getContextVerseData( (BBB,'0',str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
-        assert( len(verseData ) == 1 ) # in the introductory section
+        assert len(verseData ) == 1 # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
         if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
             if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
@@ -418,7 +418,7 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
                 #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
                 #print( "was", "'"+line+"'" )
                 ix = line.find( '\\'+marker+' ' )
-                assert( ix != -1 )
+                assert ix != -1
                 ixEnd = line.find( '\\', ix+len(marker)+2 )
                 if ixEnd == -1: # no following marker so assume field stops at the end of the line
                     line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
@@ -529,7 +529,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 if text != str(V):
                     composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
             elif vCount > 1: # We have an additional verse number
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( text != str(V) )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
                 composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
             lastMarker = marker
             continue
@@ -538,7 +538,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
         if marker in theWordIgnoredIntroMarkers:
             logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
             print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
         if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
@@ -558,7 +558,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 text = '(' + text + ')'
             composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
         elif marker in ( 'm', ):
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
             #if text:
@@ -571,35 +571,35 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ):
             #print( marker, text )
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
             #else: composedLine += '<CM>'
             #composedLine += theWordAdjustLine(BBB,C,V,text)
             resettheWordMargins( ourGlobals )
         elif marker in ( 'pi1', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi1' ); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi2', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi2' ); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi3', 'pmc', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pi4', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pc', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi5' ); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'pr', 'pmr', 'cls', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi6' ); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
         elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
-            assert( not text )
+            assert not text
             resettheWordMargins( ourGlobals, 'pi7' ); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q1', 'qm1', ):
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
             else: composedLine += '<CI>'
@@ -607,7 +607,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             resettheWordMargins( ourGlobals, 'pi1' )
             #composedLine += theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q2', 'qm2', ):
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
             else: composedLine += '<CI>'
@@ -615,7 +615,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             resettheWordMargins( ourGlobals, 'pi2' )
             #composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q3', 'qm3', ):
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
             else: composedLine += '<CI>'
@@ -623,7 +623,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             resettheWordMargins( ourGlobals, 'pi3' )
             #composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q4', 'qm4', ):
-            assert( not text )
+            assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
             else: composedLine += '<CI>'
@@ -695,7 +695,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( "theWordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
-        if originalLine: assert( '\n' not in originalLine and '\r' not in originalLine )
+        if originalLine: assert '\n' not in originalLine and '\r' not in originalLine
     line = originalLine
 
     writtenV = False
@@ -853,7 +853,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
 
     # Adjust paragraph formatting at the end of lines
     line = line.replace( '<CM><CM>', '\\NL*\\b<CM>' ) # 20cNT
-    assert( not myGlobals['haveParagraph'] )
+    assert not myGlobals['haveParagraph']
     if line.endswith( '<CM>' ): # Means start a new paragraph after this line
         line = line[:-4] # Remove the marker
         myGlobals['haveParagraph'] = 'CM'
@@ -923,7 +923,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if '\\NL*' in line: # We need to break the original line into different USFM markers
         #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '\\NL*' )
-        assert( len(segments) >= 2 )
+        assert len(segments) >= 2
         #print( " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
@@ -940,7 +940,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                         logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
                         #halt
                 else:
-                    assert( len(bits) == 2 )
+                    assert len(bits) == 2
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                         print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
                         print( "line", repr(line) )
@@ -949,7 +949,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                         print( "bits", bits )
                         print( "marker", marker )
                         print( "leftovers", repr(leftovers) )
-                        assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
+                        assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r')
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                         bookObject.addLine( marker, bits[1] )
                     elif not writtenV:
@@ -968,7 +968,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                     #bookObject.addLine( 'p', '' )
                     #myGlobals['haveParagraph'] = False
         if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( not leftovers )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not leftovers
         #halt
     else: # no newlines in the middle
         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
@@ -1025,7 +1025,7 @@ class theWordBible( Bible ):
         self.suppliedMetadata['theWord'] = {}
 
         fileExtensionUpper = self.fileExtension.upper()
-        assert( fileExtensionUpper in filenameEndingsToAccept )
+        assert fileExtensionUpper in filenameEndingsToAccept
         if fileExtensionUpper.endswith('X'):
             logging.error( _("theWordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
             return
@@ -1063,8 +1063,8 @@ class theWordBible( Bible ):
                         originalLine = sourceLine
                         lineCount += 1
                         if lineCount==1 and self.encoding.lower()=='utf-8' and originalLine[0]==chr(65279): #U+FEFF
-                            logging.info( "      theWordBible.load: Detected UTF-16 Byte Order Marker" )
-                            originalLine = originalLine[1:] # Remove the UTF-8 Byte Order Marker
+                            logging.info( "      theWordBible.load: Detected Unicode Byte Order Marker (BOM)" )
+                            originalLine = originalLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                         if originalLine[-1]=='\n': originalLine=originalLine[:-1] # Removing trailing newline character
                         line = originalLine
                         #lastLine = line
@@ -1123,7 +1123,7 @@ class theWordBible( Bible ):
                                     logging.warning( "Missing equals sign from info line (ignored): {} {!r}".format( lineCount, line ) )
                                 else: # Seems like a field=something type line
                                     bits = line.split( '=', 1 )
-                                    assert( len(bits) == 2 )
+                                    assert len(bits) == 2
                                     fieldName = bits[0]
                                     fieldContents = bits[1]
                                     if line.endswith( '\\' ): continued = True
@@ -1204,9 +1204,9 @@ def demo():
 
     if 1: # demo the functions
         #print( theWordGetBBBCV( 1532 ) )
-        assert( theWordGetBBBCV( 0 ) == ('GEN', 1, 1) )
-        assert( theWordGetBBBCV( 1532 ) == ('GEN', 50, 26) )
-        assert( theWordGetBBBCV( 1533 ) == ('EXO', 1, 1) )
+        assert theWordGetBBBCV( 0 ) == ('GEN', 1, 1)
+        assert theWordGetBBBCV( 1532 ) == ('GEN', 50, 26)
+        assert theWordGetBBBCV( 1533 ) == ('EXO', 1, 1)
 
 
 
@@ -1237,7 +1237,7 @@ def demo():
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
-                    assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                    assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( j+1, someFile ) )
@@ -1260,7 +1260,7 @@ def demo():
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
-                    assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                    assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     #if 'web' not in someFile: continue # Just try this module

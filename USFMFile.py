@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFile.py
-#   Last modified: 2014-10-18 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,11 +32,16 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
   Raises an IOError error if file doesn't exist.
 """
 
+from gettext import gettext as _
 
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "USFMFile"
 ProgName = "USFM File loader"
-ProgVersion = "0.85"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.85'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, sys
@@ -136,8 +140,8 @@ class USFMFile:
                 for line in ourFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMFile: Detected UTF-16 Byte Order Marker in {}".format( usfm_filename ) )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "USFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( usfm_filename ) )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line

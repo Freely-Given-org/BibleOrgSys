@@ -5,7 +5,7 @@
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2015 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
 ProgVersion = '0.84'
@@ -127,8 +127,8 @@ class SFMLines:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
-                        logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( sfm_filename ) )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
@@ -246,8 +246,8 @@ class SFMRecords:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "SFMRecords: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( sfm_filename ) )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
@@ -353,12 +353,12 @@ class SFMRecords:
 
         Returns the dictionary.
         """
-        assert( internalStructure in ( "list", "dict" ) )
+        assert internalStructure in ( "list", "dict" )
         self.dataDict = {}
         for record in self.records:
             for j, (marker,value) in enumerate( record ):
                 if j==0:
-                    assert( marker == self.key )
+                    assert marker == self.key
                     key = value
                     self.dataDict[key] = [] if internalStructure=="list" else {}
                 else:

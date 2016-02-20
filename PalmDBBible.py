@@ -5,7 +5,7 @@
 #
 # Module handling PDB Bible files
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.65'
@@ -88,8 +88,8 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns the loaded PalmDBBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -166,7 +166,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = PalmDBBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".PDB"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -221,7 +221,7 @@ class PalmDBBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
                     print( t("readRecord( {}, {} )").format( recordNumber, thisFile ) )
-                assert( recordNumber < len(mainDBIndex) )
+                assert recordNumber < len(mainDBIndex)
             dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
             #recordLength = 99999 if recordNumber==len(mainDBIndex)-1 else (mainDBIndex[recordNumber+1][0] - dataOffset)
             #print( " dataOffset={} recordLength={}".format( dataOffset, recordLength ) )
@@ -229,7 +229,7 @@ class PalmDBBible( Bible ):
             thisFile.seek( dataOffset )
             #print( "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
             binaryInfo = thisFile.read( recordLength )
-            if recordNumber < len(mainDBIndex)-1: assert( len(binaryInfo) == recordLength )
+            if recordNumber < len(mainDBIndex)-1: assert len(binaryInfo) == recordLength
             return binaryInfo
         # end of readRecord
 
@@ -327,7 +327,7 @@ class PalmDBBible( Bible ):
                     print( "   {:2}: wordLength={} numFixedLengthWords={} compressedFlag={}".format( n, wordLength, numFixedLengthWords, compressedFlag ) )
                 wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
                 expectedWords += numFixedLengthWords
-            assert( byteOffset == len(binary) )
+            assert byteOffset == len(binary)
             #print( " expectedWords =", expectedWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
@@ -378,7 +378,7 @@ class PalmDBBible( Bible ):
                         numRegularWords += 1
                     else: # it's a compressed word
                         # We have pointers to smaller words
-                        assert( wordLength == 4 ) # But this is the number of bytes, not the number of word characters!
+                        assert wordLength == 4 # But this is the number of bytes, not the number of word characters!
                         if debuggingThisModule: print( "compressed", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
                         ix1,ix2 = struct.unpack( ">HH",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
                         if   ix1 == 0xFFFF: word1 = '<BOOK>'
@@ -406,7 +406,7 @@ class PalmDBBible( Bible ):
                     wordDisplay = words[wordStart:] if numLoaded < 10 else repr(words[wordStart])+'..'+repr(words[-1])
                     print( "      Loaded {} {}-char words (now have {}={:04x} total): {}".format( numLoaded, wordLength, len(words), len(words), wordDisplay ) )
             #print( 'xyz', byteOffset, len(binary) )
-            assert( byteOffset == len(binary) )
+            assert byteOffset == len(binary)
         # end of loadWordlists
 
 
@@ -477,7 +477,7 @@ class PalmDBBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
                     print( t("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
-                assert( verseText )
+                assert verseText
                 if 'SQ' in verseText or 'AAA' in verseText or 'XXX' in verseText or 'WWW' in verseText:
                     print( "What's this here for:", repr(verseText) )
                     if debuggingThisModule: halt
@@ -492,11 +492,11 @@ class PalmDBBible( Bible ):
                     adjText = adjText.replace( '\x0e'+fChar+'\x0e', '\\'+fSFM+'*' if inside else '\\'+fSFM, 1 )
                     inside = not inside
                 if '\x0en\x0e' not in verseText: # WHY ???
-                    assert( not inside ) # Would be uneven number of matches
+                    assert not inside # Would be uneven number of matches
                 adjText = adjText.replace( ' \\'+fSFM+'*', '\\'+fSFM+'*' ) # Remove unwanted spaces before closing field
                 #print( "  adjText1={!r}".format( adjText ) )
             if '\x0en\x0e' not in adjText: # WHY ???
-                assert( '\x0e' not in adjText )
+                assert '\x0e' not in adjText
             #print( "  adjText2={!r}".format( adjText1 ) )
             if '\\x' in repr(adjText):
                 print( "What's this slash here for:", repr(adjText) )
@@ -507,7 +507,7 @@ class PalmDBBible( Bible ):
             while '{' in adjText and '}' in adjText: # assume it's a footnote
                 ixStart = adjText.index( '{' )
                 ixEnd = adjText.index( '}' )
-                assert( ixEnd > ixStart )
+                assert ixEnd > ixStart
                 #print( "Replacing footnote from {}-{} in {!r}".format( ixStart, ixEnd, adjText ) )
                 adjText = adjText[:ixStart].rstrip() + '\\f + \\ft {}\\f*'.format( adjText[ixStart+1:ixEnd].strip() ) + adjText[ixEnd+1:]
                 #print( "  Now have: {!r}".format( adjText ) )
@@ -515,18 +515,18 @@ class PalmDBBible( Bible ):
             # Split verse data into separate logical fields where necessary
             adjText = adjText.replace( '<NEWLINE>', '\\m ' )
             if adjText.startswith( '<BOOK>' ):
-                assert( C == 0 )
+                assert C == 0
                 adjText = adjText[6:].lstrip()
                 if debuggingThisModule: print( "  adjText BOOK={!r}".format( adjText ) )
                 thisBook.addLine( 'mt', adjText ); adjText = ''
             elif adjText.startswith( '<CHAPTER>' ):
-                assert( C > 0 )
+                assert C > 0
                 adjText = adjText[9:].lstrip()
                 thisBook.addLine( 'c', str(C) )
                 thisBook.addLine( 's', adjText ); adjText = ''
                 thisBook.addLine( 'p', '' ); hadP = True
             elif adjText.startswith( '<VERSE>' ):
-                assert( C > 0 )
+                assert C > 0
                 adjText = adjText[7:].lstrip()
             elif adjText.startswith( '<DESC>' ):
                 adjText = adjText[6:].lstrip()
@@ -573,7 +573,7 @@ class PalmDBBible( Bible ):
                 binary8 = myFile.read( 8 )
                 dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
                 #print( '', dataOffset, recordAttributes, id0, id1, id2 )
-                assert( recordAttributes + id0 + id1 + id2 == 0 )
+                assert recordAttributes + id0 + id1 + id2 == 0
                 tmpIndex.append( (dataOffset, recordAttributes, id0, id1, id2) )
             for recordNumber in range( 0, len(tmpIndex) ):
                 dataOffset, recordAttributes, id0, id1, id2 = tmpIndex[recordNumber]
@@ -585,7 +585,7 @@ class PalmDBBible( Bible ):
                 for recordNumber in range( 0, len(mainDBIndex) ):
                     dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
                     print( "Record {} @ {} len={} attribs={} {} {} {}".format( recordNumber, dataOffset, recordLength, recordAttributes, id0, id1, id2 ) )
-                    #assert( recordLength <= 4096 )
+                    #assert recordLength <= 4096
                     if 0:
                         recordBytes = readRecord( recordNumber, myFile )
                         if recordNumber < 8 or recordLength < 200:
@@ -603,7 +603,7 @@ class PalmDBBible( Bible ):
             separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
-            assert( separatorCharacter == ' ' )
+            assert separatorCharacter == ' '
             versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
             #print( "  versionAttribute =",versionAttribute )
             copyProtectedFlag = versionAttribute & 1
@@ -626,7 +626,7 @@ class PalmDBBible( Bible ):
                 if BibleOrgSysGlobals.verbosityLevel > 3:
                     print( '    Book {:2}: {!r} {!r} bkNum={} loc={} numBookRecords={}'.format( n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
                 bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
-            assert( byteOffset == len(binary) )
+            assert byteOffset == len(binary)
             #if BibleOrgSysGlobals.debugFlag:
                 #print( "bookIndexMetadata", len(bookIndexMetadata), bookIndexMetadata )
                 #halt
@@ -688,9 +688,9 @@ class PalmDBBible( Bible ):
                     print( "accumulatedVerses", len(accumulatedVersesList), accumulatedVersesList )
                     print( "accumulatedTokensPerChapter", len(accumulatedTokensPerChapterList), accumulatedTokensPerChapterList )
                     print( "accumulatedTokensPerVerse", len(accumulatedTokensPerVerseList), accumulatedTokensPerVerseList )
-                assert( len(accumulatedTokensPerVerseList) == accumulatedVerses )
+                assert len(accumulatedTokensPerVerseList) == accumulatedVerses
                 #print( "Acc V & T", totalAccumulatedVerses, accumulatedTokensPerChapter )
-                assert( byteOffset == len(binary) )
+                assert byteOffset == len(binary)
 
                 # Find total characters
                 #totalCharacters = 0
@@ -759,7 +759,7 @@ class PalmDBBible( Bible ):
                             print( "BibleWords {}/{}={}...".format( byteOffset, len(binary), hexlify(binary[byteOffset:byteOffset+32]) ) )
                         #byteOffset = 0
                         #if j==0:
-                            #assert( binary[byteOffset:byteOffset+2] == b'\xFF\xFF' )
+                            #assert binary[byteOffset:byteOffset+2] == b'\xFF\xFF'
                             #byteOffset = 2
                     if byteShiftedFlag:
                         #print( "offset", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
@@ -771,7 +771,7 @@ class PalmDBBible( Bible ):
                     if ix > len(words):
                         #print( "Got HUGE ix {:04x} {}/{}".format( ix, ix, len(words) ) )
                         #ix = ix | 0xC000 # To get it into the original range
-                        #assert( 0xFFFC <= ix <= 0xFFFF )
+                        #assert 0xFFFC <= ix <= 0xFFFF
                         if   ix == 0xFFFF: word = '<BOOK>'
                         elif ix == 0xFFFE: word = '<CHAPTER>'
                         elif ix == 0xFFFD: word = '<DESC>'
@@ -839,7 +839,7 @@ class PalmDBBible( Bible ):
                     #if len(verse)>200: print( repr(verse) ); halt
                 #print( "verse", repr(verse[:100]) )
                 #print( "Done", byteOffset, len(binary) )
-                #assert( byteOffset == len(binary) )
+                #assert byteOffset == len(binary)
                 self.saveBook( thisBook )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
@@ -926,7 +926,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testPB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, someFolder ) )

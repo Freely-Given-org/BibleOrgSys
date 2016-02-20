@@ -5,7 +5,7 @@
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -86,7 +86,7 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
 ProgVersion = '0.24'
@@ -121,8 +121,8 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         returns the loaded UnboundBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -210,7 +210,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -265,8 +265,8 @@ class UnboundBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      UnboundBible.load: Detected UTF-16 Byte Order Marker" )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "      UnboundBible.load: Detected Unicode Byte Order Marker (BOM)" )
+                    #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
@@ -298,16 +298,16 @@ class UnboundBible( Bible ):
                     continue
                 else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
-                if NRSVA_bookCode: assert( len(NRSVA_bookCode) == 3 )
-                if NRSVA_chapterNumberString: assert( NRSVA_chapterNumberString.isdigit() )
-                if NRSVA_verseNumberString: assert( NRSVA_verseNumberString.isdigit() )
+                if NRSVA_bookCode: assert len(NRSVA_bookCode) == 3
+                if NRSVA_chapterNumberString: assert NRSVA_chapterNumberString.isdigit()
+                if NRSVA_verseNumberString: assert NRSVA_verseNumberString.isdigit()
 
                 if not bookCode and not chapterNumberString and not verseNumberString:
                     print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                if BibleOrgSysGlobals.debugFlag: assert( len(bookCode) == 3 )
-                if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
-                if BibleOrgSysGlobals.debugFlag: assert( verseNumberString.isdigit() )
+                if BibleOrgSysGlobals.debugFlag: assert len(bookCode) == 3
+                if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
+                if BibleOrgSysGlobals.debugFlag: assert verseNumberString.isdigit()
 
                 if subverseNumberString:
                     logging.warning( _("subverseNumberString {!r} in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
@@ -319,10 +319,10 @@ class UnboundBible( Bible ):
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
                 if sequenceNumberString:
-                    if BibleOrgSysGlobals.debugFlag: assert( sequenceNumberString.isdigit() )
+                    if BibleOrgSysGlobals.debugFlag: assert sequenceNumberString.isdigit()
                     sequenceNumber = int( sequenceNumberString )
-                    if BibleOrgSysGlobals.debugFlag: assert( sequenceNumber > lastSequence or \
-                        self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) ) # Why???
+                    if BibleOrgSysGlobals.debugFlag: assert sequenceNumber > lastSequence or \
+                        self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) # Why???
                     lastSequence = sequenceNumber
 
                 if bookCode != lastBookCode: # We've started a new book
@@ -336,7 +336,7 @@ class UnboundBible( Bible ):
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                    if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                     if chapterNumber == 0:
                         logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.addLine( 'c', chapterNumberString )
@@ -457,7 +457,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testUB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )

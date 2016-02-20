@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-07-14 by RJH (also update ProgVersion below)
 #
 # Module handling ISO_639_3
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,6 +26,10 @@
 Module handling ISO_639_3_Languages.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-20' # by RJH
+ShortProgName = "ISOLanguages"
 ProgName = "ISO 639_3_Languages handler"
 ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -35,7 +38,6 @@ debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
@@ -67,7 +69,7 @@ class ISO_639_3_Languages:
         @rtype: string
         """
         result = "ISO_639_3_Languages object"
-        if BibleOrgSysGlobals.debugFlag: assert( len(self.__IDDict) == len(self.__NameDict) )
+        if BibleOrgSysGlobals.debugFlag: assert len(self.__IDDict) == len(self.__NameDict)
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__IDDict) )
         return result
     # end of ISO_639_3_Languages.__str__
@@ -98,7 +100,7 @@ class ISO_639_3_Languages:
 
     def __len__( self ):
         """ Returns the number of languages loaded. """
-        assert( len(self.__IDDict) >= len(self.__NameDict) )
+        assert len(self.__IDDict) >= len(self.__NameDict)
         return len(self.__IDDict)
 
     def isValidLanguageCode( self, ccc ):

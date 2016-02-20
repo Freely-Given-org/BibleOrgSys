@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
 #
 # Module handling simple XML files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -26,6 +25,10 @@
 """
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-20' # by RJH
+ShortProgName = "XMLFile"
 ProgName = "XML file handler"
 ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -34,7 +37,6 @@ debuggingThisModule = False
 
 
 import logging, os, sys, subprocess
-from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree, ParseError
 import urllib.request
 
@@ -61,7 +63,7 @@ class XMLFile():
 
         self.schemaFilepath = self.schemaURL = None
         if self.schema is not None:
-            assert( isinstance( self.schema, str ) )
+            assert isinstance( self.schema, str )
             if self.schema.lower().startswith( 'http:' ):
                 self.schemaURL = self.schema
 
@@ -114,7 +116,7 @@ class XMLFile():
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         try:
             self.tree = ElementTree().parse( self.sourceFilepath )
-            assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+            assert len ( self.tree ) # Fail here if we didn't load anything at all
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:

@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -251,8 +251,8 @@ class BCVBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( t("loadMetadata: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
-                    line = line[1:] # Remove the Byte Order Marker
+                    logging.info( t("loadMetadata: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
+                    line = line[1:] # Remove the Byte Order Marker (BOM)
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
                 if not line: continue # Just discard blank lines
@@ -414,8 +414,8 @@ class BCVBibleBook( BibleBook ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( t("loadBookMetadata: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
-                    line = line[1:] # Remove the Byte Order Marker
+                    logging.info( t("loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
+                    line = line[1:] # Remove the Byte Order Marker (BOM)
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
                 if not line: continue # Just discard blank lines
@@ -518,8 +518,8 @@ class BCVBibleBook( BibleBook ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( t("loadBCVBibleBook: Detected UTF-16 Byte Order Marker in {}").format( metadataFilepath ) )
-                        line = line[1:] # Remove the Byte Order Marker
+                        logging.info( t("loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
+                        line = line[1:] # Remove the Byte Order Marker (BOM)
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     #print( CV, "line", line )
                     assert line and line[0]=='\\'

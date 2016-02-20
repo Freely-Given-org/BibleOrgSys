@@ -5,7 +5,7 @@
 #
 # Module handling OpenSong XML Bibles
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -73,9 +73,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         returns the loaded OpenSongXMLBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoadBooks in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
+    if BibleOrgSysGlobals.debugFlag: assert autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -167,7 +167,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             osb = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             if autoLoadBooks: osb.load() # Load and process the file
             return osb
@@ -222,7 +222,7 @@ class OpenSongXMLBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == OpenSongXMLBible.treeTag:
@@ -330,7 +330,7 @@ class OpenSongXMLBible( Bible ):
                     elif attrib=="t":
                         toVerseNumber = value
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
-                if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
+                if BibleOrgSysGlobals.debugFlag: assert verseNumber
                 #thisBook.addLine( 'v', verseNumber )
                 vText = element.text
                 if not vText:

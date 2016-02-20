@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.28'
@@ -217,8 +217,8 @@ class CSVBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      CSVBible.load: Detected UTF-16 Byte Order Marker" )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "      CSVBible.load: Detected Unicode Byte Order Marker (BOM)" )
+                    #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK

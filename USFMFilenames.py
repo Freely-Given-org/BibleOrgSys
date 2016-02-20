@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-26' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.66'
@@ -521,8 +521,8 @@ class USFMFilenames:
                 #print( 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
-                    logging.info( "USFMBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( filename ) )
-                    firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                    logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                    firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if not firstLine or firstLine[0] != '\\': # don't allow a blank first line and must start with a backslash
                     resultList.remove( (BBB,filename) )
 

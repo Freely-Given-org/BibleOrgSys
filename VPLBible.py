@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2015 Robert Hunt
+# Copyright (C) 2014-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-10-31' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -122,8 +122,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns the loaded VPLBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -163,8 +163,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 #print( '1', repr(firstLine) )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
-                    logging.info( "VPLBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( thisFilename ) )
-                    firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                    logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
+                    firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 # Try to identify the VPL type
                 match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
                 if match: vplType = 1
@@ -226,8 +226,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     #print( '2', repr(firstLine) )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
-                        logging.info( "VPLBibleFileCheck: Detected UTF-16 Byte Order Marker in {}".format( thisFilename ) )
-                        firstLine = firstLine[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
+                        firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                     # Try to identify the VPL type
                     match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
                     if match: vplType = 1
@@ -254,7 +254,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -316,8 +316,8 @@ class VPLBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if lineCount==1:
                     if self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
-                        logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        logging.info( "      VPLBible.load: Detected Unicode Byte Order Marker (BOM)" )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     # Try to identify the VPL type
                     match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', line )
                     if match: vplType = 1
@@ -420,11 +420,11 @@ class VPLBible( Bible ):
                     if not bookCode and not chapterNumberString and not verseNumberString:
                         print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                         continue
-                    if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
-                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
+                    if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
+                    if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
                     if not verseNumberString.isdigit():
                         logging.error( "Invalid verse number field at {}/{} {}:{!r}".format( bookCode, BBB, chapterNumberString, verseNumberString ) )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( verseNumberString.isdigit() )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert verseNumberString.isdigit()
                         continue
                     chapterNumber = int( chapterNumberString )
                     verseNumber = int( verseNumberString )
@@ -577,7 +577,7 @@ class VPLBible( Bible ):
                         if BBB:
                             if BBB in self:
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
-                            if BibleOrgSysGlobals.debugFlag: assert( BBB not in self )
+                            if BibleOrgSysGlobals.debugFlag: assert BBB not in self
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = "VPL Bible Book object"
                             thisBook.objectTypeString = "VPL"
@@ -591,7 +591,7 @@ class VPLBible( Bible ):
 
                     if BBB:
                         if chapterNumber != lastChapterNumber: # We've started a new chapter
-                            if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                            if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                             if chapterNumber == 0:
                                 logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                             elif chapterNumber > numChapters:
@@ -720,7 +720,7 @@ def demo():
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testVPL, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )

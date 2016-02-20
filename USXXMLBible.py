@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2015 Robert Hunt
+# Copyright (C) 2012-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-14' # by RJH
+LastModifiedDate = '2016-02-17' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.27'
@@ -76,8 +76,8 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns the loaded USXXMLBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -293,7 +293,7 @@ class USXXMLBible( Bible ):
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadBook, parameters ) # have the pool do our loads
                 print( "results", results )
-                assert( len(results) == len(parameters) )
+                assert len(results) == len(parameters)
                 for j, UBB in enumerate( results ):
                     BBB = parameters[j]
                     self.books[BBB] = UBB

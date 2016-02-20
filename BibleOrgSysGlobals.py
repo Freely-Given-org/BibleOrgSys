@@ -75,7 +75,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.61'
@@ -462,8 +462,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and verbosityLevel > 2:
-                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file1" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines1.append( line )
@@ -473,8 +473,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and verbosityLevel > 2:
-                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file2" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines2.append( line )
@@ -531,8 +531,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and verbosityLevel > 2:
-                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file1" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines1.append( line )
@@ -542,8 +542,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                 if printFlag and verbosityLevel > 2:
-                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file2" )
-                line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines2.append( line )

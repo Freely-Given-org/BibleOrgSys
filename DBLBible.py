@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.16'
@@ -801,8 +801,8 @@ class DBLBible( Bible ):
             #for line in vFile:
                 #lineCount += 1
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( versificationFilename ) )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
+                    #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
@@ -882,8 +882,8 @@ class DBLBible( Bible ):
             #for line in vFile:
                 #lineCount += 1
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( languageFilename ) )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
+                    #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 #if not line: continue # Just discard blank lines
                 #lastLine = line

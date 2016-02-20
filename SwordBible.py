@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-21' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.28'
@@ -83,8 +83,8 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         returns the loaded SwordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "SwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -180,7 +180,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
             somethingUpper = something.upper()
             if somethingUpper in compulsoryFiles: foundFileCount += 1
     if foundFolderCount == len(compulsoryTopFolders):
-        assert( foundFileCount == 0 )
+        assert foundFileCount == 0
         foundConfNames = confirmThisFolder( givenFolderName )
         numFound = 0 if foundConfNames is None else len(foundConfNames)
     if numFound:
@@ -212,7 +212,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 somethingUpper = something.upper()
                 if somethingUpper in compulsoryFiles: foundFileCount += 1
         if foundFolderCount == len(compulsoryTopFolders):
-            assert( foundFileCount == 0 )
+            assert foundFileCount == 0
             foundConfNames = confirmThisFolder( tryFolderName )
             if foundConfNames:
                 for confName in foundConfNames:
@@ -221,7 +221,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "SwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = SwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
@@ -348,7 +348,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
             if match2:
                 typeValue = match2.group(1)
                 #print( 'typeValue', repr(typeValue) ) # Seems to have an incrementing value on the end for some reason
-                assert( typeValue.startswith( 'x-split' ) ) # e.g., x-split or x-split-1 -- what do these mean?
+                assert typeValue.startswith( 'x-split' ) # e.g., x-split or x-split-1 -- what do these mean?
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
             match2 = re.search( 'subType="(.+?)"', attributeString )
             if match2:
@@ -408,14 +408,14 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     while True:
         match = re.search( '<div [^/>]*?type="front"[^/>]*?/>', verseLine )
         if not match: break
-        assert( V == '0' )
+        assert V == '0'
         verseLine = verseLine[:match.start()] + verseLine[match.end():] # It's in v0 anyway so no problem
     while True:
         match = re.search( '<div ([^/>]*?)type="section"([^/>]*?)>', verseLine )
         if not match: break
         attributes = match.group(1) + match.group(2)
         print( "Div section attributes={!r}".format( attributes ) )
-        assert( 'scope="' in attributes )
+        assert 'scope="' in attributes
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     while True:
         match = re.search( '<div [^/>]*?type="colophon"[^/>]*?/>', verseLine )
@@ -428,7 +428,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     while True: # Delete start verse markers (should only be maximum of one theoretically but can be more -- bridged verses???)
         match = re.search( '<verse [^/>]*?osisID="[^/>]+?"[^/>]*?>', verseLine )
         if not match: break
-        assert( V != '0' )
+        assert V != '0'
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     verseLine = verseLine.replace( '</verse>', '' ) # Delete left-overs (normally expected at the end of the verse line)
     while True: # Delete lg start and end milestones
@@ -441,8 +441,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     if match:
         attributes, sID = match.group(1) + match.group(3), match.group(2)
         #print( 'Chapter sID {!r} attributes={!r} @ {} {}:{}'.format( sID, attributes, BBB, C, V ) )
-        assert( C and C != '0' )
-        assert( V == '0' )
+        assert C and C != '0'
+        assert V == '0'
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
         #thisBook.addLine( 'c', C ) # Don't need this coz it's done by the calling routine
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
@@ -450,8 +450,8 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     if match:
         attributes, osisID = match.group(1) + match.group(3), match.group(2)
         #print( 'Chapter osisID {!r} attributes={!r} @ {} {}:{}'.format( osisID, attributes, BBB, C, V ) )
-        #assert( C and C != '0' )
-        assert( V == '0' )
+        #assert C and C != '0'
+        assert V == '0'
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
         #thisBook.addLine( 'c', C ) # Don't need this coz it's done by the calling routine
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
@@ -625,7 +625,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         attributes, level = match.group(1)+match.group(3), match.group(2)
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( 'AttributesL={!r} Level={!r}'.format( attributes, level ) )
-        assert( level in '1234' )
+        assert level in '1234'
         if 'sID="' in attributes:
             replacement = '\\NL**\\q{} '.format( level )
         elif 'eID="' in attributes:
@@ -655,7 +655,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         if not match: break
         attributes, itemType, item = match.group(1)+match.group(3), match.group(2), match.group(4)
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Item={!r} Type={!r} attributes={!r}'.format( item, itemType, attributes ) )
-        assert( itemType in ( 'x-indent-1', 'x-indent-2', ) )
+        assert itemType in ( 'x-indent-1', 'x-indent-2', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
         replacement = '\\NL**\\{} {}\\NL**'.format( marker+itemType[-1], item )
         #print( 'replacement', repr(replacement) )
@@ -664,7 +664,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     if match: # Handle left-over list items
         attributes, itemType = match.group(1)+match.group(3), match.group(2)
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Item Type={!r} attributes={!r}'.format( itemType, attributes ) )
-        assert( itemType in ( 'x-indent-1', 'x-indent-2', ) )
+        assert itemType in ( 'x-indent-1', 'x-indent-2', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
         replacement = '\\NL**\\{}\\NL**'.format( marker+itemType[-1] )
         #print( 'replacement', repr(replacement) )
@@ -786,7 +786,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( 'Note attributes={!r} Number={!r}'.format( attributes, number ) )
         if 'crossReference' in attributes:
-            assert( noteContents == '' )
+            assert noteContents == ''
             replacement = '\\x {}\\x*'.format( number )
         else: halt
         #print( 'replacement', repr(replacement) )
@@ -885,7 +885,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
         match2 = re.search( '<RF>(\d{1,2}?)\\)? (.+?)<Rf>', verseLine ) # Footnote text starts with 1) or just 1
         if not match2:
             match3 = re.search( '<RF>([^\d].+?)<Rf>', verseLine )
-        if match1 or match2: assert( match1 and (match2 or lastCalled or match3) )
+        if match1 or match2: assert match1 and (match2 or lastCalled or match3)
         #if not match1: break
         #caller = int(match1.group(1))
         if caller in contentsDict: # We have a repeat of a previous caller
@@ -902,18 +902,18 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
                 #print( 'Loop {} start: now {} with replacement2={!r}'.format( j, contentsDict, replacement2 ) )
                 match8 = re.search( '(\d{1,2})\\) (.*?)(\d{1,2})\\) ', replacement2 )
                 match9 = re.search( '(\d{1,2})\\) ', replacement2 )
-                if match8: assert( match9 and match9.group(1)==match8.group(1) )
+                if match8: assert match9 and match9.group(1)==match8.group(1)
                 if not match9: break
                 if match8: callee8a, contents8, callee8b = match8.group(1), match8.group(2), match8.group(3)
                 callee9 = match9.group(1)
                 if match8: # We have two parts
-                    assert( callee8a == callee9 )
+                    assert callee8a == callee9
                     contentsDict[callee9] = contents8
                     replacement2 = replacement2[match8.end()-2-len(callee8b):]
                     #print( 'Loop {} with match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
                 else: # We only have one part
                     #print( repr(callee9), repr(callee) )
-                    #assert( callee9 == callee )
+                    #assert callee9 == callee
                     contentsDict[callee9] = replacement2[len(callee9)+2:]
                     replacement2 = ''
                     #print( 'Loop {} with no match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
@@ -922,11 +922,11 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
                 contentsDict[callee] = contents
                 replacement2 = ''
             replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
-            assert( match2.start()>match1.start() and match2.end()>match1.end() and match2.start()>match1.end() )
+            assert match2.start()>match1.start() and match2.end()>match1.end() and match2.start()>match1.end()
             verseLine = verseLine[:match1.start()] + replacement1 + \
                         verseLine[match1.end():match2.start()] + replacement2 + verseLine[match2.end():]
         elif match3: # We have a callee without a number
-            assert( caller == '1' ) # Would only work for a single footnote I think
+            assert caller == '1' # Would only work for a single footnote I think
             callee, contents = caller, match3.group(1).rstrip()
             contentsDict[caller] = contents
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -939,7 +939,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
             replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
             #print( 'replacement1', repr(replacement1) )
             #print( 'replacement3', repr(replacement3) )
-            assert( match3.start()>match1.start() and match3.end()>match1.end() and match3.start()>match1.end() )
+            assert match3.start()>match1.start() and match3.end()>match1.end() and match3.start()>match1.end()
             verseLine = verseLine[:match1.start()] + replacement1 + \
                         verseLine[match1.end():match3.start()] + replacement3 + verseLine[match3.end():]
         else:
@@ -951,7 +951,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
     if match4:
         contents = match4.group(1)
         #print( 'match4', repr(contents), repr(verseLine), contentsDict )
-        assert( len(contents) > 2 and not contents[0].isdigit() )
+        assert len(contents) > 2 and not contents[0].isdigit()
         replacement4 = '\\f + \\ft {}\\f*'.format( contents )
         #print( 'replacement4', repr(replacement4) )
         verseLine = verseLine[:match4.start()] + replacement4 + verseLine[match4.end():]
@@ -1156,7 +1156,7 @@ class SwordBible( Bible ):
                 if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
                 if BibleOrgSysGlobals.debugFlag:
-                    assert( verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', ) )
+                    assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
                     if markupCode == FMT_OSIS:
                         match = re.search( '<milestone ([^/>]*?)type="x-importer"([^/>]*?)/>', nativeVerseText )
@@ -1171,12 +1171,12 @@ class SwordBible( Bible ):
                             print( "Module created by {} {}".format( subType, n ) )
                 continue
             vkBits = verseKeyText.split()
-            assert( len(vkBits) == 2 )
+            assert len(vkBits) == 2
             osisBBB = vkBits[0]
             BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
             if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
             vkBits = vkBits[1].split( ':' )
-            assert( len(vkBits) == 2 )
+            assert len(vkBits) == 2
             C, V = vkBits
             #print( 'At {} {}:{}'.format( BBB, C, V ) )
 
@@ -1325,7 +1325,7 @@ def demo():
             parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testSwB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword E{}/ Trying {}".format( j+1, someFolder ) )

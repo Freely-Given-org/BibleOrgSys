@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# ISO_639_3_Languages.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+# ISO_639_3_LanguagesConverter.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,16 @@
 Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2016-02-20' # by RJH
+ShortProgName = "ISOLanguagesConverter"
 ProgName = "ISO 639_3_Languages handler"
 ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os.path
-from gettext import gettext as _
 from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
@@ -96,13 +98,13 @@ class ISO_639_3_LanguagesConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful Attributes from the header element.
         """
-        assert( XMLFilepath )
+        assert XMLFilepath
         self.__XMLFilepath = XMLFilepath
-        assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
+        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from {!r}...".format( XMLFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFilepath )
-        assert( self._XMLtree ) # Fail here if we didn't load anything at all
+        assert self._XMLtree # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag  != self._treeTag:
             logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLtree.tag ) )
@@ -112,7 +114,7 @@ class ISO_639_3_LanguagesConverter:
         """
         Check/validate the loaded data.
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
 
         uniqueDict = {}
         #for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -179,7 +181,7 @@ class ISO_639_3_LanguagesConverter:
         Loads (and pivots) the data into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
-        assert( self._XMLtree )
+        assert self._XMLtree
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
@@ -200,10 +202,10 @@ class ISO_639_3_LanguagesConverter:
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
             if "id" in self._compulsoryAttributes or ID:
-                if "id" in self._uniqueElements: assert( ID not in myIDDict ) # Shouldn't be any duplicates
+                if "id" in self._uniqueElements: assert ID not in myIDDict # Shouldn't be any duplicates
                 myIDDict[ID] = ( Name, Scope, Type, Part1Code, Part2Code, )
             if "name" in self._compulsoryAttributes or Name:
-                if "name" in self._uniqueElements: assert( Name not in myNameDict ) # Shouldn't be any duplicates
+                if "name" in self._uniqueElements: assert Name not in myNameDict # Shouldn't be any duplicates
                 myNameDict[Name.upper()] = ID # Save it as UPPERCASE
             self.__DataDicts = myIDDict, myNameDict
         return self.__DataDicts
@@ -215,9 +217,9 @@ class ISO_639_3_LanguagesConverter:
         """
         import pickle
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -241,9 +243,9 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -270,9 +272,9 @@ class ISO_639_3_LanguagesConverter:
         """
         import json
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -332,9 +334,9 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert( self._XMLtree )
+        assert self._XMLtree
         self.importDataToPython()
-        assert( self.__DataDicts )
+        assert self.__DataDicts
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )

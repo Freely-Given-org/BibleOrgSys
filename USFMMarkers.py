@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2015 Robert Hunt
+# Copyright (C) 2011-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-11' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.68'
@@ -81,7 +81,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
     If closedFlag=None (unknown), stops at the first of closing marker, next marker, or end of line.
     """
     #print( "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
-    assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
+    assert '\\' not in marker and ' ' not in marker and '*' not in marker
     text = originalText
     mLen = len( marker )
     ix = text.find( '\\'+marker+' ' )
@@ -137,7 +137,7 @@ def replaceUSFMCharacterFields( replacements, originalText ):
     text = originalText
     for markers, openReplacment, closeReplacement in replacements:
         for marker in markers:
-            assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
+            assert '\\' not in marker and ' ' not in marker and '*' not in marker
 
             # Handle the traditional USFM markers
             openMarker, closeMarker = '\\'+marker+' ', '\\'+marker+'*'
@@ -257,8 +257,8 @@ xrefSets = (
     ['xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt'], ['xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xt*'], \
     ['xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt'], ['xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xo', 'xt', 'xt*'],
     )
-for thisSet in footnoteSets: assert( footnoteSets.count(thisSet) == 1 ) # Check there's no duplicates above
-for thisSet in xrefSets: assert( xrefSets.count(thisSet) == 1 )
+for thisSet in footnoteSets: assert footnoteSets.count(thisSet) == 1 # Check there's no duplicates above
+for thisSet in xrefSets: assert xrefSets.count(thisSet) == 1
 
 
 
@@ -465,7 +465,7 @@ class USFMMarkers:
             'Combined'
             'CanonicalText'
         """
-        assert( option in ('Raw','Numbered','Combined','CanonicalText') )
+        assert option in ('Raw','Numbered','Combined','CanonicalText')
         if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"] # Includes q, q1, q2, ...
         elif option=='Raw': return self.__DataDict["newlineMarkersList"] # Doesn't include q1, q2, ...
         elif option=='Numbered': return self.__DataDict["numberedNewlineMarkersList"] # Doesn't include q
@@ -501,7 +501,7 @@ class USFMMarkers:
                     nestedMarker = '\\+'+marker if includeBackslash else '+'+marker
                     result.append( nestedMarker )
                 if includeEndMarkers:
-                    assert( self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row" )
+                    assert self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row"
                     result.append( adjMarker + '*' )
                     if includeNestedMarkers: result.append( nestedMarker + '*' )
                 if expandNumberableMarkers and self.isNumberableMarker( marker ):
@@ -629,7 +629,7 @@ class USFMMarkers:
             if x in (' ','+') and len(cx)>0: # i.e., a character start marker
                 # Find where this marker is closed
                 cxi = len(cx) - 1
-                assert( cx[cxi] == m )
+                assert cx[cxi] == m
                 for k in range( j+1, rLen ):
                     m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
                     if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
@@ -649,10 +649,10 @@ class USFMMarkers:
         if verifyMarkers:
             for j, (m, ix, x, mx, cx, ixEnd, tx,) in enumerate(finalResult):
                 #print( 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
-                assert( ix < textLength )
-                assert( x in (' ','+','-','*','',) or ( includeInitialText and j==0 and x is None ) )
+                assert ix < textLength
+                assert x in (' ','+','-','*','',) or ( includeInitialText and j==0 and x is None )
                 if m is None:
-                    assert( j==0 and ix==0 and x is None )
+                    assert j==0 and ix==0 and x is None
                 else:
                     if j == 0:
                         if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker {!r} in {!r}").format( m, text ) )

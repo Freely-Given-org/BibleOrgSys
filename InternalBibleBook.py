@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-05' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -145,7 +145,7 @@ class InternalBibleBook:
             self.containerBibleObject = parameter1
             self.workName = self.containerBibleObject.name
         self.BBB = BBB
-        if BibleOrgSysGlobals.debugFlag: assert( self.BBB in BibleOrgSysGlobals.BibleBooksCodes )
+        if BibleOrgSysGlobals.debugFlag: assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
 
         self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( self.BBB )
 
@@ -203,7 +203,7 @@ class InternalBibleBook:
 
         Returns an InternalBibleEntry object.
         """
-        assert( self._processedFlag )
+        assert self._processedFlag
         for line in self._processedLines:
             yield line
     # end of InternalBibleBook.__iter__
@@ -212,8 +212,8 @@ class InternalBibleBook:
     def addPriorityError( self, priority, C, V, string ):
         """Adds a priority error to self.errorDictionary."""
         if BibleOrgSysGlobals.debugFlag:
-            assert( isinstance( priority, int ) and ( 0 <= priority <= 100 ) )
-            assert( isinstance( string, str ) and string)
+            assert isinstance( priority, int ) and ( 0 <= priority <= 100 )
+            assert isinstance( string, str ) and string
         if not 'Priority Errors' in self.errorDictionary: self.errorDictionary['Priority Errors'] = [] # Just in case getErrors() deleted it
 
         BBB = self.BBB
@@ -242,23 +242,23 @@ class InternalBibleBook:
             logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
             halt
         if BibleOrgSysGlobals.debugFlag:
-            assert( not self._processedFlag )
-            assert( marker and isinstance( marker, str ) )
-            assert( marker[0] != '\\' )
+            assert not self._processedFlag
+            assert marker and isinstance( marker, str )
+            assert marker[0] != '\\'
             if text:
-                assert( isinstance( text, str ) )
-                assert( '\n' not in text and '\r' not in text )
+                assert isinstance( text, str )
+                assert '\n' not in text and '\r' not in text
 
         if not ( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
             logging.critical( "InternalBibleBook.addLine marker for {} not in lists: {}={!r}".format( self.objectTypeString, marker, text ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
-                assert( 0 <= ix < len(self.badMarkers) )
+                assert 0 <= ix < len(self.badMarkers)
                 self.badMarkerCounts[ix] += 1
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if BibleOrgSysGlobals.debugFlag: assert( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
+        if BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
 
         if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
             logging.critical( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
@@ -296,22 +296,22 @@ class InternalBibleBook:
         forceDebugHere = False
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
             print( " InternalBibleBook.appendToLastLine( {!r}, {!r} )".format( additionalText, expectedLastMarker ) )
-            assert( not self._processedFlag )
-            assert( self._rawLines ) # Must be an existing line to append to
+            assert not self._processedFlag
+            assert self._rawLines # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
             logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
             halt
         if BibleOrgSysGlobals.debugFlag:
-            assert( not self._processedFlag )
-            assert( additionalText and isinstance( additionalText, str ) )
-            if additionalText: assert( '\n' not in additionalText and '\r' not in additionalText )
-            if expectedLastMarker: assert( isinstance( expectedLastMarker, str ) )
+            assert not self._processedFlag
+            assert additionalText and isinstance( additionalText, str )
+            if additionalText: assert '\n' not in additionalText and '\r' not in additionalText
+            if expectedLastMarker: assert isinstance( expectedLastMarker, str )
 
         marker, text = self._rawLines[-1]
         #print( "additionalText for {} {!r} is {!r}".format( marker, text, additionalText ) )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
-        if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert( marker == expectedLastMarker )
+        if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert marker == expectedLastMarker
         #if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
         if forceDebugHere: print( "  newText for {!r} is {!r}".format( marker, text ) )
@@ -333,7 +333,7 @@ class InternalBibleBook:
         forceDebugHere = False
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
             print( "\nInternalBibleBook.addVerseSegments( {!r}, {!r}, {!r} )".format( V, text, location ) )
-            assert( not self._processedFlag )
+            assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
 
         for loopCounter in range( 0, 10 ): # Do this a few times to iron every thing out
@@ -383,7 +383,7 @@ class InternalBibleBook:
                 print( "\nMessing with segments: {!r}\n  from {!r}{}".format( ourText, text, ('\n  from '+location) if location else '' ) )
             segments = ourText.split( '\\NL**' )
             if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
-                assert( len(segments) >= 2 )
+                assert len(segments) >= 2
                 print( "\nSegments (split by \\NL**):", segments )
 
             leftovers = ''
@@ -401,7 +401,7 @@ class InternalBibleBook:
                             logging.error( "It seems that we had a blank {!r} field \nin {!r}".format( bits[0], ourText ) )
                             if BibleOrgSysGlobals.debugFlag: halt
                     else:
-                        assert( len(bits) == 2 )
+                        assert len(bits) == 2
                         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
                             if location: print( "\nHere @ {}".format( location ) )
                             print( "ourText", repr(ourText) )
@@ -411,9 +411,9 @@ class InternalBibleBook:
                             print( "marker", marker )
                             print( "leftovers", repr(leftovers) )
                             #if marker[-1] == '*': marker = marker[:-1]
-                            assert( marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
-                                            's1','s2','s3','s4', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', )
-                                or marker in ( 'f','x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) ) # These ones are character markers which can start a new line
+                            assert marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
+                                            's1','s2','s3','s4', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', ) \
+                                or marker in ( 'f','x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) # These ones are character markers which can start a new line
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             self.addLine( marker, bits[1] )
                         elif not writtenV:
@@ -459,8 +459,8 @@ class InternalBibleBook:
         global rtsCount
         #print( "InternalBibleBook.processLineFix( {}, {!r} ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
         if BibleOrgSysGlobals.debugFlag:
-            assert( originalMarker and isinstance( originalMarker, str ) )
-            assert( isinstance( text, str ) )
+            assert originalMarker and isinstance( originalMarker, str )
+            assert isinstance( text, str )
         adjText = text
         cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
         if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
@@ -665,7 +665,7 @@ class InternalBibleBook:
             if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
                 #print( "InternalBibleBook.processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
-                if BibleOrgSysGlobals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
+                if BibleOrgSysGlobals.debugFlag: assert originalMarker == 'v~' # Shouldn't occur in other fields
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
@@ -716,8 +716,8 @@ class InternalBibleBook:
                     #if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'w s c e', ixStart, ixClose, ixEnd )
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        assert( ixStart < ixClose < ixEnd )
+                        assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                        assert ixStart < ixClose < ixEnd
                     stuff = adjText[ixStart+3:ixClose]
                     adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+4:]
                     #print( "st", "'"+stuff+"'", )
@@ -729,8 +729,8 @@ class InternalBibleBook:
                     #if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'n s c e', ixStart, ixClose, ixEnd )
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        assert( ixStart < ixClose < ixEnd )
+                        assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                        assert ixStart < ixClose < ixEnd
                     stuff = adjText[ixStart+6:ixClose]
                     adjText = adjText[:ixStart] + adjText[ixEnd+7:]
                     noteContents = adjText[ixClose+1:ixEnd]
@@ -743,16 +743,16 @@ class InternalBibleBook:
                 elif remainingText.startswith('<RF>1<Rf>') or remainingText.startswith('<RF>2<Rf>') \
                 or remainingText.startswith('<RF>3<Rf>') or remainingText.startswith('<RF>4<Rf>'):
                     indexDigit = remainingText[4]
-                    if BibleOrgSysGlobals.debugFlag: assert( indexDigit.isdigit() )
+                    if BibleOrgSysGlobals.debugFlag: assert indexDigit.isdigit()
                     adjText = adjText[:ixStart] + adjText[ixStart+9:]
                     indexDigits.append( (indexDigit,ixStart,) )
                     #ixStart += 0
                 elif remainingText.startswith( '<RF>1) ' ):
                     #print( "iT", C, V, indexDigits, remainingText )
-                    if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
+                    if BibleOrgSysGlobals.debugFlag: assert indexDigits
                     ixEnd = adjText.find( '<Rf>' )
-                    if BibleOrgSysGlobals.debugFlag: assert( ixStart!=-1 and ixEnd!=-1 )
-                    if BibleOrgSysGlobals.debugFlag: assert( ixStart < ixEnd )
+                    if BibleOrgSysGlobals.debugFlag: assert ixStart!=-1 and ixEnd!=-1
+                    if BibleOrgSysGlobals.debugFlag: assert ixStart < ixEnd
                     notes = adjText[ixStart+4:ixEnd]
                     adjText = adjText[:ixStart] # Remove these notes from the end
                     newList = []
@@ -772,11 +772,11 @@ class InternalBibleBook:
                 elif remainingText.startswith( '<RF>' ):
                     print( "Something is wrong here:", C, V, text )
                     print( "iT", C, V, indexDigits, remainingText )
-                    if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
+                    if BibleOrgSysGlobals.debugFlag: assert indexDigits
                     ixEnd = adjText.find( '<Rf>' )
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( ixStart!=-1 and ixEnd!=-1 )
-                        assert( ixStart < ixEnd )
+                        assert ixStart!=-1 and ixEnd!=-1
+                        assert ixStart < ixEnd
                     notes = adjText[ixStart+4:ixEnd]
                     adjText = adjText[:ixStart] # Remove these notes from the end
                     newList = []
@@ -797,8 +797,8 @@ class InternalBibleBook:
                     #ixEnd = adjText.find( '</transChange>' )
                     ##if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'ts s c e', ixStart, ixClose, ixEnd )
-                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                    #assert( ixStart < ixClose < ixEnd )
+                    #assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                    #assert ixStart < ixClose < ixEnd
                     #stuff = adjText[ixStart+13:ixClose]
                     #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+14:]
                     ##print( "st", "'"+stuff+"'", )
@@ -807,8 +807,8 @@ class InternalBibleBook:
                     #ixEnd = adjText.find( '</seg>' )
                     ##if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
-                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                    #assert( ixStart < ixClose < ixEnd )
+                    #assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                    #assert ixStart < ixClose < ixEnd
                     #stuff = adjText[ixStart+5:ixClose]
                     #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+6:]
                     ##print( "st", "'"+stuff+"'", )
@@ -817,8 +817,8 @@ class InternalBibleBook:
                     #ixEnd = adjText.find( '</divineName>' )
                     ##if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
-                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                    #assert( ixStart < ixClose < ixEnd )
+                    #assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                    #assert ixStart < ixClose < ixEnd
                     #stuff = adjText[ixStart+12:ixClose]
                     #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+13:]
                     ##print( "st", "'"+stuff+"'", )
@@ -827,8 +827,8 @@ class InternalBibleBook:
                     #ixEnd = adjText.find( '/>' )
                     ##if ixEnd != -1: ixEnd += 3
                     #print( adjText, 'ms s e', ixStart, ixEnd )
-                    #assert( ixStart!=-1 and ixEnd!=-1 )
-                    #assert( ixStart < ixEnd )
+                    #assert ixStart!=-1 and ixEnd!=-1
+                    #assert ixStart < ixEnd
                     #stuff = adjText[ixStart+11:ixEnd]
                     #adjText = adjText[:ixStart] + adjText[ixEnd+2:]
                     #print( "st", "'"+stuff+"'", )
@@ -837,8 +837,8 @@ class InternalBibleBook:
                     #ixEnd = adjText.find( '</title>' )
                     ##if ixEnd != -1: ixEnd += 3
                     #print( adjText, 't s c e', ixStart, ixClose, ixEnd )
-                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                    #assert( ixStart < ixClose < ixEnd )
+                    #assert ixStart!=-1 and ixClose!=-1 and ixEnd!=-1
+                    #assert ixStart < ixClose < ixEnd
                     #stuff = adjText[ixStart+7:ixClose]
                     #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+8:]
                     ##print( "st", "'"+stuff+"'", )
@@ -913,7 +913,7 @@ class InternalBibleBook:
                         #print( "adjText: {!r}".format( adjText ) )
                         #print( "cleanText: {!r}".format( cleanText ) )
                         #print( ixBS, ixSP, ixAS, ixEND )
-                        if BibleOrgSysGlobals.debugFlag: assert( ixSP==99999 and ixAS==99999 and ixEND==99999 )
+                        if BibleOrgSysGlobals.debugFlag: assert ixSP==99999 and ixAS==99999 and ixEND==99999
                         cleanText = cleanText[:ixBS].rstrip()
                         #print( "QQQ7: rstrip" ); halt
                         #print( "cleanText: {!r}".format( cleanText ) )
@@ -923,15 +923,15 @@ class InternalBibleBook:
 
         if BibleOrgSysGlobals.debugFlag: # Now do a final check that we did everything right
             for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                assert( extraText ) # Shouldn't be blank
-                #if self.objectTypeString == 'USFM': assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                assert extraText # Shouldn't be blank
+                #if self.objectTypeString == 'USFM': assert extraText[0] != '\\' # Shouldn't start with backslash code
+                assert extraText[-1] != '\\' # Shouldn't end with backslash code
                 #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                assert( extraIndex >= 0 )
+                assert extraIndex >= 0
                 # This can happen with multiple notes at the end separated by spaces
                 #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with {!r}".format( extraIndex, len(adjText), text ) )
-                assert( extraType in BOS_EXTRA_TYPES )
-                assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                assert extraType in BOS_EXTRA_TYPES
+                assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
 
         return adjText, cleanText, extras
     # end of InternalBibleBook.processLines.processLineFix
@@ -976,7 +976,7 @@ class InternalBibleBook:
 
         def openMarker( newMarker ):
             """ Insert a new open marker into the book. """
-            if BibleOrgSysGlobals.debugFlag: assert( newMarker not in openMarkers )
+            if BibleOrgSysGlobals.debugFlag: assert newMarker not in openMarkers
             newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
             openMarkers.append( newMarker )
         # end of addNestingMarkers.openMarker
@@ -1079,20 +1079,20 @@ class InternalBibleBook:
                 if openMarkers and openMarkers[-1]=='c': closeLastOpenMarker( C )
                 elif 'c' in openMarkers: closeOpenMarker( 'c', C )
                 C, V = text, '0'
-                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
             elif marker == 'vp#':
-                if BibleOrgSysGlobals.debugFlag: assert( nextMarker == 'v' )
+                if BibleOrgSysGlobals.debugFlag: assert nextMarker == 'v'
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
             elif marker == 'v':
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
                 V = text
-                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
             elif marker == 'iot':
-                if BibleOrgSysGlobals.debugFlag: assert( 'iot' not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert 'iot' not in openMarkers
                 openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
             elif marker in ourIntroOutlineMarkers:
                 if lastMarker not in ourIntroOutlineMarkers:
@@ -1110,27 +1110,27 @@ class InternalBibleBook:
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
                 if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
-                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
                 lastSMarker = marker
                 #if marker=='is' or marker=='is1': print( "YY", marker, openMarkers, lastPMarker )
             #elif marker in USFM_INTRODUCTION_MARKERS:
                 #haveIntro = True
             elif marker in ourMainListMarkers:
-                assert( not text )
+                assert not text
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
                 if 'list' not in openMarkers:
                     #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
                     openMarker( 'list' )
-                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
                 lastPMarker = marker
             elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                assert( not text )
+                assert not text
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
                 lastPMarker = marker
             #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
@@ -1150,7 +1150,7 @@ class InternalBibleBook:
                 if lMarker == 'v': closeLastOpenMarker( V )
                 elif lMarker == 'c': closeLastOpenMarker( C )
                 else: closeLastOpenMarker()
-        assert( not openMarkers )
+        assert not openMarkers
         self._processedLines = newLines # replace the old set
     # end of InternalBibleBook.processLines.addNestingMarkers
 
@@ -1164,7 +1164,7 @@ class InternalBibleBook:
         Footnotes etc have not yet been extracted from any of the lines
             but there are already v~ (and a few p~) lines created as the XML was extracted.
         """
-        assert( self.objectTypeString == 'OSIS' )
+        assert self.objectTypeString == 'OSIS'
 
         # For OSIS, change lines like:
         #    1/ p = ''
@@ -1217,7 +1217,7 @@ class InternalBibleBook:
             #elif marker == 'v': V = text
 
             #if skip:
-                #assert( not text )
+                #assert not text
                 #skip = False
                 #continue # skip this empty p or q marker completely now
 
@@ -1263,7 +1263,7 @@ class InternalBibleBook:
             #elif marker == 'v': V = text[:3]
 
             #if skip:
-                #assert( not text )
+                #assert not text
                 #skip = False
                 #continue # skip this empty p or q marker completely now
 
@@ -1300,8 +1300,8 @@ class InternalBibleBook:
         """
         #if self._processedFlag: return # Can only do it once
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
-        if BibleOrgSysGlobals.debugFlag: assert( not self._processedFlag ) # Can only do it once
-        if BibleOrgSysGlobals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
+        if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
+        if BibleOrgSysGlobals.debugFlag: assert self._rawLines # or else the book was totally blank
         #print( self._rawLines[:20] ); halt # for debugging
 
 
@@ -1366,8 +1366,8 @@ class InternalBibleBook:
             nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
             #print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
             if BibleOrgSysGlobals.debugFlag:
-                assert( originalMarker and isinstance( originalMarker, str ) )
-                assert( isinstance( originalText, str ) )
+                assert originalMarker and isinstance( originalMarker, str )
+                assert isinstance( originalText, str )
             text = originalText
 
             # Convert USFM markers like s to standard markers like s1
@@ -1474,13 +1474,13 @@ class InternalBibleBook:
                         adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='cp' and text:
                 V = '0'
-                if BibleOrgSysGlobals.debugFlag: assert( haveWaitingC ) # coz this should follow the c and precede the v
+                if BibleOrgSysGlobals.debugFlag: assert haveWaitingC # coz this should follow the c and precede the v
                 haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='cl' and text:
                 if BibleOrgSysGlobals.debugFlag:
                     if V != '0':
                         print( "InternalBibleBook.processLine: Something before cl", self.workName, self.BBB, C, V, repr(text) )
-                    if debuggingThisModule: assert( V == '0' ) # coz this should precede the first c, or follow the c and precede the v
+                    if debuggingThisModule: assert V == '0' # coz this should precede the first c, or follow the c and precede the v
                 if C == '0': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
@@ -1552,9 +1552,9 @@ class InternalBibleBook:
                     verseNumberBit = text
                     #print( "verseNumberBit is {!r}".format( verseNumberBit ) )
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( verseNumberBit )
-                        assert( ' ' not in verseNumberBit )
-                        assert( '\\' not in verseNumberBit )
+                        assert verseNumberBit
+                        assert ' ' not in verseNumberBit
+                        assert '\\' not in verseNumberBit
                     self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, None, verseNumberBit) ) # Write the verse number (or range) as a separate line
                     return # Don't write a blank v~ field
                     #adjustedMarker, text = 'v~', ''
@@ -1564,8 +1564,8 @@ class InternalBibleBook:
                     goodStart =  len(verseNumberRest)>1 and verseNumberRest[0]==' ' and verseNumberRest[1]!=' '
                     #print( "verseNumberBit is {!r}, verseNumberRest is {!r}".format( verseNumberBit, verseNumberRest ) )
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( verseNumberBit and verseNumberRest )
-                        assert( '\\' not in verseNumberBit )
+                        assert verseNumberBit and verseNumberRest
+                        assert '\\' not in verseNumberBit
                     if len(vBits)>2: # rarely happens (e.g., footnote on verse number)
                         adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, vBits[1], fixErrors )
                         if (adjText or cleanText or extras) and BibleOrgSysGlobals.debugFlag:
@@ -1640,7 +1640,7 @@ class InternalBibleBook:
                 #if ixLT != -1: print( "text", "'"+text+"'" )
                 while ixLT != -1:
                     ixGT = text.find( '>', ixLT+1 )
-                    if BibleOrgSysGlobals.debugFlag: assert( ixGT != -1 )
+                    if BibleOrgSysGlobals.debugFlag: assert ixGT != -1
                     beforeText = text[:ixLT]
                     thisField = text[ixLT:ixGT+1]
                     afterText = text[ixGT+1:]
@@ -1672,8 +1672,8 @@ class InternalBibleBook:
                     elif thisField.startswith( '<l level="' ) and thisField.endswith( '"/>' ):
                         levelDigit = thisField[10]
                         if BibleOrgSysGlobals.debugFlag:
-                            assert( thisField[11] == '"' )
-                            assert( levelDigit.isdigit() )
+                            assert thisField[11] == '"'
+                            assert levelDigit.isdigit()
                         self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', None, originalText) )
                         text = beforeText + afterText
                     elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
@@ -1682,11 +1682,11 @@ class InternalBibleBook:
                     elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
                         if 0: # Don't actually need this stuff
                             ixDQ = thisField.index( '"', 17 )
-                            #assert( ixDQ != -1 )
+                            #assert ixDQ != -1
                             osisID = thisField[17:ixDQ]
                             #print( "osisID", "'"+osisID+"'" )
                             ixDOT = osisID.index( '.' )
-                            #assert( ixDOT != -1 )
+                            #assert ixDOT != -1
                             chapterDigits = osisID[ixDOT+1:]
                             #print( "chapter", chapterDigits )
                             self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, None, originalText) )
@@ -1740,8 +1740,8 @@ class InternalBibleBook:
         Works by calling makeIndex in InternalBibleInternals.py
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert( self._processedFlag )
-            assert( not self._indexedFlag )
+            assert self._processedFlag
+            assert not self._indexedFlag
         if self._indexedFlag: return # Can only do it once
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text...").format( self.objectNameString, self.workName, self.BBB ) )
@@ -1792,7 +1792,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "InternalBibleBook: processing lines from 'validateMarkers'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         validationErrors = []
 
         C = V = '0'
@@ -1859,13 +1859,13 @@ class InternalBibleBook:
             if debuggingThisModule: print( "InternalBibleBook: calling processLines from 'getField'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
-            assert( self._processedLines )
-            assert( fieldName and isinstance( fieldName, str ) )
+            assert self._processedLines
+            assert fieldName and isinstance( fieldName, str )
         adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( fieldName )
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( not entry.getExtras() ) # We're maybe losing some info here
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not entry.getExtras() # We're maybe losing some info here
                 return entry.getText()
     # end of InternalBibleBook.getField
 
@@ -1886,7 +1886,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             #print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         results = []
 
         toc1Field = self.getField( 'toc1' ) # Long table of contents text
@@ -1943,7 +1943,7 @@ class InternalBibleBook:
         #print( "Got assumedBookName of", repr(self.assumedBookName) )
 
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 3: # Print our level of confidence
-        #    if header is not None and header==mt1: assert( bookName == header ); print( "getBookName: header and main title are both {!r}".format( bookName ) )
+        #    if header is not None and header==mt1: assert bookName == header; print( "getBookName: header and main title are both {!r}".format( bookName ) )
         #    elif header is not None and mt1 is not None: print( "getBookName: header {!r} and main title {!r} are both different so selected {!r}".format( header, mt1, bookName ) )
         #    elif header is not None or mt1 is not None: print( "getBookName: only have one of header {!r} or main title {!r}".format( header, mt1 ) )
         #    else: print( "getBookName: no header or main title so used English book name {!r}".format( bookName ) )
@@ -1966,7 +1966,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'getVersification'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         versificationErrors = []
 
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
@@ -2101,7 +2101,7 @@ class InternalBibleBook:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getVersificationIfNecessary()") )
         if self.versificationList is None:
-            assert( self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None ) # also
+            assert self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None # also
             versificationResult = self.getVersification()
             #print( self.BBB, versificationResult )
             if versificationResult is None: logging.critical( exp("getVersificationIfNecessary() got nothing!") )
@@ -2124,7 +2124,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'discover'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         #print( "InternalBibleBook:discover", self.BBB )
 
         bkDict = {}
@@ -2222,7 +2222,7 @@ class InternalBibleBook:
                 if bkDict['verseCount'] is None: bkDict['verseCount'] = 1
                 else: bkDict['verseCount'] += 1
                 if bkDict['chapterCount'] is None: # Some single chapter books don't have \c 1 explicitly encoded
-                    if BibleOrgSysGlobals.debugFlag: assert( C == '0' )
+                    if BibleOrgSysGlobals.debugFlag: assert C == '0'
                     C = '1'
                     bkDict['chapterCount'] = 1
                 bkDict['havePopulatedCVmarkers'] = True
@@ -2257,13 +2257,13 @@ class InternalBibleBook:
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in BOS_EXTRA_TYPES )
+                        assert extraIndex >= 0
+                        #assert 0 <= extraIndex <= len(text)+3
+                        assert extraType in BOS_EXTRA_TYPES
                     if extraType=='fn':
                         bkDict['haveFootnotes'] = True
                         bkDict['footnotesCount'] += 1
@@ -2284,8 +2284,8 @@ class InternalBibleBook:
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
             for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress',):
-                #assert( bkDict[aKey] is None \
-                    #or ( aKey=='chapterCount' and bkDict[aKey]==1 ) ) # Some people put a chapter count in their front matter, glossary, etc.
+                #assert bkDict[aKey] is None \
+                    #or ( aKey=='chapterCount' and bkDict[aKey]==1 ) # Some people put a chapter count in their front matter, glossary, etc.
                 if bkDict[aKey] is not None and ( aKey!='chapterCount' or bkDict[aKey]!=1 ):
                     # Some people put a chapter count in their front matter, glossary, etc.
                     logging.debug( "InternalBibleBook.discover: ToProgrammer -- Some wrong in {} here. Why? {!r} {!r}".format( self.BBB, aKey, bkDict[aKey] ) )
@@ -2303,8 +2303,8 @@ class InternalBibleBook:
                 #print( bkDict['percentageProgress'] )
                 #print( bkDict['havePopulatedCVmarkers'] )
                 #print( bkDict['haveVerseText'] )
-                assert( bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText'] )
-            if not bkDict['haveVerseText']: assert( bkDict['percentageProgress']==0 and not bkDict['seemsFinished'] )
+                assert bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText']
+            if not bkDict['haveVerseText']: assert bkDict['percentageProgress']==0 and not bkDict['seemsFinished']
             bkDict['notStarted'] = not bkDict['haveVerseText']
             bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
 
@@ -2331,7 +2331,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'getAddedUnits'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         addedUnitErrors = []
 
         paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences, wordsOfJesus = [], [], [], [], [], [], []
@@ -2359,7 +2359,7 @@ class InternalBibleBook:
             elif marker == 'p':
                 reference = primeReference = (chapterNumberStr,verseNumberStr,)
                 while reference in paragraphReferences: # Must be a single verse broken into multiple paragraphs
-                    if BibleOrgSysGlobals.debugFlag: assert( primeReference in paragraphReferences )
+                    if BibleOrgSysGlobals.debugFlag: assert primeReference in paragraphReferences
                     if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
                     else: # Already have a suffix
                         reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
@@ -2367,7 +2367,7 @@ class InternalBibleBook:
             elif len(marker)==2 and marker[0]=='q' and marker[1].isdigit():# q1, q2, etc.
                 reference = primeReference = (chapterNumberStr,verseNumberStr,)
                 while reference in qReferences: # Must be a single verse broken into multiple segments
-                    if BibleOrgSysGlobals.debugFlag: assert( primeReference in qReferences )
+                    if BibleOrgSysGlobals.debugFlag: assert primeReference in qReferences
                     if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
                     else: # Already have a suffix
                         reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
@@ -2380,12 +2380,12 @@ class InternalBibleBook:
                 #levelReference = (level,reference,)
                 adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
                 #print( self.BBB, reference, levelReference, marker, text )
-                #assert( levelReference not in sectionHeadingReferences ) # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
+                #assert levelReference not in sectionHeadingReferences # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
                 #sectionHeadingReferences.append( levelReference ) # Just for checking
                 sectionHeadings.append( (reference,level,adjText,) ) # This is the real data
             elif marker == 'r':
                 reference = (chapterNumberStr,verseNumberStr,)
-                if BibleOrgSysGlobals.debugFlag: assert( reference not in sectionReferenceReferences ) # Shouldn't be any cases of two lots of section references within one verse boundary
+                if BibleOrgSysGlobals.debugFlag: assert reference not in sectionReferenceReferences # Shouldn't be any cases of two lots of section references within one verse boundary
                 sectionReferenceReferences.append( reference ) # Just for checking
                 sectionReferenceText = text
                 if sectionReferenceText and sectionReferenceText[0]=='(' and sectionReferenceText[-1]==')':
@@ -2402,7 +2402,7 @@ class InternalBibleBook:
                 wordsOfJesus.append( (reference,wjInfo,) ) # This is the real data
 
         if addedUnitErrors: self.errorDictionary['Added Unit Errors'] = addedUnitErrors
-        if BibleOrgSysGlobals.debugFlag: assert( len(paragraphReferences) == len(set(paragraphReferences)) ) # No duplicates
+        if BibleOrgSysGlobals.debugFlag: assert len(paragraphReferences) == len(set(paragraphReferences)) # No duplicates
         return paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus
     # end of InternalBibleBook.getAddedUnits
 
@@ -2418,11 +2418,11 @@ class InternalBibleBook:
         addedUnitNotices = []
         if self.BBB in typicalParagraphs:
             for reference in typicalParagraphs[self.BBB]:
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 C, V = reference[0], reference[1]
                 if len(reference)==3: V += reference[2] # append the suffix
                 typical = typicalParagraphs[self.BBB][reference]
-                if BibleOrgSysGlobals.debugFlag: assert( typical in ('A','S','M','F') )
+                if BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in paragraphReferences:
                     if typical == 'F':
                         addedUnitNotices.append( _("{} {} Paragraph break is less common after v{}").format( self.BBB, C, V ) )
@@ -2442,7 +2442,7 @@ class InternalBibleBook:
                         self.addPriorityError( 15, C, V, _("Paragraph break often inserted after field") )
                         #print( "Most", self.BBB, reference, typical, present )
             for reference in paragraphReferences: # now check for ones in this book but not typically there
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if reference not in typicalParagraphs[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
@@ -2462,12 +2462,12 @@ class InternalBibleBook:
         if self.BBB in typicalQParagraphs:
             for entry in typicalQParagraphs[self.BBB]:
                 reference, level = entry
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 C, V = reference[0], reference[1]
                 if len(reference)==3: V += reference[2] # append the suffix
                 typical = typicalQParagraphs[self.BBB][entry]
                 #print( reference, C, V, level, typical )
-                if BibleOrgSysGlobals.debugFlag: assert( typical in ('A','S','M','F') )
+                if BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in qReferences:
                     if typical == 'F':
                         addedUnitNotices.append( _("{} {} Quote Paragraph is less common after v{}").format( self.BBB, C, V ) )
@@ -2487,7 +2487,7 @@ class InternalBibleBook:
                         self.addPriorityError( 15, C, V, _("Quote Paragraph often inserted after field") )
                         #print( "Most", self.BBB, reference, typical, present )
             for reference in qReferences: # now check for ones in this book but not typically there
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if reference not in typicalQParagraphs[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
@@ -2507,12 +2507,12 @@ class InternalBibleBook:
         if self.BBB in typicalSectionHeadings:
             for entry in typicalSectionHeadings[self.BBB]:
                 reference, level = entry
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 C, V = reference[0], reference[1]
                 if len(reference)==3: V += reference[2] # append the suffix
                 typical = typicalSectionHeadings[self.BBB][entry]
                 #print( reference, C, V, level, typical )
-                if BibleOrgSysGlobals.debugFlag: assert( typical in ('A','S','M','F') )
+                if BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in sectionHeadings:
                     if typical == 'F':
                         addedUnitNotices.append( _("{} {} Section Heading is less common after v{}").format( self.BBB, C, V ) )
@@ -2533,7 +2533,7 @@ class InternalBibleBook:
                         #print( "Most", self.BBB, reference, typical, present )
             for entry in sectionHeadings: # now check for ones in this book but not typically there
                 reference, level, text = entry
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if (reference,level) not in typicalSectionHeadings[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
@@ -2552,12 +2552,12 @@ class InternalBibleBook:
         addedUnitNotices = []
         if self.BBB in typicalSectionReferences:
             for reference in typicalSectionReferences[self.BBB]:
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 C, V = reference[0], reference[1]
                 if len(reference)==3: V += reference[2] # append the suffix
                 typical = typicalSectionReferences[self.BBB][reference]
                 #print( reference, C, V, typical )
-                if BibleOrgSysGlobals.debugFlag: assert( typical in ('A','S','M','F') )
+                if BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in sectionReferences:
                     if typical == 'F':
                         addedUnitNotices.append( _("{} {} Section Reference is less common after v{}").format( self.BBB, C, V ) )
@@ -2578,7 +2578,7 @@ class InternalBibleBook:
                         #print( "Most", self.BBB, reference, typical, present )
             for entry in sectionReferences: # now check for ones in this book but not typically there
                 reference, text = entry
-                if BibleOrgSysGlobals.debugFlag: assert( 2 <= len(reference) <= 3 )
+                if BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if reference not in typicalSectionReferences[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
@@ -2683,7 +2683,7 @@ class InternalBibleBook:
                 continue
             else: # it's not our (non-USFM) c~,c#,v~ markers
                 if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is {!r}".format( marker ) )
-                if BibleOrgSysGlobals.debugFlag: assert( marker in allAvailableNewlineMarkers or marker in BOS_ALL_ADDED_MARKERS ) # Should have been checked at load time
+                if BibleOrgSysGlobals.debugFlag: assert marker in allAvailableNewlineMarkers or marker in BOS_ALL_ADDED_MARKERS # Should have been checked at load time
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
@@ -2715,7 +2715,7 @@ class InternalBibleBook:
             if marker != lastModifiedMarker: modifiedMarkerList.append( marker )
             else: # same marker in a row -- we append a sign to the saved marker to indicate multiple occurences
                 oldMarker = modifiedMarkerList.pop()
-                assert( oldMarker == marker or oldMarker == marker+'*' )
+                assert oldMarker == marker or oldMarker == marker+'*'
                 modifiedMarkerList.append( marker+'*' ) # Save the marker with the sign
             lastModifiedMarker = marker
 
@@ -2757,8 +2757,8 @@ class InternalBibleBook:
                     ('p','p'),('p','q1'),
                     ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
                     ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
-                #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-                for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert tuple2 not in commonGoodNewlineMarkerCombinations # Just check our tables for unwanted duplicates
+                for tuple2 in rarerGoodNewlineMarkerCombinations: assert tuple2 not in commonGoodNewlineMarkerCombinations # Just check our tables for unwanted duplicates
                 # We allow rem (remark) markers to be anywhere without a warning
                 if lastMarkerEmpty and markerEmpty:
                     if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
@@ -2798,8 +2798,8 @@ class InternalBibleBook:
                 # Check the internal SFMs
                 if '\\' in text:
                     #print( text )
-                    #assert( '\\f ' not in text and '\\f*' not in text and '\\x ' not in text and '\\x*' not in text ) # The contents of these fields should now be in extras (unless there were errors)
-                    #assert( '\\fr ' not in text and '\\ft' not in text and '\\xo ' not in text and '\\xt' not in text ) # The contents of these fields should now be in extras (unless there were errors)
+                    #assert '\\f ' not in text and '\\f*' not in text and '\\x ' not in text and '\\x*' not in text # The contents of these fields should now be in extras (unless there were errors)
+                    #assert '\\fr ' not in text and '\\ft' not in text and '\\xo ' not in text and '\\xt' not in text # The contents of these fields should now be in extras (unless there were errors)
                     internalTextMarkers = []
                     ixStart = text.find( '\\' )
                     while( ixStart != -1 ):
@@ -2884,15 +2884,15 @@ class InternalBibleBook:
                 extraMarkers = []
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         if debuggingThisModule:
                             print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in BOS_EXTRA_TYPES )
+                        assert extraIndex >= 0
+                        #assert 0 <= extraIndex <= len(text)+3
+                        assert extraType in BOS_EXTRA_TYPES
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
                         newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Programming error with extras: {}").format( extraText ) )
@@ -2908,7 +2908,7 @@ class InternalBibleBook:
                     #    while '  ' in extraText: extraText = extraText.replace( '  ', ' ' )
                     if '\\' in extraText:
                         #print( extraText )
-                        if BibleOrgSysGlobals.debugFlag: assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # These beginning and end markers should already be removed
+                        if BibleOrgSysGlobals.debugFlag: assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # These beginning and end markers should already be removed
                         thisExtraMarkers = []
                         ixStart = extraText.find( '\\' )
                         while( ixStart != -1 ):
@@ -3134,14 +3134,14 @@ class InternalBibleBook:
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in BOS_EXTRA_TYPES )
-                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                        assert extraIndex >= 0
+                        #assert 0 <= extraIndex <= len(text)+3
+                        assert extraType in BOS_EXTRA_TYPES
+                        assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
@@ -3185,7 +3185,7 @@ class InternalBibleBook:
 
         #OPENING_SPEECH_CHARACTERS = '“«‘‹' # The length and order of these two strings must match
         #CLOSING_SPEECH_CHARACTERS = '”»’›'
-        #if BibleOrgSysGlobals.debugFlag: assert( len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS) )
+        #if BibleOrgSysGlobals.debugFlag: assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
 
         speechMarkErrors, openChars = [], []
         newSection = newParagraph = newBit = False
@@ -3308,14 +3308,14 @@ class InternalBibleBook:
             if extras: # Check the notes also -- each note is complete in itself so it's much simpler
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
                         #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in BOS_EXTRA_TYPES )
-                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                        assert extraIndex >= 0
+                        #assert 0 <= extraIndex <= len(text)+3
+                        assert extraType in BOS_EXTRA_TYPES
+                        assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
                     extraOpenChars = []
                     for char in extraText:
                         if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
@@ -3384,8 +3384,8 @@ class InternalBibleBook:
             if lastWordTuple is None: ourLastWord = ourLastRawWord = '' # No need to check words repeated across segment boundaries
             else: # Check in case a word has been repeated (e.g., at the end of one verse and then again at the beginning of the next verse)
                 if BibleOrgSysGlobals.debugFlag:
-                    assert( isinstance( lastWordTuple, tuple ) )
-                    assert( len(lastWordTuple) == 2)
+                    assert isinstance( lastWordTuple, tuple )
+                    assert len(lastWordTuple) == 2
                 ourLastWord, ourLastRawWord = lastWordTuple
             for j,rawWord in enumerate(words):
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
@@ -3438,14 +3438,14 @@ class InternalBibleBook:
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in BOS_EXTRA_TYPES )
-                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                        assert extraIndex >= 0
+                        #assert 0 <= extraIndex <= len(text)+3
+                        assert extraType in BOS_EXTRA_TYPES
+                        assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
@@ -3476,7 +3476,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckFileControls'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         IDList, encodingList = [], []
         C = V = '0'
@@ -3502,7 +3502,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckHeadings'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList, headingErrors = [], [], [], [], []
         C = V = '0'
@@ -3577,7 +3577,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckIntroduction'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
         C = V = '0'
@@ -3653,7 +3653,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckNotes'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         allAvailableCharacterMarkers = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
 
@@ -3673,12 +3673,12 @@ class InternalBibleBook:
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
                     if BibleOrgSysGlobals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                        #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
-                        assert( extraType in BOS_EXTRA_TYPES )
-                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
+                        assert extraText # Shouldn't be blank
+                        #assert extraText[0] != '\\' # Shouldn't start with backslash code
+                        assert extraText[-1] != '\\' # Shouldn't end with backslash code
+                        #assert 0 <= extraIndex <= len(text) -- not necessarily true for multiple notes
+                        assert extraType in BOS_EXTRA_TYPES
+                        assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the CONTENTS of these fields should be in extras
 
                     # Get a copy of the note text without any formatting
                     #cleanExtraText = extraText
@@ -3701,11 +3701,11 @@ class InternalBibleBook:
                                     status, myString = 1, ''
                                 else: myString += char
                             elif status==1: # waiting for a backslash code
-                                if BibleOrgSysGlobals.debugFlag: assert( not lastCode )
+                                if BibleOrgSysGlobals.debugFlag: assert not lastCode
                                 if char=='\\':
                                     if myString and myString!=' ':
                                         #print( "Something funny in", extraText, extraList, myString ) # Perhaps a fv field embedded in another field???
-                                        #assert( len(extraList)>=2 and extraList[-2][1] == '' ) # If so, the second to last field is often blank
+                                        #assert len(extraList)>=2 and extraList[-2][1] == '' # If so, the second to last field is often blank
                                         extraList.append( ('',myString.rstrip(),) ) # Handle it by listing a blank field
                                     status, myString = 2, ''
                                 else: myString += char
@@ -3925,7 +3925,7 @@ class InternalBibleBook:
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'check'" )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
+        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         # Ignore the result of these next ones -- just use any errors collected
         #self.getVersification() # This checks CV ordering, etc. at the same time
@@ -4000,14 +4000,14 @@ class InternalBibleBook:
         Raises a KeyError if the C:V reference is not found
         """
         #print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( ref, self.BBB ) )
-        if isinstance( ref, tuple ): assert( ref[0] == self.BBB )
-        else: assert( ref.getBBB() == self.BBB )
+        if isinstance( ref, tuple ): assert ref[0] == self.BBB
+        else: assert ref.getBBB() == self.BBB
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'getContextVerseData'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
-            assert( self._processedLines )
-            assert( self._indexedFlag )
+            assert self._processedLines
+            assert self._indexedFlag
         if isinstance( ref, tuple ): C, V = ref[1], ref[2]
         else: # assume it's a SimpleVerseKey or similar
             C,V = ref.getCV()
@@ -4053,7 +4053,7 @@ class InternalBibleBook:
         if introLines: # handle left-overs for books without chapters
             with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt' ) as myFile:
                 myFile.write( introLines )
-        assert( not verseLines )
+        assert not verseLines
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata...") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )

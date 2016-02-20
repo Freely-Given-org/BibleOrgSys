@@ -5,7 +5,7 @@
 #
 # Module handling USFX XML Bibles
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-17' # by RJH
+LastModifiedDate = '2016-02-20' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.23'
@@ -86,8 +86,8 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
         returns the loaded USFXXMLBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck( {}, {}, {}, {} )".format( sourceFolder, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( sourceFolder and isinstance( sourceFolder, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert sourceFolder and isinstance( sourceFolder, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( sourceFolder, os.R_OK ):
@@ -179,7 +179,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = USFXXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
@@ -287,7 +287,7 @@ class USFXXMLBible( Bible ):
             errorString = sys.exc_info()[1]
             logging.critical( "USFXXMLBible.load: failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
         prefix = self.tree.tag[:-4] if self.tree.tag[0]=='{' and self.tree.tag[-5]=='}' else ''
@@ -384,7 +384,7 @@ class USFXXMLBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( _("USFXXMLBible.loadBook: Loading {} from {}...").format( self.name, self.sourceFolder ) )
-        assert( bookElement.tag == 'book' )
+        assert bookElement.tag == 'book'
         mainLocation = self.name + " USFX book"
 
         # Process the attributes first
@@ -416,7 +416,7 @@ class USFXXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'ksq2' )
                 for attrib,value in element.items():
                     if attrib == 'id':
-                        assert( value == bookCode )
+                        assert value == bookCode
                     else:
                         logging.warning( _("vsg4 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                 self.thisBook.addLine( 'id', bookCode + ((' '+idText) if idText else '') )
@@ -498,8 +498,8 @@ class USFXXMLBible( Bible ):
                         V = value
                     else:
                         logging.warning( _("sjx9 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                assert( V is not None )
-                assert( V )
+                assert V is not None
+                assert V
                 self.thisBook.addLine( 'v', V + ((' '+vTail) if vTail else '' ) )
             elif element.tag == 'b':
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'ks35' )
@@ -522,7 +522,7 @@ class USFXXMLBible( Bible ):
                     logging.warning( _("dve4 Unprocessed idField ({}) in {}").format( idField, location ) )
                 if text is None:
                     logging.critical( "Why is {} empty at {}".format( marker, location ) )
-                assert( text is not None )
+                assert text is not None
                 self.thisBook.addLine( marker, text )
             elif element.tag == 'table':
                 self.loadTable( element, location )
@@ -562,10 +562,10 @@ class USFXXMLBible( Bible ):
                 logging.warning( "vfh4 Unprocessed {} attribute ({}) in {}".format( attrib, value, paragraphLocation ) )
 
         if sfm:
-            assert( pTag == 'p' )
+            assert pTag == 'p'
             pTag = sfm
         if level:
-            #assert( pTag == 'q' ) # Could also be mt, etc.
+            #assert pTag == 'q' # Could also be mt, etc.
             pTag += level
         if style:
             #print( repr(pTag), repr(pText), repr(style) )
@@ -587,8 +587,8 @@ class USFXXMLBible( Bible ):
                     elif attrib == 'bcv': bcv = value # This is an BCV reference string with periods, e.g., 'MAT.1.11'
                     else:
                         logging.warning( _("cbs2 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                assert( V is not None )
-                assert( V )
+                assert V is not None
+                assert V
                 self.thisBook.addLine( 'v', V + ((' '+vTail) if vTail else '' ) )
             elif element.tag == 've': # verse end milestone -- we can just ignore this
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'lsc3' )
@@ -682,7 +682,7 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             figTag, figText = subelement.tag, clean(subelement.text)
-            assert( figTag in figDict )
+            assert figTag in figDict
             figDict[figTag] = '' if figText is None else figText
             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'jkf5' )
             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'ld18' )
@@ -712,7 +712,7 @@ class USFXXMLBible( Bible ):
                 for sub2element in subelement:
                     sub2location = sub2element.tag + " of " + sublocation
                     tag, text = sub2element.tag, clean(sub2element.text)
-                    assert( tag in ('th', 'thr', 'tc', 'tcr',) )
+                    assert tag in ('th', 'thr', 'tc', 'tcr',)
                     BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'ah82' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'ka63' )
                     level = None
@@ -745,9 +745,9 @@ class USFXXMLBible( Bible ):
             #print( "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
             #if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
                 #print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
-            if BibleOrgSysGlobals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','xt',) )
+            if BibleOrgSysGlobals.debugFlag: assert marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','xt',)
             if marker=='ref':
-                assert( fText )
+                assert fText
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
                 target = None
                 for attrib,value in subelement.items():
@@ -815,9 +815,9 @@ class USFXXMLBible( Bible ):
             #print( "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
             #if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
                 #print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
-            if BibleOrgSysGlobals.debugFlag: assert( marker in ('ref','xo','xt',) )
+            if BibleOrgSysGlobals.debugFlag: assert marker in ('ref','xo','xt',)
             if marker=='ref':
-                assert( xText )
+                assert xText
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
                 target = None
                 for attrib,value in subelement.items():
