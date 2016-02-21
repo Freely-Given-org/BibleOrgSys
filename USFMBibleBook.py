@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-01-25' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.44'
@@ -227,8 +227,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits ()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBAddedUnits )
-        discoveryDict = {}
-        UBB._discover( discoveryDict )
+        discoveryDict = UBB._discover()
         #print( "discoveryDict", discoveryDict )
         UBB.check()
         UBErrors = UBB.getErrors()

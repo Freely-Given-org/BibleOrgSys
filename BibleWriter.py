@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -149,6 +149,7 @@ class BibleWriter( InternalBible ):
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
+        if BibleOrgSysGlobals.debugFlag: print( "toPickle( {}, {} )".format( self.abbreviation, outputFolder ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickle..." )
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Bible_Object_Pickle/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -1989,7 +1990,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag:
             #print( self )
             assert self.books
-            assert self.name
+            #assert self.name
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_HTML5_Export/'
@@ -2046,7 +2047,7 @@ class BibleWriter( InternalBible ):
             else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
             if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
             else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
-            writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
+            writerObject.writeLineOpenClose( 'h1', self.name if self.name else 'Unknown', ('class','mainHeader') )
             bkList = self.getBookList()
             if myBBB  in bkList:
                 ix = bkList.index( myBBB )
@@ -3295,7 +3296,7 @@ class BibleWriter( InternalBible ):
             #elif name.endswith( ' Version' ): name = name[:-8]
         #name = name.replace( ' ', '' )
         #if not name.startswith( 'ezFree' ): name = 'ezFree' + name
-        name = 'ezFree' + self.abbreviation
+        name = 'ezFree' + ( self.abbreviation if self.abbreviation else 'UNK' )
         if len(name)>16: name = name[:16] # Shorten
         encodedNameBytes = zlib.compress( name.encode( 'utf8' ), 9 ) # Highest compression level
         if BibleOrgSysGlobals.debugFlag:
@@ -3311,7 +3312,7 @@ class BibleWriter( InternalBible ):
         with open( filepath, 'wb' ) as myFile:
             # Write the header info to binary file
             myFile.write( b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' )
-            nameBytes = self.name.encode( 'utf8' )
+            nameBytes = ( self.name if self.name else 'Unknown' ).encode( 'utf8' )
             myFile.write( nameBytes + b'\x00' * (56 - len(nameBytes)) )
 
             # Write the numChapters,numVerses info along with the file position and length

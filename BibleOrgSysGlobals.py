@@ -55,6 +55,7 @@ Contains functions:
     getFlattenedXML( element, locationString, idString=None, level=0 )
 
     applyStringAdjustments( originalText, adjustmentList )
+    stripWordPunctuation( wordToken )
 
     pickleObject( theObject, filename, folderName=None )
     unpickleObject( filename, folderName=None )
@@ -75,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.61'
+ProgVersion = '0.62'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -115,6 +116,17 @@ MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '�
 MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
 
+LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
+for char in OPENING_SPEECH_CHARACTERS: assert char in LEADING_WORD_PUNCT_CHARS
+MEDIAL_WORD_PUNCT_CHARS = '-'
+DASH_CHARS = '—–' # em-dash and en-dash
+TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
+for char in CLOSING_SPEECH_CHARACTERS: assert char in TRAILING_WORD_PUNCT_CHARS
+ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
+##import unicodedata
+#BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
+#BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
+#halt
 
 
 ##########################################################################################################
@@ -854,6 +866,20 @@ def applyStringAdjustments( originalText, adjustmentList ):
         offset += lenRS - lenFS
     return text
 # end of BibleOrgSysGlobals.applyStringAdjustments
+
+
+def stripWordPunctuation( wordToken ):
+    """
+    Removes leading and trailing punctuation from a word.
+
+    Returns the "clean" word.
+    """
+    while wordToken and wordToken[0] in LEADING_WORD_PUNCT_CHARS:
+        wordToken = wordToken[1:] # Remove leading punctuation
+    while wordToken and wordToken[-1] in TRAILING_WORD_PUNCT_CHARS:
+        wordToken = wordToken[:-1] # Remove trailing punctuation
+    return wordToken
+# end of BibleOrgSysGlobals.stripWordPunctuation
 
 
 ##########################################################################################################

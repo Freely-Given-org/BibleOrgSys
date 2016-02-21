@@ -30,7 +30,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.15'
@@ -506,8 +506,10 @@ def demo():
         try: print( "\n{} {}: {}".format( abbott.getName(), vk.getText(), abbott.renderText( vk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", abbott.getName() )
 
-        print( "\n{} {}: {}".format( strongsGreek.getName(), sk.getText(), strongsGreek.renderText( Sword.SWKey("G746") ) ) )
-        print( "\n{} {}: {}".format( strongsHebrew.getName(), sk.getText(), strongsHebrew.renderText( sk ) ) )
+        try: print( "\n{} {}: {}".format( strongsGreek.getName(), sk.getText(), strongsGreek.renderText( Sword.SWKey("G746") ) ) )
+        except UnicodeDecodeError: print( "Unicode decode error in", strongsGreek.getName() )
+        try: print( "\n{} {}: {}".format( strongsHebrew.getName(), sk.getText(), strongsHebrew.renderText( sk ) ) )
+        except UnicodeDecodeError: print( "Unicode decode error in", strongsHebrew.getName() )
 
         if 0: # Get all vernacular booknames
             # VerseKey vk; while (!vk.Error()) { cout << vk.getBookName(); vk.setBook(vk.getBook()+1); }

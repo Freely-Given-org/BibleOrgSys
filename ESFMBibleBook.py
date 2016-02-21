@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
@@ -41,7 +41,6 @@ debuggingThisModule = False
 import os, logging
 
 import BibleOrgSysGlobals
-from InternalBibleInternals import DASH_CHARS, ALL_WORD_PUNCT_CHARS
 from ESFMFile import ESFMFile
 from Bible import BibleBook
 
@@ -219,7 +218,7 @@ class ESFMBibleBook( BibleBook ):
                         else: bracedGroup += char if char!=' ' else '_'
                     if tag:
                         if BibleOrgSysGlobals.debugFlag: assert tag[0] == '='
-                        if char in ' _=' or char in ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
+                        if char in ' _=' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
                             if underlineGroupFlag:
                                 underlineGroup += word
                                 if char == '_': underlineGroup += char
@@ -258,7 +257,7 @@ class ESFMBibleBook( BibleBook ):
                                     self.addPriorityError( 20, C, V, _("Unexpected ESFM opening brace") )
                                 bracedGroupFlag = True
                                 char = '' # nothing to go into text
-                            elif char in ' _' or char in DASH_CHARS:
+                            elif char in ' _' or char in BibleOrgSysGlobals.DASH_CHARS:
                                 if underlineGroupFlag:
                                     underlineGroup += word
                                     if char == '_':
@@ -288,7 +287,7 @@ class ESFMBibleBook( BibleBook ):
                 inTag = False
                 for char in originalText:
                     if inTag:
-                        if char in ' _' or char in ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
+                        if char in ' _' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
                             inTag = False
                             text += char
                     else: # not in tag
@@ -469,8 +468,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 2: print( EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits ()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBAddedUnits )
-        discoveryDict = {}
-        EBB._discover( discoveryDict )
+        discoveryDict = EBB._discover()
         #print( "discoveryDict", discoveryDict )
         EBB.check()
         EBErrors = EBB.getErrors()

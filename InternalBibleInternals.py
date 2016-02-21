@@ -63,16 +63,6 @@ from USFMMarkers import USFM_TITLE_MARKERS, USFM_INTRODUCTION_MARKERS, \
 from BibleReferences import BibleAnchorReference
 
 
-# Define allowed punctuation
-LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
-MEDIAL_WORD_PUNCT_CHARS = '-'
-DASH_CHARS = '—–' # em-dash and en-dash
-TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
-ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
-##import unicodedata
-#BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
-#BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
-#halt
 
 BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
 """

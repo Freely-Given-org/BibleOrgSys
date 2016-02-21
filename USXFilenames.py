@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = '0.52'
@@ -265,10 +265,12 @@ class USXFilenames:
 
 
     def getUnusedFilenames( self ):
-        """ Return a list of filenames which didn't match the USFX template.
-            The order of the filenames in the list has no meaning. """
+        """
+        Return a list of filenames which didn't match the USFX template.
+            The order of the filenames in the list has no meaning.
+        """
         folderFilenames = os.listdir( self.givenFolderName )
-        actualFilenames = self.getConfirmedFilenames()
+        actualFilenames = self.getConfirmedFilenameTuples()
         filelist = []
         for BBB,actualFilename in actualFilenames:
             folderFilenames.remove( actualFilename )
@@ -324,8 +326,8 @@ def demo():
         if os.access( testFolder, os.R_OK ):
             UFns = USXFilenames( testFolder )
             print( UFns )
-            result = UFns.getDerivedFilenames(); print( "\nPossible:", len(result), result )
-            result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
+            result = UFns.getDerivedFilenameTuples(); print( "\nPossible:", len(result), result )
+            result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
         else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo

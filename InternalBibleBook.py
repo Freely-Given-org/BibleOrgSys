@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-22' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -63,7 +63,6 @@ import BibleOrgSysGlobals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_PRINTABLE_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, \
-    LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -240,7 +239,7 @@ class InternalBibleBook:
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
             logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
-            halt
+            if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
         if BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
             assert marker and isinstance( marker, str )
@@ -300,7 +299,7 @@ class InternalBibleBook:
             assert self._rawLines # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
             logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
-            halt
+            if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
         if BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
             assert additionalText and isinstance( additionalText, str )
@@ -2154,16 +2153,16 @@ class InternalBibleBook:
             """
             Breaks the segment into words and counts them.
             """
-            def stripWordPunctuation( word ):
-                """Removes leading and trailing punctuation from a word.
-                    Returns the "clean" word."""
-                while word and word[0] in LEADING_WORD_PUNCT_CHARS:
-                    word = word[1:] # Remove leading punctuation
-                while word and word[-1] in TRAILING_WORD_PUNCT_CHARS:
-                    word = word[:-1] # Remove trailing punctuation
-                if  '<' in word or '>' in word or '"' in word: print( "InternalBibleBook.discover: Need to escape HTML chars here 3s42", self.BBB, C, V, repr(word) )
-                return word
-            # end of stripWordPunctuation
+            #def stripWordPunctuation( word ):
+                #"""Removes leading and trailing punctuation from a word.
+                    #Returns the "clean" word."""
+                #while word and word[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
+                    #word = word[1:] # Remove leading punctuation
+                #while word and word[-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
+                    #word = word[:-1] # Remove trailing punctuation
+                #if  '<' in word or '>' in word or '"' in word: print( "InternalBibleBook.discover: Need to escape HTML chars here 3s42", self.BBB, C, V, repr(word) )
+                #return word
+            ## end of stripWordPunctuation
 
             # countWords() main code
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
@@ -2171,9 +2170,9 @@ class InternalBibleBook:
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 word = rawWord
                 for internalMarker in INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
-                word = stripWordPunctuation( word )
+                word = BibleOrgSysGlobals.stripWordPunctuation( word )
                 if word and not word[0].isalnum():
-                    #print( word, stripWordPunctuation( word ) )
+                    #print( word, BibleOrgSysGlobals.stripWordPunctuation( word ) )
                     if len(word) > 1:
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) \
@@ -2182,7 +2181,7 @@ class InternalBibleBook:
                 if word: # There's still some characters remaining after all that stripping
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in MEDIAL_WORD_PUNCT_CHARS):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
                                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                                     print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     lcWord = word.lower()
@@ -3066,7 +3065,7 @@ class InternalBibleBook:
                         unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
-                    if charNum > 255 and char not in ALL_WORD_PUNCT_CHARS: # Have special characters
+                    if charNum > 255 and char not in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Have special characters
                         haveNonAsciiChars = True
                     charHex = "0x{0:04x}".format( charNum )
                     #print( repr(char), repr(simpleCharName), unicodeCharName, charNum, charHex, haveNonAsciiChars )
@@ -3090,11 +3089,11 @@ class InternalBibleBook:
                         letterCounts[simpleLCCharName] = 1 if simpleLCCharName not in letterCounts else letterCounts[simpleLCCharName] + 1
                     elif not char.isalnum(): # Assume it's punctuation
                         punctuationCounts[simpleCharName] = 1 if simpleCharName not in punctuationCounts else punctuationCounts[simpleCharName] + 1
-                        if char not in ALL_WORD_PUNCT_CHARS:
+                        if char not in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS:
                             characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Invalid {!r} ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                             self.addPriorityError( 10, C, V, _("Invalid {!r} ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
-                for char in LEADING_WORD_PUNCT_CHARS:
-                    if char not in TRAILING_WORD_PUNCT_CHARS and len(adjText)>1 \
+                for char in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
+                    if char not in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS and len(adjText)>1 \
                     and ( adjText[-1]==char or char+' ' in adjText ):
                         if char==' ': simpleCharName = 'Space'
                         elif char==' ': simpleCharName = 'NBSpace'
@@ -3104,8 +3103,8 @@ class InternalBibleBook:
                         #print( "{} {}:{} char is {!r} {}".format( char, simpleCharName ) )
                         characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Misplaced {!r} ({}) word leading character").format( simpleCharName, unicodeCharName ) )
                         self.addPriorityError( 21, C, V, _("Misplaced {!r} ({}) word leading character").format( simpleCharName, unicodeCharName ) )
-                for char in TRAILING_WORD_PUNCT_CHARS:
-                    if char not in LEADING_WORD_PUNCT_CHARS and len(adjText)>1 \
+                for char in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
+                    if char not in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS and len(adjText)>1 \
                     and ( adjText[0]==char or ' '+char in adjText ):
                         if char==' ': simpleCharName = 'Space'
                         elif char==' ': simpleCharName = 'NBSpace'
@@ -3373,9 +3372,9 @@ class InternalBibleBook:
             def stripWordPunctuation( word ):
                 """Removes leading and trailing punctuation from a word.
                     Returns the "clean" word."""
-                while word and word[0] in LEADING_WORD_PUNCT_CHARS:
+                while word and word[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
                     word = word[1:] # Remove leading punctuation
-                while word and word[-1] in TRAILING_WORD_PUNCT_CHARS:
+                while word and word[-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
                 return word
             # end of stripWordPunctuation

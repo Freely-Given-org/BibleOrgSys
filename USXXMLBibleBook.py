@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-21' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.17'
@@ -407,7 +407,7 @@ def demo():
     if os.access( testFolder, os.R_OK ):
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
-        fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenames()
+        fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
                      'GEN',
