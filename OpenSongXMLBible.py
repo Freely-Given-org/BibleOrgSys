@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-23' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -407,7 +407,7 @@ def demo():
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, ob.getVerseDataList( reference ) )
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, svk.getShortText(), xb.getVerseText( svk ) )
-            if BibleOrgSysGlobals.debugFlag and not xb: halt # if no books
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not xb: halt # if no books
 # end of demo
 
 if __name__ == '__main__':

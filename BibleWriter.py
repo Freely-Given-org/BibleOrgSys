@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-02-23' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -514,12 +514,12 @@ class BibleWriter( InternalBible ):
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
                         if h: USFM += '\n\\h {}'.format( h )
-                    except KeyError: pass # ok, we've got nothing to add
+                    except (KeyError,TypeError): pass # ok, we've got nothing to add
                 if pseudoUSFMData.contains( 'mt1', 12 ) is None:
                     try:
                         mt = self.suppliedMetadata['File'][BBB+'LongName']
                         if mt: USFM += '\n\\mt1 {}'.format( mt )
-                    except KeyError: pass # ok, we've got nothing to add
+                    except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
@@ -655,7 +655,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, verseDataEntry in enumerate( pseudoUSFMData ):
                     pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                    #print( BBB, j, pseudoMarker, repr(value) )
+                    print( "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
                         #print( "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
@@ -674,7 +674,9 @@ class BibleWriter( InternalBible ):
                                 indentLevel -= 1
                             else:
                                 logging.error( "toESFM: Indent level can't go negative at {} {} {} {}".format( BBB, j, pseudoMarker, repr(value) ) )
-                                if BibleOrgSysGlobals.debugFlag: halt
+                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                                    print( "toESFM: Indent level can't go negative at {} {} {} {}".format( BBB, j, pseudoMarker, repr(value) ) )
+                                    halt
                         ESFMLine = ' ' * indentLevel * indentSize
 
                         if pseudoMarker in ('c#','vp#',):
@@ -3319,6 +3321,9 @@ class BibleWriter( InternalBible ):
             for BBB in BOS.getBookList():
                 bookAbbrev = self.getBooknameAbbreviation( BBB )
                 if bookAbbrev: bookAbbrev += '.'
+                else:
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                    bookAbbrev = 'Unknown.'
                 bookAbbrevBytes = bookAbbrev.encode( 'utf8' )
                 myFile.write( bookAbbrevBytes + b'\x00' * (51 - len(bookAbbrevBytes)) )
 
@@ -3328,7 +3333,8 @@ class BibleWriter( InternalBible ):
                 for verseCount in numVersesList: myFile.write( struct.pack( 'B', verseCount ) )
                 myFile.write( b'\x00' * (157 - numChapters - 1) )
 
-                bookBytes = compressedDictionary[BBB] # if it exists
+                try: bookBytes = compressedDictionary[BBB] # if it exists
+                except KeyError: bookBytes = b''
                 myFile.write( struct.pack( '<Q', bookAddress ) )
                 #myFile.write( b'\x00' * 4 )
                 myFile.write( struct.pack( '<Q', len(bookBytes) ) )
@@ -9370,7 +9376,10 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( os.getcwd(), outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating {!r}...").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
-            documentText = document.Text
+            try: documentText = document.Text
+            except AttributeError: # no Text? = no blank/outline ODF text available
+                logging.critical( "toODF: Cannot access blank ODF document for {}".format( BBB ) )
+                continue # can't do anything here
             initialTextCursor = documentText.createTextCursor()
             textCursor = initialTextCursor
 

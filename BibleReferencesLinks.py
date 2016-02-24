@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-17' # by RJH
+LastModifiedDate = '2015-02-24' # by RJH
 ShortProgName = "BibleReferencesLinks"
 ProgName = "Bible References Links handler"
 ProgVersion = '0.40'
@@ -38,9 +38,9 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import os, logging
+import os #, logging
 import pickle
-from collections import OrderedDict
+#from collections import OrderedDict
 
 from singleton import singleton
 import BibleOrgSysGlobals

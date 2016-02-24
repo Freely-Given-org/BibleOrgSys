@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -96,9 +96,9 @@ class BibleBookOrderSystems:
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
-                      if pickle8 <= os.stat( XMLfilepath )[8] \
-                      or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
-                        picklesGood = False; break
+                        if pickle8 <= os.stat( XMLfilepath )[8] \
+                        or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
+                            picklesGood = False; break
             if picklesGood:
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
@@ -214,14 +214,14 @@ class BibleBookOrderSystems:
                     if not BBB in self.__DataLists[bookOrderSystemCode]: # This book isn't even in the other system
                         thisError = "    " + _("Can't match '{0}' system ({0} doesn't even have {1})").format( bookOrderSystemCode, BBB )
                         allErrors += ("\n" if allErrors else "") + thisError
-                        isSubset=False;
+                        isSubset=False
                         break
                     index = self.__DataLists[bookOrderSystemCode].index( BBB )
                     #print( BBB, index, lastIndex )
                     if index < lastIndex: # they must be in a different order
                         thisError = "    " + _("Can't match '{0}' system ({0} has {1} in a different place)").format( bookOrderSystemCode, BBB )
                         allErrors += ("\n" if allErrors else "") + thisError
-                        isSubset=False;
+                        isSubset=False
                         break
                     lastIndex = index
                 if isSubset:

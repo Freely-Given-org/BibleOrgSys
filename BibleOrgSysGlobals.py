@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.62'
@@ -369,6 +369,8 @@ def backupAnyExistingFile( filenameOrFilepath ):
 ##########################################################################################################
 #
 # Peek at the first line(s) of a file
+#
+# Returns a list of lines
 
 def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None ):
     """

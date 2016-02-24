@@ -54,7 +54,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-22' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -535,7 +535,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
         Returns None for invalid or missing values.
         """
-        if BibleOrgSysGlobals.debugFlag: assert 1 <= avNumber <= 99999
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert 1 <= avNumber <= 99999
         if not BibleOrganizationalSystem.__absoluteVerseDict: self.__makeAbsoluteVerseList()
         for (BBB,C),(rangeStart, rangeEnd) in BibleOrganizationalSystem.__absoluteVerseDict.items():
             #print( BBB, C, rangeStart, rangeEnd )
@@ -580,7 +580,7 @@ def demo():
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
             print( ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
         print()
-        for myNum in ( 0, 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
+        for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
             print( ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of demo
 

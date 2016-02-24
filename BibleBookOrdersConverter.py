@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
 ProgVersion = '0.83'
@@ -122,9 +122,9 @@ class BibleBookOrdersConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( treeTag, self._XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[bookOrderSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[bookOrderSystemCode]["tree"]:
                         bookCount += 1

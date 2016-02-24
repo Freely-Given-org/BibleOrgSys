@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.34'
@@ -122,7 +122,7 @@ class BibleBooksNamesConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
                         logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
@@ -285,7 +285,7 @@ class BibleBooksNamesConverter:
         for systemName in self.__BookNamesSystemsDict:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {}...").format( systemName ) )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
-            self.__expandedInputSystems[systemName] = expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
+            self.__expandedInputSystems[systemName] = self.expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
 
     def importDataToPython( self ):

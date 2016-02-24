@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.68'
@@ -557,7 +557,7 @@ class USFMMarkers:
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )
         ixBS = text.find( '\\' )
-        while( ixBS != -1 ): # Find backslashes
+        while ixBS != -1: # Find backslashes
             #print( ixBS, firstResult )
             marker = ''
             iy = ixBS + 1

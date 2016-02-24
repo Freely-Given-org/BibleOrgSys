@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-22' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -2801,7 +2801,7 @@ class InternalBibleBook:
                     #assert '\\fr ' not in text and '\\ft' not in text and '\\xo ' not in text and '\\xt' not in text # The contents of these fields should now be in extras (unless there were errors)
                     internalTextMarkers = []
                     ixStart = text.find( '\\' )
-                    while( ixStart != -1 ):
+                    while ixStart != -1:
                         ixSpace = text.find( ' ', ixStart+1 )
                         ixAsterisk = text.find( '*', ixStart+1 )
                         if ixSpace==-1 and ixAsterisk==-1: ixEnd = len(text) - 1
@@ -2910,7 +2910,7 @@ class InternalBibleBook:
                         if BibleOrgSysGlobals.debugFlag: assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # These beginning and end markers should already be removed
                         thisExtraMarkers = []
                         ixStart = extraText.find( '\\' )
-                        while( ixStart != -1 ):
+                        while ixStart != -1:
                             ixSpace = extraText.find( ' ', ixStart+1 )
                             ixAsterisk = extraText.find( '*', ixStart+1 )
                             if ixSpace==-1 and ixAsterisk==-1: ixEnd = len(extraText) - 1

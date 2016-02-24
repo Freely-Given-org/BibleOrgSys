@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.37'
@@ -66,7 +66,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
 
         # Drop off final letters and remove internal spaces
         tempString = UCString
-        while( tempString ):
+        while tempString:
             if not tempString.isdigit() and tempString[-1]!=' ': # Don't allow single digits (even if unambiguous) and gnore any truncated strings that end in a space
                 if tempString in originalDict:
                     if originalDict[tempString] == value:
@@ -233,9 +233,9 @@ class BibleBooksNamesSystems:
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKSNAMES_"):
-                      if pickle8 <= os.stat( XMLfilepath )[8] \
-                      or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
-                        picklesGood = False; break
+                        if pickle8 <= os.stat( XMLfilepath )[8] \
+                        or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
+                            picklesGood = False; break
             if picklesGood:
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )

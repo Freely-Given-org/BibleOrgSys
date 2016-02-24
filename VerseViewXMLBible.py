@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -70,7 +70,6 @@ debuggingThisModule = False
 
 
 import logging, os
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
@@ -392,7 +391,7 @@ class VerseViewXMLBible( Bible ):
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
+        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
 
         for element in chapter:
             if element.tag == VerseViewXMLBible.verseTag:
@@ -412,6 +411,7 @@ class VerseViewXMLBible( Bible ):
             print( _("Validating XML verse...") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
+        BibleOrgSysGlobals.checkXMLNoSubelements( verse, location, 'sg20' )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
 
         # Handle verse attributes
@@ -428,99 +428,99 @@ class VerseViewXMLBible( Bible ):
         #if not vText: # This happens if a verse starts immediately with a style or note
             #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
 
-        # Handle verse subelements (notes and styled portions)
-        for subelement in verse:
-            if subelement.tag == VerseViewXMLBible.noteTag:
-                sublocation = "note in " + location
-                noteType = None
-                for attrib,value in subelement.items():
-                    if attrib=="type": noteType = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
-                if noteType and noteType not in ('variant',):
-                    logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
-                nText, nTail = subelement.text, subelement.tail
-                #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
-                vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
-                if nTail:
-                    if '\n' in nTail:
-                        print( "VerseViewXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
-                        nTail = nTail.replace( '\n', ' ' )
-                    vText += nTail
-                for subsubelement in subelement:
-                    if subsubelement.tag == VerseViewXMLBible.styleTag:
-                        subsublocation = "style in " + sublocation
-                        BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
-                        fs = css = idStyle = None
-                        for attrib,value in subsubelement.items():
-                            if attrib=='fs': fs = value
-                            #elif attrib=="css": css = value
-                            #elif attrib=="id": idStyle = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
-                        if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
-                        SFM = None
-                        if fs == 'italic': SFM = '\\it'
-                        elif fs == 'super': SFM = '\\bdit'
-                        elif fs == 'emphasis': SFM = '\\em'
-                        else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
-                        #if css == "font-style:italic": SFM = '\\it'
-                        #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
-                        #elif css == "color:#FF0000": SFM = '\\em'
-                        #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
-                        #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                        #else: print( "css is", css, "idStyle is", idStyle ); halt
-                        sText, sTail = subsubelement.text.strip(), subsubelement.tail
-                        if BibleOrgSysGlobals.debugFlag: assert sText
-                        if SFM: vText += SFM+' ' + sText + SFM+'*'
-                        else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
-                        if sTail: vText += sTail.strip()
-                    else: logging.error( "df20 Expected to find {} but got {!r} in {}".format( VerseViewXMLBible.styleTag, subsubelement.tag, sublocation ) )
+        ## Handle verse subelements (notes and styled portions)
+        #for subelement in verse:
+            #if subelement.tag == VerseViewXMLBible.noteTag:
+                #sublocation = "note in " + location
+                #noteType = None
+                #for attrib,value in subelement.items():
+                    #if attrib=="type": noteType = value
+                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                #if noteType and noteType not in ('variant',):
+                    #logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
+                #nText, nTail = subelement.text, subelement.tail
+                ##print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
+                #vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
+                #if nTail:
+                    #if '\n' in nTail:
+                        #print( "VerseViewXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        #nTail = nTail.replace( '\n', ' ' )
+                    #vText += nTail
+                #for subsubelement in subelement:
+                    #if subsubelement.tag == VerseViewXMLBible.styleTag:
+                        #subsublocation = "style in " + sublocation
+                        #BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
+                        #fs = css = idStyle = None
+                        #for attrib,value in subsubelement.items():
+                            #if attrib=='fs': fs = value
+                            ##elif attrib=="css": css = value
+                            ##elif attrib=="id": idStyle = value
+                            #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
+                        #if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
+                        #SFM = None
+                        #if fs == 'italic': SFM = '\\it'
+                        #elif fs == 'super': SFM = '\\bdit'
+                        #elif fs == 'emphasis': SFM = '\\em'
+                        #else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                        ##if css == "font-style:italic": SFM = '\\it'
+                        ##elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
+                        ##elif css == "color:#FF0000": SFM = '\\em'
+                        ##elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
+                        ##elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
+                        ##else: print( "css is", css, "idStyle is", idStyle ); halt
+                        #sText, sTail = subsubelement.text.strip(), subsubelement.tail
+                        #if BibleOrgSysGlobals.debugFlag: assert sText
+                        #if SFM: vText += SFM+' ' + sText + SFM+'*'
+                        #else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
+                        #if sTail: vText += sTail.strip()
+                    #else: logging.error( "df20 Expected to find {} but got {!r} in {}".format( VerseViewXMLBible.styleTag, subsubelement.tag, sublocation ) )
 
-            elif subelement.tag == VerseViewXMLBible.styleTag:
-                sublocation = "style in " + location
-                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
-                fs = css = idStyle = None
-                for attrib,value in subelement.items():
-                    if attrib=="fs": fs = value
-                    #elif attrib=="css": css = value
-                    #elif attrib=="id": idStyle = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
-                if BibleOrgSysGlobals.debugFlag: assert fs
-                SFM = None
-                if fs == 'super': SFM = '\\bdit'
-                elif fs == 'emphasis': SFM = '\\em'
-                else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
-                #if css == "font-style:italic": SFM = '\\it'
-                #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
-                #elif css == "color:#FF0000": SFM = '\\em'
-                #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
-                #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                #else: print( "css is", css, "idStyle is", idStyle ); halt
-                sText, sTail = subelement.text.strip(), subelement.tail
-                if BibleOrgSysGlobals.debugFlag: assert sText
-                #print( BBB, chapterNumber, sublocation )
-                if SFM: vText += SFM+' ' + sText + SFM+'*'
-                else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
-                if sTail: vText += sTail.strip()
+            #elif subelement.tag == VerseViewXMLBible.styleTag:
+                #sublocation = "style in " + location
+                #BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
+                #fs = css = idStyle = None
+                #for attrib,value in subelement.items():
+                    #if attrib=="fs": fs = value
+                    ##elif attrib=="css": css = value
+                    ##elif attrib=="id": idStyle = value
+                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                #if BibleOrgSysGlobals.debugFlag: assert fs
+                #SFM = None
+                #if fs == 'super': SFM = '\\bdit'
+                #elif fs == 'emphasis': SFM = '\\em'
+                #else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                ##if css == "font-style:italic": SFM = '\\it'
+                ##elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
+                ##elif css == "color:#FF0000": SFM = '\\em'
+                ##elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
+                ##elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
+                ##else: print( "css is", css, "idStyle is", idStyle ); halt
+                #sText, sTail = subelement.text.strip(), subelement.tail
+                #if BibleOrgSysGlobals.debugFlag: assert sText
+                ##print( BBB, chapterNumber, sublocation )
+                #if SFM: vText += SFM+' ' + sText + SFM+'*'
+                #else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
+                #if sTail: vText += sTail.strip()
 
-            elif subelement.tag == VerseViewXMLBible.breakTag:
-                sublocation = "line break in " + location
-                BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'c1d4' )
-                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
-                art = None
-                for attrib,value in subelement.items():
-                    if attrib=="art":
-                        art = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
-                if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
-                #print( BBB, chapterNumber, verseNumber )
-                #assert vText
-                if vText:
-                    thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
-                    vText = ''
-                thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
-                #bTail = subelement.tail
-                #if bTail: vText = bTail.strip()
-            else: logging.error( "bd47 Expected to find NOTE or STYLE but got {!r} in {}".format( subelement.tag, location ) )
+            #elif subelement.tag == VerseViewXMLBible.breakTag:
+                #sublocation = "line break in " + location
+                #BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'c1d4' )
+                #BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
+                #art = None
+                #for attrib,value in subelement.items():
+                    #if attrib=="art":
+                        #art = value
+                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                #if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
+                ##print( BBB, chapterNumber, verseNumber )
+                ##assert vText
+                #if vText:
+                    #thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
+                    #vText = ''
+                #thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
+                ##bTail = subelement.tail
+                ##if bTail: vText = bTail.strip()
+            #else: logging.error( "bd47 Expected to find NOTE or STYLE but got {!r} in {}".format( subelement.tag, location ) )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
@@ -585,7 +585,7 @@ def demo():
                         #vvB.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total VerseView Bibles processed.".format( count ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

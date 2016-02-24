@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
 ProgVersion = "0.25"
@@ -42,13 +42,13 @@ from xml.etree.ElementTree import ElementTree
 from singleton import singleton
 import BibleOrgSysGlobals
 from ISO_639_3_Languages import ISO_639_3_Languages
-from BibleBookOrders import BibleBookOrderSystems, BibleBookOrderSystem
-from BiblePunctuationSystems import BiblePunctuationSystems, BiblePunctuationSystem
-from BibleVersificationSystems import BibleVersificationSystems, BibleVersificationSystem
-from BibleBooksNames import BibleBooksNamesSystems, BibleBooksNamesSystem
+from BibleBookOrders import BibleBookOrderSystems
+from BiblePunctuationSystems import BiblePunctuationSystems
+from BibleVersificationSystems import BibleVersificationSystems
+from BibleBooksNames import BibleBooksNamesSystems
 
 
-allowedTypes = ( "edition", "revision", "translation", "original", ) # NOTE: The order is important here
+allowedTypes = ( 'edition', 'revision', 'translation', 'original', ) # NOTE: The order is important here
 
 
 
@@ -477,7 +477,7 @@ class BibleOrganizationalSystemsConverter:
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.h" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
-        IDDict, RADict, SBLDict, OADict, PADict, PNDict = self.importDataToPython()
+        dataDict, indexDict, combinedIndexDict = self.importDataToPython()
         ifdefName = self._filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// {}\n//\n".format( filepath ) )

@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -128,7 +128,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFilename in sorted( foundFiles ):
         if thisFilename.endswith( '.yet' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
+                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )[0]
                 if not firstLine.startswith( "info\t"):
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -165,9 +165,9 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '.yet' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
+                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )[0]
                     if not firstLine.startswith( "info\t"):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -274,7 +274,7 @@ class YETBible( Bible ):
                         if locale == 'in': locale = 'id' # Fix a quirk in the locale encoding
                     else:
                         logging.warning( _("YETBible: unknown {} info field in {} {} {}:{}") \
-                            .format( repr(bits[1]), BBB, bookCode, chapterNumberString, verseNumberString ) )
+                            .format( repr(bits[1]), BBB, chapterNumberString, verseNumberString ) )
                     continue
                 elif bits[0] == 'book_name':
                     assert 3 <= len(bits) <= 4
@@ -352,7 +352,7 @@ class YETBible( Bible ):
                     assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
-                else: print( "YETBible: Unknown line type", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: print( "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
             bookDict[lastBBB] = bookLines # Save the last book
 
 
@@ -413,7 +413,7 @@ class YETBible( Bible ):
                         #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
                         thisBook.addLine( 'r', '('+refString+')' )
                 # Insert footnotes and cross-references
-                while( '\\ff' in verseString ):
+                while '\\ff' in verseString:
                     #print( "footnote", repr(verseString) )
                     fIx = verseString.index( '\\ff' )
                     caller = verseString[fIx+3]
@@ -423,7 +423,7 @@ class YETBible( Bible ):
                     #print( "fnote", repr(note) )
                     verseString = verseString[:fIx] + '\\f + \\ft ' + note + '\\f*' + verseString[fIx+4:]
                     #print( "fvS", repr(verseString) )
-                while( '\\xx' in verseString ):
+                while '\\xx' in verseString:
                     #print( "xref", repr(verseString) )
                     fIx = verseString.index( '\\xx' )
                     caller = verseString[fIx+3]

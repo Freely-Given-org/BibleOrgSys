@@ -5,7 +5,7 @@
 #
 # Module handling the combined Hebrew and Greek lexicons
 #
-# Copyright (C) 2014-2015 Robert Hunt
+# Copyright (C) 2014-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,7 +31,7 @@ Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-06-03' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
 ProgVersion = '0.24'
@@ -41,23 +41,26 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os.path
+import logging
 
 import BibleOrgSysGlobals
 import HebrewLexicon, GreekLexicon
 
 
-def t( messageString ):
+
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 

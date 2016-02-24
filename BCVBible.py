@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-24' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -151,10 +151,10 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     foundSubfiles.append( something )
 
         # See if there's an BCV Bible here in this folder
-        if METADATA_FILENAME in foundSubFiles:
+        if METADATA_FILENAME in foundSubfiles:
             numFound += 1
             if strictCheck:
-                for folderName in foundSubFolders:
+                for folderName in foundSubfolders:
                     if folderName not in BibleOrgSysGlobals.BibleBooksCodes:
                         print( "Suprised to find folder:", folderName )
     if numFound:
@@ -208,7 +208,7 @@ class BCVBible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX'): continue
+                if folderName in ('__MACOSX',): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( t("__init__: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
