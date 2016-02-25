@@ -66,7 +66,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.34'
@@ -212,7 +212,7 @@ class SimpleVerseKey():
                 assert isinstance( V, str ) and 1<=len(V)<=3
                 assert isinstance( S, str ) and len(S)<3
                 assert BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   '
-                for checkChar in ( ' -,.:' ):
+                for checkChar in ' -,.:':
                     assert checkChar not in BBB
                     assert checkChar not in C
                     assert checkChar not in V or ( C=='0' and V=='-1' ) # 0:-1 means the last bit of the book intro
@@ -261,26 +261,26 @@ class SimpleVerseKey():
     def getCVS( self ): return self.C, self.V, self.S
 
     def getChapterNumberInt( self ):
-        try: return( int( self.C ) )
+        try: return int( self.C )
         except ValueError:
             logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
             if self.C and self.C[0].isdigit():
                 digitCount = 0
                 for char in self.C:
                     if char.isdigit(): digitCount += 1
-                return( int( self.C[:digitCount] ) )
+                return int( self.C[:digitCount] )
             return None
     # end of SimpleVerseKey.getChapterNumberInt
 
     def getVerseNumberInt( self ):
-        try: return( int( self.V ) )
+        try: return int( self.V )
         except ValueError:
             logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
             if self.V and self.V[0].isdigit():
                 digitCount = 0
                 for char in self.V:
                     if char.isdigit(): digitCount += 1
-                return( int( self.V[:digitCount] ) )
+                return int( self.V[:digitCount] )
             return None
     # end of SimpleVerseKey.getVerseNumberInt
 

@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.28'

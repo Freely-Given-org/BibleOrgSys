@@ -28,16 +28,16 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
+ShortProgName = "BiblePunctuationSystemsConverter"
 ProgName = "Bible Punctuation Systems handler"
-ProgVersion = "0.43"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.43'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 
 import os, logging
-from gettext import gettext as _
 from datetime import datetime
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
@@ -124,9 +124,9 @@ class BiblePunctuationSystemsConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[punctuationSystemCode]["tree"]:
                         bookCount += 1

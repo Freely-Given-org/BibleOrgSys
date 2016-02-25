@@ -28,14 +28,15 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
+ShortProgName = "BiblePunctuationSystems"
 ProgName = "Bible Punctuation Systems handler"
-ProgVersion = "0.43"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.43'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 
 import os, logging
-from collections import OrderedDict
 
 #from singleton import singleton
 import BibleOrgSysGlobals
@@ -71,9 +72,9 @@ class BiblePunctuationSystems:
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
-                      if pickle8 <= os.stat( XMLfilepath )[8] \
-                      or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
-                        picklesGood = False; break
+                        if pickle8 <= os.stat( XMLfilepath )[8] \
+                        or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
+                            picklesGood = False; break
             if picklesGood:
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )

@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.66'
@@ -140,7 +140,7 @@ class USFMFilenames:
             if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
-                        self.fileList.append( possibleFilename )
+                    self.fileList.append( possibleFilename )
         #print( "fL", self.fileList )
         #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 
@@ -341,7 +341,7 @@ class USFMFilenames:
                 if os.path.isfile( filepath ): # It's a file not a folder
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
-                        assert( filepath not in self._fileDictionary )
+                        assert filepath not in self._fileDictionary
                         BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self._BBBDictionary: logging.error( "{}Oops, already found {!r} in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
@@ -373,10 +373,10 @@ class USFMFilenames:
         """ Check that BBB and filename are not in the givenList,
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure). """
-        assert( isinstance( BBB, str ) )
-        assert( isinstance( filename, str ) )
-        assert( isinstance( givenList, list ) )
-        assert( isinstance( caller, str ) )
+        assert isinstance( BBB, str )
+        assert isinstance( filename, str )
+        assert isinstance( givenList, list )
+        assert isinstance( caller, str )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -489,7 +489,7 @@ class USFMFilenames:
                 self.doListAppend( BBB, self._BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
         else:
             for folder,filename in self._fileDictionary.keys():
-                assert( folder == self.givenFolderName )
+                assert folder == self.givenFolderName
                 #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList

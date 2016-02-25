@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.02'
@@ -146,7 +146,7 @@ class EasyWorshipBible( Bible ):
         Total  31,102 verses = 797E in 66 = 42 books
     """
     global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
 
     def __init__( self, sourceFolder, sourceFilename, encoding=None ):
@@ -157,8 +157,8 @@ class EasyWorshipBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "EasyWorship Bible object"
-        self.objectTypeString = "EWB"
+        self.objectNameString = 'EasyWorship Bible object'
+        self.objectTypeString = 'EWB'
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, sourceFilename, encoding

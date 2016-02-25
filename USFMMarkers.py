@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.68'
@@ -108,7 +108,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
                 text = text[:ix]
             elif ixEnd<tLen-1 and text[ixEnd+1]=='+': # We've hit an embedded marker
                 logging.critical( "removeUSFMCharacterField: doesn't handle embedded markers yet with {!r} in {!r}".format( marker, originalText ) )
-                if debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: halt
             else:
                 text = text[:ix] + text[ixEnd:]
         ix = text.find( '\\'+marker+' ' )
@@ -575,7 +575,7 @@ class USFMMarkers:
                         else: # it's probably a letter which is part of the actual marker
                             marker += c1
                             iy += 1
-                            while ( iy < textLength ):
+                            while iy < textLength:
                                 c = text[iy]
                                 if c==' ': firstResult.append( (marker,ixBS,'+','\\+'+marker+' ') ); break
                                 elif c=='*': firstResult.append( (marker,ixBS,'-','\\+'+marker+'*') ); break
@@ -589,7 +589,7 @@ class USFMMarkers:
                 else: # it's probably a letter which is part of the actual marker
                     marker += c1
                     iy += 1
-                    while ( iy < textLength ):
+                    while iy < textLength:
                         c = text[iy]
                         if c==' ': firstResult.append( (marker,ixBS,' ','\\'+marker+' ') ); break
                         elif c=='*': firstResult.append( (marker,ixBS,'*','\\'+marker+'*') ); break

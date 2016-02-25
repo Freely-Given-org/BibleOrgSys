@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -92,7 +92,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import os, logging
+import logging
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -345,9 +345,9 @@ class BibleSingleReference( BibleReferenceBase ):
             S = S[0] # Just take the first one
         if BBB is not None:
             if status==2 and C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
-                    V = C
-                    C = '1'
-                    status = 4
+                V = C
+                C = '1'
+                status = 4
             if status>=4 and not haveErrors:
                 if self._BibleOrganizationalSystem.isValidBCVRef( (BBB, C, V, S), referenceString ):
                     status = 9
@@ -610,9 +610,9 @@ class BibleSingleReferences( BibleReferenceBase ):
             if V: status = 4
         if BBB is not None:
             if status==2 and C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
-                    V = C
-                    C = '1'
-                    status = 4
+                V = C
+                C = '1'
+                status = 4
             if status>=4 and not haveErrors:
                 saveReference( BBB, C, V, S, refList )
                 status = 9
@@ -1192,7 +1192,7 @@ class BibleReferenceList( BibleReferenceBase ):
         elif status==4: # Must have ended with a separator character
             logging.warning( _("Bible reference {!r} ended with a separator character").format( referenceString ) )
             haveWarnings = True
-            status = 9;
+            status = 9
         elif status==5 and X: # Getting C or V range
             V = X
             saveReferenceRange( startReferenceTuple, BBB, C, V, S, self.referenceList )
@@ -1256,7 +1256,8 @@ class BibleReferenceList( BibleReferenceBase ):
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
         OSISList = BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes()
-        self.getBBB = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
+        #self.getBBB = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
+        self.getBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
@@ -1306,7 +1307,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 if V1 and V2: result += "{}.{}.{}-{}.{}.{}".format(Bk1,C1,V1,Bk2,C2,V2)
                 elif not V1 and not V2: result += "{}.{}-{}.{}".format(Bk1,C1,Bk2,C2)
                 elif V2: result += "{}.{}.1-{}.{}.{}".format(Bk1,C1,Bk2,C2,V2)
-                else: giveUphere
+                else: halt
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange
@@ -1386,7 +1387,7 @@ class BibleReferenceList( BibleReferenceBase ):
                         verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganizationalSystem )
                         if verseList is not None: myList.extend( verseList )
                         status, myV = 0, ''
-            if (status>0 or myV): logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
+            if status>0 or myV: logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
             #print( "myList", myList )
 
         # Now see if we can find any of these references in our internal list
@@ -1747,7 +1748,7 @@ class BibleAnchorReference:
         elif status==2: # Must have ended with a separator character
             logging.warning( _("Bible reference {!r}{} ended with a separator character").format( anchorString, '' if location is None else " at {}".format(location) ) )
             haveWarnings = True
-            status = 6;
+            status = 6
         elif status==3 and X: # Getting C or V range
             V = X
             saveReferenceRange( startReferenceTuple, self.BBB, C, V, S, self.referenceList )

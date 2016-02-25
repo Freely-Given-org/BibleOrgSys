@@ -28,17 +28,17 @@ Module handling ISO_639_3_Languages.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "ISOLanguages"
 ProgName = "ISO 639_3_Languages handler"
 ProgVersion = "0.84"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-import os, logging
-from collections import OrderedDict
+import os
 
 from singleton import singleton
 import BibleOrgSysGlobals

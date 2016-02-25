@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -97,8 +97,8 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         returns the loaded USFMBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -249,7 +249,7 @@ class USFMBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
-        assert( self.sourceFolder is not None )
+        assert self.sourceFolder is not None
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -263,7 +263,7 @@ class USFMBible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX'): continue
+                if folderName in ('__MACOSX',): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
@@ -346,7 +346,7 @@ class USFMBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("loadBookMP( {} )").format( BBB_Filename_tuple ) )
         BBB, filename = BBB_Filename_tuple
-        assert( BBB not in self.books )
+        assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -375,7 +375,7 @@ class USFMBible( Bible ):
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
-                    assert( len(results) == len(self.maximumPossibleFilenameTuples) )
+                    assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames

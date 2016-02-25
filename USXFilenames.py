@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = '0.52'
@@ -87,7 +87,7 @@ class USXFilenames:
             if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
-                        self.fileList.append( possibleFilename )
+                    self.fileList.append( possibleFilename )
         #print( "fL", self.fileList )
         #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 

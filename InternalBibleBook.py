@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -514,7 +514,7 @@ class InternalBibleBook:
                         adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
                         adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
                         if '"' in adjText:
-                            logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:{!r}".format( originalMarker, adjText ) )
+                            logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:{!r}".format( self.BBB, C, V, originalMarker, adjText ) )
 
             # Do XML/HTML common character replacements
             adjText = adjText.replace( '&', '&amp;' )
@@ -3399,7 +3399,7 @@ class InternalBibleBook:
                 if word: # There's still some characters remaining after all that stripping
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in MEDIAL_WORD_PUNCT_CHARS):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
                                 wordErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True

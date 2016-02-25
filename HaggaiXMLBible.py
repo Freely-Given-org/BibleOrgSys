@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -70,7 +70,6 @@ debuggingThisModule = False
 
 
 import logging, os
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
@@ -504,7 +503,7 @@ class HaggaiXMLBible( Bible ):
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
+        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
 
         for element in chapter:
             if element.tag == HaggaiXMLBible.paragraphTag:

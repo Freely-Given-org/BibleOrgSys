@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-23' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -90,7 +90,7 @@ import zipfile, tarfile
 import subprocess, multiprocessing
 
 import BibleOrgSysGlobals, ControlFiles
-from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_ALL_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
@@ -1433,7 +1433,7 @@ class BibleWriter( InternalBible ):
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
-                            while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
                             osisRef = BRL.parseToOSIS( xrefText, toWikiMediaGlobals['verseRef'] )
                             if osisRef is not None:
@@ -1584,7 +1584,7 @@ class BibleWriter( InternalBible ):
                     if adjText: writerObject.writeLineOpenClose( 'p', adjText, ('class','speaker') )
                 elif marker in ('p','pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4', 'pr','pq',) \
                 or marker in ('ip','ipi','ipr','ipq', 'iex',):
-                    writerObject.writeNewLine( 2 );
+                    writerObject.writeNewLine( 2 )
                 elif marker in ( 'q1','q2','q3','q4', 'iq1','iq2','iq3','iq4',):
                     adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
@@ -3681,7 +3681,7 @@ class BibleWriter( InternalBible ):
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
-            xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
+            xw.writeLineOpen( 'usx', (('version','2.0') if version>=2 else None ) )
             haveOpenPara = paraJustOpened = False
             gotVP = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
@@ -4338,7 +4338,7 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                             abbreviationList.append( vernacularAbbrev )
                     changed = False
-                    for somePunct in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
+                    for somePunct in ".''̉΄": # Remove punctuation and glottals (all UPPER CASE here)
                         if somePunct in vernacularAbbrev:
                             vernacularAbbrev = vernacularAbbrev.replace( somePunct, '' )
                             changed = True
@@ -4349,7 +4349,7 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
                             abbreviationList.append( vernacularAbbrev )
                         changed = False
-                    for vowel in ( 'AΆÁÂÃÄÅEÈÉÊËIÌÍÎÏOÒÓÔÕÖUÙÚÛÜ' ): # Remove vowels (all UPPER CASE here)
+                    for vowel in 'AΆÁÂÃÄÅEÈÉÊËIÌÍÎÏOÒÓÔÕÖUÙÚÛÜ': # Remove vowels (all UPPER CASE here)
                         if vowel in vernacularAbbrev:
                             vernacularAbbrev = vernacularAbbrev.replace( vowel, '' )
                             changed = True
@@ -4565,7 +4565,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
-                            while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
                             osisRef = BRL.parseToOSIS( xrefText, toOSISGlobals['verseRef'] )
                             if osisRef is not None:
@@ -5313,7 +5313,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
-                            while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
                             osisRef = BRL.parseToOSIS( xrefText, toZefGlobals['verseRef'] )
                             if osisRef is not None:
@@ -6109,7 +6109,7 @@ class BibleWriter( InternalBible ):
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
-                            while xrefText[-1] in (' ,;.'): finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
                             #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
                             osisRef = BRL.parseToOSIS( xrefText )
                             if osisRef is not None:
@@ -6212,7 +6212,7 @@ class BibleWriter( InternalBible ):
                 #verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
-                    if (len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit()):
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit():
                         logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     toSwordGlobals['verseRef']  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
@@ -6220,7 +6220,7 @@ class BibleWriter( InternalBible ):
                     osisID = toSwordGlobals['verseRef'] + ' ' + verseRef2
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
-                    if (len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit()):
+                    if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit():
                         logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     sID = toSwordGlobals['verseRef'] = chapterRef + '.' + bits[0]
                     osisID = ''
@@ -6525,7 +6525,7 @@ class BibleWriter( InternalBible ):
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4', 'd', ): logging.critical( "toSwordModule: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                 lastMarker = marker
-            if (haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker):
+            if haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker:
                 logging.error( "toSwordModule: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
                 logging.error( "toSwordModule: b {} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
                 logging.error( "toSwordModule: c {} = {!r}".format( marker, text ) )
@@ -8023,7 +8023,7 @@ class BibleWriter( InternalBible ):
                 if line.startswith('HhH'):
                     if lastLine:
                         #print( BBB, C, "Don't start main heading on last line", repr(line) )
-                        break; # Don't print headings on the last line
+                        break # Don't print headings on the last line
                     line = line[3:] # Remove the heading marker
                     #print( "Got main heading:", BBB, C, repr(line) )
                     isMainHeading = True
@@ -8031,7 +8031,7 @@ class BibleWriter( InternalBible ):
                 elif line.startswith('SsS'):
                     if lastLine:
                         #print( BBB, C, "Don't start section heading on last line", repr(line) )
-                        break; # Don't print headings on the last line
+                        break # Don't print headings on the last line
                     line = line[3:] # Remove the SsS heading marker
                     #print( "Got section heading:", BBB, C, repr(line) )
                     isSectionHeading = True
@@ -9326,7 +9326,7 @@ class BibleWriter( InternalBible ):
                     ix = textSegment.find( '//' )
                     while ix != -1:
                         handleTextSubsegment( textSegment[sx:ix] )
-                        documentText.insertControlCharacter( textCursor, ODF_LINE_BREAK, False );
+                        documentText.insertControlCharacter( textCursor, ODF_LINE_BREAK, False )
                         lx = ix + 2
                         ix = textSegment.find( '//', lx )
                     handleTextSubsegment( textSegment[lx:] )
@@ -9405,7 +9405,7 @@ class BibleWriter( InternalBible ):
                 nonlocal firstEverParagraphFlag
                 #print( "toODF.insertODFParagraph( {} {}:{}, {}, {} ...)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
-                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
                 except IllegalArgumentException:
                     logging.critical( "toODF: {} paragraph style doesn't seem to exist".format( repr(paragraphStyleName) ) )
@@ -9435,9 +9435,9 @@ class BibleWriter( InternalBible ):
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
-                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                             textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
-                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
 
                         # Create a new text section and insert it into the document
                         chapterSection = document.createInstance( "com.sun.star.text.TextSection" )
@@ -9461,7 +9461,7 @@ class BibleWriter( InternalBible ):
                     #runningHeaderField.setPropertyValue( "Content", "{} {}".format( headerField, C ) )
                 elif marker == 'c#':
                     if not inTextParagraph: # Not all translations have paragraph markers
-                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                         textCursor.setPropertyValue( "ParaStyleName", "Prose Paragraph" )
                         inTextParagraph = startingNewParagraphFlag = True
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
@@ -9478,7 +9478,7 @@ class BibleWriter( InternalBible ):
                         gotVP = None
                     if not inTextParagraph: # Not all translations have paragraph markers
                     #if lastMarker == 's1': # hack for OEB which has some empty s fields immediately followed by v fields
-                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                         textCursor.setPropertyValue( "ParaStyleName", "Prose Paragraph" )
                         inTextParagraph = startingNewParagraphFlag = True
                     if V != '1':
@@ -9534,7 +9534,7 @@ class BibleWriter( InternalBible ):
                     startingNewParagraphFlag = False
                 elif marker in ( 'b', 'ib', ):
                     if BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
-                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                     textCursor.setPropertyValue( "ParaStyleName", 'Blank Line Paragraph' if marker=='b' else 'Introduction Blank Line Paragraph' )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
                     if BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
@@ -10368,7 +10368,7 @@ def demo():
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
-                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
                             #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolder )

@@ -86,7 +86,7 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
 ProgVersion = '0.24'
@@ -159,6 +159,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         elif thisFilename.endswith( '_utf8.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
+                if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -201,8 +202,9 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if thisFilename.endswith( '_utf8.txt' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
+                    if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename

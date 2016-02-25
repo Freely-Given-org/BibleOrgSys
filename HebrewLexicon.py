@@ -34,7 +34,7 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = '0.17'
@@ -45,7 +45,6 @@ debuggingThisModule = False
 
 
 import logging, os.path, re
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals

@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -65,17 +65,19 @@ EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS',
 ISOLanguages = ISO_639_3_Languages().loadData()
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
@@ -210,16 +212,16 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
     result = elementText
     while result.endswith('\n') or result.endswith('\r'): result = result[:-1] # Drop off trailing newlines (assumed to be irrelevant)
     if '  ' in result:
-        errorMsg = t("clean: found multiple spaces in {!r}{}").format( result, info )
+        errorMsg = exp("clean: found multiple spaces in {!r}{}").format( result, info )
         logging.warning( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
     if '\t' in result:
-        errorMsg = t("clean: found tab in {!r}{}").format( result, info )
+        errorMsg = exp("clean: found tab in {!r}{}").format( result, info )
         logging.warning( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
         result = result.replace( '\t', ' ' )
     if '\n' in result or '\r' in result:
-        errorMsg = t("clean: found CR or LF characters in {!r}{}").format( result, info )
+        errorMsg = exp("clean: found CR or LF characters in {!r}{}").format( result, info )
         logging.error( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
         result = result.replace( '\r\n', ' ' ).replace( '\n', ' ' ).replace( '\r', ' ' )

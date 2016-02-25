@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.16'
@@ -51,7 +51,6 @@ from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
 from Bible import Bible
-from USXFilenames import USXFilenames
 from USXXMLBibleBook import USXXMLBibleBook
 from PTXBible import loadPTXLanguages, loadPTXVersifications
 

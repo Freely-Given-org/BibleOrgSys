@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.65'
@@ -49,7 +49,6 @@ debuggingThisModule = False
 
 import logging, os, struct
 import multiprocessing
-from collections import OrderedDict
 from binascii import hexlify
 
 
@@ -61,17 +60,19 @@ filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -220,7 +221,7 @@ class PalmDBBible( Bible ):
             """
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
-                    print( t("readRecord( {}, {} )").format( recordNumber, thisFile ) )
+                    print( exp("readRecord( {}, {} )").format( recordNumber, thisFile ) )
                 assert recordNumber < len(mainDBIndex)
             dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
             #recordLength = 99999 if recordNumber==len(mainDBIndex)-1 else (mainDBIndex[recordNumber+1][0] - dataOffset)
@@ -245,22 +246,22 @@ class PalmDBBible( Bible ):
             Returns the string.
             """
             #if BibleOrgSysGlobals.debugFlag:
-                #print( t("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
+                #print( exp("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
             if len(binary) < numBytes: halt # Too few bytes provided
             binary = binary[:numBytes]
             if debuggingThisModule:
                 for someInt in binary:
                     #print( repr(someInt) )
                     if someInt == 0xe2:
-                        print( t("getBinaryString( {}={}, {} ) found e2").format( hexlify(binary), binary, numBytes ) )
+                        print( exp("getBinaryString( {}={}, {} ) found e2").format( hexlify(binary), binary, numBytes ) )
             result = ''
             errorFlag = False
             for j, value in enumerate( binary ):
                 if j>=numBytes or value==0: break
                 if value > 0x7F:
                     if debuggingThisModule:
-                        print( t("getBinaryString( {}={}, {} ) found non-ascii").format( hexlify(binary), binary, numBytes ) )
-                        print( "{} Got non-ASCII character {:02x}->{!r}".format( j, value, chr(value) ) );
+                        print( exp("getBinaryString( {}={}, {} ) found non-ascii").format( hexlify(binary), binary, numBytes ) )
+                        print( "{} Got non-ASCII character {:02x}->{!r}".format( j, value, chr(value) ) )
                     errorFlag = True
                 result += chr( value )
             if errorFlag:
@@ -300,7 +301,7 @@ class PalmDBBible( Bible ):
             Used for reading the PalmDB header information from the file.
             """
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( t("getFileString( {}, {} )").format( thisFile, numBytes ) )
+                #print( exp("getFileString( {}, {} )").format( thisFile, numBytes ) )
             return getBinaryString( thisFile.read( numBytes ), numBytes )
         # end of getFileString
 
@@ -311,7 +312,7 @@ class PalmDBBible( Bible ):
             """
             nonlocal words
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( t("loadWordlists()") )
+                print( exp("loadWordlists()") )
 
             # Now read the word index info
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading word index info..." )
@@ -418,7 +419,7 @@ class PalmDBBible( Bible ):
             """
             nonlocal remainder14count, remainder14bits
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( t("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
+                #print( exp("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
             if binary16: next16, = struct.unpack( ">H", binary16 )
             else:
                 if debuggingThisModule: print( "Added error zero bits (should only be at the end of a book)" )
@@ -476,7 +477,7 @@ class PalmDBBible( Bible ):
             nonlocal hadP
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
-                    print( t("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
+                    print( exp("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
                 assert verseText
                 if 'SQ' in verseText or 'AAA' in verseText or 'XXX' in verseText or 'WWW' in verseText:
                     print( "What's this here for:", repr(verseText) )
@@ -607,7 +608,7 @@ class PalmDBBible( Bible ):
             versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
             #print( "  versionAttribute =",versionAttribute )
             copyProtectedFlag = versionAttribute & 1
-            byteShiftedFlag = not (versionAttribute & 2)
+            byteShiftedFlag = not versionAttribute & 2
             RTLFlag = versionAttribute & 4
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 if copyProtectedFlag: print( " Copy protected!" ); halt

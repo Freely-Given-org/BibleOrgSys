@@ -31,7 +31,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleVersificationSystemsConverter"
 ProgName = "Bible Versification Systems converter"
 ProgVersion = '0.50'
@@ -118,7 +118,7 @@ class BibleVersificationSystemsConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( self.__headerTag ) )
                     else:
                         logging.error( _("Expected to load {!r} but got {!r}").format( self.__treeTag, self.__XMLSystems[versificationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this

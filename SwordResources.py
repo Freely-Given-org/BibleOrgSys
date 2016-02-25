@@ -30,7 +30,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.15'
@@ -41,7 +41,7 @@ debuggingThisModule = True
 
 
 #from singleton import singleton
-import os, logging
+import logging
 
 import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey

@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-23' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -45,7 +45,6 @@ debuggingThisModule = False
 
 
 import logging, os
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
@@ -316,7 +315,7 @@ class OpenSongXMLBible( Bible ):
             #print( BBB, 'c', chapterNumber )
             chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
+        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
 
         for element in chapter:
             if element.tag == OpenSongXMLBible.verseTag:

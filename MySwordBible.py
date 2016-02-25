@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.18'
@@ -61,7 +61,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os, re
+import logging, os
 import sqlite3
 import multiprocessing
 

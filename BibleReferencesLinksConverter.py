@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
@@ -40,28 +40,29 @@ debuggingThisModule = True
 
 import logging, os.path
 from datetime import datetime
-from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-from BibleReferences import BibleSingleReference, BibleReferenceList
+#from BibleReferences import BibleSingleReference, BibleReferenceList
 from VerseReferences import SimpleVerseKey, FlexibleVersesKey
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -155,7 +156,7 @@ class BibleReferencesLinksConverter:
                         logging.warning( _("Missing work element in header") )
             else:
                 logging.warning( _("Missing header element (looking for {!r} tag)".format( self._headerTag ) ) )
-            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( element.tail ) )
+            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( header.tail ) )
         else:
             logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
     # end of BibleReferencesLinksConverter.__load

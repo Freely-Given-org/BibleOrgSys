@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.62'
@@ -54,13 +54,13 @@ debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
-import os, logging
+import logging
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from USFMMarkers import USFM_TITLE_MARKERS, USFM_INTRODUCTION_MARKERS, \
                         USFM_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
-from BibleReferences import BibleAnchorReference
+#from BibleReferences import BibleAnchorReference
 
 
 
@@ -236,7 +236,7 @@ class InternalBibleExtraList:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
                 if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, InternalBibleExtra )
-                result += "\n  {} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
+                result += "\n  {}{} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
                     break
@@ -949,14 +949,14 @@ class InternalBibleIndex:
                             if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey2", self.BBB, nextNextKey, self.getEntries( nextNextKey ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
-                                logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q3' and nextMarker not in ('p~', '¬q3'):
-                                logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q4' and nextMarker not in ('p~', '¬q3'):
-                                logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                     # Set the previous marker (but skipping over rem markers)
                     if marker != 'rem': previousMarker = marker

@@ -28,7 +28,7 @@ Module handling Greek language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "GreekLanguageHandler"
 ProgName = "Greek language handler"
 ProgVersion = '0.02'
@@ -39,7 +39,6 @@ debuggingThisModule = False
 
 
 import os, unicodedata
-from gettext import gettext as _
 from collections import OrderedDict
 
 import BibleOrgSysGlobals

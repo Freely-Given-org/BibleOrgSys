@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-17' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.27'
@@ -49,17 +49,19 @@ from Bible import Bible
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -182,7 +184,7 @@ class USXXMLBible( Bible ):
         Tries to determine USX filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload() from {}").format( self.sourceFolder ) )
+            print( exp("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
@@ -202,9 +204,8 @@ class USXXMLBible( Bible ):
                 ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
                 #print( "ssfFilepathList", ssfFilepathList )
                 if len(ssfFilepathList) > 1:
-                    logging.error( t("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+                    logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
                 if len(ssfFilepathList) >= 1: # Seems we found the right one
-                    from PTXBible import loadPTXSSFData
                     SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
                     if SSFDict:
                         if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}

@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewWLC.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling HebrewWLC.xml
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,17 +26,23 @@
 Module handling WLCHebrew.xml to produce C and Python data tables.
 """
 
-ProgName = "Hebrew WLC format handler"
-ProgVersion = "0.04"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-
-
-import os
 from gettext import gettext as _
+
+LastModifiedDate = '2016-02-25' # by RJH
+ShortProgName = "HebrewWLCHandler"
+ProgName = "Hebrew WLC format handler"
+ProgVersion = '0.04'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = True
+
+
+#import os
 
 import BibleOrgSysGlobals, Hebrew
 from OSISXMLBible import OSISXMLBible
-from InternalBibleBook import InternalBibleEntry, InternalBibleEntryList
+#from InternalBibleBook import InternalBibleEntry, InternalBibleEntryList
 
 
 

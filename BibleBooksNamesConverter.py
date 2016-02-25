@@ -365,6 +365,7 @@ class BibleBooksNamesConverter:
         return self.__BookNamesSystemsDict, self.__expandedInputSystems
     # end of importDataToPython
 
+
     def pickle( self, filepath=None ):
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
@@ -384,6 +385,7 @@ class BibleBooksNamesConverter:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
             #pickle.dump( self.__expandedInputSystems, myFile )
     # end of pickle
+
 
     def exportDataToPython( self, filepath=None ):
         """
@@ -471,25 +473,6 @@ class BibleBooksNamesConverter:
                         exportPythonOrderedDict( myFile, bookNamesInputDict, "bookNamesInputDict", "UpperCaseInputString (sorted with longest first)", "referenceAbbreviation (string)" )
                 myFile.write( "}} # end of bookNamesInputDict ({} systems)\n".format( len(self.__BookNamesSystemsDict) ) )
     # end of exportDataToPython
-
-    def pickle( self, filepath=None ):
-        """
-        Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
-        """
-        import pickle
-
-        assert self.__XMLSystems
-        self.importDataToPython()
-        assert self.__BookNamesSystemsDict
-
-        if not filepath:
-            folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
-            if not os.path.exists( folder ): os.mkdir( folder )
-            filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
-        with open( filepath, 'wb' ) as myFile:
-            pickle.dump( self.__BookNamesSystemsDict, myFile )
-    # end of pickle
 
     def exportDataToJSON( self, filepath=None ):
         """

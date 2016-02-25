@@ -54,7 +54,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-22' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -126,7 +126,6 @@ class BibleOrganizationalSystems:
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
-                from BibleOrganizationalSystemsConverter import BibleOrganizationalSystemsConverter
                 if XMLFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
                 bosc = BibleOrganizationalSystemsConverter()
                 bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)

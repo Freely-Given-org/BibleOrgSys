@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "MLWriter"
 ProgName = "ML Writer"
 ProgVersion = '0.31'
@@ -280,7 +280,9 @@ class MLWriter:
 
 
     def checkTag( self, tagString ):
-        """ Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine. """
+        """
+        Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
+        """
         #print( "tagString: {!r}", tagString )
         assert tagString # It can't be blank
         assert '<' not in tagString and '>' not in tagString and '"' not in tagString
@@ -289,15 +291,20 @@ class MLWriter:
 
 
     def checkText( self, textString ):
-        """ Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine. """
+        """
+        Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
+        """
         assert textString # It can't be blank
-        if ('<' in textString or '>' in textString or '"' in textString): logging.error( _("MLWriter:checkText: unexpected characters found in {!r}").format( textString ) )
+        if '<' in textString or '>' in textString or '"' in textString:
+            logging.error( _("MLWriter:checkText: unexpected characters found in {!r}").format( textString ) )
         return textString
     # end of MLWriter.checkText
 
 
     def checkAttribName( self, nameString ):
-        """ Returns a checked string containing the attribute name. Note that special characters should have already been handled before calling this routine. """
+        """
+        Returns a checked string containing the attribute name. Note that special characters should have already been handled before calling this routine.
+        """
         assert nameString # It can't be blank
         assert '<' not in nameString and '>' not in nameString and '"' not in nameString
         return nameString
@@ -305,7 +312,9 @@ class MLWriter:
 
 
     def checkAttribValue( self, valueString ):
-        """ Returns a checked string containing the attribute value. Note that special characters should have already been handled before calling this routine. """
+        """
+        Returns a checked string containing the attribute value. Note that special characters should have already been handled before calling this routine.
+        """
         if isinstance( valueString, int ): valueString = str( valueString ) # Do an automatic conversion if they pass us an integer
         assert valueString # It can't be blank (can it?)
         assert '<' not in valueString and '>' not in valueString and '"' not in valueString
@@ -314,7 +323,9 @@ class MLWriter:
 
 
     def getAttributes( self, attribInfo ):
-        """ Returns a string containing the validated attributes. """
+        """
+        Returns a string containing the validated attributes.
+        """
         result = ''
         if isinstance( attribInfo, tuple ): # Assume it's a single pair
             assert len(attribInfo) == 2
@@ -337,22 +348,29 @@ class MLWriter:
 
 
     def writeNewLine( self, count=1 ):
-        """ Writes a (1 or more) new line sequence to the output. """
+        """
+        Writes a (1 or more) new line sequence to the output.
+        """
         self._writeToBuffer( self._nl * count )
         self._currentColumn = 0
     # end of MLWriter.writeNewLine
 
 
     def writeLineComment( self, text, noTextCheck=False ):
-        """ Writes an XML comment field. """
+        """
+        Writes an XML comment field.
+        """
         return self._autoWrite( '<!-- {} -->'.format(text if noTextCheck else self.checkText(text)) )
     # end of MLWriter.writeLineComment
 
 
     def writeLineText( self, text, noTextCheck=False, noNL=None ):
-        """ Writes raw text onto a line. """
+        """
+        Writes raw text onto a line.
+        """
         #print( 'writeLineText', text, self._openStack )
-        if noNL is None: noNL = self._outputType=='HTML' and self._openStack and self._openStack[-1] in HTMLCombinedTags
+        if noNL is None:
+            noNL = self._outputType=='HTML' and self._openStack and self._openStack[-1] in HTMLCombinedTags
         return self._autoWrite( text if noTextCheck else self.checkText(text), noNL=noNL )
     # end of MLWriter.writeLineText
 
@@ -373,8 +391,10 @@ class MLWriter:
 
 
     def writeLineOpenText( self, openTag, text, attribInfo=None, noTextCheck=False ):
-        """ Writes an opening tag on a line.
-        Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting)."""
+        """
+        Writes an opening tag on a line.
+        Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
+        """
         #print( "text: {!r}".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
@@ -386,7 +406,9 @@ class MLWriter:
 
 
     def writeLineClose( self, closeTag ):
-        """ Writes a closing tag on a line. """
+        """
+        Writes a closing tag on a line.
+        """
         #print( 'writeLineClose', self._openStack )
         if not self._openStack:
              logging.error( _("MLWriter:writeLineClose: closed {!r} tag even though no tags open").format( closeTag ) )
@@ -400,7 +422,9 @@ class MLWriter:
 
 
     def writeLineOpenClose( self, tag, text, attribInfo=None, noTextCheck=False ):
-        """ Writes an opening and closing tag on the same line. """
+        """
+        Writes an opening and closing tag on the same line.
+        """
         checkedTag = self.checkTag(tag)
         checkedText = text if noTextCheck else self.checkText(text)
         noNL = self._outputType=='HTML' and tag in HTMLInsideTags
@@ -412,7 +436,9 @@ class MLWriter:
 
 
     def writeLineOpenSelfclose( self, tag, attribInfo=None ):
-        """ Writes a self-closing tag with optional attributes. """
+        """
+        Writes a self-closing tag with optional attributes.
+        """
         checkedTag = self.checkTag(tag)
         if attribInfo is None:
             return self._autoWrite( '<{}{}/>'.format( checkedTag, ' ' if self.spaceBeforeSelfcloseTag else '' ) )
@@ -422,7 +448,9 @@ class MLWriter:
 
 
     def close( self, writeFinalNL=False ):
-        """ Finish everything up and close the file. """
+        """
+        Finish everything up and close the file.
+        """
         assert self.__outputFile is not None
         if self._openStack: logging.error( _("MLWriter:close: have unclosed tags: {}").format(self._openStack) )
         if writeFinalNL: self.writeNewLine()
@@ -434,7 +462,9 @@ class MLWriter:
 
 
     def autoClose( self ):
-        """ Close all open tags and finish everything up and close the file. """
+        """
+        Close all open tags and finish everything up and close the file.
+        """
         assert self.__outputFile is not None
         assert self._status == 'Open'
         if BibleOrgSysGlobals.debugFlag: print( "autoClose stack: {}", self._openStack )
@@ -446,8 +476,10 @@ class MLWriter:
 
 
     def validate( self, schemaFile ):
-        """ Validate the just closed file against the given schema (pathname or URL).
-            Returns a 3-tuple consisting of a result code (0=success) and two strings containing the program output and error output.
+        """
+        Validate the just closed file against the given schema (pathname or URL).
+
+        Returns a 3-tuple consisting of a result code (0=success) and two strings containing the program output and error output.
         """
         assert self._status == "Closed"
 

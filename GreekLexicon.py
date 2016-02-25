@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.16'
@@ -45,7 +45,7 @@ debuggingThisModule = False
 
 
 import logging, os.path, re
-from collections import OrderedDict
+#from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals

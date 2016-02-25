@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.28'
@@ -53,7 +53,7 @@ except ImportError: # Sword library (dll and python bindings) seem to be not ava
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+#from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
  # Must be lowercase

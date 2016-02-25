@@ -31,7 +31,7 @@ Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
 ProgVersion = '0.24'
@@ -76,7 +76,7 @@ class BibleLexiconIndex:
         Loads (and crudely validates the XML file) into an element tree.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
+            print( exp("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         self.hIndex = None
         if preload: self.load()
@@ -188,17 +188,17 @@ class BibleLexicon:
         Does not actually cause the XML to be loaded (very slow).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
+            print( exp("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         fnfCount = 0
         try: self.hLexicon = HebrewLexicon.HebrewLexicon( self.HebrewXMLFolder, preload ) # Create the object
         except FileNotFoundError:
-            logging.critical( t("BibleLexicon could not find Hebrew lexicon at {}").format( HebrewXMLFolder ) )
+            logging.critical( exp("BibleLexicon could not find Hebrew lexicon at {}").format( HebrewXMLFolder ) )
             fnfCount += 1
             self.hLexicon = None
         try: self.gLexicon = GreekLexicon.GreekLexicon( self.GreekXMLFolder, preload ) # Create the object
         except FileNotFoundError:
-            logging.critical( t("BibleLexicon could not find Greek lexicon at {}").format( GreekXMLFolder ) )
+            logging.critical( exp("BibleLexicon could not find Greek lexicon at {}").format( GreekXMLFolder ) )
             fnfCount += 1
             self.gLexicon = None
         if fnfCount >= 2: raise FileNotFoundError
@@ -238,7 +238,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getStrongsEntryData( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getStrongsEntryData( {} )").format( repr(key) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryData( key )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryData( key )
     # end of BibleLexicon.getStrongsEntryData
@@ -253,7 +253,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            print( exp("BibleLexicon.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryField( key, fieldName )
     # end of BibleLexicon.getStrongsEntryField
@@ -278,7 +278,7 @@ class BibleLexicon:
 
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getStrongsEntryHTML( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getStrongsEntryHTML( {} )").format( repr(key) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryHTML( key )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryHTML( key )
     # end of BibleLexicon.getStrongsEntryHTML
@@ -294,7 +294,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryData( key )
     # end of BibleLexicon.getBrDrBrEntryData
 
@@ -308,7 +308,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            print( exp("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         return self.hLexicon.getBrDrBrEntryField( key, fieldName )
     # end of BibleLexicon.getBrDrBrEntryField
 
@@ -321,7 +321,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryHTML( key )
     # end of BibleLexicon.getBrDrBrEntryHTML
 
@@ -336,7 +336,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryData( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryData( key )
@@ -353,7 +353,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            print( exp("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryField( key, fieldName )
@@ -380,7 +380,7 @@ class BibleLexicon:
 
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
+            print( exp("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryHTML( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryHTML( key )

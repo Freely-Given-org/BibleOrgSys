@@ -128,7 +128,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFilename in sorted( foundFiles ):
         if thisFilename.endswith( '.yet' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )[0]
+                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -165,7 +165,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '.yet' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )[0]
+                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue

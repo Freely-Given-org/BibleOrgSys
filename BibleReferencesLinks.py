@@ -5,7 +5,7 @@
 #
 # Module handling BibleReferencesLinks functions
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-24' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleReferencesLinks"
 ProgName = "Bible References Links handler"
 ProgVersion = '0.40'
@@ -46,17 +46,20 @@ from singleton import singleton
 import BibleOrgSysGlobals
 
 
-def t( messageString ):
+
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 

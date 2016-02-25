@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2015 Robert Hunt
+# Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-11-14' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.27'
@@ -51,30 +51,30 @@ debuggingThisModule = False
 import logging, os.path
 
 import BibleOrgSysGlobals
-from ESFMBible import ESFMBibleFileCheck, ESFMBible
-from PTXBible import PTXBibleFileCheck, PTXBible
-from USFMBible import USFMBibleFileCheck, USFMBible
-from DBLBible import DBLBibleFileCheck, DBLBible
-from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
-from USFXXMLBible import USFXXMLBibleFileCheck, USFXXMLBible
-from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
-from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
-from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
-from HaggaiXMLBible import HaggaiXMLBibleFileCheck, HaggaiXMLBible
-from VerseViewXMLBible import VerseViewXMLBibleFileCheck, VerseViewXMLBible
-from UnboundBible import UnboundBibleFileCheck, UnboundBible
-from DrupalBible import DrupalBibleFileCheck, DrupalBible
-from YETBible import YETBibleFileCheck, YETBible
-from theWordBible import theWordBibleFileCheck, theWordBible
-from MySwordBible import MySwordBibleFileCheck, MySwordBible
-from ESwordBible import ESwordBibleFileCheck, ESwordBible
-from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
-from OnlineBible import OnlineBibleFileCheck, OnlineBible
-from EasyWorshipBible import EasyWorshipBibleFileCheck, EasyWorshipBible
-from SwordBible import SwordBibleFileCheck, SwordBible
-from CSVBible import CSVBibleFileCheck, CSVBible
-from ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck, ForgeForSwordSearcherBible
-from VPLBible import VPLBibleFileCheck, VPLBible
+from ESFMBible import ESFMBibleFileCheck
+from PTXBible import PTXBibleFileCheck
+from USFMBible import USFMBibleFileCheck
+from DBLBible import DBLBibleFileCheck
+from USXXMLBible import USXXMLBibleFileCheck
+from USFXXMLBible import USFXXMLBibleFileCheck
+from OpenSongXMLBible import OpenSongXMLBibleFileCheck
+from OSISXMLBible import OSISXMLBibleFileCheck
+from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck
+from HaggaiXMLBible import HaggaiXMLBibleFileCheck
+from VerseViewXMLBible import VerseViewXMLBibleFileCheck
+from UnboundBible import UnboundBibleFileCheck
+from DrupalBible import DrupalBibleFileCheck
+from YETBible import YETBibleFileCheck
+from theWordBible import theWordBibleFileCheck
+from MySwordBible import MySwordBibleFileCheck
+from ESwordBible import ESwordBibleFileCheck
+from PalmDBBible import PalmDBBibleFileCheck
+from OnlineBible import OnlineBibleFileCheck
+from EasyWorshipBible import EasyWorshipBibleFileCheck
+from SwordBible import SwordBibleFileCheck
+from CSVBible import CSVBibleFileCheck
+from ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck
+from VPLBible import VPLBibleFileCheck
 #from SwordResources import SwordInterface # What about these?
 
 
@@ -88,7 +88,7 @@ class UnknownBible:
         """
         Constructor: creates an empty Bible object.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+        if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
         self.givenFolderName = givenFolderName
 
         # Check that the given folder is readable
@@ -540,7 +540,7 @@ class UnknownBible:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
 
 
-        assert( len(typesFound) == totalBibleTypes )
+        assert len(typesFound) == totalBibleTypes
         if totalBibleCount == 0:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "UnknownBible.search: No Bibles found" )
             self.foundType = 'None found'
@@ -731,7 +731,7 @@ def demo():
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (no books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (but not books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -747,7 +747,7 @@ def demo():
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (no books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (but not books) {}...".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )

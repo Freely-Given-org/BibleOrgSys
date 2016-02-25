@@ -64,7 +64,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.55'
@@ -100,7 +100,9 @@ class BibleVersificationSystems:
 
 
     def loadData( self, XMLFolder=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        """
+        Loads the XML data file and imports it to dictionary format (if not done already).
+        """
         if not self.__DataDict: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             picklesGood = False
@@ -114,9 +116,9 @@ class BibleVersificationSystems:
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEVERSIFICATIONSYSTEM_"):
-                      if pickle8 <= os.stat( XMLfilepath )[8] \
-                      or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
-                        picklesGood = False; break
+                        if pickle8 <= os.stat( XMLfilepath )[8] \
+                        or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
+                            picklesGood = False; break
             if picklesGood:
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
@@ -706,7 +708,9 @@ class BibleVersificationSystem:
 
 
     def getAuxilliaryVerseList( self, listName ):
-        """ gets a list of auxilliary verse information for "omitted", "combined", or "reordered" verses. """
+        """
+        Gets a list of auxilliary verse information for "omitted", "combined", or "reordered" verses.
+        """
         assert listName in ["omitted", "combined", "reordered"]
         if listName=="omitted": return self.__omittedVersesDict
         if listName=="combined": return self.__combinedVersesDict
@@ -721,7 +725,8 @@ class BibleVersificationSystem:
             but it allows almost any number of verses in chapter zero (up to 199).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+            print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+
         BBB, C, V, S = referenceTuple
         assert len(BBB) == 3
         if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)

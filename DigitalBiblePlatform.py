@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.14'
@@ -432,7 +432,7 @@ class DBPBibles:
         #print( "responseJSON", responseJSON.read() )
         responseSTR = responseJSON.readall().decode('utf-8')
         #print( "responseSTR", repr(responseSTR) )
-        return( json.loads( responseSTR ) )
+        return json.loads( responseSTR )
     # end of DBPBibles.getOnlineData
 
 
@@ -588,7 +588,7 @@ class DBPBible:
             if BibleOrgSysGlobals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {} {}".format( repr(fieldREST), repr(additionalParameters) ) )
             return None
         responseSTR = responseJSON.readall().decode('utf-8')
-        return( json.loads( responseSTR ) )
+        return json.loads( responseSTR )
     # end of DBPBible.getOnlineData
 
 

@@ -28,11 +28,14 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "USFMMarkersConverter"
 ProgName = "USFM Markers converter"
 ProgVersion = "0.62"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import logging, os.path
@@ -309,7 +312,7 @@ class USFMMarkersConverter:
             combinedMarkerDict[marker] = marker
             if numberableFlag: # We have some extra work to do
                 conversionDict[marker] = marker + '1'
-                for suffix in ( '1234' ): # These are the suffix digits that we allow
+                for suffix in '1234': # These are the suffix digits that we allow
                     numberedMarker = marker + suffix
                     backConversionDict[numberedMarker] = marker
                     numberedMarkerList.append( numberedMarker )

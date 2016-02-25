@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.62'
@@ -329,7 +329,7 @@ accentDict = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','�
               'ç':'c','ć':'c','ĉ':'c','ċ':'c','č':'c',
               'ð':'d','ď':'d','đ':'d',
               'è':'e','é':'e','ê':'e','ë':'e','ē':'e','ĕ':'e','ė':'e','ę':'e','ě':'e',
-              'ģ':'g','ğ':'g','ġ':'g','ģ':'g',
+              'ģ':'g','ğ':'g','ġ':'g',
               'ì':'i','í':'i','î':'i','ï':'i',
               'ñ':'n',
               'ò':'o','ó':'o','ô':'o','õ':'o','ö':'o','ø':'o',
@@ -341,8 +341,8 @@ def removeAccents( someString ):
     Remove accents from the string and return it (used for fuzzy matching)
     """
     resultString = ''
-    for char in someString:
-        resultString += accentDict[char] if char in accentDict else char
+    for someChar in someString:
+        resultString += accentDict[someChar] if someChar in accentDict else someChar
     return resultString
 # end of BibleOrgSysGlobals.makeSafeString
 
@@ -370,7 +370,8 @@ def backupAnyExistingFile( filenameOrFilepath ):
 #
 # Peek at the first line(s) of a file
 #
-# Returns a list of lines
+# If one line is requested, returns the line (string)
+# Otherwise, returns a list of lines
 
 def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None ):
     """
@@ -389,9 +390,9 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
                 lineNumber += 1
                 if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                 #print( thisFilename, lineNumber, line )
-                if numLines==1: return line # Always returns the first line
+                if numLines==1: return line # Always returns the first line (string)
                 lines.append( line )
-                if lineNumber >= numLines: return lines
+                if lineNumber >= numLines: return lines # Return a list of lines
     except UnicodeDecodeError: # Could be binary or a different encoding
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
         logging.warning( "{}peekIntoFile: Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.' if debugFlag else '', filepath ) )
@@ -952,7 +953,7 @@ def unpickleObject( filename, folderName=None ):
 #
 # Default program setup routine
 
-def setup( ShortProgName, ProgVersion, loggingFolderPath=None ):
+def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
     """
     Does the initial set-up for our scripts / programs.
 
@@ -963,9 +964,9 @@ def setup( ShortProgName, ProgVersion, loggingFolderPath=None ):
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(ShortProgName), repr(ProgVersion), repr(loggingFolderPath) ) )
-    setupLoggingToFile( ShortProgName, ProgVersion, folderPath=loggingFolderPath )
-    logging.info( "{} v{} started".format( ShortProgName, ProgVersion ) )
+        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(sShortProgName), repr(sProgVersion), repr(loggingFolderPath) ) )
+    setupLoggingToFile( sShortProgName, sProgVersion, folderPath=loggingFolderPath )
+    logging.info( "{} v{} started".format( sShortProgName, sProgVersion ) )
 
     if verbosityLevel > 2:
         print( "  This program comes with ABSOLUTELY NO WARRANTY." )
@@ -984,7 +985,9 @@ def setup( ShortProgName, ProgVersion, loggingFolderPath=None ):
 #
 
 def setVerbosity( verbosityLevelParameter ):
-    """Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
+    """
+    Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control.
+    """
 
     global verbosityString, verbosityLevel
     if isinstance( verbosityLevelParameter, str ):
@@ -1029,7 +1032,9 @@ def setVerbosity( verbosityLevelParameter ):
 
 
 def setDebugFlag( newValue=True ):
-    """ Set the debug flag. """
+    """
+    Set the debug flag.
+    """
     global debugFlag
     debugFlag = newValue
     if (debugFlag and verbosityLevel> 2) or verbosityLevel>3:
@@ -1038,7 +1043,9 @@ def setDebugFlag( newValue=True ):
 
 
 def setStrictCheckingFlag( newValue=True ):
-    """ See the strict checking flag. """
+    """
+    See the strict checking flag.
+    """
     global strictCheckingFlag
     strictCheckingFlag = newValue
     if (strictCheckingFlag and verbosityLevel> 2) or verbosityLevel>3:
@@ -1090,7 +1097,9 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
 
 
 def printAllGlobals( indent=None ):
-    """ Print all global variables (for debugging usually). """
+    """
+    Print all global variables (for debugging usually).
+    """
     if indent is None: indent = 2
     print( "{}commandLineOptions: {}".format( ' '*indent, commandLineOptions ) )
     print( "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
@@ -1102,11 +1111,11 @@ def printAllGlobals( indent=None ):
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
-def closedown( ProgName, ProgVersion ):
+def closedown( cProgName, cProgVersion ):
     """
     Does all the finishing off for the program.
     """
-    logging.info( "{} v{} finished.".format( ProgName, ProgVersion ) )
+    logging.info( "{} v{} finished.".format( cProgName, cProgVersion ) )
 # end of BibleOrgSysGlobals.closedown
 
 

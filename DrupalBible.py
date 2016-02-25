@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-02-25' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.09'
@@ -84,9 +84,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os, struct
+import logging, os
 import multiprocessing
-from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
@@ -141,6 +140,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if thisFilename.endswith( '.bc' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
+                if firstLine is None: continue # seems we couldn't decode the file
                 if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -178,8 +178,9 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             if thisFilename.endswith( '.bc' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
+                    if firstLine is None: continue # seems we couldn't decode the file
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 #print( "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )

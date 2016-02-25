@@ -27,27 +27,27 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-02-26' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
 ProgVersion = '0.07'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 #from singleton import singleton
 import os, logging
-from gettext import gettext as _
-#from collections import OrderedDict
 
 import BibleOrgSysGlobals
 import SFMFile
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
+    Expands the message string in debug mode.
     Prepends the module name to a error or warning message string
         if we are in debug mode.
     Returns the new string.
@@ -56,8 +56,8 @@ def t( messageString ):
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -141,7 +141,7 @@ class BibleStylesheet():
         self.name = os.path.splitext( self.filename )[0]
 
         recordsDB = SFMFile.SFMRecords()
-        recordsDB.read( self.filepath, 'Marker', encoding=self.encoding )
+        recordsDB.read( self.filepath, 'Marker' ) #, encoding=self.encoding )
         #print( "\nRecords", recordsDB.records )
         self.smallestSize, self.largestSize, self.markerList, self.markerSets = recordsDB.analyze()
         self.dataDict = recordsDB.copyToDict( "dict" )
@@ -154,7 +154,7 @@ class BibleStylesheet():
     def validate( self ):
         from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("validate"), USFMMarker, styleData )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("validate"), USFMMarker, styleData )
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             assert USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
     # end of BibleStylesheet.load
@@ -281,7 +281,7 @@ class ParatextStylesheet():
         for USFMMarker in self.dataDict:
             #print( USFMMarker )
             if USFMMarker not in BibleOrgSysGlobals.USFMMarkers:
-                logging.warning( t("ParatextStylesheet validate: found unexpected {!r} marker").format( USFMMarker ) )
+                logging.warning( exp("ParatextStylesheet validate: found unexpected {!r} marker").format( USFMMarker ) )
     # end of ParatextStylesheet.load
 
 
