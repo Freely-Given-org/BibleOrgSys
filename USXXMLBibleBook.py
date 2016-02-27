@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-02-27' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.17'
@@ -38,8 +38,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os
-from xml.etree.ElementTree import ElementTree
+import logging, os, sys
+from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 from Bible import BibleBook
@@ -49,17 +49,19 @@ sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+# end of exp
 
 
 
@@ -267,21 +269,26 @@ class USXXMLBibleBook( BibleBook ):
                     if BibleOrgSysGlobals.debugFlag: halt
         # end of loadParagraph
 
+        C = V = '0'
+        loadErrors = []
+        lastMarker = None
+
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}...").format( filename, folder ) )
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
-        self.tree = ElementTree().parse( self.sourceFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
-
-        C = V = '0'
-        loadErrors = []
-        lastMarker = None
+        try: self.tree = ElementTree().parse( self.sourceFilepath )
+        except ParseError as err:
+            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
+            loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
+            self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
+        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if self.tree.tag=='usx' or self.tree.tag=='usfm': # Not sure why both are allowable
+        if 'tree' in dir(self) \
+        and ( self.tree.tag=='usx' or self.tree.tag=='usfm' ): # Not sure why both are allowable
             location = "USX ({}) file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )

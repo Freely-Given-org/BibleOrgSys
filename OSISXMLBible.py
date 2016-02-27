@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-02-27' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -46,8 +46,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os
-from xml.etree.ElementTree import ElementTree
+import logging, os, sys
+from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 from ISO_639_3_Languages import ISO_639_3_Languages
@@ -65,6 +65,7 @@ EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS',
 ISOLanguages = ISO_639_3_Languages().loadData()
 
 
+
 def exp( messageString ):
     """
     Expands the message string in debug mode.
@@ -78,6 +79,7 @@ def exp( messageString ):
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
 # end of exp
+
 
 
 def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
@@ -319,7 +321,11 @@ class OSISXMLBible( Bible ):
         Also, extracts some useful elements from the header element.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {}...").format( OSISFilepath ) )
-        self.tree = ElementTree().parse( OSISFilepath )
+        try: self.tree = ElementTree().parse( OSISFilepath )
+        except ParseError as err:
+            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
+            loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
+            return
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
