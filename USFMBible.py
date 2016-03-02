@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -426,7 +426,7 @@ def demo():
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = UsfmB.getErrors()
                     # print( UBErrors )
-                if BibleOrgSysGlobals.commandLineOptions.export:
+                if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##UsfmB.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -456,7 +456,7 @@ def demo():
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = UsfmB.getErrors()
                     # print( UBErrors )
-                if BibleOrgSysGlobals.commandLineOptions.export:
+                if BibleOrgSysGlobals.commandLineArguments.export:
                     UsfmB.pickle()
                     ##UsfmB.toDrupalBible()
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -517,7 +517,7 @@ def demo():
                             UsfmB.check()
                             UsfmBErrors = UsfmB.getErrors()
                             #print( UsfmBErrors )
-                        if BibleOrgSysGlobals.commandLineOptions.export:
+                        if BibleOrgSysGlobals.commandLineArguments.export:
                             UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )

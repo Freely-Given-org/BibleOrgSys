@@ -28,7 +28,7 @@ Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python dat
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "ISOLanguagesConverter"
 ProgName = "ISO 639_3_Languages handler"
 ProgVersion = "0.84"
@@ -376,7 +376,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         lgC = ISO_639_3_LanguagesConverter().loadAndValidate() # Load the XML
         lgC.pickle() # Produce a pickle output file
         lgC.exportDataToPython() # Produce the .py tables

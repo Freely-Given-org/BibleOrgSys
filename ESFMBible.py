@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -572,7 +572,7 @@ def demo():
                     #print( EsfmB.books['GEN']._processedLines[0:40] )
                     EsfmBErrors = EsfmB.getErrors()
                     # print( UBErrors )
-                if BibleOrgSysGlobals.commandLineOptions.export:
+                if BibleOrgSysGlobals.commandLineArguments.export:
                     ##EsfmB.toDrupalBible()
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
@@ -631,7 +631,7 @@ def demo():
                             EsfmB.check()
                             EsfmBErrors = EsfmB.getErrors()
                             #print( EsfmBErrors )
-                        if BibleOrgSysGlobals.commandLineOptions.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                        if BibleOrgSysGlobals.commandLineArguments.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total ESFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

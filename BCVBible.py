@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -584,7 +584,7 @@ def demo():
             #print( UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getErrors()
             # print( bibleErrors )
-        #if BibleOrgSysGlobals.commandLineOptions.export:
+        #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
@@ -597,7 +597,7 @@ def demo():
             #print( UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getErrors()
             # print( bibleErrors )
-        if BibleOrgSysGlobals.commandLineOptions.export:
+        if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
@@ -645,7 +645,7 @@ def demo():
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = bcvB.getErrors()
                     # print( bcbibleErrors )
-                if BibleOrgSysGlobals.commandLineOptions.export:
+                if BibleOrgSysGlobals.commandLineArguments.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )

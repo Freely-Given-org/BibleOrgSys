@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -233,15 +233,15 @@ class BibleBookOrderSystems:
         systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
             print("  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            print( allErrors if BibleOrgSysGlobals.commandLineOptions.debug or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
+            print( allErrors if BibleOrgSysGlobals.commandLineArguments.debug or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
         else: # Multiple matches
             print( "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
 
-        if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+thisSystemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:

@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.28'
@@ -1234,7 +1234,7 @@ def testSwB( SwFolderPath, SwModuleName=None ):
         #print( UsfmB.books['GEN']._processedLines[0:40] )
         SwBErrors = SwBible.getErrors()
         # print( SwBErrors )
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         ##SwBible.toDrupalBible()
         SwBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'),

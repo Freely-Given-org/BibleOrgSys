@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-27' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -3291,7 +3291,7 @@ def demo():
 
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 oB.check()
-            if BibleOrgSysGlobals.commandLineOptions.export:
+            if BibleOrgSysGlobals.commandLineArguments.export:
                 #oB.toODF(); halt
                 oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 # end of demo

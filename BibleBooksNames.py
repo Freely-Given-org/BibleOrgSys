@@ -28,10 +28,10 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
-ProgVersion = '0.37'
+ProgVersion = '0.38'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -486,7 +486,7 @@ class BibleBooksNamesSystem:
         except AttributeError:
             logging.critical( "No bookname dictionary in {} BibleBooksNamesSystem".format( self.__systemName ) )
             return None
-        if BibleOrgSysGlobals.commandLineOptions.debug:
+        if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
             print( "BibleBooksNamesSystem.getBBB( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
             #print( self.__sortedBookNamesDict )
@@ -509,7 +509,7 @@ class BibleBooksNamesSystem:
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
             #print( self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
             return self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]
-        if BibleOrgSysGlobals.commandLineOptions.debug:
+        if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
             print( "getDivisionAbbrev", divisionNameOrAbbreviation, upperCaseDivisionNameOrAbbreviation )
             myList, thisLen = [], len(upperCaseDivisionNameOrAbbreviation)
@@ -578,7 +578,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
-    parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
+    parser.add_argument("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()

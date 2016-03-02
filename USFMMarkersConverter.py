@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "USFMMarkersConverter"
 ProgName = "USFM Markers converter"
 ProgVersion = "0.62"
@@ -560,7 +560,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         umc = USFMMarkersConverter().loadAndValidate() # Load the XML
         umc.pickle() # Produce a pickle output file
         umc.exportDataToPython() # Produce the .py tables

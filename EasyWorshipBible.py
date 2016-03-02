@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.02'
@@ -356,7 +356,7 @@ def testEWB( TEWBfilename ):
         #print( UsfmB.books['GEN']._processedLines[0:40] )
         ewbErrors = ewb.getErrors()
         # print( ewbErrors )
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         ##ewb.toDrupalBible()
         ewb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \

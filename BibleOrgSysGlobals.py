@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-02' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.62'
@@ -87,13 +87,13 @@ debuggingThisModule = False
 
 
 import logging, os.path, pickle
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 
 # Global variables
 #=================
 
-commandLineOptions, commandLineArguments = None, None
+commandLineArguments = None
 
 strictCheckingFlag = debugFlag = False
 haltOnXMLWarning = False # Used for XML debugging
@@ -974,12 +974,12 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
         print( "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
-    parser = OptionParser( version="v{}".format( ProgVersion ) )
+    parser = ArgumentParser( description='{} v{} {} {}'.format( sShortProgName, sProgVersion, _("last modified"), LastModifiedDate ) )
     return parser
 # end of BibleOrgSysGlobals.setup
 
 
-##########################################################################################################
+########################## ################################################################################
 #
 # Verbosity and debug settings
 #
@@ -1057,41 +1057,43 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
     Adds our standardOptions to the command line parser.
     """
-    global commandLineOptions, commandLineArguments, maxProcesses
+    global commandLineArguments, maxProcesses
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( ..., {} )".format( exportAvailable ) )
 
-    parserObject.add_option( "-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console" )
-    parserObject.add_option( "-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console" )
-    parserObject.add_option( "-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console" )
-    parserObject.add_option( "-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user" )
-    parserObject.add_option( "-e", "--errors", action="store_true", dest="errors", default=False, help="log errors to console" )
-    parserObject.add_option( "-w", "--warnings", action="store_true", dest="warnings", default=False, help="log warnings and errors to console" )
-    parserObject.add_option( "-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger" )
-    parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing (that's the digit one)" )
-    parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
+    parserObject.add_argument( '--version', action='version', version='v{}'.format( ProgVersion ) )
+    verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
+    verbosityGroup.add_argument( '-s', '--silent', action='store_const', dest='verbose', const=0, help="output no information to the console" )
+    verbosityGroup.add_argument( '-q', '--quiet', action='store_const', dest='verbose', const=1, help="output less information to the console" )
+    verbosityGroup.add_argument( '-i', '--informative', action='store_const', dest='verbose', const=3, help="output more information to the console" )
+    verbosityGroup.add_argument( '-v', '--verbose', action='store_const', dest='verbose', const=4, help="output lots of information for the user" )
+    EWgroup = verbosityGroup.add_mutually_exclusive_group()
+    EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
+    EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
+    EWgroup.add_argument( '-d', '--debug', action='store_true', dest='debug', default=False, help="output even more information for the programmer/debugger" )
+    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
+    parserObject.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
     if exportAvailable:
-        parserObject.add_option("-x", "--export", action="store_true", dest="export", default=False, help="export the data file(s)")
-    commandLineOptions, commandLineArguments = parserObject.parse_args()
-    if commandLineOptions.errors and commandLineOptions.warnings:
-        parserObject.error( "options -e and -w are mutually exclusive" )
+        parserObject.add_argument('-x', '--export', action='store_true', dest='export', default=False, help="export the data file(s)")
+    commandLineArguments = parserObject.parse_args()
+    #if commandLineArguments.errors and commandLineArguments.warnings:
+        #parserObject.error( "options -e and -w are mutually exclusive" )
 
-    setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
-    if commandLineOptions.debug: setDebugFlag()
+    setVerbosity( commandLineArguments.verbose if commandLineArguments.verbose is not None else 2)
+    if commandLineArguments.debug: setDebugFlag()
 
     # Determine console logging levels
-    if commandLineOptions.warnings: addConsoleLogging( logging.WARNING if not debugFlag else logging.DEBUG )
-    elif commandLineOptions.errors: addConsoleLogging( logging.ERROR )
+    if commandLineArguments.warnings: addConsoleLogging( logging.WARNING if not debugFlag else logging.DEBUG )
+    elif commandLineArguments.errors: addConsoleLogging( logging.ERROR )
     else: addConsoleLogging( logging.CRITICAL ) # default
-    if commandLineOptions.strict: setStrictCheckingFlag()
+    if commandLineArguments.strict: setStrictCheckingFlag()
 
     # Determine multiprocessing strategy
     maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
-    if commandLineOptions.single: maxProcesses = 1
+    if commandLineArguments.single: maxProcesses = 1
     if debugFlag:
         maxProcesses = 1 # Limit to one process
-        print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
@@ -1101,7 +1103,6 @@ def printAllGlobals( indent=None ):
     Print all global variables (for debugging usually).
     """
     if indent is None: indent = 2
-    print( "{}commandLineOptions: {}".format( ' '*indent, commandLineOptions ) )
     print( "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
     print( "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
     print( "{}maxProcesses: {}".format( ' '*indent, maxProcesses ) )

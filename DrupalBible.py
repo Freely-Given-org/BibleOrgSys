@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.09'
@@ -314,7 +314,7 @@ def testDB( TUBfilename ):
     db.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( db ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag: db.check()
-    if BibleOrgSysGlobals.commandLineOptions.export: db.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    if BibleOrgSysGlobals.commandLineArguments.export: db.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \

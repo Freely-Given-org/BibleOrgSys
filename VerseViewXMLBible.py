@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -579,7 +579,7 @@ def demo():
                             #print( svk, ob.getVerseDataList( reference ) )
                             try: print( reference, svk.getShortText(), vvB.getVerseText( svk ) )
                             except KeyError: print( something, reference, "doesn't exist" )
-                    if BibleOrgSysGlobals.commandLineOptions.export:
+                    if BibleOrgSysGlobals.commandLineArguments.export:
                         vvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     #else:
                         #vvB.toHaggaiXML()

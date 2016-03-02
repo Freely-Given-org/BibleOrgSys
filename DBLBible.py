@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.16'
@@ -1089,7 +1089,7 @@ def demo():
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    #if BibleOrgSysGlobals.commandLineOptions.export:
+    #if BibleOrgSysGlobals.commandLineArguments.export:
     #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
     #       pass
 

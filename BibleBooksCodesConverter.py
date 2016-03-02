@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
 ProgVersion = '0.77'
@@ -847,7 +847,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         bbcc.pickle() # Produce a pickle output file
         bbcc.exportDataToPython() # Produce the .py tables

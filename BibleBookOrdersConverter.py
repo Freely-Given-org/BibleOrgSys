@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
 ProgVersion = '0.83'
@@ -511,15 +511,15 @@ class BibleBookOrdersConverter:
         #if systemMatchCount:
             #if systemMatchCount == 1: # What we hope for
                 #print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
             #else:
                 #print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
         #else:
             #print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            #print( allErrors if BibleOrgSysGlobals.commandLineOptions.debug else errorSummary )
+            #print( allErrors if BibleOrgSysGlobals.commandLineArguments.debug else errorSummary )
 
-        #if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        #if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             #outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+systemName + ".xml" )
             #print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             #with open( outputFilepath, 'wt' ) as myFile:
@@ -537,7 +537,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML
         bbosc.pickle() # Produce the .pickle file
         bbosc.exportDataToPython() # Produce the .py tables

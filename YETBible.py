@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -473,7 +473,7 @@ def testYB( TUBfilename ):
     yb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( yb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag: yb.check()
-    if BibleOrgSysGlobals.commandLineOptions.export: yb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    if BibleOrgSysGlobals.commandLineArguments.export: yb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \

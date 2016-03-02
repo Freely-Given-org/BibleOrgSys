@@ -64,7 +64,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.55'
@@ -486,7 +486,7 @@ class BibleVersificationSystems:
                 #print( "  Matches {!r} system".format( versificationSystemCode ) )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
-            if BibleOrgSysGlobals.commandLineOptions.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
+            if BibleOrgSysGlobals.commandLineArguments.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
             allErrors += ("\n" if allErrors else "") + theseErrors
 
         if badOVList:
@@ -499,16 +499,16 @@ class BibleVersificationSystems:
         if systemMatchCount == 1: # What we hope for
             if badOVList: print( "  " + _("{} roughly matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
             else: print( "  " + _("{} matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} versification systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(versificationSchemeToCheck) ) )
-            toPrint = allErrors if BibleOrgSysGlobals.commandLineOptions.debug else errorSummary
+            toPrint = allErrors if BibleOrgSysGlobals.commandLineArguments.debug else errorSummary
             if toPrint: print( toPrint )
         else: # Multiple matches
             print( "  " + _("{} matched {} versification system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedVersificationSystemCodes, len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
 
-        if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleVersificationSystem_"+thisSystemName + ".xml" )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
@@ -529,7 +529,7 @@ class BibleVersificationSystems:
                                 if oc == c: # It's this chapter
                                     omittedVerseString += (',' if omittedVerseString else '') + str(ov)
                         if omittedVerseString:
-                            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.commandLineOptions.debug: print( '   ', BBB, c+':'+omittedVerseString )
+                            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.commandLineArguments.debug: print( '   ', BBB, c+':'+omittedVerseString )
                             myFile.write( '    <numVerses chapter="{}" omittedVerses="{}">{}</numVerses>\n'.format( c, omittedVerseString, numV ) )
                         else:
                             myFile.write( '    <numVerses chapter="{}">{}</numVerses>\n'.format( c, numV ) )

@@ -5,7 +5,7 @@
 #
 # App to export a PhotoBible.
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -70,7 +70,7 @@ inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own h
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-21' # by RJH
+LastModifiedDate = '2016-03-02' # by RJH
 ShortProgName = "MakePhotoBible"
 ProgName = "Make PhotoBible"
 ProgVersion = '0.22'
@@ -78,8 +78,7 @@ ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
 import BibleOrgSysGlobals
 from UnknownBible import UnknownBible
 
@@ -104,7 +103,7 @@ def main():
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
-    loadedBible = unknownBible.search( autoLoadBooks=True ) # Load all the books if we find any
+    loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
     if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
     if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
 

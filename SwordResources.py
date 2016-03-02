@@ -30,7 +30,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-02-29' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.15'
@@ -51,7 +51,7 @@ from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 SwordType = None
 try:
     import Sword
-    SwordType = "CrosswireLibrary"
+    SwordType = 'CrosswireLibrary'
     SWORD_TEXT_DIRECTIONS = { Sword.DIRECTION_LTR:'LTR', Sword.DIRECTION_RTL:'RTL', Sword.DIRECTION_BIDI:'BiDi' }
     SWORD_MARKUPS = { Sword.FMT_UNKNOWN:'Unknown', Sword.FMT_PLAIN:'Plain', Sword.FMT_THML:'THML',
                      Sword.FMT_GBF:'GBF', Sword.FMT_HTML:'HTML', Sword.FMT_HTMLHREF:'HTMLHREF',
@@ -68,7 +68,7 @@ except ImportError: # Sword library (dll and python bindings) seem to be not ava
     else: # Use our own Python3 code instead
         try:
             import SwordModules
-            SwordType = "OurCode"
+            SwordType = 'OurCode'
         except ImportError:
             logging.critical( _("You don't appear to have any way installed to read Sword modules.") )
 
@@ -112,14 +112,14 @@ class SwordInterface():
     def __init__( self ):
         """
         """
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
             #self.verseCache = {}
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "Sword library", self.library )
+                print( 'Sword library', self.library )
     # end of SwordInterface.__init__
 
 
@@ -130,7 +130,7 @@ class SwordInterface():
         Module type is a list of strings for the type(s) of modules to include.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("SwordResources.getAvailableModuleCodes()") )
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
             for j,moduleBuffer in enumerate(self.library.getModules()):
                 moduleID = moduleBuffer.getRawData()
@@ -142,7 +142,7 @@ class SwordInterface():
                 print( "moduleID", repr(moduleID) )
                 availableModuleCodes.append( moduleID )
             return availableModuleCodes
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             return self.library.getAvailableModuleCodes( onlyModuleTypes )
     # end of SwordInterface.getAvailableModuleCodes
 
@@ -156,7 +156,7 @@ class SwordInterface():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordResources.getAvailableModuleCodeTuples()") )
 
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
             for j,moduleBuffer in enumerate(self.library.getModules()):
                 moduleID = moduleBuffer.getRawData()
@@ -171,7 +171,7 @@ class SwordInterface():
                 if onlyModuleTypes is None or moduleType in onlyModuleTypes:
                     availableModuleCodes.append( (moduleID,moduleType) )
             return availableModuleCodes
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             result1 = self.library.getAvailableModuleCodeTuples( onlyModuleTypes )
             #print( 'getAvailableModuleCodeTuples.result1', result1 )
             if result1:
@@ -185,7 +185,7 @@ class SwordInterface():
         """
         """
         if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             #print( "gM", module.getName() )
             result1 = self.library.getModule( moduleAbbreviation )
             print( 'getModule.result1', result1 )
@@ -194,7 +194,7 @@ class SwordInterface():
             result2 = self.library.getModule( moduleAbbreviation.title() )
             print( 'getModule.result2', result2 )
             return result2
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
             #except KeyError: lmResult = self.library.loadModule( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
             #print( moduleAbbreviation, lmResult ); halt
@@ -209,14 +209,14 @@ class SwordInterface():
         #if BCV  in self.keyCache:
             #print( "Cached", BCV )
             #return self.keyCache[BCV]
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             B = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
             refString = "{} {}:{}".format( B, C, V )
             #print( 'refString', refString )
             verseKey = Sword.VerseKey( refString )
             #self.keyCache[BCV] = verseKey
             return verseKey
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             return SwordKey( BBB, C, V )
     # end of SwordInterface.makeKey
 
@@ -235,9 +235,10 @@ class SwordInterface():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
 
-        if SwordType == "CrosswireLibrary":
-            mm = module.getMarkup()
-            print( "  module markup", repr(mm), SWORD_MARKUPS[ord(mm)] )
+        if SwordType == 'CrosswireLibrary':
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                mm = module.getMarkup()
+                print( "  module markup", repr(mm), SWORD_MARKUPS[ord(mm)] )
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
@@ -258,7 +259,7 @@ class SwordInterface():
             verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
             verseData.append( InternalBibleEntry( 'v~','v~', verseText, verseText, None, verseText ) )
             contextVerseData = verseData, [] # No context
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             #print( exp("module"), module )
             try: contextVerseData = module.getContextVerseData( key )
             except KeyError: # Just create a blank verse entry
@@ -295,7 +296,7 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
@@ -309,7 +310,7 @@ class SwordInterface():
             if v=='1': verseData.append( ('c#','c', c, c, [],) )
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             #print( exp("module"), module )
             stuff = module.getContextVerseData( key )
             #print( exp("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
@@ -334,12 +335,12 @@ class SwordInterface():
             #print( "Cached", cacheKey )
             #return self.verseCache[cacheKey]
         #if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getVerseText({},{})".format( module.getName(), key.getText() ) )
-        if SwordType == "CrosswireLibrary":
+        if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
-        elif SwordType == "OurCode":
+        elif SwordType == 'OurCode':
             verseData = module.getContextVerseData( key )
             #print( "gVT", module.getName(), key, verseData )
             assert isinstance( verseData, list )
@@ -379,7 +380,7 @@ def demo():
 
     #print( "\ndir Sword", dir(Sword) )
 
-    if SwordType == "CrosswireLibrary":
+    if SwordType == 'CrosswireLibrary':
         print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
         print( "Version", Sword.SWVersion().getText() )
         print( "Versions", Sword.SWVersion().major, Sword.SWVersion().minor, Sword.SWVersion().minor2, Sword.SWVersion().minor3 ) # ints
@@ -444,7 +445,7 @@ def demo():
         fm = Sword.SWFilterMgr()
         print( "\ndir filters", dir(fm) )
 
-    if SwordType == "CrosswireLibrary":
+    if SwordType == 'CrosswireLibrary':
         # Get a list of available module names and types
         print( "\n{} modules are installed.".format( len(library.getModules()) ) )
         for j,moduleBuffer in enumerate(library.getModules()):

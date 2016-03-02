@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.34'
@@ -562,9 +562,9 @@ def demo():
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
     #sampleBookList = ['MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL','PE1','PE2','JDE','REV']
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
-        #if BibleOrgSysGlobals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
         bbnsc.pickle() # Produce the .pickle file
         bbnsc.exportDataToPython() # Produce the .py tables
@@ -575,7 +575,7 @@ def demo():
         # Demo the converter object
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
         print( bbnsc ) # Just print a summary
-        #if BibleOrgSysGlobals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
         #    print( bbnsc ) # Just print a summary
 # end of demo
@@ -583,7 +583,6 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
-    #parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()

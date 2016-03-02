@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.23'
@@ -891,7 +891,7 @@ def demo():
                 UsfxB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfxB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
-                if BibleOrgSysGlobals.commandLineOptions.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getErrors()
                 # print( UsfxBErrors )
                 #print( UsfxB.getVersification () )

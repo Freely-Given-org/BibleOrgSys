@@ -31,7 +31,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "BibleVersificationSystemsConverter"
 ProgName = "Bible Versification Systems converter"
 ProgVersion = '0.50'
@@ -656,7 +656,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     bvsc = BibleVersificationSystemsConverter().loadSystems() # Load the XML
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         bvsc.pickle() # Produce the .pickle file
         bvsc.exportDataToPython() # Produce the .py tables
         bvsc.exportDataToJSON() # Produce a json output file

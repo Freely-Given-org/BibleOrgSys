@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -658,7 +658,7 @@ def testVPL( VPLfolder ):
         #print( UsfmB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getErrors()
         # print( vBErrors )
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -706,7 +706,7 @@ def demo():
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
                     vBErrors = result2.getErrors()
                     # print( vBErrors )
-                if BibleOrgSysGlobals.commandLineOptions.export:
+                if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 

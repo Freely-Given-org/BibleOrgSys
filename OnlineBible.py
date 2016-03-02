@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.16'
@@ -1277,7 +1277,7 @@ def testOB( TOBfilename ):
         #print( UsfmB.books['GEN']._processedLines[0:40] )
         olbErrors = olb.getErrors()
         # print( olbErrors )
-    if BibleOrgSysGlobals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineArguments.export:
         ##olb.toDrupalBible()
         olb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \

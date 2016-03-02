@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.16'
@@ -462,7 +462,7 @@ def demo():
         gsc.loadAndValidate( testFolder ) # Load the XML
         print( gsc ) # Just print a summary
 
-        if BibleOrgSysGlobals.commandLineOptions.export:
+        if BibleOrgSysGlobals.commandLineArguments.export:
             print( "Exports aren't written yet!" )
             #hlc.exportDataToPython() # Produce the .py tables
             #hlc.exportDataToC() # Produce the .h tables

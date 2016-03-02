@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.11'
@@ -1725,7 +1725,7 @@ def demo():
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    #if BibleOrgSysGlobals.commandLineOptions.export:
+    #if BibleOrgSysGlobals.commandLineArguments.export:
     #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
     #       pass
 

@@ -34,7 +34,7 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = '0.17'
@@ -1260,7 +1260,7 @@ def demo():
         bdb.loadAndValidate( testFolder ) # Load the XML
         print( bdb ) # Just print a summary
 
-        if BibleOrgSysGlobals.commandLineOptions.export:
+        if BibleOrgSysGlobals.commandLineArguments.export:
             print( "Exports aren't written yet!" )
             #hlc.exportDataToPython() # Produce the .py tables
             #hlc.exportDataToC() # Produce the .h tables

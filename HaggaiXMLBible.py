@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-01' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -751,7 +751,7 @@ def demo():
                             #print( svk, ob.getVerseDataList( reference ) )
                             try: print( reference, svk.getShortText(), hB.getVerseText( svk ) )
                             except KeyError: print( something, reference, "doesn't exist" )
-                    if BibleOrgSysGlobals.commandLineOptions.export:
+                    if BibleOrgSysGlobals.commandLineArguments.export:
                         hB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         hB.toHaggaiXML()
