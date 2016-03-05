@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-03-03' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.66'
@@ -368,7 +368,7 @@ class InternalBible:
 
         if 'discoveryResults' in dir(self): # need to update them
             # Need to double-check that this doesn't cause any double-ups .....................XXXXXXXXXXXXXXXXXXXXXX
-            self.books[BBB]._discover( self.discoveryResults )
+            self.discoveryResults[BBB] = self.books[BBB]._discover()
             self._aggregateDiscoveryResults()
     # end of InternalBible.reProcessBook
 

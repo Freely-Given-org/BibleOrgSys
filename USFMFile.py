@@ -34,7 +34,7 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-04' # by RJH
 ShortProgName = "USFMFile"
 ProgName = "USFM File loader"
 ProgVersion = '0.85'
@@ -118,29 +118,30 @@ class USFMFile:
     # end of USFMFile.__str__
 
 
-    def read( self, usfm_filename, ignoreSFMs=None, encoding=None ):
-        """Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
+    def read( self, USFMFilepath, ignoreSFMs=None, encoding=None ):
+        """
+        Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
 
-        @param usfm_filename: The filename
-        @type usfm_filename: string
+        @param USFMFilepath: The filename
+        @type USFMFilepath: string
         @param key: The SFM record marker (not including the backslash)
         @type encoding: string
         @rtype: list
         @return: list of lists containing the records
         """
-        #print( "USFMFile.read( {}, {}, {} )".format( repr(usfm_filename), repr(ignoreSFMs), repr(encoding) ) )
+        #print( "USFMFile.read( {!r}, {!r}, {!r} )".format( USFMFilepath, ignoreSFMs, encoding ) )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
         if encoding is None: encoding = 'utf-8'
 
         lastLine, lineCount, result = '', 0, []
-        with open( usfm_filename, encoding=encoding ) as ourFile: # Automatically closes the file when done
+        with open( USFMFilepath, encoding=encoding ) as ourFile: # Automatically closes the file when done
             try:
                 for line in ourFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( usfm_filename ) )
+                        logging.info( "USFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( USFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -152,7 +153,7 @@ class USFMFile:
                     if line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
                             if BibleOrgSysGlobals.verbosityLevel > 2:
-                                logging.error( "Non-USFM line in " + usfm_filename + " -- line ignored at #" + str(lineCount) )
+                                logging.error( "Non-USFM line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
                                 #print( x, "'" + str(ord(line[x])) + "'" )
@@ -194,7 +195,7 @@ class USFMFile:
 
             except UnicodeError as err:
                 print( "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + usfm_filename + " -- line ignored at #" + str(lineCount) )
+                logging.critical( "Invalid line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #print( line )
                 #raise

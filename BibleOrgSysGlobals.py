@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-02' # by RJH
+LastModifiedDate = '2016-03-04' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.62'
+ProgVersion = '0.63'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -111,22 +111,26 @@ if debuggingThisModule:
 # Some language independant punctuation help
 OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # The length and order of these two strings must match
 CLOSING_SPEECH_CHARACTERS = """”»"’›?!"""
-assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
 MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
+MATCHING_CLOSING_CHARACTERS = {')':'(', ']':'[', '}':'{', '>':'<', '>>':'<<', '”':'“', '‘':'‘', '»':'«', '›':'‹', '?':'¿', '!':'¡', }
 MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
-
 LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
-for char in OPENING_SPEECH_CHARACTERS: assert char in LEADING_WORD_PUNCT_CHARS
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '—–' # em-dash and en-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
-for char in CLOSING_SPEECH_CHARACTERS: assert char in TRAILING_WORD_PUNCT_CHARS
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
-##import unicodedata
-#BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
-#BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
-#halt
+
+if debuggingThisModule:
+    assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
+    assert len(MATCHING_OPENING_CHARACTERS) == len(MATCHING_CLOSING_CHARACTERS)
+    assert len(MATCHING_OPENING_CHARACTERS) + len(MATCHING_CLOSING_CHARACTERS) == len(MATCHING_CHARACTERS)
+    for char in OPENING_SPEECH_CHARACTERS: assert char in LEADING_WORD_PUNCT_CHARS
+    for char in CLOSING_SPEECH_CHARACTERS: assert char in TRAILING_WORD_PUNCT_CHARS
+
+    ##import unicodedata
+    #BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
+    #BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
 
 
 ##########################################################################################################
@@ -876,11 +880,29 @@ def stripWordPunctuation( wordToken ):
     Removes leading and trailing punctuation from a word.
 
     Returns the "clean" word.
+
+    Note: Words like 'you(pl)' will be returned unchanged (because matching parenthesis is inside the word).
     """
+    if debugFlag or strictCheckingFlag or debuggingThisModule:
+        for badChar in ' \t\r\n': assert badChar not in wordToken
+
+    # First remove matching punctuation
+    for startChar,endChar in MATCHING_OPENING_CHARACTERS.items():
+        #if wordToken and wordToken[0]==startChar and wordToken[-1]==endChar:
+            #wordToken = wordToken[1:-1] # Remove front and back matching/opposite characters
+        if wordToken.startswith(startChar) and wordToken.endswith(endChar):
+            wordToken = wordToken[len(startChar):-len(endChar)] # Remove front and back matching/opposite characters
+    # Now remove non-matching punctuation
     while wordToken and wordToken[0] in LEADING_WORD_PUNCT_CHARS:
+        if wordToken[0] in MATCHING_CHARACTERS and MATCHING_CHARACTERS[wordToken[0]] in wordToken: break
         wordToken = wordToken[1:] # Remove leading punctuation
     while wordToken and wordToken[-1] in TRAILING_WORD_PUNCT_CHARS:
+        if wordToken[-1] in MATCHING_CHARACTERS and MATCHING_CHARACTERS[wordToken[-1]] in wordToken: break
         wordToken = wordToken[:-1] # Remove trailing punctuation
+    # Now remove any remaining matching punctuation
+    for startChar,endChar in MATCHING_OPENING_CHARACTERS.items():
+        if wordToken.startswith(startChar) and wordToken.endswith(endChar):
+            wordToken = wordToken[len(startChar):-len(endChar)] # Remove front and back matching/opposite characters
     return wordToken
 # end of BibleOrgSysGlobals.stripWordPunctuation
 
@@ -1144,7 +1166,11 @@ def demo():
 
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    print( "\n{}->{}".format( repr(text), repr( applyStringAdjustments( text, adjustments ) ) ) )
+    print( "\n{!r}->adj->{!r}".format( text, applyStringAdjustments( text, adjustments ) ) )
+
+    print( '\nstripWordPunctuation() tests...' )
+    for text in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', '_said', ):
+        print( '  {!r} -> {!r}'.format( text, stripWordPunctuation(text) ) )
 
     print( "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.demo
