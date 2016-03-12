@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-07' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -84,8 +84,8 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
 
@@ -276,7 +276,7 @@ class InternalBibleBook:
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                         logging.warning( "InternalBibleBook.addLine: Possibly needed to strip {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
                     else: # we've reached our limit
-                        logging.warning( _('Additional "Possibly needed to strip" messages for {} {} suppressed...').format( self.objectTypeString, self.BBB ) )
+                        logging.warning( _('Additional "Possibly needed to strip" messages for {} {} suppressed…').format( self.objectTypeString, self.BBB ) )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
@@ -473,7 +473,7 @@ class InternalBibleBook:
                 if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                     logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, text ) )
                 else: # we've reached our limit
-                    logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed...') )
+                    logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed…') )
                     rtsCount = -1 # So we don't do this again (for this book)
             self.addPriorityError( 10, C, V, _("Trailing space at end of line") )
             adjText = adjText.rstrip()
@@ -1298,7 +1298,7 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
         if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
         if BibleOrgSysGlobals.debugFlag: assert self._rawLines # or else the book was totally blank
         #print( self._rawLines[:20] ); halt # for debugging
@@ -1342,7 +1342,7 @@ class InternalBibleBook:
                         if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                             logging.error( _("doAppendEntry: Marker {!r} at {} {}:{} should always have text").format( originalMarker, self.BBB, C, V ) )
                         else: # we've reached our limit
-                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed...') )
+                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed…') )
                             sahtCount = -1 # So we don't do this again (for this book)
                 #self.addPriorityError( 96, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
@@ -1584,7 +1584,7 @@ class InternalBibleBook:
                             if owfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                                 logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed...') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed…') )
                                 owfvnCount = -1 # So we don't do this again (for this book)
                         # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                         # (and especially coz we don't know yet if this is a finished translation)
@@ -1743,14 +1743,14 @@ class InternalBibleBook:
             assert not self._indexedFlag
         if self._indexedFlag: return # Can only do it once
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text...").format( self.objectNameString, self.workName, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._CVIndex = InternalBibleIndex( self.workName, self.BBB )
         self._CVIndex.makeIndex( self._processedLines )
 
         #if self.BBB=='GEN':
             #for j, entry in enumerate( self._processedLines):
                 #cleanText = entry.getCleanText()
-                #print( j, entry.getMarker(), cleanText[:60] + ('' if len(cleanText)<60 else '...') )
+                #print( j, entry.getMarker(), cleanText[:60] + ('' if len(cleanText)<60 else '…') )
                 ##if j>breakAt: break
             #def getKey( CVALX ):
                 #CV, ALX = CVALX
@@ -2650,7 +2650,7 @@ class InternalBibleBook:
                         #if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                             #logging.warning( _("doCheckSFMs: Marker {!r} at {} {}:{} should always have text").format( originalMarker, self.BBB, C, V ) )
                         #else: # we've reached our limit
-                            #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed...') )
+                            #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed…') )
                             #sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( emptyFieldPriority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if emptyFieldPriority >= HIGH_EMPTY_FIELD_PRIORITY:
@@ -2995,11 +2995,11 @@ class InternalBibleBook:
 
         for otherHeaderMarker in ( 'ide','sts', ):
             if otherHeaderMarker in modifiedMarkerList and modifiedMarkerList.index(otherHeaderMarker) > 8:
-                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("USFM {!r} field in file should have been earlier in {}...").format( otherHeaderMarker, modifiedMarkerList[:10] ) )
+                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("USFM {!r} field in file should have been earlier in {}…").format( otherHeaderMarker, modifiedMarkerList[:10] ) )
         if 'mt2' in modifiedMarkerList: # Must be before or after a mt1
             ix = modifiedMarkerList.index( 'mt2' )
             if (ix==0 or modifiedMarkerList[ix-1]!='mt1') and (ix==len(modifiedMarkerList)-1 or modifiedMarkerList[ix+1]!='mt1'):
-                newlineMarkerErrors.append( _("{} Expected mt2 marker to be next to an mt1 marker in {}...").format( self.BBB, modifiedMarkerList[:10] ) )
+                newlineMarkerErrors.append( _("{} Expected mt2 marker to be next to an mt1 marker in {}…").format( self.BBB, modifiedMarkerList[:10] ) )
 
         if 'USFMs' not in self.errorDictionary: self.errorDictionary['USFMs'] = OrderedDict() # So we hopefully get the errors first
         if newlineMarkerErrors: self.errorDictionary['USFMs']['Newline Marker Errors'] = newlineMarkerErrors
@@ -3748,7 +3748,7 @@ class InternalBibleBook:
 
                         # List all of the similar types of notes
                         #   plus check which ones end with a period
-                        extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
+                        extract = (extraText[:70] + '…' + extraText[-5:]) if len(extraText)>80 else extraText
                         line = "{} {}:{} '{}'".format( self.BBB, C, V, extract )
                         if extraType == 'fn':
                             haveFinalPeriod = True
@@ -3942,7 +3942,7 @@ class InternalBibleBook:
                 import pickle
                 folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
                 filepath = os.path.join( folder, "AddedUnitData.pickle" )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Importing from {}…").format( filepath ) )
                 with open( filepath, 'rb' ) as pickleFile:
                     typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             self.doCheckAddedUnits( typicalAddedUnitData )
@@ -4018,7 +4018,7 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r} as BCV...").format( self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ""
@@ -4054,7 +4054,7 @@ class InternalBibleBook:
                 myFile.write( introLines )
         assert not verseLines
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )

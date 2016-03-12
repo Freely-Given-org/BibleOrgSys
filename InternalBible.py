@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-03' # by RJH
+LastModifiedDate = '2016-03-09' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.66'
+ProgVersion = '0.67'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -93,8 +93,8 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
 
@@ -325,6 +325,19 @@ class InternalBible:
     # end of InternalBible.__getNames
 
 
+    def getAName( self ):
+        """
+        Try to find a name to identify this Bible.
+
+        Returns a string or None.
+        """
+        if self.name: return self.name
+        if self.shortName: return self.shortName
+        if self.projectName and self.projectName != 'Unknown': return self.projectName
+        if self.abbreviation: return self.abbreviation
+    # end of InternalBible.getAName
+
+
     def loadBookIfNecessary( self, BBB ):
         """
         """
@@ -342,7 +355,7 @@ class InternalBible:
         """
         Tries to load or reload a book.
         """
-        if BibleOrgSysGlobals.debugFlag: print( exp("reloadBook( {} )...").format( BBB ) )
+        if BibleOrgSysGlobals.debugFlag: print( exp("reloadBook( {} )…").format( BBB ) )
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
         except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
@@ -359,7 +372,7 @@ class InternalBible:
         Tries to re-index a loaded book.
         """
         if BibleOrgSysGlobals.debugFlag:
-            print( exp("reProcessBook( {} )...").format( BBB ) )
+            print( exp("reProcessBook( {} )…").format( BBB ) )
             assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
@@ -395,7 +408,7 @@ class InternalBible:
         """
         Called to unload books, usually coz one or more of them has been edited.
         """
-        if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks()...") )
+        if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks()…") )
         self.books = OrderedDict()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
@@ -437,8 +450,8 @@ class InternalBible:
 
         # Main code for loadMetadataTextFile()
         # Loads the metadata into self.suppliedMetadata
-        logging.info( "Loading supplied project metadata..." )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
+        logging.info( "Loading supplied project metadata…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata…" )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['File'] = {}
@@ -658,7 +671,7 @@ class InternalBible:
 
         First it looks in self.settingsDict
             then in self.suppliedMetadata['File']
-            then in self.suppliedMetadata[...].
+            then in self.suppliedMetadata[…].
 
         Returns None if nothing found.
         """
@@ -761,7 +774,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("pickle: Saving {} to {}...") \
+            print( exp("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
         BibleOrgSysGlobals.pickleObject( self, filename, folder )
     # end of InternalBible.pickle
@@ -794,7 +807,7 @@ class InternalBible:
         for BBB in self.reverseDict: assert self.reverseDict[BBB] != referenceString
 
         # See if a book name starts with this string
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1..." )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1…" )
         count = 0
         for bookName in self.bookNameDict:
             if bookName.startswith( adjRefString ):
@@ -819,7 +832,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
             print( exp("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2…" )
             for bookName in self.combinedBookNameDict:
                 if bookName.startswith( adjRefString ):
                     BBB = self.combinedBookNameDict[bookName]
@@ -843,7 +856,7 @@ class InternalBible:
 
         # See if a book name contains a word that starts with this string
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith..." )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith…" )
             for bookName in self.bookNameDict:
                 if ' ' in bookName:
                     for bit in bookName.split():
@@ -860,9 +873,9 @@ class InternalBible:
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("  guessXRefBBB using first plus other characters...") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("  guessXRefBBB using first plus other characters…") )
             for bookName in self.bookNameDict:
-                if not bookName: print( self.bookNameDict ); halt # temp...
+                if not bookName: print( self.bookNameDict ); halt # temp…
                 #print( "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
@@ -884,7 +897,7 @@ class InternalBible:
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
             if count == 0:
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters..." )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters…" )
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
@@ -892,7 +905,7 @@ class InternalBible:
                             found = False
                             break
                     if not found: continue
-                    #print( "  getXRefBBB: q...", bookName )
+                    #print( "  getXRefBBB: q…", bookName )
                     BBB = self.bookNameDict[bookName]
                     count += 1
                 if count == 1: # Found exactly one
@@ -977,15 +990,15 @@ class InternalBible:
         #import pickle
         #folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}...").format( filepath ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}…").format( filepath ) )
         #with open( filepath, 'rb' ) as pickleFile:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
         # TODO: Work out why multiprocessing is slower here!
         if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( exp("Prechecking {} books using {} CPUs...").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+                print( exp("Prechecking {} books using {} CPUs…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
@@ -994,7 +1007,7 @@ class InternalBible:
                     self.discoveryResults[BBB] = results[j] # Saves them in the correct order
         else: # Just single threaded
             for BBB in self.books: # Do individual book prechecks
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Prechecking {}...").format( BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
 
         self._aggregateDiscoveryResults()
@@ -1205,23 +1218,23 @@ class InternalBible:
         """
         # Get our recommendations for added units -- only load this once per Bible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if givenBookList is None: print( exp("Checking {} Bible...").format( self.name ) )
-            else: print( exp("Checking {} Bible books {}...").format( self.name, givenBookList ) )
+            if givenBookList is None: print( exp("Checking {} Bible…").format( self.name ) )
+            else: print( exp("Checking {} Bible books {}…").format( self.name, givenBookList ) )
         if 'discoveryResults' not in dir(self): self.discover()
 
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}...").format( pickleFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}…").format( pickleFilepath ) )
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running checks on {}...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running checks on {}…").format( self.name ) )
         if givenBookList is None:
             givenBookList = self.books # this is an OrderedDict
         for BBB in givenBookList: # Do individual book checks
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + exp("Checking {}...").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + exp("Checking {}…").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -1442,8 +1455,8 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag:
             print( "makeErrorHTML( {}, {}, {} )" \
                 .format( repr(givenOutputFolder), repr(titlePrefix), repr(webPageTemplate) ) )
-        #logging.info( "Doing Bible checks..." )
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks..." )
+        #logging.info( "Doing Bible checks…" )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks…" )
 
         errorDictionary = self.getErrors( givenBookList )
         if givenBookList is None: givenBookList = self.books # this is an OrderedDict
@@ -1669,7 +1682,7 @@ class InternalBible:
             categoryIndexPart += '<table>'
             for category in errorDictionary['ByCategory']: # Create an error page for each book (and for all books)
                 if not errorDictionary['ByCategory'][category]: print( "HEY 2—Should not have had", category )
-                #print( "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "..." )
+                #print( "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "…" )
                 categoryPart = ""
                 categoryPart += "<h1>{}</h1>".format( category )
                 if category == 'Priority Errors': # it should be a list
@@ -1994,7 +2007,7 @@ class InternalBible:
             bookObject.writeBOSBCVFiles( bookFolderPath )
 
         # Write the Bible metadata
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
         if self.name: metadataLines += 'Name = {}\n'.format( self.name )

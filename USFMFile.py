@@ -34,7 +34,7 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-04' # by RJH
+LastModifiedDate = '2016-03-07' # by RJH
 ShortProgName = "USFMFile"
 ProgName = "USFM File loader"
 ProgVersion = '0.85'
@@ -214,7 +214,7 @@ def demo():
 
     import os.path
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file…".format( filepath ) )
 
     linesDB = USFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
@@ -222,7 +222,7 @@ def demo():
     for i, r in enumerate(linesDB.lines):
         print ( i, r)
         if i>9: break
-    print ( '...\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    print ( '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 # end of demo
 
 if __name__ == '__main__':

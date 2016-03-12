@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-04' # by RJH
+LastModifiedDate = '2016-03-07' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.63'
@@ -463,8 +463,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            print( "Comparing {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing files {} and {}...".format( repr(filename1), repr(filename2) ) )
+            print( "Comparing {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing files {} and {}…".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -532,8 +532,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            print( "Comparing USFM {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing USFM files {} and {}...".format( repr(filename1), repr(filename2) ) )
+            print( "Comparing USFM {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing USFM files {} and {}…".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -613,8 +613,8 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
-        if filename1==filename2: print( "Comparing XML {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing XML files {} and {}...".format( repr(filename1), repr(filename2) ) )
+        if filename1==filename2: print( "Comparing XML {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing XML files {} and {}…".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -928,7 +928,7 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         if not os.access( folderName, os.R_OK ): # Make the folderName hierarchy if necessary
             os.makedirs( folderName )
         filepath = os.path.join( folderName, filename )
-    if verbosityLevel > 2: print( _("Saving object to {}...").format( filepath ) )
+    if verbosityLevel > 2: print( _("Saving object to {}…").format( filepath ) )
 
     if disassembleObjectFlag: # Pickles an object attribute by attribute (to help narrow down segfault)
         print( '\nobject', disassembleObjectFlag, dir(theObject) )
@@ -965,7 +965,7 @@ def unpickleObject( filename, folderName=None ):
     assert filename
     if folderName is None: folderName = DEFAULT_CACHE_FOLDER
     filepath = os.path.join( folderName, filename )
-    if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
+    if verbosityLevel > 2: print( _("Loading object from pickle file {}…").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
 # end of BibleOrgSysGlobals.unpickleObject
@@ -1081,7 +1081,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
     global commandLineArguments, maxProcesses
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( ..., {} )".format( exportAvailable ) )
+        print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
 
     parserObject.add_argument( '--version', action='version', version='v{}'.format( ProgVersion ) )
     verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
@@ -1168,7 +1168,7 @@ def demo():
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
     print( "\n{!r}->adj->{!r}".format( text, applyStringAdjustments( text, adjustments ) ) )
 
-    print( '\nstripWordPunctuation() tests...' )
+    print( '\nstripWordPunctuation() tests…' )
     for text in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', '_said', ):
         print( '  {!r} -> {!r}'.format( text, stripWordPunctuation(text) ) )
 

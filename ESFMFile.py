@@ -35,7 +35,7 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-10' # by RJH
 ShortProgName = "ESFMFile"
 ProgName = "ESFM File loader"
 ProgVersion = '0.86'
@@ -55,43 +55,43 @@ DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a lin
 
 
 
-def splitMarkerText( line ):
-    """
-    Given a line of text (may be empty),
-        returns a backslash marker and the text.
+#def splitMarkerText( line ):
+    #"""
+    #Given a line of text (may be empty),
+        #returns a backslash marker and the text.
 
-    Returns None for the backslash marker if there isn't one.
-    Returns an empty string for the text if there isn't any.
-    """
-    while line and line[0]==' ': line = line[1:] # Remove leading spaces
-    if not line: return None, ''
-    if line[0] != '\\': return None, line # Not a USFM line
+    #Returns None for the backslash marker if there isn't one.
+    #Returns an empty string for the text if there isn't any.
+    #"""
+    #while line and line[0]==' ': line = line[1:] # Remove leading spaces
+    #if not line: return None, ''
+    #if line[0] != '\\': return None, line # Not a USFM line
 
-    # We have a line that starts with a backslash
-    # The marker can end with a space, asterisk, or another marker
-    lineAfterBackslash = line[1:]
-    si1 = lineAfterBackslash.find( ' ' )
-    si2 = lineAfterBackslash.find( '*' )
-    si3 = lineAfterBackslash.find( '\\' )
-    if si1==-1: si1 = DUMMY_VALUE
-    if si2==-1: si2 = DUMMY_VALUE
-    if si3==-1: si3 = DUMMY_VALUE
-    si = min( si1, si2, si3 ) # Find the first terminating character (if any)
+    ## We have a line that starts with a backslash
+    ## The marker can end with a space, asterisk, or another marker
+    #lineAfterBackslash = line[1:]
+    #si1 = lineAfterBackslash.find( ' ' )
+    #si2 = lineAfterBackslash.find( '*' )
+    #si3 = lineAfterBackslash.find( '\\' )
+    #if si1==-1: si1 = DUMMY_VALUE
+    #if si2==-1: si2 = DUMMY_VALUE
+    #if si3==-1: si3 = DUMMY_VALUE
+    #si = min( si1, si2, si3 ) # Find the first terminating character (if any)
 
-    if si == DUMMY_VALUE: # The line is only the marker
-        return lineAfterBackslash, ''
-    else:
-        if si == si3: # Marker stops before a backslash
-            marker = lineAfterBackslash[:si3]
-            text = lineAfterBackslash[si3:]
-        elif si == si2: # Marker stops at an asterisk
-            marker = lineAfterBackslash[:si2+1]
-            text = lineAfterBackslash[si2+1:]
-        elif si == si1: # Marker stops before a space
-            marker = lineAfterBackslash[:si1]
-            text = lineAfterBackslash[si1+1:] # We drop the space completely
-    return marker, text
-# end if splitMarkerText
+    #if si == DUMMY_VALUE: # The line is only the marker
+        #return lineAfterBackslash, ''
+    #else:
+        #if si == si3: # Marker stops before a backslash
+            #marker = lineAfterBackslash[:si3]
+            #text = lineAfterBackslash[si3:]
+        #elif si == si2: # Marker stops at an asterisk
+            #marker = lineAfterBackslash[:si2+1]
+            #text = lineAfterBackslash[si2+1:]
+        #elif si == si1: # Marker stops before a space
+            #marker = lineAfterBackslash[:si1]
+            #text = lineAfterBackslash[si1+1:] # We drop the space completely
+    #return marker, text
+## end if splitMarkerText
 
 
 

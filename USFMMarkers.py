@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-11' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.68'
@@ -67,6 +67,8 @@ USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr'
                             'pi','pi1','pi2','pi3','pi4', 'ph','ph1','ph2','ph3','ph4',
                             'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
                             'li','li1','li2','li3','li4', ) # Doesn't include nb and qa
+USFM_PRINTABLE_MARKERS = ('v',) + USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS \
+                            + USFM_SECTION_HEADING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 
 
 
@@ -516,9 +518,11 @@ class USFMMarkers:
 
 
     def getNoteMarkersList( self ):
-        """ Returns a list of all possible note markers.
+        """
+        Returns a list of all possible note markers.
             This includes figure, footnote and xref markers.
-            These are fields that should not normally be displayed inline with the text. """
+            These are fields that should not normally be displayed inline with the text.
+        """
         return self.__DataDict["noteMarkersList"]
     # end of USFMMarkers.getNoteMarkersList
 

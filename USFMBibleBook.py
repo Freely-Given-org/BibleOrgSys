@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-04' # by RJH
+LastModifiedDate = '2016-03-07' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.44'
@@ -59,8 +59,8 @@ sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('
     #try: nameBit, errorBit = messageString.split( ': ', 1 )
     #except ValueError: nameBit, errorBit = '', messageString
     #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit, _(errorBit) )
+        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    #return '{}{}'.format( nameBit, errorBit )
 ## end of exp
 
 
@@ -126,7 +126,7 @@ class USFMBibleBook( BibleBook ):
 
 
         # Main code for USFMBibleBook.load()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -216,7 +216,7 @@ def demo():
 
 
     def demoFile( name, filename, folder, BBB ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
@@ -253,7 +253,7 @@ def demo():
         name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

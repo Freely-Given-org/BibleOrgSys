@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-03-10' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
 ProgVersion = '0.84'
@@ -55,33 +55,33 @@ import BibleOrgSysGlobals
 
 
 
-def splitMarkerText( line ):
-    """
-    Given a line of text (may be empty),
-        returns a backslash marker and the text.
+#def splitMarkerText( line ):
+    #"""
+    #Given a line of text (may be empty),
+        #returns a backslash marker and the text.
 
-    Returns None for the backslash marker if there isn't one.
-    Returns an empty string for the text if there isn't any.
-    """
-    if not line: return None, ''
-    if line[0] != '\\': return None, line # Not a SFM line
+    #Returns None for the backslash marker if there isn't one.
+    #Returns an empty string for the text if there isn't any.
+    #"""
+    #if not line: return None, ''
+    #if line[0] != '\\': return None, line # Not a SFM line
 
-    # We have a line that starts with a backslash
-    # The marker can end with a space or another marker
-    lineAfterBackslash = line[1:]
-    si1 = lineAfterBackslash.find( ' ' )
-    si2 = lineAfterBackslash.find( '\\' )
-    if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
-        marker = lineAfterBackslash[:si2]
-        text = lineAfterBackslash[si2:]
-    elif si1!=-1: # Marker stops at a space
-        marker = lineAfterBackslash[:si1]
-        text = lineAfterBackslash[si1+1:] # We drop the space
-    else: # The line is only the marker
-        marker = lineAfterBackslash
-        text = ''
-    return marker, text
-# end if splitMarkerText
+    ## We have a line that starts with a backslash
+    ## The marker can end with a space or another marker
+    #lineAfterBackslash = line[1:]
+    #si1 = lineAfterBackslash.find( ' ' )
+    #si2 = lineAfterBackslash.find( '\\' )
+    #if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
+        #marker = lineAfterBackslash[:si2]
+        #text = lineAfterBackslash[si2:]
+    #elif si1!=-1: # Marker stops at a space
+        #marker = lineAfterBackslash[:si1]
+        #text = lineAfterBackslash[si1+1:] # We drop the space
+    #else: # The line is only the marker
+        #marker = lineAfterBackslash
+        #text = ''
+    #return marker, text
+## end if splitMarkerText
 
 
 

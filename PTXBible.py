@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-07' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,8 +72,8 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', _(errorBit) )
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
 
@@ -408,7 +408,7 @@ def loadPTXVersifications( BibleObject ):
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
         versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
 
         assert versificationName not in PTXVersifications
         PTXVersifications[versificationName] = {}
@@ -424,7 +424,7 @@ def loadPTXVersifications( BibleObject ):
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
-                #print( "Versification line", repr(line) )
+                #print( versificationName, "versification line", repr(line) )
 
                 if len(line)<7:
                     print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
@@ -443,6 +443,17 @@ def loadPTXVersifications( BibleObject ):
                     PTXVersifications[versificationName]['Omitted'].append( (BBB,C,V) )
                 elif line[0] == '#': # It's a comment line
                     pass # Just ignore it
+                elif line[0] == '-': # It's an excluded verse line -- similar to above
+                    assert line[4] == ' '
+                    USFMBookCode = line[1:4]
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    C,V = line[5:].split( ':', 1 )
+                    #print( "CV", repr(C), repr(V) )
+                    if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
+                    #print( "Omitted {} {}:{}".format( BBB, C, V ) )
+                    if 'Omitted' not in PTXVersifications[versificationName]:
+                        PTXVersifications[versificationName]['Omitted'] = []
+                    PTXVersifications[versificationName]['Omitted'].append( (BBB,C,V) )
                 elif '=' in line: # it's a verse mapping, e.g.,
                     left, right = line.split( ' = ', 1 )
                     #print( "left", repr(left), 'right', repr(right) )
@@ -1625,6 +1636,7 @@ def demo():
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
                             "Tests/DataFilesForTests/PTXTest/",
+                            "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
                             "MadeUpFolder/",
