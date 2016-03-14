@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-14' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -655,7 +655,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, verseDataEntry in enumerate( pseudoUSFMData ):
                     pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                    print( "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
+                    if debuggingThisModule: print( "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
                         #print( "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
@@ -704,7 +704,7 @@ class BibleWriter( InternalBible ):
                                         #print( BBB, repr(value), repr(vEnd) )
                                         try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                         except ValueError:
-                                            print( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                            logging.warning( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
                                             vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                         #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                         break
