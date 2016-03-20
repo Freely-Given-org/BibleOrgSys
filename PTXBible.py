@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # PTXBible.py
@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-07' # by RJH
+LastModifiedDate = '2016-03-18' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.12'
@@ -294,8 +294,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         print( "  " + exp("Got {} SSF entries:").format( len(SSFDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(SSFDict):
-                try: print( "    {}: {}".format( key, SSFDict[key] ) )
-                except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
+                print( "    {}: {}".format( key, SSFDict[key] ) )
 
     #BibleObject.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 

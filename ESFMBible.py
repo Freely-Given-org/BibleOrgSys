@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-18' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -462,8 +462,7 @@ class ESFMBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            try: print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-            except UnicodeEncodeError: print( _("  ESFMBible: Loading {}...").format( BBB ) )
+            print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )

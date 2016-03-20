@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
@@ -30,10 +30,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-29' # by RJH
+LastModifiedDate = '2016-03-18' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -125,9 +125,9 @@ class SwordInterface():
 
     def getAvailableModuleCodes( self, onlyModuleTypes=None ):
         """
-        Returns a list of available Sword module codes.
-
         Module type is a list of strings for the type(s) of modules to include.
+
+        Returns a list of available Sword module codes.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("SwordResources.getAvailableModuleCodes()") )
         if SwordType == 'CrosswireLibrary':
@@ -147,14 +147,14 @@ class SwordInterface():
     # end of SwordInterface.getAvailableModuleCodes
 
 
-    def getAvailableModuleCodeTuples( self, onlyModuleTypes=None ):
+    def getAvailableModuleCodeDuples( self, onlyModuleTypes=None ):
         """
-        Returns a list of available Sword module codes.
-
         Module type is a list of strings for the type(s) of modules to include.
+
+        Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordResources.getAvailableModuleCodeTuples()") )
+            print( exp("SwordResources.getAvailableModuleCodeDuples()") )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -172,13 +172,13 @@ class SwordInterface():
                     availableModuleCodes.append( (moduleID,moduleType) )
             return availableModuleCodes
         elif SwordType == 'OurCode':
-            result1 = self.library.getAvailableModuleCodeTuples( onlyModuleTypes )
-            #print( 'getAvailableModuleCodeTuples.result1', result1 )
+            result1 = self.library.getAvailableModuleCodeDuples( onlyModuleTypes )
+            #print( 'getAvailableModuleCodeDuples.result1', result1 )
             if result1:
                 result2 = [(name,SwordModules.GENERIC_MODULE_TYPE_NAMES[modType]) for name,modType in result1]
-                #print( 'getAvailableModuleCodeTuples.result2', result2 )
+                #print( 'getAvailableModuleCodeDuples.result2', result2 )
                 return result2
-    # end of SwordInterface.getAvailableModuleCodeTuples
+    # end of SwordInterface.getAvailableModuleCodeDuples
 
 
     def getModule( self, moduleAbbreviation='KJV' ):
@@ -188,11 +188,11 @@ class SwordInterface():
         if SwordType == 'CrosswireLibrary':
             #print( "gM", module.getName() )
             result1 = self.library.getModule( moduleAbbreviation )
-            print( 'getModule.result1', result1 )
+            #print( 'getModule.result1', result1 )
             if result1 is not None: return result1
             # Try again with a capital
             result2 = self.library.getModule( moduleAbbreviation.title() )
-            print( 'getModule.result2', result2 )
+            #print( 'getModule.result2', result2 )
             return result2
         elif SwordType == 'OurCode':
             lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
@@ -243,17 +243,18 @@ class SwordInterface():
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
-            if BibleOrgSysGlobals.debugFlag:
-                if '\n' in verseText or '\r' in verseText:
+            if '\n' in verseText or '\r' in verseText: # Why!!!
+                if BibleOrgSysGlobals.debugFlag:
                     print( exp("getVerseData: Why does it have CR or LF in {} {} {}") \
                             .format( module.getName(), key.getShortText(), repr(verseText) ) )
+                verseText = verseText.replace( '\n', '' ).replace( '\r', '' )
             verseText = verseText.rstrip()
-            print( 'verseText', repr(verseText) )
+            #print( 'verseText', repr(verseText) )
             verseData = InternalBibleEntryList()
             #c, v = key.getChapterNumberStr(), key.getVerseNumberStr()
             cv = key.getShortText().split( ' ', 1 )[1]
             c, v = cv.split( ':', 1 )
-            print( 'c,v', repr(c), repr(v) )
+            #print( 'c,v', repr(c), repr(v) )
             # Prepend the verse number since Sword modules don't contain that info in the data
             if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
             verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )

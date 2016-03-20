@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-18' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -554,16 +554,23 @@ class UnknownBible:
                 totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
         elif totalBibleCount > 1:
             if totalBibleTypes == 1:
-                if BibleOrgSysGlobals.verbosityLevel > 0:
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
+                                                        .format( totalBibleCount, typesFound[0], self.givenFolderName ) )
+                elif BibleOrgSysGlobals.verbosityLevel > 0:
                     print( "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
                 self.foundType = "Multiple found: {} Bibles".format( typesFound[0] )
             else:
-                if BibleOrgSysGlobals.verbosityLevel > 0:
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
+                                                        .format( totalBibleCount, typesFound, self.givenFolderName ) )
+                elif BibleOrgSysGlobals.verbosityLevel > 0:
                     print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many types found'
                 if not strictCheck:
                     # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
-                    print( "UnknownBible.search: retrying with strict checking criteria" )
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        print( "UnknownBible.search: retrying with strict checking criteria" )
                     totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                         print ( "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
@@ -574,7 +581,7 @@ class UnknownBible:
                 haveSingle = False
                 for entry in typesFound:
                     if entry.endswith( ':1' ): haveSingle = True; break
-                if haveSingle: print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+                if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0: print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
 
         if autoLoadAlways or totalBibleCount == 1:
             # Put the binary formats first here because they can be detected more reliably

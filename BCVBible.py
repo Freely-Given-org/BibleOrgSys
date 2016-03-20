@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # BCVBible.py
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-18' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -270,8 +270,7 @@ class BCVBible( Bible ):
             print( "  " + t("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 for key in sorted(self.suppliedMetadata['BCV']):
-                    try: print( "    {}: {}".format( key, self.suppliedMetadata['BCV'][key] ) )
-                    except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
+                    print( "    {}: {}".format( key, self.suppliedMetadata['BCV'][key] ) )
 
         if 'BCVVersion' in self.suppliedMetadata['BCV']:
             assert self.suppliedMetadata['BCV']['BCVVersion'] == '1.0'
@@ -435,8 +434,7 @@ class BCVBibleBook( BibleBook ):
             print( "  " + t("Got {} metadata entries:").format( len(settingsDict) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 for key in sorted(settingsDict):
-                    try: print( "    {}: {}".format( key, settingsDict[key] ) )
-                    except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
+                    print( "    {}: {}".format( key, settingsDict[key] ) )
 
         if 'BCVVersion' in settingsDict: settingsDict['BCVVersion'] == '1.0'; del settingsDict['BCVVersion']
         if 'WorkName' in settingsDict: self.workName = settingsDict['WorkName']; del settingsDict['WorkName']
