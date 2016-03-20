@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-07' # by RJH
+LastModifiedDate = '2016-03-21' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.63'
@@ -997,6 +997,7 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
 
     # Handle command line parameters
     parser = ArgumentParser( description='{} v{} {} {}'.format( sShortProgName, sProgVersion, _("last modified"), LastModifiedDate ) )
+    parser.add_argument( '--version', action='version', version='v{}'.format( sProgVersion ) )
     return parser
 # end of BibleOrgSysGlobals.setup
 
@@ -1083,7 +1084,6 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
 
-    parserObject.add_argument( '--version', action='version', version='v{}'.format( ProgVersion ) )
     verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
     verbosityGroup.add_argument( '-s', '--silent', action='store_const', dest='verbose', const=0, help="output no information to the console" )
     verbosityGroup.add_argument( '-q', '--quiet', action='store_const', dest='verbose', const=1, help="output less information to the console" )

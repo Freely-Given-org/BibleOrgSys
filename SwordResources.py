@@ -30,10 +30,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-18' # by RJH
+LastModifiedDate = '2016-03-20' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -61,16 +61,11 @@ try:
                     Sword.ENC_UTF8:'UTF8', Sword.ENC_SCSU:'SCSU', Sword.ENC_UTF16:'UTF16',
                     Sword.ENC_RTF:'RTF', Sword.ENC_HTML:'HTML' }
 except ImportError: # Sword library (dll and python bindings) seem to be not available
-    if 0: # Warn the user that this won't work
-        logging.critical( _("You need to install the Sword library with Python3 bindings on your computer in order to use this module.") )
-        logging.info( _("Alternatively, you can try the unfinished all-Python SwordModules module.") )
-        #sys.exit( 1 )
-    else: # Use our own Python3 code instead
-        try:
-            import SwordModules
-            SwordType = 'OurCode'
-        except ImportError:
-            logging.critical( _("You don't appear to have any way installed to read Sword modules.") )
+    try:
+        import SwordModules
+        SwordType = 'OurCode'
+    except ImportError:
+        logging.critical( _("You don't appear to have any way installed to read Sword modules.") )
 
 
 
