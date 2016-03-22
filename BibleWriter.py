@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-14' # by RJH
+LastModifiedDate = '2016-03-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -478,6 +478,8 @@ class BibleWriter( InternalBible ):
     def toUSFM( self, outputFolder=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the USFM files.
+
+        NOTE: We use Windows \r\n line endings for writing USFM files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
         if BibleOrgSysGlobals.debugFlag: assert self.books
@@ -588,7 +590,8 @@ class BibleWriter( InternalBible ):
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
-            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+            with open( filepath, 'wt', newline='\r\n' ) as myFile: # Use Windows newline endings for USFM
+                myFile.write( USFM )
 
         if ignoredMarkers:
             logging.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
@@ -10424,11 +10427,15 @@ def demo():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    from io import TextIOWrapper
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'replace')
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

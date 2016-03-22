@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-21' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = '0.52'
@@ -177,10 +177,6 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
-        assert isinstance( BBB, str )
-        assert isinstance( filename, str )
-        assert isinstance( givenList, list )
-        assert isinstance( caller, str )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:

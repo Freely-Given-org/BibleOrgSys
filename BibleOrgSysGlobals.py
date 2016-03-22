@@ -164,7 +164,7 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ShortProgName), repr(ProgVersion), repr(folderPath) ) )
+        print( "BibleOrgSysGlobals.setupLoggingToFile( {!r}, {!r}, {!r} )".format( ShortProgName, ProgVersion, folderPath ) )
     filename = ShortProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folderPath, filename )
@@ -176,7 +176,7 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
         if debuggingThisModule or __name__ == '__main__':
-            print( "setupLoggingToFile: {} already exists -- renaming it first!".format( repr(filepath) ) )
+            print( "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
         if os.access( filepath+'.bak', os.F_OK ):
             os.remove( filepath+'.bak' )
         os.rename( filepath, filepath+'.bak' )
@@ -185,7 +185,7 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setBasicConfig to( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, LOGGING_NAME_DICT[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
+        print( "BibleOrgSysGlobals.setBasicConfig to( {!r}, {}={}, {!r}, {!r} )".format( filepath, setLevel, LOGGING_NAME_DICT[setLevel], loggingLongFormat, loggingDateFormat ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     #return filepath
@@ -363,7 +363,7 @@ def backupAnyExistingFile( filenameOrFilepath ):
     if debugFlag: assert not filenameOrFilepath.endswith( '.bak' )
     if os.access( filenameOrFilepath, os.F_OK ):
         if debugFlag:
-            logging.info( "backupAnyExistingFile: {} already exists -- renaming it first!".format( repr(filenameOrFilepath) ) )
+            logging.info( "backupAnyExistingFile: {!r} already exists -- renaming it first!".format( filenameOrFilepath ) )
         if os.access( filenameOrFilepath+'.bak', os.F_OK ):
             os.remove( filenameOrFilepath+'.bak' )
         os.rename( filenameOrFilepath, filenameOrFilepath+'.bak' )
@@ -463,8 +463,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            print( "Comparing {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing files {} and {}…".format( repr(filename1), repr(filename2) ) )
+            print( "Comparing {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
+        else: print( "Comparing files {!r} and {!r}…".format( filename1, filename2 ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -510,8 +510,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     for k in range( 0, min( len1, len2 ) ):
         if lines1[k] != lines2[k]:
             if printFlag:
-                print( "  {}a:{} ({} chars)\n  {}b:{} ({} chars)" \
-                    .format( k+1, repr(lines1[k]), len(lines1[k]), k+1, repr(lines2[k]), len(lines2[k]) ) )
+                print( "  {}a:{!r} ({} chars)\n  {}b:{!r} ({} chars)" \
+                    .format( k+1, lines1[k], len(lines1[k]), k+1, lines2[k], len(lines2[k]) ) )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:
@@ -532,8 +532,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            print( "Comparing USFM {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing USFM files {} and {}…".format( repr(filename1), repr(filename2) ) )
+            print( "Comparing USFM {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
+        else: print( "Comparing USFM files {!r} and {!r}…".format( filename1, filename2 ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -593,8 +593,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             else: adjustedLine2 = adjustedLine2.replace( '\\'+unnumbered+' ', '\\'+numbered+' ' )
         if adjustedLine1 != adjustedLine2:
             if printFlag:
-                print( "  {}:{} {}a:{} ({} chars)\n  {}:{} {}b:{} ({} chars)" \
-                    .format( C, V, k+1, repr(originalLine1), len(originalLine1), C, V, k+1, repr(originalLine2), len(originalLine1) ) )
+                print( "  {}:{} {}a:{!r} ({} chars)\n  {}:{} {}b:{!r} ({} chars)" \
+                    .format( C, V, k+1, originalLine1, len(originalLine1), C, V, k+1, originalLine2, len(originalLine1) ) )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:
@@ -613,8 +613,8 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
-        if filename1==filename2: print( "Comparing XML {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing XML files {} and {}…".format( repr(filename1), repr(filename2) ) )
+        if filename1==filename2: print( "Comparing XML {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
+        else: print( "Comparing XML files {!r} and {!r}…".format( filename1, filename2 ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -635,7 +635,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         nonlocal diffCount, location
         if element1.tag != element2.tag:
             if printFlag:
-                print( "Element tags differ ({} and {})".format( repr(element1.tag), repr(element2.tag) ) )
+                print( "Element tags differ ({!r} and {!r})".format( element1.tag, element2.tag ) )
                 if verbosityLevel > 2: print( "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
@@ -669,13 +669,13 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 elif element1.text and element2.text and element1.text.strip()==element2.text.strip(): pass
                 else:
                     if printFlag:
-                        print( "Element text differs:\n {}\n {}".format( repr(element1.text), repr(element2.text) ) )
+                        print( "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
                         if verbosityLevel > 2: print( "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
-                    print( "Element text differs:\n {}\n {}".format( repr(element1.text), repr(element2.text) ) )
+                    print( "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
                     if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
@@ -686,13 +686,13 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 elif element1.tail and element2.tail and element1.tail.strip()==element2.tail.strip(): pass
                 else:
                     if printFlag:
-                        print( "Element tail differs:\n {}\n {}".format( repr(element1.tail), repr(element2.tail) ) )
+                        print( "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
                         if verbosityLevel > 2: print( "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
-                    print( "Element tail differs:\n {}\n {}".format( repr(element1.tail), repr(element2.tail) ) )
+                    print( "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
                     if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
@@ -746,8 +746,8 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
     Give an error if the element text contains anything other than whitespace.
     """
     if element.text and element.text.strip():
-        errorString = "{}Unexpected {} element text in {}" \
-                        .format( (idString+' ') if idString else '', repr(element.text), locationString )
+        errorString = "{}Unexpected {!r} element text in {}" \
+                        .format( (idString+' ') if idString else '', element.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt
@@ -758,8 +758,8 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
     Give a warning if the element tail contains anything other than whitespace.
     """
     if element.tail and element.tail.strip():
-        warningString = "{}Unexpected {} element tail in {}" \
-                        .format( (idString+' ') if idString else '', repr(element.tail), locationString )
+        warningString = "{}Unexpected {!r} element tail in {}" \
+                        .format( (idString+' ') if idString else '', element.tail, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if debugFlag and haltOnXMLWarning: halt
@@ -771,8 +771,8 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
     Give a warning if the element contains any attributes.
     """
     for attrib,value in element.items():
-        warningString = "{}Unexpected {} attribute ({}) in {}" \
-                        .format( (idString+' ') if idString else '', repr(attrib), value, locationString )
+        warningString = "{}Unexpected {!r} attribute ({}) in {}" \
+                        .format( (idString+' ') if idString else '', attrib, value, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if debugFlag and haltOnXMLWarning: halt
@@ -784,8 +784,8 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     Give an error if the element contains any sub-elements.
     """
     for subelement in element:
-        errorString = "{}Unexpected {} sub-element ({}) in {}" \
-                        .format( (idString+' ') if idString else '', repr(subelement.tag), subelement.text, locationString )
+        errorString = "{}Unexpected {!r} sub-element ({}) in {}" \
+                        .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt
@@ -798,8 +798,8 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
         for subelement in element.getchildren():
-            warningString = "{}Unexpected {} sub-element ({}) in {} with text/tail {}/{}" \
-                            .format( (idString+' ') if idString else '', repr(subelement.tag), subelement.text, locationString,
+            warningString = "{}Unexpected {!r} sub-element ({}) in {} with text/tail {}/{}" \
+                            .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
                                 element.text.strip() if element.text else element.text,
                                 element.tail.strip() if element.tail else element.tail )
             logging.warning( warningString )
@@ -986,7 +986,7 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(sShortProgName), repr(sProgVersion), repr(loggingFolderPath) ) )
+        print( "BibleOrgSysGlobals.setup( {!r}, {!r}, {!r} )".format( sShortProgName, sProgVersion, loggingFolderPath ) )
     setupLoggingToFile( sShortProgName, sProgVersion, folderPath=loggingFolderPath )
     logging.info( "{} v{} started".format( sShortProgName, sProgVersion ) )
 
@@ -1153,16 +1153,16 @@ def demo():
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
-    print( "Bible.py starts with {}".format( repr(line1a) ) )
+    print( "Bible.py starts with {!r}".format( line1a ) )
     line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folderName
-    print( "ReadMe.txt starts with {}".format( repr(line1b) ) )
+    print( "ReadMe.txt starts with {!r}".format( line1b ) )
     line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
-    print( "BibleBooksCodes.xml starts with {}".format( repr(line1c) ) )
+    print( "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
 
-    print( "\nFirst one made string safe: {}".format( repr( makeSafeString( line1a[0] ) ) ) )
-    print( "First one made filename safe: {}".format( repr( makeSafeFilename( line1a[0] ) ) ) )
-    print( "Last one made string safe: {}".format( repr( makeSafeString( line1c ) ) ) )
-    print( "Last one made filename safe: {}".format( repr( makeSafeFilename( line1c ) ) ) )
+    print( "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
+    print( "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
+    print( "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
+    print( "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
 
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]

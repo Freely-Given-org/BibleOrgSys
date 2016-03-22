@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-21' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.66'
@@ -273,7 +273,9 @@ class USFMFilenames:
 
 
     def getUSFMIDFromFile( self, folder, thisFilename, filepath, encoding=None ):
-        """ Try to intelligently get the USFMId from the first line in the file (which should be the \\id line). """
+        """
+        Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
+        """
         #print( exp("getUSFMIDFromFile( {} {} {} {} )").format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
@@ -354,29 +356,31 @@ class USFMFilenames:
 
 
     def getFilenameTemplate( self ):
-        """ Returns a pattern/template for USFM filenames where
+        """
+        Returns a pattern/template for USFM filenames where
                 lll = language code (lower case) or LLL = language code (UPPER CASE)
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
-                dd = Paratext digits (can actually include some letters) """
+                dd = Paratext digits (can actually include some letters)
+        """
         return self.pattern
     # end of getFilenameTemplate
 
 
     def getAllFilenames( self ):
-        """Return a list of all filenames in our folder.
-            This excludes names of subfolders and backup files. """
+        """
+        Return a list of all filenames in our folder.
+            This excludes names of subfolders and backup files.
+        """
         return self.fileList
     # end of getAllFilenames
 
 
     def doListAppend( self, BBB, filename, givenList, caller ):
-        """ Check that BBB and filename are not in the givenList,
+        """
+        Check that BBB and filename are not in the givenList,
                 then add them as a 2-tuple.
-            If there is a duplicate, remove both (as we're obviously unsure). """
-        assert isinstance( BBB, str )
-        assert isinstance( filename, str )
-        assert isinstance( givenList, list )
-        assert isinstance( caller, str )
+            If there is a duplicate, remove both (as we're obviously unsure).
+        """
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -425,7 +429,8 @@ class USFMFilenames:
 
 
     def getConfirmedFilenameTuples( self, doubleCheck=False ):
-        """ Starting with the theoretical list of filenames derived from the deduced template (if we have one),
+        """
+        Starting with the theoretical list of filenames derived from the deduced template (if we have one),
                 return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
             If the doubleCheck flag is set, the program also looks at the id lines inside the files.
 
@@ -533,7 +538,8 @@ class USFMFilenames:
 
 
     def getUnusedFilenames( self ):
-        """ Return a list of filenames which didn't seem to be USFM files.
+        """
+        Return a list of filenames which didn't seem to be USFM files.
             NOTE: This list depends on which "find" routine above was run last!
             The order of the filenames in the list has no meaning.
         """
@@ -548,13 +554,15 @@ class USFMFilenames:
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
-        """ Return a list of full pathnames of .ssf files in the folder.
+        """
+        Return a list of full pathnames of .ssf files in the folder.
             NOTE: USFM projects don't usually have the .ssf files in the project folder,
                 but 'backed-up' projects often do.
             If searchAbove is set to True and no ssf files are found in the given folder,
                 this routine will attempt to search the next folder up the file hierarchy.
                 Furthermore, unless auto is set to False,
-                    it will try to find the correct one from multiple SSFs."""
+                    it will try to find the correct one from multiple SSFs.
+        """
         def getSSFFilenamesHelper( folder ):
             resultPathlist = []
             files = os.listdir( folder )
