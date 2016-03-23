@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.09'
@@ -212,8 +212,8 @@ class DrupalBible( Bible ):
 
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "DrupalBible Bible object"
-        self.objectTypeString = "DrupalBible"
+        self.objectNameString = 'DrupalBible Bible object'
+        self.objectTypeString = 'DrupalBible'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

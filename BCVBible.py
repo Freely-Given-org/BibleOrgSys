@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-18' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.14'
@@ -392,8 +392,8 @@ class BCVBibleBook( BibleBook ):
         Create the BCV Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
-        self.objectNameString = "BCV Bible Book object"
-        self.objectTypeString = "BCV"
+        self.objectNameString = 'BCV Bible Book object'
+        self.objectTypeString = 'BCV'
     # end of BCVBibleBook.__init__
 
 

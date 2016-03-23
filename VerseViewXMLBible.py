@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -222,8 +222,8 @@ class VerseViewXMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "VerseView XML Bible object"
-        self.objectTypeString = "VerseView"
+        self.objectNameString = 'VerseView XML Bible object'
+        self.objectTypeString = 'VerseView'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

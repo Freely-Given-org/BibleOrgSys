@@ -30,7 +30,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-13' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
 ProgVersion = '0.09'
@@ -184,8 +184,8 @@ class Bible( BibleWriter ):
         Constructor: creates an empty Bible object.
         """
         BibleWriter.__init__( self )
-        self.objectNameString = "Bible object (generic/unknown type)"
-        self.objectTypeString = "Unknown"
+        self.objectNameString = 'Bible object (generic/unknown type)'
+        self.objectTypeString = 'Unknown'
 
         self.BibleOrganisationalSystem = None
         # Add our own extended data stores

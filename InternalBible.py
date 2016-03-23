@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-09' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.67'
@@ -341,6 +341,9 @@ class InternalBible:
     def loadBookIfNecessary( self, BBB ):
         """
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("loadBookIfNecessary( {} )").format( BBB ) )
+
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -348,6 +351,9 @@ class InternalBible:
             except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
+        else:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "NOLOAD", BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -355,7 +361,9 @@ class InternalBible:
         """
         Tries to load or reload a book.
         """
-        if BibleOrgSysGlobals.debugFlag: print( exp("reloadBook( {} )…").format( BBB ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("reloadBook( {} )").format( BBB ) )
+
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
         except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
@@ -1879,8 +1887,11 @@ class InternalBible:
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumChapters( {} )").format( BBB ) )
-        assert len(BBB) == 3
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("getNumChapters( {} )").format( BBB ) )
+            assert len(BBB) == 3
+
+        #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
@@ -1894,8 +1905,10 @@ class InternalBible:
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
-        assert len(BBB) == 3
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
+            assert len(BBB) == 3
+
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
@@ -1919,7 +1932,9 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.
         """
-        #print( "InternalBible.getContextVerseData( {} )".format( ref ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
+
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
         else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )

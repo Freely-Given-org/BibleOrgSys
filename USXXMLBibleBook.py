@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-27' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.17'
@@ -74,8 +74,8 @@ class USXXMLBibleBook( BibleBook ):
         Create the USX Bible book object.
         """
         BibleBook.__init__( self, name, BBB ) # Initialise the base class
-        self.objectNameString = "USX XML Bible Book object"
-        self.objectTypeString = "USX"
+        self.objectNameString = 'USX XML Bible Book object'
+        self.objectTypeString = 'USX'
 
         #self.BBB = BBB
     # end of USXXMLBibleBook.__init__

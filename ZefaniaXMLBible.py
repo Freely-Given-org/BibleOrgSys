@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
 ProgVersion = '0.32'
@@ -252,8 +252,8 @@ class ZefaniaXMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Zefania XML Bible object"
-        self.objectTypeString = "Zefania"
+        self.objectNameString = 'Zefania XML Bible object'
+        self.objectTypeString = 'Zefania'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

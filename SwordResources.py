@@ -30,7 +30,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-20' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.17'
@@ -50,7 +50,7 @@ from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 SwordType = None
 try:
-    import Sword
+    import Sword # Python bindings for the Crosswire Sword C++ library
     SwordType = 'CrosswireLibrary'
     SWORD_TEXT_DIRECTIONS = { Sword.DIRECTION_LTR:'LTR', Sword.DIRECTION_RTL:'RTL', Sword.DIRECTION_BIDI:'BiDi' }
     SWORD_MARKUPS = { Sword.FMT_UNKNOWN:'Unknown', Sword.FMT_PLAIN:'Plain', Sword.FMT_THML:'THML',
@@ -62,7 +62,7 @@ try:
                     Sword.ENC_RTF:'RTF', Sword.ENC_HTML:'HTML' }
 except ImportError: # Sword library (dll and python bindings) seem to be not available
     try:
-        import SwordModules
+        import SwordModules # Not as good/reliable/efficient as the real Sword library, but better than nothing
         SwordType = 'OurCode'
     except ImportError:
         logging.critical( _("You don't appear to have any way installed to read Sword modules.") )

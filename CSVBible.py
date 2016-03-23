@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.28'
@@ -185,8 +185,8 @@ class CSVBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "CSV Bible object"
-        self.objectTypeString = "CSV"
+        self.objectNameString = 'CSV Bible object'
+        self.objectTypeString = 'CSV'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

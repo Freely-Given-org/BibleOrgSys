@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.65'
@@ -186,8 +186,8 @@ class PalmDBBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "PDB Bible object"
-        self.objectTypeString = "PDB"
+        self.objectNameString = 'PDB Bible object'
+        self.objectTypeString = 'PDB'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

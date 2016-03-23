@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-10' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -250,7 +250,7 @@ class USFMBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
             assert not self.preloadDone
-        assert self.sourceFolder is not None
+            assert self.sourceFolder is not None
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -319,6 +319,7 @@ class USFMBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
+            assert self.preloadDone
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
@@ -346,6 +347,8 @@ class USFMBible( Bible ):
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
 
         Parameter is a 2-tuple containing BBB and the filename.
+
+        Returns the book info.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( exp("loadBookMP( {} )").format( BBB_Filename_tuple ) )

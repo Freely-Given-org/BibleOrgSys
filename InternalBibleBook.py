@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-07' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -51,7 +51,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 
 BCV_VERSION = '1.0'
 
-debuggingThisModule = False
+debuggingThisModule = True
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
@@ -3980,7 +3980,9 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumVerses( {!r} )").format( C ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("getNumVerses( {!r} )").format( C ) )
+
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( exp("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
             C = str( C )
@@ -3992,24 +3994,26 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, ref ):
+    def getContextVerseData( self, BCVReference ):
         """
         Returns an InternalBibleEntryListObject plus a list containing the context of the verse.
 
         Raises a KeyError if the C:V reference is not found
         """
-        #print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( ref, self.BBB ) )
-        if isinstance( ref, tuple ): assert ref[0] == self.BBB
-        else: assert ref.getBBB() == self.BBB
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
+
+        if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
+        else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'getContextVerseData'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
             assert self._indexedFlag
-        if isinstance( ref, tuple ): C, V = ref[1], ref[2]
+        if isinstance( BCVReference, tuple ): C, V = BCVReference[1], BCVReference[2]
         else: # assume it's a SimpleVerseKey or similar
-            C,V = ref.getCV()
+            C,V = BCVReference.getCV()
         return self._CVIndex.getEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 

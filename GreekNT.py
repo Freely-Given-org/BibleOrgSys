@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = "0.07"
@@ -91,8 +91,8 @@ class GreekNT( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Greek NT Bible object"
-        self.objectTypeString = "GreekNT"
+        self.objectNameString = 'Greek NT Bible object'
+        self.objectTypeString = 'GreekNT'
 
         # Now we can set our object variables
         self.sourceFilepath, self.givenName, self.encoding  = sourceFilepath, givenName, encoding

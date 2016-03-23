@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -192,8 +192,8 @@ class OpenSongXMLBible( Bible ):
         # Setup and initialise the base class first
         if BibleOrgSysGlobals.debugFlag: print( "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
         Bible.__init__( self )
-        self.objectNameString = "OpenSong XML Bible object"
-        self.objectTypeString = "OpenSong"
+        self.objectNameString = 'OpenSong XML Bible object'
+        self.objectTypeString = 'OpenSong'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding

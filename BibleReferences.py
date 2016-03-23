@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -180,8 +180,8 @@ class BibleSingleReference( BibleReferenceBase ):
         """ Initialize the object with necessary sub-systems. """
         assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
-        self.objectNameString = "Bible single reference object"
-        self.objectTypeString = "BibleSingleReference"
+        self.objectNameString = 'Bible single reference object'
+        self.objectTypeString = 'BibleSingleReference'
         self.reference = ()
     # end of BibleSingleReference:__init__
 
@@ -375,8 +375,8 @@ class BibleSingleReferences( BibleReferenceBase ):
         """ Initialize the object with necessary sub-systems. """
         assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
-        self.objectNameString = "Bible single references object"
-        self.objectTypeString = "BibleSingleReferences"
+        self.objectNameString = 'Bible single references object'
+        self.objectTypeString = 'BibleSingleReferences'
         self.referenceList = []
     # end of BibleSingleReferences:__init__
 
@@ -656,8 +656,8 @@ class BibleReferenceList( BibleReferenceBase ):
         """
         assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
-        self.objectNameString = "Bible reference list object"
-        self.objectTypeString = "BibleReferenceList"
+        self.objectNameString = 'Bible reference list object'
+        self.objectTypeString = 'BibleReferenceList'
         self.referenceList = []
     # end of BibleReferenceList.__init__
 
@@ -1435,8 +1435,8 @@ class BibleAnchorReference:
     def __init__( self, BBB, chapterString, verseString, suffixString=None ):
         """ Initialize the object with known information.
         """
-        self.objectNameString = "Bible anchor reference object"
-        self.objectTypeString = "BibleAnchorReference"
+        self.objectNameString = 'Bible anchor reference object'
+        self.objectTypeString = 'BibleAnchorReference'
         assert BBB
         self.BBB = BBB
         assert chapterString

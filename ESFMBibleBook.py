@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-21' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
@@ -61,8 +61,8 @@ class ESFMBibleBook( BibleBook ):
         Create the ESFM Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
-        self.objectNameString = "ESFM Bible Book object"
-        self.objectTypeString = "ESFM"
+        self.objectNameString = 'ESFM Bible Book object'
+        self.objectTypeString = 'ESFM'
     # end of __init__
 
 

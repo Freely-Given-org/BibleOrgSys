@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.28'
@@ -1040,8 +1040,8 @@ class SwordBible( Bible ):
 
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Sword Bible object"
-        self.objectTypeString = "Sword"
+        self.objectNameString = 'Sword Bible object'
+        self.objectTypeString = 'Sword'
 
         # Now we can set our object variables
         self.sourceFolder, self.moduleName, self.encoding = sourceFolder, moduleName, encoding

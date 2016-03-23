@@ -49,7 +49,7 @@ Contains four classes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-18' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.36'
@@ -1742,8 +1742,8 @@ class SwordBibleModule( SwordModule, Bible ):
 
         # Initialise the SwordModule base class
         SwordModule.__init__( self, loadedSwordModuleConfiguration )
-        self.objectNameString = "SwordBibleModule object"
-        self.objectTypeString = "SwordBibleModule"
+        self.objectNameString = 'SwordBibleModule object'
+        self.objectTypeString = 'SwordBibleModule'
 
         # Initialise the InternalBible base class
         Bible.__init__( self )
