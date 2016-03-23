@@ -51,7 +51,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 
 BCV_VERSION = '1.0'
 
-debuggingThisModule = True
+debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
