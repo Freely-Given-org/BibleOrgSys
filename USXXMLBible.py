@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-23' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -112,7 +112,8 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( givenFolderName )
-            if autoLoadBooks: uB.load() # Load and process the file
+            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
 
@@ -146,7 +147,8 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( foundProjects[0] )
-            if autoLoadBooks: uB.load() # Load and process the file
+            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
 # end of USXXMLBibleFileCheck
@@ -164,10 +166,11 @@ class USXXMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "USX XML Bible object"
-        self.objectTypeString = "USX"
+        self.objectNameString = 'USX XML Bible object'
+        self.objectTypeString = 'USX'
 
         self.givenFolderName, self.givenName, self.encoding = givenFolderName, givenName, encoding # Remember our parameters
+        self.sourceFolder = self.givenFolderName
 
         # Now we can set our object variables
         self.name = self.givenName
@@ -230,12 +233,16 @@ class USXXMLBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+            assert self.preloadDone
+
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
+
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( self, BBB )
