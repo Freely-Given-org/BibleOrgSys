@@ -30,14 +30,14 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-24' # by RJH
+LastModifiedDate = '2016-03-27' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 #from singleton import singleton
@@ -551,6 +551,9 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )

@@ -49,14 +49,14 @@ Contains four classes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-03-27' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging, time
@@ -64,10 +64,6 @@ import os, logging, time
 from collections import OrderedDict
 import multiprocessing
 import struct, zlib
-assert struct.calcsize("ih") == 6 # Six-byte format used by Sword modules
-assert struct.calcsize("iih") == 10 # Ten-byte format used by Sword modules
-assert struct.calcsize("hhhhh") == 10 # Ten-byte format used by Sword modules -- why does "hii" fail?
-assert struct.calcsize("iii") == 12 # Twelve-byte format used by Sword modules
 
 import BibleOrgSysGlobals
 from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
@@ -2156,8 +2152,8 @@ def demo():
         startTime = time.time()
 
     if 0: # test one module dictionary twice -- loaded into memory, and just indexed
-        swordFolder = "/home/robert/.sword/"
-        moduleCode = "webstersdict"
+        swordFolder = os.path.join( os.path.expanduser('~'), '.sword/')
+        moduleCode = 'webstersdict'
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
@@ -2176,8 +2172,8 @@ def demo():
         del swM
 
     if 0: # test one (versified) Bible module twice -- loaded into memory, and just indexed
-        swordFolder = "/home/robert/.sword/"
-        moduleCode = "2tgreek"
+        swordFolder = os.path.join( os.path.expanduser('~'), '.sword/')
+        moduleCode = '2tgreek'
         #moduleCode = "finbiblia"
         #moduleCode = "vulgate_hebps"
         #moduleCode = "ylt"
@@ -2199,8 +2195,8 @@ def demo():
         del swM
 
     if 1: # test one (versified) commentary module twice -- loaded into memory, and just indexed
-        swordFolder = "/home/robert/.sword/"
-        moduleCode = "barnes"
+        swordFolder = os.path.join( os.path.expanduser('~'), '.sword/')
+        moduleCode = 'barnes'
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
@@ -2221,12 +2217,12 @@ def demo():
         del swM
 
     if 1: # test one imported Bible (or Bible commentary) module
-        swordFolder = "/home/robert/.sword/"
-        #moduleCode = "2tgreek"
-        moduleCode = "gerelb1871"
-        #moduleCode = "barnes"
-        #moduleCode = "finbiblia"
-        #moduleCode = "ylt"
+        swordFolder = os.path.join( os.path.expanduser('~'), '.sword/')
+        #moduleCode = '2tgreek'
+        moduleCode = 'gerelb1871'
+        #moduleCode = 'barnes'
+        #moduleCode = 'finbiblia'
+        #moduleCode = 'ylt'
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
@@ -2255,11 +2251,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

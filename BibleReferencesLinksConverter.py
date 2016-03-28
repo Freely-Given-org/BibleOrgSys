@@ -28,14 +28,14 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-27' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path
@@ -720,6 +720,9 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )

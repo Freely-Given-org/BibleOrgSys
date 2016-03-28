@@ -44,14 +44,14 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-03-27' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
-ProgVersion = "0.07"
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
@@ -464,6 +464,9 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )

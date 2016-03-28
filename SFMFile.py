@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-10' # by RJH
+LastModifiedDate = '2016-03-27' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
 ProgVersion = '0.84'
@@ -403,6 +403,9 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
