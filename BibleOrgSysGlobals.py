@@ -76,14 +76,14 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-03-29' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.63'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, pickle
@@ -165,6 +165,7 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     """
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.setupLoggingToFile( {!r}, {!r}, {!r} )".format( ShortProgName, ProgVersion, folderPath ) )
+
     filename = ShortProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folderPath, filename )
@@ -198,6 +199,7 @@ def addConsoleLogging( consoleLoggingLevel=None ):
     """
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
+
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
     if consoleLoggingLevel is not None:
@@ -218,7 +220,9 @@ def addLogfile( projectName, folderName=None ):
     """
     Adds an extra project specific log file to the logger.
     """
-    if debuggingThisModule: print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
+    if debuggingThisModule:
+        print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
+
     filename = projectName + '_log.txt'
     if folderName is None: folderName = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folderName, filename )
@@ -248,7 +252,9 @@ def removeLogfile( projectHandler ):
     """
     Removes the project specific logger.
     """
-    if debuggingThisModule: print( "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
+    if debuggingThisModule:
+        print( "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
+
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of BibleOrgSysGlobals.removeLogfile

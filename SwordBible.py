@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-28' # by RJH
+LastModifiedDate = '2016-03-29' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.28'
+ProgVersion = '0.29'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -47,9 +47,9 @@ debuggingThisModule = False
 import logging, os, re
 import multiprocessing
 
-try: import Sword # Assumes that the Sword Python bindings are installed on this computer
+try: import Sword # Assumes that the Sword Python3 bindings are installed on this computer
 except ImportError: # Sword library (dll and python bindings) seem to be not available
-    logging.critical( _("You need to install the Sword library with Python3 bindings on your computer in order to use this module.") )
+    logging.critical( _("You need to install the Sword library with Python3 bindings on your computer in order to use this {} module.").format( ShortProgName ) )
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
