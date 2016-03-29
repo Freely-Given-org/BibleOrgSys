@@ -49,10 +49,10 @@ Contains four classes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2016-03-29' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.36'
+ProgVersion = '0.37'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -73,9 +73,11 @@ from VerseReferences import SimpleVerseKey
 
 
 # Folders where to try looking for modules
+#   These should be the folders that contain mods.d and modules folders inside them
 DEFAULT_SWORD_SEARCH_FOLDERS = [ 'usr/share/sword/',
                         os.path.join( os.path.expanduser('~'), '.sword/'),
-                        'C:\\Users\\Robert\\AppData\\Local\\VirtualStore\\Program Files\\BPBible\\resources\\',
+                        'C:\\Users\\{}\\AppData\\Roaming\\Sword\\'.format( os.getlogin() ),
+                        'C:\\Users\\{}\\AppData\\Local\\VirtualStore\\Program Files\\BPBible\\resources\\'.format( os.getlogin() ),
                         'C:\\Program Files\\BPBible\\resources\\' ]
 
 GENERIC_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblical Texts',
