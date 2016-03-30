@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-29' # by RJH
+LastModifiedDate = '2016-03-30' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -792,7 +792,8 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     for subelement in element:
         errorString = "{}Unexpected {!r} sub-element ({}) in {}" \
                         .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
-        logging.error( errorString )
+        logger = logging.critical if subelement.txt else logging.error
+        logger( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoSubelements
@@ -1203,13 +1204,12 @@ if __name__ != '__main__':
     #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
 
 if __name__ == '__main__':
-    import multiprocessing
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = setup( ShortProgName, ProgVersion )
     addStandardOptionsAndProcess( parser )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

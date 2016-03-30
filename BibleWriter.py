@@ -69,7 +69,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-21' # by RJH
+LastModifiedDate = '2016-03-30' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -10431,7 +10431,7 @@ if __name__ == '__main__':
 
     from io import TextIOWrapper
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'replace')
+        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'namereplace')
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )

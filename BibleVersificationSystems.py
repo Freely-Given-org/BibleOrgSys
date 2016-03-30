@@ -64,10 +64,10 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-03-30' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.55'
+ProgVersion = '0.56'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -645,11 +645,14 @@ class BibleVersificationSystem:
 
     def getNumVerses( self, BBB, C ):
         """
+        C is normally a string.
+
         Returns the number of verses (int) in the given book and chapter.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "BibleVersificationSystem.getNumVerses( {}, {} )".format( BBB, repr(C) ) )
-        assert len(BBB) == 3
+            print( "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
+            assert len(BBB) == 3
+
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
@@ -932,7 +935,14 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
+    from io import TextIOWrapper
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'namereplace')
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
