@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-03-30' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.67'
@@ -1441,7 +1441,7 @@ class InternalBible:
             if uncommonWordCounts: errors['ByBook']['All Books']['Words']['Uncommon Word Counts'] = uncommonWordCounts
 
     	# Remove any unnecessary empty categories
-        for category in errors['ByCategory']:
+        for category in errors['ByCategory'][:]:
             if not errors['ByCategory'][category]:
                 #print( "InternalBible.getErrors: Removing empty category", category, "from errors['ByCategory']" )
                 del errors['ByCategory'][category]
@@ -2049,6 +2049,13 @@ def demo():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
