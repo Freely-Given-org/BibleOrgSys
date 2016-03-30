@@ -3356,8 +3356,8 @@ class BibleWriter( InternalBible ):
             for BBB in BOS.getBookList():
                 if BBB in compressedDictionary:
                     myFile.write( compressedDictionary[BBB] ) # Write zlib output
-                else:
-                    print( 'Book {} is not available'.format( BBB ) )
+                elif BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( '  Book {} is not available for EasyWorship export'.format( BBB ) )
 
             # Write the end of file stuff
             myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
