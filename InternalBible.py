@@ -1441,7 +1441,7 @@ class InternalBible:
             if uncommonWordCounts: errors['ByBook']['All Books']['Words']['Uncommon Word Counts'] = uncommonWordCounts
 
     	# Remove any unnecessary empty categories
-        for category in errors['ByCategory'][:]:
+        for category in list( errors['ByCategory'].keys() ):
             if not errors['ByCategory'][category]:
                 #print( "InternalBible.getErrors: Removing empty category", category, "from errors['ByCategory']" )
                 del errors['ByCategory'][category]
