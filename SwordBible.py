@@ -1345,9 +1345,9 @@ def demo():
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    from io import TextIOWrapper
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'namereplace')
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
