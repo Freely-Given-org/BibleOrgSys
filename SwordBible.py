@@ -24,6 +24,7 @@
 
 """
 Module detecting and loading Crosswire Sword Bible binary files.
+Requires the Sword Python3 bindings to be installed to load the Sword Bible books.
 
 Files are usually:
     ot
@@ -34,10 +35,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-29' # by RJH
+LastModifiedDate = '2016-03-30' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1065,9 +1066,13 @@ class SwordBible( Bible ):
                 else:
                     print( "Got", foundConfs[0] )
                     self.moduleName = foundConfs[0]
+        self.abbreviation = self.moduleName # First attempt
 
         # Load the Sword manager and find our module
-        self.SWMgr = Sword.SWMgr()
+        try: self.SWMgr = Sword.SWMgr()
+        except NameError:
+            logging.critical( _("Unable to initialise {!r} module -- no Sword manager available").format( self.moduleName ) )
+            return # our Sword import must have failed
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             availableGlobalOptions = [str(option) for option in self.SWMgr.getGlobalOptions()]
             print( "availableGlobalOptions", availableGlobalOptions )
@@ -1094,7 +1099,7 @@ class SwordBible( Bible ):
             if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "Available module codes:", availableModuleCodes )
 
-        self.abbreviation = self.moduleName
+        self.abbreviation = self.moduleName # Perhaps a better attempt
     # end of SwordBible.__init__
 
 
@@ -1103,9 +1108,12 @@ class SwordBible( Bible ):
         Load the compressed data file and import book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading {} module...").format( self.moduleName ) )
-        module = self.SWMgr.getModule( self.moduleName )
+        try: module = self.SWMgr.getModule( self.moduleName )
+        except AttributeError: # probably no SWMgr
+            logging.critical( _("Unable to load {!r} module -- no Sword manager available").format( self.moduleName ) )
+            return
         if module is None:
-            logging.critical( "Unable to load {!r} module -- not known by Sword".format( self.moduleName ) )
+            logging.critical( _("Unable to load {!r} module -- not known by Sword").format( self.moduleName ) )
             return
 
         markupCode = ord( module.getMarkup() )
@@ -1335,11 +1343,15 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    from io import TextIOWrapper
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        sys.stdout = TextIOWrapper(sys.stdout.detach(), sys.stdout.encoding, 'namereplace')
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
