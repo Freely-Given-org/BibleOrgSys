@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-30' # by RJH
+LastModifiedDate = '2016-04-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -327,6 +327,8 @@ class InternalBibleBook:
         Splits the line at those markers, and adds the individual lines to the book.
 
         The optional location parameter is for better error messages.
+
+        Currently only used by SwordBible.py
 
         No return value.
         """

@@ -23,17 +23,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling content modules produced for Crosswire Sword.
-This module uses the Sword engine (libsword) via the Python SWIG bindings.
-(If you don't want to install that, consider our SwordModules module.)
+This is the interface module used to give a unified interface to either:
+    1/ The Crosswire Sword engine (libsword) via Python3 SWIG bindings,
+        or, if that's not available, to
+    2/ Our own (still primitive module that reads Sword files directly
+        called SwordModules.py
+
+Some of the code in SwordBible.py probably needs to be moved
+    into this module.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2016-04-01' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -42,6 +47,7 @@ debuggingThisModule = False
 
 #from singleton import singleton
 import logging
+
 
 import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey
@@ -126,7 +132,9 @@ class SwordInterface():
 
         Returns a list of available Sword module codes.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("SwordResources.getAvailableModuleCodes()") )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
+
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
             for j,moduleBuffer in enumerate(self.library.getModules()):
@@ -151,7 +159,7 @@ class SwordInterface():
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordResources.getAvailableModuleCodeDuples()") )
+            print( exp("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -181,7 +189,9 @@ class SwordInterface():
     def getModule( self, moduleAbbreviation='KJV' ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "SwordInterface.getModule({})".format( moduleAbbreviation ) )
+
         if SwordType == 'CrosswireLibrary':
             #print( "gM", module.getName() )
             result1 = self.library.getModule( moduleAbbreviation )
@@ -202,7 +212,9 @@ class SwordInterface():
 
 
     def makeKey( self, BBB, C, V ):
-        #if BibleOrgSysGlobals.debugFlag: print( "SwordResources.makeKey({})".format( BCV ) )
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( "SwordInterface.makeKey( {} {}:{} )".format( BBB, C, V ) )
+
         #if BCV  in self.keyCache:
             #print( "Cached", BCV )
             #return self.keyCache[BCV]
@@ -241,7 +253,7 @@ class SwordInterface():
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
             if '\n' in verseText or '\r' in verseText: # Why!!!
-                if BibleOrgSysGlobals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( exp("getVerseData: Why does it have CR or LF in {} {} {}") \
                             .format( module.getName(), key.getShortText(), repr(verseText) ) )
                 verseText = verseText.replace( '\n', '' ).replace( '\r', '' )
@@ -299,7 +311,7 @@ class SwordInterface():
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
-            if BibleOrgSysGlobals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 if '\n' in verseText or '\r' in verseText:
                     print( exp("getVerseData: Why does it have CR or LF in {} {}").format( module.getName(), repr(verseText) ) )
             verseData = []
@@ -328,11 +340,15 @@ class SwordInterface():
 
 
     def getVerseText( self, module, key ):
+        """
+        """
         #cacheKey = (module.getName(), key.getShortText())
         #if cacheKey in self.verseCache:
             #print( "Cached", cacheKey )
             #return self.verseCache[cacheKey]
-        #if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getVerseText({},{})".format( module.getName(), key.getText() ) )
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
+
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
@@ -360,7 +376,11 @@ class SwordInterface():
 
 
 def getBCV( BCV, moduleAbbreviation='KJV' ): # Very slow -- for testing only
-    if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getBCV({},{})".format( BCV, moduleAbbreviation ) )
+    """
+    """
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        print( "SwordResources.getBCV( {}, {} )".format( BCV, moduleAbbreviation ) )
+
     library = Sword.SWMgr()
     module = library.getModule( moduleAbbreviation )
     refString = "{} {}:{}".format( BCV[0][:3], BCV[1], BCV[2] )

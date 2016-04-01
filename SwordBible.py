@@ -24,21 +24,23 @@
 
 """
 Module detecting and loading Crosswire Sword Bible binary files.
-Requires the Sword Python3 bindings to be installed to load the Sword Bible books.
 
 Files are usually:
     ot
     ot.vss
     nt
     nt.vss
+
+Some of this code (esp. filtering) should probably be moved into
+    the SwordResources module.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-30' # by RJH
+LastModifiedDate = '2016-04-01' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.30'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -48,12 +50,10 @@ debuggingThisModule = False
 import logging, os, re
 import multiprocessing
 
-try: import Sword # Assumes that the Sword Python3 bindings are installed on this computer
-except ImportError: # Sword library (dll and python bindings) seem to be not available
-    logging.critical( _("You need to install the Sword library with Python3 bindings on your computer in order to use this {} module.").format( ShortProgName ) )
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
+from SwordResources import SwordType, SwordInterface
 #from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
@@ -64,9 +64,9 @@ compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'n
 
 
 # Sword enums
-DIRECTION_LTR = 0; DIRECTION_RTL = 1; DIRECTION_BIDI = 2
+#DIRECTION_LTR = 0; DIRECTION_RTL = 1; DIRECTION_BIDI = 2
 FMT_UNKNOWN = 0; FMT_PLAIN = 1; FMT_THML = 2; FMT_GBF = 3; FMT_HTML = 4; FMT_HTMLHREF = 5; FMT_RTF = 6; FMT_OSIS = 7; FMT_WEBIF = 8; FMT_TEI = 9; FMT_XHTML = 10
-FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML' }
+FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML', 11:'LaTeX' }
 ENC_UNKNOWN = 0; ENC_LATIN1 = 1; ENC_UTF8 = 2; ENC_UTF16 = 3; ENC_RTF = 4; ENC_HTML = 5
 
 
@@ -1046,6 +1046,7 @@ class SwordBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.moduleName, self.encoding = sourceFolder, moduleName, encoding
+        self.SwordInterface = None
 
         if self.sourceFolder:
             # Do a preliminary check on the readability of our folder
@@ -1064,27 +1065,35 @@ class SwordBible( Bible ):
                 elif len(foundConfs) > 1:
                     logging.critical( "Too many .conf files found in {}".format( confFolder ) )
                 else:
-                    print( "Got", foundConfs[0] )
+                    print( "SwordBible.__init__ got", foundConfs[0] )
                     self.moduleName = foundConfs[0]
         self.abbreviation = self.moduleName # First attempt
 
         # Load the Sword manager and find our module
-        try: self.SWMgr = Sword.SWMgr()
-        except NameError:
-            logging.critical( _("Unable to initialise {!r} module -- no Sword manager available").format( self.moduleName ) )
-            return # our Sword import must have failed
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            availableGlobalOptions = [str(option) for option in self.SWMgr.getGlobalOptions()]
+        if self.SwordInterface is None and SwordType is not None:
+            self.SwordInterface = SwordInterface() # Load the Sword library
+        if self.SwordInterface is None: # still
+            logging.critical( exp("SwordBible: no Sword interface available") )
+            return
+        #try: self.SWMgr = Sword.SWMgr()
+        #except NameError:
+            #logging.critical( _("Unable to initialise {!r} module -- no Sword manager available").format( self.moduleName ) )
+            #return # our Sword import must have failed
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and SwordType=='CrosswireLibrary':
+            availableGlobalOptions = [str(option) for option in self.SwordInterface.library.getGlobalOptions()]
             print( "availableGlobalOptions", availableGlobalOptions )
         # Don't need to set options if we use getRawEntry() rather than stripText() or renderText()
         #for optionName in ( 'Headings', 'Footnotes', 'Cross-references', "Strong's Numbers", 'Morphological Tags', ):
             #self.SWMgr.setGlobalOption( optionName, 'On' )
 
         if self.sourceFolder:
-            self.SWMgr.augmentModules( self.sourceFolder, False ) # Add our folder to the SW Mgr
+            self.SwordInterface.library.augmentModules( self.sourceFolder, False ) # Add our folder to the SW Mgr
+
         availableModuleCodes = []
-        for j,moduleBuffer in enumerate(self.SWMgr.getModules()):
-            moduleID = moduleBuffer.getRawData()
+        for j,something in enumerate(self.SwordInterface.library.getModules()):
+            # something can be a moduleBuffer (Crosswire) or just a string (BOS)
+            moduleID = something.getRawData() if SwordType=='CrosswireLibrary' else something
+
             if moduleID.upper() == self.moduleName.upper(): self.moduleName = moduleID # Get the case correct
             #module = SWMgr.getModule( moduleID )
             #if 0:
@@ -1094,6 +1103,7 @@ class SwordBible( Bible ):
             #print( "moduleID", repr(moduleID) )
             availableModuleCodes.append( moduleID )
         #print( "Available module codes:", availableModuleCodes )
+
         if self.moduleName not in availableModuleCodes:
             logging.critical( "Unable to find {!r} Sword module".format( self.moduleName ) )
             if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -1108,119 +1118,125 @@ class SwordBible( Bible ):
         Load the compressed data file and import book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading {} module...").format( self.moduleName ) )
-        try: module = self.SWMgr.getModule( self.moduleName )
+        try: module = self.SwordInterface.library.getModule( self.moduleName )
         except AttributeError: # probably no SWMgr
-            logging.critical( _("Unable to load {!r} module -- no Sword manager available").format( self.moduleName ) )
+            logging.critical( _("Unable to load {!r} module -- no Sword loader available").format( self.moduleName ) )
             return
         if module is None:
             logging.critical( _("Unable to load {!r} module -- not known by Sword").format( self.moduleName ) )
             return
 
-        markupCode = ord( module.getMarkup() )
-        encoding = ord( module.getEncoding() )
-        if encoding == ENC_LATIN1: self.encoding = 'latin-1'
-        elif encoding == ENC_UTF8: self.encoding = 'utf-8'
-        elif encoding == ENC_UTF16: self.encoding = 'utf-16'
-        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+        if SwordType=='CrosswireLibrary': # need to load the module
+            markupCode = ord( module.getMarkup() )
+            encoding = ord( module.getEncoding() )
+            if encoding == ENC_LATIN1: self.encoding = 'latin-1'
+            elif encoding == ENC_UTF8: self.encoding = 'utf-8'
+            elif encoding == ENC_UTF16: self.encoding = 'utf-16'
+            elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( 'Description: {!r}'.format( module.getDescription() ) )
-            print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
-            print( 'Encoding: {!r}'.format( encoding ) )
-            print( 'Language: {!r}'.format( module.getLanguage() ) )
-            print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
-            print( 'Name: {!r}'.format( module.getName() ) )
-            print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
-            print( 'Type: {!r}'.format( module.getType() ) )
-            print( 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
-            print( 'IsUnicode: {!r}'.format( module.isUnicode() ) )
-            print( 'IsWritable: {!r}'.format( module.isWritable() ) )
-            #return
+            if BibleOrgSysGlobals.verbosityLevel > 3:
+                print( 'Description: {!r}'.format( module.getDescription() ) )
+                print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
+                print( 'Encoding: {!r}'.format( encoding ) )
+                print( 'Language: {!r}'.format( module.getLanguage() ) )
+                print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
+                print( 'Name: {!r}'.format( module.getName() ) )
+                print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
+                print( 'Type: {!r}'.format( module.getType() ) )
+                print( 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
+                print( 'IsUnicode: {!r}'.format( module.isUnicode() ) )
+                print( 'IsWritable: {!r}'.format( module.isWritable() ) )
+                #return
 
-        bookCount = 0
-        currentBBB = None
-        for index in range( 0, 999999 ):
-            module.setIndex( index )
-            if module.getIndex() != index: break # Gone too far
+            bookCount = 0
+            currentBBB = None
+            for index in range( 0, 999999 ):
+                module.setIndex( index )
+                if module.getIndex() != index: break # Gone too far
 
-            # Find where we're at
-            verseKey = module.getKey()
-            verseKeyText = verseKey.getShortText()
-            #if '2' in verseKeyText: halt # for debugging first verses
-            #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
+                # Find where we're at
+                verseKey = module.getKey()
+                verseKeyText = verseKey.getShortText()
+                #if '2' in verseKeyText: halt # for debugging first verses
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    #print( '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
 
-            #nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
-            #nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
-            #print( 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
-            #print( 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
-            #print( 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
-            #print( 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
-            try: nativeVerseText = module.getRawEntry()
-            #try: nativeVerseText = str( module.renderText() )
-            except UnicodeDecodeError: nativeVerseText = ''
+                #nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
+                #nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
+                #print( 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
+                #print( 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
+                #print( 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
+                #print( 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
+                try: nativeVerseText = module.getRawEntry()
+                #try: nativeVerseText = str( module.renderText() )
+                except UnicodeDecodeError: nativeVerseText = ''
 
-            if ':' not in verseKeyText:
-                if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
-                if BibleOrgSysGlobals.debugFlag:
-                    assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
-                if BibleOrgSysGlobals.verbosityLevel > 3:
-                    if markupCode == FMT_OSIS:
-                        match = re.search( '<milestone ([^/>]*?)type="x-importer"([^/>]*?)/>', nativeVerseText )
-                        if match:
-                            attributes = match.group(1) + match.group(2)
-                            match2 = re.search( 'subType="(.+?)"', attributes )
-                            subType = match2.group(1) if match2 else None
-                            if subType and subType.startswith( 'x-' ): subType = subType[2:] # Remove the x- prefix
-                            match2 = re.search( 'n="(.+?)"', attributes )
-                            n = match2.group(1) if match2 else None
-                            if n: n = n.replace( '$', '' ).strip()
-                            print( "Module created by {} {}".format( subType, n ) )
-                continue
-            vkBits = verseKeyText.split()
-            assert len(vkBits) == 2
-            osisBBB = vkBits[0]
-            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
-            if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
-            vkBits = vkBits[1].split( ':' )
-            assert len(vkBits) == 2
-            C, V = vkBits
-            #print( 'At {} {}:{}'.format( BBB, C, V ) )
+                if ':' not in verseKeyText:
+                    if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
+                    if BibleOrgSysGlobals.debugFlag:
+                        assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
+                    if BibleOrgSysGlobals.verbosityLevel > 3:
+                        if markupCode == FMT_OSIS:
+                            match = re.search( '<milestone ([^/>]*?)type="x-importer"([^/>]*?)/>', nativeVerseText )
+                            if match:
+                                attributes = match.group(1) + match.group(2)
+                                match2 = re.search( 'subType="(.+?)"', attributes )
+                                subType = match2.group(1) if match2 else None
+                                if subType and subType.startswith( 'x-' ): subType = subType[2:] # Remove the x- prefix
+                                match2 = re.search( 'n="(.+?)"', attributes )
+                                n = match2.group(1) if match2 else None
+                                if n: n = n.replace( '$', '' ).strip()
+                                print( "Module created by {} {}".format( subType, n ) )
+                    continue
+                vkBits = verseKeyText.split()
+                assert len(vkBits) == 2
+                osisBBB = vkBits[0]
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
+                if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
+                vkBits = vkBits[1].split( ':' )
+                assert len(vkBits) == 2
+                C, V = vkBits
+                #print( 'At {} {}:{}'.format( BBB, C, V ) )
 
-            # Start a new book if necessary
-            if BBB != currentBBB:
-                if currentBBB is not None and haveText: # Save the previous book
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
-                    self.saveBook( thisBook )
-                # Create the new book
-                if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}...'.format( self.moduleName, BBB ) )
-                thisBook = BibleBook( self, BBB )
-                thisBook.objectNameString = "Sword Bible Book object"
-                thisBook.objectTypeString = "Sword Bible"
-                currentBBB, currentC, haveText = BBB, '0', False
-                bookCount += 1
+                # Start a new book if necessary
+                if BBB != currentBBB:
+                    if currentBBB is not None and haveText: # Save the previous book
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
+                        self.saveBook( thisBook )
+                    # Create the new book
+                    if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}...'.format( self.moduleName, BBB ) )
+                    thisBook = BibleBook( self, BBB )
+                    thisBook.objectNameString = "Sword Bible Book object"
+                    thisBook.objectTypeString = "Sword Bible"
+                    currentBBB, currentC, haveText = BBB, '0', False
+                    bookCount += 1
 
-            if C != currentC:
-                thisBook.addLine( 'c', C )
-                #if C == '2': halt
-                currentC = C
+                if C != currentC:
+                    thisBook.addLine( 'c', C )
+                    #if C == '2': halt
+                    currentC = C
 
-            if nativeVerseText:
-                haveText = True
-                if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
-                elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
-                elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
-                else:
-                    print( 'markupCode', repr(markupCode) )
-                    if BibleOrgSysGlobals.debugFlag: halt
-                    return
+                if nativeVerseText:
+                    haveText = True
+                    if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                    elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                    elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
+                    else:
+                        print( 'markupCode', repr(markupCode) )
+                        if BibleOrgSysGlobals.debugFlag: halt
+                        return
 
-        if currentBBB is not None and haveText: # Save the very last book
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", self.moduleName, currentBBB, bookCount )
-            self.saveBook( thisBook )
+            if currentBBB is not None and haveText: # Save the very last book
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", self.moduleName, currentBBB, bookCount )
+                self.saveBook( thisBook )
 
-        self.doPostLoadProcessing()
+            self.doPostLoadProcessing()
+
+        elif SwordType=='OurCode': # module is already loaded above
+            #print( "moduleConfig =", module.SwordModuleConfiguration )
+            self.books = module.books
+            self.loadedAllBooks = True
     # end of SwordBible.load
 # end of SwordBible class
 
@@ -1345,6 +1361,7 @@ def demo():
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
+    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
