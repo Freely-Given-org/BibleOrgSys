@@ -161,7 +161,7 @@ class BibleStylesheet():
 
 
     def importParatextStylesheet( self, folder, filename, encoding='utf-8' ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet…".format( filename ) )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
         self.filepath = PTSS.filepath
@@ -347,7 +347,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # Try the default one
-        print( "\nTrying default Bible stylesheet..." )
+        print( "\nTrying default Bible stylesheet…" )
         #folder = "../../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/"
         #filename = "LD.sty"
         ss = BibleStylesheet()
@@ -363,7 +363,7 @@ def demo():
         except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
 
     if 1: # Try a small one
-        print( "\nTrying small PT stylesheet..." )
+        print( "\nTrying small PT stylesheet…" )
         folder = "../../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/"
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
@@ -376,7 +376,7 @@ def demo():
         except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
 
     if 1: # Try a full one
-        print( "\nTrying full PT stylesheet..." )
+        print( "\nTrying full PT stylesheet…" )
         folder = "../../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/"
         filename = "usfm.sty"
         ss = ParatextStylesheet()

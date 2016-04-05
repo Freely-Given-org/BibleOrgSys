@@ -122,7 +122,7 @@ class BibleOrganizationalSystems:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -552,13 +552,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     if 1: # Demo the BibleOrganizationalSystems object
-        print( "\nTesting system load..." )
+        print( "\nTesting system load…" )
         boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( boss ) # Just print a summary
         print( _("Available system names are: {}").format( boss.getAvailableOrganizationalSystemNames() ) )
 
     if 1: # Demo a BibleOrganizationalSystem object -- this is the one most likely to be wanted by a user
-        print( "\nTesting varying systems..." )
+        print( "\nTesting varying systems…" )
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
             print( "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganizationalSystem( testString )

@@ -102,7 +102,7 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFilepath = XMLFilepath
         assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from {!r}...".format( XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from {!r}…".format( XMLFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFilepath )
         assert self._XMLtree # Fail here if we didn't load anything at all
 
@@ -225,7 +225,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -251,7 +251,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}…".format( filepath ) )
 
         IDDict, NameDict = self.__DataDicts
         with open( filepath, 'wt' ) as myFile:
@@ -280,7 +280,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}…".format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -294,7 +294,7 @@ class ISO_639_3_LanguagesConverter:
         def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ):
             """ Exports theDict to the .h and .c files. """
             def convertEntry( entry ):
-                """ Convert special characters in an entry... """
+                """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, tuple ):
                     for j, field in enumerate(entry):
@@ -344,7 +344,7 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}…".format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self.__DataDicts

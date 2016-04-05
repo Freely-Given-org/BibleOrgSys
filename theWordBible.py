@@ -228,7 +228,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
 def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     """
-    Given a line number (0... )
+    Given a line number (0… )
         return BBB, C, V 3-tuple.
 
     volumeType is 'OT', 'NT', or 'Both'.
@@ -275,8 +275,8 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if BibleOrgSysGlobals.verbosityLevel > 1:
         if filename1==filename2:
-            print( "Comparing {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: print( "Comparing files {} and {}...".format( repr(filename1), repr(filename2) ) )
+            print( "Comparing {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing files {} and {}…".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -694,7 +694,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( "theWordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
+            print( "theWordBible.handleLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
         if originalLine: assert '\n' not in originalLine and '\r' not in originalLine
     line = originalLine
 
@@ -1016,7 +1016,7 @@ class theWordBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS
         if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
@@ -1078,7 +1078,7 @@ class theWordBible( Bible ):
                                 if consecutiveBlankLineCount < 5:
                                     logging.warning( "theWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
                                 elif consecutiveBlankLineCount == 5:
-                                    logging.warning( 'theWordBible.load: Additional {} "Found blank verse line" messages suppressed...'.format( BBB ) )
+                                    logging.warning( 'theWordBible.load: Additional {} "Found blank verse line" messages suppressed…'.format( BBB ) )
                                 consecutiveBlankLineCount += 1
 
                             handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
@@ -1163,7 +1163,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
     #testFolder = "../../../../../Data/Work/Bibles/theWord modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class {}...").format( indexString) )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class {}…").format( indexString) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( twBfolder, twBfilename ) )
     tWb = theWordBible( twBfolder, twBfilename )
     tWb.load() # Load and process the file
@@ -1188,7 +1188,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
         #doaResults = tWb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_theWord_Reexport/"
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files…" )
             result = BibleOrgSysGlobals.fileCompare( twBfilename, twBfilename, twBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
@@ -1233,7 +1233,7 @@ def demo():
                         foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
@@ -1256,7 +1256,7 @@ def demo():
                 elif os.path.isfile( somepath ): foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads

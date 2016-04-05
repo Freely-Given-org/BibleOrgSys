@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "USFMMarkersConverter"
 ProgName = "USFM Markers converter"
 ProgVersion = "0.62"
@@ -108,7 +108,7 @@ class USFMMarkersConverter:
         self.__XMLFilepath = XMLFilepath
         assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFMMarkers XML file from {!r}...").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFMMarkers XML file from {!r}…").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert self._XMLtree # Fail here if we didn't load anything at all
 
@@ -254,7 +254,7 @@ class USFMMarkersConverter:
             return self.__DataDicts
 
         # Load and validate entries and create the dictionaries and lists
-        # Note that the combined lists include the numbered markers, e.g., s as well as s1, s2, ...
+        # Note that the combined lists include the numbered markers, e.g., s as well as s1, s2, …
         rawMarkerDict, numberedMarkerList, combinedMarkerDict, = OrderedDict(), [], {}
         conversionDict, backConversionDict = {}, {}
         newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
@@ -263,38 +263,38 @@ class USFMMarkersConverter:
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
-            nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
-            marker = element.find("marker").text
+            nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
+            marker = element.find('marker').text
             if marker.lower() != marker:
                 logging.error( _("Marker {!r} should be lower case").format( marker ) )
-            compulsory = element.find("compulsory").text
-            if  compulsory not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} compulsory field for marker {!r}").format( compulsory, marker ) )
-            level = element.find("level").text
-            compulsoryFlag = compulsory == "Yes"
-            if  level == "Newline": newlineMarkersList.append( marker ); combinedNewlineMarkersList.append( marker )
-            elif level == "Internal": internalMarkersList.append( marker )
-            elif level == "Note": noteMarkersList.append( marker )
+            compulsory = element.find('compulsory').text
+            if  compulsory not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} compulsory field for marker {!r}").format( compulsory, marker ) )
+            level = element.find('level').text
+            compulsoryFlag = compulsory == 'Yes'
+            if  level == 'Newline': newlineMarkersList.append( marker ); combinedNewlineMarkersList.append( marker )
+            elif level == 'Internal': internalMarkersList.append( marker )
+            elif level == 'Note': noteMarkersList.append( marker )
             else: logging.error( _("Unexpected {!r} level field for marker {!r}").format( level, marker ) )
-            numberable = element.find("numberable").text
-            if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} numberable field for marker {!r}").format( numberable, marker ) )
+            numberable = element.find('numberable').text
+            if  numberable not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} numberable field for marker {!r}").format( numberable, marker ) )
             numberableFlag = numberable == "Yes"
             if numberableFlag and level == "Character": logging.error( _("Unexpected {!r} numberable field for character marker {!r}").format( numberable, marker ) )
             nests = element.find("nests").text
-            if  nests not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} nests field for marker {!r}").format( nests, marker ) )
-            nestsFlag = nests == "Yes"
-            hasContent = element.find("hasContent").text
-            if  hasContent not in ( "Always", "Never", "Sometimes" ): logging.error( _("Unexpected {!r} hasContent field for marker {!r}").format( hasContent, marker ) )
-            printed = element.find("printed").text
-            if  printed not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} printed field for marker {!r}").format( printed, marker ) )
-            printedFlag = printed == "Yes"
-            closed = element.find("closed").text
-            if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
-            occursIn = element.find("occursIn").text
-            if  occursIn not in ( "Header", "Introduction", "Numbering", "Text", "Canonical Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross-reference", "Front and back matter" ):
+            if  nests not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} nests field for marker {!r}").format( nests, marker ) )
+            nestsFlag = nests == 'Yes'
+            hasContent = element.find('hasContent').text
+            if  hasContent not in ( 'Always', 'Never', 'Sometimes' ): logging.error( _("Unexpected {!r} hasContent field for marker {!r}").format( hasContent, marker ) )
+            printed = element.find('printed').text
+            if  printed not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} printed field for marker {!r}").format( printed, marker ) )
+            printedFlag = printed == 'Yes'
+            closed = element.find('closed').text
+            if  closed not in ( 'No', 'Always', 'Optional' ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
+            occursIn = element.find('occursIn').text
+            if  occursIn not in ( 'Header', 'Introduction', 'Numbering', 'Text', 'Canonical Text', 'Poetry', 'Text, Poetry', 'Acrostic verse', 'Table row', 'Footnote', 'Cross-reference', 'Front and back matter' ):
                 logging.error( _("Unexpected {!r} occursIn field for marker {!r}").format( occursIn, marker ) )
-            deprecated = element.find("deprecated").text
-            if  deprecated not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} deprecated field for marker {!r}").format( deprecated, marker ) )
-            deprecatedFlag = deprecated == "Yes"
+            deprecated = element.find('deprecated').text
+            if  deprecated not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} deprecated field for marker {!r}").format( deprecated, marker ) )
+            deprecatedFlag = deprecated == 'Yes'
 
             # The optional elements are set to None if they don't exist
             #closed = None if element.find("closed") is None else element.find("closed").text
@@ -354,7 +354,7 @@ class USFMMarkersConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -402,7 +402,7 @@ class USFMMarkersConverter:
         assert self.__DataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.py" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by USFMMarkers.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -443,7 +443,7 @@ class USFMMarkersConverter:
         assert self.__DataDicts
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.json" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -457,7 +457,7 @@ class USFMMarkersConverter:
         def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ):
             """ Exports theDict to the .h and .c files. """
             def convertEntry( entry ):
-                """ Convert special characters in an entry... """
+                """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, tuple ):
                     for field in entry:
@@ -509,7 +509,7 @@ class USFMMarkersConverter:
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -574,7 +574,15 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 

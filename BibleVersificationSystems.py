@@ -121,7 +121,7 @@ class BibleVersificationSystems:
                             picklesGood = False; break
             if picklesGood:
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -231,7 +231,7 @@ class BibleVersificationSystems:
         for compareSystemName in compareList:
             if compareSystemName == system1Name: continue # Don't check against yourself
             if BibleOrgSysGlobals.verbosityLevel > 2 or len(compareList)>1:
-                result += ('\n' if result else '') + "  " + _("Comparing {} against {}...").format( system1Name, compareSystemName )
+                result += ('\n' if result else '') + "  " + _("Comparing {} against {}…").format( system1Name, compareSystemName )
             CVData1, OVData1, CoVData1, RVData1 = self.__DataDict[system1Name]['CV'], self.__DataDict[system1Name]['omitted'], self.__DataDict[system1Name]['combined'], self.__DataDict[system1Name]['reordered']
             CVData2, OVData2, CoVData2, RVData2 = self.__DataDict[compareSystemName]['CV'], self.__DataDict[compareSystemName]['omitted'], self.__DataDict[compareSystemName]['combined'], self.__DataDict[compareSystemName]['reordered']
             haveMajorDifferences, haveMinorDifferences, uncheckedBooks = False, False, []
@@ -262,7 +262,7 @@ class BibleVersificationSystems:
                                     if CVErrorCount<displayCount or displayCount==0:
                                         result += ('\n' if result else '') + "        " + _("{} {} {} has {} verses; {} {} {} has {} verses").format( system1Name, BBB, C, V1, compareSystemName, BBB, C, V2 )
                                     elif CVErrorCount==displayCount:
-                                        result += '\n' + "          " + _("...") + '  ' + _("(Increase verbosity to see more differences)")
+                                        result += '\n' + "          " + _("…") + '  ' + _("(Increase verbosity to see more differences)")
                                     haveMajorDifferences, bookHasMajorDifferences = True, True
                                     CVErrorCount += 1
                     if OVData1 and OVData2: # Compare omitted verses
@@ -510,7 +510,7 @@ class BibleVersificationSystems:
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleVersificationSystem_"+thisSystemName + ".xml" )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(versificationSchemeToCheck), outputFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}…").format( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
                 for BBB in omittedVersesToCheck.keys():
@@ -898,7 +898,7 @@ def demo():
     print( _("Available system names are: {}").format( bvss.getAvailableVersificationSystemNames() ) )
     if 0:
         for systemName in ('RSV52','NLT96','KJV'): # Test the system against itself
-            print( "\nTesting {} against the system...".format( systemName ) )
+            print( "\nTesting {} against the system…".format( systemName ) )
             testSystem = bvss.getVersificationSystem( systemName )
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time

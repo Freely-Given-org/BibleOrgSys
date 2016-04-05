@@ -38,7 +38,7 @@ Module reading and loading VerseView XML Bibles:
     Alussa loi Jumala taivaan ja maan.</v>
         <v n="2">
     Ja maa oli autio ja tyhjä, ja pimeys oli syvyyden päällä, ja Jumalan Henki liikkui vetten päällä.</v>
-    ...
+    …
 
 
     <?xml version="1.0" encoding="UTF-8"?>
@@ -54,7 +54,7 @@ Module reading and loading VerseView XML Bibles:
         <v n="1">No princípio criou Deus os céus e a terra.</v>
         <v n="2">E a terra estava sem forma e vazia; e havia trevas sobre a face do abismo, e o Espírito de Deus pairava sobre a face das águas.</v>
         <v n="3">E disse Deus: haja luz. E houve luz.</v>
-    ...
+    …
 """
 
 from gettext import gettext as _
@@ -249,7 +249,7 @@ class VerseViewXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -332,7 +332,7 @@ class VerseViewXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = None
@@ -355,7 +355,7 @@ class VerseViewXMLBible( Bible ):
             #print( BBB ); halt
 
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "VerseView XML Bible Book object"
             thisBook.objectTypeString = "VerseView"
@@ -367,7 +367,7 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "vb26 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.chapterTag, element.tag ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
             self.saveBook( thisBook )
     # end of VerseViewXMLBible.__validateAndExtractBook
 
@@ -380,7 +380,7 @@ class VerseViewXMLBible( Bible ):
         """
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 3:
-            print( _("Validating XML chapter...") )
+            print( _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -408,7 +408,7 @@ class VerseViewXMLBible( Bible ):
         """
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 3:
-            print( _("Validating XML verse...") )
+            print( _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoSubelements( verse, location, 'sg20' )

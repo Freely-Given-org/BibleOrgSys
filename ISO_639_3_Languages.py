@@ -86,7 +86,7 @@ class ISO_639_3_Languages:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML
@@ -165,7 +165,7 @@ def demo():
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
     print( lg ) # Just print a summary
     for testCode in ('qwq','mbt','MBT','abk',):
-        print( "  Testing {}...".format( testCode ) )
+        print( "  Testing {}…".format( testCode ) )
         if not lg.isValidLanguageCode( testCode ):
             print( "    {} not found".format( testCode ) )
         else:
@@ -175,14 +175,14 @@ def demo():
             if part1Code is not None: print( "    Part1 code is {}".format(part1Code) )
             if part2Code is not None: print( "    Part2 code is {}".format(part2Code) )
     for testName in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        print( "  Testing {}...".format( testName ) )
+        print( "  Testing {}…".format( testName ) )
         code = lg.getLanguageCode( testName )
         if code is None:
             print( "    {} not found".format( testName ) )
         else:
             print( "    {} -> {}".format( testName, code ) )
     for testNamePortion in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        print( "  Testing {}...".format( testNamePortion ) )
+        print( "  Testing {}…".format( testNamePortion ) )
         matches = lg.getNameMatches( testNamePortion )
         for match in matches:
             print( "    Found {} = {}".format( lg.getLanguageCode(match), match ) )

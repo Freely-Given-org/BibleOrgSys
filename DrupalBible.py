@@ -42,7 +42,7 @@ e.g.,
     EXO|Exodus|EXO|40
     LEV|Leviticus|LEV|27
     NUM|Numbers|NUM|36
-    ...
+    …
     JUD|Jude|JUD|1
     REV|Revelation|REV|22
 
@@ -53,31 +53,31 @@ e.g.,
     GEN|1|3||And God said, Let there be light: and there was light.
     GEN|1|4||And God saw the light, that [it was] good: and God divided the light from the darkness.
     GEN|1|5||And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.
-    ...
+    …
     PS|2|12||Kiss the Son, lest he be angry, and ye perish [from] the way, when his wrath is kindled but a little. Blessed [are] all they that put their trust in him.
     PS|3|1||<A Psalm of David, when he fled from Absalom his son.> LORD, how are they increased that trouble me! many [are] they that rise up against me.
     PS|3|2||Many [there be] which say of my soul, [There is] no help for him in God. Selah.
-    ...
+    …
     ROM|16|26||But now is made manifest, and by the scriptures of the prophets, according to the commandment of the everlasting God, made known to all nations for the obedience of faith:
     ROM|16|27||To God only wise, [be] glory through Jesus Christ for ever. Amen. <Written to the Romans from Corinthus, [and sent] by Phebe servant of the church at Cenchrea.>
     1CO|1|1||Paul, called [to be] an apostle of Jesus Christ through the will of God, and Sosthenes [our] brother,
-    ...
+    …
     REV|22|19||And if any man shall take away from the words of the book of this prophecy, God shall take away his part out of the book of life, and out of the holy city, and [from] the things which are written in this book.
     REV|22|20||He which testifieth these things saith, Surely I come quickly. Amen. Even so, come, Lord Jesus.
     REV|22|21||The grace of our Lord Jesus Christ [be] with you all. Amen.
 
 Limitations:
     Only checked one one file so far kjv.bc
-    <...> were converted to \\it ...\\it* (Psalms and signatures to Paul's letters.)
+    <…> were converted to \\it …\\it* (Psalms and signatures to Paul's letters.)
     Need to do Bible books codes properly -- current implementation is just a hack
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-05' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -233,7 +233,7 @@ class DrupalBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         status = 0 # 1 = getting chapters, 2 = getting verse data
         lastLine, lineCount = '', 0
@@ -242,9 +242,13 @@ class DrupalBible( Bible ):
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    logging.info( "      DrupalBible.load: Detected Unicode Byte Order Marker (BOM)" )
-                    line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
+                if lineCount==1:
+                    if line[0]==chr(65279): #U+FEFF
+                        logging.info( "DrupalBible.load1: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
+                        line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                    elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                        logging.info( "DrupalBible.load2: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
+                        line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
 
@@ -308,7 +312,7 @@ def testDB( TUBfilename ):
     import VerseReferences
     TUBfolder = "Tests/DataFilesForTests/DrupalTest/" # Must be the same as below
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     db = DrupalBible( TUBfolder, TUBfilename )
     db.load() # Load and process the file
@@ -357,8 +361,8 @@ def demo():
 
 
     if 1: # specified modules
-        single = ( "kjv", )
-        good = ( "kjv", )
+        single = ( 'kjv', )
+        good = ( 'kjv', )
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
@@ -376,7 +380,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testDB, parameters ) # have the pool do our loads
@@ -390,11 +394,17 @@ def demo():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

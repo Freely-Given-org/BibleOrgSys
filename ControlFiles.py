@@ -42,7 +42,7 @@ def readListFile( folder, filename, outputList, debug=False ):
         if not isinstance( outputList, list): raise ValueError('List expected here')
         oldlen = len( outputList )
 
-    if Controls['VerbosityLevel'] > 1: print( '    Loading list file', filename + '...' )
+    if Controls['VerbosityLevel'] > 1: print( '    Loading list file', filename + '…' )
     lines = []
     with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done
         for line in myFile:
@@ -64,7 +64,7 @@ def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
     displayFolder = folder
     if not displayFolder:
         displayFolder = 'current folder (' + os.getcwd() + ')'
-    #if 'VerbosityLevel' in GlobalControls and GlobalControls['VerbosityLevel'] > 1: print( '  Loading control file ' + filename + ' from ' + displayFolder + '...' )
+    #if 'VerbosityLevel' in GlobalControls and GlobalControls['VerbosityLevel'] > 1: print( '  Loading control file ' + filename + ' from ' + displayFolder + '…' )
     if debug: oldlen = len(controls)
 
     with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done

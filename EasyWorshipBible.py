@@ -177,7 +177,7 @@ class EasyWorshipBible( Bible ):
         Load the compressed data file and import book elements.
         """
         import zlib
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading {}…").format( self.sourceFilepath ) )
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             fileBytes = myFile.read()
         if BibleOrgSysGlobals.debugFlag: print( "  {:,} bytes read".format( len(fileBytes) ) )
@@ -279,7 +279,7 @@ class EasyWorshipBible( Bible ):
 
         # Now we have to decode the book text (compressed about 4x with zlib)
         for j, BBB in enumerate( BOS.getBookList() ):
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  Decoding {}...'.format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  Decoding {}…'.format( BBB ) )
             bookAbbrev, numChapters, numVerses, bookStart, bookLength, bookBytes = rawBooks[j]
             byteResult = zlib.decompress( bookBytes )
             textResult = byteResult.decode( 'utf8' )
@@ -346,7 +346,7 @@ def testEWB( TEWBfilename ):
 
     #TEWBfolder = os.path.join( testFolder, TEWBfilename+'/' )
     TEWBfolder = testFolder
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the EasyWorship Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the EasyWorship Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TEWBfolder, TEWBfilename ) )
     ewb = EasyWorshipBible( TEWBfolder, TEWBfilename )
     keep = ewb.load() # Load and process the file
@@ -448,7 +448,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testEWB, parameters ) # have the pool do our loads

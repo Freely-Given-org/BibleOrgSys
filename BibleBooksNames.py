@@ -108,7 +108,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     assert divisionsNamesDict and booknameLeadersDict and bookNamesDict
     assert bookList
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)...").format( systemName, len(bookList) ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)…").format( systemName, len(bookList) ) )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -238,7 +238,7 @@ class BibleBooksNamesSystems:
                             picklesGood = False; break
             if picklesGood:
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__ExpandedDicts = pickle.load( pickleFile )
@@ -563,14 +563,14 @@ def demo():
     # Demo the BibleBooksNamesSystem object with a book list
     bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
     print( bbns2 ) # Just print a summary
-    print( "Checking book name inputs..." )
+    print( "Checking book name inputs…" )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
         print( "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBB(bookAbbrevInput)) )
-    print( "Checking division name inputs..." )
+    print( "Checking division name inputs…" )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
         print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
-    print( "Getting division booklists..." )
+    print( "Getting division booklists…" )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
         print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
 # end of demo

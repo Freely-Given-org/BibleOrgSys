@@ -223,7 +223,7 @@ class DBLBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("preload() from {}").format( self.sourceFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("DBLBible: Loading {} from {}...").format( self.name, self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("DBLBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -265,7 +265,7 @@ class DBLBible( Bible ):
             print( t("loadDBLLicense()") )
 
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading license data from {}...".format( licenseFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading license data from {}…".format( licenseFilepath ) )
         self.tree = ElementTree().parse( licenseFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -288,7 +288,7 @@ class DBLBible( Bible ):
             # Now process the actual metadata
             for element in self.tree:
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}...".format( sublocation ) )
+                #print( "\nProcessing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                 if element.tag in ( 'dateLicense', 'dateLicenseExpiry' ):
@@ -299,7 +299,7 @@ class DBLBible( Bible ):
                     DBLLicense[element.tag] = {}
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
-                        #print( "  Processing {}...".format( sub2location ) )
+                        #print( "  Processing {}…".format( sub2location ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
@@ -325,7 +325,7 @@ class DBLBible( Bible ):
             print( t("loadDBLMetadata()") )
 
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading supplied DBL metadata from {}...".format( mdFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
         self.tree = ElementTree().parse( mdFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -340,7 +340,7 @@ class DBLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoTail( element, location )
             for subelement in element:
                 sublocation = subelement.tag + ' ' + location
-                #print( "  Processing {}...".format( sublocation ) )
+                #print( "  Processing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                 assert subelement.tag == 'bookList'
@@ -355,7 +355,7 @@ class DBLBible( Bible ):
                 ourDict[bookListTag]['divisions'] = OrderedDict()
                 for sub2element in subelement:
                     sub2location = sub2element.tag + ' ' + sublocation
-                    #print( "    Processing {}...".format( sub2location ) )
+                    #print( "    Processing {}…".format( sub2location ) )
                     BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
                     if sub2element.tag in ('name','nameLocal','abbreviation','abbreviationLocal','description','descriptionLocal','range','tradition'):
                         if BibleOrgSysGlobals.debugFlag: assert sub2element.text
@@ -371,7 +371,7 @@ class DBLBible( Bible ):
                         ourDict[bookListTag]['books'] = []
                         for sub3element in sub2element:
                             sub3location = sub3element.tag + ' ' + sub2location
-                            #print( "        Processing {}...".format( sub3location ) )
+                            #print( "        Processing {}…".format( sub3location ) )
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                             BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                             BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
@@ -385,14 +385,14 @@ class DBLBible( Bible ):
                         #items = sub2element.items()
                         #for sub3element in sub2element:
                             #sub3location = sub3element.tag + ' ' + sub2location
-                            #print( "      Processing {}...".format( sub3location ) )
+                            #print( "      Processing {}…".format( sub3location ) )
                             #BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                             #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                             #BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                             #assert sub3element.tag == 'books' # Don't bother saving this extra level
                             #for sub4element in sub3element:
                                 #sub4location = sub4element.tag + ' ' + sub3location
-                                #print( "        Processing {}...".format( sub4location ) )
+                                #print( "        Processing {}…".format( sub4location ) )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location )
                                 #BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
                                 #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location )
@@ -430,7 +430,7 @@ class DBLBible( Bible ):
             # Now process the actual metadata
             for element in self.tree:
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}...".format( sublocation ) )
+                #print( "\nProcessing {}…".format( sublocation ) )
                 self.suppliedMetadata['DBL'][element.tag] = OrderedDict()
                 if element.tag == 'identification':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -438,7 +438,7 @@ class DBLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
-                        #print( "  Processing {}...".format( sub2location ) )
+                        #print( "  Processing {}…".format( sub2location ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('name','nameLocal','abbreviation','abbreviationLocal','scope','description','dateCompleted','systemId','bundleProducer'):
@@ -692,7 +692,7 @@ class DBLBible( Bible ):
             print( t("loadDBLStyles()") )
 
         styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading styles from {}...".format( styleFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading styles from {}…".format( styleFilepath ) )
         self.tree = ElementTree().parse( styleFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -719,7 +719,7 @@ class DBLBible( Bible ):
             # Now process the style properties
             for subelement in element:
                 sublocation = subelement.tag + ' ' + location
-                #print( "  Processing {}...".format( sublocation ) )
+                #print( "  Processing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                 if subelement.tag in ( 'name', 'description' ):
@@ -755,7 +755,7 @@ class DBLBible( Bible ):
             # Now process the actual properties and styles
             for element in self.tree:
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}...".format( sublocation ) )
+                #print( "\nProcessing {}…".format( sublocation ) )
                 if element.tag == 'property':
                     if 'properties' not in DBLStyles: DBLStyles['properties'] = OrderedDict()
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
@@ -791,7 +791,7 @@ class DBLBible( Bible ):
 
         #versificationFilename = 'versification.vrs'
         #versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading versification from {}...".format( versificationFilepath ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading versification from {}…".format( versificationFilepath ) )
 
         #DBLVersification = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
@@ -871,7 +871,7 @@ class DBLBible( Bible ):
         #languageName = languageFilename[:-4] # Remove the .lds
 
         #languageFilepath = os.path.join( self.sourceFilepath, languageFilename )
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading language from {}...".format( languageFilepath ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading language from {}…".format( languageFilepath ) )
 
         #DBLLanguage = { 'Filename':languageName }
 
@@ -915,7 +915,7 @@ class DBLBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("loadBooks()") )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DBLBible: Loading {} books from {}...").format( self.name, self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 
         if not self.preloadDone: self.preload()
 
@@ -1036,7 +1036,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( DBLBible, parameters ) # have the pool do our loads

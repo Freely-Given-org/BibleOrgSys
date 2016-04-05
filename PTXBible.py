@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial Paratext Bibles
     along with any enclosed metadata.
 
 The raw material for this module is produced by the UBS Paratext program
-    if the File / Backup Project / To File... menu is used.
+    if the File / Backup Project / To File… menu is used.
 """
 
 from gettext import gettext as _
@@ -208,7 +208,7 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
 
 
 
-# The following loadPTX...() functions are placed here because
+# The following loadPTX…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
 def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     """
@@ -339,7 +339,7 @@ def loadPTXLanguages( BibleObject ):
         languageName = languageFilename[:-4] # Remove the .lds
 
         languageFilepath = os.path.join( BibleObject.sourceFilepath, languageFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading language from {}...".format( languageFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading language from {}…".format( languageFilepath ) )
 
         assert languageName not in PTXLanguages
         PTXLanguages[languageName] = {}
@@ -389,7 +389,7 @@ def loadPTXVersifications( BibleObject ):
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
+    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}…".format( versificationFilepath ) )
 
     #PTXVersifications = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
@@ -407,7 +407,7 @@ def loadPTXVersifications( BibleObject ):
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
         versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}...".format( versificationFilepath ) )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}…".format( versificationFilepath ) )
 
         assert versificationName not in PTXVersifications
         PTXVersifications[versificationName] = {}
@@ -649,7 +649,7 @@ class PTXBible( Bible ):
         bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
         if not os.path.exists( bookNamesFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading books names data from {}...".format( bookNamesFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.tree = ElementTree().parse( bookNamesFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -705,7 +705,7 @@ class PTXBible( Bible ):
         projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUsers.xml' )
         if not os.path.exists( projectUsersFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}...".format( projectUsersFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.tree = ElementTree().parse( projectUsersFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -728,7 +728,7 @@ class PTXBible( Bible ):
             # Now process the actual entries
             for element in self.tree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #print( "Processing {}...".format( elementLocation ) )
+                #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -747,7 +747,7 @@ class PTXBible( Bible ):
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #print( "  Processing {}...".format( sublocation ) )
+                        #print( "  Processing {}…".format( sublocation ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -775,7 +775,7 @@ class PTXBible( Bible ):
         lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
         if not os.path.exists( lexiconFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}...".format( lexiconFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}…".format( lexiconFilepath ) )
         self.tree = ElementTree().parse( lexiconFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -790,7 +790,7 @@ class PTXBible( Bible ):
             # Now process the actual items
             for subelement in element:
                 elementLocation = subelement.tag + ' in ' + treeLocation
-                #print( "Processing {}...".format( elementLocation ) )
+                #print( "Processing {}…".format( elementLocation ) )
 
                 # Now process the subelements
                 if subelement.tag == 'Lexeme':
@@ -815,7 +815,7 @@ class PTXBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, elementLocation )
                     for sub2element in subelement:
                         sublocation = sub2element.tag + ' in ' + elementLocation
-                        #print( "  Processing {}...".format( sublocation ) )
+                        #print( "  Processing {}…".format( sublocation ) )
                         if sub2element.tag == 'Sense':
                             BibleOrgSysGlobals.checkXMLNoText( sub2element, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sublocation )
@@ -828,7 +828,7 @@ class PTXBible( Bible ):
                             assert senseID and senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs']
                             for sub3element in sub2element:
                                 sub2location = sub3element.tag + ' in ' + sublocation
-                                #print( "    Processing {}...".format( sub2location ) )
+                                #print( "    Processing {}…".format( sub2location ) )
                                 if sub3element.tag == 'Gloss':
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub2location )
                                     BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub2location )
@@ -864,7 +864,7 @@ class PTXBible( Bible ):
             # Now process the actual entries
             for element in self.tree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #print( "Processing {}...".format( elementLocation ) )
+                #print( "Processing {}…".format( elementLocation ) )
 
                 # Now process the subelements
                 if element.tag in ( 'Language', 'FontName', 'FontSize', ):
@@ -883,7 +883,7 @@ class PTXBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                     for subelement in element:
                         sublocation = subelement.tag + ' in ' + elementLocation
-                        #print( "  Processing {}...".format( sublocation ) )
+                        #print( "  Processing {}…".format( sublocation ) )
                         if subelement.tag == 'item':
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
@@ -909,7 +909,7 @@ class PTXBible( Bible ):
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading spelling status data from {}...".format( spellingStatusFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.tree = ElementTree().parse( spellingStatusFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -933,7 +933,7 @@ class PTXBible( Bible ):
             # Now process the actual entries
             for element in self.tree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #print( "Processing {}...".format( elementLocation ) )
+                #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -952,7 +952,7 @@ class PTXBible( Bible ):
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #print( "  Processing {}...".format( sublocation ) )
+                        #print( "  Processing {}…".format( sublocation ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -996,7 +996,7 @@ class PTXBible( Bible ):
             commentsList[commenterName] = []
 
             commentFilepath = os.path.join( self.sourceFilepath, commentFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading comments from {}...".format( commentFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading comments from {}…".format( commentFilepath ) )
 
             self.tree = ElementTree().parse( commentFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1018,7 +1018,7 @@ class PTXBible( Bible ):
                 # Now process the actual entries
                 for element in self.tree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #print( "Processing {}...".format( elementLocation ) )
+                    #print( "Processing {}…".format( elementLocation ) )
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1037,7 +1037,7 @@ class PTXBible( Bible ):
 
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                             assert subelement.tag not in commentDict # No duplicates please
@@ -1096,7 +1096,7 @@ class PTXBible( Bible ):
             BiblicalTermsDict[versionName] = {}
 
             BiblicalTermsFilepath = os.path.join( self.sourceFilepath, BiblicalTermsFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading BiblicalTerms from {}...".format( BiblicalTermsFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
 
             self.tree = ElementTree().parse( BiblicalTermsFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1111,7 +1111,7 @@ class PTXBible( Bible ):
                 # Now process the actual entries
                 for element in self.tree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #print( "Processing {}...".format( elementLocation ) )
+                    #print( "Processing {}…".format( elementLocation ) )
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1120,7 +1120,7 @@ class PTXBible( Bible ):
                     if element.tag == 'Renderings':
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -1207,7 +1207,7 @@ class PTXBible( Bible ):
             progressDict[versionName] = {}
 
             progressFilepath = os.path.join( self.sourceFilepath, progressFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading Progress from {}...".format( progressFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading Progress from {}…".format( progressFilepath ) )
 
             self.tree = ElementTree().parse( progressFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1222,7 +1222,7 @@ class PTXBible( Bible ):
                 # Now process the actual entries
                 for element in self.tree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #print( "Processing {}...".format( elementLocation ) )
+                    #print( "Processing {}…".format( elementLocation ) )
 
                     # Now process the subelements
                     if element.tag in ( 'ProgressBase', 'GetTextStage', 'ScrTextName' ):
@@ -1239,7 +1239,7 @@ class PTXBible( Bible ):
                         progressDict[versionName][element.tag] = []
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             if subelement.tag == 'string':
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -1252,7 +1252,7 @@ class PTXBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             if subelement.tag == 'Books':
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -1268,7 +1268,7 @@ class PTXBible( Bible ):
                         progressDict[versionName]['BookStatusDict'] = {}
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             bookStatusDict = {}
                             if subelement.tag == 'BookStatus':
                                 BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
@@ -1361,7 +1361,7 @@ class PTXBible( Bible ):
             printConfigDict[printConfigType] = {}
 
             printConfigFilepath = os.path.join( self.sourceFilepath, printConfigFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading PrintConfig from {}...".format( printConfigFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.tree = ElementTree().parse( printConfigFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1376,7 +1376,7 @@ class PTXBible( Bible ):
                 # Now process the actual entries
                 for element in self.tree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #print( "Processing {}...".format( elementLocation ) )
+                    #print( "Processing {}…".format( elementLocation ) )
 
                     # Now process the subelements
                     if element.tag in ( 'Stylesheet', 'PaperWidth', 'PaperHeight', 'MarginUnit', 'TopMarginFactor',
@@ -1402,7 +1402,7 @@ class PTXBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #print( "  Processing {}...".format( sublocation ) )
+                            #print( "  Processing {}…".format( sublocation ) )
                             if subelement.tag == 'Books':
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -1433,7 +1433,7 @@ class PTXBible( Bible ):
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
         if not os.path.exists( autocorrectFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading autocorrect from {}...".format( autocorrectFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading autocorrect from {}…".format( autocorrectFilepath ) )
         PTXAutocorrects = {}
 
         lineCount = 0
@@ -1488,7 +1488,7 @@ class PTXBible( Bible ):
             styleName = styleFilename[:-4] # Remove the .sty
 
             styleFilepath = os.path.join( self.sourceFilepath, styleFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading style from {}...".format( styleFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading style from {}…".format( styleFilepath ) )
 
             assert styleName not in PTXStyles
             PTXStyles[styleName] = {}
@@ -1553,7 +1553,7 @@ class PTXBible( Bible ):
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTXBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTXBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "PTXBible.loadBook: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
@@ -1577,7 +1577,7 @@ class PTXBible( Bible ):
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( '  ' + exp("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -1590,7 +1590,7 @@ class PTXBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -1598,7 +1598,7 @@ class PTXBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( exp("Loading {} PTX books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    print( exp("Loading {} PTX books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -1608,7 +1608,7 @@ class PTXBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  PTXBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                        #print( _("  PTXBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
@@ -1685,7 +1685,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( PTXBible, parameters ) # have the pool do our loads

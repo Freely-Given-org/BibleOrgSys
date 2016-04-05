@@ -43,7 +43,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
     <ve/></p><p sfm="li"><v id="5" bcv="MAT.1.5"/>Salamon nung Boasira maung. Boasira ai awiya Rehap.
     <ve/></p><p sfm="li"><v id="6" bcv="MAT.1.6"/>Zesi nung emo tuwa Dawidi auna maung. Dawidi nung
     </p><p sfm="li">Solomonna maung. Solomonna ai awiya Yurayara bauno noi.
-    ...
+    …
 """
 
 from gettext import gettext as _
@@ -274,9 +274,9 @@ class USFXXMLBible( Bible ):
         Load the XML data file -- we should already know the filepath.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USFXXMLBible.load: Loading {!r} from {!r}...").format( self.name, self.sourceFilepath ) )
+            print( _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
 
-                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
+                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}…").format( BBB ) )
                         #self.thisBook = BibleBook( self, BBB )
                         #self.thisBook.objectNameString = "OSIS XML Bible Book object"
                         #self.thisBook.objectTypeString = "OSIS"
@@ -383,7 +383,7 @@ class USFXXMLBible( Bible ):
         Load the book container from the XML data file.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( _("USFXXMLBible.loadBook: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+            print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( self.name, self.sourceFolder ) )
         assert bookElement.tag == 'book'
         mainLocation = self.name + " USFX book"
 
@@ -397,7 +397,7 @@ class USFXXMLBible( Bible ):
         BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bookCode )
         mainLocation = "{} USFX {} book".format( self.name, BBB )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("USFXXMLBible.loadBook: Loading {} from {}...").format( BBB, self.name ) )
+            print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )
         BibleOrgSysGlobals.checkXMLNoText( self.tree, mainLocation, '4f6h' )
         BibleOrgSysGlobals.checkXMLNoTail( self.tree, mainLocation, '1wk8' )
 
@@ -546,7 +546,7 @@ class USFXXMLBible( Bible ):
         Load the paragraph (p or q) container from the XML data file.
         """
         #if BibleOrgSysGlobals.verbosityLevel > 3:
-            #print( _("USFXXMLBible.loadParagraph: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+            #print( _("USFXXMLBible.loadParagraph: Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         V = None
         pTag, pText = paragraphElement.tag, clean(paragraphElement.text)

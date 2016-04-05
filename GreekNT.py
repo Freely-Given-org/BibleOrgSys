@@ -112,7 +112,7 @@ class GreekNT( Bible ):
             for filename in fileList:
                 if filename.lower().endswith('.txt'):
                     thisFilepath = os.path.join( self.sourceFilepath, filename )
-                    #if BibleOrgSysGlobals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
+                    #if BibleOrgSysGlobals.debugFlag: print( "Trying {}…".format( thisFilepath ) )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
@@ -147,7 +147,7 @@ class GreekNT( Bible ):
 
 
     def load( self ):
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading Greek NT from {}...".format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading Greek NT from {}…".format( self.sourceFilepath ) )
         for BBB in Greek.morphgntBooks:
             self.loadBook( BBB, Greek.morphgntFilenames[BBB] )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} books loaded.".format( len(self.books) ) )
@@ -211,7 +211,7 @@ class GreekNT( Bible ):
         self.thisBook.objectNameString = "Morph Greek NT Bible Book object"
         self.thisBook.objectTypeString = "MorphGNT"
         filepath = os.path.join( self.sourceFilepath, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading {}...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading {}…".format( filename ) )
         lastLine, lineCount = '', 0
         lastC = lastV = None
         with open( filepath, encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -446,7 +446,7 @@ def demo():
     fileFolder = "../../../ExternalPrograms/morphgnt/sblgnt/"
 
     # Demonstrate the Greek NT class
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek NT class..." )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek NT class…" )
     testReference = SimpleVerseKey('MAT', '1', '1')
     #print( testFolder, testReference )
     gNT = GreekNT( fileFolder ) # Load and process the XML

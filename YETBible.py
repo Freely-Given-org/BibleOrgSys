@@ -32,28 +32,28 @@ e.g.,
     info    locale  en
     book_name       1       Genesis
     book_name       2       Exodus
-    ...
+    …
     verse   1       1       1       In the beginning God created the heaven and the earth.
     verse   1       1       2       @@And the earth was without form, and void; and darkness @9was@7 upon the face of the deep. And the Spirit of God moved upon the face of the waters.
     verse   1       1       3       And God said, Let there be light: and there was light.
     verse   1       1       4       @@And God saw the light, that @9it was@7 good: and God divided the light from the darkness.
     verse   1       1       5       And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.
     verse   1       1       6       @@@^And God said, Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.
-    ...
+    …
 Plus optional
     xref    40      1       23      1       @<ta:1443598@>Mrk. 7:14@/
     xref    40      2       6       1       @<ta:2098435@>Act. 5:2@/
-    ...
+    …
     footnote        40      1       11      1       1:11 @9word @7Some note about word in Mat 1:11.
     footnote        40      1       16      1       1:16 @9Christ @7Not in all versions.
-    ...
+    …
 Plus optional
     pericope        40      1       1       Heading to precede Mat 1:1 here
     parallel        Luk. 3:23-38
     pericope        40      1       18      Heading2 here
     parallel        Luk. 2:1-7
     parallel        Jhn. 3:2-7
-    ...
+    …
 
 Limitations:
     Unsure whether italic codes in verse text could just be \it instead of \add
@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -80,7 +80,7 @@ import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
 
-filenameEndingsToAccept = ('.YET',) # Must be UPPERCASE
+filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
 
 
 
@@ -215,7 +215,7 @@ class YETBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         def decodeVerse( encodedVerseString ):
             """
@@ -467,7 +467,7 @@ def testYB( TUBfilename ):
     import VerseReferences
     TUBfolder = "../../../../../Data/Work/Bibles/YET modules/" # Must be the same as below
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     yb = YETBible( TUBfolder, TUBfilename )
     yb.load() # Load and process the file
@@ -516,8 +516,8 @@ def demo():
 
 
     if 1: # specified modules
-        single = ( "kjv", )
-        good = ( "kjv", "kjv-red", "in-tsi", )
+        single = ( 'kjv', )
+        good = ( 'kjv', 'kjv-red', 'in-tsi', )
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
@@ -535,7 +535,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testYB, parameters ) # have the pool do our loads
@@ -549,11 +549,16 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

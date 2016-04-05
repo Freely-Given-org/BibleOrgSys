@@ -892,7 +892,7 @@ class InternalBible:
                         found = False
                         break
                 if not found: continue
-                #print( "  getXRefBBB: p...", bookName )
+                #print( "  getXRefBBB: p…", bookName )
                 BBB = self.bookNameDict[bookName]
                 count += 1
             if count == 1: # Found exactly one

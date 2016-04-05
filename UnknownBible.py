@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-28' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.28'
@@ -729,7 +729,7 @@ def demo():
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying (but not loading) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
@@ -738,7 +738,7 @@ def demo():
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (but not books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -746,7 +746,7 @@ def demo():
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (incl. books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -754,7 +754,7 @@ def demo():
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (but not books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -762,7 +762,7 @@ def demo():
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading (incl. books) {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -770,7 +770,7 @@ def demo():
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible F{}/ Processing {}...".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible F{}/ Processing {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
@@ -783,7 +783,15 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #from multiprocessing import freeze_support
+    #freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

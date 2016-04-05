@@ -252,7 +252,7 @@ class UnboundBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['Unbound'] = {}
@@ -378,7 +378,7 @@ def testUB( TUBfilename ):
     testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/" # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     ub = UnboundBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
@@ -455,7 +455,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testUB, parameters ) # have the pool do our loads

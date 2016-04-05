@@ -56,9 +56,9 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.62</version>
-      <date>2014-02-24</date>
-      <title>USFM 2.4 markers list</title>
+      <version>0.63</version>
+      <date>2016-04-04</date>
+      <title>USFM 2.4 markers list (with NET08 extensions)</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://paratext.ubs-translations.org/usfm</identifier>
       <rights>Public Domain</rights>
@@ -598,7 +598,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <deprecated>No</deprecated>
-    <description>A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\x...\x*). They are also typically separated from the main text of Scripture using a different type style and alignment.</description>
+    <description>A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\x…\x*). They are also typically separated from the main text of Scripture using a different type style and alignment.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -608,7 +608,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <level>Newline</level>
     <numberable>No</numberable>
     <nests>No</nests>
-    <hasContent>Always</hasContent>
+    <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
     <occursIn>Text</occursIn>
@@ -1243,7 +1243,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <deprecated>No</deprecated>
-    <description>A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots "..."). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \fq. An additional marker – \fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives.</description>
+    <description>A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots "…"). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \fq. An additional marker – \fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -1304,6 +1304,22 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <occursIn>Footnote</occursIn>
     <deprecated>No</deprecated>
     <description>To mark the location of a verse number in the the text quotation or alternative translation</description>
+  </USFMMarker>
+
+  <!-- fn is not in USFM 2.4 document, but is found in NET08 in Paratext 7.5 -->
+  <USFMMarker>
+    <nameEnglish>Footnote number</nameEnglish>
+    <marker>fn</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <numberable>No</numberable>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>To mark the location of a sequential footnote number in the the text quotation or alternative translation</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -1945,7 +1961,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <deprecated>No</deprecated>
-    <description>Categories can optionally be assigned to extended study notes or sidebars by supplying a category tag (name) inside of opening and closing \cat ... \cat* markers. Category tags should be restricted to alpha-numeric characters. A list of category tags are defined individually and uniquely for each study Bible project.</description>
+    <description>Categories can optionally be assigned to extended study notes or sidebars by supplying a category tag (name) inside of opening and closing \cat … \cat* markers. Category tags should be restricted to alpha-numeric characters. A list of category tags are defined individually and uniquely for each study Bible project.</description>
   </USFMMarker>
 
 <!-- 99/ Long deprecated markers -->
@@ -1991,7 +2007,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <deprecated>Yes</deprecated>
-    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Was really a duplicate of \w ... \w* used for marking words in the Scripture text which are included in the wordlist.</description>
+    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Was really a duplicate of \w … \w* used for marking words in the Scripture text which are included in the wordlist.</description>
   </USFMMarker>
 
   <USFMMarker>

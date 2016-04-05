@@ -30,7 +30,7 @@ e.g.,
     "1","1","1","Cuando Dios, en el principio, creó* los cielos y la tierra,"
     "1","1","2","la tierra era una masa caótica* y las tinieblas cubrían el abismo, mientras un viento impetuoso sacudía la superficie de las aguas."
     "1","1","3","Entonces dijo Dios: — ¡Que exista la luz! Y la luz existió."
-    ...
+    …
     "66","22","19","Si suprime algo del mensaje profético del libro, Dios lo desgajará del árbol de la vida y lo excluirá de la ciudad santa descritos en este libro."
     "66","22","20","El que da fe de todo esto proclama: — Sí, estoy a punto de llegar. ¡Amén! ¡Ven, Señor Jesús!"
     "66","22","21","Que la gracia de Jesús, el Señor, esté con todos. Amén."
@@ -206,7 +206,7 @@ class CSVBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         lastLine, lineCount = '', 0
         BBB = None
@@ -339,7 +339,7 @@ def testCSV( CSVfolder ):
     # Crudely demonstrate the CSV Bible class
     import VerseReferences
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the CSV Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the CSV Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( CSVfolder ) )
     vb = CSVBible( CSVfolder, "demo" )
     vb.load() # Load and process the file
@@ -411,7 +411,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testCSV, parameters ) # have the pool do our loads

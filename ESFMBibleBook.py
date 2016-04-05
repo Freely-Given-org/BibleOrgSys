@@ -349,7 +349,7 @@ class ESFMBibleBook( BibleBook ):
 
 
         # Main code for load
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -456,7 +456,7 @@ def demo():
 
 
     def demoFile( name, filename, folder, BBB ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is {!r}".format( EBB.getField( 'id' ) ) )
@@ -493,7 +493,7 @@ def demo():
         name, testFolder = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         #name, testFolder = "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

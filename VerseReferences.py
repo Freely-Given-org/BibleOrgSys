@@ -838,7 +838,7 @@ class VerseRangeKey():
             self.verseKeysList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
             V = V1
             if BibleOrgSysGlobals.debugFlag:
-                print( "  Expanding range from {} to {}...".format( self.rangeStart.getShortText(), self.rangeEnd.getShortText() ) )
+                print( "  Expanding range from {} to {}…".format( self.rangeStart.getShortText(), self.rangeEnd.getShortText() ) )
             assert int(V2)>int(V1) or S2!=S1
             while True:
                 V = str( int(V) + 1 )
@@ -1666,7 +1666,7 @@ def demo():
     goodVerseStrings = ( 'SA2_19:12', 'REV_11:12!b', )
     badVerseStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test SimpleVerseKey
-        print( "\n\nTesting SimpleVerseKey..." )
+        print( "\n\nTesting SimpleVerseKey…" )
         for something in ( ('GEN','1','1'), ('GEN','1','1','a'), ):
             print( "  Testing SimpleVerseKey with {!r}".format( something ) )
             vK = SimpleVerseKey( *something )
@@ -1677,7 +1677,7 @@ def demo():
             vK = SimpleVerseKey( someGoodString )
             print( '   ', vK )
             assert vK.getVerseKeyText() == someGoodString
-        print( '  BAD STUFF...' )
+        print( '  BAD STUFF…' )
         for someBadString in badVerseStrings:
             print( "  Testing SimpleVerseKey with bad {!r}".format( someBadString ) )
             try: print( '  ', repr(someBadString), SimpleVerseKey( someBadString ) )
@@ -1686,13 +1686,13 @@ def demo():
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
     if 1: # test SimpleVersesKey
-        print( "\n\nTesting SimpleVersesKey..." )
+        print( "\n\nTesting SimpleVersesKey…" )
         for someGoodString in goodVersesStrings:
             print( "  Testing SimpleVersesKey with good {!r}".format( someGoodString ) )
             vK = SimpleVersesKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        print( '  BAD STUFF...' )
+        print( '  BAD STUFF…' )
         for someBadString in badVersesStrings:
             print( "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: print( '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
@@ -1701,13 +1701,13 @@ def demo():
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test VerseRangeKey
-        print( "\n\nTesting VerseRangeKey..." )
+        print( "\n\nTesting VerseRangeKey…" )
         for someGoodString in goodRangeStrings:
             print( "  Testing VerseRangeKey with good {!r}".format( someGoodString ) )
             vK = VerseRangeKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        print( '  BAD STUFF...' )
+        print( '  BAD STUFF…' )
         for someBadString in badRangeStrings:
             print( "  Testing VerseRangeKey with bad {!r}".format( someBadString ) )
             try: print( '  ', repr(someBadString), VerseRangeKey( someBadString ) )
@@ -1717,13 +1717,13 @@ def demo():
                           + ( 'GEN_1:1,3-4', 'GEN_1:1-3,4', 'EXO_1:1!b,3-4', 'EXO_1:1-3!a,4!c', )
     badFlexibleStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1234:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test FlexibleVersesKey
-        print( "\n\nTesting FlexibleVersesKey..." )
+        print( "\n\nTesting FlexibleVersesKey…" )
         for someGoodString in goodFlexibleStrings:
             print( "  Testing FlexibleVersesKey with good {!r}".format( someGoodString ) )
             vK = FlexibleVersesKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        print( '  BAD STUFF...' )
+        print( '  BAD STUFF…' )
         for someBadString in badFlexibleStrings:
             print( "  Testing FlexibleVersesKey with bad {!r}".format( someBadString ) )
             try: print( '  ', repr(someBadString), FlexibleVersesKey( someBadString ) )

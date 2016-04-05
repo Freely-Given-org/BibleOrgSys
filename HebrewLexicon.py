@@ -75,7 +75,7 @@ class AugmentedStrongsIndexFileConverter:
         which maps Strongs Hebrew numbers (without any leading 'H') to an internal id number.
 
     The data file looks like this:
-        ...
+        …
         <w aug="8671">nyr</w>
         <w aug="8672">nys</w>
         <w aug="8673">nyt</w>
@@ -122,7 +122,7 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
         self.tree = ElementTree().parse( XMLFilepath )
@@ -239,7 +239,7 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
         self.tree = ElementTree().parse( XMLFilepath )
@@ -383,7 +383,7 @@ class HebrewStrongsFileConverter:
             <source>(Aramaic) corresponding to <w src="H1">1</w></source>
             <usage>father.</usage>
         </entry>
-        ...
+        …
         <entry id="H8673">
             <w pos="n" pron="tish-eem'" xlit="tishʻîym" xml:lang="heb">תִּשְׁעִים</w>
             <source>multiple from <w src="H8672">8672</w>;</source>
@@ -435,7 +435,7 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
         self.tree = ElementTree().parse( XMLFilepath )
@@ -463,7 +463,7 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( entryID ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
@@ -615,7 +615,7 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
         self.tree = ElementTree().parse( XMLFilepath )
@@ -643,7 +643,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} part...".format( repr(partID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} part…".format( repr(partID) ) )
             elif attrib == "title":
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
@@ -670,7 +670,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} section...".format( repr(sectionID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} section…".format( repr(sectionID) ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -695,7 +695,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( repr(entryID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry…".format( repr(entryID) ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
@@ -828,7 +828,7 @@ class HebrewLexiconIndex:
             result2 = self._getStrongsNumberFromLexiconCode2( key )
             assert result1 == result2
             return result1
-        # Normally...
+        # Normally…
         if key in self.IndexEntries2: return self.IndexEntries2[key]
     # end of HebrewLexiconIndex.getStrongsNumberFromLexiconCode
 
@@ -1238,7 +1238,7 @@ def demo():
 
 
     if 1: # demonstrate the Hebrew Lexicon converter classes
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes…" )
 
         print()
         hix = AugmentedStrongsIndexFileConverter()
@@ -1268,7 +1268,7 @@ def demo():
 
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon Index class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon Index class…" )
         hix = HebrewLexiconIndex( testFolder ) # Load and process the XML
         print( hix ) # Just print a summary
         print()
@@ -1282,7 +1282,7 @@ def demo():
 
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the simple Hebrew Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the simple Hebrew Lexicon class…" )
         hl = HebrewLexiconSimple( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()
@@ -1298,7 +1298,7 @@ def demo():
             print( " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()

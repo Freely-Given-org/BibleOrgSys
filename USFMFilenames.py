@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-21' # by RJH
+LastModifiedDate = '2016-04-05' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.66'
@@ -510,17 +510,17 @@ class USFMFilenames:
         """
         #if BibleOrgSysGlobals.debugFlag: print( "getMaximumPossibleFilenameTuples( {} )".format( strictCheck ) )
 
-        resultString, resultList = "Confirmed", self.getConfirmedFilenameTuples()
+        resultString, resultList = 'Confirmed', self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
         if len(resultListExt) > len(resultList):
-            resultString, resultList = "External", resultListExt
+            resultString, resultList = 'External', resultListExt
         resultListInt = self.getPossibleFilenameTuplesInt()
         if len(resultListInt) > len(resultList):
-            resultString, resultList = "Internal", resultListInt
+            resultString, resultList = 'Internal', resultListInt
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
 
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-            #if BibleOrgSysGlobals.debugFlag: print( "  getMaximumPossibleFilenameTuples doing strictCheck..." )
+            #if BibleOrgSysGlobals.debugFlag: print( "  getMaximumPossibleFilenameTuples doing strictCheck…" )
             for BBB,filename in resultList[:]:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
                 #print( 'UFN', repr(firstLine) )

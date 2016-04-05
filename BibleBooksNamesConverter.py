@@ -86,12 +86,12 @@ class BibleBooksNamesConverter:
         if not self.__XMLSystems: # Only ever do this once
             if folder==None: folder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookNames" ) # Relative to module, not cwd
             self.__XMLFolder = folder
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book names systems from {}...").format( folder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book names systems from {}…").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(self.__filenameBase.upper()+"_"):
                     booksNamesSystemCode = filepart[len(self.__filenameBase)+1:]
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} books names system from {}...").format( booksNamesSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.__XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
@@ -281,9 +281,9 @@ class BibleBooksNamesConverter:
             for BBB in bookList: # Just check this list is valid
                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Expanding input abbreviations…") )
         for systemName in self.__BookNamesSystemsDict:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {}...").format( systemName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {}…").format( systemName ) )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
             self.__expandedInputSystems[systemName] = self.expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
@@ -301,7 +301,7 @@ class BibleBooksNamesConverter:
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
         # We'll create a number of dictionaries
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing data into Python dictionary...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing data into Python dictionary…") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
             #print( booksNamesSystemCode )
@@ -380,7 +380,7 @@ class BibleBooksNamesConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
             #pickle.dump( self.__expandedInputSystems, myFile )
@@ -433,7 +433,7 @@ class BibleBooksNamesConverter:
 
         raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -488,7 +488,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -507,7 +507,7 @@ class BibleBooksNamesConverter:
         def exportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
             """Exports theDict to theFile."""
             def convertEntry( entry ):
-                """Convert special characters in an entry..."""
+                """Convert special characters in an entry…"""
                 result = ""
                 for field in entry:
                     if result: result += ", " # Separate the fields
@@ -535,7 +535,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.__filenameBase + "_Tables.h" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 
         ifdefName = self.__filenameBase.upper() + "_Tables_h"

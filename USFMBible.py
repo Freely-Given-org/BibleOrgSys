@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-05' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -379,8 +379,8 @@ class USFMBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( exp("Loading {} USFM books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
-                    print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    print( _("Loading {} {} books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), 'USFM', BibleOrgSysGlobals.maxProcesses ) )
+                    print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
@@ -486,9 +486,13 @@ def demo():
                 title, nameDict = None, {}
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
-                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
+                    if lineCount==1:
+                        if line[0]==chr(65279): #U+FEFF
+                            logging.info( "USFMBible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
+                            line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                        elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                            logging.info( "USFMBible.findInfo2: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
+                            line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
@@ -535,11 +539,15 @@ def demo():
 #end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

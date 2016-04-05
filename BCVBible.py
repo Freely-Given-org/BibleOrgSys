@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2016-04-06' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -250,9 +250,13 @@ class BCVBible( Bible ):
         with open( metadataFilepath, 'rt' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( t("loadMetadata: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
-                    line = line[1:] # Remove the Byte Order Marker (BOM)
+                if lineCount==1:
+                    if line[0]==chr(65279): #U+FEFF
+                        logging.info( "loadMetadata1: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                        line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                    elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                        logging.info( "loadMetadata2: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                        line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
                 if not line: continue # Just discard blank lines
@@ -317,7 +321,7 @@ class BCVBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
-            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  BCVBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
             bcvBB = BCVBibleBook( self, BBB )
             bcvBB.load( self.sourceFolder )
             if bcvBB._processedLines:
@@ -340,7 +344,7 @@ class BCVBible( Bible ):
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                print( '  ' + t("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                print( '  ' + t("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
             bcvBB = BCVBibleBook( self, BBB )
             bcvBB.load( self.sourceFolder )
             bcvBB.validateMarkers()
@@ -354,14 +358,14 @@ class BCVBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( t("Loading {} BCV books using {} CPUs...").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    print( t("Loading {} BCV books using {} CPUs…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -371,7 +375,7 @@ class BCVBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  BCVBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                        #print( _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( t("No books to load in {}!").format( self.sourceFolder ) )
@@ -404,7 +408,7 @@ class BCVBibleBook( BibleBook ):
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-            print( '  ' + t("Loading {} metadata from {!r}...").format( self.BBB, metadataFilepath ) )
+            print( '  ' + t("Loading {} metadata from {!r}…").format( self.BBB, metadataFilepath ) )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         self.givenCVList = None
@@ -422,7 +426,7 @@ class BCVBibleBook( BibleBook ):
                 processed = False
 #BCVVersion = 1.0
 #WorkName = Matigsalug
-#CVList = [('1', '1'), ('1', '2'), ('1', '3'), ('1', '4'), ('1', '5'), ...
+#CVList = [('1', '1'), ('1', '2'), ('1', '3'), ('1', '4'), ('1', '5'), …
                 for fieldName in ('BCVVersion','WorkName','CVList',):
                     if line.startswith( fieldName+' = ' ):
                         settingsDict[fieldName] = line[len(fieldName)+3:]
@@ -499,7 +503,7 @@ class BCVBibleBook( BibleBook ):
         # end of doaddLine
 
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {} from {}...").format( self.BBB, folder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {} from {}…").format( self.BBB, folder ) )
         self.sourceFolder = os.path.join( folder, self.BBB+'/' )
 
         # Read book metadata
@@ -608,7 +612,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testBCV, parameters ) # have the pool do our loads
@@ -655,7 +659,12 @@ if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support() # Multiprocessing support for frozen Windows executables
 
-    # Configure basic set-up
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 

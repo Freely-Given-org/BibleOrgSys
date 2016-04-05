@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.62'
@@ -238,7 +238,7 @@ class InternalBibleExtraList:
                 if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, InternalBibleExtra )
                 result += "\n  {}{} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
                 if j>=maxPrinted and dataLen>maxPrinted:
-                    result += "\n  ... ({} total entries)".format( dataLen )
+                    result += "\n  … ({} total entries)".format( dataLen )
                     break
         return result
     # end of InternalBibleExtraList.__str__
@@ -308,9 +308,9 @@ class InternalBibleEntry:
             #halt
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, {!r}, {!r}, {}, {!r} )" \
-                    #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
-                        #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
-                        #originalText[:35]+('...' if len(originalText)>35 else '') ) )
+                    #.format( marker, originalMarker, adjustedText[:35]+('…' if len(adjustedText)>35 else ''), \
+                        #cleanText[:35]+('…' if len(cleanText)>35 else ''), extras, \
+                        #originalText[:35]+('…' if len(originalText)>35 else '') ) )
             assert marker and isinstance( marker, str ) # Mustn't be blank
             assert '\\' not in marker and ' ' not in marker and '*' not in marker
             assert isinstance( cleanText, str )
@@ -353,7 +353,7 @@ class InternalBibleEntry:
         """
         Just display a very abbreviated form of the entry.
         """
-        cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'...'+self.cleanText[-50:])
+        cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'…'+self.cleanText[-50:])
         return "InternalBibleEntry object: {} = {}{}".format( self.marker, repr(cleanAbbreviation), '+extras' if self.extras else '' )
     # end of InternalBibleEntry.__str__
 
@@ -467,10 +467,10 @@ class InternalBibleEntryList:
             for j, entry in enumerate( self.data ):
                 if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, InternalBibleEntry )
                 cleanAbbreviation = entry.cleanText if entry.cleanText is None or len(entry.cleanText)<100 \
-                                                    else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
+                                                    else (entry.cleanText[:50]+'…'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation), " + extras" if entry.extras else '' )
                 if j>=maxPrinted and dataLen>maxPrinted:
-                    result += "\n  ... ({} total entries)".format( dataLen )
+                    result += "\n  … ({} total entries)".format( dataLen )
                     break
         return result
     # end of InternalBibleEntryList.__str__
@@ -712,7 +712,7 @@ class InternalBibleIndex:
         # end of saveAnythingOutstanding
 
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries...").format( len(self.givenBibleEntries), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.name, self.BBB ) )
         if self.BBB not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
                                                 'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
             # Assume it's a C/V book
@@ -720,7 +720,7 @@ class InternalBibleIndex:
             lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
-                #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
+                #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
@@ -780,7 +780,7 @@ class InternalBibleIndex:
             lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
-                #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
+                #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
@@ -795,7 +795,7 @@ class InternalBibleIndex:
                 elif marker == 'v':
                     assert strC != '0' # Should be in a chapter by now
                     print( "Why do we have a verse number in a {} book?".format( self.BBB ) )
-                    print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
+                    print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                     saveAnythingOutstanding() # with the adjusted lineCount
                     if 0:
                         # Remove verse ranges, etc. and then save the verse number
@@ -845,7 +845,7 @@ class InternalBibleIndex:
         """
         Just run a quick internal check on the index.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries...").format( len(self.indexData), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries…").format( len(self.indexData), self.name, self.BBB ) )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( self )
 
         for ixKey in self.indexData:
@@ -912,7 +912,7 @@ class InternalBibleIndex:
 
                 previousMarker = nextMarker = None # But these skip over rem (remark markers)
                 for j, marker in enumerate( foundMarkers ):
-                    #print( self.BBB, C, V, j, marker, previousMarker, nextMarker )
+                    #print( 'CheckIndex2 {} {}:{} {}/ m={!r} pM={!r} nM={!r}'.format( self.BBB, C, V, j, marker, previousMarker, nextMarker ) )
 
                     # Work out the next marker (skipping over rem markers)
                     offset = 1
@@ -923,13 +923,17 @@ class InternalBibleIndex:
                         offset += 1
 
                     # Check the various series of markers
-                    if marker == 'cp': assert previousMarker in ('c','c~',None) # WEB Ps 151 gives None -- not totally sure why yet?
+                    if marker == 'cp':
+                        if self.BBB not in ('ESG','SIR'):
+                            assert previousMarker in ('c','c~',None) # WEB Ps 151 gives None -- not totally sure why yet?
                     elif marker == 'c#': assert nextMarker in ( 'v', 'vp#', )
                     elif marker == 'v':
                         if foundMarkers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    elif marker == 'vp#': assert nextMarker == 'v'
+                    elif marker == 'vp#':
+                        #print( nextMarker )
+                        if self.BBB!='ESG': assert nextMarker == 'v'
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )
@@ -1021,6 +1025,11 @@ def demo():
 
 
 if __name__ == '__main__':
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )

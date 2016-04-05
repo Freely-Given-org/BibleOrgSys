@@ -279,7 +279,7 @@ class ZefaniaXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -465,7 +465,7 @@ class ZefaniaXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -486,7 +486,7 @@ class ZefaniaXMLBible( Bible ):
             BBB = self.genericBOS.getBBB( bookName )
 
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "Zefania XML Bible Book object"
             thisBook.objectTypeString = "Zefania"
@@ -498,7 +498,7 @@ class ZefaniaXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.chapterTag, element.tag ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
             self.saveBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
@@ -510,7 +510,7 @@ class ZefaniaXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -561,7 +561,7 @@ class ZefaniaXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
@@ -759,7 +759,7 @@ def demo():
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ C{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ C{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
@@ -792,7 +792,7 @@ def demo():
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ D{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ D{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML

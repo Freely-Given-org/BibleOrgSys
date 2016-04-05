@@ -401,7 +401,7 @@ def demo():
 
 
     if 0: # demonstrate the Bible Lexicon Index class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon Index class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon Index class…" )
         blix = BibleLexiconIndex( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( blix ) # Just print a summary
         print()
@@ -415,7 +415,7 @@ def demo():
 
 
     if 1: # demonstrate the Bible Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon class…" )
         bl = BibleLexicon( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( bl ) # Just print a summary
         print()

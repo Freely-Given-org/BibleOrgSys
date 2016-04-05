@@ -247,7 +247,7 @@ class HaggaiXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -441,7 +441,7 @@ class HaggaiXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -462,7 +462,7 @@ class HaggaiXMLBible( Bible ):
             BBB = self.genericBOS.getBBB( bookName )
 
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "Haggai XML Bible Book object"
             thisBook.objectTypeString = "Haggai"
@@ -480,7 +480,7 @@ class HaggaiXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.chapterTag, element.tag ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
             self.saveBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
@@ -492,7 +492,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -541,7 +541,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML paragraph...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML paragraph…") )
 
         location = "paragraph in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
@@ -582,7 +582,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )

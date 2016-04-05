@@ -142,7 +142,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, lastFilenameFound ) )
             eSB = ESwordBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: eSB.load() # Load and process the file
             return eSB
@@ -181,7 +181,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, foundProjects[0][1] ) )
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             eSB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: eSB.load() # Load and process the file
@@ -238,7 +238,7 @@ class ESwordBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
-                print( "ESwordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
+                print( "ESwordBible.handleLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
             assert originalLine is None or ('\n' not in originalLine and '\r' not in originalLine )
         #print( BBB, C, V, repr(originalLine) )
         line = originalLine
@@ -415,7 +415,7 @@ class ESwordBible( Bible ):
 
 
     def checkForExtraMaterial( self, cursor, BOS ):
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
         cursor.execute('select * from Bible' )
         for row in cursor:
@@ -434,7 +434,7 @@ class ESwordBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         loadErrors = []
 
         fileExtensionUpper = self.fileExtension.upper()
@@ -615,7 +615,7 @@ def testeSwB( eSwBfolder, eSwBfilename ):
     #testFolder = "../../../../../Data/Work/Bibles/e-Sword modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {} {}".format( repr(eSwBfolder), repr(eSwBfilename) ) )
     eSwB = ESwordBible( eSwBfolder, eSwBfilename )
     eSwB.load() # Load and process the file
@@ -641,7 +641,7 @@ def testeSwB( eSwBfolder, eSwBfilename ):
         doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files…" )
             result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
@@ -705,7 +705,7 @@ def demo():
                     foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads
@@ -726,7 +726,7 @@ def demo():
             elif os.path.isfile( somepath ) and somepath.endswith('.bblx'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads

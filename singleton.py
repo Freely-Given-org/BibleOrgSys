@@ -12,7 +12,7 @@
 #
 #       @singleton
 #       class MyClass:
-#           ...
+#           …
 
 
 def singleton(cls):

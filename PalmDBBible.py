@@ -29,10 +29,10 @@ See documentation of the format here:
     http://yohan.es/bible-pdb/bible-plus-pdb-format/
 e.g.,
 
-    ...
+    …
 
 Limitations:
-    ...
+    …
 """
 
 from gettext import gettext as _
@@ -209,7 +209,7 @@ class PalmDBBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         loadErrors = []
         mainDBIndex = []
 
@@ -315,7 +315,7 @@ class PalmDBBible( Bible ):
                 print( exp("loadWordlists()") )
 
             # Now read the word index info
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading word index info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading word index info…" )
             binary = readRecord( wordIndexIndex, myFile )
             byteOffset = 0
             totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
@@ -334,7 +334,7 @@ class PalmDBBible( Bible ):
                 #halt
 
             # Now read in the word lists
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading word lists..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading word lists…" )
             #binary = readRecord( wordIndexIndex+1, myFile )
             recordOffset = byteOffset = 0
             binary = b''
@@ -343,7 +343,7 @@ class PalmDBBible( Bible ):
             for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
                 #print( "   Got {} {:04x}".format( len(words), len(words) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}...".format( wordLength, numFixedLengthWords, compressedFlag ) )
+                    print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}…".format( wordLength, numFixedLengthWords, compressedFlag ) )
                 wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
                 #else: print( wordCountIndexes )
                 for n in range( 0, numFixedLengthWords ):
@@ -546,7 +546,7 @@ class PalmDBBible( Bible ):
         # main code for load()
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             # Read the PalmDB header info
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading PalmDB header info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading PalmDB header info…" )
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -596,7 +596,7 @@ class PalmDBBible( Bible ):
                 #halt
 
             # Now read the first record of actual Bible data which is the Bible header info
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading Bible header info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading Bible header info…" )
             binary = readRecord( 0, myFile )
             byteOffset = 0
             versionName = getBinaryString( binary, 16 ); byteOffset += 16
@@ -641,7 +641,7 @@ class PalmDBBible( Bible ):
                 #halt
 
             # Now read in the Bible book chapter/verse data
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading Bible book chapter/verse lists..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading Bible book chapter/verse lists…" )
             ## There seems to be no absolute standard for these :-(
             #convertSNtoBBB = {'GE':'GEN', 'EX':'EXO', 'DTN':'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
                             #'1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
@@ -702,7 +702,7 @@ class PalmDBBible( Bible ):
 
                 # Read the Bible word data records
                 if BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "\nReading {}{} Bible words for {} {}/{}...".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
+                    print( "\nReading {}{} Bible words for {} {}/{}…".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
                 BBB = None
                 if bookNumber % 10 == 0:
                     if bookNumber <= 160:
@@ -721,7 +721,7 @@ class PalmDBBible( Bible ):
                 #BBB = convertBNtoBBB[bookNumber]
                 #shortNameUpper = shortName.upper()
                 #BBB = convertSNtoBBB[shortNameUpper] if shortNameUpper in convertSNtoBBB else shortNameUpper
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( " Loading {} {}...".format( name, BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( " Loading {} {}…".format( name, BBB ) )
                 #if self.name == 'kjv' and BBB=='GAL': continue
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'Palm Bible Book object'
@@ -757,7 +757,7 @@ class PalmDBBible( Bible ):
                         recordCount += 1
                         if debuggingThisModule:
                             print( "Record {}/{}".format( recordCount, numBookRecords ) )
-                            print( "BibleWords {}/{}={}...".format( byteOffset, len(binary), hexlify(binary[byteOffset:byteOffset+32]) ) )
+                            print( "BibleWords {}/{}={}…".format( byteOffset, len(binary), hexlify(binary[byteOffset:byteOffset+32]) ) )
                         #byteOffset = 0
                         #if j==0:
                             #assert binary[byteOffset:byteOffset+2] == b'\xFF\xFF'
@@ -860,7 +860,7 @@ def testPB( TUBfilename ):
     #TUBfolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/" # Must be the same as below
     TUBfolder = "Tests/DataFilesForTests/PDBTest/"
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     ub = PalmDBBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
@@ -923,7 +923,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testPB, parameters ) # have the pool do our loads

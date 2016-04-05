@@ -260,7 +260,7 @@ class MLWriter:
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
         else: logging.error( "MLWriter: Unknown {!r} lineEndings flag".format( lineEndings ) )
-        if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:

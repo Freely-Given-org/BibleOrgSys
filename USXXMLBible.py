@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.28'
@@ -229,8 +229,6 @@ class USXXMLBible( Bible ):
 
     def loadBook( self, BBB, filename=None ):
         """
-        Used for multiprocessing.
-
         NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -243,7 +241,7 @@ class USXXMLBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( self, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
@@ -256,8 +254,39 @@ class USXXMLBible( Bible ):
             #if j > 50: break
         #halt
         self.saveBook( UBB )
-        #return UBB
     # end of USXXMLBible.loadBook
+
+
+    def _loadBookMP( self, BBB, filename=None ):
+        """
+        Used for multiprocessing.
+
+        NOTE: You should ensure that preload() has been called first.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+            assert self.preloadDone
+
+        if BBB in self.books: return # Already loaded
+        if BBB in self.triedLoadingBook:
+            logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
+            return # We've already attempted to load this book
+        self.triedLoadingBook[BBB] = True
+
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if filename is None: filename = self.possibleFilenameDict[BBB]
+        UBB = USXXMLBibleBook( self, BBB )
+        UBB.load( filename, self.givenFolderName, self.encoding )
+        UBB.validateMarkers()
+        #for j, something in enumerate( UBB._processedLines ):
+            #print( j, something )
+            #if j > 100: break
+        #for j, something in enumerate( sorted(UBB._CVIndex) ):
+            #print( j, something )
+            #if j > 50: break
+        #halt
+        return UBB
+    # end of USXXMLBible._loadBookMP
 
 
     def loadBooks( self ):
@@ -265,7 +294,7 @@ class USXXMLBible( Bible ):
         Load the books.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USXXMLBible: Loading {} books from {}...").format( self.name, self.givenFolderName ) )
+            print( _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
 
         if not self.preloadDone: self.preload()
 
@@ -292,19 +321,22 @@ class USXXMLBible( Bible ):
                     #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
-        # DON'T KNOW WHY THIS DOESN'T WORK
-        if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+        if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
             parameters = []
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
             #print( "parameters", parameters )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( _("Loading {} {} books using {} CPUs…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
+                print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self.loadBook, parameters ) # have the pool do our loads
-                print( "results", results )
-                assert len(results) == len(parameters)
+                results = pool.map( self._loadBookMP, parameters ) # have the pool do our loads
+                #print( "results", results )
+                #assert len(results) == len(parameters)
                 for j, UBB in enumerate( results ):
                     BBB = parameters[j]
-                    self.books[BBB] = UBB
+                    #self.books[BBB] = UBB
+                    self.saveBook( UBB )
                     # Make up our book name dictionaries while we're at it
                     assumedBookNames = UBB.getAssumedBookNames()
                     for assumedBookName in assumedBookNames:
@@ -380,6 +412,8 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
+                ('Test1','Tests/DataFilesForTests/USXTest1',),
+                ('Test2','Tests/DataFilesForTests/USXTest2',),
                 ("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
                 #("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
@@ -418,11 +452,15 @@ def demo():
         #       pass
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

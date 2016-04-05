@@ -86,13 +86,13 @@ class BibleBookOrdersConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookOrders" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book order systems from {}…").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}…").format( bookOrderSystemCode, filename ) )
                     self._XMLSystems[bookOrderSystemCode] = {}
                     self._XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert self._XMLSystems[bookOrderSystemCode]["tree"] # Fail here if we didn't load anything at all
@@ -319,7 +319,7 @@ class BibleBookOrdersConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -343,7 +343,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -381,7 +381,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -402,7 +402,7 @@ class BibleBookOrdersConverter:
         def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
             """ Exports theDict to the .h and .c files. """
             def convertEntry( entry ):
-                """ Convert special characters in an entry... """
+                """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, int ): result += str(entry)
                 elif isinstance( entry, str): result += '"' + str(entry).replace('"','\\"') + '"'
@@ -440,7 +440,7 @@ class BibleBookOrdersConverter:
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -521,7 +521,7 @@ class BibleBookOrdersConverter:
 
         #if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             #outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+systemName + ".xml" )
-            #print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
+            #print( _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             #with open( outputFilepath, 'wt' ) as myFile:
                 #for n,BBB in enumerate(bookOrderSchemeToCheck):
                     #myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )

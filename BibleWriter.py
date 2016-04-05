@@ -150,7 +150,7 @@ class BibleWriter( InternalBible ):
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
         if BibleOrgSysGlobals.debugFlag: print( "toPickle( {}, {} )".format( self.abbreviation, outputFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickle..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickle…" )
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Bible_Object_Pickle/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -163,7 +163,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -213,7 +213,7 @@ class BibleWriter( InternalBible ):
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
         import InternalBibleBook
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:makeLists..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:makeLists…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -280,7 +280,7 @@ class BibleWriter( InternalBible ):
                     sorts and writes the word count data to text, csv, and xml files. """
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by word" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_word." )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'…").format( filenamePortion ) )
             sortedWords = sorted(dictionary)
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
                 with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
@@ -303,7 +303,7 @@ class BibleWriter( InternalBible ):
                             htmlFile.write( '</table></body></html>' ) # close open elements
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by count" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_count." )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'…").format( filenamePortion ) )
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
                 with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
                     with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
@@ -374,7 +374,7 @@ class BibleWriter( InternalBible ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSBCV..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSBCV…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -386,7 +386,7 @@ class BibleWriter( InternalBible ):
         self.writeBOSBCVFiles( outputFolder )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BCV files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BCV files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -407,7 +407,7 @@ class BibleWriter( InternalBible ):
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPseudoUSFM..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPseudoUSFM…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -425,7 +425,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
@@ -438,7 +438,7 @@ class BibleWriter( InternalBible ):
             indent = 3
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
             C = V = '0'
             with open( filepath, 'wt' ) as myFile:
@@ -460,7 +460,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.debugFlag: assert indentLevel == 0
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PseudoUSFM files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PseudoUSFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -481,7 +481,7 @@ class BibleWriter( InternalBible ):
 
         NOTE: We use Windows \r\n line endings for writing USFM files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
         includeEmptyVersesFlag = True
 
@@ -524,7 +524,7 @@ class BibleWriter( InternalBible ):
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output…" ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(value) )
@@ -586,10 +586,10 @@ class BibleWriter( InternalBible ):
 
             # Write the USFM output
             #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA...
+            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', newline='\r\n' ) as myFile: # Use Windows newline endings for USFM
                 myFile.write( USFM )
 
@@ -599,7 +599,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Ignored toUSFM markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping USFM files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping USFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -618,7 +618,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESFM..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESFM…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -639,13 +639,13 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             indentLevel, indentSize =  0, 2
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             initialMarkers = [verseDataEntry.getMarker() for verseDataEntry in pseudoUSFMData[:4]]
             #print( BBB, initialMarkers )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output..." ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output…" ) )
             with open( filepath, 'wt' ) as myFile:
                 if 'id' not in initialMarkers:
                     #print( "Write ID" )
@@ -752,7 +752,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Ignored toESFM markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ESFM files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ESFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllESFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -772,7 +772,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toText..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toText…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -791,7 +791,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             textBuffer = ''
             with open( filepath, 'wt' ) as myFile:
                 gotVP = None
@@ -839,7 +839,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -858,7 +858,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toVPL..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toVPL…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -886,7 +886,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "BOS-BibleWriter-{}.txt".format( bookName )
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt' ) as myFile:
                     try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
@@ -958,7 +958,7 @@ class BibleWriter( InternalBible ):
                     print( "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
 
             # Now create a zipped collection
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files…" )
             zf = zipfile.ZipFile( os.path.join( thisOutputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( thisOutputFolder ):
                 if not filename.endswith( '.zip' ):
@@ -978,7 +978,7 @@ class BibleWriter( InternalBible ):
         Write the Bible data out into GFM markdown format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMarkdown..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMarkdown…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1127,7 +1127,7 @@ class BibleWriter( InternalBible ):
                     <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
                     markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
-                    #print( "\nformatMarkdownVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "...", markerList ) )
+                    #print( "\nformatMarkdownVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "…", markerList ) )
                     xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                     caller = origin = originCV = xrefText = ''
                     if markerList:
@@ -1292,7 +1292,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.md".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
@@ -1345,7 +1345,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Ignored toMarkdown markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping markdown files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping markdown files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllMarkdownFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -1366,7 +1366,7 @@ class BibleWriter( InternalBible ):
             converts the internal Bible (pseudo-USFM) information to the Door43.org format
                 which used to be MediaWiki but is now DokuWiki.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDoor43..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDoor43…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1631,7 +1631,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format…") )
         try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["Door43OutputFilename"] )
         except KeyError: filename = 'Bible.d43'
         xw = MLWriter( filename, outputFolder )
@@ -1656,7 +1656,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Door43 file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Door43 file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -1831,7 +1831,7 @@ class BibleWriter( InternalBible ):
                 <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                 """
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
-                #print( "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
+                #print( "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "…", markerList ) )
                 xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                 caller = origin = originCV = xrefText = ''
                 if markerList:
@@ -1991,7 +1991,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5…" )
         if BibleOrgSysGlobals.debugFlag:
             #print( self )
             assert self.books
@@ -2189,7 +2189,7 @@ class BibleWriter( InternalBible ):
 
 
         def writeHomePage():
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("    Creating HTML5 home/index page...") )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("    Creating HTML5 home/index page…") )
             xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2203,7 +2203,7 @@ class BibleWriter( InternalBible ):
 
 
         def writeAboutPage():
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("    Creating HTML5 about page...") )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("    Creating HTML5 about page…") )
             xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2434,7 +2434,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to HTML5 format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to HTML5 format…") )
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
@@ -2445,7 +2445,7 @@ class BibleWriter( InternalBible ):
         html5Globals = {}
         if 'HTML5Files' not in controlDict or controlDict['HTML5Files']=='byBook':
             for BBB,bookData in self.books.items(): # Now export the books
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format...").format( BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format…").format( BBB ) )
                 xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
@@ -2473,7 +2473,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping HTML5 files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping HTML5 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( WEBoutputFolder ):
             if not filename.endswith( '.zip' ):
@@ -2493,7 +2493,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) CustomBible (Android) app.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toCustomBible..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toCustomBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -2613,9 +2613,9 @@ class BibleWriter( InternalBible ):
             """
             """
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  Writing compression entries..." )
+                print( "  Writing compression entries…" )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionDictFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
             with open( compressionDictFilepath, 'wt' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
@@ -2673,7 +2673,7 @@ class BibleWriter( InternalBible ):
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
             #print( headerDict )
 
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}...").format( headerFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}…").format( headerFilepath ) )
             with open( headerFilepath, 'wt' ) as jsonFile:
                 json.dump( headerDict, jsonFile, indent=jsonIndent )
         # end of writeCBHeader
@@ -2716,7 +2716,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
             #print( divisionData )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}...").format( divisionNamesFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
             with open( divisionNamesFilepath, 'wt' ) as jsonFile:
                 json.dump( divisionData, jsonFile, indent=jsonIndent )
 
@@ -2741,7 +2741,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
             #print( bkData )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( bookNamesFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
             with open( bookNamesFilepath, 'wt' ) as jsonFile:
                 json.dump( bkData, jsonFile, indent=jsonIndent )
         # end of writeCBBookNames
@@ -2756,7 +2756,7 @@ class BibleWriter( InternalBible ):
                 """
                 """
                 filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}...").format( BBB, chapter, filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
                 with open( filepath, 'wt' ) as jsonFile:
                     json.dump( cData, jsonFile, indent=jsonIndent )
             # end of writeCBChapter
@@ -2789,7 +2789,7 @@ class BibleWriter( InternalBible ):
             writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
             filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}...").format( BBB, filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
                 json.dump( outputData, jsonFile, indent=jsonIndent )
         # end of writeCBBookAsJSON
@@ -2821,9 +2821,9 @@ class BibleWriter( InternalBible ):
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
-                    logging.error( "toCustomBible programming error: unprocessed backslash code in {} {}:{} section: ...{}...".format( BBB, C, V, repr(segment) ) )
+                    logging.error( "toCustomBible programming error: unprocessed backslash code in {} {}:{} section: …{}…".format( BBB, C, V, repr(segment) ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( "toCustomBible: unprocessed backslash code in {} {}:{} section: ...{}...".format( BBB, C, V, repr(segment) ) )
+                        print( "toCustomBible: unprocessed backslash code in {} {}:{} section: …{}…".format( BBB, C, V, repr(segment) ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
@@ -3155,7 +3155,7 @@ class BibleWriter( InternalBible ):
 
         if createdHTMLIndex: # Sort the main index and write it
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  Fixing and writing main index..." )
+                print( "  Fixing and writing main index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3176,7 +3176,7 @@ class BibleWriter( InternalBible ):
             #createdHTMLIndex = sorted(createdHTMLIndex)
             #print( "    toCustomBible: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}...").format( destinationIndexFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt' ) as jsonFile:
                 json.dump( newHTMLIndex, jsonFile, indent=jsonIndent )
             writeCompressions()
@@ -3203,7 +3203,7 @@ class BibleWriter( InternalBible ):
                     print( "    Compressed bytes: {}".format( bytesCompressed ) )
 
         ## Now create a zipped collection
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping CustomBible files…" )
         #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         #for filename in os.listdir( outputFolder ):
             #if not filename.endswith( '.zip' ):
@@ -3224,7 +3224,7 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
         import zlib, struct
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3311,7 +3311,7 @@ class BibleWriter( InternalBible ):
 
         filename = "{}.ewb".format( self.abbreviation )
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         bookAddress = startingBookAddress = 0x3a21 + len(encodedNameBytes)
         vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
         with open( filepath, 'wb' ) as myFile:
@@ -3369,7 +3369,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} EWB file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} EWB file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -3388,7 +3388,7 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSXXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSXXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3790,7 +3790,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format…") )
         #USXOutputFolder = os.path.join( 'OutputFiles/', "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -3816,7 +3816,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toUSXXML books were {}").format( unhandledBooks ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping USX files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping USX files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllUSXFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( filesFolder ):
             #if not filename.endswith( '.zip' ):
@@ -3824,7 +3824,7 @@ class BibleWriter( InternalBible ):
             zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USX files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USX files…" )
         tar = tarfile.open( os.path.join( outputFolder, 'AllUSXFiles.qz' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
             filepath = os.path.join( filesFolder, filename )
@@ -3846,7 +3846,7 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFXXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFXXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4234,7 +4234,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USFX XML format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USFX XML format…") )
         #USFXOutputFolder = os.path.join( 'OutputFiles/', "USFX output/' )
         #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -4272,7 +4272,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} USFX file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} USFX file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -4289,7 +4289,7 @@ class BibleWriter( InternalBible ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(localeFilepath) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(localeFilepath) )
 
         with open( localeFilepath, 'wt' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
@@ -4377,7 +4377,7 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOSISXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOSISXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4415,7 +4415,7 @@ class BibleWriter( InternalBible ):
         try: ln = controlDict["LanguageName"]
         except KeyError: ln = 'eng'
         self._writeSwordLocale( xlg, ln, BOS, getBookNameFunction, os.path.join( outputFolder, 'SwLocale-utf8.conf' ) )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict["LanguageName"]) )
@@ -5018,7 +5018,7 @@ class BibleWriter( InternalBible ):
 
         # Start of main toOSIS code
         if 'osisFiles' not in controlDict or controlDict['osisFiles']=='byBook': # Write an individual XML file for each book
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting individually to OSIS XML format...") )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting individually to OSIS XML format…") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
                 try: fn = controlDict["osisOutputFilename"].replace( '_Bible', "_Book-{}".format(BBB) )
@@ -5045,7 +5045,7 @@ class BibleWriter( InternalBible ):
                     if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         elif controlDict['osisFiles']=='byBible': # write all the books into a single file
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OSIS XML format...") )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OSIS XML format…") )
             filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["osisOutputFilename"] )
             xw = MLWriter( filename, outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
@@ -5062,7 +5062,7 @@ class BibleWriter( InternalBible ):
             xw.close()
             # Now create a zipped version
             filepath = os.path.join( outputFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} OSIS file...".format( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} OSIS file…".format( filename ) )
             zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
@@ -5100,7 +5100,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toZefaniaXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toZefaniaXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5501,7 +5501,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Zefania format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Zefania format…") )
         try: zOFn = controlDict['ZefaniaOutputFilename']
         except KeyError: zOFn = 'Bible.zef'
         filename = BibleOrgSysGlobals.makeSafeFilename( zOFn )
@@ -5534,7 +5534,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Zefania file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Zefania file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -5555,7 +5555,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Haggai_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHaggaiXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toHaggaiXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5683,7 +5683,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Haggai format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Haggai format…") )
         try: hOFn = controlDict['HaggaiOutputFilename']
         except KeyError: hOFn = 'Bible.hag'
         filename = BibleOrgSysGlobals.makeSafeFilename( hOFn )
@@ -5716,7 +5716,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Haggai file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Haggai file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -5737,7 +5737,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/OpenSong_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOpenSongXML..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOpenSongXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5837,7 +5837,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OpenSong format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OpenSong format…") )
         try: osOFn = controlDict['OpenSongOutputFilename']
         except KeyError: osOFn = 'Bible.osong'
         filename = BibleOrgSysGlobals.makeSafeFilename( osOFn )
@@ -5865,7 +5865,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} OpenSong file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} OpenSong file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -5883,7 +5883,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordModule..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordModule…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5937,7 +5937,7 @@ class BibleWriter( InternalBible ):
         except KeyError: lN = 'eng'
         self._writeSwordLocale( xL, lN, BOS, getBookNameFunction, os.path.join( outputFolder, 'SwLocale-utf8.conf' ) )
         #SwLocFilepath = os.path.join( outputFolder, 'SwLocale-utf8.conf" )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict["LanguageName"]) )
@@ -6546,7 +6546,7 @@ class BibleWriter( InternalBible ):
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Sword modified-OSIS XML format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Sword modified-OSIS XML format…") )
         xwOT = MLWriter( 'ot', lgFolder )
         xwNT = MLWriter( 'nt', lgFolder )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
@@ -6604,7 +6604,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, resettheWordMargins, theWordHandleIntroduction, theWordComposeVerseLine
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:totheWord..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:totheWord…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6697,7 +6697,7 @@ class BibleWriter( InternalBible ):
             testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
             booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to theWord format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to theWord format…") )
         mySettings = {}
         mySettings['unhandledMarkers'] = set()
         handledBooks = []
@@ -6710,7 +6710,7 @@ class BibleWriter( InternalBible ):
         else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             try: myFile.write('\ufeff') # theWord needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
@@ -6770,7 +6770,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} theWord file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} theWord file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -6790,7 +6790,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMySword…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6891,7 +6891,7 @@ class BibleWriter( InternalBible ):
             booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
         extension = '.bbl.mybible'
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MySword format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MySword format…") )
         mySettings = {}
         mySettings['unhandledMarkers'] = set()
         handledBooks = []
@@ -6905,7 +6905,7 @@ class BibleWriter( InternalBible ):
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if os.path.exists( filepath ): os.remove( filepath )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         conn = sqlite3.connect( filepath )
         cursor = conn.cursor()
 
@@ -6986,7 +6986,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toMySword books were {}").format( unhandledBooks ) )
 
         # Now create the gzipped file
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Compressing {} MySword file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Compressing {} MySword file…".format( filename ) )
         tar = tarfile.open( filepath+'.gz', 'w:gz' )
         tar.add( filepath )
         tar.close()
@@ -7006,7 +7006,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at xxx
         """
         from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7398,7 +7398,7 @@ class BibleWriter( InternalBible ):
             booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
         extension = '.bblx'
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to e-Sword format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to e-Sword format…") )
         mySettings = {}
         mySettings['unhandledMarkers'] = set()
         handledBooks = []
@@ -7412,7 +7412,7 @@ class BibleWriter( InternalBible ):
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if os.path.exists( filepath ): os.remove( filepath )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         conn = sqlite3.connect( filepath )
         cursor = conn.cursor()
 
@@ -7491,7 +7491,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toESword books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} e-Sword file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} e-Sword file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -7518,7 +7518,7 @@ class BibleWriter( InternalBible ):
                             'TH1':'1Th', 'TH2':'2Th', 'TI1':'1Ti', 'TI2':'2Ti', 'TIT':'Tit', 'PHM':'Phm',
                             'HEB':'Heb', 'JAM':'Jas', 'PE1':'1Pe', 'PE2':'2Pe',
                             'JN1':'1Jo', 'JN2':'2Jo', 'JN3':'3Jo', 'JDE':'Jude', 'REV':'Re' }
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordSearcher..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toSwordSearcher…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7592,10 +7592,10 @@ class BibleWriter( InternalBible ):
         # end of toSwordSearcher:writeSSBook
 
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to SwordSearcher format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to SwordSearcher format…") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
@@ -7618,7 +7618,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toSwordSearcher books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} SwordSearcher file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} SwordSearcher file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
@@ -7634,7 +7634,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDrupalBible..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDrupalBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7769,10 +7769,10 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible:writeDrupalBibleBook
 
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to DrupalBible format...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to DrupalBible format…") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
@@ -7796,7 +7796,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toDrupalBible books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} DrupalBible file...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} DrupalBible file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
@@ -7821,7 +7821,7 @@ class BibleWriter( InternalBible ):
             ImageMagick convert is unable to handle complex scripts.  :(
         """
         import unicodedata
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -8334,7 +8334,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
 
         # Now create some zipped collections (for easier downloads)
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PhotoBible files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PhotoBible files…" )
         for subset in ('OT','NT','Other','All'):
             loadFolder = outputFolder if subset=='All' else os.path.join( outputFolder, subset+'/' )
             #print( repr(subset), "Load folder =", repr(loadFolder) )
@@ -8378,7 +8378,7 @@ class BibleWriter( InternalBible ):
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9214,7 +9214,7 @@ class BibleWriter( InternalBible ):
                 \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                 """
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
-                #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "...", markerList ) )
+                #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "…", markerList ) )
 
                 xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
                 documentText.insertTextContent( textCursor, xrefNote, False )
@@ -9371,13 +9371,13 @@ class BibleWriter( InternalBible ):
 
         # Create and save the ODF files
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Creating ODF file for {}...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Creating ODF file for {}…".format( BBB ) )
             pseudoUSFMData = bookObject._processedLines
 
             # Create the blank document
             filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
             filepath = os.path.join( os.getcwd(), outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating {!r}...").format( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating {!r}…").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             try: documentText = document.Text
             except AttributeError: # no Text? = no blank/outline ODF text available
@@ -9406,7 +9406,7 @@ class BibleWriter( InternalBible ):
                     start a new paragraph and insert the text.
                 """
                 nonlocal firstEverParagraphFlag
-                #print( "toODF.insertODFParagraph( {} {}:{}, {}, {} ...)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
+                #print( "toODF.insertODFParagraph( {} {}:{}, {}, {} …)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
@@ -9581,7 +9581,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toODF markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ODF files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ODF files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -9602,7 +9602,7 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
         import subprocess
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9770,14 +9770,14 @@ class BibleWriter( InternalBible ):
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( allFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( allFilepath ) )
         with open( allFilepath, 'wt' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
@@ -9883,7 +9883,7 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PDF files..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping PDF files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBible1PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if filename.endswith( '.Bible1.pdf' ):
@@ -9933,7 +9933,7 @@ class BibleWriter( InternalBible ):
         """
         allWord = "all" if wantPhotoBible and wantODFs and wantPDFs else "most"
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats...").format( self.name, self.objectTypeString, allWord ) )
+            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats…").format( self.name, self.objectTypeString, allWord ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = 'OutputFiles/'
@@ -10328,7 +10328,7 @@ def demo():
                     fN = USFMFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files..." )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files…" )
                     for j, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                         #print( j, BBB, filename1 )
                         UUU, nn = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
@@ -10338,7 +10338,7 @@ def demo():
                             if nn in fn and UUU in fn: filename2 = fn; break
                         if filename1 in folderContents1 and filename2 in folderContents2:
                             if BibleOrgSysGlobals.verbosityLevel > 2:
-                                print( "\nAbout to compare {}: {} {} with {}...".format( j+1, BBB, filename1, filename2 ) )
+                                print( "\nAbout to compare {}: {} {} with {}…".format( j+1, BBB, filename1, filename2 ) )
                             result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolder )
                             if result and BibleOrgSysGlobals.verbosityLevel > 2: print( "  Matched." )
                             #print( "  result", result )
@@ -10370,7 +10370,7 @@ def demo():
                     fN = USXFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files…" )
                     for j, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
                             #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
@@ -10417,7 +10417,7 @@ def demo():
                     else: halt
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing supplied and exported theWord files..." )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolder, outputFolder, exitCount=10 )
                     if not result:
                         print( "theWord modules did NOT match" )

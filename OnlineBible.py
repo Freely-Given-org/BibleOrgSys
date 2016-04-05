@@ -177,14 +177,14 @@ class OnlineBible( Bible ):
         """
         Load the compressed data file and import book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading from {}...").format( self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading from {}…").format( self.sourceFolder ) )
 
 
         def loadOnlineBibleMetadata():
             """
             Version.Ext contains lines of text.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading metadata from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading metadata from {}…").format( self.sourceFolder ) )
 
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['Online'] = {}
@@ -280,13 +280,13 @@ class OnlineBible( Bible ):
                   S Said See So Some Son T That The Their Them Then There These They This To Told Up Us
                   Was We Went Were What When Who Will With Would You Your
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading main version data from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading main version data from {}…").format( self.sourceFolder ) )
             filename = 'Version.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading version from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading version from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 versionBytes = myFile.read()
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} version bytes read".format( len(versionBytes) ) )
@@ -450,13 +450,13 @@ class OnlineBible( Bible ):
                     elshaddaizites
             Counters for these sequences are in XrefNdx.Dat.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading dictionary characters from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading dictionary characters from {}…").format( self.sourceFolder ) )
             filename = 'Tokens.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading token characters from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading token characters from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 tokenBytes = myFile.read()
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} token bytes read".format( len(tokenBytes) ) )
@@ -491,13 +491,13 @@ class OnlineBible( Bible ):
             Seems to have a header and then 972 3+32-byte or 3+48-byte (CEV) entry lines.
                 972 * 32 = 31,104 = 31,102 verses in KJV + 2 blank at end.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading verse index info from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading verse index info from {}…").format( self.sourceFolder ) )
             filename = 'TextNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading verse text index from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading verse text index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 textIndexBytes = myFile.read()
             numTextIndexBytes = len(textIndexBytes)
@@ -591,14 +591,14 @@ class OnlineBible( Bible ):
                 80..FF means use the next byte as well as an index to the dictionary.
             """
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("  Loading verse text data from {}...").format( self.sourceFolder ) )
+                print( _("  Loading verse text data from {}…").format( self.sourceFolder ) )
             filename = 'Text.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
 
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.textBytes = myFile.read()
             numTextBytes = len(self.textBytes)
@@ -616,17 +616,17 @@ class OnlineBible( Bible ):
                     and the first letter capitalized:
                 '  !”'    tO 10/5 '  ).}'    tO 16/8 '  ,\\\\*\\\\'    tO 16/8 '  ,\\\\†\\\\'    tO 8/4 '  ,”'    tO 18/9 '  .”\\\\*\\\\'    tO 18/9 '  .”\\\\†\\\\'    tO 10/5 '  :\\\\'    tO 16/8 '  :\\\\†\\\\'    tO 8/4 '  ?”'    tO 14/7 '  \\\\).}'    tO 12/6 '  \\\\)}'    tO 12/6 '  \\\\.}'    tO 14/7 '  \\\\†\\\\'    tO 6/3 '  ’'    tO 6/3 '  ”'    tO 18/9 ' +!!\\\\†\\\\'    tO 10/5 ' +!!—'    tO 6/3 ' +…'    tO 6/3 ' -('    tO 8/4 ' -\\@'    tO 12/6 ' -{(\\\\'    tO 6/3 ' -‘'    tO 6/3 '#10'    tO 6/3 '#11'    tO 6/3 '#12'    tO 6/3 '#13'    tO 6/3 '#14'    tO 6/3 '#15'    tO 6/3 '#16'    tO 6/3 '#17'    tO 6/3 '#18'    tO 6/3 '#19'    tO 4/2 '#2'    tO 6/3 '#20'    tO 6/3 '#21'    tO 6/3 '#22'    tO 6/3 '#23'    tO 6/3 '#24'    tO 6/3 '#25'    tO 6/3 '#26'    tO 6/3 '#27'    tO 6/3 '#28'    tO 6/3 '#29'    tO 4/2 '#3'    tO 6/3 '#30'    tO 6/3 '#31'    tO 6/3 '#32'    tO 6/3 '#33'    tO 6/3 '#34'    tO 6/3 '#35'    tO 6/3 '#36'    tO 6/3 '#37'    tO 6/3 '#38'    tO 6/3 '#39'    tO 4/2 '#4'    tO 6/3 '#40'    tO 6/3 '#43'    tO 4/2 '#5'    tO 4/2 '#6'    tO 4/2 '#7'    tO 4/2 '#8'    tO 4/2 '#9'    tO 2/1 '1'    tO 2/1 '2'
                 Aaron Able Above Abraham
-                ...
+                …
                 Years Yes Yet Young Yourself Zedekiah Zion
             Doesn't include the capitalized words from Version.Dat.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading textOpt data from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading textOpt data from {}…").format( self.sourceFolder ) )
             filename = 'TextOpt.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text opts from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text opts from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 optBytes = myFile.read()
             if BibleOrgSysGlobals.debugFlag: print( "    {:,} optBytes bytes read".format( len(optBytes) ) )
@@ -736,13 +736,13 @@ class OnlineBible( Bible ):
                 a count (3..226)
                 a not always increasing pointer (0..640.567) to Xref.Dat
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference index data from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference index data from {}…").format( self.sourceFolder ) )
             filename = 'XrefNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref index from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
@@ -822,7 +822,7 @@ class OnlineBible( Bible ):
 
             Strongs printed numbers are Hebrew 1..8,674 plus Greek 1..5,624 = total = 14,298
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading Strongs index data from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading Strongs index data from {}…").format( self.sourceFolder ) )
             filename = 'XrefNdxs.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
@@ -832,7 +832,7 @@ class OnlineBible( Bible ):
                 try: del self.StrongsIndex
                 except AttributeError: pass
                 return False
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading Strongs reference index from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading Strongs reference index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
@@ -896,13 +896,13 @@ class OnlineBible( Bible ):
             """
             0.6-1.1MB
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference data from {}...").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference data from {}…").format( self.sourceFolder ) )
             filename = 'Xref.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref data from {} {}...").format( self.sourceFolder, filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref data from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.xrefBytes = myFile.read()
             numXrefBytes = len(self.xrefBytes)
@@ -928,7 +928,7 @@ class OnlineBible( Bible ):
         def createDictionary():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Creating dictionary...") )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Creating dictionary…") )
             self.dictionary = {}
 
             # Put the short common words into the dictionary
@@ -1141,7 +1141,7 @@ class OnlineBible( Bible ):
         def loadBooks():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( 'Loading books...' )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( 'Loading books…' )
 
             bookCount = 0
             currentBBB = None
@@ -1153,7 +1153,7 @@ class OnlineBible( Bible ):
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
                         self.saveBook( thisBook )
                     # Create the new book
-                    if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}...'.format( BBB ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}…'.format( BBB ) )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "Online Bible Book object"
                     thisBook.objectTypeString = "Online Bible"
@@ -1267,7 +1267,7 @@ def testOB( TOBfilename ):
     testFolder = 'Tests/DataFilesForTests/OnlineBible/'
 
     TOBfolder = os.path.join( testFolder, TOBfilename+'/' )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Online Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Online Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TOBfolder, TOBfilename ) )
     olb = OnlineBible( TOBfolder )
     olb.load() # Load and process the file
@@ -1355,7 +1355,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testOB, parameters ) # have the pool do our loads

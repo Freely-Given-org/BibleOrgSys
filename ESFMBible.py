@@ -382,7 +382,7 @@ class ESFMBible( Bible ):
     def loadSemanticDictionary( self, BBB, filename ):
         """
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "    " + _("Loading possible semantic dictionary from {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "    " + _("Loading possible semantic dictionary from {}…").format( filename ) )
         sourceFilepath = os.path.join( self.sourceFolder, filename )
         originalBook = ESFMFile()
         originalBook.read( sourceFilepath )
@@ -411,7 +411,7 @@ class ESFMBible( Bible ):
     def loadStrongsDictionary( self, BBB, filename ):
         """
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "    " + _("Loading possible Strong's dictionary from {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "    " + _("Loading possible Strong's dictionary from {}…").format( filename ) )
         sourceFilepath = os.path.join( self.sourceFolder, filename )
         originalBook = ESFMFile()
         originalBook.read( sourceFilepath )
@@ -441,7 +441,7 @@ class ESFMBible( Bible ):
         """
         Attempts to load the spelling, hyphenation, and semantic dictionaries if they exist.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  " + _("Loading any dictionaries...") )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  " + _("Loading any dictionaries…") )
         for BBB,filename in self.maximumPossibleFilenameTuples:
             if BBB=='XXD': self.loadSemanticDictionary( BBB, filename )
             elif BBB=='XXE': self.loadStrongsDictionary( BBB, filename )
@@ -462,7 +462,7 @@ class ESFMBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
@@ -486,7 +486,7 @@ class ESFMBible( Bible ):
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
         EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -499,7 +499,7 @@ class ESFMBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("ESFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("ESFMBible: Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -510,7 +510,7 @@ class ESFMBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( t("ESFMBible: Loading {} ESFM books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    print( t("ESFMBible: Loading {} ESFM books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -521,7 +521,7 @@ class ESFMBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                        #print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     if BBB not in self.dontLoadBook:
                         loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:

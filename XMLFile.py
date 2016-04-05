@@ -113,7 +113,7 @@ class XMLFile():
         """
         errorString = None
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         try:
             self.tree = ElementTree().parse( self.sourceFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -204,17 +204,17 @@ def demo():
             "Vietnamese Bible.xmm", )
         bad = ( "EPS99", )
         allOfThem = good + nonEnglish + bad
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OpenSong Bibles..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
         testFolder = "../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/"
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)…" )
         doTest( testFolder, testNames, schema=osisSchemaFile )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
         doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
 # end of demo
 

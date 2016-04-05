@@ -291,7 +291,7 @@ class USFMMarkers:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -468,8 +468,8 @@ class USFMMarkers:
             'CanonicalText'
         """
         assert option in ('Raw','Numbered','Combined','CanonicalText')
-        if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"] # Includes q, q1, q2, ...
-        elif option=='Raw': return self.__DataDict["newlineMarkersList"] # Doesn't include q1, q2, ...
+        if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"] # Includes q, q1, q2, …
+        elif option=='Raw': return self.__DataDict["newlineMarkersList"] # Doesn't include q1, q2, …
         elif option=='Numbered': return self.__DataDict["numberedNewlineMarkersList"] # Doesn't include q
         elif option=='CanonicalText':
             return [m for m in self.__DataDict["numberedNewlineMarkersList"] if self.markerOccursIn(m)=='Canonical Text'] # Doesn't include id, h1, b, q

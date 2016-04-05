@@ -253,7 +253,7 @@ class ForgeForSwordSearcherBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -478,7 +478,7 @@ def testForge4SS( F4SSFolder ):
     # Crudely demonstrate the Forge for SwordSearcher Bible class
     import VerseReferences
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Forge for SwordSearcher Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Forge for SwordSearcher Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( F4SSFolder ) )
     vb = ForgeForSwordSearcherBible( F4SSFolder, "demo" )
     vb.load() # Load and process the file
@@ -549,7 +549,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testForge4SS, parameters ) # have the pool do our loads

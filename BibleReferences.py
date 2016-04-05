@@ -1913,11 +1913,11 @@ def demo():
         print( BSR ) # Just print a summary
         print( "\nSingle Reference (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
-            if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+            if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
             print( "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
         print( "\nSingle Reference (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+            if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
             print( "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
 
     if 1: # test BibleSingleReferences
@@ -1926,14 +1926,14 @@ def demo():
         print( BSRs ) # Just print a summary
         print( "\nSingle References (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
-            if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+            if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
             print( "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
         for ref in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+            if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
             print( "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
         print( "\nSingle References (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+            if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
             print( "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
 
     if 1: # test BibleReferenceList
@@ -1945,36 +1945,36 @@ def demo():
             print( "\n\nSingle References for Ranges (good)" )
             for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
             print( "\nSingle References for Ranges (bad)" )
             for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BSRs got {}".format(ref, BRL.parseReferenceString(ref)) )
             print( "\n\nSingle Ranges (good)" )
             for ref in ("Mat 7:3-7","Mat.7:3-11","Mat. 7:13-8:2","Mt. 7:3,5-9","Mt.7:3-4,6-9","Jde 7-8","Jde. 1-3","Jde 1:7-8","Jud. 1:1-3,5,7-9","EXO.4:14,27c-30;  5:1,4,20; 6:13,20,23,25-27a; 7:1,2,6b-10a,10,12,19,20; 8:1,2,4,8,12,13,21;"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
                 print( "OSIS result is {!r}".format( BRL.getOSISRefList() ) )
             print( "\nSingle Ranges (bad)" )
             for ref in ("EXO.4:14-12; NUM.3:12-1:5; JOS.4:5-5","Mt. 7:7;"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
             print( "\n\nNow some chapter Ranges (good)" )
             for ref in ("Dan. 5","Gen. 1-11","Act.4-7; Mat.5-7"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
                 #print( "OSIS result is {!r}".format( BRL.getOSISRefList() ) )
             print( "\nNow some chapter Ranges (bad)" )
             for ref in ("Tit. 1:2; 1:2-7","Jer. 95","Exo. 23-99","1 Cor.9-7; 1Tim.5-7:2"):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
             for ref in ("Jhn. 3:16", "Rev. 2:1-3" ):
-                if printProcessingMessages: print( "Processing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "Processing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got OSIS {!r}".format(ref, BRL.parseToOSIS(ref)) )
         if 1:
             for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22", ):
-                if printProcessingMessages: print( "\nProcessing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "\nProcessing {!r} reference string…".format( ref ) )
                 print( "  From {!r} BRL got OSIS {!r}".format(ref, BRL.parseToOSIS(ref)) )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
                 print( "List is: ", l1 )
@@ -1991,7 +1991,7 @@ def demo():
                     "Mt. 7:21; 8:11; 11:12,13; 13:43; 16:19; 24:7; 25:34; 26:29; Mk. 6:23; 9:47; 10:37; 13:8; 14:25; Lk 13:21,24-25; 13:28,29; 14:15; 17:21; 21:10; 22:16,30; Ac 1:6; 7:10; 14:22; 15:16,50; Col. 1:12; 1 Th. 2:11,12; 2 Th. 1:5; 4:18; Heb. 12:28; Jas. 2:5; 2 Pe. 1:11; Rev. 3:7; 16:10", \
                 )
             for ref in fixedRefs:
-                if printProcessingMessages: print( "\nProcessing {!r} reference string...".format( ref ) )
+                if printProcessingMessages: print( "\nProcessing {!r} reference string…".format( ref ) )
                 oL = BRL.parseToOSIS( ref )
                 print( "From {!r}\n  BRL got OSIS {!r}".format(ref, oL) )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
@@ -2002,7 +2002,7 @@ def demo():
                     print( "Now got: ", l3 )
         if 1:
             for ref in ( "1Cor.3.5-1Cor.3.9", ):
-                if printProcessingMessages: print( "\nProcessing {!r} OSIS reference string...".format( ref ) )
+                if printProcessingMessages: print( "\nProcessing {!r} OSIS reference string…".format( ref ) )
                 sucessFlag, hvWarnings, resultList = BRL.parseOSISReferenceString( ref )
                 print( "From {!r}\n  BRL got {!r}".format(ref, resultList) )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )

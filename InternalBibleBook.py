@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-01' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -459,8 +459,8 @@ class InternalBibleBook:
         NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
         """
         global rtsCount
-        #print( "InternalBibleBook.processLineFix( {}, {!r} ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
         if BibleOrgSysGlobals.debugFlag:
+            #print( "InternalBibleBook.processLineFix( {}, {!r} ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
             assert originalMarker and isinstance( originalMarker, str )
             assert isinstance( text, str )
         adjText = text
@@ -643,8 +643,9 @@ class InternalBibleBook:
                     note = note.rstrip()
                     #print( "QQQ3: rstrip in note" )
                 if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                    print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
-                    print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
+                    if debuggingThisModule:
+                        print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
+                        print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                     note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
             adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
             # Now prepare a cleaned version
@@ -698,7 +699,7 @@ class InternalBibleBook:
         #if len(extras)>1: print( "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )
 
         # Check for anything left over
-        if '\\f' in adjText or '\\x' in adjText:
+        if '\\f ' in adjText or '\\f*' in adjText or '\\x ' in adjText or '\\x*' in adjText:
             fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
             logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
             self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
@@ -973,6 +974,9 @@ class InternalBibleBook:
         Note: the six parameters for InternalBibleEntry are
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("addNestingMarkers()") )
+
         newLines = InternalBibleEntryList()
         openMarkers = []
 
@@ -998,6 +1002,8 @@ class InternalBibleBook:
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop( ie ), None, None, withText, None, None) )
         # end of addNestingMarkers.closeOpenMarker
 
+
+        # Main code for addNestingMarkers
         ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
         ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
         ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
@@ -1041,6 +1047,7 @@ class InternalBibleBook:
                 return None
             # end of addNestingMarkers.findNextRelevantListMarker
 
+            # Main loop in addNestingMarkers
             marker, text = dataLine.getMarker(), dataLine.getCleanText()
             nextDataLine = self._processedLines[j+1] if j<lastJ else None
             nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
@@ -1084,7 +1091,7 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
             elif marker == 'vp#':
-                if BibleOrgSysGlobals.debugFlag: assert nextMarker == 'v'
+                if BibleOrgSysGlobals.debugFlag and self.BBB!='ESG': assert nextMarker == 'v' # after vp#
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
             elif marker == 'v':
@@ -1366,8 +1373,8 @@ class InternalBibleBook:
             """
             nonlocal C, V, haveWaitingC
             nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
-            #print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
-            if BibleOrgSysGlobals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
                 assert originalMarker and isinstance( originalMarker, str )
                 assert isinstance( originalText, str )
             text = originalText
@@ -1476,7 +1483,8 @@ class InternalBibleBook:
                         adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='cp' and text:
                 V = '0'
-                if BibleOrgSysGlobals.debugFlag: assert haveWaitingC # coz this should follow the c and precede the v
+                # Assertion is not correct in RSV52 ESG -- has cp in between verses
+                if BibleOrgSysGlobals.debugFlag and self.BBB!='ESG': assert haveWaitingC # coz this should follow the c and precede the v
                 haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='cl' and text:
                 if BibleOrgSysGlobals.debugFlag:
@@ -1547,7 +1555,7 @@ class InternalBibleBook:
                             if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                                 logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed...') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed…') )
                                 nfvnCount = -1 # So we don't do this again (for this book)
                                 #priority = 12
                     #self.addPriorityError( priority, C, V, _("Nothing following verse number in {!r}").format( originalText ) )
@@ -1792,7 +1800,8 @@ class InternalBibleBook:
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "InternalBibleBook: processing lines from 'validateMarkers'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'validateMarkers'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         validationErrors = []
@@ -1886,7 +1895,8 @@ class InternalBibleBook:
         """
         #print( "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
-            #print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         results = []
@@ -1966,7 +1976,8 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getVersification'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'getVersification'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         versificationErrors = []
@@ -2124,7 +2135,8 @@ class InternalBibleBook:
         Returns a dictionary containing the results for the book.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'discover'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'discover'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         #print( "InternalBibleBook:discover", self.BBB )
@@ -2331,7 +2343,8 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getAddedUnits'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'getAddedUnits'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         addedUnitErrors = []
@@ -3476,7 +3489,8 @@ class InternalBibleBook:
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'doCheckFileControls'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'doCheckFileControls'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3502,7 +3516,8 @@ class InternalBibleBook:
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'doCheckHeadings'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'doCheckHeadings'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3577,7 +3592,8 @@ class InternalBibleBook:
         Runs a number of checks on introductory parts.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'doCheckIntroduction'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'doCheckIntroduction'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3653,7 +3669,8 @@ class InternalBibleBook:
         Runs a number of checks on footnotes and cross-references.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'doCheckNotes'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'doCheckNotes'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3925,7 +3942,8 @@ class InternalBibleBook:
         Runs a number of checks on the book and returns the error dictionary.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'check'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'check'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4009,7 +4027,8 @@ class InternalBibleBook:
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getContextVerseData'" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "InternalBibleBook: processing lines called from 'getContextVerseData'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
@@ -4093,6 +4112,7 @@ if __name__ == '__main__':
     #from multiprocessing import freeze_support
     #freeze_support() # Multiprocessing support for frozen Windows executables
 
+    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )

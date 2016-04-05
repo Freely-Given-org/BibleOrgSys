@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-30' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.64'
+ProgVersion = '0.65'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -792,7 +792,7 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     for subelement in element:
         errorString = "{}Unexpected {!r} sub-element ({}) in {}" \
                         .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
-        logger = logging.critical if subelement.txt else logging.error
+        logger = logging.critical if subelement.text else logging.error
         logger( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt

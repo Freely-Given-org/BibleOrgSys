@@ -278,7 +278,7 @@ class OSISXMLBible( Bible ):
             for filename in fileList:
                 if filename.lower().endswith('.xml'):
                     self.sourceFilepath = os.path.join( self.sourceFolder, filename )
-                    if BibleOrgSysGlobals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
+                    if BibleOrgSysGlobals.debugFlag: print( "Trying {}…".format( self.sourceFilepath ) )
                     if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         else: # it's presumably a file name
@@ -320,7 +320,7 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {}...").format( OSISFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {}…").format( OSISFilepath ) )
         try: self.tree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
@@ -437,7 +437,7 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS header record.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS header...").format( self.abbreviation+' ' if self.abbreviation else '' ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS header…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
         headerlocation = "header"
         BibleOrgSysGlobals.checkXMLNoText( header, headerlocation, '2s90', loadErrors )
         BibleOrgSysGlobals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
@@ -775,7 +775,7 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS front matter (div) record.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS front matter...").format( self.abbreviation+' ' if self.abbreviation else '' ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS front matter…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
         frontMatterLocation = "frontMatter"
         BibleOrgSysGlobals.checkXMLNoText( frontMatter, frontMatterLocation, 'c3a2', loadErrors )
         BibleOrgSysGlobals.checkXMLNoTail( frontMatter, frontMatterLocation, 'm7s9', loadErrors )
@@ -881,7 +881,7 @@ class OSISXMLBible( Bible ):
             This may be a book group, or directly into a book
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS main div...").format( self.abbreviation+' ' if self.abbreviation else '' ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS main div…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
         haveEIDs = False
         self.haveBook = False
 
@@ -921,10 +921,10 @@ class OSISXMLBible( Bible ):
         for attrib,value in div.items():
             if attrib=='type':
                 mainDivType = value
-                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}…").format( mainDivOsisID, mainDivType ) )
             elif attrib=="osisID":
                 mainDivOsisID = value
-                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}…").format( mainDivOsisID, mainDivType ) )
             elif attrib=='canonical':
                 mainDivCanonical = value
             else:
@@ -937,7 +937,7 @@ class OSISXMLBible( Bible ):
         if mainDivType == 'bookGroup': # this is all the books lumped in together into one big div
             if BibleOrgSysGlobals.debugFlag: assert mainDivCanonical == 'true'
             # We have to set BBB when we get a chapter reference
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group…") )
             self.haveBook = False
             for element in div:
                 if element.tag == OSISXMLBible.OSISNameSpace+'title':
@@ -1041,8 +1041,8 @@ class OSISXMLBible( Bible ):
                             print( "here MAGIC", cmBBB, BBB, repr(chapterMilestone), len(self.thisBook._rawLines) )
                             if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
                                 #print( verseMilestone )
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Saving previous {}{} book into results...".format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
-                                #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Saving previous {}{} book into results…".format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
+                                #print( mainDivOsisID, "results", BBB, bookResults[:10], "…" )
                                 # Remove the last titles
                                 #lastBookResult = bookResults.pop()
                                 #if lastBookResult[0]!='sectionTitle':
@@ -1079,7 +1079,7 @@ class OSISXMLBible( Bible ):
                             #print( "23f4 BBB is", BBB )
                             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}…").format( BBB ) )
                             self.thisBook = BibleBook( self, BBB )
                             self.thisBook.objectNameString = "OSIS XML Bible Book object"
                             self.thisBook.objectTypeString = "OSIS"
@@ -1110,7 +1110,7 @@ class OSISXMLBible( Bible ):
                 OSIS verse ID string for a startMilestone
                 '' for an endMilestone
                 'verseContainer.' + verse number string for a container
-                'verseContents#' + verse number string + '#' + verse contents for a verse contained within the <verse>...</verse> markers
+                'verseContents#' + verse number string + '#' + verse contents for a verse contained within the <verse>…</verse> markers
             """
             nonlocal haveEIDs
             #print( "OSISXMLBible.validateVerseElement at {} with {!r} and {!r}".format( locationDescription, chapterMilestone, verseMilestone ) )
@@ -2464,7 +2464,7 @@ class OSISXMLBible( Bible ):
 
 
         # Main code for validateAndExtractBookDiv
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS book div...").format( self.abbreviation+' ' if self.abbreviation else '' ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS book div…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
         haveEIDs = False
         self.haveBook = False
 
@@ -2474,10 +2474,10 @@ class OSISXMLBible( Bible ):
         for attrib,value in div.items():
             if attrib=='type':
                 mainDivType = value
-                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}…").format( mainDivOsisID, mainDivType ) )
             elif attrib=="osisID":
                 mainDivOsisID = value
-                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}…").format( mainDivOsisID, mainDivType ) )
             elif attrib=='canonical':
                 mainDivCanonical = value
             else:
@@ -2499,7 +2499,7 @@ class OSISXMLBible( Bible ):
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "Multiple alternatives for OSIS {!r}: {} (Choosing the first one)".format( mainDivOsisID, BBB ) )
                     BBB = BBB[0]
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading {}{}...").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
                 USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
                 self.thisBook = BibleBook( self, BBB )
@@ -2512,7 +2512,7 @@ class OSISXMLBible( Bible ):
             ## This is all the books lumped in together into one big div
             #if BibleOrgSysGlobals.debugFlag: assert mainDivCanonical == 'true'
             ## We have to set BBB when we get a chapter reference
-            #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group…") )
             #self.haveBook = False
         else:
             logging.critical( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
@@ -2860,7 +2860,7 @@ class OSISXMLBible( Bible ):
                         BBB = newBBB
                         USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                         USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
-                        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}{}...").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix
                     chapterBits = OSISChapterID.split( '.' )
@@ -3193,8 +3193,8 @@ class OSISXMLBible( Bible ):
         #print( "Done Validating", BBB, mainDivOsisID, mainDivType )
         #print( "bookResults", bookResults )
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {}{} book into results...".format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
-            #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {}{} book into results…".format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
+            #print( mainDivOsisID, "results", BBB, bookResults[:10], "…" )
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
             self.saveBook( self.thisBook )
@@ -3263,7 +3263,7 @@ def demo():
         # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths ): # Choose testFilepaths or justOne
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class…".format( j+1 ) )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()

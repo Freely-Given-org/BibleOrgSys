@@ -88,7 +88,7 @@ class BibleReferencesLinks:
             dataFilepath = os.path.join( os.path.dirname(__file__), "DataFiles" )
             standardIndexPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleReferencesLinks_Tables.index.pickle" )
             self.dataPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleReferencesLinks_Tables.data.pickle" )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle index file {}...".format( standardIndexPickleFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -217,7 +217,7 @@ class BibleReferencesLinks:
             #and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             #and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 #import pickle
-                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -320,7 +320,7 @@ def demo():
 
     testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
-    print( "\nTest full passage list..." )
+    print( "\nTest full passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
         print( svk.getShortText() )
@@ -336,7 +336,7 @@ def demo():
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
                     print( '    ', linkType, targetReference )
 
-    print( "\nTest passage list..." )
+    print( "\nTest passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
         print( svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )

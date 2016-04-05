@@ -83,7 +83,7 @@ class GreekStrongsFileConverter:
             <strongs_derivation>of Hebrew origin (<strongsref language="HEBREW" strongs="011"/>);</strongs_derivation><strongs_def> a destroying angel</strongs_def><kjv_def>:--Abaddon.</kjv_def>
             <see language="HEBREW" strongs="011"/>
         </entry>
-        ...
+        …
         <entry strongs="05624">
             <strongs>5624</strongs>   <greek BETA="W)FE/LIMOS" unicode="ὠφέλιμος" translit="ōphélimos"/>   <pronunciation strongs="o-fel'-ee-mos"/>
             <strongs_derivation>from a form of <strongsref language="GREEK" strongs="3786"/>;</strongs_derivation><strongs_def> helpful or serviceable, i.e.
@@ -128,7 +128,7 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
         try: self.tree = ElementTree().parse( XMLFilepath )
@@ -179,7 +179,7 @@ class GreekStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib ==  "strongs":
                 strongs5 = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( strongs5 ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry…".format( strongs5 ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
@@ -455,7 +455,7 @@ def demo():
 
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes…" )
 
         print()
         gsc = GreekStrongsFileConverter()
@@ -470,7 +470,7 @@ def demo():
 
 
     if 1: # demonstrate the Greek Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek Lexicon class…" )
         hl = GreekLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()

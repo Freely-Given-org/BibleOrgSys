@@ -383,7 +383,7 @@ def demo():
 
     import os.path
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file…".format( filepath ) )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
@@ -391,7 +391,7 @@ def demo():
     for i, r in enumerate(linesDB.lines):
         print ( i, r)
         if i>9: break
-    print ( '...\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    print ( '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 
     recordsDB = SFMRecords()
     recordsDB.read( filepath, 'og', ignoreSFMs=('mn','aMU','aMW','cu','cp'))
@@ -399,7 +399,7 @@ def demo():
     for i, r in enumerate(recordsDB.records):
         print ( i, r)
         if i>3: break
-    print( '...\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+    print( '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
 # end of demo
 
 if __name__ == '__main__':

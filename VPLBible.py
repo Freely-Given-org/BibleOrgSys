@@ -30,7 +30,7 @@ vplType 1
     Ge 1:1 En el principio creó Dios el cielo y la tierra.
     Ge 1:2 Y la tierra estaba desordenada y vacía, y las tinieblas [estaban] sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas.
     Ge 1:3 Y dijo Dios: Sea la luz; y fue la luz.
-    ...
+    …
     Re 22:19 Y si alguno quitare de las palabras del libro de esta profecía, Dios quitará su parte del libro de la vida, y de la santa ciudad, y de las cosas que están escritas en este libro.
     Re 22:20 El que da testimonio de estas cosas, dice: <Ciertamente vengo en breve.> Amén, así sea. Ven: Señor Jesús.
     Re 22:21 La gracia de nuestro Señor Jesucristo [sea] con todos vosotros. Amén.
@@ -297,7 +297,7 @@ class VPLBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -648,7 +648,7 @@ def testVPL( VPLfolder ):
     # Crudely demonstrate the VPL Bible class
     import VerseReferences
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( VPLfolder ) )
     vb = VPLBible( VPLfolder, "demo" )
     vb.load() # Load and process the file
@@ -719,7 +719,7 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testVPL, parameters ) # have the pool do our loads

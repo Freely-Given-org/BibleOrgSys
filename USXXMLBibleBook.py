@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-04' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -85,6 +85,8 @@ class USXXMLBibleBook( BibleBook ):
         """
         Load a single source USX XML file and extract the information.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
 
         def loadParagraph( paragraphXML, paragraphlocation ):
             """
@@ -102,7 +104,7 @@ class USXXMLBibleBook( BibleBook ):
                 if attrib=='style':
                     paragraphStyle = value # This is basically the USFM marker name
                 else:
-                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    logging.warning( _("CH46 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
 
             # Now process the paragraph text (or write a paragraph marker anyway)
             paragraphText = paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else ''
@@ -117,17 +119,21 @@ class USXXMLBibleBook( BibleBook ):
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attributes first
-                    verseStyle = None
+                    verseStyle = altNumber = None
                     for attrib,value in element.items():
                         if attrib=='number':
                             V = value
                         elif attrib=='style':
                             verseStyle = value
+                        elif attrib=='altnumber':
+                            altNumber = value
                         else:
-                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("KR60 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if verseStyle != 'v':
                         logging.error( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
-                    self.addLine( verseStyle, V + ' ' )
+                    #if altNumber: print( repr(verseStyle), repr(altNumber) ); halt
+                    altStuff = ' \\va {}\\va*'.format( altNumber ) if altNumber else ''
+                    self.addLine( verseStyle, V + altStuff + ' ' )
                     # Now process the tail (if there's one) which is the verse text
                     if element.tail:
                         vText = element.tail
@@ -144,7 +150,7 @@ class USXXMLBibleBook( BibleBook ):
                             #print( "  charStyle", charStyle )
                             assert not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle )
                         else:
-                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("QU52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     charLine = "\\{} {} ".format( charStyle, element.text )
                     # Now process the subelements -- chars are one of the few multiply embedded fields in USX
                     for subelement in element:
@@ -160,7 +166,7 @@ class USXXMLBibleBook( BibleBook ):
                                     assert value=='false'
                                     charClosed = False
                                 else:
-                                    logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.error( _("KS41 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             charLine += "\\{} {}".format( subCharStyle, subelement.text )
                             if charClosed: charLine += "\\{}*".format( subCharStyle )
                             #if subelement.tail is not None: print( "  tail1", repr(subelement.tail) )
@@ -175,7 +181,7 @@ class USXXMLBibleBook( BibleBook ):
                         charTail = element.tail
                         if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
                     charLine += "\\{}*{}".format( charStyle, charTail )
-                    if debuggingThisModule: print( "USX.loadParagraph:", C, V, paragraphStyle, charStyle, repr(charLine) )
+                    #if debuggingThisModule: print( "USX.loadParagraph:", C, V, paragraphStyle, charStyle, repr(charLine) )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     #print( "NOTE", BibleOrgSysGlobals.elementStr( element ) )
@@ -187,7 +193,7 @@ class USXXMLBibleBook( BibleBook ):
                             assert noteStyle in ('x','f',)
                         elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
-                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.error( _("CY38 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
                     assert noteStyle and noteCaller # both compulsory
                     noteLine = "\\{} {} ".format( noteStyle, noteCaller )
@@ -197,9 +203,8 @@ class USXXMLBibleBook( BibleBook ):
                     # Now process the subelements -- notes are one of the few multiply embedded fields in USX
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + location
-                        #print( C, V, element.tag )
+                        #print( C, V, subelement.tag )
                         if subelement.tag == 'char': # milestone (not a container)
-                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                             # Process the attributes first
                             charStyle, charClosed = None, True
                             for attrib,value in subelement.items():
@@ -209,8 +214,26 @@ class USXXMLBibleBook( BibleBook ):
                                     assert value=='false'
                                     charClosed = False
                                 else:
-                                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.warning( _("GJ67 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             noteLine += "\\{} {}".format( charStyle, subelement.text )
+                            # Now process the subelements -- notes are one of the few multiply embedded fields in USX
+                            for sub2element in subelement:
+                                sub2location = sub2element.tag + ' ' + sublocation
+                                #print( C, V, sub2element.tag )
+                                if sub2element.tag == 'char': # milestone (not a container)
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
+                                    # Process the attributes first
+                                    char2Style, char2Closed = None, True
+                                    for attrib,value in sub2element.items():
+                                        if attrib=='style':
+                                            char2Style = value
+                                        elif attrib=='closed':
+                                            assert value=='false'
+                                            char2Closed = False
+                                        else:
+                                            logging.warning( _("VH36 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                    assert char2Closed
+                                    noteLine += "\\{} {}\\{}*{}".format( char2Style, sub2element.text, char2Style, sub2element.tail if sub2element.tail else '' )
                             if charClosed: noteLine += "\\{}*".format( charStyle )
                             if subelement.tail:
                                 charTail = subelement.tail
@@ -225,7 +248,7 @@ class USXXMLBibleBook( BibleBook ):
                                 if attrib=='marker':
                                     unmmatchedMarker = value
                                 else:
-                                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.warning( _("NV21 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
                         else:
                             logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
@@ -238,6 +261,7 @@ class USXXMLBibleBook( BibleBook ):
                         noteTail = element.tail
                         if noteTail[0]=='\n': noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
                         noteLine += noteTail
+                    #print( "NoteLine", repr(noteLine) )
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'link': # Used to include extra resources
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -254,7 +278,7 @@ class USXXMLBibleBook( BibleBook ):
                         elif attrib=='target':
                             linkTarget = value # e.g., some reference
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            logging.warning( _("KW54 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     self.addPriorityError( 3, C, V, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -273,8 +297,8 @@ class USXXMLBibleBook( BibleBook ):
         loadErrors = []
         lastMarker = None
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}...").format( filename, folder ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}…").format( filename, folder ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
@@ -298,7 +322,7 @@ class USXXMLBibleBook( BibleBook ):
             version = None
             for attrib,value in self.tree.items():
                 if attrib=='version': version = value
-                else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                else: logging.warning( _("DG84 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
             if version not in ( None, '2.0' ):
                 logging.warning( _("Not sure if we can handle v{} USX files").format( version ) )
 
@@ -318,7 +342,7 @@ class USXXMLBibleBook( BibleBook ):
                         elif attrib=='style':
                             bookStyle = value
                         else:
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.warning( _("MD12 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if bookStyle != 'id':
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, sublocation ) )
                     idLine = idField
@@ -330,17 +354,21 @@ class USXXMLBibleBook( BibleBook ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
                     # Process the attributes
-                    chapterStyle = None
+                    chapterStyle = pubNumber = None
                     for attrib,value in element.items():
                         if attrib=='number':
                             C = value
                         elif attrib=='style':
                             chapterStyle = value
+                        elif attrib=='pubnumber':
+                            pubNumber = value
                         else:
-                            logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.error( _("LY76 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if chapterStyle != 'c':
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
+                    #if pubNumber: print( self.BBB, C, repr(pubNumber) ); halt
                     self.addLine( 'c', C )
+                    if pubNumber: self.addLine( 'cp', pubNumber )
                 elif element.tag == 'para':
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
@@ -405,15 +433,15 @@ def demo():
     def getShortVersion( someString ):
         maxLen = 140
         if len(someString)<maxLen: return someString
-        return someString[:int(maxLen/2)]+'...'+someString[-int(maxLen/2):]
+        return someString[:int(maxLen/2)]+'…'+someString[-int(maxLen/2):]
 
     import USXFilenames, USFMFilenames, USFMBibleBook
     #name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -424,7 +452,7 @@ def demo():
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
@@ -448,7 +476,7 @@ def demo():
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} from {}...").format( BBB2, filename2 ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} from {}…").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
@@ -491,7 +519,7 @@ def demo():
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
                                 mismatchCount += 1
                                 break
-                            if mismatchCount > 5: print( "..." ); break
+                            if mismatchCount > 5: print( "…" ); break
                         if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
                 else: print( "Sorry, USFM test folder {!r} doesn't exist on this computer.".format( testFolder2 ) )
@@ -500,7 +528,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

@@ -49,10 +49,10 @@ Contains four classes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-01' # by RJH
+LastModifiedDate = '2016-04-05' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.38'
+ProgVersion = '0.40'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -107,17 +107,22 @@ class SwordModuleConfiguration:
     """
     A class that loads, processes, and stores a Sword .conf file.
     """
-    importantFieldNames = ('Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version', 'History', 'Description', \
-                        'TextSource', 'Source', 'LCSH', 'ShortPromo', 'Promo', 'Obsoletes', 'GlossaryFrom', 'GlossaryTo', \
-                        'DistributionSource', 'DistributionNotes', 'DistributionLicense', \
-                        'Category', 'Feature', 'Versification', 'Scope', 'About', \
-                        'Notes', 'NoticeLink', 'NoticeText', \
-                        'Copyright', 'CopyrightHolder', 'CopyrightDate', 'CopyrightContactName', 'CopyrightContactEmail', 'CopyrightContactAddress', 'CopyrightContactNotes', 'ShortCopyright', 'CopyrightNotes', 'CopyrightYear', \
-                        'DictionaryModule', 'ReferenceBible', )
-    technicalFieldNames = ('ModDrv', 'DataPath', 'Encoding', 'SourceType', 'GlobalOptionFilter', 'CaseSensitiveKeys', 'SearchOption', \
-                        'CompressType', 'BlockType', 'MinimumVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion', \
-                        'DisplayLevel', 'LangSortOrder', 'LangSortSkipChars', 'StrongsPadding', \
-                        'CipherKey', 'InstallSize', 'BlockCount', 'OSISqToTick', 'MinimumBlockNumber', 'MaximumBlockNumber',)
+    importantFieldNames = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version', 'History', 'Description',
+                'TextSource', 'Source', 'LCSH', 'ShortPromo', 'Promo', 'Obsoletes', 'GlossaryFrom', 'GlossaryTo',
+                'DistributionSource', 'DistributionNotes', 'DistributionLicense',
+                'Category', 'Feature', 'Versification', 'Scope', 'About',
+                'Notes', 'NoticeLink', 'NoticeText',
+                'Copyright', 'CopyrightHolder', 'CopyrightDate', 'CopyrightContactName', 'CopyrightContactEmail',
+                    'CopyrightContactAddress', 'CopyrightContactNotes', 'ShortCopyright',
+                    'CopyrightNotes', 'CopyrightYear',
+                'DictionaryModule', 'ReferenceBible',
+                'Siglum1', 'Siglum2', )
+    technicalFieldNames = ( 'ModDrv', 'DataPath', 'Encoding', 'SourceType', 'GlobalOptionFilter',
+                'CaseSensitiveKeys', 'SearchOption',
+                'CompressType', 'BlockType',
+                'MinimumVersion', 'MinimumSwordVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion',
+                'DisplayLevel', 'LangSortOrder', 'LangSortSkipChars', 'StrongsPadding',
+                'CipherKey', 'InstallSize', 'BlockCount', 'OSISqToTick', 'MinimumBlockNumber', 'MaximumBlockNumber', )
     allFieldNames = importantFieldNames + technicalFieldNames
     specialFieldNames = ('History','Description','About','Copyright','DistributionNotes',) # Ones that have an underline and then a subfield
 
@@ -145,7 +150,7 @@ class SwordModuleConfiguration:
         Load the Sword module conf file into a dictionary.
 
         Also sets:
-            self.name (from [...name...] entry)
+            self.name (from […name…] entry)
             self.modType (from ModDrv entry)
             self.modCategory (from ModDrv, Category, Features entries)
             self.encoding (from Encoding entry)
@@ -154,7 +159,7 @@ class SwordModuleConfiguration:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModuleConfiguration.loadConf()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading Sword config file for {}...".format( self.abbreviation ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading Sword config file for {}…".format( self.abbreviation ) )
         filename = self.abbreviation+".conf"
         self.confPath = os.path.join( self.swordFolder, "mods.d/", filename )
         self.confDict = OrderedDict()
@@ -162,13 +167,17 @@ class SwordModuleConfiguration:
         with open( self.confPath, 'rt', encoding="iso-8859-1" ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "SwordModuleConfiguration.loadConf: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
-                    line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
+                if lineCount==1:
+                    if line[0]==chr(65279): #U+FEFF
+                        logging.info( "SwordModuleConfiguration.loadConf1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                        line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                    elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                        logging.info( "SwordModuleConfiguration.loadConf2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                        line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                #print( lineCount, "'"+line+"'" )
+                #print( lineCount, repr(line) )
                 if not line: continue # Just discard blank lines
-                #print ( 'Conf file line is "' + line + '"' )
+                #print ( "SwordModuleConfiguration.loadConf: Conf file line {} is {!r}".format( lineCount, line ) )
                 if line[0] in '#;': continue # Just discard comment lines
                 if continuationFlag: thisLine += line; continuationFlag = False
                 else: thisLine = line
@@ -198,11 +207,15 @@ class SwordModuleConfiguration:
                             if bits[1]==self.confDict[bits[0]]:
                                 logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( self.abbreviation, bits[0], bits[1] ) )
                             else: # We have multiple different entries for this field name
-                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                    print( "loadConf splonk", self.abbreviation, bits[0] )
+                                if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                                    print( "Sword Modules loadConf found inconsistency", self.abbreviation, bits[0] )
                                     assert bits[0] in self.specialFieldNames or bits[0] in ('GlobalOptionFilter','DictionaryModule','DistributionLicense','Feature','LCSH','Obsoletes','TextSource',) # These are the only ones where we expect multiple values (and some of these are probably module bugs)
-                                try: self.confDict[bits[0]].append( bits[1] ) #; print( bits[0], 'lots' )
-                                except AttributeError: self.confDict[bits[0]] = [self.confDict[bits[0]], bits[1] ] #; print( bits[0], 'made list' )
+                                if bits[0] in self.specialFieldNames: # Try to handle these duplicate entries -- we're expecting 2-tuples later
+                                    try: self.confDict[bits[0]].append( ('???',bits[1]) ) #; print( bits[0], 'lots' )
+                                    except AttributeError: self.confDict[bits[0]] = [('???',self.confDict[bits[0]]), ('???',bits[1]) ] #; print( bits[0], 'made list' )
+                                else:
+                                    try: self.confDict[bits[0]].append( bits[1] ) #; print( bits[0], 'lots' )
+                                    except AttributeError: self.confDict[bits[0]] = [self.confDict[bits[0]], bits[1] ] #; print( bits[0], 'made list' )
                         else: self.confDict[bits[0]] = bits[1] # Most fields only occur once
                 lastLine = line
         #print( self.confDict )
@@ -216,7 +229,7 @@ class SwordModuleConfiguration:
         # Tidy things up
         if 'Name' in self.confDict: self.name = self.confDict['Name']
         else:
-            logging.error( _("Missing '[...name...]' line at beginning of {} conf file").format( self.abbreviation ) )
+            logging.error( _("Missing '[…name…]' line at beginning of {} conf file").format( self.abbreviation ) )
             self.name = self.abbreviation
         if 'ModDrv' in self.confDict:
             self.modType = self.confDict['ModDrv']
@@ -235,7 +248,7 @@ class SwordModuleConfiguration:
 
         # See if we have any new fields
         for key in self.confDict:
-            if key not in self.allFieldNames: print( "Unexpected {!r} key ({})".format( key, self.confDict[key] ) )
+            if key not in self.allFieldNames: print( "Unexpected {!r} Sword conf key ({})".format( key, self.confDict[key] ) )
             #if BibleOrgSysGlobals.debugFlag: halt
 
         # See if we have to inform the user about anything
@@ -270,6 +283,7 @@ class SwordModuleConfiguration:
             adjKey = "LCSH (Library of Congress Subject Headings)" if key=="LCSH" else key
             if key == "History":
                 result += ('\n' if result else '') + "      " + _("History:")
+                #print( "value", repr(value) )
                 if not isinstance( value, list ): value = [value]
                 for version,historyDescription in value:
                     result += ('\n' if result else '') + "        {}: {}".format( version, historyDescription )
@@ -340,7 +354,7 @@ class SwordModule():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModule.loadRawLD()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading {} from {}...".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',)
         assert self.SwordModuleConfiguration.modCategory in ('Dictionary',)
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
@@ -390,7 +404,7 @@ class SwordModule():
         Decrypt if necessary, and then decompress (using zlib) a chunk of a work.
         """
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( exp("SwordModule.decompressChunk( ... )") )
+            #print( exp("SwordModule.decompressChunk( … )") )
 
 
         # The following decryption code is adapted from sapphire.cpp -- the Saphire II stream cipher class.
@@ -492,7 +506,7 @@ class SwordModule():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModule.loadCompressedLD()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed {} from {}...".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('zLD',)
         assert self.SwordModuleConfiguration.modCategory in ('Dictionary',)
         assert 'CompressType' in self.SwordModuleConfiguration.confDict
@@ -716,7 +730,7 @@ class SwordModule():
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModule.loadRawGenBook()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading raw general book from {}...".format( self.dataFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading raw general book from {}…".format( self.dataFolder ) )
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
         count, gbIndexIndex = 0, []
         filepath = os.path.join( self.dataFolder, self.filename+'.idx' )
@@ -1208,19 +1222,19 @@ class SwordModule():
     # end of SwordModule.loadVersifiedBibleData
 
 
-    def load( self, inMemoryFlag=False ):
+    def loadBooks( self, inMemoryFlag=False ):
         """
         Load the Sword module index into memory (and possibly also the data)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.load( {} )").format( inMemoryFlag ) )
+            print( exp("SwordModule.loadBooks( {} )").format( inMemoryFlag ) )
             #print( "\n\nSwIndex", self.swordIndex )
             #print( "\n\nSwData", self.swordData )
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
 
         self.inMemoryFlag = inMemoryFlag
 
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "Loading {!r} module...".format( self.SwordModuleConfiguration.abbreviation ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "Loading {!r} module…".format( self.SwordModuleConfiguration.abbreviation ) )
         self.store = self.swordData if self.inMemoryFlag else self.swordIndex
         if self.SwordModuleConfiguration.locked:
             logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
@@ -1244,14 +1258,16 @@ class SwordModule():
         if self.dataFolder[-1] not in ('/','\\',): self.dataFolder += os.sep # We like folder names to end with the separator character
 
         if self.SwordModuleConfiguration.modType == 'RawText' or self.SwordModuleConfiguration.modType=='RawFiles': # it's an uncompressed Bible
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed Bible from {}...".format( self.dataFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             if 'BlockType' in self.SwordModuleConfiguration.confDict: assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK',)
-            if self.SwordModuleConfiguration.modType!='RawFiles': assert self.SwordModuleConfiguration.confDict['SourceType'] in ('OSIS','ThML','Plain',)
+            if self.SwordModuleConfiguration.modType!='RawFiles':
+                try: assert self.SwordModuleConfiguration.confDict['SourceType'] in ('OSIS','ThML','Plain',)
+                except KeyError: pass # Doesn't seem to matter if it's missing
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType == 'zText': # it's a compressed Bible
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed Bible from {}...".format( self.dataFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             assert self.SwordModuleConfiguration.confDict['CompressType'] in ('ZIP',)
             assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK','CHAPTER',)
@@ -1259,17 +1275,17 @@ class SwordModule():
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType in ('RawCom','RawCom4',): # it's an uncompressed commentary
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed commentary from {}...".format( self.dataFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType == 'zCom': # it's a compressed commentary
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed commentary from {}...".format( self.dataFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',): # it's an uncompressed lexicon/dictionary
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed dictionary from {}...".format( self.dataFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed dictionary from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             self.loadRawLD()
 
@@ -1289,7 +1305,7 @@ class SwordModule():
             print( "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
 
         if self.store: return True
-    # end of SwordModule.load
+    # end of SwordModule.loadBooks
 
 
     def __str__( self ):
@@ -1548,7 +1564,7 @@ class SwordModule():
     ## end of SwordModule.preprocessRawGenBookEntry
 
 
-    def filterToHTML( self, rawData ):
+    def filterToHTML( self, rawData, BBB, C, V ):
         """
         Does preprocessing on the raw data from the module.
         """
@@ -1589,10 +1605,12 @@ class SwordModule():
     # end of SwordModule.filterToHTML
 
 
-    def filterToUSFM( self, rawData ):
+    def filterToUSFM( self, rawData, BBB, C, V ):
         """
         Does preprocessing on the raw data from the module.
         """
+        from SwordResources import filterOSISVerseLine, filterGBFVerseLine, filterTHMLVerseLine
+
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #print( exp("SwordModule.filterToUSFM( {} )").format( rawData ) )
             assert self.versifiedFlag # only makes sense for versified data
@@ -1610,17 +1628,20 @@ class SwordModule():
             data = rawData.strip()
             if 'SourceType' in self.SwordModuleConfiguration.confDict:
                 if self.SwordModuleConfiguration.confDict['SourceType'] == 'OSIS':
-                    # What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    return data
+                    ## What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    #return data
+                    return filterOSISVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'GBF':
-                    if data: data = data.replace('<FI>','\\add ').replace('<Fi>','\\add*')
-                    if data: data = data.replace('<CM>','') # What is this?
-                    #if '<' in data: print( "{!r} is now {!r}".format( rawData, data ) ); halt
-                    return data
+                    #if data: data = data.replace('<FI>','\\add ').replace('<Fi>','\\add*')
+                    #if data: data = data.replace('<CM>','') # What is this?
+                    ##if '<' in data: print( "{!r} is now {!r}".format( rawData, data ) ); halt
+                    #return data
+                    return filterGBFVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'ThML':
-                #    #if data: print( "ThML data is", data )
-                    # What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    return data
+                ##    #if data: print( "ThML data is", data )
+                    ## What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    #return data
+                    return filterTHMLVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] in ('Plaintext','Plain',):
                     # Should be nothing to do here
                     return data
@@ -1662,12 +1683,12 @@ class SwordModule():
                         ('REV','1','1',''),('REV','1','2',''),('REV','1','3',''),('REV','22','1',''),('REV','22','20',''),('REV','22','21',''),('LAO','1','1',''),)
             #specificTest = (('REV','1','2',''),)
             specificTest = (('MAT','3','15',''),('MAT','3','16',''),('MAT','3','17',''),('MAT','4','1',''),('MAT','4','2',''),)
-            filter = self.filterToUSFM if self.SwordModuleConfiguration.modCategory=='Bible' else self.filterToHTML
+            ourFilter = self.filterToUSFM if self.SwordModuleConfiguration.modCategory=='Bible' else self.filterToHTML
             for ref in specificTest:
                 if self.BibleOrgSystem.isValidBCVRef( ref, "SwordModule. test references", True ): # Some versification systems don't contain all of the test references
                     BBB,c,v,s = ref
                     assert not s
-                    result = filter( self.getRawVersifiedData( ref ) )
+                    result = ourFilter( self.getRawVersifiedData( ref ), BBB, c, v )
                     if result: foundAny = True
                     if (result and BibleOrgSysGlobals.verbosityLevel > 1) or BibleOrgSysGlobals.verbosityLevel > 2: print( "{}{} {} {}:{}={}".format( '\n' if result and len(result)>500 else '', self.SwordModuleConfiguration.name, BBB, c, v, result ) )
                     if testArray is None: ourTestArray[ref] = result
@@ -1804,29 +1825,29 @@ class SwordBibleModule( SwordModule, Bible ):
     # end of SwordBibleModule.__init__
 
 
-    def load( self, inMemoryFlag=False ):
+    def loadBooks( self, inMemoryFlag=False ):
         """
         Loads a versified Sword module indexes into memory
             and then reads the data and saves it all in our internal format.
 
-        Dummy inMemoryFlag (unused) is to make the parameters identical to the SwordModule.load() routine.
+        Dummy inMemoryFlag (unused) is to make the parameters identical to the SwordModule.loadBooks() routine.
 
         TODO: This should be faster if both the above actions were done together.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordBibleModule.load( ({}) )").format( inMemoryFlag ) )
+            print( exp("SwordBibleModule.loadBooks( ({}) )").format( inMemoryFlag ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  Loading Sword Bible module {}...".format( self.SwordModuleConfiguration.abbreviation ) )
+            print( "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
 
-        SwordModule.load( self, inMemoryFlag=False ) # Load the Sword module index
+        SwordModule.loadBooks( self, inMemoryFlag=False ) # Load the Sword module index
         if self.store: # we loaded something
-            filter = self.filterToUSFM if self.SwordModuleConfiguration.modCategory=='Bible' else self.filterToHTML
+            ourFilter = self.filterToUSFM if self.SwordModuleConfiguration.modCategory=='Bible' else self.filterToHTML
             # Now we have to iterate through each book, chapter and verse and load into our internal format
             for BBB in self.store:
                 if BBB=='FRT': # special case for the front matter
                     #print( self.swordIndex[BBB] )
-                    result = filter( self.getRawVersifiedData( ('FRT','0','0') ) )
+                    result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
                     if result:
                         logging.warning( "Didn't process FRT: "+"'"+result+"'" )
                         #halt # Need to process this
@@ -1847,14 +1868,15 @@ class SwordBibleModule( SwordModule, Bible ):
                         C = str( intC )
                         thisBook.addLine( 'c', C )
                         for intV in range( 0, numVerses+1 ):
+                            V = str( intV )
                             #print( BBB, intC, intV )
                             #thisBook.addLine( 'v', str(intV) )
-                            result = filter( self.getRawVersifiedData( (BBB,C,str(intV)) ) )
+                            result = ourFilter( self.getRawVersifiedData( (BBB,C,V) ), BBB, C, V )
                             #if result: result = result.replace('<FI>','\\add ').replace('<Fi>','\\add*')
                             #if result: result = result.replace('<CM>','') # What is this?
                             if result:
                                 if '\n' in result or '\r' in result:
-                                    logging.warning( "SwordBibleModule.load: Result with CR or LF {} {}:{} {}".format( self.name, BBB, C, intV, repr(result) ) )
+                                    logging.warning( "SwordBibleModule.loadBooks: Result with CR or LF {} {}:{} {}".format( self.name, BBB, C, intV, repr(result) ) )
                                 #thisBook.addLine( 'v', "{} {}".format( intV, result ) )
                                 thisBook.addLine( 'v', "{}".format( intV ) )
                                 thisBook.addLine( 'v~', "{}".format( result.replace( '\n', '' ) ) )
@@ -1865,7 +1887,7 @@ class SwordBibleModule( SwordModule, Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {}.".format( self.name ) )
             return True
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  Nothing loaded for {}.".format( self.name ) )
-    # end of SwordBibleModule.load
+    # end of SwordBibleModule.loadBooks
 
 
     def __str__( self ):
@@ -2023,7 +2045,12 @@ class SwordModules:
 
         count = 0
         for moduleConfFilename in sorted( os.listdir( os.path.join( loadFolder, 'mods.d/' ) ) ):
-            assert moduleConfFilename.endswith( '.conf' ) # Should only be conf files in here
+            #print( 'moduleConfFilename', repr(moduleConfFilename), repr(loadFolder) )
+            if debuggingThisModule: assert moduleConfFilename.endswith( '.conf' ) # Should only be conf files in here
+            if not moduleConfFilename.endswith( '.conf' ):
+                #if BibleOrgSysGlobals.verbosityLevel > 1:
+                logging.warning( _("SwordModules found unexpected file in conf folder: {!r}").format( moduleConfFilename ) )
+                continue
             moduleRoughName = moduleConfFilename[:-5] # Remove the .conf from the name
             #if moduleRoughName not in ('gerhfa2002','oxfordtr','personal','tagalog','tr',): continue # Used for testing specific modules
             count += 1
@@ -2202,9 +2229,9 @@ class SwordModules:
         #print( [key for key in self.confs.keys()] )
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
         except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
-        print( "SwordModules.loadModule: mC", repr(swMC.modCategory) )
+        #print( "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
         swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
-        result = swM.load( self.inMemoryFlag )
+        result = swM.loadBooks( self.inMemoryFlag )
         return result, swM
     # end of SwordModules.loadModule
 
@@ -2216,7 +2243,7 @@ class SwordModules:
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("SwordModules.loadModule( {} )").format( inMemoryFlag ) )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSwordModules.loadAll()..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSwordModules.loadAll()…" )
         self.inMemoryFlag = inMemoryFlag
         displayCount = loadCount = 0
         if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
@@ -2249,7 +2276,7 @@ class SwordModules:
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSwMod #{}".format( displayCount ) )
                 if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 1: print( "#{} again".format( displayCount ) )
                 swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
-                if swM.load( self.inMemoryFlag ):
+                if swM.loadBooks( self.inMemoryFlag ):
                     loadCount += 1
                     self.modules[moduleRoughName] = swM
                 if loadCount >= 300:
@@ -2263,9 +2290,9 @@ class SwordModules:
 
     def testAll( self ):
         """ Runs the module test function on each module. """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTesting {} Sword modules...".format( len(self.modules) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTesting {} Sword modules…".format( len(self.modules) ) )
         for j, moduleRoughName in enumerate( self.modules ):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n#{} Testing {} Sword module...".format( j+1, moduleRoughName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n#{} Testing {} Sword module…".format( j+1, moduleRoughName ) )
             swM = self.modules[moduleRoughName]
             if not swM.SwordModuleConfiguration.locked: swM.test()
     # end testAll
@@ -2291,12 +2318,12 @@ def demo():
         print( swMC )
 
         swM = SwordModule( swMC )
-        swM.load( inMemoryFlag=True )
+        swM.loadBooks( inMemoryFlag=True )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
-        swM.load( inMemoryFlag=False )
+        swM.loadBooks( inMemoryFlag=False )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
@@ -2314,12 +2341,12 @@ def demo():
         print( swMC )
 
         swM = SwordModule( swMC )
-        swM.load( inMemoryFlag=True )
+        swM.loadBooks( inMemoryFlag=True )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
-        swM.load( inMemoryFlag=False )
+        swM.loadBooks( inMemoryFlag=False )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
@@ -2335,13 +2362,13 @@ def demo():
 
         if 1:
             swM = SwordModule( swMC )
-            swM.load( inMemoryFlag=True )
+            swM.loadBooks( inMemoryFlag=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
         if 1:
             swM = SwordModule( swMC )
-            swM.load( inMemoryFlag=False )
+            swM.loadBooks( inMemoryFlag=False )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
@@ -2361,7 +2388,7 @@ def demo():
 
         swBM = SwordBibleModule( swMC )
         if not swBM.SwordModuleConfiguration.locked:
-            swBM.load()
+            swBM.loadBooks()
             if BibleOrgSysGlobals.verbosityLevel > 1: print( swBM )
             #swBM.discover()
             #swBM.check()
@@ -2384,7 +2411,12 @@ def demo():
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    # Configure basic set-up
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 

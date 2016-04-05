@@ -152,7 +152,7 @@ def demo():
     testFile = "../morphhb/wlc/Dan.xml" # Hebrew Daniel
     testReference = ('DAN', '1', '5')
     testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew WLC class..." )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew WLC class…" )
     #print( testFile, testReference )
     wlc = HebrewWLC( testFile )
     wlc.load() # Load and process the XML
