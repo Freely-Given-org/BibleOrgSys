@@ -26,7 +26,7 @@
 Module reading and loading MySword Bible files.
 These can be downloaded from: http://www.theword.net/index.php?downloads.modules
 
-A MySword Bible module file has one verse per line (KJV versification)
+A MySword Bible module file has one verse per SQLite3 table row (KJV versification)
     OT (.ot file) has 23145 lines
     NT (.nt file) has 7957 lines
     Bible (.ont file) has 31102 lines.
@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-08' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.18'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -77,19 +77,19 @@ BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 
 
 
-#def exp( messageString ):
-    #"""
-    #Expands the message string in debug mode.
-    #Prepends the module name to a error or warning message string
-        #if we are in debug mode.
-    #Returns the new string.
-    #"""
-    #try: nameBit, errorBit = messageString.split( ': ', 1 )
-    #except ValueError: nameBit, errorBit = '', messageString
-    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-## end of exp
+def exp( messageString ):
+    """
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
+# end of exp
 
 
 
@@ -106,8 +106,9 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         returns the loaded MySwordBible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
-    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
+    if BibleOrgSysGlobals.debugFlag:
+        assert givenFolderName and isinstance( givenFolderName, str )
+        assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -146,9 +147,10 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            twB = MySwordBible( givenFolderName, lastFilenameFound )
-            if autoLoadBooks: twB.load() # Load and process the file
-            return twB
+            MySwB = MySwordBible( givenFolderName, lastFilenameFound )
+            if autoLoad or autoLoadBooks: MySwB.preload()
+            if autoLoadBooks: MySwB.load() # Load and process the database
+            return MySwB
         return numFound
     elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
@@ -185,9 +187,10 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
-            twB = MySwordBible( foundProjects[0][0], foundProjects[0][1] )
-            if autoLoadBooks: twB.load() # Load and process the file
-            return twB
+            MySwB = MySwordBible( foundProjects[0][0], foundProjects[0][1] )
+            if autoLoad or autoLoadBooks: MySwB.preload()
+            if autoLoadBooks: MySwB.load() # Load and process the database
+            return MySwB
         return numFound
 # end of MySwordBibleFileCheck
 
@@ -223,11 +226,14 @@ class MySwordBible( Bible ):
     # end of MySwordBible.__init__
 
 
-    def load( self ):
+    def preload( self ):
         """
-        Load a single source file and load book elements.
+        Load the metadata from the SQLite3 database.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("preload()") )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -237,13 +243,13 @@ class MySwordBible( Bible ):
 
         connection = sqlite3.connect( self.sourceFilepath )
         connection.row_factory = sqlite3.Row # Enable row names
-        cursor = connection.cursor()
+        self.cursor = connection.cursor()
 
         # First get the settings
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['MySword'] = {}
-        cursor.execute( 'select * from Details' )
-        row = cursor.fetchone()
+        self.cursor.execute( 'select * from Details' )
+        row = self.cursor.fetchone()
         for key in row.keys():
             self.suppliedMetadata['MySword'][key] = row[key]
         #print( self.suppliedMetadata['MySword'] ); halt
@@ -251,6 +257,22 @@ class MySwordBible( Bible ):
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['MySword']:
             logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
+
+        self.BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+
+        self.preloadDone = True
+    # end of MySwordBible.preload
+
+
+    def load( self ):
+        """
+        Load all the books out of the SQLite3 database.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("load()") )
+        assert self.preloadDone
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
 
         if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
@@ -263,14 +285,12 @@ class MySwordBible( Bible ):
             testament, BBB = 'NT', 'MAT'
             booksExpected, textLineCountExpected = 27, 7957
 
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
-
         # Create the first book
         thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = "MySword Bible Book object"
         thisBook.objectTypeString = "MySword"
 
-        verseList = BOS.getNumVersesList( BBB )
+        verseList = self.BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -280,9 +300,9 @@ class MySwordBible( Bible ):
         continued = ourGlobals['haveParagraph'] = False
         haveLines = False
         while True:
-            cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
+            self.cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
             try:
-                row = cursor.fetchone()
+                row = self.cursor.fetchone()
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
                 #print( "something wrong at", BBB, C, V )
@@ -294,10 +314,10 @@ class MySwordBible( Bible ):
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.suppliedMetadata['MySword']:
-                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
+                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
                         break
                     else:
-                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.suppliedMetadata['MySword'] ) )
+                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['MySword'] ) )
                 elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
                     haveLines = True
@@ -316,19 +336,19 @@ class MySwordBible( Bible ):
                 C += 1
                 if C > numC: # Save this book now
                     if haveLines:
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  MySword saving", BBB, bookCount+1 )
                         self.saveBook( thisBook )
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = BOS.getNextBookCode( BBB )
+                    BBB = self.BOS.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "MySword Bible Book object"
                     thisBook.objectTypeString = "MySword"
                     haveLines = False
 
-                    verseList = BOS.getNumVersesList( BBB )
+                    verseList = self.BOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -341,10 +361,106 @@ class MySwordBible( Bible ):
             if ourGlobals['haveParagraph']:
                 thisBook.addLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
-        cursor.close()
+
+        self.cursor.close()
         self.applySuppliedMetadata( 'MySword' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of MySwordBible.load
+
+
+    def loadBook( self, BBB ):
+        """
+        Load the requested book out of the SQLite3 database.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("loadBook( {} )").format( BBB ) )
+        assert self.preloadDone
+
+        if BBB in self.books:
+            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            return # Already loaded
+        if BBB in self.triedLoadingBook:
+            logging.warning( "We had already tried loading MySwordBible {} for {}".format( BBB, self.name ) )
+            return # We've already attempted to load this book
+        self.triedLoadingBook[BBB] = True
+        self.bookNeedsReloading[BBB] = False
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("MySwordBible: Loading {} from {}…").format( BBB, self.sourceFilepath ) )
+
+        #if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
+            #testament, BBB = 'BOTH', 'GEN'
+            #booksExpected, textLineCountExpected = 1, 31102
+        #elif self.suppliedMetadata['MySword']['OT']:
+            #testament, BBB = 'OT', 'GEN'
+            #booksExpected, textLineCountExpected = 1, 23145
+        #elif self.suppliedMetadata['MySword']['NT']:
+            #testament, BBB = 'NT', 'MAT'
+            #booksExpected, textLineCountExpected = 1, 7957
+
+
+        # Create the first book
+        thisBook = BibleBook( self, BBB )
+        thisBook.objectNameString = "MySword Bible Book object"
+        thisBook.objectTypeString = "MySword"
+
+        verseList = self.BOS.getNumVersesList( BBB )
+        numC, numV = len(verseList), verseList[0]
+        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        C = V = 1
+
+        #bookCount = 0
+        ourGlobals = {}
+        continued = ourGlobals['haveParagraph'] = False
+        haveLines = False
+        while True:
+            self.cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
+            try:
+                row = self.cursor.fetchone()
+                line = row[0]
+            except TypeError: # This reference is missing (row is None)
+                #print( "something wrong at", BBB, C, V )
+                #if BibleOrgSysGlobals.debugFlag: halt
+                #print( row )
+                line = None
+            #print ( nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
+            if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
+            else: # line is not None
+                if not isinstance( line, str ):
+                    if 'encryption' in self.suppliedMetadata['MySword']:
+                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                        break
+                    else:
+                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['MySword'] ) )
+                elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                else:
+                    haveLines = True
+
+                    # Some modules end lines with \r\n or have it in the middle!
+                    #   (We just ignore these for now)
+                    while line and line[-1] in '\r\n': line = line[:-1]
+                    if '\r' in line or '\n' in line: # (in the middle)
+                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
+
+            #print( "MySword.load", BBB, C, V, repr(line) )
+            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
+            V += 1
+            if V > numV:
+                C += 1
+                if C <= numC: # next chapter only
+                    #thisBook.addLine( 'c', str(C) )
+                    numV = verseList[C-1]
+                    V = 1
+                else: # Save this book now
+                    if haveLines:
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MySword saving", BBB )
+                        self.saveBook( thisBook )
+                    #else: print( "Not saving", BBB )
+                    break
+
+            if ourGlobals['haveParagraph']:
+                thisBook.addLine( 'p', '' )
+                ourGlobals['haveParagraph'] = False
+    # end of MySwordBible.loadBook
 # end of MySwordBible class
 
 
@@ -361,10 +477,11 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class {}…").format( indexString) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
-    MySwB.load() # Load and process the file
+    MySwB.preload()
+    #MySwB.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( MySwB ) # Just print a summary
     #print( MySwB.suppliedMetadata['MySword'] )
-    if 0 and MySwB:
+    if MySwB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MySwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
@@ -376,18 +493,21 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
             if t=='DC' and len(MySwB)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
-            shortText, verseText = svk.getShortText(), MySwB.getVerseText( svk )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+            try:
+                shortText, verseText = svk.getShortText(), MySwB.getVerseText( svk )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+            except KeyError:
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
 
-        # Now export the Bible and compare the round trip
-        MySwB.toMySword()
-        #doaResults = MySwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/BOS_MySword_Reexport/"
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported MySword files…" )
-            result = BibleOrgSysGlobals.fileCompare( MySwBfilename, MySwBfilename, MySwBfolder, outputFolder )
-            if BibleOrgSysGlobals.debugFlag:
-                if not result: halt
+        if 0: # Now export the Bible and compare the round trip
+            MySwB.toMySword()
+            #doaResults = MySwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                outputFolder = "OutputFiles/BOS_MySword_Reexport/"
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported MySword files…" )
+                result = BibleOrgSysGlobals.fileCompare( MySwBfilename, MySwBfilename, MySwBfolder, outputFolder )
+                if BibleOrgSysGlobals.debugFlag:
+                    if not result: halt
 # end of testMySwB
 
 
@@ -404,6 +524,8 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = MySwordBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+        result3 = MySwordBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
 
 
     if 1: # individual modules in the test folder
@@ -411,9 +533,11 @@ def demo():
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            indexString = 'B' + str( j+1 )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
-            testMySwB( indexString, testFolder, fullname )
+            pathname = os.path.join( testFolder, fullname )
+            if os.path.exists( pathname ):
+                indexString = 'B' + str( j+1 )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                testMySwB( indexString, testFolder, fullname )
 
 
     if 1: # individual modules in the output folder
@@ -446,9 +570,10 @@ def demo():
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw D{}/ Trying {}".format( j+1, someFile ) )
+                indexString = 'D' + str( j+1 )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testMySwB( testFolder, someFile )
+                testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one.........temp
 
     if 1: # all discovered modules in the test folder
@@ -470,16 +595,21 @@ def demo():
                 indexString = 'E' + str( j+1 )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testMySwB( testFolder, someFile )
+                testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one.........temp
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

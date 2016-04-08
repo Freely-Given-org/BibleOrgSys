@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -696,7 +696,7 @@ def demo():
             result1 = VPLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nVPL TestA1", result1 )
 
-            result2 = VPLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+            result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA2", result2 )
             if result2 is not None:
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
@@ -709,6 +709,20 @@ def demo():
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+            result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "VPL TestA3", result3 )
+            if result3 is not None:
+                try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+                except FileNotFoundError: pass # it's not compulsory
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result3.check()
+                    #print( UsfmB.books['GEN']._processedLines[0:40] )
+                    vBErrors = result3.getErrors()
+                    # print( vBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    ##result3.toDrupalBible()
+                    result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
     if 0: # all discovered modules in the test folder

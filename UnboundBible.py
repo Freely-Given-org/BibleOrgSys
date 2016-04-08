@@ -86,7 +86,7 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
 ProgVersion = '0.24'
@@ -421,15 +421,20 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = UnboundBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA1", result1 )
-        result2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA2", result2 )
+        resultA1 = UnboundBibleFileCheck( testFolder )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA1", resultA1 )
+        resultA2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA2", resultA2 )
+        resultA3 = UnboundBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA3", resultA3 )
+
         testSubfolder = os.path.join( testFolder, 'asv/' )
-        result3 = UnboundBibleFileCheck( testSubfolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB1", result3 )
-        result4 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB2", result4 )
+        resultB1 = UnboundBibleFileCheck( testSubfolder )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB1", resultB1 )
+        resultB2 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB2", resultB2 )
+        resultB3 = UnboundBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB3", resultB3 )
 
 
     if 1: # specified modules

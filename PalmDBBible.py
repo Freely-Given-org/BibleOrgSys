@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.65'
@@ -899,7 +899,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA1", result1 )
         result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA2", result2 )
-        result3 = PalmDBBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+        result3 = PalmDBBibleFileCheck( testFolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA3", result3 )
 
 

@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.34'
@@ -526,7 +526,7 @@ def demo():
             result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nForgeForSwordSearcher TestA1", result1 )
 
-            result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+            result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "ForgeForSwordSearcher TestA2", result2 )
             if result2 is not None:
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
@@ -539,6 +539,20 @@ def demo():
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+            result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "ForgeForSwordSearcher TestA3", result3 )
+            if result3 is not None:
+                try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+                except FileNotFoundError: pass # it's not compulsory
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result3.check()
+                    #print( UsfmB.books['GEN']._processedLines[0:40] )
+                    vBErrors = result3.getErrors()
+                    # print( vBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    ##result3.toDrupalBible()
+                    result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
     if 0: # all discovered modules in the test folder

@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-05' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.10'
@@ -353,6 +353,8 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "DrupalBible TestA1", result1 )
         result2 = DrupalBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "DrupalBible TestA2", result2 )
+        result3 = DrupalBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "DrupalBible TestA3", result3 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = DrupalBibleFileCheck( testSubfolder )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( "DrupalBible TestB1", result3 )

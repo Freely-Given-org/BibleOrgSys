@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-04' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.28'
+ProgVersion = '0.29'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -68,6 +68,7 @@ from YETBible import YETBibleFileCheck
 from theWordBible import theWordBibleFileCheck
 from MySwordBible import MySwordBibleFileCheck
 from ESwordBible import ESwordBibleFileCheck
+from MyBibleBible import MyBibleBibleFileCheck
 from PalmDBBible import PalmDBBibleFileCheck
 from OnlineBible import OnlineBibleFileCheck
 from EasyWorshipBible import EasyWorshipBibleFileCheck
@@ -170,6 +171,14 @@ class UnknownBible:
                 totalBibleStrictTypes += 1
                 typesStrictlyFound.append( 'e-Sword:' + str(ESwordBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
+
+            # Search for MyBible Bibles
+            MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if MyBibleBibleStrictCount:
+                totalBibleStrictCount += MyBibleBibleStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'MyBible:' + str(MyBibleBibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
 
             # Search for PalmDB Bibles
             PDBBibleStrictCount = PalmDBBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -370,6 +379,14 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'e-Sword:' + str(ESwordBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
+
+        # Search for MyBible Bibles
+        MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if MyBibleBibleCount:
+            totalBibleCount += MyBibleBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'MyBible:' + str(MyBibleBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
 
         # Search for PalmDB Bibles
         PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -597,6 +614,10 @@ class UnknownBible:
                 self.foundType = "e-Sword Bible"
                 if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif MyBibleBibleCount == 1:
+                self.foundType = "MyBible Bible"
+                if autoLoad: return MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             elif PDBBibleCount == 1:
                 self.foundType = "PalmDB Bible"
                 if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
@@ -705,6 +726,7 @@ def demo():
                     '../../../../../Data/Work/Bibles/OpenSong Bibles/',
                     '../../../../../Data/Work/Bibles/Zefania modules/',
                     '../../../../../Data/Work/Bibles/YET modules/',
+                    '../../../../../Data/Work/Bibles/MyBible modules/',
                     '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
                     '../../../../AutoProcesses/Processed/',
                     'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
@@ -718,6 +740,7 @@ def demo():
                     'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/HaggaiTest/',
                     'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/VerseViewXML/',
                     'Tests/DataFilesForTests/e-SwordTest/',
+                    'Tests/DataFilesForTests/MyBibleTest/',
                     'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
                     'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
                     'Tests/DataFilesForTests/OnlineBible/',

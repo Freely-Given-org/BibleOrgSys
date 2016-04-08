@@ -49,7 +49,7 @@ Contains four classes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-05' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.40'
@@ -2289,7 +2289,9 @@ class SwordModules:
 
 
     def testAll( self ):
-        """ Runs the module test function on each module. """
+        """
+        Runs the module test function on each module.
+        """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTesting {} Sword modules…".format( len(self.modules) ) )
         for j, moduleRoughName in enumerate( self.modules ):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n#{} Testing {} Sword module…".format( j+1, moduleRoughName ) )

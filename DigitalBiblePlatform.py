@@ -64,10 +64,10 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-05' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -733,26 +733,31 @@ def demo():
                     #print( "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
 
 
+    testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
+
     if 1: # Test the DBPBible class with the ESV
         print()
         dbpBible1 = DBPBible( "ENGESV" )
         print( dbpBible1 )
-        for verseKey in (SimpleVerseKey('GEN','1','1'),SimpleVerseKey('MAT','1','1'),SimpleVerseKey('JHN','3','16'),):
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
             print( verseKey )
-            print( dbpBible1.getVerseData( verseKey ) )
+            print( " ", dbpBible1.getVerseData( verseKey ) )
          # Now test the DBPBible class caching
-        for verseKey in (SimpleVerseKey('GEN','1','1'),SimpleVerseKey('MAT','1','1'),SimpleVerseKey('JHN','3','16'),):
-            print( verseKey )
-            print( dbpBible1.getVerseData( verseKey ) )
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            print( verseKey, "cached" )
+            print( " ", dbpBible1.getVerseData( verseKey ) )
 
 
     if 1: # Test the DBPBible class with the MS
         print()
         dbpBible2 = DBPBible( "MBTWBT" )
         print( dbpBible2 )
-        for verseKey in (SimpleVerseKey('MAT','1','1'),SimpleVerseKey('JHN','3','16'),):
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
             print( verseKey )
-            print( dbpBible2.getVerseData( verseKey ) )
+            print( " ", dbpBible2.getVerseData( verseKey ) )
 # end of demo
 
 if __name__ == '__main__':

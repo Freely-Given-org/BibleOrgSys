@@ -393,6 +393,7 @@ def demo():
             result3 = CSVBibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "CSV TestA3", result3 )
             #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
                 #print( UsfmB.books['GEN']._processedLines[0:40] )

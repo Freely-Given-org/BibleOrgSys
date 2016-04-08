@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.23'
@@ -867,8 +867,11 @@ def demo():
         testFolder = 'Tests/DataFilesForTests/USFXTest1/'
         resultA1 = USFXXMLBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
-        resultA2 = USFXXMLBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
+        resultA2 = USFXXMLBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA2", resultA2 )
+        resultA3 = USFXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA3", resultA3 )
+
         #testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         #resultB1 = USFXXMLBibleFileCheck( testSubfolder )
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB1", resultB1 )

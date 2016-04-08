@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -543,6 +543,7 @@ def demo():
     if 1: # demo the file checking code
         print( "TestA1", VerseViewXMLBibleFileCheck( testFolder ) )
         print( "TestA2", VerseViewXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        print( "TestA3", VerseViewXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:

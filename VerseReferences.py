@@ -312,6 +312,7 @@ class SimpleVerseKey():
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("parseOSISString( {!r} )").format( referenceString ) )
+
         match = re.search( VERSE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )

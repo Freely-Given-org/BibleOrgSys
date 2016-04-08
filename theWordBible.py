@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-04-08' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.45'
+ProgVersion = '0.46'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1168,7 +1168,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
     tWb = theWordBible( twBfolder, twBfilename )
     tWb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( tWb ) # Just print a summary
-    if 0 and tWb:
+    if tWb is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: tWb.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
@@ -1180,8 +1180,11 @@ def testtWB( indexString, twBfolder, twBfilename ):
             if t=='DC' and len(tWb)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
-            shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+            try:
+                shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+            except KeyError:
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
 
         # Now export the Bible and compare the round trip
         tWb.totheWord()

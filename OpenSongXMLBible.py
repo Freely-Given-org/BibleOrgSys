@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -374,11 +374,16 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
         resultA2 = OpenSongXMLBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA2", resultA2 )
+        resultA3 = OpenSongXMLBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA3", resultA3 )
+
         testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         resultB1 = OpenSongXMLBibleFileCheck( testSubfolder )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB1", resultB1 )
         resultB2 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB2", resultB2 )
+        resultB3 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB3", resultB3 )
 
 
     if 1:

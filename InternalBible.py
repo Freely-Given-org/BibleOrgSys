@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-30' # by RJH
+LastModifiedDate = '2016-04-08' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -351,7 +351,7 @@ class InternalBible:
             except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
-        else:
+        else: # didn't try loading the book
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "NOLOAD", BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
     # end of InternalBible.loadBookIfNecessary
@@ -359,7 +359,7 @@ class InternalBible:
 
     def reloadBook( self, BBB ):
         """
-        Tries to load or reload a book.
+        Tries to load or reload a book (perhaps because we changed it on disk).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("reloadBook( {} )").format( BBB ) )
@@ -514,10 +514,18 @@ class InternalBible:
             since it's a commonly used subset of self.suppliedMetadata['PTX'].
 
         Note that some importers might prefer to supply their own function instead.
+
+        Standard settings values include:
+            Abbreviation
+            FullName, Workname, Name, ProjectName
+            ShortName
+            Language
+            Copyright
+            Rights
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -630,6 +638,28 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
 
+        elif applyMetadataType == 'MyBible':
+            # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
+            #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
+            wantedDict = { 'language':'Language', 'description':'FullName', 'detailed_info':'Description', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
+                if oldKey in wantedDict: #  Only copy wanted entries
+                    if BibleOrgSysGlobals.debugFlag: assert value
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                break
+                    self.settingsDict[newKey] = value
+            #print( self.settingsDict ); halt
+
         elif applyMetadataType in ( 'e-Sword','MySword', ):
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
             #                           RightToLeft, Strong, Version
@@ -653,7 +683,7 @@ class InternalBible:
                     self.settingsDict[newKey] = value
 
         else:
-            logging.critical( "Unknown {} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
+            logging.critical( "Unknown {!r} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel>3:

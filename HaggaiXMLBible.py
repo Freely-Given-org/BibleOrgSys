@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -714,6 +714,7 @@ def demo():
         testFolder = "Tests/DataFilesForTests/HaggaiTest/"
         print( "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
         print( "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        print( "TestA3", HaggaiXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:

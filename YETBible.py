@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-04' # by RJH
+LastModifiedDate = '2016-04-07' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -508,6 +508,9 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA1", result1 )
         result2 = YETBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA2", result2 )
+        result3 = YETBibleFileCheck( testFolder, autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA3", result3 )
+
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = YETBibleFileCheck( testSubfolder )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestB1", result3 )
