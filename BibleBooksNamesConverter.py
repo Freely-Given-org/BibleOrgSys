@@ -28,10 +28,10 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -144,8 +144,8 @@ class BibleBooksNamesConverter:
 
         if len(self.__XMLSystems[systemName]["languageCode"]) != 3:
             logging.error( _("Couldn't find 3-letter language code in {!r} book names system").format( systemName ) )
-        if self.__ISOLanguages and not self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[systemName]["languageCode"] ): # Check that we have a valid language code
-            logging.error( _("Unrecognized {!r} ISO-639-3 language code in {!r} book names system").format( self.__XMLSystems[systemName]["languageCode"], systemName ) )
+        #if self.__ISOLanguages and not self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[systemName]["languageCode"] ): # Check that we have a valid language code
+            #logging.error( _("Unrecognized {!r} ISO-639-3 language code in {!r} book names system").format( self.__XMLSystems[systemName]["languageCode"], systemName ) )
 
         uniqueDict = {}
         for index in range( 0, len(self.mainElementTags) ):
@@ -372,14 +372,14 @@ class BibleBooksNamesConverter:
         """
         import pickle
 
-        assert self._XMLSystems
+        assert self.__XMLSystems
         self.importDataToPython()
         assert self.__BookNamesSystemsDict
 
         if not filepath:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
-            filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
+            filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
@@ -581,7 +581,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 

@@ -79,14 +79,14 @@ Here is a typical verses table segment (one verse per SQLite3 table row):
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-10' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.01'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os
@@ -100,8 +100,108 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
 
-FILENAME_ENDINGS_TO_ACCEPT = ('.SQLITE3',) # Must be UPPERCASE
-BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.SQLITE3','.COMMENTARIES.SQLITE3',) # Must be UPPERCASE
+FILENAME_ENDINGS_TO_ACCEPT = ( '.SQLITE3', ) # Must be UPPERCASE
+BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ( '.SQLITE3', '.COMMENTARIES.SQLITE3', ) # Must be UPPERCASE
+FILENAME_PARTS_TO_REJECT = ( '.DICTIONARY.', '.CROSSREFERENCES.', ) # Must be UPPERCASE
+
+
+# NOTE that color values can vary between modules
+BOOK_TABLE = {
+    'GEN': ( 0xccccff, 10, 'Быт', 'Бытие', 'Gen', 'Genesis'),
+    'EXO': ( 0xccccff, 20, 'Исх', 'Исход', 'Exo', 'Exodus'),
+    'LEV': ( 0xccccff, 30, 'Лев', 'Левит', 'Lev', 'Leviticus'),
+    'NUM': ( 0xccccff, 40, 'Чис', 'Числа', 'Num', 'Numbers'),
+    'DEU': ( 0xccccff, 50, 'Втор', 'Второзаконие', 'Deu', 'Deuteronomy'),
+    'JOS': ( 0xffcc99, 60, 'Нав', 'Иисус Навин', 'Josh', 'Joshua'),
+    'JDG': ( 0xffcc99, 70, 'Суд', 'Судьи', 'Judg', 'Judges'),
+    'RUT': ( 0xffcc99, 80, 'Руфь', 'Руфь', 'Ruth', 'Ruth'),
+    'SA1': ( 0xffcc99, 90, '1Цар', '1-я Царств', '1Sam', '1 Samuel'),
+    'SA2': ( 0xffcc99, 100, '2Цар', '2-я Царств', '2Sam', '2 Samuel'),
+    'KI1': ( 0xffcc99, 110, '3Цар', '3-я Царств', '1Kin', '1 Kings'),
+    'KI2': ( 0xffcc99, 120, '4Цар', '4-я Царств', '2Kin', '2 Kings'),
+    'JDT': ( 0xffcc99, 180, 'Иудф', 'Иудифь', 'Jdth', 'Judith'),
+    'CH1': ( 0xffcc99, 130, '1Пар', '1-я Паралипоменон', '1Chr', '1 Chronicles'),
+    'CH2': ( 0xffcc99, 140, '2Пар', '2-я Паралипоменон', '2Chr', '2 Chronicles'),
+    'EZR': ( 0xffcc99, 150, 'Ездр', 'Ездра', 'Ezr', 'Ezra'),
+    'NEH': ( 0xffcc99, 160, 'Неем', 'Неемия', 'Neh', 'Nehemiah'),
+    'LES': ( 0xffcc99, 165, '2Езд', '2-я Ездры', '2Esd', '2 Esdras'), # Was 740 -- NOT SURE ABOUT THIS ONE -- 2nd Ezra
+    'TOB': ( 0xffcc99, 170, 'Тов', 'Товит', 'Tob', 'Tobit'),
+    'EST': ( 0xffcc99, 190, 'Есф', 'Есфирь', 'Esth', 'Esther'),
+    'JOB': ( 0x66ff99, 220, 'Иов', 'Иов', 'Job', 'Job'),
+    'PSA': ( 0x66ff99, 230, 'Пс', 'Псалтирь', 'Ps', 'Psalms'),
+    'PRO': ( 0x66ff99, 240, 'Прит', 'Притчи', 'Prov', 'Proverbs'),
+    'ECC': ( 0x66ff99, 250, 'Еккл', 'Екклесиаст', 'Eccl', 'Ecclesiastes'),
+    'SNG': ( 0x66ff99, 260, 'Песн', 'Песня Песней', 'Song', 'Song of Solomon'),
+    'WIS': ( 0x66ff99, 270, 'Прем', 'Премудрость Соломона', 'Wis', 'Wisdom of Solomon'),
+    'SIR': ( 0x66ff99, 280, 'Сир', 'Сирах', 'Sir', 'Sirach'),
+    'ISA': ( 0xff9fb4, 290, 'Ис', 'Исаия', 'Isa', 'Isaiah'),
+    'JER': ( 0xff9fb4, 300, 'Иер', 'Иеремия', 'Jer', 'Jeremiah'),
+    'PAZ': ( 0xff9fb4, 305, '???', '???', 'Azar', 'Azariah'),
+    'LAM': ( 0xff9fb4, 310, 'Плач', 'Плач Иеремии', 'Lam', 'Lamentations'),
+    'LJE': ( 0xff9fb4, 315, 'Посл', 'Послание Иеремии', 'Let', 'Letter of Jeremiah'),
+    'BAR': ( 0xff9fb4, 320, 'Вар', 'Варух', 'Bar', 'Baruch'),
+    'SUS': ( 0xff9fb4, 325, '???', '???', 'Sus', 'Susanna'),
+    'EZE': ( 0xff9fb4, 330, 'Иез', 'Иезекииль', 'Ezek', 'Ezekiel'),
+    'DAN': ( 0xff9fb4, 340, 'Дан', 'Даниил', 'Dan', 'Daniel'),
+    'BEL': ( 0xff9fb4, 345, '???', '???', 'Bel', 'Bel and Dragon'),
+    'HOS': ( 0xffff99, 350, 'Ос', 'Осия', 'Hos', 'Hosea'),
+    'JOL': ( 0xffff99, 360, 'Иоил', 'Иоиль', 'Joel', 'Joel'),
+    'AMO': ( 0xffff99, 370, 'Ам', 'Амос', 'Am', 'Amos'),
+    'OBA': ( 0xffff99, 380, 'Авд', 'Авдий', 'Oba', 'Obadiah'),
+    'JNA': ( 0xffff99, 390, 'Ион', 'Иона', 'Jona', 'Jonah'),
+    'MIC': ( 0xffff99, 400, 'Мих', 'Михей', 'Mic', 'Micah'),
+    'NAH': ( 0xffff99, 410, 'Наум', 'Наум', 'Nah', 'Nahum'),
+    'HAB': ( 0xffff99, 420, 'Авв', 'Аввакум', 'Hab', 'Habakkuk'),
+    'ZEP': ( 0xffff99, 430, 'Соф', 'Софония', 'Zeph', 'Zephaniah'),
+    'HAG': ( 0xffff99, 440, 'Агг', 'Аггей', 'Hag', 'Haggai'),
+    'ZEC': ( 0xffff99, 450, 'Зах', 'Захария', 'Zech', 'Zechariah'),
+    'MAL': ( 0xffff99, 460, 'Мал', 'Малахия', 'Mal', 'Malachi'),
+    'MA1': ( 0xd3d3d3, 462, '1Мак', '1-я Маккавейская', '1Mac', '1 Maccabees'), # Was 200
+    'MA2': ( 0xd3d3d3, 464, '2Мак', '2-я Маккавейская', '2Mac', '2 Maccabees'), # Was 210
+    'MA3': ( 0xd3d3d3, 466, '3Мак', '3-я Маккавейская', '3Mac', '3 Maccabees'), # MAN appears at 466 in KJ-1769
+    'EZ5': ( 0xd3d3d3, 468, '3Езд', '3-я Ездры', '3Esd', '3 Esdras'), # Was 750 -- NOT SURE ABOUT THIS ONE -- 3rd Ezra
+    'MAT': ( 0xff6600, 470, 'Мат', 'От Матфея', 'Mat', 'Matthew'),
+    'MRK': ( 0xff6600, 480, 'Мар', 'От Марка', 'Mar', 'Mark'),
+    'LUK': ( 0xff6600, 490, 'Лук', 'От Луки', 'Luk', 'Luke'),
+    'JHN': ( 0xff6600, 500, 'Ин', 'От Иоанна', 'John', 'John'),
+    'ACT': ( 0x00ffff, 510, 'Деян', 'Деяния', 'Acts', 'Acts'),
+    'JAM': ( 0x00ff00, 660, 'Иак', 'Иакова', 'Jam', 'James'),
+    'PE1': ( 0x00ff00, 670, '1Пет', '1-е Петра', '1Pet', '1 Peter'),
+    'PE2': ( 0x00ff00, 680, '2Пет', '2-е Петра', '2Pet', '2 Peter'),
+    'JN1': ( 0x00ff00, 690, '1Ин', '1-е Иоанна', '1Jn', '1 John'),
+    'JN2': ( 0x00ff00, 700, '2Ин', '2-е Иоанна', '2Jn', '2 John'),
+    'JN3': ( 0x00ff00, 710, '3Ин', '3-е Иоанна', '3Jn', '3 John'),
+    'JDE': ( 0x00ff00, 720, 'Иуд', 'Иуды', 'Jud', 'Jude'),
+    'ROM': ( 0xffff00, 520, 'Рим', 'К Римлянам', 'Rom', 'Romans'),
+    'CO1': ( 0xffff00, 530, '1Кор', '1-е Коринфянам', '1Cor', '1 Corinthians'),
+    'CO2': ( 0xffff00, 540, '2Кор', '2-е Коринфянам', '2Cor', '2 Corinthians'),
+    'GAL': ( 0xffff00, 550, 'Гал', 'К Галатам', 'Gal', 'Galatians'),
+    'EPH': ( 0xffff00, 560, 'Еф', 'К Ефесянам', 'Eph', 'Ephesians'),
+    'PHP': ( 0xffff00, 570, 'Флп', 'К Филиппийцам', 'Phil', 'Philippians'),
+    'COL': ( 0xffff00, 580, 'Кол', 'К Колоссянам', 'Col', 'Colossians'),
+    'TH1': ( 0xffff00, 590, '1Фес', '1-е Фессалоникийцам', '1Ths', '1 Thessalonians'),
+    'TH2': ( 0xffff00, 600, '2Фес', '2-е Фессалоникийцам', '2Ths', '2 Thessalonians'),
+    'TI1': ( 0xffff00, 610, '1Тим', '1-е Тимофею', '1Tim', '1 Timothy'),
+    'TI2': ( 0xffff00, 620, '2Тим', '2-е Тимофею', '2Tim', '2 Timothy'),
+    'TIT': ( 0xffff00, 630, 'Тит', 'К Титу', 'Tit', 'Titus'),
+    'PHM': ( 0xffff00, 640, 'Флм', 'К Филимону', 'Phlm', 'Philemon'),
+    'HEB': ( 0xffff00, 650, 'Евр', 'К Евреям', 'Heb', 'Hebrews'),
+    'REV': ( 0xff7c80, 730, 'Откр', 'Откровение', 'Rev', 'Revelation'),
+    'LAO': ( 0x00ff00, 780, 'Лаод', 'К Лаодикийцам', 'Lao', 'Letter to the Laodiceans'),
+    'MAN': ( 0x66ff99, 790, 'Мол', 'Молитва Манассии', 'Man', 'Prayer of Manasseh'), # Can also appear at 466
+    }
+# Create a pivot table by book number
+BOOKNUMBER_TABLE = {}
+# Check the table
+for BBB,stuff in BOOK_TABLE.items():
+    #print( BBB, stuff )
+    assert len(stuff) == 6
+    for something in stuff: assert something # shouldn't be blank
+    assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)
+    color, bookNumber, rusAbbrev, rusName, engAbbrev, engName = stuff
+    assert bookNumber not in BOOKNUMBER_TABLE
+    BOOKNUMBER_TABLE[bookNumber] = (BBB,color,rusAbbrev,rusName,engAbbrev,engName)
+assert len(BOOKNUMBER_TABLE) == len(BOOK_TABLE)
 
 
 
@@ -155,10 +255,10 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-            #ignore = False
-            #for ending in filenameEndingsToIgnore:
-                #if somethingUpper.endswith( ending): ignore=True; break
-            #if ignore: continue
+            ignore = False
+            for stuff in FILENAME_PARTS_TO_REJECT:
+                if stuff in somethingUpper: ignore=True; break
+            if ignore: continue
             #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
             if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
@@ -198,10 +298,10 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             elif os.path.isfile( somepath ):
                 somethingUpper = something.upper()
                 somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                #ignore = False
-                #for ending in filenameEndingsToIgnore:
-                    #if somethingUpper.endswith( ending): ignore=True; break
-                #if ignore: continue
+                ignore = False
+                for stuff in FILENAME_PARTS_TO_REJECT:
+                    if stuff in somethingUpper: ignore=True; break
+                if ignore: continue
                 #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                     foundSubfiles.append( something )
@@ -281,19 +381,22 @@ class MyBibleBible( Bible ):
         for row in rows:
             assert len(row) == 2 # name, value
             name, value = row
-            #print( '  INFO', name, repr(value) )
+            #if debuggingThisModule: print( '  INFO', name, repr(value) )
             assert name in ( 'description', 'chapter_string',
                             'language', 'language_iso639-2b', 'region', 'russian_numbering',
-                            'strong_numbers', 'right_to_left', 'contains_accents',
-                            'detailed_info', 'introduction_string', 'Introduction', )
+                            'strong_numbers', 'strong_numbers_prefix',
+                            'right_to_left', 'contains_accents',
+                            'detailed_info', 'introduction_string', 'Introduction',
+                            'is_footnotes', )
             # NOTE: detailed_info may contain HTML formatting
             if value == 'false': value = False
             elif value == 'true': value = True
             self.suppliedMetadata['MyBible'][name] = value
         #print( self.suppliedMetadata['MyBible'] ); halt
 
-        #if self.suppliedMetadata['MyBible']['language'] ==
-        self.BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        if self.suppliedMetadata['MyBible']['language'] == 'ru':
+            self.BOS = BibleOrganizationalSystem( 'GENERIC-81-RUS' )
+        else: self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
 
         # Now get the book info -- try the books_all table first to see if it exists
         self.suppliedMetadata['MyBible']['BookInfo'] = OrderedDict()
@@ -307,9 +410,12 @@ class MyBibleBible( Bible ):
             for j, row in enumerate( rows ):
                 assert len(row) == 5
                 bookColor, bookNumber, shortName, longName, isPresent = row
+                #print( bookColor, bookNumber, shortName, longName, isPresent )
+                if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
                     BBB = self.BOS.getBBB( longName ) # Might not work for other languages
+                    if BBB is None: BBB = self.BOS.getBBB( shortName ) # Might not work for other languages
                 #print( "  Got1 BBB", BBB, repr(longName) )
                 assert BBB
                 self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
@@ -320,24 +426,34 @@ class MyBibleBible( Bible ):
         except sqlite3.OperationalError: pass # Table is not in older module versions
 
         if not loadedBookInfo: # from newer books_all table
-            self.cursor.execute( 'select * from books' )
-            rows = self.cursor.fetchall()
-            #print( "  BOOKS rows", len(rows) )
-            isPresent = True
-            for j, row in enumerate( rows ):
-                try: bookColor, bookNumber, shortName, longName = row
-                except ValueError: bookColor, bookNumber, shortName, longName, isPresent = row
-                longName = longName.strip() # Why do some have a \n at the end???
-                if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
-                else:
-                    BBB = self.BOS.getBBB( longName ) # Might not work for other languages
-                #print( "  Got2 BBB", BBB, repr(longName) )
-                assert BBB
-                self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
-                                                'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  Loaded book info ({}) from (old) BOOKS table".format( len(rows) ) )
+            try:
+                self.cursor.execute( 'select * from books' )
+                rows = self.cursor.fetchall()
+                #print( "  BOOKS rows", len(rows) )
+                isPresent = True
+                for j, row in enumerate( rows ):
+                    try: bookColor, bookNumber, shortName, longName = row
+                    except ValueError: bookColor, bookNumber, shortName, longName, isPresent = row
+                    #print( bookColor, bookNumber, shortName, longName, isPresent )
+                    if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
+                    longName = longName.strip() # Why do some have a \n at the end???
+                    if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
+                    else:
+                        BBB = self.BOS.getBBB( longName ) # Might not work for other languages
+                        if BBB is None: BBB = self.BOS.getBBB( shortName ) # Might not work for other languages
+                        if BBB is None and shortName=='3Ма': BBB = 'MA3' # Cant't track down why this fails ???
+                    #print( "  Got2 BBB", BBB, repr(longName), repr(shortName) )
+                    assert BBB
+                    self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
+                                                    'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "  Loaded book info ({}) from (old) BOOKS table".format( len(rows) ) )
+                loadedBookInfo = True
+            except sqlite3.OperationalError: pass # Table is not in older module versions
 
+        if not loadedBookInfo:
+            if '.commentaries.' not in self.sourceFilename:
+                logging.critical( "MyBibleBible.preload for {} had no books table".format( self.sourceFilename ) )
         #print( self.suppliedMetadata['MyBible'] ); halt
         self.preloadDone = True
     # end of MyBibleBible.preload
@@ -384,36 +500,57 @@ class MyBibleBible( Bible ):
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("MyBibleBible: Loading {} from {}…").format( BBB, self.sourceFilepath ) )
 
+        if '.commentaries.' in self.sourceFilename: self.__loadBibleCommentaryBook( BBB )
+        else: self.__loadBibleBook( BBB )
+    # end of MyBibleBible.loadBook
+
+
+    def __loadBibleBook( self, BBB ):
+        """
+        Load the requested Bible book out of the SQLite3 database.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("__loadBibleBook( {} )").format( BBB ) )
 
         lastC = None
-        def importLine( name, BBB, C, V, originalLine, bookObject ):
+        def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
             """
             Change MyBible format codes to our codes
                 and then add the line to the given bookObject
             """
             nonlocal lastC
 
-            if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( exp("importLine( {!r}, {} {}:{}, {!r}, ... )").format( name, BBB, C, V, originalLine ) )
+            #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                #print( exp("importVerseLine( {!r}, {} {}:{}, {!r}, ... )").format( name, BBB, C, V, originalLine ) )
 
-            assert originalLine is None or ('\n' not in originalLine and '\r' not in originalLine )
             if originalLine is None: # We don't have an entry for this C:V
                 return
+
+            while originalLine and originalLine[-1] in '\r\n': # RHB
+                originalLine = originalLine[:-1]
+            assert '\n' not in originalLine and '\r' not in originalLine
             line = originalLine
+
+            if line.endswith( '<BR>' ): line = line[:-4] # CSLU
 
             # Change MyBible format codes
             line = line.replace( '<n>{', '\\f ' ).replace( '}</n>', '\\f*' ) # ISV
             line = line.replace( '<n>', '\\f ' ).replace( '</n>', '\\f*' )
+            line = line.replace( '<f>', '\\fn ' ).replace( '</f>', '\\fn*' ) # BTI
             line = line.replace( '<i>', '\\add ' ).replace( '</i>', '\\add*' )
+            line = line.replace( '<b>', '\\bd ' ).replace( '</b>', '\\bd*' ) # RHB
             line = line.replace( '<e>', '\\em ' ).replace( '</e>', '\\em*' )
-            line = line.replace( '<J>', '\\wj ' ).replace( '</J>', '\\wj*' )
+            line = line.replace( '<J>', '\\wj ' ).replace( '</J>', '\\wj*' ).replace( '<J/>', '\\wj*' ) # ¥­£¥
             line = line.replace( '<S>', '\\str ' ).replace( '</S>', '\\str*' )
             line = line.replace( '<t>', '\\qm ' ).replace( '</t>', '\\m ' )
-            line = line.replace( '<br/>', '\\m ' ).replace( '<pb/>', '\\p ' )
+            line = line.replace( '<br/>', '\\m ' )
+            line = line.replace( '<pb/>', '\\p ' )
+            line = line.replace( '<p>', '\\p ' ) # KJ-1769
+            line = line.replace( '<br>', '\\m ' ) # RHB
 
             # Check for left-overs
-            if '<' in line or '>' in line or '=' in line or '{' in line or '}' in line:
-                print( exp("importLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+            if '<' in line or '>' in line: # or '{' in line or '}' in line: RSTI has braces
+                print( exp("importVerseLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
                 if debuggingThisModule: halt
 
             # Ok, use the adjusted info
@@ -422,7 +559,7 @@ class MyBibleBible( Bible ):
                 lastC = C
             #print( BBB, C, V, repr(line) )
             bookObject.addLine( 'v', '{} {}'.format( V, line ) )
-        # end of importLine
+        # end of importVerseLine
 
 
         # Main code for loadBook()
@@ -454,9 +591,9 @@ class MyBibleBible( Bible ):
                 ##print( row )
                 #line = None
             #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
-            if line is None: logging.warning( "MyBibleBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( "MyBibleBible.loadBibleBook: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
-                if not line: logging.warning( "MyBibleBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                if not line: logging.warning( "MyBibleBible.loadBibleBook: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
                     haveLines = True
 
@@ -467,17 +604,135 @@ class MyBibleBible( Bible ):
                         #logging.warning( "MyBibleBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                     #line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
-            importLine( self.name, BBB, C, V, line, thisBook ) # handle any formatting and save the line
+            importVerseLine( self.name, BBB, C, V, line, thisBook ) # handle any formatting and save the line
 
         if haveLines:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible saving", BBB )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleBook saving", BBB )
             self.saveBook( thisBook )
         #else: print( "Not saving", BBB )
 
         #if ourGlobals['haveParagraph']:
             #thisBook.addLine( 'p', '' )
             #ourGlobals['haveParagraph'] = False
-    # end of MyBibleBible.loadBook
+    # end of MyBibleBible.__loadBibleBook
+
+
+    def __loadBibleCommentaryBook( self, BBB ):
+        """
+        Load the requested Bible book out of the SQLite3 database.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("__loadBibleCommentaryBook( {} )").format( BBB ) )
+
+        lastC = None
+        def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
+            """
+            Change MyBible format codes to our codes
+                and then add the line to the given bookObject
+            """
+            nonlocal lastC
+
+            #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                #print( exp("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, ... )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
+
+            if originalLine is None: # We don't have an entry for this C:V
+                return
+            assert '\n' not in originalLine and '\r' not in originalLine
+            line = originalLine
+
+            # Change MyBible format codes
+            line = line.replace( '<n>{', '\\f ' ).replace( '}</n>', '\\f*' ) # ISV
+            line = line.replace( '<n>', '\\f ' ).replace( '</n>', '\\f*' )
+            line = line.replace( '<i>', '\\add ' ).replace( '</i>', '\\add*' )
+            line = line.replace( '<e>', '\\em ' ).replace( '</e>', '\\em*' )
+            line = line.replace( '<J>', '\\wj ' ).replace( '</J>', '\\wj*' )
+            line = line.replace( '<S>', '\\str ' ).replace( '</S>', '\\str*' )
+            line = line.replace( '<t>', '\\qm ' ).replace( '</t>', '\\m ' )
+            line = line.replace( '<br/>', '\\m ' ).replace( '<pb/>', '\\p ' )
+
+            # Check for left-overs
+            if '<' in line or '>' in line or '=' in line or '{' in line or '}' in line:
+                if '<a ' not in line:
+                    print( exp("importCommentaryLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+                    if debuggingThisModule:
+                        halt
+
+            # Ok, use the adjusted info
+            if C!=lastC:
+                bookObject.addLine( 'c', str(C) )
+                lastC = C
+            #print( BBB, C, V, repr(line) )
+            bookObject.addLine( 'v', '{} {}'.format( V, line ) )
+        # end of importCommentaryLine
+
+
+        # Main code for loadBook()
+        #if BBB not in self.suppliedMetadata['MyBible']['BookInfo'] \
+        #or not self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent']:
+            #return
+
+        # Create the empty book
+        thisBook = BibleBook( self, BBB )
+        thisBook.objectNameString = "MyBible Bible Book object"
+        thisBook.objectTypeString = "MyBible"
+
+        C = V = 1
+
+        #ourGlobals = {}
+        #continued = ourGlobals['haveParagraph'] = False
+        haveLines = False
+        footnoteMarker = None
+        mbBookNumber = BOOK_TABLE[BBB][1]
+        #print( repr(mbBookNumber) )
+        if self.suppliedMetadata['MyBible']['is_footnotes']:
+            self.cursor.execute('select chapter_number_from,verse_number_from,chapter_number_to,verse_number_to,marker,text from commentaries where book_number=?', (mbBookNumber,) )
+        else:
+            self.cursor.execute('select chapter_number_from,verse_number_from,chapter_number_to,verse_number_to,text from commentaries where book_number=?', (mbBookNumber,) )
+        for row in self.cursor.fetchall():
+            if self.suppliedMetadata['MyBible']['is_footnotes']:
+                C, V, C2, V2, footnoteMarker, line = row
+                #print( '{!r}:{!r}-{!r}:{!r} {!r}:{!r}'.format( C, V, C2, V2, footnoteMarker, line ) )
+            else: # not footnotes
+                C, V, C2, V2, line = row
+                #print( '{!r}:{!r}-{!r}:{!r} {!r}'.format( C, V, C2, V2, line ) )
+            if C2 is not None or V2 is not None:
+                if C2 is None or C2==C:
+                    assert V2 > V
+                    V = '{}-{}'.format( V, V2 ) # Make a verse bridge
+                else: halt # it's across a chapter boundary -- not finished
+            #try:
+                #row = self.cursor.fetchone()
+                #C, V, line = row
+            #except TypeError: # This reference is missing (row is None)
+                ##print( "something wrong at", BBB, C, V )
+                ##if BibleOrgSysGlobals.debugFlag: halt
+                ##print( row )
+                #line = None
+            #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
+            if line is None: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Found missing commentary line at {} {}:{}".format( BBB, C, V ) )
+            else: # line is not None
+                if not line: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Found blank commentary line at {} {}:{}".format( BBB, C, V ) )
+                else:
+                    haveLines = True
+
+                    ## Some modules end lines with \r\n or have it in the middle!
+                    ##   (We just ignore these for now)
+                    #while line and line[-1] in '\r\n': line = line[:-1]
+                    #if '\r' in line or '\n' in line: # (in the middle)
+                        #logging.warning( "MyBibleBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                    #line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
+
+            importCommentaryLine( self.name, BBB, C, V, footnoteMarker, line, thisBook ) # handle any formatting and save the line
+
+        if haveLines:
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleCommentaryBook saving", BBB )
+            self.saveBook( thisBook )
+        #else: print( "Not saving", BBB )
+
+        #if ourGlobals['haveParagraph']:
+            #thisBook.addLine( 'p', '' )
+            #ourGlobals['haveParagraph'] = False
+    # end of MyBibleBible.__loadBibleCommentaryBook
 # end of MyBibleBible class
 
 
@@ -492,7 +747,7 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MyBible Bible class {}…").format( indexString) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( MyBBfolder, MyBBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder/filename are {!r} {!r}".format( MyBBfolder, MyBBfilename ) )
     MyBB = MyBibleBible( MyBBfolder, MyBBfilename )
     MyBB.preload()
     #MyBB.load() # Load and process the file
@@ -511,10 +766,12 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
             try:
-                shortText, verseText = svk.getShortText(), MyBB.getVerseText( svk )
+                shortText = svk.getShortText()
+                verseText = MyBB.getVerseText( svk )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
             except KeyError:
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( '  testMyBB', reference, "not found!!!" )
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: raise
 
         if 0: # Now export the Bible and compare the round trip
             MyBB.toMyBible()
@@ -535,7 +792,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code
         testFolder = "Tests/DataFilesForTests/MyBibleTest/"
         result1 = MyBibleBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
@@ -547,7 +804,7 @@ def demo():
 
     if 1: # individual modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MyBible modules/"
-        names = ('nheb-je','nko','ts1998',)
+        names = ('CSLU',)
         for j, name in enumerate( names):
             fullname = name + '.SQLite3'
             pathname = os.path.join( testFolder, fullname )
@@ -576,10 +833,15 @@ def demo():
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
+                ignore = False
+                somethingUpper = something.upper()
+                for stuff in FILENAME_PARTS_TO_REJECT:
+                    if stuff in somethingUpper: ignore=True; break
+                if ignore: continue
                 foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nD: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
@@ -598,10 +860,16 @@ def demo():
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'): foundFiles.append( something )
+            elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
+                ignore = False
+                somethingUpper = something.upper()
+                for stuff in FILENAME_PARTS_TO_REJECT:
+                    if stuff in somethingUpper: ignore=True; break
+                if ignore: continue
+                foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nE: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads

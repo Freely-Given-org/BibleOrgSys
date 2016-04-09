@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.20'
@@ -530,7 +530,7 @@ class ESwordBible( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        self.BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
     # end of ESwordBible.load
 
 
@@ -625,7 +625,7 @@ class ESwordBible( Bible ):
             loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         #halt
 
-        #BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
@@ -814,7 +814,7 @@ class ESwordBible( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        #BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         # Create the first book
         thisBook = BibleBook( self, BBB )

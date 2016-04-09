@@ -56,17 +56,17 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-10' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.68'
+ProgVersion = '0.69'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-import os, logging, multiprocessing
+import os, sys, logging, multiprocessing
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
@@ -347,7 +347,13 @@ class InternalBible:
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            except AttributeError:
+                errorClass, exceptionInstance, traceback = sys.exc_info()
+                print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                if "object has no attribute 'loadBookx'" in str(exceptionInstance):
+                    logging.info( "No 'loadBook()' function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+                else: # it's some other attribute error in the loadBook function
+                    raise
             except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
@@ -2081,7 +2087,6 @@ def demo():
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )

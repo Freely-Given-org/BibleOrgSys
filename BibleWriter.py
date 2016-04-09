@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -3233,7 +3233,7 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         ignoredMarkers = set()
 
@@ -6684,7 +6684,7 @@ class BibleWriter( InternalBible ):
 
 
         # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
@@ -6877,7 +6877,7 @@ class BibleWriter( InternalBible ):
 
 
         # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
@@ -7384,7 +7384,7 @@ class BibleWriter( InternalBible ):
 
 
         # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
@@ -7890,7 +7890,7 @@ class BibleWriter( InternalBible ):
 
 
         # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)

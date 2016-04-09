@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-07' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -231,7 +231,7 @@ class HaggaiXMLBible( Bible ):
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
-        self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):

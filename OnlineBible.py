@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.16'
@@ -147,7 +147,7 @@ class OnlineBible( Bible ):
         Total  31,102 verses = 797E
     """
     global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
 
     def __init__( self, sourceFolder, encoding=None ):

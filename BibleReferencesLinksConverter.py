@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
@@ -345,7 +345,7 @@ class BibleReferencesLinksConverter:
 
         myRefLinkList = []
         actualLinkCount = 0
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         for j,(sourceReference,sourceComponent,actualRawLinksList) in enumerate( rawRefLinkList ):
             # Just do some testing first

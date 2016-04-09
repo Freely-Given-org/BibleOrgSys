@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.20'
@@ -258,7 +258,7 @@ class MySwordBible( Bible ):
         if 'encryption' in self.suppliedMetadata['MySword']:
             logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
 
-        self.BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         self.preloadDone = True
     # end of MySwordBible.preload

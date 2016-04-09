@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-08' # by RJH
+LastModifiedDate = '2016-04-09' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.46'
@@ -239,7 +239,7 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     assert volumeType in ('OT','NT','BOTH',)
 
     global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
     if volumeType == 'OT':
         bookCount, books, totalLines, bookLines = theWordOTBookCount, theWordOTBooks, theWordOTTotalLines, theWordOTBookLines
@@ -1019,7 +1019,7 @@ class theWordBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['theWord'] = {}
