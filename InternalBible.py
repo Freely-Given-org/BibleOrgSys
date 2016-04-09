@@ -347,10 +347,10 @@ class InternalBible:
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except AttributeError:
+            except AttributeError: # Could be that our Bible doesn't have the ability to load individual books
                 errorClass, exceptionInstance, traceback = sys.exc_info()
                 print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-                if "object has no attribute 'loadBookx'" in str(exceptionInstance):
+                if "object has no attribute 'loadBook'" in str(exceptionInstance):
                     logging.info( "No 'loadBook()' function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
                 else: # it's some other attribute error in the loadBook function
                     raise
