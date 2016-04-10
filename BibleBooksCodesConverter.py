@@ -28,10 +28,10 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = '0.77'
+ProgVersion = '0.78'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -51,17 +51,19 @@ import BibleOrgSysGlobals
 SPECIAL_CODES = 'ALL', 'UNK' # We check these aren't used for other things
 
 
-def t( messageString ):
-    """
-    Prepends the module name to a error or warning message string if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, errorBit )
-# end of t
+#def exp( messageString ):
+    #"""
+    #Expands the message string in debug mode.
+    #Prepends the module name to a error or warning message string
+        #if we are in debug mode.
+    #Returns the new string.
+    #"""
+    #try: nameBit, errorBit = messageString.split( ': ', 1 )
+    #except ValueError: nameBit, errorBit = '', messageString
+    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
+## end of exp
 
 
 
@@ -555,7 +557,7 @@ class BibleBooksCodesConverter:
         adjAllAbbreviationsDict = {}
         for abbreviation, value in initialAllAbbreviationsDict.items(): # Remove useless entries
             if value == 'MultipleValues': # don't add it to this adjusted dictionary
-                logging.critical( "BibleBooksCodesConverter: Removing {!r} which has multiple values from adjAllAbbreviationsDict".format( abbreviation ) )
+                logging.warning( "BibleBooksCodesConverter: Removing {!r} which has multiple values from adjAllAbbreviationsDict".format( abbreviation ) )
             #elif value == 'MultipleShortenedValues': # don't add it to this adjusted dictionary
                 ##logging.critical( "BibleBooksCodesConverter: Removing {!r} which has multiple shortened values from adjAllAbbreviationsDict".format( abbreviation ) )
                 #pass
@@ -864,7 +866,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 1 or 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
