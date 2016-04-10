@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-09' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.46'
+ProgVersion = '0.50'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -494,189 +494,6 @@ def resettheWordMargins( ourGlobals, setKey=None ):
         #print( "Went off at", BBB, C, V, marker, text )
         #if BBB=='MAT' and C==4 and V==17: halt
 # end of resettheWordMargins
-
-
-def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
-    """
-    Composes a single line representing a verse.
-
-    Parameters are the Scripture reference (for error messages),
-        the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
-        and a ourGlobals dictionary for holding persistent variables (between calls).
-
-    This function handles the paragraph/new-line markers;
-        theWordAdjustLine (above) is called to handle internal/character markers.
-
-    Returns the composed line.
-    """
-    #print( "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
-    composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
-    ourGlobals['line'] = '' # We've used them so we don't need them any more
-    #marker = text = None
-
-    vCount = 0
-    lastMarker = None
-    #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
-    for verseDataEntry in verseData:
-        marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        #print( '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
-        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
-        if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
-
-        if marker == 'v': # handle versification differences here
-            vCount += 1
-            if vCount == 1: # Handle verse bridges
-                if text != str(V):
-                    composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
-            elif vCount > 1: # We have an additional verse number
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
-                composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
-            lastMarker = marker
-            continue
-
-        #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
-        if marker in theWordIgnoredIntroMarkers:
-            logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-            print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
-
-        if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker == 's1':
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
-            composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 's3', 's4', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 'qa', 'r', ):
-            if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
-                text = '(' + text + ')'
-            composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
-        elif marker in ( 'm', ):
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
-            #if text:
-                #print( 'm', repr(text), verseData )
-                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
-                #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
-                    #composedLine += '<CL>'
-                #else: composedLine += '<CM>'
-            #else: # there is text
-                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'p', 'b', ):
-            #print( marker, text )
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
-            #else: composedLine += '<CM>'
-            #composedLine += theWordAdjustLine(BBB,C,V,text)
-            resettheWordMargins( ourGlobals )
-        elif marker in ( 'pi1', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi1' ); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi2', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi2' ); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi3', 'pmc', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi4', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pc', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi5' ); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pr', 'pmr', 'cls', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi6' ); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
-        elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
-            assert not text
-            resettheWordMargins( ourGlobals, 'pi7' ); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q1', 'qm1', ):
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
-            else: composedLine += '<CI>'
-            if not ourGlobals['pi1']: composedLine += '<PI>'
-            resettheWordMargins( ourGlobals, 'pi1' )
-            #composedLine += theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q2', 'qm2', ):
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
-            else: composedLine += '<CI>'
-            if not ourGlobals['pi2']: composedLine += '<PI2>'
-            resettheWordMargins( ourGlobals, 'pi2' )
-            #composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q3', 'qm3', ):
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
-            else: composedLine += '<CI>'
-            if not ourGlobals['pi3']: composedLine += '<PI3>'
-            resettheWordMargins( ourGlobals, 'pi3' )
-            #composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q4', 'qm4', ):
-            assert not text
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
-            else: composedLine += '<CI>'
-            if not ourGlobals['pi4']: composedLine += '<PI4>'
-            resettheWordMargins( ourGlobals, 'pi4' )
-            #composedLine += '<CI><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li1': resettheWordMargins( ourGlobals, 'pi1' ); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li2': resettheWordMargins( ourGlobals, 'pi2' ); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li3': resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
-        elif marker in ( 'v~', 'p~', ):
-            #print( lastMarker )
-            if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
-            elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
-            elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
-            elif lastMarker != 'v':
-                composedLine += theWordAdjustLine(BBB,C,V, text )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
-                    halt # This should never happen -- probably a b marker with text
-            #if ourGlobals['pi1']: composedLine += '<PI>'
-            #elif ourGlobals['pi2']: composedLine += '<PI2>'
-            #elif ourGlobals['pi3']: composedLine += '<PI3>'
-            #elif ourGlobals['pi4']: composedLine += '<PI4>'
-            #elif ourGlobals['pi5']: composedLine += '<PI5>'
-            #elif ourGlobals['pi6']: composedLine += '<PI6>'
-            #elif ourGlobals['pi7']: composedLine += '<PI7>'
-            composedLine += theWordAdjustLine(BBB,C,V, text )
-        elif marker in ('nb',): # Just ignore these ones
-            pass
-        else:
-            logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
-            ourGlobals['unhandledMarkers'].add( marker )
-        lastMarker = marker
-
-    # Final clean-up
-    composedLine = composedLine.replace( '<CM><CI>', '<CM>' ) # paragraph mark not needed when following a title close marker
-    while '  ' in composedLine: # remove double spaces
-        composedLine = composedLine.replace( '  ', ' ' )
-
-    # Check what's left at the end
-    if '\\' in composedLine:
-        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-            halt
-    return composedLine.rstrip()
-# end of theWordComposeVerseLine
-
-
 
 
 def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
@@ -1140,7 +957,7 @@ class theWordBible( Bible ):
                 if lineCount < textLineCountExpected:
                     logging.error( _("theWord Bible module file seems too short: {}").format( self.sourceFilename ) )
                 self.encoding = encoding
-                break; # Get out of decoding loop because we were successful
+                break # Get out of decoding loop because we were successful
             except UnicodeDecodeError:
                 logging.critical( _("theWord Bible module file fails with encoding: {} {}").format( self.sourceFilename, self.encoding ) )
 
@@ -1152,6 +969,360 @@ class theWordBible( Bible ):
         self.doPostLoadProcessing()
     # end of theWordBible.load
 # end of theWordBible class
+
+
+
+def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
+    """
+    Composes a single line representing a verse.
+
+    Parameters are the Scripture reference (for error messages),
+        the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
+        and a ourGlobals dictionary for holding persistent variables (between calls).
+
+    This function handles the paragraph/new-line markers;
+        theWordAdjustLine (above) is called to handle internal/character markers.
+
+    Returns the composed line.
+    """
+    #print( "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+    composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
+    ourGlobals['line'] = '' # We've used them so we don't need them any more
+    #marker = text = None
+
+    vCount = 0
+    lastMarker = None
+    #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
+    for verseDataEntry in verseData:
+        marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+        #print( '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
+        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+        if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
+
+        if marker == 'v': # handle versification differences here
+            vCount += 1
+            if vCount == 1: # Handle verse bridges
+                if text != str(V):
+                    composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
+            elif vCount > 1: # We have an additional verse number
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
+                composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
+            lastMarker = marker
+            continue
+
+        #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
+        if marker in theWordIgnoredIntroMarkers:
+            logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+            print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
+
+        if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker == 's1':
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
+            composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ( 's3', 's4', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ( 'qa', 'r', ):
+            if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
+                text = '(' + text + ')'
+            composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
+        elif marker in ( 'm', ):
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
+            #if text:
+                #print( 'm', repr(text), verseData )
+                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
+                #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
+                    #composedLine += '<CL>'
+                #else: composedLine += '<CM>'
+            #else: # there is text
+                #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'p', 'b', ):
+            #print( marker, text )
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
+            #else: composedLine += '<CM>'
+            #composedLine += theWordAdjustLine(BBB,C,V,text)
+            resettheWordMargins( ourGlobals )
+        elif marker in ( 'pi1', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi1' ); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi2', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi2' ); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi3', 'pmc', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi4', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pc', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi5' ); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pr', 'pmr', 'cls', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi6' ); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
+        elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
+            assert not text
+            resettheWordMargins( ourGlobals, 'pi7' ); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'q1', 'qm1', ):
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
+            else: composedLine += '<CI>'
+            if not ourGlobals['pi1']: composedLine += '<PI>'
+            resettheWordMargins( ourGlobals, 'pi1' )
+            #composedLine += theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'q2', 'qm2', ):
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
+            else: composedLine += '<CI>'
+            if not ourGlobals['pi2']: composedLine += '<PI2>'
+            resettheWordMargins( ourGlobals, 'pi2' )
+            #composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'q3', 'qm3', ):
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
+            else: composedLine += '<CI>'
+            if not ourGlobals['pi3']: composedLine += '<PI3>'
+            resettheWordMargins( ourGlobals, 'pi3' )
+            #composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'q4', 'qm4', ):
+            assert not text
+            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
+            else: composedLine += '<CI>'
+            if not ourGlobals['pi4']: composedLine += '<PI4>'
+            resettheWordMargins( ourGlobals, 'pi4' )
+            #composedLine += '<CI><PI4>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li1': resettheWordMargins( ourGlobals, 'pi1' ); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li2': resettheWordMargins( ourGlobals, 'pi2' ); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li3': resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
+        elif marker in ( 'v~', 'p~', ):
+            #print( lastMarker )
+            if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
+            elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
+            elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
+            elif lastMarker != 'v':
+                composedLine += theWordAdjustLine(BBB,C,V, text )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    print( "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
+                    halt # This should never happen -- probably a b marker with text
+            #if ourGlobals['pi1']: composedLine += '<PI>'
+            #elif ourGlobals['pi2']: composedLine += '<PI2>'
+            #elif ourGlobals['pi3']: composedLine += '<PI3>'
+            #elif ourGlobals['pi4']: composedLine += '<PI4>'
+            #elif ourGlobals['pi5']: composedLine += '<PI5>'
+            #elif ourGlobals['pi6']: composedLine += '<PI6>'
+            #elif ourGlobals['pi7']: composedLine += '<PI7>'
+            composedLine += theWordAdjustLine(BBB,C,V, text )
+        elif marker in ('nb',): # Just ignore these ones
+            pass
+        else:
+            logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
+            ourGlobals['unhandledMarkers'].add( marker )
+        lastMarker = marker
+
+    # Final clean-up
+    composedLine = composedLine.replace( '<CM><CI>', '<CM>' ) # paragraph mark not needed when following a title close marker
+    while '  ' in composedLine: # remove double spaces
+        composedLine = composedLine.replace( '  ', ' ' )
+
+    # Check what's left at the end
+    if '\\' in composedLine:
+        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            halt
+    return composedLine.rstrip()
+# end of theWordComposeVerseLine
+
+
+
+def createTheWordModule( self, outputFolder, controlDict ):
+    """
+    Create a SQLite3 database module for the program MySword.
+
+    self here is a Bible object with _processedLines
+    """
+    from datetime import datetime
+    import zipfile
+
+
+    def writetWBook( writerObject, BBB, ourGlobals ):
+        """
+        Writes a book to the theWord writerObject file.
+        """
+        nonlocal lineCount
+        bkData = self.books[BBB] if BBB in self.books else None
+        #print( bkData._processedLines )
+        verseList = BOS.getNumVersesList( BBB )
+        numC, numV = len(verseList), verseList[0]
+
+        resettheWordMargins( ourGlobals )
+        if bkData: # write book headings (stuff before chapter 1)
+            ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
+
+        # Write the verses (whether or not they're populated)
+        C = V = 1
+        ourGlobals['lastLine'] = None
+        while True:
+            verseData, composedLine = None, ''
+            if bkData:
+                try:
+                    result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
+                    verseData, context = result
+                except KeyError:
+                    logging.warning( "BibleWriter.totheWord: missing source verse at {} {}:{}".format( BBB, C, V ) )
+                    composedLine = '(-)' # assume it was a verse bridge (or something)
+                # Handle some common versification anomalies
+                if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                    try:
+                        result15 = bkData.getContextVerseData( ('JN3','1','15',) )
+                        verseData15, context15 = result15
+                        verseData.extend( verseData15 )
+                    except KeyError: pass #  just ignore it
+                elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                    try:
+                        result18 = bkData.getContextVerseData( ('REV','12','18',) )
+                        verseData18, context18 = result18
+                        verseData.extend( verseData18 )
+                    except KeyError: pass #  just ignore it
+            if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+            assert '\n' not in composedLine # This would mess everything up
+            #print( BBB, C, V, repr(composedLine) )
+            if C!=1 or V!=1: # Stay one line behind (because paragraph indicators get appended to the previous line)
+                assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
+                writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
+                lineCount += 1
+            ourGlobals['lastLine'] = composedLine
+            V += 1
+            if V > numV:
+                C += 1
+                if C > numC:
+                    break
+                else: # next chapter only
+                    numV = verseList[C-1]
+                    V = 1
+        # Write the last line of the file
+        assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
+        writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
+        lineCount += 1
+    # end of totheWord.writetWBook
+
+
+    # Set-up their Bible reference system
+    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+    # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
+    if len(self) <= (39+6) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
+        testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
+        booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+    elif len(self) <= (27+6) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
+        testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
+        booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+    else: # assume it's an entire Bible
+        testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
+        booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to theWord format…") )
+    mySettings = {}
+    mySettings['unhandledMarkers'] = set()
+    handledBooks = []
+
+    if 'theWordOutputFilename' in controlDict: filename = controlDict['theWordOutputFilename']
+    elif self.sourceFilename: filename = self.sourceFilename
+    elif self.shortName: filename = self.shortName
+    elif self.abbreviation: filename = self.abbreviation
+    elif self.name: filename = self.name
+    else: filename = 'export'
+    if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+    filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+    with open( filepath, 'wt' ) as myFile:
+        try: myFile.write('\ufeff') # theWord needs the BOM
+        except UnicodeEncodeError: # why does this fail on Windows???
+            logging.critical( exp("totheWord: Unable to write BOM to file") )
+        BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
+        while True: # Write each Bible book in the KJV order
+            writetWBook( myFile, BBB, mySettings )
+            checkCount += checkTotals[bookCount]
+            bookCount += 1
+            if lineCount != checkCount:
+                logging.critical( "Wrong number of lines written: {} {} {} {}".format( bookCount, BBB, lineCount, checkCount ) )
+                if BibleOrgSysGlobals.debugFlag: halt
+            handledBooks.append( BBB )
+            if BBB == endBBB: break
+            BBB = BOS.getNextBookCode( BBB )
+
+        # Now append the various settings if any
+        written = []
+        for keyName in ('id','lang','charset','title','short.title','title.english','description','author',
+                        'status','publish.date','version.date','isbn','r2l','font','font.size',
+                        'version.major','version.minor','publisher','about','source','creator','keywords',
+                        'verse.rule',):
+            field = self.getSetting( keyName )
+            if field: # Copy non-blank matches
+                myFile.write( "{}={}\n".format( keyName, field ) )
+                written.append( keyName )
+            elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.totheWord: ignored {!r} setting ({})".format( keyName, field ) )
+        # Now do some adaptions
+        keyName = 'short.title'
+        if self.abbreviation and keyName not in written:
+            myFile.write( "{}={}\n".format( keyName, self.abbreviation ) )
+            written.append( keyName )
+        if self.name and keyName not in written:
+            myFile.write( "{}={}\n".format( keyName, self.name ) )
+            written.append( keyName )
+        # Anything useful in the settingsDict?
+        for keyName, fieldName in (('title','FullName'),):
+            fieldContents = self.getSetting( fieldName )
+            if fieldContents and keyName not in written:
+                myFile.write( "{}={}\n".format( keyName, fieldContents ) )
+                written.append( keyName )
+        keyName = 'publish.date'
+        if keyName not in written:
+            myFile.write( "{}={}\n".format( keyName, datetime.now().strftime('%Y') ) )
+            written.append( keyName )
+
+    if mySettings['unhandledMarkers']:
+        logging.warning( "BibleWriter.totheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+    unhandledBooks = []
+    for BBB in self.getBookList():
+        if BBB not in handledBooks: unhandledBooks.append( BBB )
+    if unhandledBooks:
+        logging.warning( "totheWord: Unhandled books were {}".format( unhandledBooks ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
+
+    # Now create a zipped version
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} theWord file…".format( filename ) )
+    zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+    zf.write( filepath, filename )
+    zf.close()
+
+    if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+        print( "  BibleWriter.totheWord finished successfully." )
+    return True
+# end of createTheWordModule
 
 
 
@@ -1243,9 +1414,10 @@ def demo():
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( j+1, someFile ) )
+                    indexString = 'C{}'.format( j+1 )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                    testtWB( testFolder, someFile )
+                    testtWB( indexString, testFolder, someFile )
                     #break # only do the first one.........temp
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
@@ -1266,20 +1438,26 @@ def demo():
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
+                    indexString = 'D{}'.format( j+1 )
                     #if 'web' not in someFile: continue # Just try this module
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW D{}/ Trying {}".format( j+1, someFile ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                    testtWB( testFolder, someFile )
+                    testtWB( indexString, testFolder, someFile )
                     #break # only do the first one.........temp
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

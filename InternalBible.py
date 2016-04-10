@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-10' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.69'
@@ -349,7 +349,7 @@ class InternalBible:
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
             except AttributeError: # Could be that our Bible doesn't have the ability to load individual books
                 errorClass, exceptionInstance, traceback = sys.exc_info()
-                print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
                     logging.info( "No 'loadBook()' function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
                 else: # it's some other attribute error in the loadBook function
@@ -2089,7 +2089,7 @@ if __name__ == '__main__':
 
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

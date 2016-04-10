@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-05' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -371,7 +371,7 @@ class USFMBible( Bible ):
         """
         Load all the Bible books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name if self.name else self.abbreviation, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -543,7 +543,7 @@ if __name__ == '__main__':
 
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )

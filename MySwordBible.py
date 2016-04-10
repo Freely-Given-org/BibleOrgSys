@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-09' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.20'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -465,6 +465,208 @@ class MySwordBible( Bible ):
 
 
 
+def createMySwordModule( self, outputFolder, controlDict ):
+    """
+    Create a SQLite3 database module for the program MySword.
+
+    self here is a Bible object with _processedLines
+    """
+    import tarfile
+    from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
+
+    def writeMSBook( sqlObject, BBB, ourGlobals ):
+        """
+        Writes a book to the MySword sqlObject file.
+        """
+        nonlocal lineCount
+        bkData = self.books[BBB] if BBB in self.books else None
+        #print( bkData._processedLines )
+        verseList = BOS.getNumVersesList( BBB )
+        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        numC, numV = len(verseList), verseList[0]
+
+        ourGlobals['line'], ourGlobals['lastLine'] = '', None
+        ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
+        if bkData:
+            # Write book headings (stuff before chapter 1)
+            ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
+
+            # Write the verses
+            C = V = 1
+            ourGlobals['lastLine'] = ourGlobals['lastBCV'] = None
+            while True:
+                verseData = None
+                if bkData:
+                    try:
+                        result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
+                        verseData, context = result
+                    except KeyError: # Missing verses
+                        logging.warning( "BibleWriter.toMySword: missing source verse at {} {}:{}".format( BBB, C, V ) )
+                    # Handle some common versification anomalies
+                    if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                        try:
+                            result15 = bkData.getContextVerseData( ('JN3','1','15',) )
+                            verseData15, context15 = result15
+                            verseData.extend( verseData15 )
+                        except KeyError: pass #  just ignore it
+                    elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                        try:
+                            result18 = bkData.getContextVerseData( ('REV','12','18',) )
+                            verseData18, context18 = result18
+                            verseData.extend( verseData18 )
+                        except KeyError: pass #  just ignore it
+                    composedLine = ''
+                    if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+                    # Stay one line behind (because paragraph indicators get appended to the previous line)
+                    if ourGlobals['lastBCV'] is not None \
+                    and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                        sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                            (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                        lineCount += 1
+                    ourGlobals['lastLine'] = composedLine
+                ourGlobals['lastBCV'] = (nBBB,C,V)
+                V += 1
+                if V > numV:
+                    C += 1
+                    if C > numC:
+                        break
+                    else: # next chapter only
+                        numV = verseList[C-1]
+                        V = 1
+            #assert not ourGlobals['line'] and not ourGlobals['lastLine'] #  We should have written everything
+
+        # Write the last line of the file
+        if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+            sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+            lineCount += 1
+    # end of toMySword.writeMSBook
+
+
+    # Set-up their Bible reference system
+    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+    # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+    if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
+        testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
+        booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+    elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
+        testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
+        booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+    else: # assume it's an entire Bible
+        testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
+        booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+    extension = '.bbl.mybible'
+
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MySword format…") )
+    mySettings = {}
+    mySettings['unhandledMarkers'] = set()
+    handledBooks = []
+
+    if 'MySwordOutputFilename' in controlDict: filename = controlDict['MySwordOutputFilename']
+    elif self.sourceFilename: filename = self.sourceFilename
+    elif self.shortName: filename = self.shortName
+    elif self.abbreviation: filename = self.abbreviation
+    elif self.name: filename = self.name
+    else: filename = 'export'
+    if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+    filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+    if os.path.exists( filepath ): os.remove( filepath )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+    conn = sqlite3.connect( filepath )
+    cursor = conn.cursor()
+
+    # First write the settings Details table
+    exeStr = 'CREATE TABLE Details(Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL' # incomplete
+    customCSS = self.getSetting( 'CustomCSS' )
+    if customCSS: exeStr += ', CustomCSS TEXT'
+    exeStr += ')'
+    cursor.execute( exeStr )
+
+    values = []
+
+    description = self.getSetting( 'Description' )
+    if not description: description = self.getSetting( 'description' )
+    if not description: description = self.name
+    values.append( description )
+
+    if self.abbreviation: abbreviation = self.abbreviation
+    else: abbreviation = self.getSetting( 'WorkAbbreviation' )
+    if not abbreviation: abbreviation = self.name[:3].upper()
+    values.append( abbreviation )
+
+    comments = self.getSetting( 'Comments' )
+    values.append( comments )
+
+    version = self.getSetting( 'Version' )
+    values.append( version )
+
+    versionDate = self.getSetting( 'VersionDate' )
+    values.append( versionDate )
+
+    publishDate = self.getSetting( 'PublishDate' )
+    values.append( publishDate )
+
+    rightToLeft = self.getSetting( 'RightToLeft' )
+    values.append( rightToLeft )
+
+    values.append( True if testament=='OT' or testament=='BOTH' else False )
+    values.append( True if testament=='NT' or testament=='BOTH' else False )
+
+    Strong = self.getSetting( 'Strong' )
+    values.append( Strong if Strong else False )
+
+    if customCSS: values.append( customCSS )
+
+    exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
+    #print( exeStr, values )
+    cursor.execute( exeStr, values )
+    #if BibleOrgSysGlobals.debugFlag: cursor.execute( exeStr, values )
+    #else: # Not debugging
+        #try: cursor.execute( exeStr, values )
+        #except sqlite3.InterfaceError:
+            #logging.critical( "SQLite3 Interface error executing {} with {}".format( exeStr, values ) )
+
+    # Now create and fill the Bible table
+    cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT, Primary Key(Book,Chapter,Verse))' )
+    conn.commit() # save (commit) the changes
+    BBB, lineCount = startBBB, 0
+    while True: # Write each Bible book in the KJV order
+        writeMSBook( cursor, BBB, mySettings )
+        conn.commit() # save (commit) the changes
+        handledBooks.append( BBB )
+        if BBB == endBBB: break
+        BBB = BOS.getNextBookCode( BBB )
+    conn.commit() # save (commit) the changes
+    cursor.close()
+
+    if mySettings['unhandledMarkers']:
+        logging.warning( "BibleWriter.toMySword: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled toMySword markers were {}").format( mySettings['unhandledMarkers'] ) )
+    unhandledBooks = []
+    for BBB in self.getBookList():
+        if BBB not in handledBooks: unhandledBooks.append( BBB )
+    if unhandledBooks:
+        logging.warning( "toMySword: Unhandled books were {}".format( unhandledBooks ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled toMySword books were {}").format( unhandledBooks ) )
+
+    # Now create the gzipped file
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Compressing {} MySword file…".format( filename ) )
+    tar = tarfile.open( filepath+'.gz', 'w:gz' )
+    tar.add( filepath )
+    tar.close()
+
+    if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+        print( "  BibleWriter.toMySword finished successfully." )
+    return True
+# end of createMySwordModule
+
+
+
 def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     """
     Crudely demonstrate the MySword Bible class.
@@ -605,7 +807,7 @@ if __name__ == '__main__':
     import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
