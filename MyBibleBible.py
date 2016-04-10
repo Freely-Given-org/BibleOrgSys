@@ -75,14 +75,19 @@ Here is a typical verses table segment (one verse per SQLite3 table row):
     INSERT INTO "verses" VALUES(730,22,21,'May the grace of the Lord Jesus be with all the saints. Amen. <n>{Other mss. lack Amen}</n> ');
     CREATE UNIQUE INDEX verses_index on "verses" (book_number, chapter, verse);
     COMMIT;
+
+NOTE that MyBible can put different parts of the translation into different databases/files,
+    e.g., a main (plain) text module, plus having footnotes, subheadings, and cross-references in separate modules.
+    This code does not (yet?) handle combining multiple MyBible databases into one InternalBible,
+        i.e., you can only have the text module OR the footnote module, but not both together.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-10' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -105,103 +110,114 @@ BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ( '.SQLITE3', '.COMMENTARIES.SQLITE3', ) # Mu
 FILENAME_PARTS_TO_REJECT = ( '.DICTIONARY.', '.CROSSREFERENCES.', ) # Must be UPPERCASE
 
 
+KNOWN_INFO_FIELD_NAMES = ( 'description',
+                          'chapter_string', 'chapter_string_ot', 'chapter_string_nt',
+                            'language', 'language_iso639-2b', 'region', 'russian_numbering',
+                            'strong_numbers', 'strong_numbers_prefix',
+                            'right_to_left', 'right_to_left_ot', 'right_to_left_nt',
+                            'localized_book_abbreviations', 'contains_accents',
+                            'detailed_info', 'introduction_string', 'Introduction',
+                            'is_footnotes', )
+
+
 # NOTE that color values can vary between modules
 BOOK_TABLE = {
-    'GEN': ( 0xccccff, 10, 'Быт', 'Бытие', 'Gen', 'Genesis'),
-    'EXO': ( 0xccccff, 20, 'Исх', 'Исход', 'Exo', 'Exodus'),
-    'LEV': ( 0xccccff, 30, 'Лев', 'Левит', 'Lev', 'Leviticus'),
-    'NUM': ( 0xccccff, 40, 'Чис', 'Числа', 'Num', 'Numbers'),
-    'DEU': ( 0xccccff, 50, 'Втор', 'Второзаконие', 'Deu', 'Deuteronomy'),
-    'JOS': ( 0xffcc99, 60, 'Нав', 'Иисус Навин', 'Josh', 'Joshua'),
-    'JDG': ( 0xffcc99, 70, 'Суд', 'Судьи', 'Judg', 'Judges'),
-    'RUT': ( 0xffcc99, 80, 'Руфь', 'Руфь', 'Ruth', 'Ruth'),
-    'SA1': ( 0xffcc99, 90, '1Цар', '1-я Царств', '1Sam', '1 Samuel'),
-    'SA2': ( 0xffcc99, 100, '2Цар', '2-я Царств', '2Sam', '2 Samuel'),
-    'KI1': ( 0xffcc99, 110, '3Цар', '3-я Царств', '1Kin', '1 Kings'),
-    'KI2': ( 0xffcc99, 120, '4Цар', '4-я Царств', '2Kin', '2 Kings'),
-    'JDT': ( 0xffcc99, 180, 'Иудф', 'Иудифь', 'Jdth', 'Judith'),
-    'CH1': ( 0xffcc99, 130, '1Пар', '1-я Паралипоменон', '1Chr', '1 Chronicles'),
-    'CH2': ( 0xffcc99, 140, '2Пар', '2-я Паралипоменон', '2Chr', '2 Chronicles'),
-    'EZR': ( 0xffcc99, 150, 'Ездр', 'Ездра', 'Ezr', 'Ezra'),
-    'NEH': ( 0xffcc99, 160, 'Неем', 'Неемия', 'Neh', 'Nehemiah'),
-    'LES': ( 0xffcc99, 165, '2Езд', '2-я Ездры', '2Esd', '2 Esdras'), # Was 740 -- NOT SURE ABOUT THIS ONE -- 2nd Ezra
-    'TOB': ( 0xffcc99, 170, 'Тов', 'Товит', 'Tob', 'Tobit'),
-    'EST': ( 0xffcc99, 190, 'Есф', 'Есфирь', 'Esth', 'Esther'),
-    'JOB': ( 0x66ff99, 220, 'Иов', 'Иов', 'Job', 'Job'),
-    'PSA': ( 0x66ff99, 230, 'Пс', 'Псалтирь', 'Ps', 'Psalms'),
-    'PRO': ( 0x66ff99, 240, 'Прит', 'Притчи', 'Prov', 'Proverbs'),
-    'ECC': ( 0x66ff99, 250, 'Еккл', 'Екклесиаст', 'Eccl', 'Ecclesiastes'),
-    'SNG': ( 0x66ff99, 260, 'Песн', 'Песня Песней', 'Song', 'Song of Solomon'),
-    'WIS': ( 0x66ff99, 270, 'Прем', 'Премудрость Соломона', 'Wis', 'Wisdom of Solomon'),
-    'SIR': ( 0x66ff99, 280, 'Сир', 'Сирах', 'Sir', 'Sirach'),
-    'ISA': ( 0xff9fb4, 290, 'Ис', 'Исаия', 'Isa', 'Isaiah'),
-    'JER': ( 0xff9fb4, 300, 'Иер', 'Иеремия', 'Jer', 'Jeremiah'),
-    'PAZ': ( 0xff9fb4, 305, '???', '???', 'Azar', 'Azariah'),
-    'LAM': ( 0xff9fb4, 310, 'Плач', 'Плач Иеремии', 'Lam', 'Lamentations'),
-    'LJE': ( 0xff9fb4, 315, 'Посл', 'Послание Иеремии', 'Let', 'Letter of Jeremiah'),
-    'BAR': ( 0xff9fb4, 320, 'Вар', 'Варух', 'Bar', 'Baruch'),
-    'SUS': ( 0xff9fb4, 325, '???', '???', 'Sus', 'Susanna'),
-    'EZE': ( 0xff9fb4, 330, 'Иез', 'Иезекииль', 'Ezek', 'Ezekiel'),
-    'DAN': ( 0xff9fb4, 340, 'Дан', 'Даниил', 'Dan', 'Daniel'),
-    'BEL': ( 0xff9fb4, 345, '???', '???', 'Bel', 'Bel and Dragon'),
-    'HOS': ( 0xffff99, 350, 'Ос', 'Осия', 'Hos', 'Hosea'),
-    'JOL': ( 0xffff99, 360, 'Иоил', 'Иоиль', 'Joel', 'Joel'),
-    'AMO': ( 0xffff99, 370, 'Ам', 'Амос', 'Am', 'Amos'),
-    'OBA': ( 0xffff99, 380, 'Авд', 'Авдий', 'Oba', 'Obadiah'),
-    'JNA': ( 0xffff99, 390, 'Ион', 'Иона', 'Jona', 'Jonah'),
-    'MIC': ( 0xffff99, 400, 'Мих', 'Михей', 'Mic', 'Micah'),
-    'NAH': ( 0xffff99, 410, 'Наум', 'Наум', 'Nah', 'Nahum'),
-    'HAB': ( 0xffff99, 420, 'Авв', 'Аввакум', 'Hab', 'Habakkuk'),
-    'ZEP': ( 0xffff99, 430, 'Соф', 'Софония', 'Zeph', 'Zephaniah'),
-    'HAG': ( 0xffff99, 440, 'Агг', 'Аггей', 'Hag', 'Haggai'),
-    'ZEC': ( 0xffff99, 450, 'Зах', 'Захария', 'Zech', 'Zechariah'),
-    'MAL': ( 0xffff99, 460, 'Мал', 'Малахия', 'Mal', 'Malachi'),
-    'MA1': ( 0xd3d3d3, 462, '1Мак', '1-я Маккавейская', '1Mac', '1 Maccabees'), # Was 200
-    'MA2': ( 0xd3d3d3, 464, '2Мак', '2-я Маккавейская', '2Mac', '2 Maccabees'), # Was 210
-    'MA3': ( 0xd3d3d3, 466, '3Мак', '3-я Маккавейская', '3Mac', '3 Maccabees'), # MAN appears at 466 in KJ-1769
-    'EZ5': ( 0xd3d3d3, 468, '3Езд', '3-я Ездры', '3Esd', '3 Esdras'), # Was 750 -- NOT SURE ABOUT THIS ONE -- 3rd Ezra
-    'MAT': ( 0xff6600, 470, 'Мат', 'От Матфея', 'Mat', 'Matthew'),
-    'MRK': ( 0xff6600, 480, 'Мар', 'От Марка', 'Mar', 'Mark'),
-    'LUK': ( 0xff6600, 490, 'Лук', 'От Луки', 'Luk', 'Luke'),
-    'JHN': ( 0xff6600, 500, 'Ин', 'От Иоанна', 'John', 'John'),
-    'ACT': ( 0x00ffff, 510, 'Деян', 'Деяния', 'Acts', 'Acts'),
-    'JAM': ( 0x00ff00, 660, 'Иак', 'Иакова', 'Jam', 'James'),
-    'PE1': ( 0x00ff00, 670, '1Пет', '1-е Петра', '1Pet', '1 Peter'),
-    'PE2': ( 0x00ff00, 680, '2Пет', '2-е Петра', '2Pet', '2 Peter'),
-    'JN1': ( 0x00ff00, 690, '1Ин', '1-е Иоанна', '1Jn', '1 John'),
-    'JN2': ( 0x00ff00, 700, '2Ин', '2-е Иоанна', '2Jn', '2 John'),
-    'JN3': ( 0x00ff00, 710, '3Ин', '3-е Иоанна', '3Jn', '3 John'),
-    'JDE': ( 0x00ff00, 720, 'Иуд', 'Иуды', 'Jud', 'Jude'),
-    'ROM': ( 0xffff00, 520, 'Рим', 'К Римлянам', 'Rom', 'Romans'),
-    'CO1': ( 0xffff00, 530, '1Кор', '1-е Коринфянам', '1Cor', '1 Corinthians'),
-    'CO2': ( 0xffff00, 540, '2Кор', '2-е Коринфянам', '2Cor', '2 Corinthians'),
-    'GAL': ( 0xffff00, 550, 'Гал', 'К Галатам', 'Gal', 'Galatians'),
-    'EPH': ( 0xffff00, 560, 'Еф', 'К Ефесянам', 'Eph', 'Ephesians'),
-    'PHP': ( 0xffff00, 570, 'Флп', 'К Филиппийцам', 'Phil', 'Philippians'),
-    'COL': ( 0xffff00, 580, 'Кол', 'К Колоссянам', 'Col', 'Colossians'),
-    'TH1': ( 0xffff00, 590, '1Фес', '1-е Фессалоникийцам', '1Ths', '1 Thessalonians'),
-    'TH2': ( 0xffff00, 600, '2Фес', '2-е Фессалоникийцам', '2Ths', '2 Thessalonians'),
-    'TI1': ( 0xffff00, 610, '1Тим', '1-е Тимофею', '1Tim', '1 Timothy'),
-    'TI2': ( 0xffff00, 620, '2Тим', '2-е Тимофею', '2Tim', '2 Timothy'),
-    'TIT': ( 0xffff00, 630, 'Тит', 'К Титу', 'Tit', 'Titus'),
-    'PHM': ( 0xffff00, 640, 'Флм', 'К Филимону', 'Phlm', 'Philemon'),
-    'HEB': ( 0xffff00, 650, 'Евр', 'К Евреям', 'Heb', 'Hebrews'),
-    'REV': ( 0xff7c80, 730, 'Откр', 'Откровение', 'Rev', 'Revelation'),
-    'LAO': ( 0x00ff00, 780, 'Лаод', 'К Лаодикийцам', 'Lao', 'Letter to the Laodiceans'),
-    'MAN': ( 0x66ff99, 790, 'Мол', 'Молитва Манассии', 'Man', 'Prayer of Manasseh'), # Can also appear at 466
+    'GEN': ( '#ccccff', 10, 'Быт', 'Бытие', 'Gen', 'Genesis'),
+    'EXO': ( '#ccccff', 20, 'Исх', 'Исход', 'Exo', 'Exodus'),
+    'LEV': ( '#ccccff', 30, 'Лев', 'Левит', 'Lev', 'Leviticus'),
+    'NUM': ( '#ccccff', 40, 'Чис', 'Числа', 'Num', 'Numbers'),
+    'DEU': ( '#ccccff', 50, 'Втор', 'Второзаконие', 'Deu', 'Deuteronomy'),
+    'JOS': ( '#ffcc99', 60, 'Нав', 'Иисус Навин', 'Josh', 'Joshua'),
+    'JDG': ( '#ffcc99', 70, 'Суд', 'Судьи', 'Judg', 'Judges'),
+    'RUT': ( '#ffcc99', 80, 'Руфь', 'Руфь', 'Ruth', 'Ruth'),
+    'SA1': ( '#ffcc99', 90, '1Цар', '1-я Царств', '1Sam', '1 Samuel'),
+    'SA2': ( '#ffcc99', 100, '2Цар', '2-я Царств', '2Sam', '2 Samuel'),
+    'KI1': ( '#ffcc99', 110, '3Цар', '3-я Царств', '1Kin', '1 Kings'),
+    'KI2': ( '#ffcc99', 120, '4Цар', '4-я Царств', '2Kin', '2 Kings'),
+    'JDT': ( '#ffcc99', 180, 'Иудф', 'Иудифь', 'Jdth', 'Judith'),
+    'CH1': ( '#ffcc99', 130, '1Пар', '1-я Паралипоменон', '1Chr', '1 Chronicles'),
+    'CH2': ( '#ffcc99', 140, '2Пар', '2-я Паралипоменон', '2Chr', '2 Chronicles'),
+    'EZR': ( '#ffcc99', 150, 'Ездр', 'Ездра', 'Ezr', 'Ezra'),
+    'NEH': ( '#ffcc99', 160, 'Неем', 'Неемия', 'Neh', 'Nehemiah'),
+    'LES': ( '#ffcc99', 165, '2Езд', '2-я Ездры', '2Esd', '2 Esdras'), # Was 740 -- NOT SURE ABOUT THIS ONE -- 2nd Ezra
+    'TOB': ( '#ffcc99', 170, 'Тов', 'Товит', 'Tob', 'Tobit'),
+    'EST': ( '#ffcc99', 190, 'Есф', 'Есфирь', 'Esth', 'Esther'),
+    'JOB': ( '#66ff99', 220, 'Иов', 'Иов', 'Job', 'Job'),
+    'PSA': ( '#66ff99', 230, 'Пс', 'Псалтирь', 'Ps', 'Psalms'),
+    'PRO': ( '#66ff99', 240, 'Прит', 'Притчи', 'Prov', 'Proverbs'),
+    'ECC': ( '#66ff99', 250, 'Еккл', 'Екклесиаст', 'Eccl', 'Ecclesiastes'),
+    'SNG': ( '#66ff99', 260, 'Песн', 'Песня Песней', 'Song', 'Song of Solomon'),
+    'WIS': ( '#66ff99', 270, 'Прем', 'Премудрость Соломона', 'Wis', 'Wisdom of Solomon'),
+    'SIR': ( '#66ff99', 280, 'Сир', 'Сирах', 'Sir', 'Sirach'),
+    'ISA': ( '#ff9fb4', 290, 'Ис', 'Исаия', 'Isa', 'Isaiah'),
+    'JER': ( '#ff9fb4', 300, 'Иер', 'Иеремия', 'Jer', 'Jeremiah'),
+    'PAZ': ( '#ff9fb4', 305, '???', '???', 'Azar', 'Azariah'),
+    'LAM': ( '#ff9fb4', 310, 'Плач', 'Плач Иеремии', 'Lam', 'Lamentations'),
+    'LJE': ( '#ff9fb4', 315, 'Посл', 'Послание Иеремии', 'Let', 'Letter of Jeremiah'),
+    'BAR': ( '#ff9fb4', 320, 'Вар', 'Варух', 'Bar', 'Baruch'),
+    'SUS': ( '#ff9fb4', 325, '???', '???', 'Sus', 'Susanna'),
+    'EZE': ( '#ff9fb4', 330, 'Иез', 'Иезекииль', 'Ezek', 'Ezekiel'),
+    'DAN': ( '#ff9fb4', 340, 'Дан', 'Даниил', 'Dan', 'Daniel'),
+    'BEL': ( '#ff9fb4', 345, '???', '???', 'Bel', 'Bel and Dragon'),
+    'HOS': ( '#ffff99', 350, 'Ос', 'Осия', 'Hos', 'Hosea'),
+    'JOL': ( '#ffff99', 360, 'Иоил', 'Иоиль', 'Joel', 'Joel'),
+    'AMO': ( '#ffff99', 370, 'Ам', 'Амос', 'Am', 'Amos'),
+    'OBA': ( '#ffff99', 380, 'Авд', 'Авдий', 'Oba', 'Obadiah'),
+    'JNA': ( '#ffff99', 390, 'Ион', 'Иона', 'Jona', 'Jonah'),
+    'MIC': ( '#ffff99', 400, 'Мих', 'Михей', 'Mic', 'Micah'),
+    'NAH': ( '#ffff99', 410, 'Наум', 'Наум', 'Nah', 'Nahum'),
+    'HAB': ( '#ffff99', 420, 'Авв', 'Аввакум', 'Hab', 'Habakkuk'),
+    'ZEP': ( '#ffff99', 430, 'Соф', 'Софония', 'Zeph', 'Zephaniah'),
+    'HAG': ( '#ffff99', 440, 'Агг', 'Аггей', 'Hag', 'Haggai'),
+    'ZEC': ( '#ffff99', 450, 'Зах', 'Захария', 'Zech', 'Zechariah'),
+    'MAL': ( '#ffff99', 460, 'Мал', 'Малахия', 'Mal', 'Malachi'),
+    'MA1': ( '#d3d3d3', 462, '1Мак', '1-я Маккавейская', '1Mac', '1 Maccabees'), # Was 200
+    'MA2': ( '#d3d3d3', 464, '2Мак', '2-я Маккавейская', '2Mac', '2 Maccabees'), # Was 210
+    'MA3': ( '#d3d3d3', 466, '3Мак', '3-я Маккавейская', '3Mac', '3 Maccabees'), # MAN appears at 466 in KJ-1769
+    'EZ5': ( '#d3d3d3', 468, '3Езд', '3-я Ездры', '3Esd', '3 Esdras'), # Was 750 -- NOT SURE ABOUT THIS ONE -- 3rd Ezra
+    'MAT': ( '#ff6600', 470, 'Мат', 'От Матфея', 'Mat', 'Matthew'),
+    'MRK': ( '#ff6600', 480, 'Мар', 'От Марка', 'Mar', 'Mark'),
+    'LUK': ( '#ff6600', 490, 'Лук', 'От Луки', 'Luk', 'Luke'),
+    'JHN': ( '#ff6600', 500, 'Ин', 'От Иоанна', 'John', 'John'),
+    'ACT': ( '#00ffff', 510, 'Деян', 'Деяния', 'Acts', 'Acts'),
+    'JAM': ( '#00ff00', 660, 'Иак', 'Иакова', 'Jam', 'James'),
+    'PE1': ( '#00ff00', 670, '1Пет', '1-е Петра', '1Pet', '1 Peter'),
+    'PE2': ( '#00ff00', 680, '2Пет', '2-е Петра', '2Pet', '2 Peter'),
+    'JN1': ( '#00ff00', 690, '1Ин', '1-е Иоанна', '1Jn', '1 John'),
+    'JN2': ( '#00ff00', 700, '2Ин', '2-е Иоанна', '2Jn', '2 John'),
+    'JN3': ( '#00ff00', 710, '3Ин', '3-е Иоанна', '3Jn', '3 John'),
+    'JDE': ( '#00ff00', 720, 'Иуд', 'Иуды', 'Jud', 'Jude'),
+    'ROM': ( '#ffff00', 520, 'Рим', 'К Римлянам', 'Rom', 'Romans'),
+    'CO1': ( '#ffff00', 530, '1Кор', '1-е Коринфянам', '1Cor', '1 Corinthians'),
+    'CO2': ( '#ffff00', 540, '2Кор', '2-е Коринфянам', '2Cor', '2 Corinthians'),
+    'GAL': ( '#ffff00', 550, 'Гал', 'К Галатам', 'Gal', 'Galatians'),
+    'EPH': ( '#ffff00', 560, 'Еф', 'К Ефесянам', 'Eph', 'Ephesians'),
+    'PHP': ( '#ffff00', 570, 'Флп', 'К Филиппийцам', 'Phil', 'Philippians'),
+    'COL': ( '#ffff00', 580, 'Кол', 'К Колоссянам', 'Col', 'Colossians'),
+    'TH1': ( '#ffff00', 590, '1Фес', '1-е Фессалоникийцам', '1Ths', '1 Thessalonians'),
+    'TH2': ( '#ffff00', 600, '2Фес', '2-е Фессалоникийцам', '2Ths', '2 Thessalonians'),
+    'TI1': ( '#ffff00', 610, '1Тим', '1-е Тимофею', '1Tim', '1 Timothy'),
+    'TI2': ( '#ffff00', 620, '2Тим', '2-е Тимофею', '2Tim', '2 Timothy'),
+    'TIT': ( '#ffff00', 630, 'Тит', 'К Титу', 'Tit', 'Titus'),
+    'PHM': ( '#ffff00', 640, 'Флм', 'К Филимону', 'Phlm', 'Philemon'),
+    'HEB': ( '#ffff00', 650, 'Евр', 'К Евреям', 'Heb', 'Hebrews'),
+    'REV': ( '#ff7c80', 730, 'Откр', 'Откровение', 'Rev', 'Revelation'),
+    'LAO': ( '#00ff00', 780, 'Лаод', 'К Лаодикийцам', 'Lao', 'Letter to the Laodiceans'),
+    'MAN': ( '#66ff99', 790, 'Мол', 'Молитва Манассии', 'Man', 'Prayer of Manasseh'), # Can also appear at 466
     }
 # Create a pivot table by book number
 BOOKNUMBER_TABLE = {}
 # Check the table
-for BBB,stuff in BOOK_TABLE.items():
-    #print( BBB, stuff )
-    assert len(stuff) == 6
-    for something in stuff: assert something # shouldn't be blank
-    assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)
-    color, bookNumber, rusAbbrev, rusName, engAbbrev, engName = stuff
-    assert bookNumber not in BOOKNUMBER_TABLE
-    BOOKNUMBER_TABLE[bookNumber] = (BBB,color,rusAbbrev,rusName,engAbbrev,engName)
+for bBBB,bStuff in BOOK_TABLE.items():
+    #print( bBBB, bStuff )
+    assert len(bStuff) == 6
+    for someField in bStuff: assert someField # shouldn't be blank
+    assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(bBBB)
+    bkColor, bkNumber, rusAbbrev, rusName, engAbbrev, engName = bStuff
+    assert bkNumber not in BOOKNUMBER_TABLE
+    BOOKNUMBER_TABLE[bkNumber] = (bBBB,bkColor,rusAbbrev,rusName,engAbbrev,engName)
 assert len(BOOKNUMBER_TABLE) == len(BOOK_TABLE)
+# We only use the BOOKNUMBER_TABLE for CREATING modules -- not for reading
 
 
 
@@ -382,21 +398,20 @@ class MyBibleBible( Bible ):
             assert len(row) == 2 # name, value
             name, value = row
             #if debuggingThisModule: print( '  INFO', name, repr(value) )
-            assert name in ( 'description', 'chapter_string',
-                            'language', 'language_iso639-2b', 'region', 'russian_numbering',
-                            'strong_numbers', 'strong_numbers_prefix',
-                            'right_to_left', 'contains_accents',
-                            'detailed_info', 'introduction_string', 'Introduction',
-                            'is_footnotes', )
+            assert name in KNOWN_INFO_FIELD_NAMES
             # NOTE: detailed_info may contain HTML formatting
             if value == 'false': value = False
             elif value == 'true': value = True
             self.suppliedMetadata['MyBible'][name] = value
         #print( self.suppliedMetadata['MyBible'] ); halt
 
-        if self.suppliedMetadata['MyBible']['language'] == 'ru':
+        if self.getSetting('language') in ('ru','rus',) \
+        or self.getSetting('Language') in ('ru','rus',) \
+        or self.getSetting('LanguageName') in ('Russian',) \
+        or self.getSetting('ISOLanguageCode') in ('rus',) \
+        or self.getSetting('language_iso639-2b') in ('rus',):
             self.BOS = BibleOrganizationalSystem( 'GENERIC-81-RUS' )
-        else: self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
+        else: self.BOS = BibleOrganizationalSystem( 'GENERIC-ENG' ) # All possible books
 
         # Now get the book info -- try the books_all table first to see if it exists
         self.suppliedMetadata['MyBible']['BookInfo'] = OrderedDict()
@@ -737,6 +752,518 @@ class MyBibleBible( Bible ):
 
 
 
+def createMyBibleModule( self, outputFolder, controlDict ):
+    """
+    Create a SQLite3 database module for the Android program MyBible.
+
+    self here is a Bible object with _processedLines
+    """
+    import zipfile
+    from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+
+    def adjustLine( BBB, C, V, originalLine ):
+        """
+        Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
+
+        Parameters are the Scripture reference (for error messsages)
+            and the line (string) containing the backslash codes.
+
+        Returns a string with the backslash codes replaced by MyBible RTF formatting codes.
+        """
+        line = originalLine # Keep a copy of the original line for error messages
+
+        if '\\x' in line: # Remove cross-references completely (why???)
+            #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+            line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+
+        #if '\\f' in line: # Handle footnotes
+            #line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            ##for marker in ( 'fr', 'fm', ): # simply remove these whole field
+                ##line = removeUSFMCharacterField( marker, line, closedFlag=None )
+            ##for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
+                ##while '\\'+marker+' ' in line:
+                    ###print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                    ###print( "was", "'"+line+"'" )
+                    ##ix = line.find( '\\'+marker+' ' )
+                    ##assert ix != -1
+                    ##ixEnd = line.find( '\\', ix+len(marker)+2 )
+                    ##if ixEnd == -1: # no following marker so assume field stops at the end of the line
+                        ##line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
+                    ##elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
+                        ##line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
+                    ##else: # leave the next marker in place
+                        ##line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
+            ##for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field)
+                ##line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
+            ###for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
+            ##line = re.sub( r'(\\f [a-z+*]{1,4} )', '<RF>', line ) # Handle one to three character callers
+            ##line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
+            ###if '\\f' in originalLine:
+                ###print( "o", originalLine )
+                ###print( "n", line )
+                ###halt
+
+        if '\\' in line: # Handle character formatting fields
+            line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
+            #line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
+            line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
+            replacements = (
+                ( ('add',), '<i>','</i>' ),
+                ( ('qt',), '','' ),
+                ( ('wj',), '<J>','</J>' ),
+                ( ('ca','va',), '(',')' ),
+                ( ('bdit',), '<b><i>','</i></b>' ),
+                ( ('bd','em','k',), '<b>','</b>' ),
+                ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
+                ( ('nd','sc',), '','' ),
+                ( ('f',), '<n>','</n>' ),
+                ( ('str',), '<S>','</S>' ),
+                )
+            line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
+            if '\\nd' not in originalLine and '\\+nd' not in originalLine:
+                line = line.replace('LORD', '<font size=-1>LORD</font>')
+                #line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
+            #else:
+                #line = line.replace('LORD', '<font size=-1>LORD</font>')
+            #line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
+            #line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
+            #line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
+
+        #if '\\' in line: # Output simple HTML tags (with no semantic info)
+            #line = line.replace('\\bdit ','<b><i>').replace('\\bdit*','</i></b>').replace('\\+bdit ','<b><i>').replace('\\+bdit*','</i></b>')
+            #for marker in ( 'it', 'rq', 'bk', 'dc', 'qs', 'sig', 'sls', 'tl', ): # All these markers are just italicised
+                #line = line.replace('\\'+marker+' ','<i>').replace('\\'+marker+'*','</i>').replace('\\+'+marker+' ','<i>').replace('\\+'+marker+'*','</i>')
+            #for marker in ( 'bd', 'em', 'k', ): # All these markers are just bolded
+                #line = line.replace('\\'+marker+' ','<b>').replace('\\'+marker+'*','</b>').replace('\\+'+marker+' ','<b>').replace('\\+'+marker+'*','</b>')
+            #line = line.replace('\\sc ','<font size=-1>',).replace('\\sc*','</font>').replace('\\+sc ','<font size=-1>',).replace('\\+sc*','</font>')
+
+        # Check what's left at the end
+        if '\\' in line:
+            logging.warning( "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+                halt
+        return line
+    # end of toMyBible.adjustLine
+
+
+    #def handleIntroduction( BBB, bookData, ourGlobals ):
+        #"""
+        #Go through the book introduction (if any) and extract main titles for MyBible export.
+
+        #Parameters are BBB (for error messages),
+            #the actual book data, and
+            #ourGlobals dictionary for persistent variables.
+
+        #Returns the information in a composed line string.
+        #"""
+        #C = V = 0
+        #composedLine = ''
+        #while True:
+            ##print( "toMyBible.handleIntroduction", BBB, C, V )
+            #try: result = bookData.getContextVerseData( (BBB,'0',str(V),) ) # Currently this only gets one line
+            #except KeyError: break # Reached the end of the introduction
+            #verseData, context = result
+            #assert len(verseData ) == 1 # in the introductory section
+            #marker, text = verseData[0].getMarker(), verseData[0].getFullText()
+            #if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
+                #if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #else:
+                    #logging.warning( "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                    #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        #print( "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                        #halt
+                    #ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
+            #V += 1 # Step to the next introductory section "verse"
+
+        ## Check what's left at the end
+        #if '\\' in composedLine:
+            #logging.warning( "toMyBible.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+            #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                #print( "toMyBible.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+                #halt
+        #return composedLine.replace( '~^~', '\\' )
+    ## end of toMyBible.handleIntroduction
+
+
+    def composeVerseLine( BBB, C, V, verseData, ourGlobals ):
+        """
+        Composes a single line representing a verse.
+
+        Parameters are the Scripture reference (for error messages),
+            the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
+            and a ourGlobals dictionary for holding persistent variables (between calls).
+
+        This function handles the paragraph/new-line markers;
+            adjustLine (above) is called to handle internal/character markers.
+
+        Returns the composed line.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "toMyBible.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+
+        composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
+        ourGlobals['line'] = '' # We've used them so we don't need them any more
+        #marker = text = None
+
+        vCount = 0
+        lastMarker = gotVP = None
+        #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
+        for verseDataEntry in verseData:
+            marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+            if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+            if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
+
+            if marker == 'vp#': # This precedes a v field and has the verse number to be printed
+                gotVP = text # Just remember it for now
+            elif marker == 'v': # handle versification differences here
+                vCount += 1
+                if vCount == 1: # Handle verse bridges
+                    if text != str(V):
+                        composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
+                elif vCount > 1: # We have an additional verse number
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
+                    composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                lastMarker = marker
+                continue
+
+            #print( "toMyBible.composeVerseLine:", BBB, C, V, marker, text )
+            if marker in theWordIgnoredIntroMarkers:
+                logging.error( "toMyBible.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                print( "toMyBible.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
+
+            if marker == 'ms1':
+                pass #composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+            elif marker in ('ms2','ms3','ms4'):
+                pass #composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+            elif marker == 's1':
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
+            #elif marker == 's2': composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
+            elif marker in ( 's2', 's3','s4', 'sr','mr', 'd', ): composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
+            elif marker in ( 'qa', 'r', ):
+                if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
+                    text = '(' + text + ')'
+                composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
+            elif marker in ( 'm', ):
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                #if text:
+                    #print( 'm', repr(text), verseData )
+                    #composedLine += '~^~line '+adjustLine(BBB,C,V,text)
+                    #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
+                        #composedLine += '~^~line '
+                    #else: composedLine += '~^~line '
+                #else: # there is text
+                    #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
+            elif marker in ( 'p', 'b', ):
+                #print( marker, text )
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                #else: composedLine += '~^~line '
+                #composedLine += adjustLine(BBB,C,V,text)
+            elif marker in ( 'pi1', ):
+                assert not text
+            elif marker in ( 'pi2', ):
+                assert not text
+            elif marker in ( 'pi3', 'pmc', ):
+                assert not text
+            elif marker in ( 'pi4', ):
+                assert not text
+            elif marker in ( 'pc', ):
+                assert not text
+            elif marker in ( 'pr', 'pmr', 'cls', ):
+                assert not text
+            elif marker in ( 'b','nb','ib', 'mi', 'pm', 'pmo', ):
+                assert not text
+            elif marker in ( 'q1', 'qm1', ):
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '~^~line '
+                #composedLine += adjustLine(BBB,C,V,text)
+            elif marker in ( 'q2', 'qm2', ):
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '~^~line '
+                #composedLine += '~^~line<PI2>'+adjustLine(BBB,C,V,text)
+            elif marker in ( 'q3', 'qm3', ):
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '~^~line '
+                #composedLine += '~^~line<PI3>'+adjustLine(BBB,C,V,text)
+            elif marker in ( 'q4', 'qm4', ):
+                assert not text
+                if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '~^~line '
+                #composedLine += '~^~line<PI4>'+adjustLine(BBB,C,V,text)
+            elif marker == 'li1': composedLine += '• '+adjustLine(BBB,C,V,text)
+            elif marker == 'li2': composedLine += '• '+adjustLine(BBB,C,V,text)
+            elif marker == 'li3': composedLine += '• '+adjustLine(BBB,C,V,text)
+            elif marker == 'li4': composedLine += '• '+adjustLine(BBB,C,V,text)
+            elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
+            elif marker in ( 'v~', 'p~', ):
+                #print( lastMarker )
+                if lastMarker == 'p': composedLine += '~^~line ' # We had a continuation paragraph
+                elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
+                elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
+                elif lastMarker != 'v':
+                    print( BBB, C, V, marker, lastMarker, verseData )
+                    composedLine += adjustLine(BBB,C,V, text )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
+                composedLine += adjustLine(BBB,C,V, text )
+            else:
+                logging.warning( "toMyBible.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    print( "toMyBible.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
+                    halt
+                ourGlobals['unhandledMarkers'].add( marker )
+            lastMarker = marker
+
+        # Final clean-up
+        #while '  ' in composedLine: # remove double spaces
+            #composedLine = composedLine.replace( '  ', ' ' )
+
+        # Check what's left at the end (but hide MyBible \line markers first)
+        if '\\' in composedLine.replace( '\\line ', '' ):
+            logging.warning( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+                halt
+        return composedLine.replace( '~^~', '\\' ).rstrip()
+    # end of toMyBible.composeVerseLine
+
+
+    def writeMyBibleBook( sqlObject, BBB, nBBB, bkData, ourGlobals ):
+        """
+        Writes a book to the MyBible sqlObject file.
+        """
+        #nonlocal lineCount
+        #print( bkData._processedLines )
+        try: verseList = BOS.getNumVersesList( BBB )
+        except KeyError: return False
+        #nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        numC, numV = len(verseList), verseList[0]
+
+        ourGlobals['line'], ourGlobals['lastLine'] = '', None
+        if bkData:
+            ## Write book headings (stuff before chapter 1)
+            #ourGlobals['line'] = handleIntroduction( BBB, bkData, ourGlobals )
+
+            # Write the verses
+            C = V = 1
+            ourGlobals['lastLine'] = ourGlobals['lastBCV'] = None
+            while True:
+                verseData = None
+                if bkData:
+                    try:
+                        result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
+                        verseData, context = result
+                    except KeyError: # Just ignore missing verses
+                        logging.warning( "BibleWriter.toMyBible: missing source verse at {} {}:{}".format( BBB, C, V ) )
+                    # Handle some common versification anomalies
+                    if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                        try:
+                            result15 = bkData.getContextVerseData( ('JN3','1','15',) )
+                            verseData15, context15 = result15
+                            verseData.extend( verseData15 )
+                        except KeyError: pass #  just ignore it
+                    elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                        try:
+                            result18 = bkData.getContextVerseData( ('REV','12','18',) )
+                            verseData18, context18 = result18
+                            verseData.extend( verseData18 )
+                        except KeyError: pass #  just ignore it
+                    composedLine = ''
+                    if verseData:
+                        composedLine = composeVerseLine( BBB, C, V, verseData, ourGlobals )
+                        #if composedLine: # don't bother writing blank (unfinished?) verses
+                            #print( "toMyBible: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                            #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
+                        # Stay one line behind (because paragraph indicators get appended to the previous line)
+                        if ourGlobals['lastBCV'] is not None \
+                        and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                            sqlObject.execute( 'INSERT INTO verses VALUES(?,?,?,?)', \
+                                (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                            #lineCount += 1
+                    ourGlobals['lastLine'] = composedLine
+                ourGlobals['lastBCV'] = (nBBB,C,V)
+                V += 1
+                if V > numV:
+                    C += 1
+                    if C > numC:
+                        break
+                    else: # next chapter only
+                        numV = verseList[C-1]
+                        V = 1
+            #assert not ourGlobals['line'] and not ourGlobals['lastLine'] #  We should have written everything
+
+        # Write the last line of the file
+        if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+            sqlObject.execute( 'INSERT INTO verses VALUES(?,?,?,?)', \
+                (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+            #lineCount += 1
+        return True
+    # end of toMyBible.writeMyBibleBook
+
+
+    # Set-up their Bible reference system
+    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
+    extension = '.SQLite3'
+    #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+    ## Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+    #if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
+        #testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
+        #booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+    #elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
+        #testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
+        #booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+    #else: # assume it's an entire Bible
+        #testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
+        #booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MyBible format…") )
+    mySettings = {}
+    mySettings['unhandledMarkers'] = set()
+    handledBooks = []
+
+    if 'MyBibleOutputFilename' in controlDict: filename = controlDict['MyBibleOutputFilename']
+    elif self.abbreviation: filename = self.abbreviation
+    elif self.shortName: filename = self.shortName
+    elif self.sourceFilename: filename = self.sourceFilename
+    elif self.name: filename = self.name
+    else: filename = 'export'
+    filename = filename.replace( ' ', '_' )
+    if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+    filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+    if os.path.exists( filepath ): os.remove( filepath )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+    conn = sqlite3.connect( filepath )
+    cursor = conn.cursor()
+
+
+    # First write the settings info table
+    cursor.execute( 'CREATE TABLE info (name TEXT, value TEXT)' )
+    exeStr = 'INSERT INTO info VALUES(?,?)'
+
+    description = self.getSetting( 'MyBibleDescription' )
+    if not description: description = self.getSetting( 'Description' )
+    if not description: description = self.getSetting( 'description' )
+    if not description: description = self.name
+    if not description: description = 'Unknown'
+    cursor.execute( exeStr, ('description', description) )
+
+    chapterString = self.getSetting( 'MyBibleChapterString' )
+    if not chapterString: chapterString = 'Chapter'
+    cursor.execute( exeStr, ('chapter_string', chapterString) )
+
+    language = self.getSetting( 'MyBibleLanguage' )
+    if not language: language = 'en'
+    cursor.execute( exeStr, ('language', language) )
+
+    ISOLanguageCode = self.getSetting( 'ISOLanguageCode' )
+    if not ISOLanguageCode: ISOLanguageCode = 'eng'
+    cursor.execute( exeStr, ('language_iso639-2b', ISOLanguageCode) )
+
+    cursor.execute( exeStr, ('russian_numbering', 'false') )
+
+    Strong = self.getSetting( 'Strong' )
+    if not Strong: Strong = 'false'
+    cursor.execute( exeStr, ('strong_numbers', Strong) )
+
+    rightToLeft = self.getSetting( 'RightToLeft' )
+    if not rightToLeft: rightToLeft = 'false'
+    cursor.execute( exeStr, ('right_to_left', rightToLeft) )
+    conn.commit() # save (commit) the changes
+
+
+    BOOKS_TO_IGNORE = ( 'FRT', 'INT', 'BAK', 'GLS', 'OTH', 'XXA', 'XXB', 'XXC', 'XXD', 'XXE', 'XXF', 'NDX', 'UNK',
+                       'PS2', 'ESG','GES', 'MA4', ) # This line are ones containing verse data but which we don't know how to encode
+
+    # Now create and fill the Bible books table
+    cursor.execute( 'CREATE TABLE books_all(book_color TEXT, book_number NUMERIC, short_name TEXT, long_name TEXT, is_present NUMERIC)' )
+    exeStr = 'INSERT INTO books_all VALUES(?,?,?,?,?)'
+    for bkData in self:
+        BBB = bkData.BBB
+        if BBB in BOOKS_TO_IGNORE: continue # No way to encode these books
+        #print( "LOOP1", self.name, BBB )
+        adjBBB = BBB
+        #if BBB=='ESG': adjBBB = 'GES'
+        bookColor, bookNumber, rusAbbrev, rusName, engAbbrev, engName = BOOK_TABLE[adjBBB]
+
+        bookAbbrev = self.getSetting( BBB+'Abbreviation' )
+        if not bookAbbrev: bookAbbrev = self.getSetting( BBB+'ShortName' )
+        if not bookAbbrev: bookAbbrev = engAbbrev
+
+        bookName = self.getSetting( BBB+'LongName' )
+        if not bookName: bookName = self.getSetting( BBB+'ShortName' )
+        if not bookName: bookName = engName
+
+        cursor.execute( exeStr, (bookColor, bookNumber, bookAbbrev, bookName, 1) )
+    conn.commit() # save (commit) the changes
+
+    # Now create and fill the Bible verses table
+    cursor.execute( 'CREATE TABLE verses (book_number NUMERIC, chapter NUMERIC, verse NUMERIC, text TEXT)' )
+    #exeStr = 'INSERT INTO verses VALUES(?,?,?,?)'
+    for bkData in self:
+        BBB = bkData.BBB
+        if BBB in BOOKS_TO_IGNORE: continue # No way to encode these books
+        #print( "LOOP2", self.name, BBB )
+        adjBBB = BBB
+        #if BBB=='ESG': adjBBB = 'GES'
+        bookColor, bookNumber, rusAbbrev, rusName, engAbbrev, engName = BOOK_TABLE[adjBBB]
+        #cursor.execute( exeStr, (bookNumber, C, V, adjustedLine) )
+        if writeMyBibleBook( cursor, BBB, bookNumber, bkData, mySettings ):
+            conn.commit() # save (commit) the changes
+            handledBooks.append( BBB )
+
+    # Now create the index to the verses
+    cursor.execute( 'CREATE UNIQUE INDEX verses_index on "verses" (book_number, chapter, verse)' )
+    conn.commit() # save (commit) the changes
+    cursor.close() # All done
+
+    if mySettings['unhandledMarkers']:
+        logging.warning( "BibleWriter.toMyBible: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled toMyBible markers were {}").format( mySettings['unhandledMarkers'] ) )
+    unhandledBooks = []
+    for BBB in self.getBookList():
+        if BBB not in handledBooks: unhandledBooks.append( BBB )
+    if unhandledBooks:
+        logging.warning( "toMyBible: Unhandled books were {}".format( unhandledBooks ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  " + _("WARNING: Unhandled toMyBible books were {}").format( unhandledBooks ) )
+
+    # Now create a zipped version
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} MyBible file…".format( filename ) )
+    zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+    zf.write( filepath, filename )
+    zf.close()
+
+    if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+        print( "  BibleWriter.toMyBible finished successfully." )
+    return True
+# end of createMyBibleModule
+
+
+
 def testMyBB( indexString, MyBBfolder, MyBBfilename ):
     """
     Crudely demonstrate the MyBible Bible class.
@@ -768,7 +1295,7 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
             try:
                 shortText = svk.getShortText()
                 verseText = MyBB.getVerseText( svk )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( '    {}\t{!r}'.format( shortText, verseText ) )
             except KeyError:
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( '  testMyBB', reference, "not found!!!" )
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: raise
@@ -785,6 +1312,26 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
 # end of testMyBB
 
 
+def exportMyBB( eIndexString, eFolder ):
+    """
+    Used for multiprocessing, etc.
+    """
+    from UnknownBible import UnknownBible
+    uB = UnknownBible( eFolder )
+    result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  {} result is: {}".format( eIndexString, result ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+    try: result.toMyBible()
+    except AttributeError:
+        errorClass, exceptionInstance, traceback = sys.exc_info()
+        #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+        if "object has no attribute 'toMyBible'" in str(exceptionInstance):
+            logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
+        else: # it's some other attribute error in the loadBook function
+            raise
+# end of exportMyBB
+
+
 def demo():
     """
     Main program to handle command line parameters and then run what they want.
@@ -792,7 +1339,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    if 1: # demo the file checking code
+    if 1: # A: demo the file checking code
         testFolder = "Tests/DataFilesForTests/MyBibleTest/"
         result1 = MyBibleBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
@@ -802,7 +1349,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
 
 
-    if 1: # individual modules in the test folder
+    if 1: # B: individual modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MyBible modules/"
         names = ('CSLU',)
         for j, name in enumerate( names):
@@ -814,7 +1361,7 @@ def demo():
                 testMyBB( indexString, testFolder, fullname )
 
 
-    if 1: # individual modules in the output folder
+    if 1: # C: individual modules in the output folder
         testFolder = "OutputFiles/BOS_MyBibleExport"
         names = ("Matigsalug",)
         for j, name in enumerate( names):
@@ -826,7 +1373,7 @@ def demo():
                 testMyBB( indexString, testFolder, fullname )
 
 
-    if 1: # all discovered modules in the test folder
+    if 1: # D: all discovered modules in the test folder
         testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -835,8 +1382,8 @@ def demo():
             elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
                 ignore = False
                 somethingUpper = something.upper()
-                for stuff in FILENAME_PARTS_TO_REJECT:
-                    if stuff in somethingUpper: ignore=True; break
+                for rejectStuff in FILENAME_PARTS_TO_REJECT:
+                    if rejectStuff in somethingUpper: ignore=True; break
                 if ignore: continue
                 foundFiles.append( something )
 
@@ -854,7 +1401,7 @@ def demo():
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one.........temp
 
-    if 1: # all discovered modules in the test folder
+    if 1: # E: all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MyBible modules/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -863,13 +1410,13 @@ def demo():
             elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
                 ignore = False
                 somethingUpper = something.upper()
-                for stuff in FILENAME_PARTS_TO_REJECT:
-                    if stuff in somethingUpper: ignore=True; break
+                for rejectStuff in FILENAME_PARTS_TO_REJECT:
+                    if rejectStuff in somethingUpper: ignore=True; break
                 if ignore: continue
                 foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nE: Trying all {} discovered modules…".format( len(foundFiles) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
@@ -881,6 +1428,66 @@ def demo():
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one.........temp
+
+    if 1: # F: test the export
+        testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
+                    'Tests/DataFilesForTests/PTXTest/',
+                    'Tests/DataFilesForTests/DBLTest/',
+                    '../../../../../Data/Work/Bibles/theWord modules/',
+                    '../../../../../Data/Work/Bibles/Biola Unbound modules/',
+                    '../../../../../Data/Work/Bibles/EasyWorship Bibles/',
+                    '../../../../../Data/Work/Bibles/OpenSong Bibles/',
+                    '../../../../../Data/Work/Bibles/Zefania modules/',
+                    '../../../../../Data/Work/Bibles/YET modules/',
+                    '../../../../../Data/Work/Bibles/MyBible modules/',
+                    '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
+                    '../../../../AutoProcesses/Processed/',
+                    'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
+                    'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
+                    'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
+                    'Tests/DataFilesForTests/DBLTest/',
+                    'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
+                    'Tests/DataFilesForTests/USFXTest1/', 'Tests/DataFilesForTests/USFXTest2/',
+                    'Tests/DataFilesForTests/USFX-ASV/', 'Tests/DataFilesForTests/USFX-WEB/',
+                    'Tests/DataFilesForTests/OSISTest1/', 'Tests/DataFilesForTests/OSISTest2/',
+                    'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/HaggaiTest/',
+                    'Tests/DataFilesForTests/ZefaniaTest/', 'Tests/DataFilesForTests/VerseViewXML/',
+                    'Tests/DataFilesForTests/e-SwordTest/',
+                    'Tests/DataFilesForTests/MyBibleTest/',
+                    'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
+                    'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
+                    'Tests/DataFilesForTests/OnlineBible/',
+                    'Tests/DataFilesForTests/EasyWorshipBible/',
+                    'Tests/DataFilesForTests/DrupalTest/',
+                    'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',
+                    'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
+                    'Tests/DataFilesForTests/', # Up a level
+                    )
+        if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            # This fails with "daemonic processes are not allowed to have children"
+            #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
+            parameters = [('F'+str(j+1),testFolder) for j,testFolder in enumerate(testFolders)]
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.starmap( exportMyBB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+        else: # Just single threaded
+            for j, testFolder in enumerate( testFolders ):
+                indexString = 'F{}'.format( j+1 )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\ntoMyBible {}/ Export MyBible module for {}…".format( indexString, testFolder ) )
+                exportMyBB( indexString, testFolder )
+                #uB = UnknownBible( testFolder )
+                #result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  {} result is: {}".format( indexString, result ) )
+                #if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+                #try: result.toMyBible()
+                #except AttributeError:
+                    #errorClass, exceptionInstance, traceback = sys.exc_info()
+                    ##print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #if "object has no attribute 'toMyBible'" in str(exceptionInstance):
+                        #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
+                    #else: # it's some other attribute error in the loadBook function
+                        #raise
 # end of demo
 
 if __name__ == '__main__':
@@ -889,7 +1496,7 @@ if __name__ == '__main__':
     import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' )
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
