@@ -71,9 +71,9 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.26</version>
-      <date>2016-04-09</date>
-      <title>Traditional English Bible books names list</title>
+      <version>0.27</version>
+      <date>2016-04-11</date>
+      <title>Traditional English Bible books names extensive list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
@@ -1138,6 +1138,300 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>PsBk5</defaultAbbreviation>
   </BibleBookNames>
 
+  <BibleBookNames referenceAbbreviation="RVE">
+    <!-- Pseudepigrapha -->
+    <defaultName>Revelation of Ezra</defaultName>
+    <defaultAbbreviation>RevEzra</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="VSE">
+    <!-- Pseudepigrapha -->
+    <defaultName>Vison of Ezra</defaultName>
+    <defaultAbbreviation>VisEzra</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="JRA">
+    <defaultName>Additions to Jeremiah / Rest of Jeremiah</defaultName> <!-- Ethiopian Orthodox Canon / Ge'ez Translation addition -->
+    <defaultAbbreviation>AddJer</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="">
+    <defaultName>Pseudo-Josephus</defaultName>
+    <!-- Jossipon; Joseph ben Gorion's Medieval History of the Jews in Ethiopian Orthodox Canon / Ge'ez Translation addition -->
+    <defaultAbbreviation>PsdJosp</defaultAbbreviation>
+  </BibleBookNames>
+
+
+<!-- Apocryphal gosels / Gnostic gospels -->
+  <BibleBookNames referenceAbbreviation="GHE">
+    <defaultName>Gospel of the Hebrews</defaultName>
+    <defaultAbbreviation>GospHebr</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GTR">
+    <defaultName>Gospel of Truth</defaultName>
+    <defaultAbbreviation>GospTruth</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GMA">
+    <defaultName>Gospel of Mary</defaultName>
+    <defaultAbbreviation>GospMary</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GMC">
+    <defaultName>Gospel of Marcion</defaultName>
+    <defaultAbbreviation>GospMarcion</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GTW">
+    <defaultName>Gospel of the Twelve</defaultName>
+    <defaultAbbreviation>Gosp12</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GPH">
+    <defaultName>Gospel of Philip</defaultName>
+    <defaultAbbreviation>GospPhil</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GTH">
+    <defaultName>Gospel of Thomas</defaultName>
+    <defaultAbbreviation>GospThom</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GJU">
+    <defaultName>Gospel of Judas</defaultName>
+    <defaultAbbreviation>GospJudas</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GBA">
+    <defaultName>Gospel of Bartholomew</defaultName>
+    <defaultAbbreviation>GospBart</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="AJA">
+    <defaultName>Apocrypha of James / Apocryphal James</defaultName>
+    <defaultAbbreviation>ApocJames</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="WJC">
+    <defaultName>Wisdom of Jesus Christ</defaultName>
+    <defaultAbbreviation>WisJC</defaultAbbreviation>
+  </BibleBookNames>
+
+<!-- More Pseudepigrapha -->
+  <BibleBookNames referenceAbbreviation="TAD">
+    <defaultName>Testament of Adam</defaultName>
+    <defaultAbbreviation>TstAdam</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="LAE">
+    <defaultName>Life of Adam and Eve</defaultName>
+    <defaultAbbreviation>AdamEve</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ASS">
+    <defaultName>Assumption of Moses / Testament of Moses</defaultName>
+    <defaultAbbreviation>AssMos</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSO">
+    <defaultName>Testament of Solomon</defaultName>
+    <defaultAbbreviation>TstSol</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TJB">
+    <defaultName>Testament of Job</defaultName>
+    <defaultAbbreviation>TstJob</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="MAI">
+    <defaultName>Martyrdom and Ascension of Isaiah</defaultName>
+    <defaultAbbreviation>MAIs</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="AEZ">
+    <defaultName>Apocrypha of Ezekiel / Apocryphon of Ezekiel</defaultName>
+    <defaultAbbreviation>ApocEze</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="EZT">
+    <defaultName>Ezekiel the Tragedian</defaultName>
+    <defaultAbbreviation>EzeTrg</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="EUP">
+    <defaultName>Eupolemus</defaultName>
+    <defaultAbbreviation>Eup</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="PEU">
+    <defaultName>Pseudo of Eupolemus / Pseudo-Eupolemus</defaultName>
+    <defaultAbbreviation>PsdEup</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="VAM">
+    <defaultName>Visions of Amram</defaultName>
+    <defaultAbbreviation>VisAm</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="LAR">
+    <defaultName>Letter of Aristeas / Epistle of Aristeas</defaultName>
+    <defaultAbbreviation>LettAris</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ARI">
+    <defaultName>Aristeas the Exegete</defaultName>
+    <defaultAbbreviation>Aris</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ABL">
+    <defaultName>Aristobulus</defaultName>
+    <defaultAbbreviation>Aristb</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ART">
+    <defaultName>Artapanus</defaultName>
+    <defaultAbbreviation>Artap</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="CLM">
+    <defaultName>Cleodemus Malchus</defaultName>
+    <defaultAbbreviation>CleoMalch</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ELM">
+    <defaultName>Eldad and Modad</defaultName>
+    <defaultAbbreviation>EldMod</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="HRE">
+    <defaultName>History of the Rechabites</defaultName>
+    <defaultAbbreviation>HistRech</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="LPR">
+    <defaultName>Lives of the Prophets</defaultName>
+    <defaultAbbreviation>LivesProphs</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="EPL">
+    <defaultName>Philo the Epic Poet</defaultName>
+    <defaultAbbreviation>Philo</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TEO">
+    <defaultName>Theodotus</defaultName>
+    <defaultAbbreviation>Theod</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="TTP">
+    <defaultName>Testaments of the Twelve Patriarchs</defaultName> <!-- Armenian Orthodox -->
+    <defaultAbbreviation>Tst12Patr</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSA">
+    <defaultName>Testament of Asher</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstAsher</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSB">
+    <defaultName>Testament of Benjamin</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstBenj</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSD">
+    <defaultName>Testament of Dan</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstDan</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSG">
+    <defaultName>Testament of Gad</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstGad</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSI">
+    <defaultName>Testament of Issachar</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstIssa</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSJ">
+    <defaultName>Testament of Joseph</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstJoseph</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSY">
+    <defaultName>Testament of Judah</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstJudah</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSL">
+    <defaultName>Testament of Levi</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstLevi</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSN">
+    <defaultName>Testament of Naphtali</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstNaph</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSR">
+    <defaultName>Testament of Reuben</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstReub</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSS">
+    <defaultName>Testament of Simeon</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstSimeon</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TSZ">
+    <defaultName>Testament of Zebulun</defaultName> <!-- Armenian -->
+    <defaultAbbreviation>TstZeb</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="JJW">
+    <defaultName>Josephus Jewish War VI</defaultName> <!-- Syriac -->
+    <defaultAbbreviation>JosJewWarVI</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="SHE">
+    <defaultName>Shepherd of Hermas</defaultName> <!-- Greek from Codex Siniaticus -->
+    <defaultAbbreviation>ShepHermas</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="SHM">
+    <defaultName>Shepherd of Hermas Mandates</defaultName> <!-- Greek from Codex Siniaticus -->
+    <defaultAbbreviation>ShepHerMand</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="SHS">
+    <defaultName>Shepherd of Hermas Similitudes</defaultName> <!-- Greek from Codex Siniaticus -->
+    <defaultAbbreviation>ShepHerSim</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="SHV">
+    <defaultName>Shepherd of Hermas Visions</defaultName> <!-- Greek from Codex Siniaticus -->
+    <defaultAbbreviation>ShepHerVis</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="IGE">
+    <defaultName>Ignatius to the Ephesians</defaultName>
+    <defaultAbbreviation>IgnEph</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGM">
+    <defaultName>Ignatius to the Magnesians</defaultName>
+    <defaultAbbreviation>IgnMagn</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGT">
+    <defaultName>Ignatius to the Trallians</defaultName>
+    <defaultAbbreviation>IgnTrall</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGR">
+    <defaultName>Ignatius to the Romans</defaultName>
+    <defaultAbbreviation>IgnRom</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGP">
+    <defaultName>Ignatius to the Philadelphians</defaultName>
+    <defaultAbbreviation>IgnPhp</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGS">
+    <defaultName>Ignatius to the Smyrnaeans</defaultName>
+    <defaultAbbreviation>IgnSmyrn</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IGC">
+    <defaultName>Ignatius to Polycarp</defaultName>
+    <defaultAbbreviation>IgnPolyc</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="PCP">
+    <defaultName>Polycarp to the Philippians</defaultName>
+    <defaultAbbreviation>PolycPhp</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="MPC">
+    <defaultName>Martydom of Polycarp</defaultName>
+    <defaultAbbreviation>MartyrPolyc</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="DIO">
+    <defaultName>Diognetus</defaultName>
+    <defaultAbbreviation>Diogn</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="APC">
+    <defaultName>Apostles' Creed</defaultName>
+    <defaultAbbreviation>AposCreed</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="FOP">
+    <defaultName>Fragments of Papias</defaultName>
+    <defaultAbbreviation>FragPapias</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="ROE">
+    <defaultName>Reliques of the Elders</defaultName>
+    <defaultAbbreviation>RelicsElders</defaultAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="FOQ">
+    <defaultName>Fragment of Quadratus</defaultName>
+    <defaultAbbreviation>FragQuadr</defaultAbbreviation>
+  </BibleBookNames>
+
+  <BibleBookNames referenceAbbreviation="TAT">
+    <defaultName>Tatian / Tatian's Diatessaron / Diatessaron</defaultName> <!-- Appears in Codex Fuldensis; Latin language gospel harmony -->
+    <defaultAbbreviation>Tatian</defaultAbbreviation>
+  </BibleBookNames>
+
+
   <!-- Front matter -->
   <BibleBookNames referenceAbbreviation="PRF">
     <defaultName>Preface</defaultName>
@@ -1169,10 +1463,40 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Back</defaultAbbreviation>
     <inputAbbreviation>Bck</inputAbbreviation>
   </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="GLS">
+    <defaultName>Glossary</defaultName>
+    <defaultAbbreviation>Gloss</defaultAbbreviation>
+    <inputAbbreviation>Gls</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="CNC">
+    <defaultName>Concordance</defaultName>
+    <defaultAbbreviation>Concord</defaultAbbreviation>
+    <inputAbbreviation>Ccd</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="TPC">
+    <defaultName>Topical Concordance</defaultName>
+    <defaultAbbreviation>TopicConcord</defaultAbbreviation>
+    <inputAbbreviation>TpclCcd</inputAbbreviation>
+  </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MAP">
     <defaultName>Maps</defaultName>
     <defaultAbbreviation>Maps</defaultAbbreviation>
     <inputAbbreviation>Mps</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IXN">
+    <defaultName>Names Index</defaultName>
+    <defaultAbbreviation>NameIdx</defaultAbbreviation>
+    <inputAbbreviation>IdxNames</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IXP">
+    <defaultName>Places Index</defaultName>
+    <defaultAbbreviation>PlaceIdx</defaultAbbreviation>
+    <inputAbbreviation>IdxPlaces</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="IXT">
+    <defaultName>Thematic Index</defaultName>
+    <defaultAbbreviation>ThemeIdx</defaultAbbreviation>
+    <inputAbbreviation>IdxThemes</inputAbbreviation>
   </BibleBookNames>
 
   <!-- Extra (unknown books) -->

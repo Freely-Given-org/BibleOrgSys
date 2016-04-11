@@ -1144,7 +1144,9 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
 
+    workAbbreviation = self.getSetting( 'workAbbreviation' )
     if 'MyBibleOutputFilename' in controlDict: filename = controlDict['MyBibleOutputFilename']
+    elif workAbbreviation: filename = workAbbreviation
     elif self.abbreviation: filename = self.abbreviation
     elif self.shortName: filename = self.shortName
     elif self.sourceFilename: filename = self.sourceFilename

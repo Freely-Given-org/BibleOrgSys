@@ -54,7 +54,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -448,7 +448,9 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
 
     def getPreviousBookCode( self, BBB ):
-        """ Returns the book (if any) before the given one. """
+        """
+        Returns the book (if any) before the given one.
+        """
         while True:
             previousCode = BibleBookOrderSystem.getPreviousBookCode( self, BBB )
             if previousCode is None: return None
@@ -584,7 +586,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

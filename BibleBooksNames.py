@@ -28,10 +28,10 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
-ProgVersion = '0.38'
+ProgVersion = '0.39'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -460,6 +460,7 @@ class BibleBooksNamesSystem:
         Get the default book name from the given referenceAbbreviation.
         """
         if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
+        print( self.__systemName )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
@@ -576,6 +577,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     parser.add_argument("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
