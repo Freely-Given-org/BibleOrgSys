@@ -67,7 +67,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.56'
+ProgVersion = '0.57'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -657,7 +657,8 @@ class BibleVersificationSystem:
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
             C = str( C )
-        return int( self.__chapterDataDict[BBB][C] )
+        try: return int( self.__chapterDataDict[BBB][C] )
+        except KeyError: return 0
     # end of BibleVersificationSystem.getNumVerses
 
 
@@ -938,6 +939,7 @@ if __name__ == '__main__':
     #from multiprocessing import freeze_support
     #freeze_support() # Multiprocessing support for frozen Windows executables
 
+    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
