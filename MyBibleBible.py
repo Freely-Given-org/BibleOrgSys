@@ -87,7 +87,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-04-11' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -869,13 +869,13 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             #assert len(verseData ) == 1 # in the introductory section
             #marker, text = verseData[0].getMarker(), verseData[0].getFullText()
             #if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
-                #if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                #elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                #if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
+                #elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
                 #else:
                     #logging.warning( "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -943,37 +943,37 @@ def createMyBibleModule( self, outputFolder, controlDict ):
                     assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
             if marker == 'ms1':
-                pass #composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                pass #composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
             elif marker in ('ms2','ms3','ms4'):
-                pass #composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                pass #composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts><pb/>'
             elif marker == 's1':
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
-                composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
-            #elif marker == 's2': composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<pb/>' # append the new paragraph marker to the previous line
+                composedLine += '<br/><t>'+adjustLine(BBB,C,V,text)+'</t><br/>'
+            #elif marker == 's2': composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0<pb/>'
             elif marker in ( 's2', 's3','s4', 'sr','mr', 'd', ): composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
             elif marker in ( 'qa', 'r', ):
                 if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
                     text = '(' + text + ')'
-                composedLine += '<t>'+adjustLine(BBB,C,V,text)+'</t>'
+                composedLine += '<br/><t>'+adjustLine(BBB,C,V,text)+'</t><br/>'
             elif marker in ( 'm', ):
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<pb/>' # append the new paragraph marker to the previous line
                 #if text:
                     #print( 'm', repr(text), verseData )
-                    #composedLine += '~^~line '+adjustLine(BBB,C,V,text)
+                    #composedLine += '<pb/>'+adjustLine(BBB,C,V,text)
                     #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
-                        #composedLine += '~^~line '
-                    #else: composedLine += '~^~line '
+                        #composedLine += '<pb/>'
+                    #else: composedLine += '<pb/>'
                 #else: # there is text
                     #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
             elif marker in ( 'p', 'b', ):
                 #print( marker, text )
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
-                #else: composedLine += '~^~line '
+                    ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<pb/>' # append the new paragraph marker to the previous line
+                #else: composedLine += '<pb/>'
                 #composedLine += adjustLine(BBB,C,V,text)
             elif marker in ( 'pi1', ):
                 assert not text
@@ -992,26 +992,26 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             elif marker in ( 'q1', 'qm1', ):
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
-                else: composedLine += '~^~line '
+                    ourGlobals['lastLine'] += '<pb/>' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '<pb/>'
                 #composedLine += adjustLine(BBB,C,V,text)
             elif marker in ( 'q2', 'qm2', ):
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
-                else: composedLine += '~^~line '
+                    ourGlobals['lastLine'] += '<pb/>' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '<pb/>'
                 #composedLine += '~^~line<PI2>'+adjustLine(BBB,C,V,text)
             elif marker in ( 'q3', 'qm3', ):
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
-                else: composedLine += '~^~line '
+                    ourGlobals['lastLine'] += '<pb/>' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '<pb/>'
                 #composedLine += '~^~line<PI3>'+adjustLine(BBB,C,V,text)
             elif marker in ( 'q4', 'qm4', ):
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                    ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
-                else: composedLine += '~^~line '
+                    ourGlobals['lastLine'] += '<pb/>' # append the new quotation paragraph marker to the previous line
+                else: composedLine += '<pb/>'
                 #composedLine += '~^~line<PI4>'+adjustLine(BBB,C,V,text)
             elif marker == 'li1': composedLine += '• '+adjustLine(BBB,C,V,text)
             elif marker == 'li2': composedLine += '• '+adjustLine(BBB,C,V,text)
@@ -1020,8 +1020,8 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
             elif marker in ( 'v~', 'p~', ):
                 #print( lastMarker )
-                if lastMarker == 'p': composedLine += '~^~line ' # We had a continuation paragraph
-                elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
+                if lastMarker == 'p': composedLine += '<pb/>' # We had a continuation paragraph
+                elif lastMarker == 'm': composedLine += '<br/>' # We had a continuation paragraph
                 elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
                 elif lastMarker != 'v':
                     print( BBB, C, V, marker, lastMarker, verseData )
@@ -1041,7 +1041,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             #composedLine = composedLine.replace( '  ', ' ' )
 
         # Check what's left at the end (but hide MyBible \line markers first)
-        if '\\' in composedLine.replace( '\\line ', '' ):
+        if '\\' in composedLine.replace( '<pb/>', '' ):
             logging.warning( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
