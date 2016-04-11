@@ -460,7 +460,7 @@ class BibleBooksNamesSystem:
         Get the default book name from the given referenceAbbreviation.
         """
         if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
-        print( self.__systemName )
+        #print( self.__systemName )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
