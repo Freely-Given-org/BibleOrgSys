@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-07' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.33'
@@ -582,8 +582,8 @@ class VPLBible( Bible ):
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
                             if BibleOrgSysGlobals.debugFlag: assert BBB not in self
                             thisBook = BibleBook( self, BBB )
-                            thisBook.objectNameString = "VPL Bible Book object"
-                            thisBook.objectTypeString = "VPL"
+                            thisBook.objectNameString = 'VPL Bible Book object'
+                            thisBook.objectTypeString = 'VPL'
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCode = bookCode

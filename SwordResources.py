@@ -35,7 +35,7 @@ Some of the code in SwordBible.py probably needs to be moved
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.21'
@@ -1185,8 +1185,8 @@ class SwordInterface():
         # Create the new book
         if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "Sword Bible Book object"
-        thisBook.objectTypeString = "Sword Bible"
+        thisBook.objectNameString = 'Sword Bible Book object'
+        thisBook.objectTypeString = 'Sword Bible'
         currentC, haveText = '0', False
 
         if SwordType=='CrosswireLibrary': # need to load the module
@@ -1380,8 +1380,8 @@ class SwordInterface():
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "Sword Bible Book object"
-                    thisBook.objectTypeString = "Sword Bible"
+                    thisBook.objectNameString = 'Sword Bible Book object'
+                    thisBook.objectTypeString = 'Sword Bible'
                     currentBBB, currentC, haveText = BBB, '0', False
                     bookCount += 1
 

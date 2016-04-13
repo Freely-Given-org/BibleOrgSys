@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-14' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.29'
@@ -563,7 +563,8 @@ class UnknownBible:
             self.foundType = 'None found'
             if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
                 # We did a strict check the first time, but strict checking wasn't specified on the command line
-                print( "UnknownBible.search: retrying without strict checking criteria" )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                     print ( "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )

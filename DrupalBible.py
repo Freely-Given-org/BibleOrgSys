@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.10'
@@ -287,8 +287,8 @@ class DrupalBible( Bible ):
                         if lastBBB is not None:
                             self.saveBook( thisBook )
                         thisBook = BibleBook( self, BBB )
-                        thisBook.objectNameString = "DrupalBible Bible Book object"
-                        thisBook.objectTypeString = "DrupalBible"
+                        thisBook.objectNameString = 'DrupalBible Bible Book object'
+                        thisBook.objectTypeString = 'DrupalBible'
                         lastChapterNumberString = None
                         lastBBB = BBB
                     if chapterNumberString != lastChapterNumberString:

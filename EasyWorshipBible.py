@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.02'
@@ -290,8 +290,8 @@ class EasyWorshipBible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag: assert '  ' not in textResult
 
             thisBook = BibleBook( self, BBB )
-            thisBook.objectNameString = "EasyWorship Bible Book object"
-            thisBook.objectTypeString = "EasyWorship Bible"
+            thisBook.objectNameString = 'EasyWorship Bible Book object'
+            thisBook.objectTypeString = 'EasyWorship Bible'
             if bookAbbrev: thisBook.addLine( 'toc3', bookAbbrev )
 
             C = V = '0'

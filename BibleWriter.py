@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.91'
@@ -9501,7 +9501,7 @@ def demo():
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
-    BW.objectNameString = "Dummy test Bible Writer object"
+    BW.objectNameString = 'Dummy test Bible Writer object'
     if BibleOrgSysGlobals.verbosityLevel > 0: print( BW ); print()
 
 
@@ -9510,7 +9510,7 @@ def demo():
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
                 #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/',),
-                #('CustomTest', 'Custom', '.../',),
+                #('CustomTest', 'Custom', '../',),
                 #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/',),
                 #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/',),
                 #('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/',),

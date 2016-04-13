@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-07' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.34'
@@ -232,7 +232,7 @@ class ForgeForSwordSearcherBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Forge for SwordSearcher Bible object"
+        self.objectNameString = 'Forge for SwordSearcher Bible object'
         self.objectTypeString = 'Forge4SS'
 
         # Now we can set our object variables
@@ -412,8 +412,8 @@ class ForgeForSwordSearcherBible( Bible ):
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
                             if BibleOrgSysGlobals.debugFlag: assert BBB not in self
                             thisBook = BibleBook( self, BBB )
-                            thisBook.objectNameString = "ForgeForSwordSearcher Bible Book object"
-                            thisBook.objectTypeString = "ForgeForSwordSearcher"
+                            thisBook.objectNameString = 'ForgeForSwordSearcher Bible Book object'
+                            thisBook.objectTypeString = 'ForgeForSwordSearcher'
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCode = bookCode

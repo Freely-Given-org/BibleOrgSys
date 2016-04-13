@@ -51,7 +51,7 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-14' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.40'
@@ -259,10 +259,12 @@ class SwordModuleConfiguration:
         # Checked for locked modules
         if 'CipherKey' in self.confDict:
             if self.confDict['CipherKey']:
-                print( "{} {} module is unlocked!".format( self.name, self.modCategory ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "SwordModules: {} {} module is unlocked!".format( self.name, self.modCategory ) )
                 self.locked = False
             else:
-                print( "{} {} module is locked!".format( self.name, self.modCategory ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "SwordModules: {} {} module is locked!".format( self.name, self.modCategory ) )
                 self.locked = True
 
         # Check we got everything we should have
@@ -1855,7 +1857,7 @@ class SwordBibleModule( SwordModule, Bible ):
                         #halt # Need to process this
                 else:
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "SwordBibleModule book object"
+                    thisBook.objectNameString = 'SwordBibleModule book object'
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB

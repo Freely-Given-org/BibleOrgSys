@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-09' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -273,8 +273,8 @@ class OpenSongXMLBible( Bible ):
             if BBB:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
-                thisBook.objectNameString = "OpenSong XML Bible Book object"
-                thisBook.objectTypeString = "OpenSong"
+                thisBook.objectNameString = 'OpenSong XML Bible Book object'
+                thisBook.objectTypeString = 'OpenSong'
                 #thisBook.sourceFilepath = self.sourceFilepath
                 USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )

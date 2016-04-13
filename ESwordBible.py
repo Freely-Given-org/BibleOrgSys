@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.30'
@@ -629,8 +629,8 @@ class ESwordBible( Bible ):
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "e-Sword Bible Book object"
-        thisBook.objectTypeString = "e-Sword"
+        thisBook.objectNameString = 'e-Sword Bible Book object'
+        thisBook.objectTypeString = 'e-Sword'
 
         verseList = self.BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -689,8 +689,8 @@ class ESwordBible( Bible ):
                     BBB = self.BOS.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "e-Sword Bible Book object"
-                    thisBook.objectTypeString = "e-Sword"
+                    thisBook.objectNameString = 'e-Sword Bible Book object'
+                    thisBook.objectTypeString = 'e-Sword'
                     haveLines = False
 
                     verseList = self.BOS.getNumVersesList( BBB )
@@ -818,8 +818,8 @@ class ESwordBible( Bible ):
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "e-Sword Bible Book object"
-        thisBook.objectTypeString = "e-Sword"
+        thisBook.objectNameString = 'e-Sword Bible Book object'
+        thisBook.objectTypeString = 'e-Sword'
 
         verseList = self.BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
