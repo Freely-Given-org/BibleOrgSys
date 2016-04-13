@@ -84,10 +84,10 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-14' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -95,7 +95,7 @@ debuggingThisModule = False
 
 
 import logging, os
-import sqlite3
+import sqlite3, re
 import multiprocessing
 from collections import OrderedDict
 
@@ -584,8 +584,8 @@ class MyBibleBible( Bible ):
 
         # Create the empty book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "MyBible Bible Book object"
-        thisBook.objectTypeString = "MyBible"
+        thisBook.objectNameString = 'MyBible Bible Book object'
+        thisBook.objectTypeString = 'MyBible'
 
         C = V = 1
 
@@ -688,8 +688,8 @@ class MyBibleBible( Bible ):
 
         # Create the empty book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "MyBible Bible Book object"
-        thisBook.objectTypeString = "MyBible"
+        thisBook.objectNameString = 'MyBible Bible Book object'
+        thisBook.objectTypeString = 'MyBible'
 
         C = V = 1
 
@@ -778,7 +778,38 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
             line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
 
-        #if '\\f' in line: # Handle footnotes
+        if '\\f' in line: # Handle footnotes
+            #print( "originalLine", repr(originalLine) )
+            while True: # fix internal footnote formatting
+                match = re.search( r"\\f (.+?)\\f\*", line )
+                if not match: break
+                #print( "line1", repr(line) )
+                #print( "1", match.group(1) )
+                adjNote = match.group(1).replace('\\fqa*','\\ft ').replace('\\nd*','\\ft ').replace('\\add*','\\ft ')
+                if '\\' in adjNote:
+                    noteBits = adjNote.split( '\\' )
+                    #print( "noteBits", noteBits )
+                    newNote = ''
+                    for noteBit in noteBits:
+                        if noteBit in ( '+ ', '- ', '* ', '*  ', ): pass # Just ignore these -- '*  ' is for WEB
+                        elif noteBit.startswith( '+ ' ): newNote += (' ' if newNote else '') + noteBit[2:]
+                        elif noteBit.rstrip().isdigit(): pass # Just ignore footnote digits
+                        elif noteBit.startswith( 'fr ' ): pass # Just ignore the origin markers (since we'll see the footnotes inline anyway)
+                        elif noteBit.startswith( 'ft ' ): newNote += (' ' if newNote else '') + noteBit[3:]
+                        elif noteBit.startswith( 'fq ' ): newNote += '<i>' + noteBit[3:] + '</i>'
+                        elif noteBit.startswith( 'fqa ' ): newNote += '<i>' + noteBit[4:] + '</i>'
+                        elif noteBit.startswith( 'nd ' ): newNote += noteBit[3:]
+                        elif noteBit.startswith( 'add ' ): newNote += noteBit[4:]
+                        elif noteBit.startswith( '+wj ' ): newNote += '<J>' + noteBit[4:]
+                        elif noteBit.startswith( '+wj*' ): newNote += '</J>' + noteBit[4:]
+                        else:
+                            logging.error( "MyBible adjustLine: {} {!r} footnote field not handled properly yet.".format( self.abbreviation if self.abbreviation else self.name, noteBit[:3] ) )
+                            newNote += '[[' + noteBit[3:] + ']]'
+                            if BibleOrgSysGlobals.debuggingThisModule and debuggingThisModule: halt
+                else: newNote = adjNote # No backslash fields inside note
+                line = line[:match.start()] + '<n>' + newNote + '</n>' + line[match.end():]
+                #print( "line2", repr(line) )
+
             #line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
             ##for marker in ( 'fr', 'fm', ): # simply remove these whole field
                 ##line = removeUSFMCharacterField( marker, line, closedFlag=None )
@@ -818,7 +849,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
                 ( ('bd','em','k',), '<b>','</b>' ),
                 ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
                 ( ('nd','sc',), '','' ),
-                ( ('f',), '<n>','</n>' ),
+                #( ('f',), '<n>','</n>' ),
                 ( ('str',), '<S>','</S>' ),
                 )
             line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
@@ -907,8 +938,8 @@ def createMyBibleModule( self, outputFolder, controlDict ):
 
         Returns the composed line.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "toMyBible.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( "toMyBible.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
 
         composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
         ourGlobals['line'] = '' # We've used them so we don't need them any more
@@ -928,10 +959,10 @@ def createMyBibleModule( self, outputFolder, controlDict ):
                 vCount += 1
                 if vCount == 1: # Handle verse bridges
                     if text != str(V):
-                        composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
+                        composedLine += '<sup>('+adjustLine(BBB,C,V,text)+')</sup> ' # Put the additional verse number into the text in parenthesis
                 elif vCount > 1: # We have an additional verse number
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
-                    composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                    composedLine += ' <sup>('+adjustLine(BBB,C,V,text)+')</sup>' # Put the additional verse number into the text in parenthesis
                 lastMarker = marker
                 continue
 
@@ -1024,7 +1055,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
                 elif lastMarker == 'm': composedLine += '<br/>' # We had a continuation paragraph
                 elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
                 elif lastMarker != 'v':
-                    print( BBB, C, V, marker, lastMarker, verseData )
+                    #print( BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
                 composedLine += adjustLine(BBB,C,V, text )
@@ -1041,7 +1072,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
             #composedLine = composedLine.replace( '  ', ' ' )
 
         # Check what's left at the end (but hide MyBible \line markers first)
-        if '\\' in composedLine.replace( '<pb/>', '' ):
+        if '\\' in composedLine:
             logging.warning( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
@@ -1323,14 +1354,16 @@ def exportMyBB( eIndexString, eFolder ):
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  {} result is: {}".format( eIndexString, result ) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
-    try: result.toMyBible()
-    except AttributeError:
-        errorClass, exceptionInstance, traceback = sys.exc_info()
-        #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-        if "object has no attribute 'toMyBible'" in str(exceptionInstance):
-            logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
-        else: # it's some other attribute error in the loadBook function
-            raise
+    if isinstance( result, Bible ) and result.books:
+        result.toMyBible()
+        #try: result.toMyBible()
+        #except AttributeError:
+            #errorClass, exceptionInstance, traceback = sys.exc_info()
+            ##print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #if "object has no attribute 'toMyBible'" in str(exceptionInstance):
+                #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
+            #else: # it's some other attribute error in the loadBook function
+                #raise
 # end of exportMyBB
 
 
@@ -1465,7 +1498,7 @@ def demo():
                     'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
                     'Tests/DataFilesForTests/', # Up a level
                     )
-        if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if 000 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
