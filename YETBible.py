@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.07'
@@ -356,48 +356,12 @@ class YETBible( Bible ):
             bookDict[lastBBB] = bookLines # Save the last book
 
 
-                #if bookCode != lastBookCode: # We've started a new book
-                    #if lastBookCode != -1: # Better save the last book
-                        #self.saveBook( thisBook )
-                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromYETBibleCode( bookCode )
-                    #thisBook = BibleBook( self, BBB )
-                    #thisBook.objectNameString = "YET Bible Book object"
-                    #thisBook.objectTypeString = "YET"
-                    #lastBookCode = bookCode
-                    #lastChapterNumber = lastVerseNumber = -1
-
-                #if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    #if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
-                    #if chapterNumber == 0:
-                        #logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    #thisBook.addLine( 'c', chapterNumberString )
-                    #lastChapterNumber = chapterNumber
-                    #lastVerseNumber = -1
-
-                ## Handle the verse info
-                #if verseNumber==lastVerseNumber and vText==lastVText:
-                    #logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    #continue
-                #if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
-                    ## Move Psalm titles to verse zero
-                    #verseNumber = 0
-                #if verseNumber < lastVerseNumber:
-                    #logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                #elif verseNumber == lastVerseNumber:
-                    #if vText == lastVText:
-                        #logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    #else:
-                        #logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                #thisBook.addLine( 'v', verseNumberString + ' ' + vText )
-                #lastVText = vText
-                #lastVerseNumber = verseNumber
-
         # Now process the books
         for BBB,bkData in bookDict.items():
             #print( "Processing", BBB )
             thisBook = BibleBook( self, BBB )
-            thisBook.objectNameString = "YET Bible Book object"
-            thisBook.objectTypeString = "YET"
+            thisBook.objectNameString = 'YET Bible Book object'
+            thisBook.objectTypeString = 'YET'
             lastChapterNumberString = None
             for (chapterNumberString,verseNumberString), verseString in bkData.items():
                 # Insert headings (can only occur before verses)

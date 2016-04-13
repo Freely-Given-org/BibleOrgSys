@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.49'
@@ -1081,8 +1081,8 @@ class OSISXMLBible( Bible ):
                             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
                             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}…").format( BBB ) )
                             self.thisBook = BibleBook( self, BBB )
-                            self.thisBook.objectNameString = "OSIS XML Bible Book object"
-                            self.thisBook.objectTypeString = "OSIS"
+                            self.thisBook.objectNameString = 'OSIS XML Bible Book object'
+                            self.thisBook.objectTypeString = 'OSIS'
                             self.haveBook = True
                         self.thisBook.addLine( 'c', bits[1] )
 
@@ -2503,8 +2503,8 @@ class OSISXMLBible( Bible ):
                 USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
                 self.thisBook = BibleBook( self, BBB )
-                self.thisBook.objectNameString = "OSIS XML Bible Book object"
-                self.thisBook.objectTypeString = "OSIS"
+                self.thisBook.objectNameString = 'OSIS XML Bible Book object'
+                self.thisBook.objectTypeString = 'OSIS'
                 self.haveBook = True
             self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
             self.thisBook.addLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )

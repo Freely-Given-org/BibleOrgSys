@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-07' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.23'
@@ -276,12 +276,6 @@ class USFXXMLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
 
-                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}…").format( BBB ) )
-                        #self.thisBook = BibleBook( self, BBB )
-                        #self.thisBook.objectNameString = "OSIS XML Bible Book object"
-                        #self.thisBook.objectTypeString = "OSIS"
-                        #self.haveBook = True
-
         try: self.tree = ElementTree().parse( self.sourceFilepath )
         except ParseError:
             errorString = sys.exc_info()[1]
@@ -403,8 +397,8 @@ class USFXXMLBible( Bible ):
 
         # Now create our actual book
         self.thisBook = BibleBook( self, BBB )
-        self.thisBook.objectNameString = "USFX XML Bible Book object"
-        self.thisBook.objectTypeString = "USFX"
+        self.thisBook.objectNameString = 'USFX XML Bible Book object'
+        self.thisBook.objectTypeString = 'USFX'
 
         C = V = '0'
         for element in bookElement:

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.69'
@@ -2079,7 +2079,7 @@ def demo():
 
     # Since this is only designed to be a base class, it can't actually do much at all
     IB = InternalBible()
-    IB.objectNameString = "Dummy test Internal Bible object"
+    IB.objectNameString = 'Dummy test Internal Bible object'
     if BibleOrgSysGlobals.verbosityLevel > 0: print( IB )
 # end of demo
 

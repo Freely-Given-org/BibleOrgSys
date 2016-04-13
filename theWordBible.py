@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.50'
@@ -859,8 +859,8 @@ class theWordBible( Bible ):
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = "theWord Bible Book object"
-        thisBook.objectTypeString = "theWord"
+        thisBook.objectNameString = 'theWord Bible Book object'
+        thisBook.objectTypeString = 'theWord'
         consecutiveBlankLineCount, hadText = 0, False
 
         verseList = BOS.getNumVersesList( BBB )
@@ -913,8 +913,8 @@ class theWordBible( Bible ):
                                     BBB = BOS.getNextBookCode( BBB )
                                     # Create the next book
                                     thisBook = BibleBook( self, BBB )
-                                    thisBook.objectNameString = "theWord Bible Book object"
-                                    thisBook.objectTypeString = "theWord"
+                                    thisBook.objectNameString = 'theWord Bible Book object'
+                                    thisBook.objectTypeString = 'theWord'
 
                                     verseList = BOS.getNumVersesList( BBB )
                                     numC, numV = len(verseList), verseList[0]

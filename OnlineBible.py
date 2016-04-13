@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-09' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.16'
@@ -1155,8 +1155,8 @@ class OnlineBible( Bible ):
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}…'.format( BBB ) )
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "Online Bible Book object"
-                    thisBook.objectTypeString = "Online Bible"
+                    thisBook.objectNameString = 'Online Bible Book object'
+                    thisBook.objectTypeString = 'Online Bible'
                     currentBBB, currentC = BBB, '0'
                     bookCount += 1
                 if C != currentC:

@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = '0.07'
@@ -208,8 +208,8 @@ class GreekNT( Bible ):
         # end of unpackLine
 
         self.thisBook = BibleBook( self, BBB )
-        self.thisBook.objectNameString = "Morph Greek NT Bible Book object"
-        self.thisBook.objectTypeString = "MorphGNT"
+        self.thisBook.objectNameString = 'Morph Greek NT Bible Book object'
+        self.thisBook.objectTypeString = 'MorphGNT'
         filepath = os.path.join( self.sourceFilepath, filename )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading {}…".format( filename ) )
         lastLine, lineCount = '', 0

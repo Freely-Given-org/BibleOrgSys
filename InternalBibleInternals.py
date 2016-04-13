@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.62'
@@ -1020,9 +1020,9 @@ def demo():
 
     #IBB = InternalBibleInternals( 'GEN' )
     ## The following fields would normally be filled in a by "load" routine in the derived class
-    #IBB.objectNameString = "Dummy test Internal Bible Book object"
-    #IBB.objectTypeString = "DUMMY"
-    #IBB.sourceFilepath = "Nowhere"
+    #IBB.objectNameString = 'Dummy test Internal Bible Book object'
+    #IBB.objectTypeString = 'DUMMY'
+    #IBB.sourceFilepath = 'Nowhere'
     #if BibleOrgSysGlobals.verbosityLevel > 0: print( IBB )
 # end of demo
 

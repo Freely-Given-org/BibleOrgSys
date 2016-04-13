@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-09' # by RJH
+LastModifiedDate = '2016-04-13' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -464,8 +464,8 @@ class HaggaiXMLBible( Bible ):
         if BBB:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
-            thisBook.objectNameString = "Haggai XML Bible Book object"
-            thisBook.objectTypeString = "Haggai"
+            thisBook.objectNameString = 'Haggai XML Bible Book object'
+            thisBook.objectTypeString = 'Haggai'
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == HaggaiXMLBible.captionTag:
