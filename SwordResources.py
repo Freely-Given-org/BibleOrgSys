@@ -3,7 +3,8 @@
 #
 # SwordResources.py
 #
-# Module handling Sword resources using the Sword engine
+# Interface module handling Sword resources
+#   using either the Sword engine (if available) or else our own software
 #
 # Copyright (C) 2013-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -26,16 +27,14 @@
 This is the interface module used to give a unified interface to either:
     1/ The Crosswire Sword engine (libsword) via Python3 SWIG bindings,
         or, if that's not available, to
-    2/ Our own (still primitive module that reads Sword files directly
-        called SwordModules.py
-
-Some of the code in SwordBible.py probably needs to be moved
-    into this module.
+    2/ Our own SwordManager.py which downloads modules from remote
+        repositories, and our (still primitive) module that reads Sword
+        files directly called SwordModules.py
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-04-18' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.21'

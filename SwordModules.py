@@ -51,10 +51,10 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-14' # by RJH
+LastModifiedDate = '2016-04-18' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.40'
+ProgVersion = '0.42'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,6 +72,8 @@ from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 from VerseReferences import SimpleVerseKey
+from SwordManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, TECHNICAL_SWORD_CONF_FIELD_NAMES
+
 
 
 # Folders where to try looking for modules
@@ -80,13 +82,14 @@ DEFAULT_SWORD_SEARCH_FOLDERS = ( 'usr/share/sword/',
                         os.path.join( os.path.expanduser('~'), '.sword/'),
                         'C:\\Users\\{}\\AppData\\Roaming\\Sword\\'.format( os.getlogin() ),
                         'C:\\Users\\{}\\AppData\\Local\\VirtualStore\\Program Files\\BPBible\\resources\\'.format( os.getlogin() ),
-                        'C:\\Program Files\\BPBible\\resources\\' )
+                        'C:\\Program Files\\BPBible\\resources\\', 'C:\\Program Files (x86)\\BPBible\\resources\\', )
 
-GENERIC_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblical Texts',
+GENERIC_SWORD_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblical Texts',
                 'RawCom':'Commentaries', 'RawCom4':'Commentaries', 'zCom':'Commentaries',
                 'RawLD':'Lexicons / Dictionaries', 'RawLD4':'Lexicons / Dictionaries', 'zLD':'Lexicons / Dictionaries',
                 'RawGenBook':'Generic Books',
                 'RawFiles':'Commentaries' }
+
 
 
 def exp( messageString ):
@@ -109,26 +112,6 @@ class SwordModuleConfiguration:
     """
     A class that loads, processes, and stores a Sword .conf file.
     """
-    importantFieldNames = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version', 'History', 'Description',
-                'TextSource', 'Source', 'LCSH', 'ShortPromo', 'Promo', 'Obsoletes', 'GlossaryFrom', 'GlossaryTo',
-                'DistributionSource', 'DistributionNotes', 'DistributionLicense',
-                'Category', 'Feature', 'Versification', 'Scope', 'About',
-                'Notes', 'NoticeLink', 'NoticeText',
-                'Copyright', 'CopyrightHolder', 'CopyrightDate', 'CopyrightContactName', 'CopyrightContactEmail',
-                    'CopyrightContactAddress', 'CopyrightContactNotes', 'ShortCopyright',
-                    'CopyrightNotes', 'CopyrightYear',
-                'DictionaryModule', 'ReferenceBible',
-                'Siglum1', 'Siglum2', )
-    technicalFieldNames = ( 'ModDrv', 'DataPath', 'Encoding', 'SourceType', 'GlobalOptionFilter',
-                'CaseSensitiveKeys', 'SearchOption',
-                'CompressType', 'BlockType',
-                'MinimumVersion', 'MinimumSwordVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion',
-                'DisplayLevel', 'LangSortOrder', 'LangSortSkipChars', 'StrongsPadding',
-                'CipherKey', 'InstallSize', 'BlockCount', 'OSISqToTick', 'MinimumBlockNumber', 'MaximumBlockNumber', )
-    allFieldNames = importantFieldNames + technicalFieldNames
-    specialFieldNames = ('History','Description','About','Copyright','DistributionNotes',) # Ones that have an underline and then a subfield
-
-
     def __init__( self, moduleAbbreviation, swordFolder ):
         """
         Create the config object.
@@ -162,64 +145,66 @@ class SwordModuleConfiguration:
             print( exp("SwordModuleConfiguration.loadConf()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading Sword config file for {}…".format( self.abbreviation ) )
-        filename = self.abbreviation+".conf"
-        self.confPath = os.path.join( self.swordFolder, "mods.d/", filename )
+        filename = self.abbreviation + '.conf'
+        self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename )
         self.confDict = OrderedDict()
-        lastLine, lineCount, continuationFlag, result = None, 0, False, []
+        #lastLine, lineCount, continuationFlag, result = None, 0, False, []
         with open( self.confPath, 'rt', encoding="iso-8859-1" ) as myFile: # Automatically closes the file when done
-            for line in myFile:
-                lineCount += 1
-                if lineCount==1:
-                    if line[0]==chr(65279): #U+FEFF
-                        logging.info( "SwordModuleConfiguration.loadConf1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
-                        line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
-                    elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
-                        logging.info( "SwordModuleConfiguration.loadConf2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
-                        line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                #print( lineCount, repr(line) )
-                if not line: continue # Just discard blank lines
-                #print ( "SwordModuleConfiguration.loadConf: Conf file line {} is {!r}".format( lineCount, line ) )
-                if line[0] in '#;': continue # Just discard comment lines
-                if continuationFlag: thisLine += line; continuationFlag = False
-                else: thisLine = line
-                if thisLine and thisLine[-1]=='\\': thisLine = thisLine[:-1]; continuationFlag = True # This line should be continued
-                if self.abbreviation=='burjudson' and thisLine.endswith(" available from "): continuationFlag = True # Bad module it seems
+            processConfLines( self.abbreviation, myFile, self.confDict )
+            #for line in myFile:
+                #processConfLine( line, self.confDict )
+                #lineCount += 1
+                #if lineCount==1:
+                    #if line[0]==chr(65279): #U+FEFF
+                        #logging.info( "SwordModuleConfiguration.loadConf1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                        #line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                    #elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                        #logging.info( "SwordModuleConfiguration.loadConf2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                        #line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
+                #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                ##print( lineCount, repr(line) )
+                #if not line: continue # Just discard blank lines
+                ##print ( "SwordModuleConfiguration.loadConf: Conf file line {} is {!r}".format( lineCount, line ) )
+                #if line[0] in '#;': continue # Just discard comment lines
+                #if continuationFlag: thisLine += line; continuationFlag = False
+                #else: thisLine = line
+                #if thisLine and thisLine[-1]=='\\': thisLine = thisLine[:-1]; continuationFlag = True # This line should be continued
+                #if self.abbreviation=='burjudson' and thisLine.endswith(" available from "): continuationFlag = True # Bad module it seems
 
-                if not continuationFlag: # process the line
-                    if lineCount==1 or lastLine==None: # First (non-blank) line should contain a name in square brackets
-                        assert '=' not in thisLine and thisLine[0]=='[' and thisLine[-1]==']'
-                        self.confDict['Name'] = thisLine[1:-1]
-                    else:
-                        #print( "lastLine = '"+lastLine+"'" )
-                        #print( "thisLine = '"+thisLine+"'" )
-                        if '=' not in thisLine:
-                            logging.error( "Missing = in {} conf file line (line will be ignored): {!r}".format( self.abbreviation, thisLine ) )
-                            continue
-                        if 'History=1.4-081031=' in thisLine: thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
-                        bits = thisLine.split( '=', 1 )
-                        #print( bits )
-                        assert len(bits) == 2
-                        for fieldName in self.specialFieldNames:
-                            if bits[0].startswith(fieldName+'_'): # Just extract the various versions and put into a tuple
-                                bits = [fieldName, (bits[0][len(fieldName)+1:],bits[1]) ]
-                        if bits[0]=='MinumumVersion': bits[0] = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
-                        if bits[0]=='CompressType' and bits[1]=='Zip': bits[1] = 'ZIP' # Fix error in romcor.conf
-                        if bits[0] in self.confDict: # already
-                            if bits[1]==self.confDict[bits[0]]:
-                                logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( self.abbreviation, bits[0], bits[1] ) )
-                            else: # We have multiple different entries for this field name
-                                if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                    print( "Sword Modules loadConf found inconsistency", self.abbreviation, bits[0] )
-                                    assert bits[0] in self.specialFieldNames or bits[0] in ('GlobalOptionFilter','DictionaryModule','DistributionLicense','Feature','LCSH','Obsoletes','TextSource',) # These are the only ones where we expect multiple values (and some of these are probably module bugs)
-                                if bits[0] in self.specialFieldNames: # Try to handle these duplicate entries -- we're expecting 2-tuples later
-                                    try: self.confDict[bits[0]].append( ('???',bits[1]) ) #; print( bits[0], 'lots' )
-                                    except AttributeError: self.confDict[bits[0]] = [('???',self.confDict[bits[0]]), ('???',bits[1]) ] #; print( bits[0], 'made list' )
-                                else:
-                                    try: self.confDict[bits[0]].append( bits[1] ) #; print( bits[0], 'lots' )
-                                    except AttributeError: self.confDict[bits[0]] = [self.confDict[bits[0]], bits[1] ] #; print( bits[0], 'made list' )
-                        else: self.confDict[bits[0]] = bits[1] # Most fields only occur once
-                lastLine = line
+                #if not continuationFlag: # process the line
+                    #if lineCount==1 or lastLine==None: # First (non-blank) line should contain a name in square brackets
+                        #assert '=' not in thisLine and thisLine[0]=='[' and thisLine[-1]==']'
+                        #self.confDict['Name'] = thisLine[1:-1]
+                    #else:
+                        ##print( "lastLine = '"+lastLine+"'" )
+                        ##print( "thisLine = '"+thisLine+"'" )
+                        #if '=' not in thisLine:
+                            #logging.error( "Missing = in {} conf file line (line will be ignored): {!r}".format( self.abbreviation, thisLine ) )
+                            #continue
+                        #if 'History=1.4-081031=' in thisLine: thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
+                        #bits = thisLine.split( '=', 1 )
+                        ##print( bits )
+                        #assert len(bits) == 2
+                        #for fieldName in self.SPECIAL_SWORD_CONF_FIELD_NAMES:
+                            #if bits[0].startswith(fieldName+'_'): # Just extract the various versions and put into a tuple
+                                #bits = [fieldName, (bits[0][len(fieldName)+1:],bits[1]) ]
+                        #if bits[0]=='MinumumVersion': bits[0] = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
+                        #if bits[0]=='CompressType' and bits[1]=='Zip': bits[1] = 'ZIP' # Fix error in romcor.conf
+                        #if bits[0] in self.confDict: # already
+                            #if bits[1]==self.confDict[bits[0]]:
+                                #logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( self.abbreviation, bits[0], bits[1] ) )
+                            #else: # We have multiple different entries for this field name
+                                #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                                    #print( "Sword Modules loadConf found inconsistency", self.abbreviation, bits[0] )
+                                    #assert bits[0] in self.SPECIAL_SWORD_CONF_FIELD_NAMES or bits[0] in ('GlobalOptionFilter','DictionaryModule','DistributionLicense','Feature','LCSH','Obsoletes','TextSource',) # These are the only ones where we expect multiple values (and some of these are probably module bugs)
+                                #if bits[0] in self.SPECIAL_SWORD_CONF_FIELD_NAMES: # Try to handle these duplicate entries -- we're expecting 2-tuples later
+                                    #try: self.confDict[bits[0]].append( ('???',bits[1]) ) #; print( bits[0], 'lots' )
+                                    #except AttributeError: self.confDict[bits[0]] = [('???',self.confDict[bits[0]]), ('???',bits[1]) ] #; print( bits[0], 'made list' )
+                                #else:
+                                    #try: self.confDict[bits[0]].append( bits[1] ) #; print( bits[0], 'lots' )
+                                    #except AttributeError: self.confDict[bits[0]] = [self.confDict[bits[0]], bits[1] ] #; print( bits[0], 'made list' )
+                        #else: self.confDict[bits[0]] = bits[1] # Most fields only occur once
+                #lastLine = line
         #print( self.confDict )
 
         # Fix known module bugs or inconsistencies
@@ -250,7 +235,7 @@ class SwordModuleConfiguration:
 
         # See if we have any new fields
         for key in self.confDict:
-            if key not in self.allFieldNames: print( "Unexpected {!r} Sword conf key ({})".format( key, self.confDict[key] ) )
+            if key not in ALL_SWORD_CONF_FIELD_NAMES: print( "Unexpected {!r} Sword conf key ({})".format( key, self.confDict[key] ) )
             #if BibleOrgSysGlobals.debugFlag: halt
 
         # See if we have to inform the user about anything
@@ -291,7 +276,7 @@ class SwordModuleConfiguration:
                 if not isinstance( value, list ): value = [value]
                 for version,historyDescription in value:
                     result += ('\n' if result else '') + "        {}: {}".format( version, historyDescription )
-            elif key not in self.technicalFieldNames or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
+            elif key not in TECHNICAL_SWORD_CONF_FIELD_NAMES or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
                 result += ('\n' if result else '') + "      {}: {}".format( adjKey, value )
         return result
     # end of SwordModuleConfiguration:__str__
@@ -1330,7 +1315,7 @@ class SwordModule():
                 if not isinstance( value, list ): value = [value]
                 for version,historyDescription in value:
                     result += ('\n' if result else '') + "        {}: {}".format( version, historyDescription )
-            elif key not in SwordModuleConfiguration.technicalFieldNames or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
+            elif key not in TECHNICAL_SWORD_CONF_FIELD_NAMES or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
                 result += ('\n' if result else '') + "      {}: {}".format( adjKey, value )
         return result
     # end of SwordModule.__str__
@@ -2203,9 +2188,9 @@ class SwordModules:
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):
                 swMC = self.confs[moduleRoughName]
                 print( moduleRoughName, swMC.modType )
-                #print( repr(swMC.modType), repr(GENERIC_MODULE_TYPE_NAMES[swMC.modType]) )
+                #print( repr(swMC.modType), repr(GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType]) )
                 if onlyModuleTypes is None \
-                or swMC.modType in onlyModuleTypes or GENERIC_MODULE_TYPE_NAMES[swMC.modType] in onlyModuleTypes:
+                or swMC.modType in onlyModuleTypes or GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType] in onlyModuleTypes:
                     result.append( (moduleRoughName,swMC.modType) )
             return result
     # end of SwordModules.getAvailableModuleCodeDuples
