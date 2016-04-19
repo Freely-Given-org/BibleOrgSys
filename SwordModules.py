@@ -51,7 +51,7 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-18' # by RJH
+LastModifiedDate = '2016-04-19' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.42'
@@ -72,7 +72,7 @@ from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 from VerseReferences import SimpleVerseKey
-from SwordManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, TECHNICAL_SWORD_CONF_FIELD_NAMES
+from SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, TECHNICAL_SWORD_CONF_FIELD_NAMES
 
 
 

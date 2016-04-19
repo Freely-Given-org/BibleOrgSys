@@ -33,7 +33,7 @@ The raw material for this module is produced by the UBS Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-18' # by RJH
+LastModifiedDate = '2016-03-19' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.12'
@@ -529,14 +529,16 @@ class PTXBible( Bible ):
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
+            assert self.sourceFolder
 
         #if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
+            print( "PTX.preload something", repr(something) )
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )

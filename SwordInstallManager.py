@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# SwordManager.py
+# SwordInstallManager.py
 #
-# Module handling downloading of Sword resources
+# Module handling downloading and installing of Sword resources
 #
 # Copyright (C) 2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-18' # by RJH
-ShortProgName = "SwordManager"
+LastModifiedDate = '2016-04-19' # by RJH
+ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.02'
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -68,6 +68,7 @@ DEFAULT_SWORD_DOWNLOAD_SOURCES = OrderedDict([
     ('Crosswire IBT', ('FTP', 'ftp.CrossWire.org', '/pub/modsword/raw/' )),
     ('NET Bible', ('FTP', 'ftp.bible.org', '/sword/' )),
     ('Xiphos', ('FTP', 'ftp.Xiphos.org', '' )),
+    #('eBible', ('FTP', 'ftp.Xiphos.org', '' )),
     ])
 
 DEFAULT_SWORD_INSTALL_FOLDERS = (
@@ -278,12 +279,15 @@ class SwordInstallManager():
     # end of SwordInstallManager.setUserDisclaimerConfirmed
 
 
-    def refreshRemoteSource( self ):
+    def refreshRemoteSource( self, clearFirst=True ):
         """
         Get a list of available modules from the selected remote repository.
+
+        Places the information in self.availableModules
+            (which may need to be cleared to prevent obsolete entries being held).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.refreshRemoteSource()") )
+            print( exp("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -297,6 +301,8 @@ class SwordInstallManager():
         if not self.userDisclaimerConfirmed:
             logging.critical( _("User security disclaimer not yet confirmed.") )
             return False
+
+        if clearFirst: self.availableModules = OrderedDict()
 
         # Assume that we're good to go
         repoType, repoSite, repoFolder = self.downloadSources[self.currentRepoName]
@@ -318,7 +324,7 @@ class SwordInstallManager():
             shutil.rmtree( repoConfFolder )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Refreshing/Downloading index files from {} repository…").format( repoName ) )
+            print( _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
 
         # Download the config files
         ftp = ftplib.FTP( repoSite )
@@ -375,8 +381,7 @@ class SwordInstallManager():
 
         #print( allConfigs )
 
-        # Place the information into a dictionary
-        self.availableModules = OrderedDict()
+        # Place the conf files information into a dictionary
         for confName in confNames:
             confPath = os.path.join( repoConfFolder, confName+'.conf' )
             confDict = self._getConfFile( confName, confPath )
@@ -384,6 +389,39 @@ class SwordInstallManager():
         #print( 'availableModules', len(self.availableModules), self.availableModules.keys() )
         return True
     # end of SwordInstallManager.refreshRemoteSource
+
+
+    def refreshAllRemoteSources( self ):
+        """
+        Get a list of available modules from all the remote repositories
+            (irrespective of self.currentRepoName).
+
+        Places the information in self.availableModules
+            (which is cleared first).
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordInstallManager.refreshRemoteSource()") )
+
+        if not self.downloadSources:
+            logging.critical( _("No remote Sword repository/repositories specified.") )
+            return False
+        if not self.userDisclaimerConfirmed:
+            logging.critical( _("User security disclaimer not yet confirmed.") )
+            return False
+
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
+
+        saveRepo = self.currentRepoName # Remember this
+        self.availableModules = OrderedDict()
+
+        # Go through each repo and get the source list
+        for repoName in self.downloadSources:
+            self.currentRepoName = repoName
+            self.refreshRemoteSource( clearFirst=False )
+
+        self.currentRepoName = saveRepo
+    # end of SwordInstallManager.refreshAllRemoteSources
 
 
     def _getConfFile( self, confName, confPath ):
@@ -487,12 +525,24 @@ def demo():
     im = SwordInstallManager()
     if 0 and __name__ == '__main__': im.isUserDisclaimerConfirmed()
     else: im.setUserDisclaimerConfirmed()
-    im.currentRepoName = 'NET Bible'
-    im.currentInstallFolder = '/tmp/'
-    im.refreshRemoteSource()
-    #im.installFolders.append( '.' )
-    im.currentInstallFolder = '.'
-    im.installModule( 'NETfree' )
+
+    if 1: # try refreshing one repository
+        im.currentRepoName = 'NET Bible'
+        im.currentInstallFolder = '/tmp/'
+        im.refreshRemoteSource()
+
+    if 1: # try installing a module
+        #im.installFolders.append( '.' )
+        im.currentInstallFolder = 'TempTestData/'
+        im.installModule( 'NETfree' )
+
+    if 1: # try refreshing all repositories
+        im.refreshAllRemoteSources()
+
+    if 1: # try installing another module
+        #im.installFolders.append( '.' )
+        im.currentInstallFolder = 'TempTestData/'
+        im.installModule( 'ESV' )
 # end of demo
 
 if __name__ == '__main__':
@@ -511,4 +561,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of SwordManager.py
+# end of SwordInstallManager.py

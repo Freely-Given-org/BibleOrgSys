@@ -27,14 +27,14 @@
 This is the interface module used to give a unified interface to either:
     1/ The Crosswire Sword engine (libsword) via Python3 SWIG bindings,
         or, if that's not available, to
-    2/ Our own SwordManager.py which downloads modules from remote
+    2/ Our own SwordInstallManager.py which downloads modules from remote
         repositories, and our (still primitive) module that reads Sword
         files directly called SwordModules.py
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-18' # by RJH
+LastModifiedDate = '2016-04-19' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.21'
