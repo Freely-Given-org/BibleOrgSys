@@ -223,6 +223,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
 
     SSFDict = {}
 
+    # This is actually an XML file, but we'll assume it's nicely formed with one XML field per line
     lastLine, lineCount, status = '', 0, 0
     with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
         for line in myFile:
@@ -285,13 +286,15 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                 contents += ' ' + line
                 #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
                 processed = True
-            if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
+            if not processed: print( _("ERROR: Unexpected {} line in PTX SSF file").format( repr(line) ) )
     if status == 0:
-        logging.error( "SSF file was empty: {}".format( BibleObject.ssfFilepath ) )
+        logging.critical( _("PTX SSF file was empty: {}").format( BibleObject.ssfFilepath ) )
         status = 9
+    if status != 9:
+        logging.critical( _("PTX SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
     if BibleOrgSysGlobals.debugFlag: assert status == 9
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + exp("Got {} SSF entries:").format( len(SSFDict) ) )
+        print( "  " + exp("Got {} PTX SSF entries:").format( len(SSFDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(SSFDict):
                 print( "    {}: {}".format( key, SSFDict[key] ) )
@@ -529,7 +532,7 @@ class PTXBible( Bible ):
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
-        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
             assert self.sourceFolder
 
@@ -538,10 +541,11 @@ class PTXBible( Bible ):
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
-            print( "PTX.preload something", repr(something) )
+            #print( "PTX.preload something", repr(something) )
+            #somethingUPPER = something.upper()
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ): foundFiles.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something ) # Adds even .BAK files, but result is not used much anyway!
             else: logging.error( exp("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
