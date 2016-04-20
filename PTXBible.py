@@ -3,7 +3,7 @@
 #
 # PTXBible.py
 #
-# Module handling UBS Paratext (PTX) collections of USFM Bible books
+# Module handling UBS/SIL Paratext (PTX) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
 # Copyright (C) 2015-2016 Robert Hunt
@@ -27,16 +27,16 @@
 Module for defining and manipulating complete or partial Paratext Bibles
     along with any enclosed metadata.
 
-The raw material for this module is produced by the UBS Paratext program
+The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-19' # by RJH
+LastModifiedDate = '2016-04-20' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -226,26 +226,47 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     # This is actually an XML file, but we'll assume it's nicely formed with one XML field per line
     lastLine, lineCount, status = '', 0, 0
     with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-        for line in myFile:
-            lineCount += 1
-            if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                logging.info( exp("loadPTXSSFData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
-                line = line[1:] # Remove the Byte Order Marker (BOM)
-            if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-            line = line.strip() # Remove leading and trailing whitespace
-            if not line: continue # Just discard blank lines
-            lastLine = line
-            processed = False
-            if status==0 and line=="<ScriptureText>":
-                status = 1
+        ssfData = myFile.read() # Read it all first
+    #print( "ssfData", ssfData )
+    ssfData = ssfData.replace( '><', '>\n<' ) # Handle Paratext 'bug'
+    for line in ssfData.split( '\n' ):
+        #print( "ssfData line", repr(line) )
+        lineCount += 1
+        if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+            logging.info( exp("loadPTXSSFData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
+            line = line[1:] # Remove the Byte Order Marker (BOM)
+        if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+        line = line.strip() # Remove leading and trailing whitespace
+        if not line: continue # Just discard blank lines
+        lastLine = line
+        processed = False
+        if status==0 and line=="<ScriptureText>":
+            status = 1
+            processed = True
+        elif status==1 and line=="</ScriptureText>":
+            status = 9
+            processed = True
+        elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a BibleObject-closing (empty) field
+            fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
+            if ' ' not in fieldname:
+                SSFDict[fieldname] = ''
                 processed = True
-            elif status==1 and line=="</ScriptureText>":
-                status = 9
+            elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                bits = fieldname.split( None, 1 )
+                if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
+                fieldname = bits[0]
+                attributes = bits[1]
+                #print( "attributes = {!r}".format( attributes) )
+                SSFDict[fieldname] = (contents, attributes)
                 processed = True
-            elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a BibleObject-closing (empty) field
-                fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
-                if ' ' not in fieldname:
-                    SSFDict[fieldname] = ''
+        elif status==1 and line[0]=='<' and line[-1]=='>' and '/' in line:
+            ix1 = line.find('>')
+            ix2 = line.find('</')
+            if ix1!=-1 and ix2!=-1 and ix2>ix1:
+                fieldname = line[1:ix1]
+                contents = line[ix1+1:ix2]
+                if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
+                    SSFDict[fieldname] = contents
                     processed = True
                 elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                     bits = fieldname.split( None, 1 )
@@ -253,40 +274,23 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                     fieldname = bits[0]
                     attributes = bits[1]
                     #print( "attributes = {!r}".format( attributes) )
-                    SSFDict[fieldname] = (contents, attributes)
-                    processed = True
-            elif status==1 and line[0]=='<' and line[-1]=='>' and '/' in line:
-                ix1 = line.find('>')
-                ix2 = line.find('</')
-                if ix1!=-1 and ix2!=-1 and ix2>ix1:
-                    fieldname = line[1:ix1]
-                    contents = line[ix1+1:ix2]
-                    if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                        SSFDict[fieldname] = contents
+                    if line[ix2+2:-1]==fieldname:
+                        SSFDict[fieldname] = (contents, attributes)
                         processed = True
-                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                        bits = fieldname.split( None, 1 )
-                        if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
-                        fieldname = bits[0]
-                        attributes = bits[1]
-                        #print( "attributes = {!r}".format( attributes) )
-                        if line[ix2+2:-1]==fieldname:
-                            SSFDict[fieldname] = (contents, attributes)
-                            processed = True
-            elif status==1 and line.startswith( '<ValidCharacters>' ):
-                fieldname = 'ValidCharacters'
-                contents = line[len(fieldname)+2:]
-                #print( "Got {} opener {!r} from {!r}".format( fieldname, contents, line ) )
-                status = 2
-                processed = True
-            elif status==2: # in the middle of processing an extension line
-                if line.endswith( '</' + fieldname + '>' ):
-                    line = line[:-len(fieldname)-3]
-                    status = 1
-                contents += ' ' + line
-                #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
-                processed = True
-            if not processed: print( _("ERROR: Unexpected {} line in PTX SSF file").format( repr(line) ) )
+        elif status==1 and line.startswith( '<ValidCharacters>' ):
+            fieldname = 'ValidCharacters'
+            contents = line[len(fieldname)+2:]
+            #print( "Got {} opener {!r} from {!r}".format( fieldname, contents, line ) )
+            status = 2
+            processed = True
+        elif status==2: # in the middle of processing an extension line
+            if line.endswith( '</' + fieldname + '>' ):
+                line = line[:-len(fieldname)-3]
+                status = 1
+            contents += ' ' + line
+            #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
+            processed = True
+        if not processed: print( _("ERROR: Unexpected {} line in PTX SSF file").format( repr(line) ) )
     if status == 0:
         logging.critical( _("PTX SSF file was empty: {}").format( BibleObject.ssfFilepath ) )
         status = 9
