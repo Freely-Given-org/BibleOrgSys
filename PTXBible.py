@@ -228,7 +228,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
         ssfData = myFile.read() # Read it all first
     #print( "ssfData", ssfData )
-    ssfData = ssfData.replace( '><', '>\n<' ) # Handle Paratext 'bug'
+    ssfData = ssfData.replace( '><', '>\n<' ) # Handle Paratext 'bug' that produces XML files in different format
     for line in ssfData.split( '\n' ):
         #print( "ssfData line", repr(line) )
         lineCount += 1
