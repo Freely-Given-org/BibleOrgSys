@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-19' # by RJH
+LastModifiedDate = '2016-04-20' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.04'
+ProgVersion = '0.05'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -48,7 +48,7 @@ debuggingThisModule = True
 import os, logging, re
 import ftplib
 #import urllib.request
-import tarfile
+import tempfile, tarfile
 import shutil
 from collections import OrderedDict
 
@@ -313,7 +313,7 @@ class SwordInstallManager():
 
         repoConfFolderName = 'mods.d'
         repoCompressedFilename = repoConfFolderName + '.tar.gz'
-        repoSaveFolder = '/tmp/'
+        repoSaveFolder = tempfile.gettempdir()
         repoCompressedSaveFilepath = os.path.join( repoSaveFolder, repoCompressedFilename )
         if os.path.isfile( repoCompressedSaveFilepath ): # delete file if it exists
             #print( "Delete1", repoCompressedSaveFilepath )
@@ -528,7 +528,7 @@ def demo():
 
     if 1: # try refreshing one repository
         im.currentRepoName = 'NET Bible'
-        im.currentInstallFolder = '/tmp/'
+        im.currentInstallFolder = tempfile.gettempdir()
         im.refreshRemoteSource()
 
     if 1: # try installing a module

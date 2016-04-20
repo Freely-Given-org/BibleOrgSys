@@ -43,7 +43,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import os, sys, logging
+import sys, os, logging
 from collections import OrderedDict
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
@@ -1447,7 +1447,7 @@ class PTXBible( Bible ):
         PTXAutocorrects = {}
 
         lineCount = 0
-        with open( autocorrectFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+        with open( autocorrectFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
