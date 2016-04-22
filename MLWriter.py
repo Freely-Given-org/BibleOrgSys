@@ -37,10 +37,10 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "MLWriter"
 ProgName = "ML Writer"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -261,7 +261,7 @@ class MLWriter:
         elif lineEndings == 'w': self._nl = '\r\n'
         else: logging.error( "MLWriter: Unknown {!r} lineEndings flag".format( lineEndings ) )
         if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}…").format(self._outputFilePath) )
-        self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
+        self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
             #logging.error( "Haven't worked out how to write BOM yet" )
@@ -495,9 +495,9 @@ class MLWriter:
                 logging.error( "MLWriter.validate is unable to open {!r}".format( parameters[0] ) )
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
-            if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding="utf-8", errors="replace" ) )
+            if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )
             if checkProgramErrorOutputBytes:
-                tempString = checkProgramErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
+                tempString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                 if tempString.count('\n')>1 or not tempString.endswith('validates\n'):
                     checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")

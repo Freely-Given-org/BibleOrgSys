@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.91'
@@ -283,46 +283,46 @@ class BibleWriter( InternalBible ):
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_word." )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'…").format( filenamePortion ) )
             sortedWords = sorted(dictionary)
-            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
-                with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
-                    with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
-                        with open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt' ) as htmlFile:
-                            xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
-                            xmlFile.write( '<entries>\n' ) # root element
-                            htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
-                            htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
-                            htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
-                            for word in sortedWords:
-                                if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
-                                txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                                csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                                #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
-                                #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
-                                xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
-                                htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
-                            xmlFile.write( '</entries>' ) # close root element
-                            htmlFile.write( '</table></body></html>' ) # close open elements
+            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
+                 open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
+                 open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
+                 open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt', encoding='utf-8' ) as htmlFile:
+                    xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                    xmlFile.write( '<entries>\n' ) # root element
+                    htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
+                    htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
+                    htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
+                    for word in sortedWords:
+                        if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
+                        txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                        csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
+                        #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
+                        #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
+                        xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
+                        htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
+                    xmlFile.write( '</entries>' ) # close root element
+                    htmlFile.write( '</table></body></html>' ) # close open elements
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by count" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_count." )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}*'…").format( filenamePortion ) )
-            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
-                with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
-                    with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
-                        with open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt' ) as htmlFile:
-                            xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
-                            xmlFile.write( '<entries>\n' ) # root element
-                            htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
-                            htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
-                            htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
-                            for word in sorted(sortedWords, key=dictionary.get):
-                                if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
-                                txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                                csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                                #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
-                                xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
-                                htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
-                            xmlFile.write( '</entries>' ) # close root element
-                            htmlFile.write( '</table></body></html>' ) # close open elements
+            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
+                 open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
+                 open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
+                 open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt', encoding='utf-8' ) as htmlFile:
+                    xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                    xmlFile.write( '<entries>\n' ) # root element
+                    htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
+                    htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
+                    htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
+                    for word in sorted(sortedWords, key=dictionary.get):
+                        if BibleOrgSysGlobals.debugFlag: assert ' ' not in word
+                        txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                        csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
+                        #if BibleOrgSysGlobals.debugFlag: assert '<' not in word and '>' not in word and '"' not in word
+                        xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
+                        htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( BibleOrgSysGlobals.makeSafeXML(word), dictionary[word] ) )
+                    xmlFile.write( '</entries>' ) # close root element
+                    htmlFile.write( '</table></body></html>' ) # close open elements
         # end of printWordCounts
 
 
@@ -427,7 +427,7 @@ class BibleWriter( InternalBible ):
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-                with open( filepath, 'wt' ) as myFile:
+                with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
 
@@ -442,7 +442,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
             C = V = '0'
-            with open( filepath, 'wt' ) as myFile:
+            with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                     if marker == 'c': C, V = adjText, '0'
@@ -591,7 +591,7 @@ class BibleWriter( InternalBible ):
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-            with open( filepath, 'wt', newline='\r\n' ) as myFile: # Use Windows newline endings for USFM
+            with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for USFM
                 myFile.write( USFM )
 
         if ignoredMarkers:
@@ -647,7 +647,7 @@ class BibleWriter( InternalBible ):
             initialMarkers = [verseDataEntry.getMarker() for verseDataEntry in pseudoUSFMData[:4]]
             #print( BBB, initialMarkers )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output…" ) )
-            with open( filepath, 'wt' ) as myFile:
+            with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if 'id' not in initialMarkers:
                     #print( "Write ID" )
                     myFile.write( '\\id {} -- BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), ProgVersion ) )
@@ -794,7 +794,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             textBuffer = ''
-            with open( filepath, 'wt' ) as myFile:
+            with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
@@ -889,7 +889,7 @@ class BibleWriter( InternalBible ):
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
-                with open( filepath, 'wt' ) as myFile:
+                with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
                     except UnicodeEncodeError: # why does this fail on Windows???
                         logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
@@ -1299,7 +1299,7 @@ class BibleWriter( InternalBible ):
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
             C = V = '0'
             textBuffer = ''
-            with open( filepath, 'wt' ) as myFile:
+            with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
                 for entry in pseudoUSFMData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
@@ -2617,7 +2617,7 @@ class BibleWriter( InternalBible ):
                 print( "  Writing compression entries…" )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
-            with open( compressionDictFilepath, 'wt' ) as jsonFile:
+            with open( compressionDictFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
                 json.dump( CBCompressions, jsonFile, indent=jsonIndent )
@@ -2675,7 +2675,7 @@ class BibleWriter( InternalBible ):
             #print( headerDict )
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}…").format( headerFilepath ) )
-            with open( headerFilepath, 'wt' ) as jsonFile:
+            with open( headerFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( headerDict, jsonFile, indent=jsonIndent )
         # end of writeCBHeader
 
@@ -2718,7 +2718,7 @@ class BibleWriter( InternalBible ):
                     doneAny = doneBooks = True
             #print( divisionData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
-            with open( divisionNamesFilepath, 'wt' ) as jsonFile:
+            with open( divisionNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( divisionData, jsonFile, indent=jsonIndent )
 
             # Make a list of book data including names and abbreviations and write them to a JSON file
@@ -2743,7 +2743,7 @@ class BibleWriter( InternalBible ):
                     doneAny = doneBooks = True
             #print( bkData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
-            with open( bookNamesFilepath, 'wt' ) as jsonFile:
+            with open( bookNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( bkData, jsonFile, indent=jsonIndent )
         # end of writeCBBookNames
 
@@ -2758,7 +2758,7 @@ class BibleWriter( InternalBible ):
                 """
                 filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
-                with open( filepath, 'wt' ) as jsonFile:
+                with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                     json.dump( cData, jsonFile, indent=jsonIndent )
             # end of writeCBChapter
 
@@ -2791,7 +2791,7 @@ class BibleWriter( InternalBible ):
 
             filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
-            with open( filepath, 'wt' ) as jsonFile:
+            with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( outputData, jsonFile, indent=jsonIndent )
         # end of writeCBBookAsJSON
 
@@ -2828,7 +2828,7 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
-                    with open( debugDestinationHTMLFilepathTemplate.format( BBB, C, V ), 'wt' ) as debugOutputFile:
+                    with open( debugDestinationHTMLFilepathTemplate.format( BBB, C, V ), 'wt', encoding='utf-8' ) as debugOutputFile:
                         debugOutputFile.write( '<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><link rel="stylesheet" type="text/css" href="BibleBook.css"><title>Bible Section</title></head><body>' \
                                             + sectionHTML + '</body></html>' )
                     checkHTML = decompress( compressedHTML )
@@ -3178,7 +3178,7 @@ class BibleWriter( InternalBible ):
             #print( "    toCustomBible: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
-            with open( destinationIndexFilepath, 'wt' ) as jsonFile:
+            with open( destinationIndexFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( newHTMLIndex, jsonFile, indent=jsonIndent )
             writeCompressions()
 
@@ -4292,7 +4292,7 @@ class BibleWriter( InternalBible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(localeFilepath) )
 
-        with open( localeFilepath, 'wt' ) as SwLocFile:
+        with open( localeFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
             SwLocFile.write( 'Description={}\n'.format( description ) )
             SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
@@ -4417,7 +4417,7 @@ class BibleWriter( InternalBible ):
         except KeyError: ln = 'eng'
         self._writeSwordLocale( xlg, ln, BOS, getBookNameFunction, os.path.join( outputFolder, 'SwLocale-utf8.conf' ) )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(SwLocFilepath) )
-        #with open( SwLocFilepath, 'wt' ) as SwLocFile:
+        #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
             #SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
@@ -5939,7 +5939,7 @@ class BibleWriter( InternalBible ):
         self._writeSwordLocale( xL, lN, BOS, getBookNameFunction, os.path.join( outputFolder, 'SwLocale-utf8.conf' ) )
         #SwLocFilepath = os.path.join( outputFolder, 'SwLocale-utf8.conf" )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}…").format(SwLocFilepath) )
-        #with open( SwLocFilepath, 'wt' ) as SwLocFile:
+        #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
             #SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
@@ -6022,7 +6022,8 @@ class BibleWriter( InternalBible ):
             # Write the new file
             confFilename = BibleOrgSysGlobals.makeSafeFilename( adjustedProjectName + '.conf' )
             confFilepath = os.path.join( modsdFolder, confFilename )
-            with open( confFilepath, 'wt' ) as myFile: myFile.write( confText )
+            with open( confFilepath, 'wt', encoding='utf-8' ) as myFile:
+                myFile.write( confText )
         # end of makeConfFile
 
 
@@ -6556,7 +6557,8 @@ class BibleWriter( InternalBible ):
         toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
         toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
         xwOT.setSectionName( 'Main' ); xwNT.setSectionName( 'Main' )
-        with open( os.path.join( lgFolder, 'ot.vss' ), 'wb' ) as ixOT, open( os.path.join( lgFolder, 'nt.vss' ), 'wb' ) as ixNT:
+        with open( os.path.join( lgFolder, 'ot.vss' ), 'wb' ) as ixOT, \
+             open( os.path.join( lgFolder, 'nt.vss' ), 'wb' ) as ixNT:
             ixOT.write( struct.pack( "IH", 0, 0 ) ) # Write the first dummy entry
             ixNT.write( struct.pack( "IH", 0, 0 ) ) # Write the first dummy entry
             writeIndexEntry( xwOT, ixOT ) # Write the second entry pointing to the opening milestone
@@ -6803,7 +6805,7 @@ class BibleWriter( InternalBible ):
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-        with open( filepath, 'wt' ) as myFile:
+        with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
                 if BibleOrgSysGlobals.debugFlag: writeSSBook( myFile, BBB, bookObject ) # Halts on errors
@@ -6980,7 +6982,7 @@ class BibleWriter( InternalBible ):
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-        with open( filepath, 'wt' ) as myFile:
+        with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
             for BBB,bookObject in self.books.items():
@@ -7109,13 +7111,13 @@ class BibleWriter( InternalBible ):
 
             # Process the output
             if programOutputBytes:
-                programOutputString = programOutputBytes.decode( encoding="utf-8", errors="replace" )
+                programOutputString = programOutputBytes.decode( encoding='utf-8', errors='replace' )
                 logging.critical( "renderCommands: " + programOutputString )
-                #with open( os.path.join( outputFolder, 'UncompressedScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+                #with open( os.path.join( outputFolder, 'UncompressedScriptOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programOutputString )
             if programErrorOutputBytes:
-                programErrorOutputString = programErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
+                programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                 logging.critical( "renderE: " + programErrorOutputString )
-                #with open( os.path.join( outputFolder, 'UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+                #with open( os.path.join( outputFolder, 'UncompressedScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
 
             return returnCode
         # end of toPhotoBible.renderCommands
@@ -8956,13 +8958,13 @@ class BibleWriter( InternalBible ):
                     programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
                 # Process the output
                 if programOutputBytes:
-                    programOutputString = programOutputBytes.decode( encoding='utf-8', errors="replace" )
+                    programOutputString = programOutputBytes.decode( encoding='utf-8', errors='replace' )
                     #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
-                    #with open( os.path.join( outputFolder, 'ScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+                    #with open( os.path.join( outputFolder, 'ScriptOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programOutputString )
                     #print( "pOS", programOutputString )
                 if programErrorOutputBytes:
-                    programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
-                    #with open( os.path.join( outputFolder, 'ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+                    programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
+                    #with open( os.path.join( outputFolder, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
                     if BibleOrgSysGlobals.debugFlag: print( "pEOS", programErrorOutputString )
 
                 # Rename our PDF (and the log file) according to the style
@@ -8978,14 +8980,14 @@ class BibleWriter( InternalBible ):
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( allFilepath ) )
-        with open( allFilepath, 'wt' ) as allFile:
+        with open( allFilepath, 'wt', encoding='utf-8' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-                with open( filepath, 'wt' ) as bookFile:
+                with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )

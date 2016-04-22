@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -4067,16 +4067,16 @@ class InternalBibleBook:
 
             if C != '0':
                 if introLines:
-                    with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt' ) as myFile:
+                    with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( introLines )
                     introLines = None # Will now cause an error if we try to do more introduction bits
                 else:
-                    with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt' ) as myFile:
+                    with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( verseLines )
                     verseLines = ""
                     CVList.append( CVKey )
         if introLines: # handle left-overs for books without chapters
-            with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt' ) as myFile:
+            with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( introLines )
         assert not verseLines
 
@@ -4084,7 +4084,7 @@ class InternalBibleBook:
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )
-        with open( os.path.join( bookFolderPath, self.BBB+'_BookMetadata.txt' ), 'wt' ) as metadataFile:
+        with open( os.path.join( bookFolderPath, self.BBB+'_BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             metadataFile.write( metadataLines )
     # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook

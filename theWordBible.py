@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.50'
@@ -1255,7 +1255,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
-    with open( filepath, 'wt' ) as myFile:
+    with open( filepath, 'wt', encoding='utf-8' ) as myFile:
         try: myFile.write('\ufeff') # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
             logging.critical( exp("totheWord: Unable to write BOM to file") )

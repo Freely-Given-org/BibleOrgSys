@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-24' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.78'
@@ -557,8 +557,8 @@ class BibleBooksCodes:
         """
         if not outputFolder: outputFolder = "OutputFiles/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        with open( os.path.join( outputFolder, "BOS_Books_Codes.txt" ), 'wt' ) as txtFile:
-            with open( os.path.join( outputFolder, "BOS_Books_Codes.html" ), 'wt' ) as htmlFile:
+        with open( os.path.join( outputFolder, "BOS_Books_Codes.txt" ), 'wt', encoding='utf-8' ) as txtFile, \
+             open( os.path.join( outputFolder, "BOS_Books_Codes.html" ), 'wt', encoding='utf-8' ) as htmlFile:
                 txtFile.write( "NUM BBB English name\n" )
                 htmlFile.write( '<html><body><table border="1">\n<tr><th>NUM</th><th>BBB</th><th>English name</th></tr>\n' )
                 for BBB in self.__DataDicts["referenceAbbreviationDict"]:

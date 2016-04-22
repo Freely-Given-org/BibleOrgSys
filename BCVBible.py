@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-14' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.15'
@@ -629,9 +629,9 @@ def demo():
     if 0: # Load and process some of our test versions
         count = 0
         for name, encoding, testFolder in (
-                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/BCVTest1/"),
-                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/BCVTest2/"),
-                                        ("Exported", "utf-8", "Tests/BOS_BCV_Export/"),
+                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/BCVTest1/"),
+                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/BCVTest2/"),
+                                        ("Exported", 'utf-8', "Tests/BOS_BCV_Export/"),
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):

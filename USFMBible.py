@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.69'
@@ -442,12 +442,12 @@ def demo():
 
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
-                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"),
-                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"),
-                                        ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest3/"),
-                                        ("WEB+", "utf-8", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
-                                        ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"),
-                                        ("Exported", "utf-8", "Tests/BOS_USFM_Export/"),
+                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest1/"),
+                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest2/"),
+                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest3/"),
+                                        ("WEB+", 'utf-8', "Tests/DataFilesForTests/USFMAllMarkersProject/"),
+                                        ("UEP", 'utf-8', "Tests/DataFilesForTests/USFMErrorProject/"),
+                                        ("Exported", 'utf-8', "Tests/BOS_USFM_Export/"),
                                         ) ):
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( j+1 ) )
@@ -519,7 +519,7 @@ def demo():
                     findInfoResult = findInfo( somepath )
                     if findInfoResult: title, bookNameDict = findInfoResult
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                    name, encoding, testFolder = title, "utf-8", somepath
+                    name, encoding, testFolder = title, 'utf-8', somepath
                     if os.access( testFolder, os.R_OK ):
                         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM C{}/".format( count ) )
                         UsfmB = USFMBible( testFolder, name, encoding=encoding )
@@ -541,6 +541,7 @@ def demo():
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
+    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )

@@ -37,7 +37,7 @@ Contains functions:
     makeSafeString( someString )
     removeAccents( someString )
 
-    backupAnyExistingFile( filenameOrFilepath )
+    backupAnyExistingFile( filenameOrFilepath, numBackups=1 )
     peekIntoFile( filenameOrFilepath, folderName=None, numLines=1 )
 
     totalSize( o, handlers={} )
@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-04' # by RJH
+LastModifiedDate = '2016-04-22' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.65'
+ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -106,6 +106,8 @@ DEFAULT_LOG_FOLDER = 'Logs/' # Relative path
 DEFAULT_CACHE_FOLDER = 'ObjectCache/' # Relative path
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
+
+STANDARD_BACKUP_EXTENSIONS = ( '', '.bak', '.bak2', '.bak3','.bak4' )
 
 
 # Some language independant punctuation help
@@ -175,12 +177,13 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
         os.makedirs( folderPath ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
-    if os.access( filepath, os.F_OK ):
-        if debuggingThisModule or __name__ == '__main__':
-            print( "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
-        if os.access( filepath+'.bak', os.F_OK ):
-            os.remove( filepath+'.bak' )
-        os.rename( filepath, filepath+'.bak' )
+    backupAnyExistingFile( filepath, numBackups=4 )
+    #if os.access( filepath, os.F_OK ):
+        #if debuggingThisModule or __name__ == '__main__':
+            #print( "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
+        #if os.access( filepath+'.bak', os.F_OK ):
+            #os.remove( filepath+'.bak' )
+        #os.rename( filepath, filepath+'.bak' )
 
     # Now setup our new log file -- DOESN'T SEEM TO WORK IN WINDOWS!!!
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
@@ -232,12 +235,13 @@ def addLogfile( projectName, folderName=None ):
         os.makedirs( folderName ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
-    if os.access( filepath, os.F_OK ):
-        if __name__ == '__main__':
-            print( filepath, 'already exists -- renaming it first!' )
-        if os.access( filepath+'.bak', os.F_OK ):
-            os.remove( filepath+'.bak' )
-        os.rename( filepath, filepath+'.bak' )
+    backupAnyExistingFile( filepath, numBackups=4 )
+    #if os.access( filepath, os.F_OK ):
+        #if __name__ == '__main__':
+            #print( filepath, 'already exists -- renaming it first!' )
+        #if os.access( filepath+'.bak', os.F_OK ):
+            #os.remove( filepath+'.bak' )
+        #os.rename( filepath, filepath+'.bak' )
 
     projectHandler = logging.FileHandler( filepath )
     projectHandler.setFormatter( logging.Formatter( loggingShortFormat, loggingDateFormat ) )
@@ -359,20 +363,28 @@ def removeAccents( someString ):
 
 ##########################################################################################################
 #
-# Make a backup copy of a file
+# Make a backup copy of a file that's about to be written by renaming it
+#   Note that this effectively "deletes" the file.
 
-def backupAnyExistingFile( filenameOrFilepath ):
+def backupAnyExistingFile( filenameOrFilepath, numBackups=1, extension='bak' ):
     """
-    Make a backup copy of a file if it exists.
+    Make a backup copy/copies of a file if it exists.
     """
+    if debugFlag and debuggingThisModule:
+        print( exp("backupAnyExistingFile( {!r}, {}, {!r} )").format( filenameOrFilepath, numBackups, extension ) )
+        assert not filenameOrFilepath.lower().endswith( '.bak' )
+        assert 1 <= numBackups <= 4
 
-    if debugFlag: assert not filenameOrFilepath.endswith( '.bak' )
-    if os.access( filenameOrFilepath, os.F_OK ):
-        if debugFlag:
-            logging.info( "backupAnyExistingFile: {!r} already exists -- renaming it first!".format( filenameOrFilepath ) )
-        if os.access( filenameOrFilepath+'.bak', os.F_OK ):
-            os.remove( filenameOrFilepath+'.bak' )
-        os.rename( filenameOrFilepath, filenameOrFilepath+'.bak' )
+    backupExtensions = STANDARD_BACKUP_EXTENSIONS if extension=='bak' \
+                        else ( '', '.'+extension, '.'+extension+'2', '.'+extension+'3','.'+extension+'4' )
+    for n in range( numBackups, 0, -1 ):
+        source = filenameOrFilepath + backupExtensions[n-1]
+        destination = filenameOrFilepath + backupExtensions[n]
+        if os.access( source, os.F_OK ):
+            if n==1 and debugFlag:
+                logging.info( "backupAnyExistingFile: {!r} already exists -- renaming it first!".format( source ) )
+            if os.access( destination, os.F_OK ): os.remove( destination )
+            os.rename( source, destination )
 # end of BibleOrgSysGlobals.backupAnyExistingFile
 
 

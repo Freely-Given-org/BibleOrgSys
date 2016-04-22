@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "BiblePunctuationSystems"
 ProgName = "Bible Punctuation Systems handler"
 ProgVersion = '0.43'
@@ -180,7 +180,7 @@ class BiblePunctuationSystems:
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BiblePunctuation_"+systemName + ".xml" )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
-            with open( outputFilepath, 'wt' ) as myFile:
+            with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
                 myFile.write( "</BiblePunctuationSystem>" )

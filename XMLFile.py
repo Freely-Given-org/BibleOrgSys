@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "XMLFile"
 ProgName = "XML file handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -145,9 +145,9 @@ class XMLFile():
         checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
 
         if checkProgramOutputBytes:
-            checkProgramOutputString = checkProgramOutputBytes.decode( encoding="utf-8", errors="replace" )
+            checkProgramOutputString = checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' )
         if checkProgramErrorOutputBytes:
-            checkProgramErrorOutputString = checkProgramErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
+            checkProgramErrorOutputString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
 
         if checkProcess.returncode != 0:
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \

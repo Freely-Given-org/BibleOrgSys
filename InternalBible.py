@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.69'
@@ -1651,7 +1651,7 @@ class InternalBible:
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
-                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
                                             BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
                                         else: # Just show it inline
@@ -1696,7 +1696,7 @@ class InternalBible:
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
-                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
                                             BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
                                             CountPart = ''
@@ -1707,7 +1707,7 @@ class InternalBible:
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
-                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
                                             BBBPart += '<p><a href="{}">{} (sorted by count)</a></p>'.format( webPageFilename, secondKey )
                                     else: raise KeyError
@@ -1717,7 +1717,7 @@ class InternalBible:
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                 #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                     webPageFilename = "{}.html".format( BBB )
-                    with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                    with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
                     #BBBIndexPart += '<p>Errors for book <a href="{}">{}</a></p>'.format( webPageFilename, BBB )
                     if BBB == 'All Books': BBBIndexPart += '<tr><td><a href="{}">ALL</a></td><td>All Books</td></tr>'.format( webPageFilename )
@@ -1848,7 +1848,7 @@ class InternalBible:
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                 #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                     webPageFilename = "{}.html".format( category )
-                    with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                    with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
                     categoryCommentDict = { 'Priority Errors': 'Errors that the program thinks are most important',
                                             'Load Errors': 'Errors discovered when loading the USFM files',
@@ -1881,7 +1881,7 @@ class InternalBible:
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
             webPageFilename = "BBBIndex.html"
-            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+            with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
             if len(givenBookList) == 1:
                 #indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
@@ -1895,7 +1895,7 @@ class InternalBible:
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
             webPageFilename = "categoryIndex.html"
-            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+            with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
             indexPart += '<p><a href="{}">By error category</a></p>'.format( webPageFilename )
         if indexPart:
@@ -1910,7 +1910,7 @@ class InternalBible:
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
             if BibleOrgSysGlobals.verbosityLevel>3: print( "Writing error checks web index page at {}".format( webPagePath ) )
-            with open( webPagePath, 'wt' ) as myFile: # Automatically closes the file when done
+            with open( webPagePath, 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
             #print( "Test web page at {}".format( webPageURL ) )
 
@@ -2064,7 +2064,7 @@ class InternalBible:
         if self.name: metadataLines += 'Name = {}\n'.format( self.name )
         if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
         metadataLines += 'BookList = {}\n'.format( BBBList )
-        with open( os.path.join( outputFolderPath, 'Metadata.txt' ), 'wt' ) as metadataFile:
+        with open( os.path.join( outputFolderPath, 'Metadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             metadataFile.write( metadataLines )
     # end of InternalBible.writeBOSBCVFiles
 # end of class InternalBible
