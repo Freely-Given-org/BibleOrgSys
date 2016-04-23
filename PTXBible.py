@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-20' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1504,7 +1504,7 @@ class PTXBible( Bible ):
             PTXStyles[styleName] = {}
 
             lineCount = 0
-            encodings = ['utf-8', 'ISO-8859-1', 'ISO-8859-15']
+            encodings = ['utf-8', 'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-15']
             currentStyle = {}
             for encoding in encodings: # Start by trying the given encoding
                 try:
@@ -1650,7 +1650,8 @@ def demo():
                             "OutputFiles/BOS_USFM_Reexport/",
                             "MadeUpFolder/",
                             ):
-            print( "\nTestfolder is: {}".format( testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nTestfolder is: {}".format( testFolder ) )
             result1 = PTXBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA1", result1 )
             result2 = PTXBibleFileCheck( testFolder, autoLoad=True )

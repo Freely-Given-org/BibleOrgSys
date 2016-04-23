@@ -59,7 +59,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.69'
+ProgVersion = '0.70'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -520,6 +520,7 @@ class InternalBible:
             since it's a commonly used subset of self.suppliedMetadata['PTX'].
 
         Note that some importers might prefer to supply their own function instead.
+            (DBL Bible does this.)
 
         Standard settings values include:
             Abbreviation
@@ -610,18 +611,30 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
-            if self.encoding is None and 'Encoding' in self.suppliedMetadata['PTX']['SSF']: # See if the SSF file gives some help to us
+            if 'Encoding' in self.suppliedMetadata['PTX']['SSF']: # See if the SSF file gives some help to us
                 ssfEncoding = self.suppliedMetadata['PTX']['SSF']['Encoding']
-                if ssfEncoding == '65001': self.encoding = 'utf-8'
+                if ssfEncoding == '65001': adjSSFencoding = 'utf-8'
                 else:
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
                         print( exp("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
                     if ssfEncoding.isdigit():
-                        self.encoding = 'cp' + ssfEncoding
-                        if BibleOrgSysGlobals.verbosityLevel > 0:
-                            print( exp("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        adjSSFencoding = 'cp' + ssfEncoding
+                        if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( exp("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
                     else:
                         logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+                        adjSSFencoding = ssfEncoding
+                if self.encoding is None:
+                    self.encoding = adjSSFencoding
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( exp("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                elif self.encoding == adjSSFencoding:
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( exp("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                else: # we have a conflict of encodings for some reason !
+                    logging.critical( exp("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    self.encoding = adjSSFencoding
+                    logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
 
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
