@@ -249,7 +249,7 @@ class BCVBible( Bible ):
 
         self.givenBookList = None
         lastLine, lineCount, status = '', 0, 0
-        with open( metadataFilepath, 'rt' ) as myFile: # Automatically closes the file when done
+        with open( metadataFilepath, 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 if lineCount==1:
@@ -518,7 +518,7 @@ class BCVBibleBook( BibleBook ):
         for CV in self.givenCVList:
             C, V = CV
             lineCount = 0
-            with open( os.path.join( self.sourceFolder, self.BBB+'_C'+C+'V'+V+'.txt' ), 'rt' ) as myFile: # Automatically closes the file when done
+            with open( os.path.join( self.sourceFolder, self.BBB+'_C'+C+'V'+V+'.txt' ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF

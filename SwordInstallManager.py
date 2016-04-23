@@ -34,7 +34,7 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-20' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
 ProgVersion = '0.05'
@@ -75,6 +75,8 @@ DEFAULT_SWORD_INSTALL_FOLDERS = (
     'usr/share/sword/',
     os.path.join( os.path.expanduser('~'), '.sword/'),
     )
+
+DEFAULT_SWORD_CONF_ENCODING = 'iso-8859-1'
 
 
 
@@ -368,13 +370,13 @@ class SwordInstallManager():
                 #configData = allConfigsTar.extractfile( member.name )
                 #print( '  cD', configData )
 
-                #with gzip.open( configData, 'rt') as cFile1:
+                #with gzip.open( configData, 'rt', encoding='utf-8' ) as cFile1:
                     #print( '  cFile1', cFile1, dir(cFile1), cFile1.tell() )
                     ##print( 'ww', ww )
                     #configStuff = cFile1.readlines()
                     ##for x in cFile1:
                         ##print( 'x', x )
-                    ##with open( cFile1, mode='rt' ) as cFile2:
+                    ##with open( cFile1, mode='rt', encoding='utf-8' ) as cFile2:
                         ##print( '  cFile2', cFile2 )
                         ##configStuff = cFile2.read()
                 #print( '  cS', configStuff )
@@ -434,7 +436,7 @@ class SwordInstallManager():
 
         # Read the conf file
         confDict = OrderedDict()
-        with open( confPath, 'rt' ) as confFile:
+        with open( confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as confFile:
             processConfLines( confName, confFile, confDict )
 
         #print( 'confDict', confDict )

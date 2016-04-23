@@ -470,7 +470,7 @@ class InternalBible:
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['File'] = {}
         lineCount, continuedFlag = 0, False
-        with open( mdFilepath, 'rt' ) as mdFile:
+        with open( mdFilepath, 'rt', encoding='utf-8' ) as mdFile:
             for line in mdFile:
                 while line and line[-1] in '\n\r': line=line[:-1] # Remove trailing newline characters (Linux or Windows)
                 #print( "MD line: {!r}".format( line ) )

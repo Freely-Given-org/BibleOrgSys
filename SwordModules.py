@@ -51,7 +51,7 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-19' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.42'
@@ -72,7 +72,8 @@ from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 from VerseReferences import SimpleVerseKey
-from SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, TECHNICAL_SWORD_CONF_FIELD_NAMES
+from SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
+                                    TECHNICAL_SWORD_CONF_FIELD_NAMES, DEFAULT_SWORD_CONF_ENCODING
 
 
 
@@ -122,7 +123,7 @@ class SwordModuleConfiguration:
         # Set our defaults
         self.abbreviation = moduleAbbreviation # a string like 'ylt'
         self.swordFolder = swordFolder
-        self.encoding="ISO-8859-1" # seems to be the default
+        self.encoding = DEFAULT_SWORD_CONF_ENCODING # seems to be the default
 
         # Things we'll fill up later when we load the data
         self.name = self.modType = self.modCategory = self.locked = None
@@ -149,7 +150,7 @@ class SwordModuleConfiguration:
         self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename )
         self.confDict = OrderedDict()
         #lastLine, lineCount, continuationFlag, result = None, 0, False, []
-        with open( self.confPath, 'rt', encoding="iso-8859-1" ) as myFile: # Automatically closes the file when done
+        with open( self.confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as myFile: # Automatically closes the file when done
             processConfLines( self.abbreviation, myFile, self.confDict )
             #for line in myFile:
                 #processConfLine( line, self.confDict )
@@ -231,7 +232,7 @@ class SwordModuleConfiguration:
             #print( self.confDict['Encoding']); halt
             assert self.confDict['Encoding'] in ('UTF-8',)
             #self.encoding = 'utf-8' # override the default
-            if self.abbreviation in ('ab','barnes','navelinked','dandettebiblen',): self.encoding = "iso-8859-15" # Not sure how/why they got this wrong!
+            if self.abbreviation in ('ab','barnes','navelinked','dandettebiblen',): self.encoding = 'iso-8859-15' # Not sure how/why they got this wrong!
 
         # See if we have any new fields
         for key in self.confDict:

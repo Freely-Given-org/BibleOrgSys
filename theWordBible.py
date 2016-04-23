@@ -288,7 +288,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
     # Read the files
     lineCount, lines1 = 0, []
-    with open( filepath1, 'rt' ) as file1:
+    with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -299,7 +299,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             #if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
-    with open( filepath2, 'rt' ) as file2:
+    with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF

@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.16'
@@ -796,7 +796,7 @@ class DBLBible( Bible ):
         #DBLVersification = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
         #lineCount = 0
-        #with open( versificationFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+        #with open( versificationFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             #for line in vFile:
                 #lineCount += 1
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -877,7 +877,7 @@ class DBLBible( Bible ):
 
         #lineCount = 0
         #sectionName = None
-        #with open( languageFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+        #with open( languageFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             #for line in vFile:
                 #lineCount += 1
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF

@@ -353,7 +353,7 @@ def loadPTXLanguages( BibleObject ):
 
         lineCount = 0
         sectionName = None
-        with open( languageFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+        with open( languageFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -420,7 +420,7 @@ def loadPTXVersifications( BibleObject ):
         PTXVersifications[versificationName] = {}
 
         lineCount = 0
-        with open( versificationFilepath, 'rt' ) as vFile: # Automatically closes the file when done
+        with open( versificationFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF

@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-22' # by RJH
+LastModifiedDate = '2016-04-23' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.66'
@@ -475,7 +475,7 @@ def totalSize( o, handlers={} ):
 
 def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
     """
-    Compare the two files.
+    Compare the two utf-8 files.
     """
     filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
@@ -494,7 +494,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Read the files into lists
     lineCount, lines1 = 0, []
-    with open( filepath1, 'rt' ) as file1:
+    with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -505,7 +505,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
             if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
-    with open( filepath2, 'rt' ) as file2:
+    with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -543,7 +543,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
 def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
     """
-    Compare the two USFM files,
+    Compare the two utf-8 USFM files,
         ignoring little things like \s vs \s1.
     """
     filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
@@ -563,7 +563,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Read the files into lists
     lineCount, lines1 = 0, []
-    with open( filepath1, 'rt' ) as file1:
+    with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
@@ -574,7 +574,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
-    with open( filepath2, 'rt' ) as file2:
+    with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
