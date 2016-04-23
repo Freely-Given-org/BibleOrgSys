@@ -83,7 +83,7 @@ ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, pickle
@@ -205,15 +205,16 @@ def addConsoleLogging( consoleLoggingLevel=None ):
 
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
-    if consoleLoggingLevel is not None:
-        stderrHandler.setLevel( consoleLoggingLevel )
-    else: # work it out for ourselves
+    if consoleLoggingLevel is None: # work it out for ourselves
         if verbosityLevel == 0: # Silent
-            stderrHandler.setLevel( logging.CRITICAL )
+            consoleLoggingLevel = logging.CRITICAL
         elif verbosityLevel == 4: # Verbose
-            stderrHandler.setLevel( logging.WARNING )
+            consoleLoggingLevel = logging.WARNING
         else: # Quiet or normal
-            stderrHandler.setLevel( logging.ERROR )
+            consoleLoggingLevel = logging.ERROR
+    if debuggingThisModule:
+        print( "  addConsoleLogging setting it to {}={}".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
+    stderrHandler.setLevel( consoleLoggingLevel )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderrHandler)
 # end of BibleOrgSysGlobals.addConsoleLogging
@@ -1133,9 +1134,9 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
     if commandLineArguments.single: maxProcesses = 1
-    if debugFlag:
+    if debugFlag or debuggingThisModule:
         maxProcesses = 1 # Limit to one process
-        print( "  commandLineArguments: {}".format( commandLineArguments ) )
+        print( "commandLineArguments: {}".format( commandLineArguments ) )
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
