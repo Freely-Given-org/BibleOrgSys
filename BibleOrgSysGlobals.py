@@ -76,14 +76,14 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-04-25' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path, pickle
@@ -372,7 +372,7 @@ def backupAnyExistingFile( filenameOrFilepath, numBackups=1, extension='bak' ):
     Make a backup copy/copies of a file if it exists.
     """
     if debugFlag and debuggingThisModule:
-        print( exp("backupAnyExistingFile( {!r}, {}, {!r} )").format( filenameOrFilepath, numBackups, extension ) )
+        print( "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
         assert not filenameOrFilepath.lower().endswith( '.bak' )
         assert 1 <= numBackups <= 4
 
