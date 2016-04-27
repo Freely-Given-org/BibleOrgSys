@@ -28,7 +28,8 @@ Class for creating and manipulating our internal Bible verse references.
 This module recognises and handles only our internal Bible references.
 
 The native Bible reference string format in this system is tightly defined
-    e.g., GEN_1:1 or EXO_20:10 or CH2_7:6 or JDE_1:2!b
+    e.g., GEN_1:1 or EXO_20:10 or CH2_7:6 or JDE_1:2!b or REV_9:1!7
+    i.e., BBB_C:V or BBB_C:V   or BBB_C:V or BBB_C:V!S or BBB_C:V!I
 We can see that
     1/ The Bible book code is always 3-characters, starting with a letter
         All letters are UPPERCASE
@@ -43,11 +44,13 @@ We can see that
             d = final quarter of a verse
     6/ No spaces are ever allowed.
 
-Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) also called BCVS where
+Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) or (BBB,C,V,I)
+also called BCVS or BCVI where
     BBB is the three-character UPPERCASE reference abbreviation
     C is the chapter number string (There are some examples of letters being used for chapter "numbers")
     V is the verse number string
     S is the single lowercase letter suffix (see above)
+    I is the index into the verse (0=first letter of verse, maximum of 2-digits)
 
 Our ranges are inclusive
     e.g., Gen_1:1-Gen_1:2 but Gen_1:1–Gen_2:3
@@ -66,14 +69,14 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2016-04-26' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import re, logging
@@ -99,45 +102,52 @@ BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Finds BBB codes only (as strict a
 C_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Chapter numbers 1..199
 V_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Verse numbers 1..199
 S_RE = '([a-f]?)'
+I_RE = '([0-9]{1,3})' #  Index numbers 0..999
+
 # Derived REs
 VS_RE = '{}(?:!{})?'.format( V_RE, S_RE )
+VI_RE = '{}(?:!{})?'.format( V_RE, I_RE )
 CVS_RE = '{}:{}'.format( C_RE, VS_RE )
+CVI_RE = '{}:{}'.format( C_RE, VI_RE )
 BCVS_RE = '{}_{}'.format( BBB_RE, CVS_RE )
+BCVI_RE = '{}_{}'.format( BBB_RE, CVI_RE )
+
 # The following all include beginning and end markers, i.e., only match entire strings
-VERSE_RE = '^{}$'.format( BCVS_RE )
-VERSES2_RE = '^{},{}$'.format( BCVS_RE, VS_RE )
-VERSES2C_RE = '^{};{}$'.format( BCVS_RE, CVS_RE )
-VERSES3_RE = '^{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
-VERSES3C_RE = '^{};{};{}$'.format( BCVS_RE, CVS_RE, CVS_RE )
-VERSES4_RE = '^{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-VERSES5_RE = '^{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES6_RE = '^{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES7_RE = '^{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES8_RE = '^{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES9_RE = '^{},{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS1_RE = '^{}$'.format( BCVS_RE )
+BCVI1_RE = '^{}$'.format( BCVI_RE )
+BCVS2_RE = '^{},{}$'.format( BCVS_RE, VS_RE )
+BCVS2C_RE = '^{};{}$'.format( BCVS_RE, CVS_RE )
+BCVS3_RE = '^{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
+BCVS3C_RE = '^{};{};{}$'.format( BCVS_RE, CVS_RE, CVS_RE )
+BCVS4_RE = '^{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
+BCVS5_RE = '^{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS6_RE = '^{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS7_RE = '^{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS8_RE = '^{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS9_RE = '^{},{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
 CHAPTER_RE = '^{}_{}$'.format( BBB_RE, C_RE )
-VERSE_RANGE_RE = '^{}-{}$'.format( BCVS_RE, VS_RE )
+BCVS_RANGE_RE = '^{}-{}$'.format( BCVS_RE, VS_RE )
 CHAPTER_RANGE_RE = '^{}–{}$'.format( BCVS_RE, CVS_RE )
 # Special cases
-VERSE_RANGE_PLUS_RE = '^{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
-VERSE_RANGE_PLUS2_RE = '^{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGE_PLUS3_RE = '^{}-{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGE_PLUS4_RE = '^{}-{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_PLUS_RANGE_RE = '^{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE )
-VERSE_PLUS_RANGES2_RE = '^{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES2_PLUS_RANGES2_RE = '^{},{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGE_PLUS_RANGE_RE = '^{}-{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGE_PLUS2_RANGE_RE = '^{}-{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES2_PLUS_RANGE_RE = '^{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-VERSES3_PLUS_RANGE_RE = '^{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSES4_PLUS_RANGE_RE = '^{},{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_PLUS_RANGE_PLUS_RE = '^{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-VERSES2_PLUS_RANGE_PLUS_RE = '^{},{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGES2_RE = '^{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGES2_PLUS_RE = '^{}-{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGES2_PLUS2_RE = '^{}-{},{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGES3_RE = '^{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-VERSE_RANGES4_RE = '^{}-{},{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS_RE = '^{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS2_RE = '^{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS3_RE = '^{}-{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS4_RE = '^{}-{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_PLUS_RANGE_RE = '^{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE )
+BCVS_PLUS_RANGES2_RE = '^{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS2_PLUS_RANGES2_RE = '^{},{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS_RANGE_RE = '^{}-{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS2_RANGE_RE = '^{}-{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS2_PLUS_RANGE_RE = '^{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
+BCVS3_PLUS_RANGE_RE = '^{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS4_PLUS_RANGE_RE = '^{},{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_PLUS_RANGE_PLUS_RE = '^{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
+BCVS2_PLUS_RANGE_PLUS_RE = '^{},{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGES2_RE = '^{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGES2_PLUS_RE = '^{}-{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGES2_PLUS2_RE = '^{}-{},{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGES3_RE = '^{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGES4_RE = '^{}-{},{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
 
 # OSIS
 OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v](?:[DEPacdeghklmnrstuvz](?:[Gachnrsz](?:[nrst][ah]?)?)?)?)?)' # Finds OSIS book codes
@@ -149,76 +159,94 @@ OSIS_VS_RE = '{}(?:!{})?'.format( OSIS_V_RE, OSIS_S_RE )
 OSIS_CVS_RE = '{}\.{}'.format( OSIS_C_RE, OSIS_VS_RE )
 OSIS_BCVS_RE = '{}_{}'.format( OSIS_BOOK_RE, OSIS_CVS_RE )
 # The following all include beginning and end markers, i.e., only match entire strings
-OSIS_VERSE_RE = '^{}$'.format( OSIS_BCVS_RE )
-OSIS_VERSES2_RE = '^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
-OSIS_VERSES2C_RE = '^{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE )
-OSIS_VERSES3_RE = '^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_VERSES3C_RE = '^{};{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE, OSIS_CVS_RE )
+OSIS_BCVS1_RE = '^{}$'.format( OSIS_BCVS_RE )
+OSIS_BCVS2_RE = '^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
+OSIS_BCVS2C_RE = '^{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE )
+OSIS_BCVS3_RE = '^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
+OSIS_BCVS3C_RE = '^{};{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE, OSIS_CVS_RE )
 OSIS_CHAPTER_RE = '^{}_{}$'.format( OSIS_BOOK_RE, OSIS_C_RE )
-OSIS_VERSE_RANGE_RE = '^{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
+OSIS_BCVS_RANGE_RE = '^{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
 OSIS_CHAPTER_RANGE_RE = '^{}–{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE )
 # Special cases
-OSIS_VERSE_RANGE_PLUS_RE = '^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_VERSE_PLUS_RANGE_RE = '^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_VERSE_PLUS_RANGE_PLUS_RE = '^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE )
+OSIS_BCVS_RANGE_PLUS_RE = '^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
+OSIS_BCVS_PLUS_RANGE_RE = '^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
+OSIS_BCVS_PLUS_RANGE_PLUS_RE = '^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE )
 
 
 
-def t( messageString ):
+def exp( messageString ):
     """
-    Prepends the module name to a error or warning message string if we are in debug mode.
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, errorBit )
-# end of t
+    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
+# end of exp
 
 
 
 class SimpleVerseKey():
     """
-    Handles individual verse references (no ranges, etc. allowed) in the internal BCVS form
+    Handles individual verse references (no ranges, etc. allowed) in the internal BCVS or BCVI form
         where   B is the BBB reference code
                 C is the chapter number string
                 V is the verse number string
                 S is the optional suffix string
+                I is the optional index into the verse
     The name or organisational system of the work is not specified
         so we can only check that BBB is a valid book code
         and no checking is done on the validity of the CV values.
 
-    A string to be parsed can also be passed as the first (and only) parameter.
-        e.g. "SA2_12:9b"
+    A BCVS string to be parsed can also be passed as the first (and only) parameter.
+        e.g. 'SA2_12:9b'
     """
-    def __init__( self, BBB, C=None, V=None, S=None, OSIS=False, ignoreParseErrors=False ):
+    def __init__( self, BBB, C=None, V=None, SI=None, OSIS=False, ignoreParseErrors=False ):
+        """
+        """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("__init__( {!r}, {!r}, {!r}, {!r} )").format( BBB, C, V, S ) )
+            print( exp("SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )").format( BBB, C, V, SI ) )
+
         self.ignoreParseErrors = ignoreParseErrors
-        if C is None and V is None and S is None: # assume it's a string to be parsed
+
+        if C is None and V is None and SI is None: # assume it's a string to be parsed
             #if BibleOrgSysGlobals.debugFlag:
             #    assert isinstance( BBB, str ) and 7<=len(BBB)<=16
             parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
             if not parseFunction( BBB ):
                 raise TypeError
-        else: # assume it's a BBB/C/V/(S) call
-            if S is None: S = ''
+
+        else: # assume it's a BBB/C/V/(S/I) call
+            if SI is None: SI = ''
             if isinstance( C, int ): C = str( C ) # Make sure we have strings
             if isinstance( V, int ): V = str( V )
-            if BibleOrgSysGlobals.debugFlag:
-                assert isinstance( BBB, str ) and len(BBB) == 3
-                assert isinstance( C, str ) and 1<=len(C)<=3
-                assert isinstance( V, str ) and 1<=len(V)<=3
-                assert isinstance( S, str ) and len(S)<3
-                assert BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   '
-                for checkChar in ' -,.:':
-                    assert checkChar not in BBB
-                    assert checkChar not in C
-                    assert checkChar not in V or ( C=='0' and V=='-1' ) # 0:-1 means the last bit of the book intro
-                    assert checkChar not in S
-            self.BBB, self.C, self.V, self.S = BBB, C, V, S
-            self.keyType = 'AssignedBVCS'
+            if isinstance( SI, int ): SI = str( SI )
+            #if BibleOrgSysGlobals.debugFlag:
+            if not isinstance( BBB, str ) or len(BBB) != 3 \
+            or not BBB in BibleOrgSysGlobals.BibleBooksCodes and BBB!='   ':
+                logging.error( "SimpleVerseKey: bad {!r} BBB in {}".format( BBB, (BBB,C,V,SI) ) ); raise TypeError
+            if not isinstance( C, str ) or not 1<=len(C)<=3:
+                logging.error( "SimpleVerseKey: bad {!r} C in {}".format( C, (BBB,C,V,SI) ) ); raise TypeError
+            if not isinstance( V, str ) or not 1<=len(V)<=3:
+                logging.error( "SimpleVerseKey: bad {!r} V in {}".format( V, (BBB,C,V,SI) ) ); raise TypeError
+            if not isinstance( SI, str ) or not ( len(SI)<2 or (SI.isdigit() and len(SI)<4) ):
+                logging.error( "SimpleVerseKey: bad {!r} S/I in {}".format( SI, (BBB,C,V,SI) ) ); raise TypeError
+            for checkChar in ' -,.:':
+                if checkChar in BBB \
+                or checkChar in C \
+                or checkChar in SI \
+                or checkChar in V and ( C=='0' and V=='-1' ): # 0:-1 means the last bit of the book intro
+                    raise TypeError
+            if SI and SI.isdigit():
+                self.BBB, self.C, self.V, self.I, self.S = BBB, C, V, SI, None
+                self.keyType = 'AssignedBVCI'
+            else:
+                self.BBB, self.C, self.V, self.S, self.I = BBB, C, V, SI, None
+                self.keyType = 'AssignedBCVS'
     # end of SimpleVerseKey.__init__
 
     def __eq__( self, other ):
@@ -231,13 +259,13 @@ class SimpleVerseKey():
     def __repr__(self): return self.__str__()
     def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
     def getShortText( self ):
-        return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+        return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S if self.I is None else ('!'+self.I) )
         #except AttributeError: return 'Invalid'
     def getVerseKeyText( self ):
-        return "{}_{}:{}{}{}".format( self.BBB, self.C, self.V, '!' if self.S else '', self.S )
+        return "{}_{}:{}{}{}".format( self.BBB, self.C, self.V, '!' if self.S or self.I else '', self.S if self.I is None else self.I )
 
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
-        return "{}_{}:{}!{}".format( self.BBB, self.C, self.V, self.S )
+        return "{}_{}:{}!{}".format( self.BBB, self.C, self.V, self.S if self.I is None else self.I )
     def __hash__( self ): return hash( self.makeHash() )
 
     def __len__( self ): return 4
@@ -245,7 +273,7 @@ class SimpleVerseKey():
         if keyIndex==0: return self.BBB
         elif keyIndex==1: return self.C
         elif keyIndex==2: return self.V
-        elif keyIndex==3: return self.S
+        elif keyIndex==3: return self.S if self.I is None else self.I
         else: raise IndexError
 
     def getBBB( self ): return self.BBB
@@ -254,16 +282,19 @@ class SimpleVerseKey():
     def getVerseNumber( self ): return self.V
     def getVerseNumberStr( self ): return self.V
     def getVerseSuffix( self ): return self.S
+    def getVerseIndex( self ): return self.I
 
     def getBCV( self ): return self.BBB, self.C, self.V
     def getBCVS( self ): return self.BBB, self.C, self.V, self.S
+    def getBCVI( self ): return self.BBB, self.C, self.V, self.I
     def getCV( self ): return self.C, self.V
     def getCVS( self ): return self.C, self.V, self.S
+    def getCVI( self ): return self.C, self.V, self.I
 
     def getChapterNumberInt( self ):
         try: return int( self.C )
         except ValueError:
-            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
+            logging.warning( exp("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
             if self.C and self.C[0].isdigit():
                 digitCount = 0
                 for char in self.C:
@@ -275,7 +306,7 @@ class SimpleVerseKey():
     def getVerseNumberInt( self ):
         try: return int( self.V )
         except ValueError:
-            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
+            logging.warning( exp("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
             if self.V and self.V[0].isdigit():
                 digitCount = 0
                 for char in self.V:
@@ -287,7 +318,7 @@ class SimpleVerseKey():
     def getOSISBookAbbreviation( self ):
         return BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
     def getOSISReference( self ):
-        return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
+        return '{}.{}.{}'.format( self.getOSISBookAbbreviation(), self.C, self.V )
 
     def __iter__( self ):
         """
@@ -311,26 +342,41 @@ class SimpleVerseKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseOSISString( {!r} )").format( referenceString ) )
+            print( exp("parseOSISString( {!r} )").format( referenceString ) )
 
-        match = re.search( VERSE_RE, referenceString )
+        match = re.search( BCVS1_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
-            self.BBB, self.C, self.V, self.S = match.group(1), match.group(2), match.group(3), match.group(4) if match.group(4) else ''
+            self.BBB, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
             if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
-            self.keyType = 'ParsedBVCS'
+            self.keyType = 'ParsedBCVS'
             #print( self.getShortText() )
             return True
+
+        match = re.search( BCVI1_RE, referenceString )
+        if match:
+            #print( "Matched", match.start(), match.end() )
+            #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
+            self.BBB, self.C, self.V, self.I, self.S = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
+            if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
+                logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
+            self.keyType = 'ParsedBVCI'
+            #print( self.getShortText() )
+            return True
+
         # else:
         #print( "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
         return False
     # end of SimpleVerseKey.parseReferenceString
+
 
     def parseOSISString( self, referenceString ):
         """
@@ -339,8 +385,9 @@ class SimpleVerseKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseReferenceString( {!r} )").format( referenceString ) )
-        match = re.search( OSIS_VERSE_RE, referenceString )
+            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+
+        match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
@@ -350,7 +397,7 @@ class SimpleVerseKey():
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
-            self.keyType = 'ParsedBVCS'
+            self.keyType = 'ParsedBCVS'
             #print( self.getShortText() )
             return True
         # else:
@@ -378,8 +425,11 @@ class SimpleVersesKey():
         e.g. "SA2_12:9b"
     """
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
+        """
+        """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("__init__( {!r} )").format( referenceString ) )
+            print( exp("SimpleVersesKey.__init__( {!r} )").format( referenceString ) )
+
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
         #    assert isinstance( referenceString, str ) and 7<=len(referenceString)<=16
@@ -444,8 +494,9 @@ class SimpleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseReferenceString( {!r} )").format( referenceString ) )
-        match = re.search( VERSES2_RE, referenceString )
+            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+
+        match = re.search( BCVS2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -461,7 +512,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
             return True
-        match = re.search( VERSES2C_RE, referenceString )
+        match = re.search( BCVS2C_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -475,7 +526,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
-        match = re.search( VERSES3_RE, referenceString )
+        match = re.search( BCVS3_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -493,7 +544,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3)]
             self.keyType = '3V'
             return True
-        match = re.search( VERSES3C_RE, referenceString )
+        match = re.search( BCVS3C_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -508,7 +559,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2), SimpleVerseKey(BBB,C3,V3,S3)]
             self.keyType = '3CV'
             return True
-        match = re.search( VERSES4_RE, referenceString )
+        match = re.search( BCVS4_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -529,7 +580,7 @@ class SimpleVersesKey():
                                   SimpleVerseKey(BBB,C,V4,S4)]
             self.keyType = '4V'
             return True
-        match = re.search( VERSES5_RE, referenceString )
+        match = re.search( BCVS5_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -551,7 +602,7 @@ class SimpleVersesKey():
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5)]
             self.keyType = '5V'
             return True
-        match = re.search( VERSES6_RE, referenceString )
+        match = re.search( BCVS6_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -575,7 +626,7 @@ class SimpleVersesKey():
                                   SimpleVerseKey(BBB,C,V4,S4), SimpleVerseKey(BBB,C,V5,S5), SimpleVerseKey(BBB,C,V6,S6)]
             self.keyType = '6V'
             return True
-        match = re.search( VERSES7_RE, referenceString )
+        match = re.search( BCVS7_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -602,7 +653,7 @@ class SimpleVersesKey():
                                   SimpleVerseKey(BBB,C,V7,S7)]
             self.keyType = '7V'
             return True
-        match = re.search( VERSES8_RE, referenceString )
+        match = re.search( BCVS8_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -631,7 +682,7 @@ class SimpleVersesKey():
                                   SimpleVerseKey(BBB,C,V7,S7), SimpleVerseKey(BBB,C,V8,S8)]
             self.keyType = '8V'
             return True
-        match = re.search( VERSES9_RE, referenceString )
+        match = re.search( BCVS9_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -669,6 +720,7 @@ class SimpleVersesKey():
         return False
     # end of SimpleVersesKey.parseReferenceString
 
+
     def parseOSISString( self, referenceString ):
         """
         Parses a string, expecting something like "SA2_19:5b"
@@ -676,8 +728,9 @@ class SimpleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseOSISString( {!r} )").format( referenceString ) )
-        match = re.search( OSIS_VERSES2_RE, referenceString )
+            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+
+        match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -692,7 +745,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
             return True
-        match = re.search( OSIS_VERSES2C_RE, referenceString )
+        match = re.search( OSIS_BCVS2C_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -706,7 +759,7 @@ class SimpleVersesKey():
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
-        match = re.search( OSIS_VERSES3_RE, referenceString )
+        match = re.search( OSIS_BCVS3_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -722,7 +775,7 @@ class SimpleVersesKey():
                 assert int(V3)>int(V2)+1 or S3!=S2
             self.keyType = '3V'
             return True
-        match = re.search( OSIS_VERSES3C_RE, referenceString )
+        match = re.search( OSIS_BCVS3C_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
@@ -763,8 +816,11 @@ class VerseRangeKey():
             "GEN 18"
     """
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
+        """
+        """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("__init__( {!r} )").format( referenceString ) )
+            print( exp("VerseRangeKey.__init__( {!r} )").format( referenceString ) )
+
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
         #    assert isinstance( referenceString, str ) and 7<=len(referenceString)<=16
@@ -788,6 +844,7 @@ class VerseRangeKey():
         #if self.keyType=='C': return "{} {}".format( self.BBB, self.C )
         #print( self.keyType ); halt
 
+
     def getVerseKeyText( self ):
         resultStr = self.rangeStart.getVerseKeyText()
         BBB, C, V, S = self.rangeEnd.getBCVS()
@@ -797,6 +854,7 @@ class VerseRangeKey():
         else: resultStr += '–{}_{}:{}{}{}'.format( BBB, C,V, '!' if S else '', S )
         return resultStr
     # end of VerseRangeKey.getVerseKeyText
+
 
     def __iter__( self ):
         """
@@ -820,8 +878,9 @@ class VerseRangeKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseReferenceString( {!r} )").format( referenceString ) )
-        match = re.search( VERSE_RANGE_RE, referenceString )
+            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+
+        match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -902,8 +961,9 @@ class VerseRangeKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseOSISString( {!r} )").format( referenceString ) )
-        match = re.search( OSIS_VERSE_RANGE_RE, referenceString )
+            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+
+        match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -991,10 +1051,13 @@ class FlexibleVersesKey():
             "GEN 18"
     """
     def __init__( self, referenceString, OSIS=False ):
+        """
+        """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("__init__( {!r} )").format( referenceString ) )
+            print( exp("FlexibleVersesKey.__init__( {!r} )").format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
+
         self.keyType, self.verseKeyObjectList = None, []
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
@@ -1018,6 +1081,8 @@ class FlexibleVersesKey():
         #if self.keyType=='V-V,V': return '{} {}:{}(?:!{})?-{}(?:!{})?,{}(?:!{})?'.format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2, self.V3, self.S3 )
         #if self.keyType=='V,V-V': return '{} {}:{}(?:!{})?,{}(?:!{})?-{}(?:!{})?'.format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2, self.V3, self.S3 )
         #halt
+
+
     def getVerseKeyText( self ):
         if self.keyType=='V-V,V':
             vRange, vSingle = self.verseKeyObjectList[0], self.verseKeyObjectList[1]
@@ -1029,6 +1094,7 @@ class FlexibleVersesKey():
             if resultText: resultText += ', '
             resultText += verseKeyObject.getVerseKeyText()
         return resultText
+
 
     def __iter__( self ):
         """
@@ -1056,7 +1122,7 @@ class FlexibleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseReferenceString( {!r} )").format( referenceString ) )
+            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1076,7 +1142,7 @@ class FlexibleVersesKey():
             return True
         except TypeError: pass
 
-        match = re.search( VERSE_RANGE_PLUS_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1095,7 +1161,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
             self.keyType = 'V-V,V'
             return True
-        match = re.search( VERSE_RANGE_PLUS2_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1117,7 +1183,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V4, S4 ) )
             self.keyType = 'V-V,2V'
             return True
-        match = re.search( VERSE_RANGE_PLUS3_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS3_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1142,7 +1208,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V5, S5 ) )
             self.keyType = 'V-V,3V'
             return True
-        match = re.search( VERSE_RANGE_PLUS4_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS4_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1170,7 +1236,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V6, S6 ) )
             self.keyType = 'V-V,3V'
             return True
-        match = re.search( VERSE_PLUS_RANGE_RE, referenceString )
+        match = re.search( BCVS_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1189,7 +1255,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V,V-V'
             return True
-        match = re.search( VERSE_PLUS_RANGES2_RE, referenceString )
+        match = re.search( BCVS_PLUS_RANGES2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1214,7 +1280,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey2 )
             self.keyType = 'V,V-V,V-V'
             return True
-        match = re.search( VERSES2_PLUS_RANGES2_RE, referenceString )
+        match = re.search( BCVS2_PLUS_RANGES2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1242,7 +1308,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey2 )
             self.keyType = 'V,V,V-V,V-V'
             return True
-        match = re.search( VERSE_RANGE_PLUS_RANGE_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1267,7 +1333,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V-V,V,V-V'
             return True
-        match = re.search( VERSE_RANGE_PLUS2_RANGE_RE, referenceString )
+        match = re.search( BCVS_RANGE_PLUS2_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1295,7 +1361,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V-V,2V,V-V'
             return True
-        match = re.search( VERSES2_PLUS_RANGE_RE, referenceString )
+        match = re.search( BCVS2_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1317,7 +1383,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V2,V-V'
             return True
-        match = re.search( VERSES3_PLUS_RANGE_RE, referenceString )
+        match = re.search( BCVS3_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1342,7 +1408,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V3,V-V'
             return True
-        match = re.search( VERSES4_PLUS_RANGE_RE, referenceString )
+        match = re.search( BCVS4_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1370,7 +1436,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V4,V-V'
             return True
-        match = re.search( VERSE_PLUS_RANGE_PLUS_RE, referenceString )
+        match = re.search( BCVS_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1392,7 +1458,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V4, S4 ) )
             self.keyType = 'V,V-V,V'
             return True
-        match = re.search( VERSES2_PLUS_RANGE_PLUS_RE, referenceString )
+        match = re.search( BCVS2_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1417,7 +1483,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V5, S5 ) )
             self.keyType = 'V,V,V-V,V'
             return True
-        match = re.search( VERSE_RANGES2_RE, referenceString )
+        match = re.search( BCVS_RANGES2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1439,7 +1505,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey2 )
             self.keyType = 'V-V,V-V'
             return True
-        match = re.search( VERSE_RANGES2_PLUS_RE, referenceString )
+        match = re.search( BCVS_RANGES2_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1464,7 +1530,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V5, S5 ) )
             self.keyType = 'V-V,V-V,V'
             return True
-        match = re.search( VERSE_RANGES2_PLUS2_RE, referenceString )
+        match = re.search( BCVS_RANGES2_PLUS2_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1493,7 +1559,7 @@ class FlexibleVersesKey():
             self.keyType = 'V-V,V-V,2V'
             return True
 
-        match = re.search( VERSE_RANGES3_RE, referenceString )
+        match = re.search( BCVS_RANGES3_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1521,7 +1587,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey3 )
             self.keyType = 'V-Vx3'
             return True
-        match = re.search( VERSE_RANGES4_RE, referenceString )
+        match = re.search( BCVS_RANGES4_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1568,7 +1634,7 @@ class FlexibleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("parseOSISString( {!r} )").format( referenceString ) )
+            print( exp("parseOSISString( {!r} )").format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1588,7 +1654,7 @@ class FlexibleVersesKey():
             return True
         except TypeError: pass
 
-        match = re.search( OSIS_VERSE_RANGE_PLUS_RE, referenceString )
+        match = re.search( OSIS_BCVS_RANGE_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1607,7 +1673,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
             self.keyType = 'V-V,V'
             return True
-        match = re.search( OSIS_VERSE_PLUS_RANGE_RE, referenceString )
+        match = re.search( OSIS_BCVS_PLUS_RANGE_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1626,7 +1692,7 @@ class FlexibleVersesKey():
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V,V-V'
             return True
-        match = re.search( OSIS_VERSE_PLUS_RANGE_PLUS_RE, referenceString )
+        match = re.search( OSIS_BCVS_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
@@ -1662,27 +1728,34 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    badStrings = ( 'Gn_1:1', '2KI_3:17', 'MAL_1234:1', 'MAT_1:1234', )
+    badStrings = ( 'Gn_1:1', '2KI_3:17', 'MAL_1234:1', 'MAT_1:1234', 'MRK_3:6:!ab', 'LUK_2:2!1234', )
 
-    goodVerseStrings = ( 'SA2_19:12', 'REV_11:12!b', )
+    goodVerseStrings = ( 'SA2_19:12', 'REV_11:12!b', 'EXO_17:9!5', 'PRO_31:2!101', )
     badVerseStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test SimpleVerseKey
         print( "\n\nTesting SimpleVerseKey…" )
-        for something in ( ('GEN','1','1'), ('GEN','1','1','a'), ):
-            print( "  Testing SimpleVerseKey with {!r}".format( something ) )
-            vK = SimpleVerseKey( *something )
-            print( '  ', vK, "and", vK.getOSISReference() )
-            print( '  ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+        for somethingGood in ( ('GEN','1','1'), ('GEN','1','1','a'), ('GEN','1','1','123'), ):
+            print( "  Testing SimpleVerseKey with good {!r}".format( somethingGood ) )
+            vK = SimpleVerseKey( *somethingGood )
+            print( '   ', vK, "({}) and".format(vK.keyType), vK.getOSISReference() )
+            print( '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+        for somethingBad in ( ('GEN','1234','1'), ('GEN','1','1','ab'), ('GEN','1','1','123'), ):
+            print( "  Testing SimpleVerseKey with bad {!r}".format( somethingBad ) )
+            try: vK = SimpleVerseKey( *somethingBad )
+            except TypeError: pass
+            else:
+                print( '   ', vK, "({}) and".format(vK.keyType), vK.getOSISReference() )
+                print( '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
         for someGoodString in goodVerseStrings:
             print( "  Testing SimpleVerseKey with good {!r}".format( someGoodString ) )
             vK = SimpleVerseKey( someGoodString )
-            print( '   ', vK )
+            print( '    ', vK )
             assert vK.getVerseKeyText() == someGoodString
         print( '  BAD STUFF…' )
         for someBadString in badVerseStrings:
             print( "  Testing SimpleVerseKey with bad {!r}".format( someBadString ) )
-            try: print( '  ', repr(someBadString), SimpleVerseKey( someBadString ) )
-            except TypeError: pass
+            try: print( '    ', repr(someBadString), SimpleVerseKey( someBadString ) )
+            except TypeError: pass #print( '    TypeError' )
 
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
@@ -1697,7 +1770,7 @@ def demo():
         for someBadString in badVersesStrings:
             print( "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: print( '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
-            except TypeError: pass
+            except TypeError: pass # print( '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
@@ -1732,8 +1805,15 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
+    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()

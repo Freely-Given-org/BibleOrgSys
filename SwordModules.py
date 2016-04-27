@@ -51,7 +51,7 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-04-27' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.42'
@@ -79,11 +79,12 @@ from SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
 
 # Folders where to try looking for modules
 #   These should be the folders that contain mods.d and modules folders inside them
-DEFAULT_SWORD_SEARCH_FOLDERS = ( 'usr/share/sword/',
+DEFAULT_SWORD_SEARCH_FOLDERS = ( '/usr/share/sword/',
                         os.path.join( os.path.expanduser('~'), '.sword/'),
                         'C:\\Users\\{}\\AppData\\Roaming\\Sword\\'.format( os.getlogin() ),
                         'C:\\Users\\{}\\AppData\\Local\\VirtualStore\\Program Files\\BPBible\\resources\\'.format( os.getlogin() ),
-                        'C:\\Program Files\\BPBible\\resources\\', 'C:\\Program Files (x86)\\BPBible\\resources\\', )
+                        'C:\\Program Files\\BPBible\\resources\\', 'C:\\Program Files (x86)\\BPBible\\resources\\',
+                        'TestData/', )
 
 GENERIC_SWORD_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblical Texts',
                 'RawCom':'Commentaries', 'RawCom4':'Commentaries', 'zCom':'Commentaries',
@@ -150,6 +151,9 @@ class SwordModuleConfiguration:
         self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename )
         self.confDict = OrderedDict()
         #lastLine, lineCount, continuationFlag, result = None, 0, False, []
+        if not os.path.exists( self.confPath) and filename.lower()!=filename: # Try a lower case
+            logging.info( "loadConf: Trying {!r} instead of {!r}".format( filename.lower(), filename ) )
+            self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename.lower() )
         with open( self.confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as myFile: # Automatically closes the file when done
             processConfLines( self.abbreviation, myFile, self.confDict )
             #for line in myFile:

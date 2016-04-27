@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-04-27' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.70'
+ProgVersion = '0.71'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,6 +72,7 @@ from collections import OrderedDict
 import BibleOrgSysGlobals
 from InternalBibleInternals import InternalBibleEntryList
 from InternalBibleBook import BCV_VERSION
+from VerseReferences import SimpleVerseKey
 
 
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
@@ -418,23 +419,23 @@ class InternalBible:
     # end of InternalBible.doPostLoadProcessing
 
 
-    def xxxunloadBooks( self ):
-        """
-        Called to unload books, usually coz one or more of them has been edited.
-        """
-        if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks()…") )
-        self.books = OrderedDict()
-        self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
-        self.reverseDict, self.guesses = {}, '' # A program history
-        self.loadedAllBooks, self.triedLoadingBook = False, {}
-        self.divisions = OrderedDict()
-        self.errorDictionary = OrderedDict()
-        self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
+    #def xxxunloadBooks( self ):
+        #"""
+        #Called to unload books, usually coz one or more of them has been edited.
+        #"""
+        #if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks()…") )
+        #self.books = OrderedDict()
+        #self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
+        #self.reverseDict, self.guesses = {}, '' # A program history
+        #self.loadedAllBooks, self.triedLoadingBook = False, {}
+        #self.divisions = OrderedDict()
+        #self.errorDictionary = OrderedDict()
+        #self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
 
-        try: del self.discoveryResults # These are now irrelevant
-        except KeyError:
-            if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks has no discoveryResults to delete") )
-    # end of InternalBible.unloadBooks
+        #try: del self.discoveryResults # These are now irrelevant
+        #except KeyError:
+            #if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks has no discoveryResults to delete") )
+    ## end of InternalBible.unloadBooks
 
 
     def loadMetadataTextFile( self, mdFilepath ):
@@ -2059,10 +2060,106 @@ class InternalBible:
     # end of InternalBible.getVerseText
 
 
+    def searchText( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=12 ):
+        """
+        Search the Bible for the given text.
+
+        Assumes that all Bible books are already loaded.
+
+        Always returns a list of tuples.
+            The first entry is always a dictionary of all parameters.
+            Following entries are (zero or more) search results.
+
+        For the normal search, the 4-tuples are:
+            SimpleVerseKey, marker (none if v~), contextBefore, contextAfter
+        If the search is caseless, the 5-tuples are:
+            SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("searchText( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
+                            .format( givenText, bookList, chapterList, wholeWordOnly, includeIntro,
+                                        includeMarkers, noExtras, noCase, regExp, contextLength ) )
+            if chapterList: assert bookList is None or len(bookList) == 1 \
+                                or chapterList == [0] # Only combinations that make sense
+            assert '\r' not in givenText and '\n' not in givenText
+            if wholeWordOnly: assert ' ' not in givenText
+
+        ourSearchText = givenText.lower() if noCase else givenText
+        searchLen = len( ourSearchText )
+        #print( "  {} books loaded".format( len(self) ) )
+
+        # The first entry in the result list is a dictionary containing the parameters
+        #   Following entries are SimpleVerseKey objects
+        resultList = [{ 'givenText':givenText, 'BookList':bookList, 'chapterList':chapterList,
+                       'wholeWordOnly':wholeWordOnly, 'includeIntro':includeIntro,
+                       'includeMarkers':includeMarkers, 'noExtras':noExtras, 'noCase':noCase,
+                       'regExp':regExp, 'contextLength':contextLength, }]
+        for BBB,bookObject in self.books.items():
+            #print( exp("  searchText: got book {}").format( BBB ) )
+            if bookList is None or BBB in bookList:
+                #print( exp("  searchText: will search book {}").format( BBB ) )
+                #self.loadBookIfNecessary( BBB )
+                C = V = '0'
+                for lineEntry in bookObject:
+                    marker, cleanText = lineEntry.getMarker(), lineEntry.getCleanText()
+                    if marker[0] == '¬': continue # we'll always ignore these lines
+                    if marker == 'c': C, V = cleanText, '0'
+                    elif marker == 'v': V = cleanText
+                    elif C == '0': V = str( int(V) + 1 )
+                    if C=='0' and not includeIntro: continue
+                    #print( "{}:{} {} = {}".format( C, V, marker, cleanText ) )
+
+                    if chapterList is None or C in chapterList or int(C) in chapterList:
+                        #if chapterList and V=='0':
+                            #print( exp("  searchText: will search {} chapter {}").format( BBB, C ) )
+
+                        # Get our text to search
+                        origTextToSearch = cleanText if noExtras else lineEntry.getFullText()
+                        if includeMarkers: origTextToSearch = '\\{} ' + origTextToSearch
+                        if not origTextToSearch: continue
+                        textToSearch = origTextToSearch.lower() if noCase else origTextToSearch
+                        textLen = len( textToSearch )
+
+                        if regExp:
+                            halt
+                        else: # not regExp
+                            ix = -1
+                            while True:
+                                ix = textToSearch.find( ourSearchText, ix+1 )
+                                if ix == -1: break
+                                ixAfter = ix + searchLen
+                                if wholeWordOnly:
+                                    #print( "BF", repr(textToSearch[ix-1]) )
+                                    #print( "AF", repr(textToSearch[ixAfter]) )
+                                    if ix>0 and textToSearch[ix-1].isalpha(): continue
+                                    if ixAfter<textLen and textToSearch[ixAfter].isalpha(): continue
+
+                                if contextLength: # Find the context in the original (fully-cased) string
+                                    contextBefore = origTextToSearch[ix-contextLength:ix]
+                                    contextAfter = origTextToSearch[ixAfter:ixAfter+contextLength]
+                                else: contextBefore = contextAfter = None
+
+                                ixHyphen = V.find( '-' )
+                                if ixHyphen != -1: V = V[:ixHyphen] # Remove verse bridges
+                                adjMarker = None if marker=='v~' else marker # most markers are v~ -- ignore them (for space)
+                                resultTuple = (SimpleVerseKey(BBB, C, V, ix), adjMarker, contextBefore,
+                                                                    origTextToSearch[ix:ixAfter], contextAfter, ) \
+                                            if noCase else \
+                                                (SimpleVerseKey(BBB, C, V, ix), adjMarker, contextBefore, contextAfter, )
+                                resultList.append( resultTuple )
+
+        #print( exp("  searchText: returning {}").format( resultList ) )
+        return resultList
+    # end of InternalBible.searchText
+
+
     def writeBOSBCVFiles( self, outputFolderPath ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("writeBOSBCVFiles( {} )").format( outputFolderPath ) )
+
         BBBList = []
         for BBB,bookObject in self.books.items():
             BBBList.append( BBB )
@@ -2094,6 +2191,36 @@ def demo():
     IB = InternalBible()
     IB.objectNameString = 'Dummy test Internal Bible object'
     if BibleOrgSysGlobals.verbosityLevel > 0: print( IB )
+
+    # But we'll load a USFM Bible so we can test some other functions
+    from UnknownBible import UnknownBible
+    from Bible import Bible
+    testFolder = "Tests/DataFilesForTests/PTXTest/"
+    uB = UnknownBible( testFolder )
+    result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "IB Test", result )
+    if isinstance( result, Bible ):
+        iB = result
+        if BibleOrgSysGlobals.strictCheckingFlag:
+            iB.check()
+            IBErrors = iB.getErrors()
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( IBErrors )
+        books = None #['JNA','PE1']
+        chapters = None #[0]
+        for searchString in ( "keen", "Keen", "junk", ):
+            print( "\n{}:".format( searchString ) )
+            sResult = iB.searchText( searchString, books, chapters )
+            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\n  sResult for {!r} is {}".format( searchString, adjResult ) )
+            sResult = iB.searchText( searchString, books, chapters, wholeWordOnly=True )
+            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\n  sResult for whole word {!r} is {}".format( searchString, adjResult ) )
+            sResult = iB.searchText( searchString, books, chapters, noCase=True )
+            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\n  sResult for caseless {!r} is {}".format( searchString, adjResult ) )
 # end of demo
 
 

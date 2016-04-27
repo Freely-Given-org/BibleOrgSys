@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-04-27' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.05'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -45,7 +45,7 @@ debuggingThisModule = True
 
 
 #from singleton import singleton
-import os, logging, re
+import sys, os, logging, re
 import ftplib
 #import urllib.request
 import tempfile, tarfile
@@ -58,17 +58,18 @@ import BibleOrgSysGlobals
 
 
 
-DEFAULT_SWORD_DOWNLOAD_SOURCES = OrderedDict([
+DEFAULT_SWORD_DOWNLOAD_SOURCES = OrderedDict([ # Put these in priority order -- highest priority first
     ('CrossWire Main', ('FTP', 'ftp.CrossWire.org', '/pub/sword/raw/' )),
     ('CrossWire Attic', ('FTP', 'ftp.CrossWire.org', '/pub/sword/atticraw/' )),
     ('Crosswire Beta', ('FTP', 'ftp.CrossWire.org', '/pub/sword/betaraw/' )),
     ('Crosswire Wycliffe', ('FTP', 'ftp.CrossWire.org', '/pub/sword/wyclifferaw/' )),
     ('Crosswire Alt Versification', ('FTP', 'ftp.CrossWire.org', '/pub/sword/avraw/' )),
-    ('Crosswire Alt Vrsfctn Attic', ('FTP', 'ftp.CrossWire.org', '/pub/sword/avatticraw/' )),
+    # Seems gone ('Crosswire Alt Vrsfctn Attic', ('FTP', 'ftp.CrossWire.org', '/pub/sword/avatticraw/' )),
     ('Crosswire IBT', ('FTP', 'ftp.CrossWire.org', '/pub/modsword/raw/' )),
     ('NET Bible', ('FTP', 'ftp.bible.org', '/sword/' )),
     ('Xiphos', ('FTP', 'ftp.Xiphos.org', '' )),
-    #('eBible', ('FTP', 'ftp.Xiphos.org', '' )),
+    ('eBible', ('FTP', 'ftp.eBible.org', '/pub/sword/' )),
+    ('eBible Beta', ('FTP', 'ftp.eBible.org', '/pub/swordbeta/' )),
     ])
 
 DEFAULT_SWORD_INSTALL_FOLDERS = (
@@ -333,7 +334,12 @@ class SwordInstallManager():
         ftp.login() # anonymous:anonymous
         if repoFolder:
             assert repoFolder[0] == '/'
-            ftp.cwd( repoFolder )
+            try: ftp.cwd( repoFolder )
+            except ftplib.error_perm as err:
+                #logging.error( "refreshRemoteSource: FTP error:", sys.exc_info()[0], err )
+                logging.error( "refreshRemoteSource: Unable to reach {} on {} with {!r}" \
+                                                .format( repoFolder, repoSite, err ) )
+                return False
         ftp.retrbinary( 'RETR ' + repoCompressedFilename, open( repoCompressedSaveFilepath, 'wb' ).write )
         ftp.quit()
 
@@ -387,7 +393,15 @@ class SwordInstallManager():
         for confName in confNames:
             confPath = os.path.join( repoConfFolder, confName+'.conf' )
             confDict = self._getConfFile( confName, confPath )
-            self.availableModules[confDict['Name']] = (self.currentRepoName,confName,confDict)
+            moduleName = confDict['Name']
+            newTuple = (self.currentRepoName,confName,confDict)
+            if moduleName in self.availableModules: # already
+                logging.warning( "refreshRemoteSource: {} module already in {}, now found in {}".format( moduleName, self.availableModules[moduleName][0], self.currentRepoName ) )
+                existing = self.availableModules[moduleName]
+                if isinstance( existing, tuple): self.availableModules[moduleName] = [existing,newTuple]
+                else: self.availableModules[moduleName].append( newTuple )
+            else: # add it
+                self.availableModules[moduleName] = newTuple
         #print( 'availableModules', len(self.availableModules), self.availableModules.keys() )
         return True
     # end of SwordInstallManager.refreshRemoteSource
@@ -478,12 +492,15 @@ class SwordInstallManager():
 
         # Get the config info
         repoName, confName, confDict = self.availableModules[moduleName]
+        if repoName != self.currentRepoName:
+            print( "installModule: You requested {!r} from {} but it's in {}!".format( moduleName, self.currentRepoName, repoName ) )
+            return False
 
         moduleName = confDict['Name']
         moduleRelativePath = confDict['DataPath']
         if moduleRelativePath.startswith( './' ): moduleRelativePath = moduleRelativePath[2:]
         if moduleRelativePath[-1] != '/': moduleRelativePath += '/'
-        #print( repr(moduleName), repr(moduleRelativePath) )
+        print( repr(moduleName), repr(moduleRelativePath) )
         fileSaveFolder = os.path.join( self.currentInstallFolder, moduleRelativePath )
         #print( "Save folder is", fileSaveFolder )
         if not os.path.isdir( fileSaveFolder): os.makedirs( fileSaveFolder )
@@ -503,14 +520,29 @@ class SwordInstallManager():
         ftp.login() # anonymous:anonymous
         if repoFolder:
             assert repoFolder[0] == '/'
-            ftp.cwd( repoFolder )
+            try: ftp.cwd( repoFolder )
+            except ftplib.error_perm as err:
+                #logging.error( "installModule: FTP error:", sys.exc_info()[0], err )
+                logging.error( "installModule: Unable to reach {} on {} with {!r}" \
+                                            .format( repoFolder, repoSite, err ) )
+                return False
         for filename,filedict in ftp.mlsd( moduleRelativePath ):
             #print( '  ff', repr(filename), filedict )
             if filename not in ( '.','..', ): # Ignore these
                 #print( "    Need to download", filename )
                 fileSaveFilepath = os.path.join( fileSaveFolder, filename )
                 #print( "    Save filepath is", fileSaveFilepath )
-                ftp.retrbinary( 'RETR ' + moduleRelativePath + filename, open( fileSaveFilepath, 'wb' ).write )
+                ftp.retrbinary( 'RETR ' + moduleRelativePath + filename,
+                                    open( fileSaveFilepath, 'wb' ).write )
+
+        # Finally download and install the .conf file
+        confFullname = confName+'.conf'
+        confFolderPath = os.path.join( self.currentInstallFolder, 'mods.d/' )
+        if not os.path.isdir( confFolderPath): os.makedirs( confFolderPath )
+        confFilePath = os.path.join( confFolderPath, confFullname )
+        print( 'confFilePath', confFilePath )
+        ftp.retrbinary( 'RETR ' + 'mods.d/' + confFullname,
+                        open( confFilePath, 'wb' ).write ) # , encoding=DEFAULT_SWORD_CONF_ENCODING
         ftp.quit()
         return True
     # end of SwordInstallManager.installModule
@@ -520,8 +552,9 @@ class SwordInstallManager():
 
 def demo():
     """
-    Sword Manager
+    Sword Manager demo
     """
+    import SwordModules
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     im = SwordInstallManager()
@@ -529,29 +562,94 @@ def demo():
     else: im.setUserDisclaimerConfirmed()
 
     if 1: # try refreshing one repository
-        im.currentRepoName = 'NET Bible'
+        getRepoName = 'NET Bible'
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        im.currentRepoName = getRepoName
         im.currentInstallFolder = tempfile.gettempdir()
         im.refreshRemoteSource()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                for modName in im.availableModules:
+                    print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
-    if 1: # try installing a module
-        #im.installFolders.append( '.' )
-        im.currentInstallFolder = 'TempTestData/'
-        im.installModule( 'NETfree' )
+        if 1: # try installing a module from the above repository
+            getModuleName = 'NETfree'
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+            im.currentInstallFolder = 'TempTestData/'
+            if im.installModule( getModuleName ):
+                confData = im.availableModules[getModuleName]
+                if isinstance( confData, tuple ): confName = confData[1]
+                elif isinstance( confData, list ): confName = confData[0][1]
+                swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolder )
+                swMC.loadConf()
+                print( swMC )
 
-    if 1: # try refreshing all repositories
+                swM = SwordModules.SwordModule( swMC )
+                swM.loadBooks( inMemoryFlag=True )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+                if not swM.SwordModuleConfiguration.locked: swM.test()
+
+
+    if 1: # try refreshing one repository
+        getRepoName = 'eBible'
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        im.currentRepoName = getRepoName
+        im.currentInstallFolder = tempfile.gettempdir()
+        im.refreshRemoteSource()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                for modName in im.availableModules:
+                    print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+
+        if 1: # try installing a module from the above repository
+            getModuleName = 'engWEBBE2015eb'
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+            im.currentInstallFolder = 'TempTestData/'
+            if im.installModule( getModuleName ):
+                swMC = SwordModules.SwordModuleConfiguration( getModuleName, im.currentInstallFolder )
+                swMC.loadConf()
+                print( swMC )
+
+                swM = SwordModules.SwordModule( swMC )
+                swM.loadBooks( inMemoryFlag=True )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+                if not swM.SwordModuleConfiguration.locked: swM.test()
+
+
+    if 0: # try refreshing all repositories
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh all repositories…" )
         im.refreshAllRemoteSources()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            for modName in im.availableModules:
+                print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
-    if 1: # try installing another module
-        #im.installFolders.append( '.' )
+    if 0: # try installing another module
+        getModuleName = 'JPS'
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+        im.currentRepoName = 'CrossWire Main'
         im.currentInstallFolder = 'TempTestData/'
-        im.installModule( 'ESV' )
+        if im.installModule( getModuleName ): # See if we can read it
+            confData = im.availableModules[getModuleName]
+            if isinstance( confData, tuple ): confName = confData[1]
+            elif isinstance( confData, list ): confName = confData[0][1]
+            swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolder )
+            swMC.loadConf()
+            print( swMC )
+
+            swM = SwordModules.SwordModule( swMC )
+            swM.loadBooks( inMemoryFlag=True )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+            if not swM.SwordModuleConfiguration.locked: swM.test()
+
 # end of demo
 
 if __name__ == '__main__':
     #from multiprocessing import freeze_support
     #freeze_support() # Multiprocessing support for frozen Windows executables
 
-    import sys
     if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
         from io import TextIOWrapper
         sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )

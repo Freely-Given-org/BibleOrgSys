@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-04-27' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -235,7 +235,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
             logging.info( exp("loadPTXSSFData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
             line = line[1:] # Remove the Byte Order Marker (BOM)
-        if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+        #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
         line = line.strip() # Remove leading and trailing whitespace
         if not line: continue # Just discard blank lines
         lastLine = line
