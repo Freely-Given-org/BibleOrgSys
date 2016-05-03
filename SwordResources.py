@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-19' # by RJH
+LastModifiedDate = '2016-05-03' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1134,7 +1134,7 @@ class SwordInterface():
             result1 = self.library.getAvailableModuleCodeDuples( onlyModuleTypes )
             #print( 'getAvailableModuleCodeDuples.result1', result1 )
             if result1:
-                result2 = [(name,SwordModules.GENERIC_MODULE_TYPE_NAMES[modType]) for name,modType in result1]
+                result2 = [(name,SwordModules.GENERIC_SWORD_MODULE_TYPE_NAMES[modType]) for name,modType in result1]
                 #print( 'getAvailableModuleCodeDuples.result2', result2 )
                 return result2
     # end of SwordInterface.getAvailableModuleCodeDuples

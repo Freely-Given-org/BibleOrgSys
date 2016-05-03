@@ -51,10 +51,10 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-27' # by RJH
+LastModifiedDate = '2016-05-03' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.42'
+ProgVersion = '0.43'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -121,6 +121,9 @@ class SwordModuleConfiguration:
         Looks in loadFolder (should be the sword folder that contains the mods.d and modules folders)
             and attempts to load moduleAbbreviation.conf.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordModuleConfiguration.__init__( {!r}, {} )").format( moduleAbbreviation, swordFolder ) )
+
         # Set our defaults
         self.abbreviation = moduleAbbreviation # a string like 'ylt'
         self.swordFolder = swordFolder
@@ -259,9 +262,11 @@ class SwordModuleConfiguration:
 
         # Check we got everything we should have
         assert self.name
-        assert self.modType
-        assert self.modCategory
+        if self.name != 'Globals': # special case
+            assert self.modType
+            assert self.modCategory
     # end of SwordModuleConfiguration.loadConf
+
 
     def __str__( self ):
         """
@@ -270,6 +275,9 @@ class SwordModuleConfiguration:
         @return: the name of a Sword object formatted as a string
         @rtype: string
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordModuleConfiguration.__str__()") )
+
         result = "SwordModuleConfiguration for {}".format( self.abbreviation )
         #if self.abbreviation: result += ('\n' if result else '') + "  " + _("Abbreviation: ") + self.abbreviation
         if self.swordFolder: result += ('\n' if result else '') + "  " + _("Folder: {}").format( self.swordFolder )
@@ -286,10 +294,14 @@ class SwordModuleConfiguration:
         return result
     # end of SwordModuleConfiguration:__str__
 
+
     def get( self, fieldName ):
         """
         Return the value for fieldname (str) if it's in the configDict (loading from the Sword module .conf file).
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordModuleConfiguration.get( {} )").format( fieldName ) )
+
         if fieldName in self.confDict: return self.confDict[fieldName]
     # end of SwordModuleConfiguration.get
 # end of SwordModuleConfiguration
@@ -2021,7 +2033,7 @@ class SwordModules:
         # Go find them and load them all!
         for folder in self.searchFolders:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( exp("Checking {}").format( folder ) )
+                print( '  ' + exp("__loadAllConfs: checking {}").format( folder ) )
             if os.path.isdir( folder ):
                 loadCount = self.__loadConfs( folder )
                 if loadCount: self.folders.append( (folder,loadCount,) )
@@ -2046,6 +2058,7 @@ class SwordModules:
                 logging.warning( _("SwordModules found unexpected file in conf folder: {!r}").format( moduleConfFilename ) )
                 continue
             moduleRoughName = moduleConfFilename[:-5] # Remove the .conf from the name
+            if moduleRoughName == 'globals': continue # Not a real module, so not wanted here
             #if moduleRoughName not in ('gerhfa2002','oxfordtr','personal','tagalog','tr',): continue # Used for testing specific modules
             count += 1
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "#{}".format( count ), end='' )

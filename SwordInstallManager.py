@@ -34,14 +34,14 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-27' # by RJH
+LastModifiedDate = '2016-05-03' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
 ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 #from singleton import singleton
@@ -121,7 +121,7 @@ SPECIAL_SWORD_CONF_FIELD_NAMES = ('History','Description','About','Copyright','D
 def processConfLines( abbreviation, openFile, confDict ):
     """
     Process a line from a Sword .conf file
-        and saves the results in the confDict.
+        and saves the results in the given confDict.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( exp("processConfLines( {}, … )").format( abbreviation ) )
@@ -131,15 +131,14 @@ def processConfLines( abbreviation, openFile, confDict ):
         lineCount += 1
         if lineCount==1:
             if line[0]==chr(65279): #U+FEFF
-                logging.info( "SwordModuleConfiguration.loadConf1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                logging.info( "processConfLines1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
                 line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
             elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
-                logging.info( "SwordModuleConfiguration.loadConf2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                logging.info( "processConfLines2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
                 line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
         if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-        #print( lineCount, repr(line) )
         if not line: continue # Just discard blank lines
-        #print ( "SwordModuleConfiguration.loadConf: Conf file line {} is {!r}".format( lineCount, line ) )
+        #print ( "processConfLines: Conf file line {} is {!r}".format( lineCount, line ) )
         if line[0] in '#;': continue # Just discard comment lines
         if continuationFlag: thisLine += line; continuationFlag = False
         else: thisLine = line
@@ -170,7 +169,7 @@ def processConfLines( abbreviation, openFile, confDict ):
                         logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( abbreviation, bits[0], bits[1] ) )
                     else: # We have multiple different entries for this field name
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( "Sword Modules loadConf found inconsistency", abbreviation, bits[0], bits[1] )
+                            print( exp("processConfLines found inconsistency"), abbreviation, bits[0], bits[1] )
                             assert bits[0] in SPECIAL_SWORD_CONF_FIELD_NAMES or bits[0] in ('GlobalOptionFilter','DictionaryModule','DistributionLicense','Feature','LCSH','Obsoletes','TextSource',) # These are the only ones where we expect multiple values (and some of these are probably module bugs)
                         if bits[0] in SPECIAL_SWORD_CONF_FIELD_NAMES: # Try to handle these duplicate entries -- we're expecting 2-tuples later
                             try: confDict[bits[0]].append( ('???',bits[1]) ) #; print( bits[0], 'lots' )
@@ -500,7 +499,7 @@ class SwordInstallManager():
         moduleRelativePath = confDict['DataPath']
         if moduleRelativePath.startswith( './' ): moduleRelativePath = moduleRelativePath[2:]
         if moduleRelativePath[-1] != '/': moduleRelativePath += '/'
-        print( repr(moduleName), repr(moduleRelativePath) )
+        #print( repr(moduleName), repr(moduleRelativePath) )
         fileSaveFolder = os.path.join( self.currentInstallFolder, moduleRelativePath )
         #print( "Save folder is", fileSaveFolder )
         if not os.path.isdir( fileSaveFolder): os.makedirs( fileSaveFolder )
@@ -573,7 +572,7 @@ def demo():
                 for modName in im.availableModules:
                     print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
-        if 1: # try installing a module from the above repository
+        if 1: # try installing and testing a module from the above repository
             getModuleName = 'NETfree'
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolder = 'TempTestData/'
@@ -591,7 +590,7 @@ def demo():
                 if not swM.SwordModuleConfiguration.locked: swM.test()
 
 
-    if 1: # try refreshing one repository
+    if 0: # try refreshing one repository
         getRepoName = 'eBible'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
@@ -603,7 +602,7 @@ def demo():
                 for modName in im.availableModules:
                     print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
-        if 1: # try installing a module from the above repository
+        if 1: # try installing and testing a module from the above repository
             getModuleName = 'engWEBBE2015eb'
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolder = 'TempTestData/'
