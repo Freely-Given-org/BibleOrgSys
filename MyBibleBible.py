@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-14' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.13'
@@ -429,8 +429,8 @@ class MyBibleBible( Bible ):
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
-                    BBB = self.BOS.getBBB( longName ) # Might not work for other languages
-                    if BBB is None: BBB = self.BOS.getBBB( shortName ) # Might not work for other languages
+                    BBB = self.BOS.getBBBFromText( longName ) # Might not work for other languages
+                    if BBB is None: BBB = self.BOS.getBBBFromText( shortName ) # Might not work for other languages
                 #print( "  Got1 BBB", BBB, repr(longName) )
                 assert BBB
                 self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
@@ -454,8 +454,8 @@ class MyBibleBible( Bible ):
                     longName = longName.strip() # Why do some have a \n at the end???
                     if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                     else:
-                        BBB = self.BOS.getBBB( longName ) # Might not work for other languages
-                        if BBB is None: BBB = self.BOS.getBBB( shortName ) # Might not work for other languages
+                        BBB = self.BOS.getBBBFromText( longName ) # Might not work for other languages
+                        if BBB is None: BBB = self.BOS.getBBBFromText( shortName ) # Might not work for other languages
                         if BBB is None and shortName=='3Ма': BBB = 'MA3' # Cant't track down why this fails ???
                     #print( "  Got2 BBB", BBB, repr(longName), repr(shortName) )
                     assert BBB

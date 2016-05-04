@@ -28,10 +28,10 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
-ProgVersion = '0.78'
+ProgVersion = '0.79'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -119,9 +119,12 @@ class BibleBooksCodes:
 
 
     def __len__( self ):
-        """ Return the number of available codes. """
+        """
+        Return the number of available codes.
+        """
         assert len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"])
         return len(self.__DataDicts["referenceAbbreviationDict"])
+    # end of BibleBooksCodes.__len__
 
 
     def __contains__( self, BBB ):
@@ -159,14 +162,16 @@ class BibleBooksCodes:
 
 
     def getReferenceNumber( self, BBB ):
-        """ Return the referenceNumber 1..255 for the given book code (referenceAbbreviation). """
+        """ Return the referenceNumber 1..999 for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["referenceNumber"]
 
 
     def getSequenceList( self, myList=None ):
-        """ Return a list of BBB codes in a sequence that could be used for the print order if no further information is available.
+        """
+        Return a list of BBB codes in a sequence that could be used for the print order if no further information is available.
             If you supply a list of books, it puts your actual book codes into the default order.
-                Your list can simply be a list of BBB strings, or a list of tuples with the BBB as the first entry in the tuple. """
+                Your list can simply be a list of BBB strings, or a list of tuples with the BBB as the first entry in the tuple.
+        """
         if myList is None: return self.__DataDicts["sequenceList"]
         # They must have given us their list of books
         assert isinstance( myList, list )
@@ -186,6 +191,13 @@ class BibleBooksCodes:
         #else: print( "getSequenceList: {} produced {}".format( myList, resultList ) )
         return resultList
     # end of BibleBooksCodes.getSequenceList
+
+
+    def _getFullEntry( self, BBB ):
+        """
+        Return the full dictionary for the given book (code).
+        """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]
 
 
     def getCCELNumber( self, BBB ):
@@ -282,7 +294,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
 
-    def getBBB( self, someText ):
+    def getBBBFromText( self, someText ):
         """
         Attempt to return the BBB reference abbreviation string for the given book information (text).
 
@@ -293,7 +305,7 @@ class BibleBooksCodes:
         #print( '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
         if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
             return SomeUppercaseText # it's already a BBB code
-        #if someText.isdigit() and 1 <= int(someText) <= 255:
+        #if someText.isdigit() and 1 <= int(someText) <= 999:
             #return self.__DataDicts['referenceNumberDict'][int(someText)]['referenceAbbreviation']
         #print( '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
         #print( '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
@@ -310,7 +322,7 @@ class BibleBooksCodes:
         #print( 'getBBB2', repr(someText), matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
         #print( sorted(self.__DataDicts['allAbbreviationsDict']) )
-    # end of BibleBooksCodes.getBBB
+    # end of BibleBooksCodes.getBBBFromText
 
 
     def getExpectedChaptersList( self, BBB ):
@@ -600,7 +612,7 @@ def demo():
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
-        print( '{!r} -> {}'.format( something, bbc.getBBB( something ) ) )
+        print( '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSIS( osisCode ) ) )

@@ -54,7 +54,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.31'
@@ -572,7 +572,7 @@ def demo():
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
             #    print( "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
-            #    print( "{!r} gives {}".format(test,bos.getBBB(test) ) )
+            #    print( "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
 
     if 1:
         version = 'KJV-1769_edition'

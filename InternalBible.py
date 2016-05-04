@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-27' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -845,7 +845,7 @@ class InternalBible:
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
-        result = BibleOrgSysGlobals.BibleBooksCodes.getBBB( referenceString )
+        result = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()

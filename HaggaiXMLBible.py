@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.30'
@@ -459,7 +459,7 @@ class HaggaiXMLBible( Bible ):
                 logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
                                                                         .format( bookNumber, bookName, bookShortName ) )
         elif bookName:
-            BBB = self.genericBOS.getBBB( bookName )
+            BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )

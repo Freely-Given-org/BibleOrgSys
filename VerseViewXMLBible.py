@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.14'
@@ -342,11 +342,11 @@ class VerseViewXMLBible( Bible ):
             else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
 
         if bookName:
-            BBB = self.genericBOS.getBBB( bookName )
+            BBB = self.genericBOS.getBBBFromText( bookName )
         if BBB is None:
             adjustedBookName = BibleOrgSysGlobals.removeAccents( bookName )
             if adjustedBookName != bookName:
-                BBB = self.genericBOS.getBBB( adjustedBookName )
+                BBB = self.genericBOS.getBBBFromText( adjustedBookName )
         BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
         if BBB2 != BBB: # Just double check using the book number
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:

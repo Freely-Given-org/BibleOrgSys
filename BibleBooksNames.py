@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.39'
@@ -308,7 +308,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.getAvailableLanguageCodes
 
 
-    def getBBB( self, bookNameOrAbbreviation ):
+    def getBBBFromText( self, bookNameOrAbbreviation ):
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
@@ -338,7 +338,7 @@ class BibleBooksNamesSystems:
                             return BBB
 
             if self.__ExpandedDicts: print( self.__ExpandedDicts[systemName] ); halt # nothing written here yet
-    # end of BibleBooksNamesSystems.getBBB
+    # end of BibleBooksNamesSystems.getBBBFromText
 
 
     def getBooksNamesSystem( self, systemName, bookList=None ):
@@ -474,7 +474,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
 
-    def getBBB( self, bookNameOrAbbreviation ):
+    def getBBBFromText( self, bookNameOrAbbreviation ):
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
@@ -489,7 +489,7 @@ class BibleBooksNamesSystem:
             return None
         if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
-            print( "BibleBooksNamesSystem.getBBB( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
+            print( "BibleBooksNamesSystem.getBBBFromText( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
             #print( self.__sortedBookNamesDict )
             myList, thisLen = [], len(upperCaseBookNameOrAbbreviation)
             #for key in self.__sortedBookNamesDict.keys():
@@ -497,7 +497,7 @@ class BibleBooksNamesSystem:
             for key in self.__sortedBookNamesDict.keys():
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             print( "Possibility list is", myList )
-    # end of BibleBooksNamesSystem.getBBB
+    # end of BibleBooksNamesSystem.getBBBFromText
 
 
     def getDivisionAbbreviation( self, divisionNameOrAbbreviation ):
@@ -555,7 +555,7 @@ def demo():
     print( "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
     print( "Available language codes are:", bbnss.getAvailableLanguageCodes() )
     for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
-        print( "From {!r} got {}".format( bookName, bbnss.getBBB( bookName ) ) )
+        print( "From {!r} got {}".format( bookName, bbnss.getBBBFromText( bookName ) ) )
 
     # Demo the BibleBooksNamesSystem object
     bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
@@ -567,7 +567,7 @@ def demo():
     print( "Checking book name inputs…" )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
-        print( "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBB(bookAbbrevInput)) )
+        print( "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBBFromText(bookAbbrevInput)) )
     print( "Checking division name inputs…" )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
         print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )

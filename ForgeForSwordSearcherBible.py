@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.34'
@@ -355,10 +355,10 @@ class ForgeForSwordSearcherBible( Bible ):
                                 #elif bookCode in ('Jude',): BBB = 'JDE'
                                 else:
                                     #print( "4BookCode =", repr(bookCode) )
-                                    #BBB = BOS.getBBB( bookCode )  # Try to guess
-                                    BBB = BOS66.getBBB( bookCode )  # Try to guess
-                                    if not BBB: BBB = BOS81.getBBB( bookCode )  # Try to guess
-                                    if not BBB: BBB = BOSx.getBBB( bookCode )  # Try to guess
+                                    #BBB = BOS.getBBBFromText( bookCode )  # Try to guess
+                                    BBB = BOS66.getBBBFromText( bookCode )  # Try to guess
+                                    if not BBB: BBB = BOS81.getBBBFromText( bookCode )  # Try to guess
+                                    if not BBB: BBB = BOSx.getBBBFromText( bookCode )  # Try to guess
                                     #print( "4BBB =", repr(BBB) )
                         else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
                     continue # Just save the pointer information which refers to the text on the next line

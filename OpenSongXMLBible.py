@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-04' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.32'
@@ -269,7 +269,7 @@ class OpenSongXMLBible( Bible ):
                 bookName = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookName:
-            BBB = self.genericBOS.getBBB( bookName ) # Booknames are in English
+            BBB = self.genericBOS.getBBBFromText( bookName ) # Booknames are in English
             if BBB:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
