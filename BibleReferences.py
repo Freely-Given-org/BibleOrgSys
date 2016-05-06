@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2016-05-06' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -152,13 +152,13 @@ class BibleReferenceBase:
             #assert BibleObject is not None
             self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
-            self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book code from the vernacular name or abbreviation
+            self.getBBBFromText = self._BibleOrganizationalSystem.getBBBFromText # This is the function that finds a book code from the vernacular name or abbreviation
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
             assert BibleObject is not None
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
             getBookAbbreviationFunction = None
-            self.getBBB = BibleObject.guessXRefBBB
+            self.getBBBFromText = BibleObject.guessXRefBBB
     # end of BibleReferenceBase:__init__
 # end of class BibleReferenceBase
 
@@ -1256,15 +1256,15 @@ class BibleReferenceList( BibleReferenceBase ):
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
         OSISList = BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes()
-        #self.getBBB = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
-        self.getBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS
+        #self.getBBBFromText = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
+        self.getBBBFromText = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
 
         # Set things up again how they were
         self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
-        self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book by name
+        self.getBBBFromText = self._BibleOrganizationalSystem.getBBBFromText # This is the function that finds a book by name
 
         return sucessFlag, haveWarnings, resultList
     # end of BibleReferenceList.parseOSISReferenceString

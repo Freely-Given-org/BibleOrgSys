@@ -265,6 +265,7 @@ class BibleBooksNamesSystems:
         return result
     # end of BibleBooksNamesSystems.__str__
 
+
     def __len__( self ):
         """
         Returns the number of book names systems loaded.
@@ -272,12 +273,14 @@ class BibleBooksNamesSystems:
         return len( self.__DataDicts )
     # end of BibleBooksNamesSystems.__len__
 
+
     def __contains__( self, name ):
         """
         Returns True/False if the name is in this system.
         """
         return name in self.__DataDicts
     # end of BibleBooksNamesSystems.__contains__
+
 
     def getAvailableBooksNamesSystemNames( self, languageCode=None ):
         """
@@ -294,6 +297,7 @@ class BibleBooksNamesSystems:
             if systemName.startswith( search ): result.append( systemName[4:] ) # Get the bit after the underline
         return result
     # end of BibleBooksNamesSystems.getAvailableBooksNamesSystemNames
+
 
     def getAvailableLanguageCodes( self ):
         """
