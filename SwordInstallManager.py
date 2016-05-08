@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-03' # by RJH
+LastModifiedDate = '2016-05-07' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -200,6 +200,8 @@ class SwordInstallManager():
 
         self.userDisclaimerConfirmed = False
 
+        self.currentTempFolder = tempfile.gettempdir()
+
         # We default to allowing all of the default sources
         self.downloadSources = DEFAULT_SWORD_DOWNLOAD_SOURCES # OrderedDict
         self.currentRepoName = None
@@ -315,7 +317,7 @@ class SwordInstallManager():
 
         repoConfFolderName = 'mods.d'
         repoCompressedFilename = repoConfFolderName + '.tar.gz'
-        repoSaveFolder = tempfile.gettempdir()
+        repoSaveFolder = self.currentTempFolder
         repoCompressedSaveFilepath = os.path.join( repoSaveFolder, repoCompressedFilename )
         if os.path.isfile( repoCompressedSaveFilepath ): # delete file if it exists
             #print( "Delete1", repoCompressedSaveFilepath )
@@ -564,7 +566,7 @@ def demo():
         getRepoName = 'NET Bible'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
-        im.currentInstallFolder = tempfile.gettempdir()
+        im.currentInstallFolder = self.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
@@ -594,7 +596,7 @@ def demo():
         getRepoName = 'eBible'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
-        im.currentInstallFolder = tempfile.gettempdir()
+        im.currentInstallFolder = self.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
