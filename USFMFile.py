@@ -34,7 +34,7 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-07' # by RJH
+LastModifiedDate = '2016-05-09' # by RJH
 ShortProgName = "USFMFile"
 ProgName = "USFM File loader"
 ProgVersion = '0.85'
@@ -127,7 +127,8 @@ class USFMFile:
         @param key: The SFM record marker (not including the backslash)
         @type encoding: string
         @rtype: list
-        @return: list of lists containing the records
+
+        Puts the result into self.lines
         """
         #print( "USFMFile.read( {!r}, {!r}, {!r} )".format( USFMFilepath, ignoreSFMs, encoding ) )
 

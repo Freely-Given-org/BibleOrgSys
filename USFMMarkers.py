@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-11' # by RJH
+LastModifiedDate = '2016-05-09' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.68'
@@ -704,7 +704,7 @@ class USFMMarkers:
 
 def demo():
     """
-    Main program to handle command line parameters and then run what they want.
+    Demonstration program to handle command line parameters and then run what they want.
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
@@ -775,7 +775,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
