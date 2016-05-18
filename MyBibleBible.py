@@ -212,7 +212,7 @@ for bBBB,bStuff in BOOK_TABLE.items():
     #print( bBBB, bStuff )
     assert len(bStuff) == 6
     for someField in bStuff: assert someField # shouldn't be blank
-    assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(bBBB)
+    if debuggingThisModule: assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(bBBB)
     bkColor, bkNumber, rusAbbrev, rusName, engAbbrev, engName = bStuff
     assert bkNumber not in BOOKNUMBER_TABLE
     BOOKNUMBER_TABLE[bkNumber] = (bBBB,bkColor,rusAbbrev,rusName,engAbbrev,engName)

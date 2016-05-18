@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.44'
+ProgVersion = '0.45'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -43,10 +43,6 @@ import os, logging
 import BibleOrgSysGlobals
 from USFMFile import USFMFile
 from Bible import BibleBook
-
-
-sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
-
 
 
 #def exp( messageString ):
@@ -65,6 +61,10 @@ sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('
 
 
 
+sortedNLMarkers = None
+
+
+
 class USFMBibleBook( BibleBook ):
     """
     Class to load and manipulate a single USFM file / book.
@@ -77,6 +77,10 @@ class USFMBibleBook( BibleBook ):
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = 'USFM Bible Book object'
         self.objectTypeString = 'USFM'
+
+        global sortedNLMarkers
+        if sortedNLMarkers is None:
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
     # end of USFMBibleBook.__init__
 
 

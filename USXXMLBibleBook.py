@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -43,10 +43,6 @@ from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 from Bible import BibleBook
-
-
-sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
-
 
 
 def exp( messageString ):
@@ -65,6 +61,10 @@ def exp( messageString ):
 
 
 
+sortedNLMarkers = None
+
+
+
 class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
@@ -77,6 +77,9 @@ class USXXMLBibleBook( BibleBook ):
         self.objectNameString = 'USX XML Bible Book object'
         self.objectTypeString = 'USX'
 
+        global sortedNLMarkers
+        if sortedNLMarkers is None:
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
         #self.BBB = BBB
     # end of USXXMLBibleBook.__init__
 
@@ -437,11 +440,12 @@ def demo():
 
     import USXFilenames, USFMFilenames, USFMBibleBook
     #name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
-    name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
+    #name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
+    name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/" # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder2 ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning USX  {} from {}…").format( name, testFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -452,7 +456,7 @@ def demo():
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading USX {} from {}…").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
@@ -476,7 +480,7 @@ def demo():
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} from {}…").format( BBB2, filename2 ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
@@ -505,15 +509,18 @@ def demo():
                         for i in range(0, max( UxL, UL ) ):
                             if i<UxL and i<UL:
                                 if UxBB._processedLines[i] != UBB._processedLines[i]:
-                                    #print( "usx ", i, len(UxBB._processedLines[i]), str(UxBB._processedLines[i])[:2] )
-                                    #print( "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i][0]) #[:2] )
-                                    print( "\n{} line {} not equal: {}({}) from {}({})".format( BBB, i, UxBB._processedLines[i][0], UxBB._processedLines[i][1], UBB._processedLines[i][0], UBB._processedLines[i][1] ) )
-                                    if UxBB._processedLines[i][2] != UBB._processedLines[i][2]:
-                                        print( "   UsxBB[2]: {!r}".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
-                                        print( "   UsfBB[2]: {!r}".format( getShortVersion( UBB._processedLines[i][2] ) ) )
-                                    if (UxBB._processedLines[i][3] or UBB._processedLines[i][3]) and UxBB._processedLines[i][3]!=UBB._processedLines[i][3]:
-                                        print( "   UdsBB[3]: {!r}".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
-                                        print( "   UsfBB[3]: {!r}".format( getShortVersion( UBB._processedLines[i][3] ) ) )
+                                    print( "\n{} line {} not equal: {}({}) from {}({})".format( BBB, i, UxBB._processedLines[i].getCleanText(), UxBB._processedLines[i].getMarker(), UBB._processedLines[i].getCleanText(), UBB._processedLines[i].getMarker() ) )
+                                    if 1:
+                                        print( "usx ", repr(UxBB._processedLines[i]) )
+                                        print( "usx ", i, len(UxBB._processedLines[i]), UxBB._processedLines[i].getMarker(), UxBB._processedLines[i].getOriginalText() )
+                                        print( "usfm", repr(UBB._processedLines[i]) )
+                                        print( "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i].getMarker() )
+                                    if UxBB._processedLines[i].getAdjustedText() != UBB._processedLines[i].getAdjustedText():
+                                        print( "   UsxBB[adj]: {!r}".format( getShortVersion( UxBB._processedLines[i].getAdjustedText() ) ) )
+                                        print( "   UsfBB[adj]: {!r}".format( getShortVersion( UBB._processedLines[i].getAdjustedText() ) ) )
+                                    if (UxBB._processedLines[i].getCleanText() or UBB._processedLines[i].getCleanText()) and UxBB._processedLines[i].getCleanText()!=UBB._processedLines[i].getCleanText():
+                                        print( "   UdsBB[clT]: {!r}".format( getShortVersion( UxBB._processedLines[i].getCleanText() ) ) )
+                                        print( "   UsfBB[clT]: {!r}".format( getShortVersion( UBB._processedLines[i].getCleanText() ) ) )
                                     mismatchCount += 1
                             else: # one has more lines
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )

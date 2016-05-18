@@ -43,10 +43,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.62'
+ProgVersion = '0.63'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -217,12 +217,6 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.__init__
 
 
-    #def __eq__( self, other ):
-        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        #return False
-    #def __ne__(self, other): return not self.__eq__(other)
-
-
     def __str__( self ):
         """
         Just display a simplified view of the list of entries.
@@ -244,6 +238,10 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.__str__
 
     def __len__( self ): return len( self.data )
+    def __eq__( self, other ):
+        if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        return False
+    def __ne__(self, other): return not self.__eq__(other)
 
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
@@ -254,6 +252,7 @@ class InternalBibleExtraList:
         # Otherwise assume keyIndex is an int
         return self.data[keyIndex]
     # end of InternalBibleExtraList.__getitem__
+
 
     def summary( self ):
         """
@@ -343,19 +342,43 @@ class InternalBibleEntry:
     # end of InternalBibleEntry.__init__
 
 
-    #def __eq__( self, other ):
-        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        #return False
-    #def __ne__(self, other): return not self.__eq__(other)
+    def __eq__( self, other ): # If we don't have this defined, a==b does a is b.
+        #print( repr(self) )
+        #print( repr(other) )
+        #print( isinstance( other, self.__class__ ) )
+        #print( self.__dict__ == other.__dict__ )
+        #for someKey, someItem in sorted( self.__dict__.items() ):
+            #print( 'self', someKey, repr(someItem) )
+        #for someKey, someItem in sorted( other.__dict__.items() ):
+            #print( 'other', someKey, repr(someItem) )
+        #halt
+        return isinstance( other, self.__class__ ) and self.__dict__ == other.__dict__
+    def __ne__( self, other ):
+        return not self.__eq__( other )
 
 
     def __str__( self ):
         """
         Just display a very abbreviated form of the entry.
         """
-        cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'…'+self.cleanText[-50:])
-        return "InternalBibleEntry object: {} = {}{}".format( self.marker, repr(cleanAbbreviation), '+extras' if self.extras else '' )
+        abbreviatedCleanText = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'…'+self.cleanText[-50:])
+        return 'InternalBibleEntry object: {} = {!r}{}'.format( self.marker, abbreviatedCleanText, '+extras' if self.extras else '' )
     # end of InternalBibleEntry.__str__
+
+
+    def __repr__( self ):
+        """
+        Display a fuller form of the entry.
+        """
+        abbreviatedAdjText = self.adjustedText if len(self.adjustedText)<100 else (self.adjustedText[:50]+'…'+self.adjustedText[-50:])
+        abbreviatedCleanText = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'…'+self.cleanText[-50:])
+        abbreviatedOrigText = self.originalText if len(self.originalText)<100 else (self.originalText[:50]+'…'+self.originalText[-50:])
+        return 'InternalBibleEntry object:' \
+            + '\n    {} = {!r}'.format( self.marker, abbreviatedCleanText ) \
+            + ('\n  from Original {} = {!r}'.format( self.originalMarker, abbreviatedOrigText ) if self.originalMarker!=self.marker or self.originalText!=self.cleanText else '' ) \
+            + ('\n          adjusted to {!r}'.format( abbreviatedAdjText ) if self.adjustedText!=self.originalText else '' ) \
+            + ('\n         with {}'.format( self.extras ) if self.extras else '' )
+    # end of InternalBibleEntry.__repr__
 
 
     def __len__( self ): return 5
@@ -366,7 +389,7 @@ class InternalBibleEntry:
         elif keyIndex==3: return self.cleanText
         elif keyIndex==4: return self.extras
         elif keyIndex==5: return self.originalText
-        else: raise IndexError
+        else: raise IndexError( 'Invalid {} index number'.format( keyIndex ) )
     # end of InternalBibleEntry.__getitem__
 
     def getMarker( self ): return self.marker

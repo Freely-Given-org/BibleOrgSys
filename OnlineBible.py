@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-16' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -146,10 +146,6 @@ class OnlineBible( Bible ):
         NT has  7,957 verses = 1F15
         Total  31,102 verses = 797E
     """
-    global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-
-
     def __init__( self, sourceFolder, encoding=None ):
         """
         Constructor: just sets up the Bible object.
@@ -167,6 +163,8 @@ class OnlineBible( Bible ):
         if not os.access( self.sourceFolder, os.R_OK ):
             logging.critical( _("OnlineBible: Folder {!r} is unreadable").format( self.sourceFolder ) )
 
+        global BOS
+        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
         #self.name = self.givenName
         #if self.name is None:
             #pass

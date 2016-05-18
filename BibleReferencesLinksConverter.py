@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
@@ -578,7 +578,16 @@ class BibleReferencesLinksConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+            for something in self.__DataList: # temp for debugging ...........................................
+                print( "Dumping something", something )
+                json.dump( something, myFile, indent=2 )
             json.dump( self.__DataList, myFile, indent=2 )
+
+            for someKey,someItem in self.__DataDict.items(): # temp for debugging ...........................................
+                print( "Dumping someKey", someKey )
+                json.dump( someKey, myFile, indent=2 )
+                print( "Dumping someItem", someItem )
+                json.dump( someItem, myFile, indent=2 )
             json.dump( self.__DataDict, myFile, indent=2 )
     # end of BibleReferencesLinksConverter.exportDataToJSON
 

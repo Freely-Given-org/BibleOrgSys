@@ -34,7 +34,7 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-07' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
 ProgVersion = '0.07'
@@ -566,7 +566,7 @@ def demo():
         getRepoName = 'NET Bible'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
-        im.currentInstallFolder = self.currentTempFolder
+        im.currentInstallFolder = im.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
@@ -596,7 +596,7 @@ def demo():
         getRepoName = 'eBible'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
-        im.currentInstallFolder = self.currentTempFolder
+        im.currentInstallFolder = im.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )

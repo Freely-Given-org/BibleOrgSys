@@ -31,10 +31,10 @@ Given two file paths, reads and compares the USFM Bible books
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-12' # by RJH
+LastModifiedDate = '2016-05-16' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -238,10 +238,10 @@ def USFMBookCompare( filepath1, filepath2 ):
     startedCVs1 = startedCVs2 = False
     while True:
         if lineIndex >= resultDict['File1']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag: print( "F1 done" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "F1 done" )
             break
         if lineIndex >= resultDict['File2']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag: print( "F2 done" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "F2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
         #print( lineIndex, lineOffset, m1, m2 )

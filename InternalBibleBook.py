@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -67,8 +67,6 @@ from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_PRINTABLE_MARK
 from BibleReferences import BibleAnchorReference
 
 
-INTERNAL_SFMS_TO_REMOVE = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
-INTERNAL_SFMS_TO_REMOVE = sorted( INTERNAL_SFMS_TO_REMOVE, key=len, reverse=True ) # List longest first
 
 nfvnCount = owfvnCount = rtsCount = sahtCount = 0
 
@@ -136,8 +134,7 @@ class InternalBibleBook:
         """
         #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
         if isinstance( parameter1, str ):
-            # Downgrade from critical to warning after testing
-            logging.critical( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
+            logging.warning( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
             self.containerBibleObject = None
             self.workName = parameter1
         else:
@@ -656,7 +653,7 @@ class InternalBibleBook:
                             '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
                             '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
                             '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
-                                + INTERNAL_SFMS_TO_REMOVE:
+                                + BibleOrgSysGlobals.internal_SFMs_to_remove:
                 cleanedNote = cleanedNote.replace( marker, '' )
             if '\\' in cleanedNote:
                 fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
@@ -2184,7 +2181,7 @@ class InternalBibleBook:
             for j,rawWord in enumerate(words):
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 word = rawWord
-                for internalMarker in INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
+                for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
                 word = BibleOrgSysGlobals.stripWordPunctuation( word )
                 if word and not word[0].isalnum():
                     #print( word, BibleOrgSysGlobals.stripWordPunctuation( word ) )
@@ -3160,7 +3157,7 @@ class InternalBibleBook:
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                    #for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + INTERNAL_SFMS_TO_REMOVE:
+                    #for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + BibleOrgSysGlobals.internal_SFMs_to_remove:
                     #    cleanExtraText = cleanExtraText.replace( marker, '' )
                     if cleanExtraText: countCharacters( cleanExtraText )
 
@@ -3405,7 +3402,7 @@ class InternalBibleBook:
             for j,rawWord in enumerate(words):
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 word = rawWord
-                for internalMarker in INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
+                for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
                 word = stripWordPunctuation( word )
                 if word and not word[0].isalnum():
                     #print( word, stripWordPunctuation( word ) )

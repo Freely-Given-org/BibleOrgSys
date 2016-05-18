@@ -99,10 +99,6 @@ from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MAR
 from MLWriter import MLWriter
 
 
-ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-
-
-
 def exp( messageString ):
     """
     Expands the message string in debug mode.
@@ -118,7 +114,6 @@ def exp( messageString ):
 # end of exp
 
 
-
 defaultControlFolder = 'ControlFiles/' # Relative to the current working directory
 def setDefaultControlFolder( newFolderName ):
     global defaultControlFolder
@@ -127,6 +122,9 @@ def setDefaultControlFolder( newFolderName ):
     defaultControlFolder = newFolderName
 # end of BibleWriter.setDefaultControlFolder
 
+
+
+ALL_CHAR_MARKERS = None
 
 
 class BibleWriter( InternalBible ):
@@ -143,6 +141,10 @@ class BibleWriter( InternalBible ):
         self.doneSetupGeneric = False
         #self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
         #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # self isn't actualised yet!!!
+
+        global ALL_CHAR_MARKERS
+        if ALL_CHAR_MARKERS is None:
+            ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
     # end of BibleWriter.__init_
 
 

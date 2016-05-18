@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-23' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
@@ -45,11 +45,11 @@ from ESFMFile import ESFMFile
 from Bible import BibleBook
 
 
-sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
-
 ESFM_SEMANTIC_TAGS = 'ADFGLMNOPQS'
 ESFM_STRONGS_TAGS = 'HG'
 
+
+sortedNLMarkers = None
 
 class ESFMBibleBook( BibleBook ):
     """
@@ -63,6 +63,10 @@ class ESFMBibleBook( BibleBook ):
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = 'ESFM Bible Book object'
         self.objectTypeString = 'ESFM'
+
+        global sortedNLMarkers
+        if sortedNLMarkers is None:
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
     # end of __init__
 
 

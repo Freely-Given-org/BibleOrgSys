@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-27' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -228,7 +228,12 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
     with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
         ssfData = myFile.read() # Read it all first
     #print( "ssfData", ssfData )
-    ssfData = ssfData.replace( '><', '>\n<' ) # Handle Paratext 'bug' that produces XML files in different format
+
+    # Handle Paratext 'bug' that produces XML files in different format
+    ssfData = ssfData.replace( '></', '=QwErTy=' ) # Protect a blank field like in "<CallerSequence></CallerSequence>"
+    ssfData = ssfData.replace( '><', '>\n<' )
+    ssfData = ssfData.replace( '=QwErTy=', '></' )
+
     for line in ssfData.split( '\n' ):
         #print( "ssfData line", repr(line) )
         lineCount += 1

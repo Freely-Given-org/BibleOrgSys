@@ -28,7 +28,9 @@ It does not use the Sword engine -- see SwordResources.py for that.
 (The advantage of this module is that there are less installation complications.)
 
 This code does not include a Sword module installer.
-It's recommended that you use a program like Xiphos to install the Sword modules on your system.
+That is in SwordInstallManager.py
+Alternatively, you can use a program like Xiphos to install the Sword modules on your system.
+Also our Biblelator provides a SwordManager (GUI) that's a front end for SwordInstallManager.
 
 Caching is not yet implemented.
 
@@ -47,14 +49,15 @@ Contains four classes:
         Then loads the collection of SwordModules and/or SwordBibleModules.
 
 TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backslashreplace' or 'namereplace') ???
+TODO: I think this entire module is very messy and needs to be completely rewritten! ???
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-03' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.43'
+ProgVersion = '0.44'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -253,11 +256,11 @@ class SwordModuleConfiguration:
         if 'CipherKey' in self.confDict:
             if self.confDict['CipherKey']:
                 if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "SwordModules: {} {} module is unlocked!".format( self.name, self.modCategory ) )
+                    print( "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
                 self.locked = False
             else:
                 if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "SwordModules: {} {} module is locked!".format( self.name, self.modCategory ) )
+                    print( "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
                 self.locked = True
 
         # Check we got everything we should have
@@ -896,35 +899,35 @@ class SwordModule():
         self.OTIndex, self.NTIndex = [], []
 
         # Default to KJV versification
-        OTList = OT39_BOOKLIST
-        assert len(OTList) == 39
-        NTList = NT27_BOOKLIST
-        assert len(NTList) == 27
+        self.OTList = OT39_BOOKLIST
+        assert len(self.OTList) == 39
+        self.NTList = NT27_BOOKLIST
+        assert len(self.NTList) == 27
         if 'Versification' in self.SwordModuleConfiguration.confDict:
             if self.SwordModuleConfiguration.confDict['Versification'] == 'KJVA':
-                OTList = OTList + ('GES','LES','TOB','JDT','ESA','WIS','SIR','BAR','PAZ','SUS','BEL','MAN','MA1','MA2',)
-                assert len(OTList) == 53
+                self.OTList = self.OTList + ('GES','LES','TOB','JDT','ESA','WIS','SIR','BAR','PAZ','SUS','BEL','MAN','MA1','MA2',)
+                assert len(self.OTList) == 53
             elif self.SwordModuleConfiguration.confDict['Versification'] == 'Vulg':
-                OTList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
+                self.OTList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
                             'EZR', 'NEH', 'TOB', 'JDT', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'WIS', 'SIR', \
                             'ISA', 'JER', 'LAM', 'BAR', 'EZE', 'DAN', 'HOS', 'JOL', 'AMO', 'OBA', \
                             'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL', 'MA1', 'MA2' )
-                assert len(OTList) == 46
-                NTList = NTList + ('MAN','GES','LES','PS2','LAO',)
-                assert len(NTList) == 32
+                assert len(self.OTList) == 46
+                self.NTList = self.NTList + ('MAN','GES','LES','PS2','LAO',)
+                assert len(self.NTList) == 32
             elif self.SwordModuleConfiguration.confDict['Versification'] == 'Rahlfs':
-                OTList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JSA', 'JGB', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', \
+                self.OTList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JSA', 'JGB', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', \
                             'CH1', 'CH2', 'EZR', 'NEH', 'TOB', 'JDT', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', \
                             'WIS', 'SIR', 'ISA', 'JER', 'LAM', 'BAR', 'EZE', 'DAN', 'HOS', 'JOL', 'AMO', 'OBA', \
                             'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL', 'MA1', 'MA2' )
-                assert len(OTList) == 46
+                assert len(self.OTList) == 46
 
         # Do the OT
         NTOffset = None
         OTOffset = 1+1 # Allow for heading of work
         self.OTIndex.append( ('FRT','0','0',) ); self.OTIndex.append( ('FRT','0','0',) )
 
-        for BBB in OTList:
+        for BBB in self.OTList:
             bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB )
             OTOffset += 1 # Allow for heading of book
             #self.OTIndex.append( (BBB,'0','0',) )
@@ -952,7 +955,7 @@ class SwordModule():
         NTOffset = 1+1 # Allow for heading of work
         OTOffset = None
         self.NTIndex.append( ('FRT','0','0',) ); self.NTIndex.append( ('FRT','0','0',) )
-        for BBB in NTList:
+        for BBB in self.NTList:
             bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB )
             OTNTOffset += 1 # Allow for heading of book
             NTOffset += 1 # Allow for heading of book
@@ -980,12 +983,14 @@ class SwordModule():
     # end of SwordModule.createChapterOffsets
 
 
-    def loadVersifiedBibleData( self ):
+    def loadVersifiedBibleData( self, requestedBBB=None ):
         """
         Loads data from a Sword module that is structured into chapters and verses.
+
+        Can load either one or all (if requestedBBB=None) books.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadVersifiedBibleData()") )
+            print( exp("SwordModule.loadVersifiedBibleData( {} ) with {}").format( requestedBBB, self.inMemoryFlag ) )
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
             assert self.SwordModuleConfiguration.modCategory in ('Bible','Commentary','General',)
 
@@ -993,6 +998,18 @@ class SwordModule():
         #if 'Versification' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Versification']!='KJV':
             #print( "Versification:", self.SwordModuleConfiguration.confDict['Versification'] )
         self.createChapterOffsets( self.SwordModuleConfiguration.confDict['Versification'] if 'Versification' in self.SwordModuleConfiguration.confDict else 'KJV' )
+        processTestaments = (('ot','OT',),('nt','NT',),)
+
+        if requestedBBB:
+            if requestedBBB not in self.chapterOffsets:
+                logging.critical( "No data available for {} book {}".format( self.SwordModuleConfiguration.name, requestedBBB ) )
+                return
+            # Find the book offset
+            #print( "cOs", len(self.chapterOffsets), self.chapterOffsets ) # A dictionary for each BBB containing a list of 3-tuples (length = numChapters + 1)
+            #print( "book cOs", len(self.chapterOffsets[requestedBBB]), self.chapterOffsets[requestedBBB] ) # A 3-tuples (length = numChapters + 1)
+            #print( "OTIndex", len(self.OTIndex), self.OTIndex ) # A list of 3-tuples of all possible BBB,C,V combinations
+            #print( "NTIndex", len(self.NTIndex), self.NTIndex )
+            processTestaments = (('ot','OT',),) if requestedBBB in self.OTList else (('nt','NT',),)
 
         if 'CompressType' in self.SwordModuleConfiguration.confDict:
             assert self.SwordModuleConfiguration.confDict['CompressType'] in ('ZIP',) # LZSS not tested yet with zlib
@@ -1005,14 +1022,14 @@ class SwordModule():
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
             totalIdxCount = 0
-            for testament,Testament in (('ot','OT',),('nt','NT',),): # load OT then NT files
+            for testament,Testament in processTestaments: # load OT then NT files
                 idxCount, bookData = 0, []
-                filepath = os.path.join( self.dataFolder, "{}.{}zs".format( testament, letter ) )
-                if os.path.isfile( filepath ):
-                    with open( filepath, 'rb') as indexFile: # These are book index entries
+                bookIndexFilepath = os.path.join( self.dataFolder, "{}.{}zs".format( testament, letter ) )
+                if os.path.isfile( bookIndexFilepath ):
+                    with open( bookIndexFilepath, 'rb') as indexFile1: # These are book index entries
                         while True:
                             idxCount += 1
-                            binary12 = indexFile.read(12)
+                            binary12 = indexFile1.read(12)
                             if not binary12: break # at the end of the file
                             blockOffset, compressedLength, uncompressedLength = struct.unpack( "III", binary12 )
                             #if count==1 and bookNum!=0:
@@ -1025,12 +1042,12 @@ class SwordModule():
                 logging.info( "No {} data available for {} module".format( Testament, self.SwordModuleConfiguration.name ) )
                 if bookData:
                     count, vssData = 0, []
-                    filepath = os.path.join( self.dataFolder, "{}.{}zv".format( testament, letter ) ) # These are verse index entries
+                    verseIndexFilepath = os.path.join( self.dataFolder, "{}.{}zv".format( testament, letter ) ) # These are verse index entries
                     minBN, maxBN = 99999, -1
-                    with open( filepath, 'rb') as indexFile:
+                    with open( verseIndexFilepath, 'rb') as indexFile2:
                         while True:
                             count += 1
-                            binary10 = indexFile.read(10)
+                            binary10 = indexFile2.read(10)
                             if not binary10: break # at the end of the file
                             blockNumber, verseOffset, verseLength = struct.unpack( "iih", binary10 ) # Book block number sometimes starts at 0, 1 is usually Genesis for OT
                             if blockNumber < minBN: minBN = blockNumber
@@ -1078,7 +1095,7 @@ class SwordModule():
                             assert maxBN <= (44 if testament=='ot' else 26)
                     if vssData:
                         blankCount = 0
-                        lastBBB = 'FRT'
+                        lastBBB = None
                         thisBookCVData = {}
                         filepath = os.path.join( self.dataFolder, "{}.{}zz".format( testament, letter ) )
                         if self.inMemoryFlag:
@@ -1123,6 +1140,7 @@ class SwordModule():
                                         self.swordData[lastBBB] = thisBookCVData
                                         thisBookCVData = {}
                                     lastBBB = BBB
+                                if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                 if verseLength:
                                     try: chunk = blockStuff[blockNumber][verseOffset:verseOffset+verseLength]
                                     except IndexError:
@@ -1148,6 +1166,7 @@ class SwordModule():
                                             self.swordIndex[lastBBB] = (filepath,thisBookCVData,)
                                             thisBookCVData = {}
                                         lastBBB = BBB
+                                    if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                     #thisBookCVData[(C,V,)] = (bookData[blockNumber][0],bookData[blockNumber][1],bookData[blockNumber][2],verseOffset,verseLength,)
                                     try:
                                         thisBookCVData[(C,V,)] = (bookData[blockNumber][0],bookData[blockNumber][1],bookData[blockNumber][2],verseOffset,verseLength,)
@@ -1159,10 +1178,11 @@ class SwordModule():
                             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {} {} {} index entries loaded".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
             if not totalIdxCount:
                 logging.critical( "No data available for compressed {} module".format( self.SwordModuleConfiguration.name ) )
+
         else: # module is not compressed
             lengthsize = 4 if self.SwordModuleConfiguration.modType=='RawCom4' else 2
             totalCount = 0
-            for testament,Testament in (('ot','OT',),('nt','NT',),): # load OT then NT files
+            for testament,Testament in processTestaments: # load OT then NT files
                 vssCount, vssData = 0, []
                 filepath = os.path.join( self.dataFolder, testament+'.vss' )
                 if os.path.isfile( filepath ):
@@ -1180,7 +1200,7 @@ class SwordModule():
                 if vssData:
                     blankCount = 0
                     thisBookCVData = {}
-                    lastBBB = 'FRT'
+                    lastBBB = None
                     filepath = os.path.join( self.dataFolder, testament )
                     if self.inMemoryFlag:
                         with open( filepath, 'rt', encoding=self.SwordModuleConfiguration.encoding ) as textFile: # Load all the Bible text into self.swordData
@@ -1202,6 +1222,7 @@ class SwordModule():
                                             self.swordData[lastBBB] = thisBookCVData
                                             thisBookCVData = {}
                                         lastBBB = BBB
+                                    if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                     thisBookCVData[(C,V,)] = chunk.strip()
                             if thisBookCVData: self.swordData[lastBBB] = thisBookCVData
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {} {} {} entries loaded{}".format( j+1-blankCount, Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
@@ -1220,6 +1241,7 @@ class SwordModule():
                                         self.swordIndex[lastBBB] = (filepath,thisBookCVData,)
                                         thisBookCVData = {}
                                     lastBBB = BBB
+                                if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                 thisBookCVData[(C,V,)] = (verseOffset,verseLength,)
                         if thisBookCVData: self.swordIndex[lastBBB] = (filepath,thisBookCVData,) # Save final entry
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {} {} {} index entries loaded".format( j+1, Testament, self.SwordModuleConfiguration.modCategory ) )
@@ -1314,6 +1336,87 @@ class SwordModule():
     # end of SwordModule.loadBooks
 
 
+    def loadBook( self, BBB, inMemoryFlag=False ):
+        """
+        Load the Sword module index into memory (and possibly also the data)
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordModule.loadBook( {}, {} )").format( BBB, inMemoryFlag ) )
+            #print( "\n\nSwIndex", self.swordIndex )
+            #print( "\n\nSwData", self.swordData )
+            assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
+
+        self.inMemoryFlag = inMemoryFlag
+
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "Loading {!r} book {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+        self.store = self.swordData if self.inMemoryFlag else self.swordIndex
+        if self.SwordModuleConfiguration.locked:
+            logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
+            return
+        if not self.SwordModuleConfiguration.modType: return # Assume an error of some sort is already given in loadConf()
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "    Module name is {}.".format( self.SwordModuleConfiguration.name ) )
+            print( "    Module type is {}.".format( self.SwordModuleConfiguration.modType ) )
+            if 'Versification' in self.SwordModuleConfiguration.confDict: print( "    Versification scheme is {}.".format( self.SwordModuleConfiguration.confDict['Versification'] ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.debugFlag:
+                print( "    Category is {}.".format( self.SwordModuleConfiguration.confDict['Category'] ) if 'Category' in self.SwordModuleConfiguration.confDict else "    " + _("No category.") )
+                print( "    Feature is {}.".format( self.SwordModuleConfiguration.confDict['Feature'] ) if 'Feature' in self.SwordModuleConfiguration.confDict else "    " + _("No feature.") )
+                print( "    Module encoding is {}.".format( self.SwordModuleConfiguration.encoding ) )
+
+        self.dataFolder = os.path.normpath( os.path.join( self.SwordModuleConfiguration.swordFolder, self.SwordModuleConfiguration.confDict['DataPath'] ) )
+        self.filename = ''
+        if not os.path.isdir( self.dataFolder ):
+            self.dataFolder = os.path.normpath( os.path.join( self.dataFolder, '../' ) ) # Seems that some modules put the filename here also
+            ix = self.SwordModuleConfiguration.confDict['DataPath'].rfind( '/' )
+            self.filename = self.SwordModuleConfiguration.confDict['DataPath'][ix+1:]
+        if self.dataFolder[-1] not in ('/','\\',): self.dataFolder += os.sep # We like folder names to end with the separator character
+
+        if self.SwordModuleConfiguration.modType == 'RawText' or self.SwordModuleConfiguration.modType=='RawFiles': # it's an uncompressed Bible
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
+            assert 'CompressType' not in self.SwordModuleConfiguration.confDict
+            if 'BlockType' in self.SwordModuleConfiguration.confDict: assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK',)
+            if self.SwordModuleConfiguration.modType!='RawFiles':
+                try: assert self.SwordModuleConfiguration.confDict['SourceType'] in ('OSIS','ThML','Plain',)
+                except KeyError: pass # Doesn't seem to matter if it's missing
+            self.loadVersifiedBibleData( BBB )
+
+        elif self.SwordModuleConfiguration.modType == 'zText': # it's a compressed Bible
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed Bible from {}…".format( self.dataFolder ) )
+            assert 'CompressType' in self.SwordModuleConfiguration.confDict
+            assert self.SwordModuleConfiguration.confDict['CompressType'] in ('ZIP',)
+            assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK','CHAPTER',)
+            if 'SourceType' in self.SwordModuleConfiguration.confDict: assert self.SwordModuleConfiguration.confDict['SourceType'] in ('OSIS','ThML','GBF','Plaintext',)
+            self.loadVersifiedBibleData( BBB )
+
+        elif self.SwordModuleConfiguration.modType in ('RawCom','RawCom4',): # it's an uncompressed commentary
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
+            assert 'CompressType' not in self.SwordModuleConfiguration.confDict
+            self.loadVersifiedBibleData( BBB )
+
+        elif self.SwordModuleConfiguration.modType == 'zCom': # it's a compressed commentary
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed commentary from {}…".format( self.dataFolder ) )
+            assert 'CompressType' in self.SwordModuleConfiguration.confDict
+            self.loadVersifiedBibleData( BBB )
+
+        elif self.SwordModuleConfiguration.modType in ('RawLD','RawLD4','zLD',): # it's a lexicon/dictionary
+            logging.critical( "Lexicons/Dictionaries don't have Bible books!" )
+
+        elif self.SwordModuleConfiguration.modType == 'RawGenBook': # it's an uncompressed commentary
+            logging.critical( "Genbooks don't have Bible books!" )
+
+        else:
+            logging.critical( "Unknown {!r} module type".format( self.SwordModuleConfiguration.modType ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( self )
+            print( "      Index size: {}".format( BibleOrgSysGlobals.totalSize( self.swordIndex ) ) )
+            print( "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
+
+        if self.store: return True
+    # end of SwordModule.loadBook
+
+
     def __str__( self ):
         """
         This method returns the string representation of a Sword module object.
@@ -1336,6 +1439,14 @@ class SwordModule():
                 result += ('\n' if result else '') + "      {}: {}".format( adjKey, value )
         return result
     # end of SwordModule.__str__
+
+
+    def getType( self ):
+        return self.SwordModuleConfiguration.modType
+    def getMarkup( self ):
+        return self.SwordModuleConfiguration.confDict['SourceType']
+    def getEncoding( self ):
+        return self.SwordModuleConfiguration.encoding
 
 
     def getDescription( self ):
@@ -1889,11 +2000,76 @@ class SwordBibleModule( SwordModule, Bible ):
                             elif intV!=0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                                 print( "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
                     self.books[BBB] = thisBook
-            del self.store, self.cache # The original module information is no longer required
+            del self.store # The original module information is no longer required
+            self.cache = {}
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {}.".format( self.name ) )
             return True
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  Nothing loaded for {}.".format( self.name ) )
     # end of SwordBibleModule.loadBooks
+
+
+    def loadBook( self, BBB ):
+        """
+        Loads a versified Sword module indexes into memory
+            and then reads the data and saves it all in our internal format.
+
+        TODO: This should be faster if both the above actions were done together.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordBibleModule.loadBook( ({}) )").format( BBB ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+
+        SwordModule.loadBook( self, BBB ) # Load the Sword module index
+        if self.store: # we loaded something
+            ourFilter = self.filterToUSFM if self.SwordModuleConfiguration.modCategory=='Bible' else self.filterToHTML
+            # Now we have to iterate through each book, chapter and verse and load into our internal format
+            for BBB in self.store:
+                if BBB=='FRT': # special case for the front matter
+                    #print( self.swordIndex[BBB] )
+                    result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
+                    if result:
+                        logging.warning( "Didn't process FRT: "+"'"+result+"'" )
+                        #halt # Need to process this
+                else:
+                    thisBook = BibleBook( self, BBB )
+                    thisBook.objectNameString = 'SwordBibleModule book object'
+                    thisBook.objectTypeString = self.objectTypeString
+                    thisBook.sourceFilepath = self.dataFilepath
+                    #thisBook.BBB = BBB
+                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+                    #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
+                    thisBook.replaceAngleBracketsFlag = False
+                    bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB )
+                    #print( BBB, bookVerseList )
+                    intC = 0
+                    for numVerses in bookVerseList:
+                        intC += 1
+                        C = str( intC )
+                        thisBook.addLine( 'c', C )
+                        for intV in range( 0, numVerses+1 ):
+                            V = str( intV )
+                            #print( BBB, intC, intV )
+                            #thisBook.addLine( 'v', str(intV) )
+                            result = ourFilter( self.getRawVersifiedData( (BBB,C,V) ), BBB, C, V )
+                            #if result: result = result.replace('<FI>','\\add ').replace('<Fi>','\\add*')
+                            #if result: result = result.replace('<CM>','') # What is this?
+                            if result:
+                                if '\n' in result or '\r' in result:
+                                    logging.warning( "SwordBibleModule.loadBook: Result with CR or LF {} {}:{} {}".format( self.name, BBB, C, intV, repr(result) ) )
+                                #thisBook.addLine( 'v', "{} {}".format( intV, result ) )
+                                thisBook.addLine( 'v', "{}".format( intV ) )
+                                thisBook.addLine( 'v~', "{}".format( result.replace( '\n', '' ) ) )
+                            elif intV!=0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                                print( "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
+                    self.books[BBB] = thisBook
+            del self.store # The original module information is no longer required
+            self.cache = {}
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {}.".format( self.name ) )
+            return True
+        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  Nothing loaded for {}.".format( self.name ) )
+    # end of SwordBibleModule.loadBook
 
 
     def __str__( self ):
@@ -2214,14 +2390,18 @@ class SwordModules:
     # end of SwordModules.getAvailableModuleCodeDuples
 
 
-    def getModule( self, moduleName ):
+    def getModule( self, moduleRoughName ):
         """
         For Sword compatibility
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.getModule( {} )").format( moduleName ) )
+            print( exp("SwordModules.getModule( {} )").format( moduleRoughName ) )
 
-        return self.loadModule( moduleName )[1]
+        try: swMC = self.confs[moduleRoughName] # Get the correct conf object
+        except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
+        #print( "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
+        swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
+        return swM
     # end of SwordModules.getModules
 
 

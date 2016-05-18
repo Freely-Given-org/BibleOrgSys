@@ -32,10 +32,10 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-16' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -145,10 +145,6 @@ class EasyWorshipBible( Bible ):
         NT has  7,957 verses = 1F15 in 27 = 1B books
         Total  31,102 verses = 797E in 66 = 42 books
     """
-    global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-
-
     def __init__( self, sourceFolder, sourceFilename, encoding=None ):
         """
         Constructor: just sets up the Bible object.
@@ -167,6 +163,9 @@ class EasyWorshipBible( Bible ):
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
             logging.critical( _("EasyWorshipBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+
+        global BOS
+        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         self.abbreviation = self.sourceFilename[:-4] # Remove file extension
     # end of EasyWorshipBible.__init__

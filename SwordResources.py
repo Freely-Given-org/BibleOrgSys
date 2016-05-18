@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-11' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.22'
@@ -1142,6 +1142,9 @@ class SwordInterface():
 
     def getModule( self, moduleAbbreviation='KJV' ):
         """
+        Get the requested module.
+
+        (Doesn't load books)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
@@ -1156,12 +1159,14 @@ class SwordInterface():
             #print( 'getModule.result2', result2 )
             return result2
         elif SwordType == 'OurCode':
-            lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
+            #lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
             #except KeyError: lmResult = self.library.loadBooks( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
             #print( moduleAbbreviation, lmResult ); halt
-            resultFlag, theModule = lmResult
+            #resultFlag, theModule = lmResult
             #if debuggingThisModule and not resultFlag: print( "failed here!" ); halt
-            return theModule
+            #return theModule
+            result1 = self.library.getModule( moduleAbbreviation )
+            return result1
     # end of SwordInterface.getModule
 
 
@@ -1470,7 +1475,7 @@ class SwordInterface():
             contextVerseData = verseData, [] # No context
         elif SwordType == 'OurCode':
             #print( exp("module"), module )
-            try: contextVerseData = module.getContextVerseData( key )
+            try: contextVerseData = module.getContextVerseData( key ) # a call to InternalBible.py
             except KeyError: # Just create a blank verse entry
                 verseData = InternalBibleEntryList()
                 c, v = key.getChapterNumberStr(), key.getVerseNumberStr()

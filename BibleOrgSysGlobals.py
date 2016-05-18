@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-25' # by RJH
+LastModifiedDate = '2016-05-17' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.66'
+ProgVersion = '0.67'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -190,6 +190,8 @@ def setupLoggingToFile( ShortProgName, ProgVersion, folderPath=None ):
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.setBasicConfig to( {!r}, {}={}, {!r}, {!r} )".format( filepath, setLevel, LOGGING_NAME_DICT[setLevel], loggingLongFormat, loggingDateFormat ) )
+    # NOTE: This call to basicConfig MUST occur BEFORE any modules make any logging calls
+    #   i.e., be careful of putting executable calls at module level that might log at module load time
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     #return filepath
@@ -1096,6 +1098,8 @@ def setStrictCheckingFlag( newValue=True ):
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
+# Some global variables
+BibleBooksCodes = USFMMarkers = USFMParagraphMarkers = internal_SFMs_to_remove = None
 def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
     Adds our standardOptions to the command line parser.
@@ -1137,6 +1141,28 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     if debugFlag or debuggingThisModule:
         maxProcesses = 1 # Limit to one process
         print( "commandLineArguments: {}".format( commandLineArguments ) )
+
+    # Load Bible data sets that are globally useful
+    global BibleBooksCodes, USFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
+    from BibleBooksCodes import BibleBooksCodes
+    BibleBooksCodes = BibleBooksCodes().loadData()
+    from USFMMarkers import USFMMarkers
+    USFMMarkers = USFMMarkers().loadData()
+    USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
+    #for marker in ( ):
+        #print( marker )
+        #USFMParagraphMarkers.remove( marker )
+    # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
+    #    'qm1', 'qm2', 'qm3', 'qm4']
+    # now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
+    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
+    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
+    internal_SFMs_to_remove = USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    internal_SFMd_to_remove = sorted( internal_SFMs_to_remove, key=len, reverse=True ) # List longest first
+
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
@@ -1197,7 +1223,7 @@ def demo():
 
 
 setVerbosity( verbosityString )
-if __name__ != '__main__':
+if 0 and __name__ != '__main__':
     # Load Bible data sets that are globally useful
     from BibleBooksCodes import BibleBooksCodes
     BibleBooksCodes = BibleBooksCodes().loadData()

@@ -69,14 +69,14 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-26' # by RJH
+LastModifiedDate = '2016-05-18' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import re, logging
@@ -243,7 +243,7 @@ class SimpleVerseKey():
                     raise TypeError
             if SI and SI.isdigit():
                 self.BBB, self.C, self.V, self.I, self.S = BBB, C, V, SI, None
-                self.keyType = 'AssignedBVCI'
+                self.keyType = 'AssignedBCVI'
             else:
                 self.BBB, self.C, self.V, self.S, self.I = BBB, C, V, SI, None
                 self.keyType = 'AssignedBCVS'
@@ -366,7 +366,7 @@ class SimpleVerseKey():
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
-            self.keyType = 'ParsedBVCI'
+            self.keyType = 'ParsedBCVI'
             #print( self.getShortText() )
             return True
 
@@ -391,7 +391,7 @@ class SimpleVerseKey():
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
-            bk, self.C, self.V, self.S = match.group(1), match.group(2), match.group(3), match.group(4) if match.group(4) else ''
+            bk, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
             self.BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bk )
             if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
