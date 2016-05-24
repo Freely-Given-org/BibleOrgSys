@@ -24,17 +24,21 @@
 
 """
 Module comparing USFM Bible book files
+    which should be versions of each other
+    to try to determine which is likely the most recently edited.
 
 Given two file paths, reads and compares the USFM Bible books
     and returns or prints a dictionary of results.
+
+This also functions as a stand-alone program.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-16' # by RJH
+LastModifiedDate = '2016-05-25' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -302,8 +306,8 @@ def main():
 
     fp1, fp2 = BibleOrgSysGlobals.commandLineArguments.file1, BibleOrgSysGlobals.commandLineArguments.file2
     allOkay = True
-    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
-    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
+    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid—aborting".format( fp1 ) ); allOkay = False
+    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid—aborting".format( fp2 ) ); allOkay = False
     if allOkay:
         result = USFMBookCompare( fp1, fp2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -330,8 +334,8 @@ if __name__ == '__main__':
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
-    parser.add_argument('file1', help="USFM Bible book file 1" ) #, metavar='XXX')
-    parser.add_argument('file2', help="USFM Bible book file 2" ) #, metavar='XXX')
+    parser.add_argument('file1', help="USFM Bible book file 1" )
+    parser.add_argument('file2', help="USFM Bible book file 2" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
