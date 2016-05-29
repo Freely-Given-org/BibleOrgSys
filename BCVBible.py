@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -99,7 +99,9 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -109,8 +111,6 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an BCVBible project here in this given folder
     numFound = 0

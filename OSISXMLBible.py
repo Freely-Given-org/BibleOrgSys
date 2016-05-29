@@ -36,10 +36,10 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.49'
+ProgVersion = '0.50'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -111,7 +111,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -121,8 +123,6 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
     # See if there's an OSIS project here in this folder

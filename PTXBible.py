@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-17' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -116,10 +116,10 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if the compulsory files are here in this given folder
     numFound = numFilesFound = numFoldersFound = 0

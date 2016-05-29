@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-16' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,12 +87,12 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             if somethingUpper in compulsoryFiles: foundFileCount += 1
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
     if foundFileCount >= len(compulsoryFiles):
         numFound = 1
     if numFound:

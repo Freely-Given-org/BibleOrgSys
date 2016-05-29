@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-18' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -116,7 +116,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         #elif os.path.isfile( somepath ):
             #somethingUpper = something.upper()
             #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -137,8 +139,6 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 #if not firstLine: continue # don't allow a blank first line
                 #if firstLine[0] != '\\': continue # Must start with a backslash
             #foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an ESFMBible project here in this given folder
     numFound = 0

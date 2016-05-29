@@ -48,10 +48,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -102,7 +102,9 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
     foundFolders, foundFiles = [], []
     for something in os.listdir( sourceFolder ):
         somepath = os.path.join( sourceFolder, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -112,8 +114,6 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
     # See if there's a USFX project here in this folder

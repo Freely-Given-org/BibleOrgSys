@@ -42,16 +42,16 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-25' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.94'
+ProgVersion = '0.95'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 BCV_VERSION = '1.0'
 
-debuggingThisModule = False
+debuggingThisModule = True
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
@@ -440,7 +440,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addVerseSegments
 
 
-    def processLineFix( self, C, V, originalMarker, text, fixErrors ):
+    def processLineFix( self, C,V, originalMarker, text, fixErrors ):
         """
         Does character fixes on a specific line and moves the following out of the main text:
             footnotes, cross-references, and figures, Strongs numbers.
@@ -457,7 +457,8 @@ class InternalBibleBook:
         """
         global rtsCount
         if BibleOrgSysGlobals.debugFlag:
-            #print( "InternalBibleBook.processLineFix( {}, {!r} ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
+            if debuggingThisModule:
+                print( "InternalBibleBook.processLineFix( {}:{}, {}, {!r} ) for {} ({})".format( C,V, originalMarker, text, self.BBB, self.objectTypeString ) )
             assert originalMarker and isinstance( originalMarker, str )
             assert isinstance( text, str )
         adjText = text
@@ -600,7 +601,7 @@ class InternalBibleBook:
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                     fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found unexpected 'vp' field after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
                 ix2 = adjText.find( '\\vp*' )
                 if ix2 == -1: ix2 = adjText.find( '\\VP*' )
@@ -1181,7 +1182,7 @@ class InternalBibleBook:
         #    1/ p = ''
         #    2/ v = 17
         #    3/ q1 = Text of verse 17.
-        newLines = []
+        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         lastMarker = lastText = None
         C = V = '0'
         for j,(marker,text) in enumerate( self._rawLines ):
@@ -1211,7 +1212,7 @@ class InternalBibleBook:
         #    2/ p = ''
         #    2/ v = 3
         #    3/ v~ = Text of verse 3.
-        newLines = []
+        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
@@ -1257,7 +1258,7 @@ class InternalBibleBook:
         #    2/ v~ = Some text
         #    3/ p = '' (last line in file)
         # to remove that last line.
-        newLines = []
+        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
@@ -1370,8 +1371,9 @@ class InternalBibleBook:
             """
             nonlocal C, V, haveWaitingC
             nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
+            if BibleOrgSysGlobals.debugFlag:
+                if debuggingThisModule:
+                    print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
                 assert originalMarker and isinstance( originalMarker, str )
                 assert isinstance( originalText, str )
             text = originalText
@@ -1742,9 +1744,10 @@ class InternalBibleBook:
 
     def makeIndex( self ):
         """
-        Index the lines for faster reference.
+        Index the InternalBibleBook processed lines InternalBibleEntryList for faster reference.
 
         Works by calling makeIndex in InternalBibleInternals.py
+            to update self._CVIndex
         """
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedFlag
@@ -1773,6 +1776,7 @@ class InternalBibleBook:
                 ##A, L, X = ALX
                 #print( "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
             #halt
+
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
 

@@ -62,10 +62,10 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -113,14 +113,14 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             if somethingUpperExt in filenameEndingsToAccept:
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an YETBible project here in this given folder
     numFound = 0

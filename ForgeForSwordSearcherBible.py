@@ -52,10 +52,10 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -121,7 +121,9 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -131,8 +133,6 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an ForgeForSwordSearcherBible project here in this given folder
     numFound = 0

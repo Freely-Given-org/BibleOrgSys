@@ -43,14 +43,14 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.63'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
@@ -511,16 +511,26 @@ class InternalBibleEntryList:
 
 
     def append( self, newBibleEntry ):
+        """
+        Append the newBibleEntry to the InternalBibleEntryList.
+        """
         assert isinstance( newBibleEntry, InternalBibleEntry )
         self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append
 
     def pop( self ): # Doesn't allow a parameter
+        """
+        Return the last InternalBibleEntry from the InternalBibleEntryList
+            or None if the InternalBibleEntryList is empty.
+        """
         try: return self.data.pop()
         except IndexError: return None
     # end of InternalBibleEntryList.append
 
     def extend( self, newList ):
+        """
+        Extend the InternalBibleEntryList with the newList given.
+        """
         assert isinstance( newList, InternalBibleEntryList )
         self.data.extend( newList )
     # end of InternalBibleEntryList.extend
@@ -661,9 +671,10 @@ class InternalBibleIndex:
 
         The keys to the index dictionary for each Bible book are (C,V,) 2-tuples.
             Chapter 0 is the book introduction
-                Each line is a successive "verse" number (usually the id line is "verse" 0)
-            For each chapter, verse 0 is the chapter introduction.
-                Normally this contains only the 'c' entry.
+                Each line in chapter 0 is a successive 'verse' number (usually the id line is 'verse' 0)
+            For each proper chapter (usually starting with 1), verse 0 is the chapter introduction.
+                Often this contains only the 'c' entry.
+                Section headings are put with the following text / verse.
 
         The created dictionary entries are (ix,lineCount,context) 3-tuples where
             ix is the index into givenBibleEntries,
@@ -735,6 +746,7 @@ class InternalBibleIndex:
         # end of saveAnythingOutstanding
 
 
+        # Main code of InternalBibleIndex.makeIndex
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.name, self.BBB ) )
         if self.BBB not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
                                                 'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):

@@ -405,7 +405,7 @@ class InternalBible:
         """
         This method should be called once all books are loaded to do critical book-keeping.
 
-        Doesn't do a "discover" yet, coz this is quite time-consuming.
+        Doesn't do a "discover" yet, in case it's not really required yet, coz discover() is quite time-consuming.
         """
         self.loadedAllBooks = True
 

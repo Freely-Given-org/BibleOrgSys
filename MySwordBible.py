@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-05-29' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -123,7 +123,9 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
-        if os.path.isdir( somepath ): foundFolders.append( something )
+        if os.path.isdir( somepath ):
+            if something == '__MACOSX': continue # don't visit these directories
+            foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
@@ -134,8 +136,6 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
             if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
-    if '__MACOSX' in foundFolders:
-        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an MySwordBible project here in this given folder
     numFound = 0
