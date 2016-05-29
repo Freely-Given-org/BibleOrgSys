@@ -30,10 +30,10 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-27' # by RJH
+LastModifiedDate = '2016-05-28' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.04'
+ProgVersion = '0.05'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -78,6 +78,61 @@ def exp( messageString ):
         nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
+
+
+
+def loadWordCompares( folder, filename ):
+    """
+    """
+    if 1 or BibleOrgSysGlobals.debugFlag:
+        if debuggingThisModule:
+            print( exp("loadWordCompares( {}, {} )").format( folder, filename ) )
+
+    dict12, dict21 = {}, {}
+
+    filepath = os.path.join( folder, filename )
+    lineCount = 0
+    with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
+        for line in inputFile:
+            lineCount += 1
+            if lineCount==1 and line[0]==chr(65279): #U+FEFF or \ufeff
+                logging.info( "loadWordCompares: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
+                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
+            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if not line: continue # Just discard blank lines
+            #print ( 'SFM file line is "' + line + '"' )
+            if line[0]=='#': continue # Just discard comment lines
+
+            if debuggingThisModule: assert( '=' in line )
+            if '=>' in line: # this line only works from Bible1 => Bible2
+                mid, use = '=>', 12
+            elif '<=' in line: # this line only works from Bible1 <= Bible2
+                mid, use = '<=', 21
+            else: # it works both ways
+                mid, use = '=', 1221
+
+            bitl, bitr = line.split( mid, 1 )
+            lBits, rBits = bitl.strip().split( '\\' ), bitr.strip().split( '\\' )
+            #print( '{!r}={} <> {!r}={}'.format( bitl, lBits, bitr, rBits ) )
+            if use in (12,1221):
+                for lBit in lBits:
+                    if lBit in dict12:
+                        print( "  We already had {!r} in dict12".format( lBit ) )
+                    dict12[lBit] = rBits
+                    #if lBit.title() != lBit:
+                        #dict12[lBit.title()] = rBits
+            if use in (21,1221):
+                for rBit in rBits:
+                    if rBit in dict21:
+                        print( "  We already had {!r} in dict21".format( rBit ) )
+                    dict21[rBit] = lBits
+                    #if rBit.title() != rBit:
+                        #dict21[rBit.title()] = lBits
+
+    #print( '\ndict12', len(dict12), sorted(dict12.items()) )
+    #print( '\ndict21', len(dict21), sorted(dict21.items()) )
+    return dict12, dict21
+# end of loadWordCompares
 
 
 
@@ -241,7 +296,7 @@ def _doCompare( parameters ): # for multiprocessing
     return compareBooksPedantic( Bible1[BBB], Bible2[BBB] )
 
 
-def getLineWords( line, segmentEndPunctuation='.?!;:' ):
+def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
     """
     Break the line into segments (like sentences that should match across the translations)
         and then break each segment into words.
@@ -252,9 +307,9 @@ def getLineWords( line, segmentEndPunctuation='.?!;:' ):
 
     Returns a list of lists of words.
     """
-    if 1 or BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("getLineWords( {!r} )").format( line ) )
+            print( exp("segmentizeLine( {!r} )").format( line ) )
 
     if segmentEndPunctuation:
         for segmentEndChar in segmentEndPunctuation:
@@ -270,10 +325,10 @@ def getLineWords( line, segmentEndPunctuation='.?!;:' ):
             for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
             word = BibleOrgSysGlobals.stripWordPunctuation( word )
             if word and not word[0].isalnum():
-                print( "not alnum", repr(rawWord), repr(word) )
+                #print( "not alnum", repr(rawWord), repr(word) )
                 if len(word) > 1:
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "getLineWords: {} {}:{} ".format( self.BBB, C, V ) \
+                        print( "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) \
                                             + _("Have unexpected character starting word {!r}").format( word ) )
                     word = word[1:]
             if word: # There's still some characters remaining after all that stripping
@@ -282,7 +337,7 @@ def getLineWords( line, segmentEndPunctuation='.?!;:' ):
                     for k,char in enumerate(word):
                         if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                print( "getLineWords: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
+                                print( "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                 lcWord = word.lower()
                 isAReferenceOrNumber = True
                 for char in word:
@@ -292,25 +347,23 @@ def getLineWords( line, segmentEndPunctuation='.?!;:' ):
                     #lDict['allWordCounts'][word] = 1 if word not in lDict['allWordCounts'] else lDict['allWordCounts'][word] + 1
                     #lDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in lDict['allCaseInsensitiveWordCounts'] else lDict['allCaseInsensitiveWordCounts'][lcWord] + 1
         lineList.append( segmentList )
-    print( '  lineList', lineList )
+
+    #print( '  lineList', lineList )
     return lineList
-# end of getLineWords
+# end of segmentizeLine
 
 
-def analyzeBooks( book1, book2 ):
+def segmentizeBooks( book1, book2 ):
     """
     Given two Bible book objects, analyse the two carefully
         and return differences.
-
-    This is typically used to compare a translation and a matching back-translation
-        for pedantic things like quote-marks and punctuation.
 
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being CV and error message.
     """
     if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("analyzeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
+            print( exp("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
         assert( book1.BBB == book2.BBB )
         assert( book1.workName != book2.workName )
 
@@ -339,7 +392,7 @@ def analyzeBooks( book1, book2 ):
             if C == '0': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
         elif C == '0': V = str( int(V) + 1 )
-        print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )
         #print( ' ', entry1.getCleanText() )
@@ -349,12 +402,12 @@ def analyzeBooks( book1, book2 ):
         if marker1 == marker2:
             numMismatchedMarkers = 0
             if (line1 or line2) and marker1 not in ( 'id','ide','rem', 'c','v', ): # Don't count these non-Bible-text fields
-                wordList1 = getLineWords( line1 )
-                wordList2 = getLineWords( line2 )
+                wordList1 = segmentizeLine( line1 )
+                wordList2 = segmentizeLine( line2 )
                 if len(wordList1) == len(wordList2): # both had the same number of segments
                     for segment1List,segment2List in zip( wordList1, wordList2 ):
                         if segment1List and segment2List:
-                            segmentList.append( (segment1List,segment2List) )
+                            segmentList.append( (reference,segment1List,segment2List) )
         else: # markers are different
             numMismatchedMarkers += 1
             if numMismatchedMarkers < MAX_MISMATCHED_MARKERS:
@@ -375,29 +428,59 @@ def analyzeBooks( book1, book2 ):
         ix1 += 1; ix2 += 1
 
     if (ix1+offset1)<len1:
-        remaining = len1 - (ix1+offset)
+        remaining = len1 - (ix1+offset1)
         assert remaining >= 1
         abResults.append( (reference,"Extra marker{} remaining in book1: {!r}{}" \
                                 .format( '' if remaining==1 else 's ({})'.format( remaining ),
                                     book1._processedLines[ix1+offset1].getMarker(), '…' if remaining>1 else '' )) )
     if (ix2+offset2)<len2:
-        remaining = len2 - (ix2+offset)
+        remaining = len2 - (ix2+offset2)
         assert remaining >= 1
         abResults.append( (reference,"Extra marker{} remaining in book2: {!r}{}" \
                                 .format( '' if remaining==1 else 's ({})'.format( remaining ),
                                     book1._processedLines[ix2+offset2].getMarker(), '…' if remaining>1 else '' )) )
+
+    #print( '\nsegmentList', len(segmentList), segmentList )
+    #print( '\nabResults', len(abResults), abResults )
     return segmentList, abResults
-# end of analyzeBooks
+# end of segmentizeBooks
 
 
 
-def analyzeWords( segmentList ):
+def analyzeWords( segmentList, dict12=None, dict21=None ):
     """
     """
-    if BibleOrgSysGlobals.debugFlag:
+    if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("analyzeWords( … )") )
         assert( isinstance( segmentList, list ) )
+
+    awResults = []
+
+    for j,(reference,segment1,segment2) in enumerate( segmentList ):
+        for word in dict12:
+            if word in segment1:
+                wordCount = segment1.count( word )
+                foundCount = 0
+                for rWord in dict12[word]:
+                    foundCount += segment2.count( rWord )
+                if wordCount > foundCount:
+                    awResults.append( (reference,"Word matches for {!r} not enough ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
+                #elif wordCount < foundCount:
+                    #awResults.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
+        for word in dict21:
+            if word in segment2:
+                wordCount = segment2.count( word )
+                foundCount = 0
+                for rWord in dict21[word]:
+                    foundCount += segment1.count( rWord )
+                if wordCount > foundCount:
+                    awResults.append( (reference,"Word matches for {!r} not enough ({}/{}) in {!r}".format( word, wordCount, foundCount, segment1 )) )
+                #elif wordCount < foundCount:
+                    #awResults.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
+
+    #print( '\nawResults', len(awResults), awResults )
+    return awResults
 
     wordDict1, wordDict2 = {}, {}
     for j,(segment1,segment2) in enumerate( segmentList ):
@@ -448,7 +531,7 @@ def analyzeBibles( Bible1, Bible2 ):
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running analyzeBooks on both Bibles…") )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running segmentizeBooks on both Bibles…") )
     # TODO: Work out why multiprocessing is slower here -- yes, coz it has to pickle and unpickle entire Bible books
     if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -462,7 +545,7 @@ def analyzeBibles( Bible1, Bible2 ):
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )
-            bSegmentList[BBB], bResults[BBB] = analyzeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
+            bSegmentList[BBB], bResults[BBB] = segmentizeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
             print( BBB, bSegmentList[BBB] )
             print( BBB, bResults[BBB] )
     return bResults
@@ -561,18 +644,7 @@ def demo():
             print( "Comparing {} gave:".format( BBB ) )
             print( ' ', result )
 
-    if 0: # Compare one book
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nAnalyzing one book only…" )
-        BBB = 'JDE'
-        abResults1, abResults2 = {}, {}
-        segmentResult, otherResult = analyzeBooks( UB1[BBB], UB2[BBB] )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "Comparing {} gave:".format( BBB ) )
-            #print( ' 1s', len(segmentResult), segmentResult )
-            print( ' 2o', len(otherResult), otherResult )
-        awResult = analyzeWords( segmentResult )
-
-    if 1: # Test the whole Bible
+    if 0: # Test the whole Bibles
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTesting for whole Bible…" )
         results = compareBibles( UB1, UB2, illegalStrings1=MS_ILLEGAL_STRINGS_1, illegalStrings2=MS_ILLEGAL_STRINGS_2 )
         totalCount = resultsBooksCount = 0
@@ -587,6 +659,47 @@ def demo():
                         resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
                         print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
             print( "{} total results in {} books (out of {})".format( totalCount, resultsBooksCount, len(UB1) ) )
+
+    if 0: # Compare one book
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nAnalyzing one book only…" )
+        BBB = 'JDE'
+        segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "Comparing {} gave:".format( BBB ) )
+            #print( ' 1s', len(segmentResult), segmentResult )
+            print( ' 2o', len(otherResult), otherResult )
+        dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'BTCheckWords.txt' )
+        awResult = analyzeWords( segmentResult, dict12, dict21 )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "Comparing {} gave:".format( BBB ) )
+            print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+            for (C,V,marker),resultString in awResult:
+                resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
+                print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+            print( "{:,} results in {}".format( len(awResult), BBB ) )
+
+    if 1: # Compare the whole Bibles
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nAnalyzing whole Bible…" )
+        totalSegments = totalCount = 0
+        for BBB in UB1.getBookList():
+            segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
+            totalSegments += len( segmentResult )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "Comparing {} gave:".format( BBB ) )
+                #print( ' 1s', len(segmentResult), segmentResult )
+                print( ' 2o', len(otherResult), otherResult )
+            dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'BTCheckWords.txt' )
+            awResult = analyzeWords( segmentResult, dict12, dict21 )
+            totalCount += len( awResult )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+                for (C,V,marker),resultString in awResult:
+                    resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
+                    print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+                print( "  {:,} results in {}".format( len(awResult), BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
+
 # end of demo
 
 

@@ -272,7 +272,7 @@ def demo():
     """
     Demonstration program to show off USFM Bible book comparison.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( '{} Demo'.format( ProgNameVersion ) )
     #if BibleOrgSysGlobals.print( BibleOrgSysGlobals.commandLineArguments )
 
     fp1 = 'Tests/DataFilesForTests/USFMTest2/MBT01GEN.SCP'

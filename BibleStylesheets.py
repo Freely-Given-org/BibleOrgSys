@@ -27,14 +27,14 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-05-23' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 #from singleton import singleton
@@ -71,6 +71,8 @@ def exp( messageString ):
 #"background", "bgstipple", "borderwidth", "elide", "fgstipple", "font", "foreground", "justify", "lmargin1",
 #"lmargin2", "offset", "overstrike", "relief", "rmargin", "spacing1", "spacing2", "spacing3",
 #"tabs", "tabstyle", "underline", and "wrap".
+INDENT_SIZE = 4
+
 DEFAULT_FONTNAME = 'helvetica'
 
 VERSENUMBER_FONTSIZE = 6
@@ -93,6 +95,7 @@ SUPERSCRIPT_OFFSET = '4'
 DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'id': {},
     'h': {},
+# The following fields all contain their own (self-contained) text
     's1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
     's2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
     's3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
@@ -103,31 +106,41 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'r': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
     'c#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
     'c~': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
-    #'v-': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'offset':SUPERSCRIPT_OFFSET, },
     'v': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'foreground':VERSENUMBER_COLOUR, 'offset':SUPERSCRIPT_OFFSET, },
-    #'v+': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'offset':SUPERSCRIPT_OFFSET, },
-    'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), }, #'background':'orange', },
-    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), }, #'background':'pink', },
-    'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
-    'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
-    'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
-    'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
+# The next two should never be used (because v~ fields should take on the previous paragraph tag)
+    'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'orange', },
+    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'orange', },
+# The following paragraph level fields can contain text, or can influence the next v~ text
+    'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
     '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', },
+    'mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    'pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     }
 
 
 class BibleStylesheet():
     """
-    Class to load a Paratext stylesheet into a dictionary.
+    Class to load a Bible stylesheet into a dictionary.
     """
     def __init__( self ):
+        """
+        """
         self.dataDict = None
         self.filepath = None
         self.smallestSize = self.largestSize = self.markerList = self.markerSets = None
+        self.name = None
     # end of BibleStylesheet.__init__
 
 
     def loadDefault( self ):
+        """
+        """
         self.dataDict = DEFAULT_STYLE_DICT
         self.name = 'Default'
         self.validate()
@@ -136,6 +149,8 @@ class BibleStylesheet():
 
 
     def load( self, sourceFolder, filename ):
+        """
+        """
         self.sourceFolder = sourceFolder
         self.filename = filename
         assert os.path.exists( self.sourceFolder )
@@ -157,6 +172,8 @@ class BibleStylesheet():
 
 
     def validate( self ):
+        """
+        """
         from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("validate"), USFMMarker, styleData )
@@ -166,6 +183,8 @@ class BibleStylesheet():
 
 
     def importParatextStylesheet( self, folder, filename, encoding='utf-8' ):
+        """
+        """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet…".format( filename ) )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
@@ -176,9 +195,10 @@ class BibleStylesheet():
             try: PTFormatting = PTSS.getDict( marker )
             except KeyError: PTFormatting = None # Just ignore the error
             if PTFormatting:
-                formatSpecification = ''
+                formatSpecification = {}
                 for field, value in PTFormatting.items():
-                    print( marker, field, value )
+                    #print( marker, field, repr(value) )
+                    formatSpecification[field] = value
                 self.dataDict[marker] = formatSpecification
             elif BibleOrgSysGlobals.debugFlag: print( "USFM {} marker not included in {} Paratext stylesheet".format( marker, filename ) )
             #export the marker
@@ -360,12 +380,27 @@ def demo():
         #ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         ss.loadDefault()
         print( ss )
-        print( ss.getTKStyleDict( 'h' ) )
-        #print( ss.getValue( 'h', 'FontSize' ) )
+        print( "h style:", ss.getTKStyleDict( 'h' ) )
+        try: print( "s1 font:", ss.getValue( 's1', 'font' ) )
+        except KeyError: print( "No s1 or font in stylesheet!" )
         try: print( ss.getTKStyleDict( 'hijkl' ) )
         except KeyError: print( "No hijkl in stylesheet!" )
         try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
         except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
+        if debuggingThisModule: print( ss.dataDict )
+
+    if 1: # Try importing one
+        print( "\nTrying Bible stylesheet import…" )
+        folder = "../../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/"
+        filename = "LD.sty"
+        ss = BibleStylesheet()
+        print( ss )
+        ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
+        print( ss )
+        if debuggingThisModule: print( ss.dataDict )
+        print( "h style:", ss.getTKStyleDict( 'h' ) )
+        try: print( "h FontSize:", ss.getValue( 'h', 'FontSize' ) )
+        except KeyError: print( "No h or FontSize in stylesheet!" )
 
     if 1: # Try a small one
         print( "\nTrying small PT stylesheet…" )
@@ -373,12 +408,9 @@ def demo():
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
         print( ss )
-        print( 'h', ss.getDict( 'h' ) )
-        print( ss.getValue( 'h', 'FontSize' ) )
-        try: print( ss.getDict( 'hijkl' ) )
-        except KeyError: print( "No hijkl in stylesheet!" )
-        try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
-        except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
+        print( "h style:", ss.getDict( 'h' ) )
+        print( "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if debuggingThisModule: print( ss.dataDict )
 
     if 1: # Try a full one
         print( "\nTrying full PT stylesheet…" )
@@ -387,16 +419,20 @@ def demo():
         ss = ParatextStylesheet()
         ss.load( folder, filename )
         print( ss )
-        print( ss.getDict( 'h' ) )
-        print( ss.getValue( 'h', 'FontSize' ) )
-        try: print( ss.getDict( 'hijkl' ) )
-        except KeyError: print( "No hijkl in stylesheet!" )
-        try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
-        except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
+        print( "h style:", ss.getDict( 'h' ) )
+        print( "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if debuggingThisModule: print( ss.dataDict )
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

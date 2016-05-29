@@ -119,7 +119,7 @@ MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
 LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
 MEDIAL_WORD_PUNCT_CHARS = '-'
-DASH_CHARS = '—–' # em-dash and en-dash
+DASH_CHARS = '–—' # en-dash and em-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 

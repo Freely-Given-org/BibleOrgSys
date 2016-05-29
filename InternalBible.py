@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2016-05-24' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -1054,7 +1054,7 @@ class InternalBible:
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
         # TODO: Work out why multiprocessing is slower here!
-        if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+        if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( exp("Prechecking {} books using {} CPUs…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )

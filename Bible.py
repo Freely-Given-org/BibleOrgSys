@@ -30,10 +30,10 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-05-24' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -351,10 +351,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest Bible…" )
     B = Bible()
     if BibleOrgSysGlobals.verbosityLevel > 0: print( B )
 
-    if 1: # Test a single folder containing a USFM Bible
+    if 0: # No need for this here
+        # Test a single folder containing a USFM Bible
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest USFM Bible…" )
         from USFMBible import USFMBible
         name, encoding, testFolder = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
@@ -368,7 +371,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
+    import sys
+    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
+        from io import TextIOWrapper
+        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
+
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 

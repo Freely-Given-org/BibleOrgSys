@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-05-25' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.94'
@@ -2208,7 +2208,7 @@ class InternalBibleBook:
                         #else: bkDict['allWordCounts'][word] += 1
                         bkDict['allWordCounts'][word] = 1 if word not in bkDict['allWordCounts'] else bkDict['allWordCounts'][word] + 1
                         bkDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['allCaseInsensitiveWordCounts'] else bkDict['allCaseInsensitiveWordCounts'][lcWord] + 1
-                        if location == "main":
+                        if location == 'main':
                             bkDict['mainTextWordCounts'][word] = 1 if word not in bkDict['mainTextWordCounts'] else bkDict['mainTextWordCounts'][word] + 1
                             bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['mainTextCaseInsensitiveWordCounts'] else bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] + 1
                     #else: print( "excluded reference or number", word )
@@ -2262,7 +2262,7 @@ class InternalBibleBook:
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
             if text and marker in BOS_PRINTABLE_MARKERS: # process this main text
-                countWords( marker, cleanText, "main" )
+                countWords( marker, cleanText, 'main' )
             #elif text: print( "Ignoring {} {}:{} {}={}".format( self.BBB, C, V, marker, repr(text) ) )
 
             if extras:
