@@ -354,7 +354,12 @@ class USFMBible( Bible ):
             print( exp("loadBookMP( {} )").format( BBB_Filename_tuple ) )
 
         BBB, filename = BBB_Filename_tuple
-        assert BBB not in self.books
+        if BBB in self.books:
+            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            return self.books[BBB] # Already loaded
+        #if BBB in self.triedLoadingBook:
+            #logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+            #return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:

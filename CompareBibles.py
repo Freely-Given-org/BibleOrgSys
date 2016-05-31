@@ -103,7 +103,7 @@ def loadWordCompares( folder, filename ):
             #print ( 'SFM file line is "' + line + '"' )
             if line[0]=='#': continue # Just discard comment lines
 
-            if debuggingThisModule: assert( '=' in line )
+            if debuggingThisModule: assert '=' in line
             if '=>' in line: # this line only works from Bible1 => Bible2
                 mid, use = '=>', 12
             elif '<=' in line: # this line only works from Bible1 <= Bible2
@@ -160,8 +160,8 @@ def compareBooksPedantic( book1, book2,
                     .format( book1, book2, compareQuotes, comparePunctuation, compareDigits,
                                         illegalStrings1, illegalStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
-        assert( book1.BBB == book2.BBB )
-        assert( book1.workName != book2.workName )
+        assert book1.BBB == book2.BBB
+        assert book1.workName != book2.workName
 
     bcResults = []
 
@@ -364,8 +364,8 @@ def segmentizeBooks( book1, book2 ):
     if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
-        assert( book1.BBB == book2.BBB )
-        assert( book1.workName != book2.workName )
+        assert book1.BBB == book2.BBB
+        assert book1.workName != book2.workName
 
     abResults, segmentList = [], []
     #if 'allWordCounts' not in dict1: dict1['allWordCounts'] = {}
@@ -453,7 +453,7 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
     if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("analyzeWords( … )") )
-        assert( isinstance( segmentList, list ) )
+        assert isinstance( segmentList, list )
 
     awResults = []
 
@@ -516,11 +516,11 @@ def analyzeBibles( Bible1, Bible2 ):
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("analyzeBibles( {}, {} )").format( Bible1, Bible2 ) )
-        assert( isinstance( Bible1, Bible ) )
-        assert( isinstance( Bible2, Bible ) )
-        assert( Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name )
-        assert( Bible1.discoveryResults )
-        assert( Bible2.discoveryResults )
+        assert isinstance( Bible1, Bible )
+        assert isinstance( Bible2, Bible )
+        assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
+        assert Bible1.discoveryResults
+        assert Bible2.discoveryResults
     if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Running analyzeBibles…") )
 
     bSegmentList, bResults = {}, {}
@@ -567,9 +567,9 @@ def compareBibles( Bible1, Bible2,
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule: print( exp("compareBibles( {}, {} )").format( Bible1, Bible2 ) )
-        assert( isinstance( Bible1, Bible ) )
-        assert( isinstance( Bible2, Bible ) )
-        assert( Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name )
+        assert isinstance( Bible1, Bible )
+        assert isinstance( Bible2, Bible )
+        assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
     if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Running compareBibles…") )
 
     len1, len2 = len(Bible1), len(Bible2)

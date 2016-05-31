@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-24' # by RJH
+LastModifiedDate = '2016-05-31' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -207,6 +207,7 @@ class InternalBible:
     def __getitem__( self, keyIndex ):
         """
         Given an index integer, return the book object (or raise an IndexError)
+            Note that it returns the book object, not just the BBB.
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
@@ -1945,6 +1946,7 @@ class InternalBible:
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
+            #print( "getNumChapters", self, self.books[BBB].getNumChapters() )
             return self.books[BBB].getNumChapters()
         # else return None
     # end of InternalBible.getNumChapters
@@ -2060,7 +2062,7 @@ class InternalBible:
     # end of InternalBible.getVerseText
 
 
-    def searchText( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=12 ):
+    def searchText( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=15 ):
         """
         Search the Bible for the given text.
 
@@ -2075,8 +2077,9 @@ class InternalBible:
         If the search is caseless, the 5-tuples are:
             SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("searchText( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
+        if 1 or BibleOrgSysGlobals.debugFlag:
+            if debuggingThisModule:
+                print( exp("searchText( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
                             .format( givenText, bookList, chapterList, wholeWordOnly, includeIntro,
                                         includeMarkers, noExtras, noCase, regExp, contextLength ) )
             if chapterList: assert bookList is None or len(bookList) == 1 \
@@ -2093,7 +2096,8 @@ class InternalBible:
         resultList = [{ 'givenText':givenText, 'BookList':bookList, 'chapterList':chapterList,
                        'wholeWordOnly':wholeWordOnly, 'includeIntro':includeIntro,
                        'includeMarkers':includeMarkers, 'noExtras':noExtras, 'noCase':noCase,
-                       'regExp':regExp, 'contextLength':contextLength, }]
+                       'regExp':regExp, 'contextLength':contextLength,
+                       'work':self.abbreviation if self.abbreviation else self.name, }]
         for BBB,bookObject in self.books.items():
             #print( exp("  searchText: got book {}").format( BBB ) )
             if bookList is None or BBB in bookList:
@@ -2141,11 +2145,11 @@ class InternalBible:
 
                                 ixHyphen = V.find( '-' )
                                 if ixHyphen != -1: V = V[:ixHyphen] # Remove verse bridges
-                                adjMarker = None if marker=='v~' else marker # most markers are v~ -- ignore them (for space)
-                                resultTuple = (SimpleVerseKey(BBB, C, V, ix), adjMarker, contextBefore,
+                                #adjMarker = None if marker=='v~' else marker # most markers are v~ -- ignore them (for space)
+                                resultTuple = (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore,
                                                                     origTextToSearch[ix:ixAfter], contextAfter, ) \
                                             if noCase else \
-                                                (SimpleVerseKey(BBB, C, V, ix), adjMarker, contextBefore, contextAfter, )
+                                                (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore, contextAfter, )
                                 resultList.append( resultTuple )
 
         #print( exp("  searchText: returning {}").format( resultList ) )

@@ -71,7 +71,7 @@ def exp( messageString ):
 #"background", "bgstipple", "borderwidth", "elide", "fgstipple", "font", "foreground", "justify", "lmargin1",
 #"lmargin2", "offset", "overstrike", "relief", "rmargin", "spacing1", "spacing2", "spacing3",
 #"tabs", "tabstyle", "underline", and "wrap".
-INDENT_SIZE = 10
+INDENT_SIZE = 12
 
 DEFAULT_FONTNAME = 'helvetica'
 
@@ -108,29 +108,29 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'c~': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
     'v': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'foreground':VERSENUMBER_COLOUR, 'offset':SUPERSCRIPT_OFFSET, },
 # The next two should never be used (because v~ fields should take on the previous paragraph tag)
-    'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'orange', },
-    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'orange', },
+    'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
 # The following paragraph level fields can contain text, or can influence the next v~ text
-    'p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'brown', 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    '*p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'green', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'blue', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'purple', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    '*q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'blue', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    '*p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    '*q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
     'mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
     '*mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
     'pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
     '*pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    '*pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
     }
 
 

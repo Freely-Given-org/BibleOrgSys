@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-05-31' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -1797,12 +1797,13 @@ class InternalBibleBook:
     def validateMarkers( self ):
         """
         Validate the loaded book.
+        This is usually called from loadBook() in the various Bible importers.
 
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'validateMarkers'" )
+                print( "InternalBibleBook {} {}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         validationErrors = []
@@ -1868,7 +1869,7 @@ class InternalBibleBook:
         Extract a SFM field from the loaded book.
         """
         if not self._processedFlag:
-            if debuggingThisModule: print( "InternalBibleBook: calling processLines from 'getField'" )
+            if debuggingThisModule: print( "InternalBibleBook {}: calling processLines from 'getField'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
@@ -1897,7 +1898,7 @@ class InternalBibleBook:
         #print( "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
+                print( "InternalBibleBook {}: processing lines called from 'getAssumedBookNames'".format( self.BBB ) ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         results = []
@@ -1978,7 +1979,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'getVersification'" )
+                print( "InternalBibleBook {}: processing lines called from 'getVersification'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         versificationErrors = []
@@ -2137,7 +2138,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'discover'" )
+                print( "InternalBibleBook {}: processing lines called from 'discover'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         #print( "InternalBibleBook:discover", self.BBB )
@@ -2345,7 +2346,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'getAddedUnits'" )
+                print( "InternalBibleBook {}: processing lines called from 'getAddedUnits'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         addedUnitErrors = []
@@ -3491,7 +3492,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'doCheckFileControls'" )
+                print( "InternalBibleBook {}: processing lines called from 'doCheckFileControls'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3518,7 +3519,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'doCheckHeadings'" )
+                print( "InternalBibleBook {}: processing lines called from 'doCheckHeadings'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3594,7 +3595,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'doCheckIntroduction'" )
+                print( "InternalBibleBook {}: processing lines called from 'doCheckIntroduction'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3671,7 +3672,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'doCheckNotes'" )
+                print( "InternalBibleBook {}: processing lines called from 'doCheckNotes'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3944,7 +3945,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'check'" )
+                print( "InternalBibleBook {}: processing lines called from 'check'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4029,7 +4030,7 @@ class InternalBibleBook:
         else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook: processing lines called from 'getContextVerseData'" )
+                print( "InternalBibleBook {}: processing lines called from 'getContextVerseData'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines

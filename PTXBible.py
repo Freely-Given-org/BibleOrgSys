@@ -33,10 +33,10 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-05-31' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1562,8 +1562,12 @@ class PTXBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loadBook( {}, {} )".format( BBB, filename ) )
-        if BBB in self.books: return # Already loaded
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "PTXBible.loadBook( {}, {} )".format( BBB, filename ) )
+
+        if BBB in self.books:
+            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
@@ -1587,9 +1591,16 @@ class PTXBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("loadBookMP( {} )").format( BBB_Filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( exp("loadBookMP( {} )").format( BBB_Filename ) )
+
         BBB, filename = BBB_Filename
-        assert BBB not in self.books
+        if BBB in self.books:
+            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            return self.books[BBB] # Already loaded
+        #if BBB in self.triedLoadingBook:
+            #logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+            #return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
@@ -1624,7 +1635,8 @@ class PTXBible( Bible ):
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
                         #print( _("  PTXBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-                    loadedBook = self.loadBook( BBB, filename ) # also saves it
+                    if BBB not in self.books:
+                        self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
