@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-17' # by RJH
+LastModifiedDate = '2016-06-03' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,6 +87,7 @@ debuggingThisModule = False
 
 
 import logging, os.path, pickle
+import unicodedata
 from argparse import ArgumentParser
 
 
@@ -273,7 +274,6 @@ def removeLogfile( projectHandler ):
 def printUnicodeInfo( text, description ):
     """
     """
-    import unicodedata
     print( "{}:".format( description ) )
     for j,char in enumerate(text):
         print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
@@ -332,7 +332,7 @@ def makeSafeString( someString ):
 #
 # Remove accents
 
-accentDict = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','Ą':'A', 'Æ':'AE',
+ACCENT_DICT = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','Ą':'A', 'Æ':'AE',
               'Ç':'C','Ć':'C','Ĉ':'C','Ċ':'C','Č':'C',
               'Ð':'D','Ď':'D','Đ':'D',
               'È':'E','É':'E','Ê':'E','Ë':'E','Ē':'E','Ĕ':'E','Ė':'E','Ę':'E','Ě':'E',
@@ -353,14 +353,35 @@ accentDict = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','�
               'ù':'u','ú':'u','û':'u','ü':'u',
               'ý':'y','ÿ':'y',
               }
+
 def removeAccents( someString ):
     """
     Remove accents from the string and return it (used for fuzzy matching)
+
+    Not that this doesn't remove Hebrew vowel pointing.
     """
-    resultString = ''
-    for someChar in someString:
-        resultString += accentDict[someChar] if someChar in accentDict else someChar
-    return resultString
+    # Try 1
+    #return unicodedata.normalize('NFKD', someString).encode('ASCII', 'ignore')
+
+    # Try 2
+    #resultString = ''
+    #for someChar in someString:
+        #desc = unicodedata.name( someChar )
+        #cutoff = desc.find( ' WITH ' )
+        ##if cutoff != -1:
+            ##desc = desc[:cutoff]
+        #resultString += someChar if cutoff==-1 else unicodedata.lookup( desc[:cutoff] )
+    #return resultString
+
+    # The next two use our ACCENT_DICT above
+    # Try 3
+    #resultString = ''
+    #for someChar in someString:
+        #resultString += ACCENT_DICT[someChar] if someChar in ACCENT_DICT else someChar
+    #return resultString
+
+    # Try 4
+    return ''.join( ACCENT_DICT[someChar] if someChar in ACCENT_DICT else someChar for someChar in someString )
 # end of BibleOrgSysGlobals.makeSafeString
 
 
@@ -1137,7 +1158,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     # Determine multiprocessing strategy
     maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
-    if commandLineArguments.single: maxProcesses = 1
+    if 1 or commandLineArguments.single: maxProcesses = 1 # Multiprocessing is currently disabled (since it mostly slows things down at present)
     if debugFlag or debuggingThisModule:
         maxProcesses = 1 # Limit to one process
         print( "commandLineArguments: {}".format( commandLineArguments ) )
@@ -1210,13 +1231,26 @@ def demo():
     print( "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
     print( "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
 
-    text = "The quick brown fox jumped over the lazy brown dog."
+    accentedString1 = 'naïve café'
+    dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
+    print( "\nRemoving accents…" )
+    for accentedString in ( accentedString1, dan11, ):
+        for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
+            print( "  Given: {}".format( thisAccentedString ) )
+            print( "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+    for accentedChar in ACCENT_DICT:
+        got = removeAccents(accentedChar)
+        wanted = ACCENT_DICT[accentedChar]
+        print( "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+
+    longText = "The quick brown fox jumped over the lazy brown dog."
+    print( "\nGiven: {}".format( longText ) )
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    print( "\n{!r}->adj->{!r}".format( text, applyStringAdjustments( text, adjustments ) ) )
+    print( "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
 
     print( '\nstripWordPunctuation() tests…' )
-    for text in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', '_said', ):
-        print( '  {!r} -> {!r}'.format( text, stripWordPunctuation(text) ) )
+    for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
+        print( '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
 
     print( "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.demo

@@ -69,10 +69,10 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-06-02' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.36'
+ProgVersion = '0.37'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -233,7 +233,7 @@ class SimpleVerseKey():
                 logging.error( "SimpleVerseKey: bad {!r} C in {}".format( C, (BBB,C,V,SI) ) ); raise TypeError
             if not isinstance( V, str ) or not 1<=len(V)<=3:
                 logging.error( "SimpleVerseKey: bad {!r} V in {}".format( V, (BBB,C,V,SI) ) ); raise TypeError
-            if not isinstance( SI, str ) or not ( len(SI)<2 or (SI.isdigit() and len(SI)<4) ):
+            if not isinstance( SI, str ) or not ( len(SI)<2 or (SI.isdigit() and len(SI)<=4) ):
                 logging.error( "SimpleVerseKey: bad {!r} S/I in {}".format( SI, (BBB,C,V,SI) ) ); raise TypeError
             for checkChar in ' -,.:':
                 if checkChar in BBB \
