@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-17' # by RJH
+LastModifiedDate = '2016-06-03' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.45'
+ProgVersion = '0.46'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -183,21 +183,38 @@ class USFMBibleBook( BibleBook ):
                 lastText +=  '\\' + marker + ' ' + text
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
-                if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
-                else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.BBB, C, V, marker ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
-                for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
-                    if marker.startswith( tryMarker ): # Let's try changing it
-                        if lastMarker: doaddLine( lastMarker, lastText )
-                        lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
-                        logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
-                        break
-                # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+                if marker[0] == 'z': # it's a custom marker
+                    if text:
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {}") \
+                                            .format( self.BBB, C, V, marker, text ) )
+                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line with text: {}") \
+                                            .format( marker, self.BBB, C, V, text ) )
+                    else: # no text
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line (with no text") \
+                                            .format( self.BBB, C, V, marker ) )
+                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line (with no text)") \
+                                            .format( marker, self.BBB, C, V ) )
+                    self.addPriorityError( 80, C, V, _("Found \\{} unknown custom marker on new line in file").format( marker ) )
+                else: # it's an unknown marker
+                    if text:
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}") \
+                                            .format( self.BBB, C, V, marker, text ) )
+                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}") \
+                                            .format( marker, self.BBB, C, V, text ) )
+                    else: # no text
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text") \
+                                            .format( self.BBB, C, V, marker ) )
+                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)") \
+                                            .format( marker, self.BBB, C, V ) )
+                    self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
+                    for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
+                        if marker.startswith( tryMarker ): # Let's try changing it
+                            if lastMarker: doaddLine( lastMarker, lastText )
+                            lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
+                            loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
+                            logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                            break
+                    # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
