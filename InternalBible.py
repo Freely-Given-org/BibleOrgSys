@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-31' # by RJH
+LastModifiedDate = '2016-06-03' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -2062,9 +2062,106 @@ class InternalBible:
     # end of InternalBible.getVerseText
 
 
-    def searchText( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=15 ):
+    #def searchText1( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=30 ):
+        #"""
+        #Search the Bible for the given text.
+
+        #Assumes that all Bible books are already loaded.
+
+        #Always returns a list of tuples.
+            #The first entry is always a dictionary of all parameters.
+            #Following entries are (zero or more) search results.
+
+        #For the normal search, the 4-tuples are:
+            #SimpleVerseKey, marker (none if v~), contextBefore, contextAfter
+        #If the search is caseless, the 5-tuples are:
+            #SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
+        #"""
+        #if BibleOrgSysGlobals.debugFlag:
+            #if debuggingThisModule:
+                #print( exp("searchText1( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
+                            #.format( givenText, bookList, chapterList, wholeWordOnly, includeIntro,
+                                        #includeMarkers, noExtras, noCase, regExp, contextLength ) )
+            #if chapterList: assert bookList is None or len(bookList) == 1 \
+                                #or chapterList == [0] # Only combinations that make sense
+            #assert '\r' not in givenText and '\n' not in givenText
+            #if wholeWordOnly: assert ' ' not in givenText
+
+        #oursearchText1 = givenText.lower() if noCase else givenText
+        #searchLen = len( oursearchText1 )
+        ##print( "  {} books loaded".format( len(self) ) )
+
+        ## The first entry in the result list is a dictionary containing the parameters
+        ##   Following entries are SimpleVerseKey objects
+        #resultList = [{ 'givenText':givenText, 'BookList':bookList, 'chapterList':chapterList,
+                       #'wholeWordOnly':wholeWordOnly, 'includeIntro':includeIntro,
+                       #'includeMarkers':includeMarkers, 'noExtras':noExtras, 'noCase':noCase,
+                       #'regExp':regExp, 'contextLength':contextLength,
+                       #'work':self.abbreviation if self.abbreviation else self.name, }]
+        #for BBB,bookObject in self.books.items():
+            ##print( exp("  searchText1: got book {}").format( BBB ) )
+            #if bookList is None or BBB in bookList:
+                ##print( exp("  searchText1: will search book {}").format( BBB ) )
+                ##self.loadBookIfNecessary( BBB )
+                #C = V = '0'
+                #for lineEntry in bookObject:
+                    #marker, cleanText = lineEntry.getMarker(), lineEntry.getCleanText()
+                    #if marker[0] == '¬': continue # we'll always ignore these lines
+                    #if marker == 'c': C, V = cleanText, '0'
+                    #elif marker == 'v': V = cleanText
+                    #elif C == '0': V = str( int(V) + 1 )
+                    #if C=='0' and not includeIntro: continue
+                    ##print( "{}:{} {} = {}".format( C, V, marker, cleanText ) )
+
+                    #if chapterList is None or C in chapterList or int(C) in chapterList:
+                        ##if chapterList and V=='0':
+                            ##print( exp("  searchText1: will search {} chapter {}").format( BBB, C ) )
+
+                        ## Get our text to search
+                        #origTextToSearch = cleanText if noExtras else lineEntry.getFullText()
+                        #if includeMarkers: origTextToSearch = '\\{} ' + origTextToSearch
+                        #if not origTextToSearch: continue
+                        #textToSearch = origTextToSearch.lower() if noCase else origTextToSearch
+                        #textLen = len( textToSearch )
+
+                        #if regExp:
+                            #halt
+                        #else: # not regExp
+                            #ix = -1
+                            #while True:
+                                #ix = textToSearch.find( oursearchText1, ix+1 )
+                                #if ix == -1: break
+                                #ixAfter = ix + searchLen
+                                #if wholeWordOnly:
+                                    ##print( "BF", repr(textToSearch[ix-1]) )
+                                    ##print( "AF", repr(textToSearch[ixAfter]) )
+                                    #if ix>0 and textToSearch[ix-1].isalpha(): continue
+                                    #if ixAfter<textLen and textToSearch[ixAfter].isalpha(): continue
+
+                                #if contextLength: # Find the context in the original (fully-cased) string
+                                    #contextBefore = origTextToSearch[ix-contextLength:ix]
+                                    #contextAfter = origTextToSearch[ixAfter:ixAfter+contextLength]
+                                #else: contextBefore = contextAfter = None
+
+                                #ixHyphen = V.find( '-' )
+                                #if ixHyphen != -1: V = V[:ixHyphen] # Remove verse bridges
+                                ##adjMarker = None if marker=='v~' else marker # most markers are v~ -- ignore them (for space)
+                                #resultTuple = (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore,
+                                                                    #origTextToSearch[ix:ixAfter], contextAfter, ) \
+                                            #if noCase else \
+                                                #(SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore, contextAfter, )
+                                #resultList.append( resultTuple )
+
+        ##print( exp("  searchText1: returning {}").format( resultList ) )
+        #return resultList
+    ## end of InternalBible.searchText1
+
+
+    def searchText( self, optionsDict ):
         """
-        Search the Bible for the given text.
+        Search the Bible for the given text which is contained in a dictionary of options.
+            Search string must be in optionsDict['givenText'].
+            (We add default options for any missing ones as well as updating the 'searchHistoryList'.)
 
         Assumes that all Bible books are already loaded.
 
@@ -2076,31 +2173,65 @@ class InternalBible:
             SimpleVerseKey, marker (none if v~), contextBefore, contextAfter
         If the search is caseless, the 5-tuples are:
             SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
+
+        NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough.
+
+        TODO: Get regex working
         """
         if 1 or BibleOrgSysGlobals.debugFlag:
-            if debuggingThisModule:
-                print( exp("searchText( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
-                            .format( givenText, bookList, chapterList, wholeWordOnly, includeIntro,
-                                        includeMarkers, noExtras, noCase, regExp, contextLength ) )
-            if chapterList: assert bookList is None or len(bookList) == 1 \
-                                or chapterList == [0] # Only combinations that make sense
-            assert '\r' not in givenText and '\n' not in givenText
-            if wholeWordOnly: assert ' ' not in givenText
+            if 1 or debuggingThisModule:
+                print( exp("searchText( {} )").format( optionsDict ) )
+                assert 'givenText' in optionsDict
 
-        ourSearchText = givenText.lower() if noCase else givenText
-        searchLen = len( ourSearchText )
-        #print( "  {} books loaded".format( len(self) ) )
+        optionsList = ( 'givenText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag',
+                'ignoreDiacriticsFlag', 'includeMarkersFlag', 'includeExtrasFlag',
+                'includeIntroFlag', 'contextLength', 'bookList', 'chapterList', 'regexFlag',
+                'currentBCV', )
+        for someKey in optionsDict:
+            if someKey not in optionsList:
+                print( "searchText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+                if debuggingThisModule: halt
+
+        # Go through all the given options
+        if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
+        if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
+        if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'Ends' or 'Begins'
+        if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
+        if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
+        if 'includeMarkersFlag' not in optionsDict: optionsDict['includeMarkersFlag'] = False
+        if 'includeExtrasFlag' not in optionsDict: optionsDict['includeExtrasFlag'] = False
+        if 'includeIntroFlag' not in optionsDict: optionsDict['includeIntroFlag'] = True
+        if 'contextLength' not in optionsDict: optionsDict['contextLength'] = 30 # each side
+        if 'bookList' not in optionsDict: optionsDict['bookList'] = 'ALL' # or BBB or a list
+        if 'chapterList' not in optionsDict: optionsDict['chapterList'] = None
+        optionsDict['regexFlag'] = False
+
+        if BibleOrgSysGlobals.debugFlag:
+            if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
+                                or optionsDict['chapterList'] == [0] # Only combinations that make sense
+            assert '\r' not in optionsDict['givenText'] and '\n' not in optionsDict['givenText']
+            assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
+            if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['givenText']
+
+        oursearchText = optionsDict['givenText']
+        try: optionsDict['searchHistoryList'].remove( oursearchText )
+        except ValueError: pass
+        optionsDict['searchHistoryList'].append( oursearchText ) # Make sure it goes on the end
+        if oursearchText.lower().startswith( 'regex:' ):
+            optionsDict['regexFlag'] = True
+            oursearchText = oursearchText[6:]
+        if optionsDict['ignoreDiacriticsFlag']: oursearchText = BibleOrgSysGlobals.removeAccents( oursearchText )
+        if optionsDict['caselessFlag']: oursearchText = oursearchText.lower()
+        searchLen = len( oursearchText )
+        if BibleOrgSysGlobals.debugFlag: assert searchLen
+        #print( "  Searching for {!r} in {} loaded books".format( oursearchText, len(self) ) )
 
         # The first entry in the result list is a dictionary containing the parameters
         #   Following entries are SimpleVerseKey objects
-        resultList = [{ 'givenText':givenText, 'BookList':bookList, 'chapterList':chapterList,
-                       'wholeWordOnly':wholeWordOnly, 'includeIntro':includeIntro,
-                       'includeMarkers':includeMarkers, 'noExtras':noExtras, 'noCase':noCase,
-                       'regExp':regExp, 'contextLength':contextLength,
-                       'work':self.abbreviation if self.abbreviation else self.name, }]
+        resultList = [optionsDict] # Put optionsDict as first entry in resultList
         for BBB,bookObject in self.books.items():
             #print( exp("  searchText: got book {}").format( BBB ) )
-            if bookList is None or BBB in bookList:
+            if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
                 #print( exp("  searchText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 C = V = '0'
@@ -2110,45 +2241,55 @@ class InternalBible:
                     if marker == 'c': C, V = cleanText, '0'
                     elif marker == 'v': V = cleanText
                     elif C == '0': V = str( int(V) + 1 )
-                    if C=='0' and not includeIntro: continue
+                    if C=='0' and not optionsDict['includeIntroFlag']: continue
                     #print( "{}:{} {} = {}".format( C, V, marker, cleanText ) )
 
-                    if chapterList is None or C in chapterList or int(C) in chapterList:
-                        #if chapterList and V=='0':
+                    if optionsDict['chapterList'] is None \
+                    or C in optionsDict['chapterList'] \
+                    or int(C) in optionsDict['chapterList']:
+                        #if optionsDict['chapterList'] and V=='0':
                             #print( exp("  searchText: will search {} chapter {}").format( BBB, C ) )
 
                         # Get our text to search
-                        origTextToSearch = cleanText if noExtras else lineEntry.getFullText()
-                        if includeMarkers: origTextToSearch = '\\{} ' + origTextToSearch
-                        if not origTextToSearch: continue
-                        textToSearch = origTextToSearch.lower() if noCase else origTextToSearch
-                        textLen = len( textToSearch )
+                        origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
+                        if optionsDict['includeMarkersFlag']:
+                            origTextToBeSearched = '\\{} {}'.format( marker, origTextToBeSearched )
+                        if not origTextToBeSearched: continue
+                        textToBeSearched = origTextToBeSearched
+                        if optionsDict['ignoreDiacriticsFlag']: textToBeSearched = BibleOrgSysGlobals.removeAccents( textToBeSearched )
+                        if optionsDict['caselessFlag']: textToBeSearched = textToBeSearched.lower()
+                        textLen = len( textToBeSearched )
 
-                        if regExp:
+                        if optionsDict['regexFlag']:
+                            import re
                             halt
                         else: # not regExp
                             ix = -1
                             while True:
-                                ix = textToSearch.find( ourSearchText, ix+1 )
+                                ix = textToBeSearched.find( oursearchText, ix+1 )
                                 if ix == -1: break
                                 ixAfter = ix + searchLen
-                                if wholeWordOnly:
-                                    #print( "BF", repr(textToSearch[ix-1]) )
-                                    #print( "AF", repr(textToSearch[ixAfter]) )
-                                    if ix>0 and textToSearch[ix-1].isalpha(): continue
-                                    if ixAfter<textLen and textToSearch[ixAfter].isalpha(): continue
+                                if optionsDict['wordMode'] == 'Whole':
+                                    #print( "BF", repr(textToBeSearched[ix-1]) )
+                                    #print( "AF", repr(textToBeSearched[ixAfter]) )
+                                    if ix>0 and textToBeSearched[ix-1].isalpha(): continue
+                                    if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
+                                elif optionsDict['wordMode'] == 'Begins':
+                                    if ix>0 and textToBeSearched[ix-1].isalpha(): continue
+                                elif optionsDict['wordMode'] == 'Ends':
+                                    if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
 
-                                if contextLength: # Find the context in the original (fully-cased) string
-                                    contextBefore = origTextToSearch[ix-contextLength:ix]
-                                    contextAfter = origTextToSearch[ixAfter:ixAfter+contextLength]
+                                if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
+                                    contextBefore = origTextToBeSearched[ix-optionsDict['contextLength']:ix]
+                                    contextAfter = origTextToBeSearched[ixAfter:ixAfter+optionsDict['contextLength']]
                                 else: contextBefore = contextAfter = None
 
                                 ixHyphen = V.find( '-' )
                                 if ixHyphen != -1: V = V[:ixHyphen] # Remove verse bridges
                                 #adjMarker = None if marker=='v~' else marker # most markers are v~ -- ignore them (for space)
                                 resultTuple = (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore,
-                                                                    origTextToSearch[ix:ixAfter], contextAfter, ) \
-                                            if noCase else \
+                                                                    origTextToBeSearched[ix:ixAfter], contextAfter, ) \
+                                            if optionsDict['caselessFlag'] else \
                                                 (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore, contextAfter, )
                                 resultList.append( resultTuple )
 
@@ -2209,22 +2350,49 @@ def demo():
             iB.check()
             IBErrors = iB.getErrors()
             if BibleOrgSysGlobals.verbosityLevel > 2: print( IBErrors )
-        books = None #['JNA','PE1']
-        chapters = None #[0]
-        for searchString in ( "keen", "Keen", "junk", ):
-            print( "\n{}:".format( searchString ) )
-            sResult = iB.searchText( searchString, books, chapters )
-            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\n  sResult for {!r} is {}".format( searchString, adjResult ) )
-            sResult = iB.searchText( searchString, books, chapters, wholeWordOnly=True )
-            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\n  sResult for whole word {!r} is {}".format( searchString, adjResult ) )
-            sResult = iB.searchText( searchString, books, chapters, noCase=True )
-            adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\n  sResult for caseless {!r} is {}".format( searchString, adjResult ) )
+
+        if 0:
+            books = None #['JNA','PE1']
+            chapters = None #[0]
+            for searchString in ( "keen", "Keen", "junk", ):
+                print( "\n{}:".format( searchString ) )
+                sResult = iB.searchText1( searchString, books, chapters )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for {!r} is {}".format( searchString, adjResult ) )
+                sResult = iB.searchText1( searchString, books, chapters, wholeWordOnly=True )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for whole word {!r} is {}".format( searchString, adjResult ) )
+                sResult = iB.searchText1( searchString, books, chapters, noCase=True )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for caseless {!r} is {}".format( searchString, adjResult ) )
+
+        if 1:
+            searchOptions = {}
+            searchOptions['bookList'] = None #['JNA','PE1']
+            searchOptions['chapters'] = None #[0]
+            for searchString in ( "keen", "Keen", "junk", ):
+                print( "\n{}:".format( searchString ) )
+                searchOptions['givenText'] = searchString
+                searchOptions['wordMode'] = 'Any'
+                searchOptions['caselessFlag'] = False
+                sResult = iB.searchText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for {!r} is {}".format( searchString, adjResult ) )
+                searchOptions['wordMode'] = 'Whole'
+                sResult = iB.searchText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for whole word {!r} is {}".format( searchString, adjResult ) )
+                searchOptions['wordMode'] = 'Any'
+                searchOptions['caselessFlag'] = True
+                sResult = iB.searchText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult)-1, sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "\n  sResult for caseless {!r} is {}".format( searchString, adjResult ) )
 # end of demo
 
 
