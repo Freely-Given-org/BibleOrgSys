@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-01' # by RJH
+LastModifiedDate = '2016-06-04' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -1182,7 +1182,7 @@ class InternalBibleBook:
         #    1/ p = ''
         #    2/ v = 17
         #    3/ q1 = Text of verse 17.
-        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         lastMarker = lastText = None
         C = V = '0'
         for j,(marker,text) in enumerate( self._rawLines ):
@@ -1212,7 +1212,7 @@ class InternalBibleBook:
         #    2/ p = ''
         #    2/ v = 3
         #    3/ v~ = Text of verse 3.
-        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
@@ -1258,7 +1258,7 @@ class InternalBibleBook:
         #    2/ v~ = Some text
         #    3/ p = '' (last line in file)
         # to remove that last line.
-        newLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False

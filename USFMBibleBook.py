@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-03' # by RJH
+LastModifiedDate = '2016-06-04' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.46'
@@ -183,7 +183,7 @@ class USFMBibleBook( BibleBook ):
                 lastText +=  '\\' + marker + ' ' + text
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
-                if marker[0] == 'z': # it's a custom marker
+                if marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {}") \
                                             .format( self.BBB, C, V, marker, text ) )

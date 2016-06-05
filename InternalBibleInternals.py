@@ -43,7 +43,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-06-04' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.63'
@@ -508,12 +508,14 @@ class InternalBibleEntryList:
             return InternalBibleEntryList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
         return self.data[keyIndex]
+    # end of InternalBibleEntryList.__getitem__
 
 
     def append( self, newBibleEntry ):
         """
         Append the newBibleEntry to the InternalBibleEntryList.
         """
+        #print( "InternalBibleEntryList.append( {} )".format( newBibleEntry ) )
         assert isinstance( newBibleEntry, InternalBibleEntry )
         self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append
@@ -525,7 +527,7 @@ class InternalBibleEntryList:
         """
         try: return self.data.pop()
         except IndexError: return None
-    # end of InternalBibleEntryList.append
+    # end of InternalBibleEntryList.pop
 
     def extend( self, newList ):
         """

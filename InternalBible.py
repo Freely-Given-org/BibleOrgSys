@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-03' # by RJH
+LastModifiedDate = '2016-06-05' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -2183,9 +2183,9 @@ class InternalBible:
                 print( exp("searchText( {} )").format( optionsDict ) )
                 assert 'givenText' in optionsDict
 
-        optionsList = ( 'givenText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag',
-                'ignoreDiacriticsFlag', 'includeMarkersFlag', 'includeExtrasFlag',
-                'includeIntroFlag', 'contextLength', 'bookList', 'chapterList', 'regexFlag',
+        optionsList = ( 'givenText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
+                'includeIntroFlag', 'includeMainTextFlag', 'includeMarkerTextFlag', 'includeExtrasFlag',
+                'contextLength', 'bookList', 'chapterList', 'markerList', 'regexFlag',
                 'currentBCV', )
         for someKey in optionsDict:
             if someKey not in optionsList:
@@ -2198,12 +2198,14 @@ class InternalBible:
         if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'Ends' or 'Begins'
         if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
         if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
-        if 'includeMarkersFlag' not in optionsDict: optionsDict['includeMarkersFlag'] = False
-        if 'includeExtrasFlag' not in optionsDict: optionsDict['includeExtrasFlag'] = False
         if 'includeIntroFlag' not in optionsDict: optionsDict['includeIntroFlag'] = True
+        if 'includeMainTextFlag' not in optionsDict: optionsDict['includeMainTextFlag'] = True
+        if 'includeMarkerTextFlag' not in optionsDict: optionsDict['includeMarkerTextFlag'] = False
+        if 'includeExtrasFlag' not in optionsDict: optionsDict['includeExtrasFlag'] = False
         if 'contextLength' not in optionsDict: optionsDict['contextLength'] = 30 # each side
         if 'bookList' not in optionsDict: optionsDict['bookList'] = 'ALL' # or BBB or a list
         if 'chapterList' not in optionsDict: optionsDict['chapterList'] = None
+        if 'markerList' not in optionsDict: optionsDict['markerList'] = None
         optionsDict['regexFlag'] = False
 
         if BibleOrgSysGlobals.debugFlag:
@@ -2212,6 +2214,17 @@ class InternalBible:
             assert '\r' not in optionsDict['givenText'] and '\n' not in optionsDict['givenText']
             assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
             if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['givenText']
+            if optionsDict['markerList']:
+                assert isinstance( markerList, list )
+                assert not optionsDict['includeIntroFlag']
+                assert not optionsDict['includeMainTextFlag']
+                assert not optionsDict['includeMarkerTextFlag']
+                assert not optionsDict['includeExtrasFlag']
+
+        ourMarkerList = []
+        if optionsDict['markerList']:
+            for marker in optionsDict['markerList']:
+                ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
 
         oursearchText = optionsDict['givenText']
         try: optionsDict['searchHistoryList'].remove( oursearchText )
@@ -2235,14 +2248,21 @@ class InternalBible:
                 #print( exp("  searchText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 C = V = '0'
+                marker = None
                 for lineEntry in bookObject:
+                    if marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                        lastParagraphMarker = marker
+
                     marker, cleanText = lineEntry.getMarker(), lineEntry.getCleanText()
                     if marker[0] == '¬': continue # we'll always ignore these lines
                     if marker == 'c': C, V = cleanText, '0'
                     elif marker == 'v': V = cleanText
                     elif C == '0': V = str( int(V) + 1 )
-                    if C=='0' and not optionsDict['includeIntroFlag']: continue
-                    #print( "{}:{} {} = {}".format( C, V, marker, cleanText ) )
+                    if ourMarkerList:
+                        if marker in ('v~','p~') and lastParagraphMarker in ourMarkerList: pass
+                        elif marker not in ourMarkerList: continue
+                    elif C=='0' and not optionsDict['includeIntroFlag']: continue
+                    #print( "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
 
                     if optionsDict['chapterList'] is None \
                     or C in optionsDict['chapterList'] \
@@ -2252,7 +2272,7 @@ class InternalBible:
 
                         # Get our text to search
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
-                        if optionsDict['includeMarkersFlag']:
+                        if optionsDict['includeMarkerTextFlag']:
                             origTextToBeSearched = '\\{} {}'.format( marker, origTextToBeSearched )
                         if not origTextToBeSearched: continue
                         textToBeSearched = origTextToBeSearched
@@ -2280,7 +2300,7 @@ class InternalBible:
                                     if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
 
                                 if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
-                                    contextBefore = origTextToBeSearched[ix-optionsDict['contextLength']:ix]
+                                    contextBefore = origTextToBeSearched[max(0,ix-optionsDict['contextLength']):ix]
                                     contextAfter = origTextToBeSearched[ixAfter:ixAfter+optionsDict['contextLength']]
                                 else: contextBefore = contextAfter = None
 
