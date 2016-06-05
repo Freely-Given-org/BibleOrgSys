@@ -3252,9 +3252,8 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            "/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/English_My_Bible.2016-06-06_01.30_0.35928200_1465133425/YourSourceFiles/Unzipped/MB.xml",
-            #'Tests/DataFilesForTests/OSISTest1/', # Matigsalug test sample
-            #'Tests/DataFilesForTests/OSISTest2/', # Full KJV from Crosswire
+            'Tests/DataFilesForTests/OSISTest1/', # Matigsalug test sample
+            'Tests/DataFilesForTests/OSISTest2/', # Full KJV from Crosswire
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
