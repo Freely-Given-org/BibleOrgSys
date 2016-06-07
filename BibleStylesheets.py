@@ -27,7 +27,7 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-01' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
 ProgVersion = '0.10'
@@ -112,6 +112,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'c': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
     'r': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
     'mr': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
+    'sr': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
     'c#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
     'c~': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
     'v': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'foreground':VERSENUMBER_COLOUR, 'offset':SUPERSCRIPT_OFFSET, },
@@ -165,6 +166,7 @@ class BibleStylesheet():
         self.filepath = None
         self.smallestSize = self.largestSize = self.markerList = self.markerSets = None
         self.name = None
+        self.recordsDB = None
     # end of BibleStylesheet.__init__
 
 
