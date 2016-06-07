@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-05' # by RJH
+LastModifiedDate = '2016-06-06' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -70,7 +70,7 @@ import os, sys, logging, multiprocessing
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
-from InternalBibleInternals import InternalBibleEntryList
+from InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from InternalBibleBook import BCV_VERSION
 from VerseReferences import SimpleVerseKey
 
@@ -1526,6 +1526,7 @@ class InternalBible:
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="__TOP_PATH__Overall.css" type="text/css"/>
     <title>__TITLE__</title>
 </head>
@@ -2259,8 +2260,8 @@ class InternalBible:
                     elif marker == 'v': V = cleanText
                     elif C == '0': V = str( int(V) + 1 )
                     if ourMarkerList:
-                        if marker in ('v~','p~') and lastParagraphMarker in ourMarkerList: pass
-                        elif marker not in ourMarkerList: continue
+                        if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
+                            continue
                     elif C=='0' and not optionsDict['includeIntroFlag']: continue
                     #print( "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
 
@@ -2272,6 +2273,22 @@ class InternalBible:
 
                         # Get our text to search
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
+                        if C != '0' and not optionsDict['includeMainTextFlag']:
+                            #print( "Got {!r} but  don't include main text".format( origTextToBeSearched ) )
+                            if marker in ('v~','p~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                                origTextToBeSearched = ''
+                                if origTextToBeSearched != cleanText: # we must have extras -- we need to remove the main text
+                                    #print( "  Got extras" )
+                                    assert optionsDict['includeExtrasFlag']
+                                    origTextToBeSearched = ''
+                                    for extra in lineEntry.getExtras():
+                                        #print( "extra", extra )
+                                        extraStart = ''
+                                        if optionsDict['includeMarkerTextFlag']:
+                                            eTypeIndex = BOS_EXTRA_TYPES.index( extra.getType() )
+                                            extraStart = '\\{} '.format( BOS_EXTRA_MARKERS[eTypeIndex] )
+                                        origTextToBeSearched += ' ' if origTextToBeSearched else '' + extraStart + extra.getText()
+                                    #print( "  Now", repr(origTextToBeSearched) )
                         if optionsDict['includeMarkerTextFlag']:
                             origTextToBeSearched = '\\{} {}'.format( marker, origTextToBeSearched )
                         if not origTextToBeSearched: continue
