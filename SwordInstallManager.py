@@ -34,7 +34,7 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
 ProgVersion = '0.07'
@@ -45,7 +45,7 @@ debuggingThisModule = False
 
 
 #from singleton import singleton
-import sys, os, logging, re
+import sys, os, logging
 import ftplib
 #import urllib.request
 import tempfile, tarfile

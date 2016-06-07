@@ -28,7 +28,7 @@ Module handling Hebrew language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-20' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "Hebrew"
 ProgName = "Hebrew language handler"
 ProgVersion = "0.05"
@@ -37,7 +37,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 debuggingThisModule = False
 
 
-import os, unicodedata
+import unicodedata
 
 import BibleOrgSysGlobals
 

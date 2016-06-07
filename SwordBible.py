@@ -37,7 +37,7 @@ Some of this code (esp. filtering) should probably be moved into
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.32'
@@ -52,7 +52,7 @@ import multiprocessing
 
 
 import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+from Bible import Bible #, BibleBook
 from SwordResources import SwordType, SwordInterface
 #from BibleOrganizationalSystems import BibleOrganizationalSystem
 

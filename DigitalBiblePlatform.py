@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-11' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.16'
@@ -75,7 +75,7 @@ debuggingThisModule = False
 
 
 from singleton import singleton
-import os, logging, multiprocessing
+import os, logging
 import urllib.request, json
 from collections import OrderedDict
 

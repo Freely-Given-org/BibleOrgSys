@@ -43,10 +43,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-04' # by RJH
+LastModifiedDate = '2016-06-06' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -113,6 +113,7 @@ BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
 BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
+BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'vp', )
 """
     fn  footnote
     en  endnote
@@ -122,6 +123,7 @@ BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
     sem semantic and other translation-related markers
     vp  published verse number
 """
+assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
 #def exp( messageString ):
