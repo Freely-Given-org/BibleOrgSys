@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-06-07' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.91'
@@ -86,7 +86,7 @@ OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
 import sys, os, shutil, logging
 from datetime import datetime
 from collections import OrderedDict
-import re, sqlite3, json
+import re, json
 import zipfile, tarfile
 import subprocess, multiprocessing
 
@@ -95,7 +95,7 @@ from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKER
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from MLWriter import MLWriter
 
 
@@ -2831,7 +2831,7 @@ class BibleWriter( InternalBible ):
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
                     with open( debugDestinationHTMLFilepathTemplate.format( BBB, C, V ), 'wt', encoding='utf-8' ) as debugOutputFile:
-                        debugOutputFile.write( '<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><link rel="stylesheet" type="text/css" href="BibleBook.css"><title>Bible Section</title></head><body>' \
+                        debugOutputFile.write( '<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" type="text/css" href="BibleBook.css"><title>Bible Section</title></head><body>' \
                                             + sectionHTML + '</body></html>' )
                     checkHTML = decompress( compressedHTML )
                     if checkHTML != sectionHTML:
