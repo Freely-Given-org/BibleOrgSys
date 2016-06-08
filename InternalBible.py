@@ -2063,7 +2063,7 @@ class InternalBible:
     # end of InternalBible.getVerseText
 
 
-    #def searchText1( self, givenText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=30 ):
+    #def searchText1( self, searchText, bookList=None, chapterList=None, wholeWordOnly=False, includeIntro=True, includeMarkers=False, noExtras=True, noCase=False, regExp=False, contextLength=30 ):
         #"""
         #Search the Bible for the given text.
 
@@ -2081,20 +2081,20 @@ class InternalBible:
         #if BibleOrgSysGlobals.debugFlag:
             #if debuggingThisModule:
                 #print( exp("searchText1( {!r}, bl={}, cl={}, wwo={}, ii={}, im={}, ne={}, nc={}, re={}, cl={} )") \
-                            #.format( givenText, bookList, chapterList, wholeWordOnly, includeIntro,
+                            #.format( searchText, bookList, chapterList, wholeWordOnly, includeIntro,
                                         #includeMarkers, noExtras, noCase, regExp, contextLength ) )
             #if chapterList: assert bookList is None or len(bookList) == 1 \
                                 #or chapterList == [0] # Only combinations that make sense
-            #assert '\r' not in givenText and '\n' not in givenText
-            #if wholeWordOnly: assert ' ' not in givenText
+            #assert '\r' not in searchText and '\n' not in searchText
+            #if wholeWordOnly: assert ' ' not in searchText
 
-        #oursearchText1 = givenText.lower() if noCase else givenText
+        #oursearchText1 = searchText.lower() if noCase else searchText
         #searchLen = len( oursearchText1 )
         ##print( "  {} books loaded".format( len(self) ) )
 
         ## The first entry in the result list is a dictionary containing the parameters
         ##   Following entries are SimpleVerseKey objects
-        #resultList = [{ 'givenText':givenText, 'BookList':bookList, 'chapterList':chapterList,
+        #resultList = [{ 'searchText':searchText, 'BookList':bookList, 'chapterList':chapterList,
                        #'wholeWordOnly':wholeWordOnly, 'includeIntro':includeIntro,
                        #'includeMarkers':includeMarkers, 'noExtras':noExtras, 'noCase':noCase,
                        #'regExp':regExp, 'contextLength':contextLength,
@@ -2161,7 +2161,7 @@ class InternalBible:
     def searchText( self, optionsDict ):
         """
         Search the Bible for the given text which is contained in a dictionary of options.
-            Search string must be in optionsDict['givenText'].
+            Search string must be in optionsDict['searchText'].
             (We add default options for any missing ones as well as updating the 'searchHistoryList'.)
 
         Assumes that all Bible books are already loaded.
@@ -2182,9 +2182,9 @@ class InternalBible:
         if 1 or BibleOrgSysGlobals.debugFlag:
             if 1 or debuggingThisModule:
                 print( exp("searchText( {} )").format( optionsDict ) )
-                assert 'givenText' in optionsDict
+                assert 'searchText' in optionsDict
 
-        optionsList = ( 'givenText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
+        optionsList = ( 'searchText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
                 'includeIntroFlag', 'includeMainTextFlag', 'includeMarkerTextFlag', 'includeExtrasFlag',
                 'contextLength', 'bookList', 'chapterList', 'markerList', 'regexFlag',
                 'currentBCV', )
@@ -2212,9 +2212,9 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag:
             if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
                                 or optionsDict['chapterList'] == [0] # Only combinations that make sense
-            assert '\r' not in optionsDict['givenText'] and '\n' not in optionsDict['givenText']
+            assert '\r' not in optionsDict['searchText'] and '\n' not in optionsDict['searchText']
             assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
-            if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['givenText']
+            if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['searchText']
             if optionsDict['markerList']:
                 assert isinstance( markerList, list )
                 assert not optionsDict['includeIntroFlag']
@@ -2227,7 +2227,7 @@ class InternalBible:
             for marker in optionsDict['markerList']:
                 ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
 
-        oursearchText = optionsDict['givenText']
+        oursearchText = optionsDict['searchText']
         try: optionsDict['searchHistoryList'].remove( oursearchText )
         except ValueError: pass
         optionsDict['searchHistoryList'].append( oursearchText ) # Make sure it goes on the end
@@ -2412,7 +2412,7 @@ def demo():
             searchOptions['chapters'] = None #[0]
             for searchString in ( "keen", "Keen", "junk", ):
                 print( "\n{}:".format( searchString ) )
-                searchOptions['givenText'] = searchString
+                searchOptions['searchText'] = searchString
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = False
                 sResult = iB.searchText( searchOptions )
