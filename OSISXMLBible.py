@@ -36,10 +36,10 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-06' # by RJH
+LastModifiedDate = '2016-06-12' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.51'
+ProgVersion = '0.52'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -717,7 +717,7 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} (1s3d)".format( attrib, value, sublocation ) )
                         #print( "copyrightType", copyrightType )
                         if BibleOrgSysGlobals.debugFlag:
-                            assert copyrightType in (None,'x-copyright','x-license','x-license-url','x-BY-SA',)
+                            assert copyrightType in (None,'x-copyright','x-license','x-license-url','x-BY-SA','x-comments-to',)
                         if BibleOrgSysGlobals.verbosityLevel > 2:
                             print( "    Rights{} are/were {!r}".format( " ({})".format(copyrightType) if copyrightType else '', subelement.text ) )
                         self.suppliedMetadata['OSIS']['Rights'] = subelement.text
@@ -1575,7 +1575,8 @@ class OSISXMLBible( Bible ):
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if BibleOrgSysGlobals.debugFlag: assert notePlacement in ('inline',)
                 if not noteN: noteN = '~'
-                self.thisBook.addLine( 'ix', noteN )
+                #self.thisBook.addLine( 'ix', noteN )
+                self.thisBook.appendToLastLine( ' {} '.format( noteN ) ) # Not sure what this is
             elif noteType == 'x-strongsMarkup':
                 #print( "  noteType =", noteType, "noteN =", noteN, repr(notePlacement) )
                 if BibleOrgSysGlobals.debugFlag: assert notePlacement is None
@@ -1620,7 +1621,8 @@ class OSISXMLBible( Bible ):
                     #print( "translation note fgd1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement )
                 elif noteType == 'x-index':
                     #print( "Need to handle index note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                    self.thisBook.addLine( 'ix~', noteText )
+                    #self.thisBook.addLine( 'ix~', noteText )
+                    self.thisBook.appendToLastLine( ' {} '.format( noteText ) )
                 elif noteType == 'x-strongsMarkup':
                     self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
                 else:
@@ -2836,12 +2838,15 @@ class OSISXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2s7z', loadErrors )
                         p = element.text
                         if p == '¶':
-                            bookResults.append( ('paragraph', None,) )
-                            bookResults.append( ('p', None,) )
+                            #bookResults.append( ('paragraph', None,) )
+                            #bookResults.append( ('p', None,) )
+                            self.thisBook.addLine( 'p', '' )
+
                         else:
                             # print( "p = {!r}".format( element.text ) ); halt
-                            bookResults.append( ('paragraph', p,) )
-                            bookResults.append( ('p', p,) )
+                            #bookResults.append( ('paragraph', p,) )
+                            #bookResults.append( ('p', p,) )
+                            self.thisBook.addLine( 'p', p )
                     else:
                         logging.error( "95k3 Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (95k3)".format( subelement.tag, subelement.text, location, verseMilestone ) )

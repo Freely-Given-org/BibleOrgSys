@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-11' # by RJH
+LastModifiedDate = '2016-06-12' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.71'
@@ -2028,6 +2028,8 @@ class InternalBible:
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
 
+        Gets cleanText (no notes) unless fullTextFlag is specified.
+
         Uses uncommon Unicode symbols to represent various formatted styles
 
         Raises a KeyError if the key isn't found/valid.
@@ -2085,8 +2087,8 @@ class InternalBible:
 
         TODO: Get regex working
         """
-        if 1 or BibleOrgSysGlobals.debugFlag:
-            if 1 or debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag:
+            if debuggingThisModule:
                 print( exp("searchText( {} )").format( optionsDict ) )
                 assert 'searchText' in optionsDict
 
