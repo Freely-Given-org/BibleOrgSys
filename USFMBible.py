@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-06-11' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.70'
+ProgVersion = '0.71'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -39,7 +39,8 @@ debuggingThisModule = False
 
 
 import os, logging
-import multiprocessing
+import re, multiprocessing
+from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from USFMFilenames import USFMFilenames
@@ -216,6 +217,208 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             return uB
         return numFound
 # end of USFMBibleFileCheck
+
+
+
+def searchReplaceText( self, optionsDict, confirmCallback ):
+    """
+    Search the Bible book files for the given text which is contained in a dictionary of options.
+        Search string must be in optionsDict['searchText'].
+        (We add default options for any missing ones as well as updating the 'searchHistoryList'.)
+    Then go through and replace.
+
+    "self" in this case is either a USFMBible or a PTXBible object.
+
+    The confirmCallback function must be a function that takes
+        6 parameters: ref, contextBefore, ourSearchText, contextAfter, willBeText, haveUndosFlag
+    and returns a single UPPERCASE character
+        'N' (no), 'Y' (yes), 'A' (all), or 'S' (stop).
+
+    Note that this function works on actual text files.
+        If the text files are loaded into a Bible object,
+            after replacing, the Bible object will need to be reloaded.
+    If it's called from an edit window, it's essential that all editing changes
+        are saved to the file first.
+
+    NOTE: We currently handle undo, by cache all files which need to be saved to disk.
+        We might need to make this more efficient, e.g., save under a temp filename.
+
+    TODO: Get regex working
+    """
+    if BibleOrgSysGlobals.debugFlag:
+        if debuggingThisModule:
+            print( exp("searchReplaceText( {}, {}, … )").format( self, optionsDict ) )
+            assert 'searchText' in optionsDict
+            assert 'replaceText' in optionsDict
+
+    optionsList = ( 'searchText', 'replaceText', 'work', 'searchHistoryList', 'replaceHistoryList', 'wordMode',
+            #'caselessFlag', 'ignoreDiacriticsFlag', 'includeIntroFlag', 'includeMainTextFlag',
+            #'includeMarkerTextFlag', 'includeExtrasFlag', 'markerList', 'chapterList',
+            'contextLength', 'bookList', 'regexFlag', 'currentBCV', 'doBackups', )
+    for someKey in optionsDict:
+        if someKey not in optionsList:
+            print( "searchReplaceText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+            if debuggingThisModule: halt
+
+    # Go through all the given options
+    if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
+    if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
+    if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'Ends' or 'Begins'
+    #if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
+    #if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
+    #if 'includeIntroFlag' not in optionsDict: optionsDict['includeIntroFlag'] = True
+    #if 'includeMainTextFlag' not in optionsDict: optionsDict['includeMainTextFlag'] = True
+    #if 'includeMarkerTextFlag' not in optionsDict: optionsDict['includeMarkerTextFlag'] = False
+    #if 'includeExtrasFlag' not in optionsDict: optionsDict['includeExtrasFlag'] = False
+    if 'contextLength' not in optionsDict: optionsDict['contextLength'] = 60 # each side
+    if 'bookList' not in optionsDict: optionsDict['bookList'] = 'ALL' # or BBB or a list
+    #if 'chapterList' not in optionsDict: optionsDict['chapterList'] = None
+    #if 'markerList' not in optionsDict: optionsDict['markerList'] = None
+    if 'doBackups' not in optionsDict: optionsDict['doBackups'] = True
+    optionsDict['regexFlag'] = False
+
+    if BibleOrgSysGlobals.debugFlag:
+        if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
+                            or optionsDict['chapterList'] == [0] # Only combinations that make sense
+        assert '\r' not in optionsDict['searchText'] and '\n' not in optionsDict['searchText']
+        assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
+        if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['searchText']
+        #if optionsDict['markerList']:
+            #assert isinstance( markerList, list )
+            #assert not optionsDict['includeIntroFlag']
+            #assert not optionsDict['includeMainTextFlag']
+            #assert not optionsDict['includeMarkerTextFlag']
+            #assert not optionsDict['includeExtrasFlag']
+
+    #ourMarkerList = []
+    #if optionsDict['markerList']:
+        #for marker in optionsDict['markerList']:
+            #ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
+
+    ourSearchText = optionsDict['searchText']
+    try: optionsDict['searchHistoryList'].remove( ourSearchText )
+    except ValueError: pass
+    optionsDict['searchHistoryList'].append( ourSearchText ) # Make sure it goes on the end
+
+    ourReplaceText = optionsDict['replaceText']
+    try: optionsDict['replaceHistoryList'].remove( ourReplaceText )
+    except ValueError: pass
+    optionsDict['replaceHistoryList'].append( ourReplaceText ) # Make sure it goes on the end
+
+    if ourSearchText.lower().startswith( 'regex:' ):
+        optionsDict['regexFlag'] = True
+        ourSearchText = ourSearchText[6:]
+    #if optionsDict['ignoreDiacriticsFlag']: ourSearchText = BibleOrgSysGlobals.removeAccents( ourSearchText )
+    #if optionsDict['caselessFlag']: ourSearchText = ourSearchText.lower()
+    searchLen = len( ourSearchText )
+    if BibleOrgSysGlobals.debugFlag: assert searchLen
+    replaceLen = len( ourReplaceText )
+    diffLen = replaceLen - searchLen
+    #print( "  Searching for {!r} in {} loaded books".format( ourSearchText, len(self) ) )
+
+    if not self.preloadDone: self.preload()
+
+    # The first entry in the result list is a dictionary containing the parameters
+    #   Following entries are SimpleVerseKey objects
+    encoding = self.encoding
+    if encoding is None: encoding = 'utf-8'
+
+    replaceAllFlag = stopFlag = undoFlag = False
+    resultDict = { 'numFinds':0, 'numReplaces':0, 'searchedBookList':[], 'foundBookList':[], 'replacedBookList':[], 'aborted':False, }
+    filesToSave = OrderedDict()
+    if self.maximumPossibleFilenameTuples:
+        for BBB,filename in self.maximumPossibleFilenameTuples:
+            if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
+                #print( exp("searchReplaceText: will search book {}").format( BBB ) )
+                bookFilepath = os.path.join( self.sourceFolder, filename )
+                with open( bookFilepath, 'rt', encoding=encoding ) as bookFile:
+                    bookText = bookFile.read()
+                resultDict['searchedBookList'].append( BBB )
+
+                #C = V = '0'
+                if optionsDict['regexFlag']:
+                    halt
+                else: # not regExp
+                    ix = 0
+                    while True:
+                        ix = bookText.find( ourSearchText, ix )
+                        if ix == -1: break # none / no more found
+                        #print( "Found {!r} at {:,} in {}".format( ourSearchText, ix, BBB ) )
+                        resultDict['numFinds'] += 1
+                        if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
+
+                        ixAfter = ix + searchLen
+                        if optionsDict['wordMode'] == 'Whole':
+                            #print( "BF", repr(bookText[ix-1]) )
+                            #print( "AF", repr(bookText[ixAfter]) )
+                            if ix>0 and bookText[ix-1].isalpha(): ix+=1; continue
+                            if ixAfter<len(bookText) and bookText[ixAfter].isalpha(): ix+=1; continue
+                        elif optionsDict['wordMode'] == 'Begins':
+                            if ix>0 and bookText[ix-1].isalpha(): ix+=1; continue
+                        elif optionsDict['wordMode'] == 'Ends':
+                            if ixAfter<len(bookText) and bookText[ixAfter].isalpha(): ix+=1; continue
+
+                        if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
+                            contextBefore = bookText[max(0,ix-optionsDict['contextLength']):ix]
+                            contextAfter = bookText[ixAfter:ixAfter+optionsDict['contextLength']]
+                        else: contextBefore = contextAfter = None
+                        #print( "  After  {!r}".format( contextBefore ) )
+                        #print( "  Before {!r}".format( contextAfter ) )
+
+                        result = None
+                        if not replaceAllFlag:
+                            ref = BBB
+                            willBeText = contextBefore + ourReplaceText + contextAfter
+                            result = confirmCallback( ref, contextBefore, ourSearchText, contextAfter, willBeText, resultDict['numReplaces']>0 )
+                            #print( "searchReplaceText got", result )
+                            assert result in 'YNASU'
+                            if result == 'A': replaceAllFlag = True
+                            elif result == 'S': stopFlag = True; break
+                            elif result == 'U': undoFlag = True; break
+                        if replaceAllFlag or result == 'Y':
+                            #print( "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
+                            bookText = bookText[:ix] + ourReplaceText + bookText[ixAfter:]
+                            ix += replaceLen # Start searching after the replacement
+                            #print( "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
+                            resultDict['numReplaces'] += 1
+                            if BBB not in resultDict['replacedBookList']: resultDict['replacedBookList'].append( BBB )
+                            if BBB not in filesToSave: filesToSave[BBB] = (bookFilepath,bookText)
+                        else: ix += 1 # So don't keep repeating the same find
+
+            if stopFlag:
+                if BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "Search/Replace was aborted in {} after {} replaces.".format( BBB, resultDict['numReplaces'] ) )
+                resultDict['aborted'] = True
+                break
+            if undoFlag:
+                if resultDict['numReplaces']>0:
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
+                elif BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "Search/Replace was aborted (by undo) in {}.".format( BBB ) )
+                filesToSave = {}
+                resultDict['replacedBookList'] = []
+                resultDict['numReplaces'] = 0
+                resultDict['aborted'] = True
+                break
+
+    else:
+        logging.critical( exp("No book files to search/replace in {}!").format( self.sourceFolder ) )
+
+    for BBB,(filepath,fileText) in filesToSave.items():
+        if optionsDict['doBackups']:
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "Making backup copy of {} file: {}…".format( BBB, filepath ) )
+            BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=4 )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
+        with open( filepath, 'wt', encoding=encoding, newline='\r\n' ) as bookFile:
+            bookFile.write( fileText )
+        self.bookNeedsReloading[BBB] = True
+
+    #print( exp("searchReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
+    return optionsDict, resultDict
+# end of searchReplaceText
 
 
 

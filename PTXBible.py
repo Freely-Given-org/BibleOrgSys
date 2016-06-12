@@ -27,13 +27,17 @@
 Module for defining and manipulating complete or partial Paratext Bibles
     along with any enclosed metadata.
 
+The Paratext Bible (PTXBible) object contains USFMBibleBooks.
+
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
+
+TODO: Check if PTXBible object should be based on USFMBible.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-31' # by RJH
+LastModifiedDate = '2016-06-10' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.18'
@@ -504,6 +508,9 @@ def loadPTXVersifications( BibleObject ):
 class PTXBible( Bible ):
     """
     Class to load and manipulate Paratext Bible bundles.
+
+    The PTXBible object contains USFMBibleBooks.
+        (i.e., there's not PTXBibleBook object types.)
     """
     def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
         """
