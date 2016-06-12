@@ -34,10 +34,10 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-06-12' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -995,6 +995,7 @@ class HebrewLexiconSimple:
         #if key == 'H1':
             #print( "Should be:" )
             #print( 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
+        while len(keyDigits)>1 and keyDigits[0]=='0': keyDigits = keyDigits[1:] # Remove leading zeroes
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
             #for j, subentry in enumerate(entry):

@@ -34,10 +34,10 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-01' # by RJH
+LastModifiedDate = '2016-06-12' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -431,6 +431,7 @@ class GreekLexicon:
         """
         if BibleOrgSysGlobals.debugFlag: assert key and key[0]=='G' and key[1:].isdigit()
         keyDigits = key[1:]
+        while len(keyDigits)>1 and keyDigits[0]=='0': keyDigits = keyDigits[1:] # Remove leading zeroes
         if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
