@@ -30,7 +30,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-12' # by RJH
+LastModifiedDate = '2016-06-14' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.05'
@@ -214,6 +214,7 @@ def compareBooksPedantic( book1, book2,
                         bcResults.append( (reference,"Mismatched digit: {} vs {} {!r}".format( c1, c2, digit )) )
                         if breakOnOne: break
                 for left,right in matchingPairs:
+                    # NOTE: Code below doesn't give error with ( ( )
                     ixl = -1
                     while True:
                         ixl = line1.find( left, ixl+1 )
