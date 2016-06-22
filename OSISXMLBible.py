@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-15' # by RJH
+LastModifiedDate = '2016-06-22' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.52'
@@ -1217,7 +1217,7 @@ class OSISXMLBible( Bible ):
                 #print( "OSISXMLBible.validateVerseElement verse container bits", bits, 'vT', verseText )
                 if BibleOrgSysGlobals.debugFlag: assert len(bits)==3 and bits[1].isdigit() and bits[2].isdigit()
                 #print( "validateVerseElement: Have a verse container at", verseMilestone )
-                if verseText.strip():
+                if verseText and verseText.strip():
                     if self.source == "ftp://unboundftp.biola.edu/pub/albanian_utf8.zip": # Do some special handling
                         #print( "here", "&amp;quot;" in verseText, "&quot;" in verseText )
                         verseText = verseText.lstrip().replace('&quot;','"').replace('&lt;','<').replace('&gt;','>') # Fix some encoding issues
