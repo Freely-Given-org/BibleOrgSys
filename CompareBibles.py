@@ -645,7 +645,7 @@ def demo():
             print( "Comparing {} gave:".format( BBB ) )
             print( ' ', result )
 
-    if 0: # Test the whole Bibles
+    if 1: # Test the whole Bibles
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTesting for whole Bible…" )
         results = compareBibles( UB1, UB2, illegalStrings1=MS_ILLEGAL_STRINGS_1, illegalStrings2=MS_ILLEGAL_STRINGS_2 )
         totalCount = resultsBooksCount = 0
@@ -679,7 +679,7 @@ def demo():
                 print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
             print( "{:,} results in {}".format( len(awResult), BBB ) )
 
-    if 1: # Compare the whole Bibles
+    if 0: # Compare the whole Bibles
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nAnalyzing whole Bible…" )
         totalSegments = totalCount = 0
         for BBB in UB1.getBookList():
