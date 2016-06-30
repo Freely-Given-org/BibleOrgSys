@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -80,7 +80,8 @@ CURRENT_VERSE_FONTSIZE = 12
 CHAPTERNUMBER_FONTSIZE = 13
 DEFAULT_FONTSIZE = 9
 HEADING_FONTSIZE = 11
-SUBHEADING_FONTSIZE = 10
+SUBHEADING_FONTSIZE = HEADING_FONTSIZE - 1
+TITLE_FONTSIZE = HEADING_FONTSIZE + 2
 
 VERSENUMBER_COLOUR = 'blue'
 CHAPTERNUMBER_COLOUR = 'orange'
@@ -93,10 +94,23 @@ SUPERSCRIPT_OFFSET = '4'
 
 # Asterisk in front of a tag name indicates the currently selected verse
 DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
-    'id': {},
-    'h': {},
 # The following fields from InternalBible all contain their own (self-contained) text (in _processedLines)
+# File beginning
+    'id': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'firebrick1', },
+    'ide': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'tan1', },
+    'h': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'green4', },
+    'rem': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'lightBlue', },
+    'toc1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory2', },
+    'toc2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory3', },
+    'toc3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory4', },
+# Our added fields
+    'intro': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
+    'chapters': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
 # Headings
+    'mt1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold', 'justify':'center', },
+    'mt2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold2', 'justify':'center', },
+    'mt3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold3', 'justify':'center', },
+    'mt4': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold4', 'justify':'center', },
     's1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
     's2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
     's3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },

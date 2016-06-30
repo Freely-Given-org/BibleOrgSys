@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.31'
@@ -758,7 +758,7 @@ def demo():
                         hB.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total Haggai Bibles processed.".format( count ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

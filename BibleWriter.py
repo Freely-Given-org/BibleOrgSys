@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.91'
@@ -3242,7 +3242,7 @@ class BibleWriter( InternalBible ):
         # Before we write the file, let's compress all our books
         compressedDictionary = {}
         for BBB,bookObject in self.books.items():
-            if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF',): continue # Ignore these books
+            if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF','XXG',): continue # Ignore these books
             pseudoUSFMData = bookObject._processedLines
 
             textBuffer = ''

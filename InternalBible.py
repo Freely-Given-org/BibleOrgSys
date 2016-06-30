@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-12' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -116,7 +116,7 @@ class InternalBible:
     """
     def __init__( self ):
         """
-        Create the object.
+        Create the InternalBible object with empty variables.
         """
         # Set up empty variables for the object
         #       some of which will be filled in later depending on what is known from the Bible type
@@ -354,15 +354,19 @@ class InternalBible:
                 errorClass, exceptionInstance, traceback = sys.exc_info()
                 #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
-                    logging.info( "No 'loadBook()' function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+                    logging.info( _("No 'loadBook()' function to load individual {} Bible book for {}") \
+                        .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
                 else: # it's some other attribute error in the loadBook function
                     raise
-            except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            except KeyError: logging.critical( _("No individual {} Bible book available for {}") \
+                                    .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
+            except FileNotFoundError: logging.critical( _("Unable to find and load individual {} Bible book for {}") \
+                                    .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "NOLOAD", BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
+                print( 'NOLOAD', BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -2158,14 +2162,15 @@ class InternalBible:
                 #print( exp("  searchText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
-                C = V = '0'
+                C, V = '0', '-1' # So id line starts at 0:0
                 marker = None
                 for lineEntry in bookObject:
                     if marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                         lastParagraphMarker = marker
 
                     marker, cleanText = lineEntry.getMarker(), lineEntry.getCleanText()
-                    if marker[0] == '¬': continue # we'll always ignore these lines
+                    if marker[0] == '¬': continue # we'll always ignore these added lines
+                    if marker in ('intro','chapters'): continue # we'll always ignore these added lines
                     if marker == 'c': C, V = cleanText, '0'
                     elif marker == 'v': V = cleanText
                     elif C == '0': V = str( int(V) + 1 )

@@ -26,9 +26,9 @@
 Module for defining and manipulating Bible books in our internal USFM-based 'lines' format.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (with "OSIS", "USFM", "USX" or "XML", etc.)
+    self.objectTypeString (with 'OSIS', 'USFM', 'USX' or 'XML', etc.)
     self.objectNameString (with a description of the type of BibleBook object)
-It also needs to provide a "load" routine that sets one or more of:
+It also needs to provide a 'load' routine that sets one or more of:
     self.sourceFolder
     self.sourceFilename
     self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
@@ -38,11 +38,19 @@ and then calls
 
 Required improvements:
     Need to be able to accept encoded cross references as well as text (USFX and YET modules).
+
+To use the InternalBibleBook class,
+    use addLine( marker, text ) to add lines to _rawLines
+        which is a list containing 2-tuples (marker,text) which contain the actual Bible text
+    Then call processLines() which works through _rawLines
+        removes footnotes and other additional info
+        and places the processed Bible info into _processedLines.
+    Finally, call makeIndex() to index _processedLines by CV.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-04' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -145,7 +153,7 @@ class InternalBibleBook:
 
         self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( self.BBB )
 
-        self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see addLine below
+        self._rawLines = [] # Contains 2-tuples (marker,text) which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedFlag = False
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary

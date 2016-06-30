@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.51'
@@ -110,19 +110,19 @@ for count in theWordBookLines: total += count
 assert total == theWordTotalLines
 
 
-#def exp( messageString ):
-    #"""
-    #Expands the message string in debug mode.
-    #Prepends the module name to a error or warning message string
-        #if we are in debug mode.
-    #Returns the new string.
-    #"""
-    #try: nameBit, errorBit = messageString.split( ': ', 1 )
-    #except ValueError: nameBit, errorBit = '', messageString
-    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit, errorBit )
-## end of exp
+def exp( messageString ):
+    """
+    Expands the message string in debug mode.
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, errorBit )
+# end of exp
 
 
 

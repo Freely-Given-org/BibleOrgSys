@@ -84,10 +84,10 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1227,7 +1227,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     conn.commit() # save (commit) the changes
 
 
-    BOOKS_TO_IGNORE = ( 'FRT', 'INT', 'BAK', 'GLS', 'OTH', 'XXA', 'XXB', 'XXC', 'XXD', 'XXE', 'XXF', 'NDX', 'UNK',
+    BOOKS_TO_IGNORE = ( 'FRT', 'INT', 'BAK', 'GLS', 'OTH', 'XXA','XXB','XXC','XXD','XXE','XXF','XXG', 'NDX', 'UNK',
                        'PS2', 'ESG','GES', 'MA4', ) # This line are ones containing verse data but which we don't know how to encode
 
     # Now create and fill the Bible books table

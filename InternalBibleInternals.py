@@ -39,11 +39,16 @@ Module for defining and manipulating internal Bible objects including:
 
     InternalBibleIndexEntry
     InternalBibleIndex
+        Everything before chapter 1 is considered chapter 0.
+        The first line in chapter 0 is considered verse 0
+            and each successive line has a successive verse number.
+        Everything before verse 1 in regular chapters
+            is considered as verse 0, e.g., many section headings, etc.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-06' # by RJH
+LastModifiedDate = '2016-06-30' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.64'
@@ -124,6 +129,11 @@ BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'vp', )
     vp  published verse number
 """
 assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
+
+BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX', 'TDX', 'BAK', 'OTH',
+                          'XXA','XXB','XXC','XXD','XXE','XXF','XXG',
+                          'UNK', '???', )
+
 
 
 #def exp( messageString ):
@@ -567,6 +577,8 @@ class InternalBibleIndexEntry:
         3/ context: a list containing contextual markers which still apply to this entry.
     """
     def __init__( self, entryIndex, entryCount, context=None ):
+        """
+        """
         #if context: print( "XXXXXXXX", entryIndex, entryCount, context )
         if context is None: context = []
         self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
@@ -610,17 +622,17 @@ class InternalBibleIndex:
         Just display a simplified view of the list of entries.
         """
         result = "InternalBibleIndex object for {}:".format( self.BBB )
-        try: result += "\n  {} index entries".format( len( self.indexData ) )
+        try: result += "\n  {} index entries".format( len( self.__indexData ) )
         except AttributeError: result += "\n  Index is empty"
         try: result += " created from {} data entries".format( len( self.givenBibleEntries ) )
         except AttributeError: pass # ignore it
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.indexData), 1 ) )
+            try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.__indexData), 1 ) )
             except ( AttributeError, ZeroDivisionError ): pass # ignore it
         #try:
-            #for j, key in enumerate( sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
+            #for j, key in enumerate( sorted( self.__indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
-                #indexEntry = self.indexData[key]
+                #indexEntry = self.__indexData[key]
                 #entries = self.getEntries( key )
                 #result += "\n{} {} {} {}".format( j, key, indexEntry, entries )
                 #if j>10: break
@@ -629,18 +641,18 @@ class InternalBibleIndex:
     # end of InternalBibleIndex.__str__
 
 
-    def __len__( self ): len( self.indexData )
+    def __len__( self ): len( self.__indexData )
     #def __getitem__( self, keyIndex ):
-        #print( "IBI.gi", keyIndex, len(self.indexData)); halt
+        #print( "IBI.gi", keyIndex, len(self.__indexData)); halt
         #if keyIndex == 0: return None
-        #return self.indexData[keyIndex]
+        #return self.__indexData[keyIndex]
 
 
     def __iter__( self ):
         """
         Yields the next index entry CV key.
         """
-        for CVKey in self.indexData:
+        for CVKey in self.__indexData:
             yield CVKey
     # end of InternalBibleIndex.__iter__
 
@@ -651,7 +663,7 @@ class InternalBibleIndex:
 
         Raises a KeyError if the CV key doesn't exist.
         """
-        indexEntry = self.indexData[CVkey]
+        indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()]
     # end of InternalBibleIndex.getEntries
 
@@ -664,7 +676,7 @@ class InternalBibleIndex:
 
         Raises a KeyError if the CV key doesn't exist.
         """
-        indexEntry = self.indexData[CVkey]
+        indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()], indexEntry.getContext()
     # end of InternalBibleIndex.getEntriesWithContext
 
@@ -689,7 +701,7 @@ class InternalBibleIndex:
         self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
         #if self.BBB=='PHM':
         #print( self.givenBibleEntries )
-        self.indexData = OrderedDict()
+        self.__indexData = OrderedDict()
         errorData = []
 
 
@@ -710,20 +722,20 @@ class InternalBibleIndex:
                 #print( "saveAnythingOutstanding", self.BBB, saveCV, saveJ, lineCount, context )
                 #if saveCV == ('0','0'): halt
                 #assert 1 <= lineCount <= 120 # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self.indexData: # we already have an index entry for this C:V
+                if saveCV in self.__indexData: # we already have an index entry for this C:V
                     #print( "makeIndex.saveAnythingOutstanding: already have an index entry @ {} {}:{}".format( self.BBB, strC, strV ) )
                     errorData.append( ( self.BBB,strC,strV,) )
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
                         print( 'saveAnythingOutstanding @ ', self.BBB, saveCV )
                         try: # printing the previous index entry
-                            iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
+                            iep = self.__indexData[(saveCV[0],str(int(saveCV[1])-1))]
                             logging.error( "  mI:sAO previous {}".format( iep ) )
                             ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
                             for ixx in range( ix, ix+lc ):
                                 logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
                         except KeyError: pass
-                        logging.error( "  mI:sAO was {}".format( self.indexData[saveCV] ) )
-                        ie = self.indexData[saveCV]
+                        logging.error( "  mI:sAO was {}".format( self.__indexData[saveCV] ) )
+                        ie = self.__indexData[saveCV]
                         ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
                         for ixx in range( ix, ix+lc ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
@@ -735,16 +747,16 @@ class InternalBibleIndex:
                             if C != '0' and V != '0': # intros aren't so important
                                 halt # This is a serious error that is losing Biblical text
                     # Let's combine the entries
-                    ie = self.indexData[saveCV]
+                    ie = self.__indexData[saveCV]
                     ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
-                    self.indexData[saveCV] = InternalBibleIndexEntry( ix, lc+lineCount, ct[:] )
+                    self.__indexData[saveCV] = InternalBibleIndexEntry( ix, lc+lineCount, ct[:] )
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
                         logging.error( "  mI:sAO combined {}".format( (ix,lc+lineCount,ct) ) )
                         for ixx in range( ix, ix+lc+lineCount ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
                 else: # no pre-existing duplicate
-                    self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
-                #print( 'sAO', printIndexEntry( self.indexData[saveCV] ) )
+                    self.__indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
+                #print( 'sAO', printIndexEntry( self.__indexData[saveCV] ) )
                 saveCV = saveJ = None
                 lineCount = 0
         # end of saveAnythingOutstanding
@@ -752,9 +764,56 @@ class InternalBibleIndex:
 
         # Main code of InternalBibleIndex.makeIndex
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.name, self.BBB ) )
-        if self.BBB not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
-                                                'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
-            # Assume it's a C/V book
+        if self.BBB in BOS_NON_CHAPTER_BOOKS:
+            # It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
+            saveCV = saveJ = None
+            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
+            strC, strV = '0', '0'
+            for j, entry in enumerate( self.givenBibleEntries):
+                #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
+                marker = entry.getMarker()
+                if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                    assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
+                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
+                if marker == 'c': # A new chapter always means that it's a clean new index entry
+                    saveAnythingOutstanding()
+                    # Save anything before the first verse number as verse "zero"
+                    strC, strV = entry.getCleanText(), '0'
+                    assert strC != '0'
+                    #saveCV, saveJ = (strC,strV,), j
+                    lineCount += 1
+                elif marker == 'v':
+                    assert strC != '0' # Should be in a chapter by now
+                    print( "Why do we have a verse number in a {} book without chapters?".format( self.BBB ) )
+                    if debuggingThisModule:
+                        print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
+                    saveAnythingOutstanding() # with the adjusted lineCount
+                    if 0:
+                        # Remove verse ranges, etc. and then save the verse number
+                        strV = entry.getCleanText()
+                        digitV = ''
+                        for char in strV:
+                            if char.isdigit(): digitV += char
+                            else: # the first non-digit in the verse "number"
+                                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                break # ignore the rest
+                        #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
+                        saveCV, saveJ = (strC,digitV,), revertToJ
+                elif strC == '0': # Still in the introduction
+                    # Each line is considered a new "verse" entry in chapter "zero"
+                    assert saveCV is None and saveJ is None
+                    self.__indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    #print( "makeIndexIntro", printIndexEntry( self.__indexData[(strC,strV)] ) )
+                    Vi = int( strV )
+                    assert Vi == j
+                    strV = str( Vi + 1 ) # Increment the verse number
+                    lastJ = j
+                    assert lineCount == 0
+                else: # All the other lines don't cause a new index entry to be made
+                    lineCount += 1
+                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
+            saveAnythingOutstanding()
+        else: # Assume it's a C/V book
             saveCV = saveJ = None
             lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
@@ -799,10 +858,10 @@ class InternalBibleIndex:
                     saveCV, saveJ = (strC,digitV,), revertToJ
                     lineCount += (j-revertToJ) + 1 # For the v
                 elif strC == '0': # Still in the introduction
-                    # Each line is considered a new "verse" entry in chapter "zero"
+                    # Each line is considered a new 'verse' entry in chapter 'zero'
                     assert saveCV is None and saveJ is None
-                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
-                    #print( "makeIndex", printIndexEntry( self.indexData[(strC,strV)] ) )
+                    self.__indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    #print( "makeIndex", printIndexEntry( self.__indexData[(strC,strV)] ) )
                     Vi = int( strV )
                     assert Vi == j
                     strV = str( Vi + 1 ) # Increment the verse number
@@ -812,54 +871,6 @@ class InternalBibleIndex:
                     lineCount += 1
                 if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
                 #if j > 10: break
-            saveAnythingOutstanding()
-
-        else: # it's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
-            saveCV = saveJ = None
-            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
-            strC, strV = '0', '0'
-            for j, entry in enumerate( self.givenBibleEntries):
-                #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
-                marker = entry.getMarker()
-                if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
-                    assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
-                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
-                if marker == 'c': # A new chapter always means that it's a clean new index entry
-                    saveAnythingOutstanding()
-                    # Save anything before the first verse number as verse "zero"
-                    strC, strV = entry.getCleanText(), '0'
-                    assert strC != '0'
-                    #saveCV, saveJ = (strC,strV,), j
-                    lineCount += 1
-                elif marker == 'v':
-                    assert strC != '0' # Should be in a chapter by now
-                    print( "Why do we have a verse number in a {} book?".format( self.BBB ) )
-                    print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
-                    saveAnythingOutstanding() # with the adjusted lineCount
-                    if 0:
-                        # Remove verse ranges, etc. and then save the verse number
-                        strV = entry.getCleanText()
-                        digitV = ''
-                        for char in strV:
-                            if char.isdigit(): digitV += char
-                            else: # the first non-digit in the verse "number"
-                                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
-                                break # ignore the rest
-                        #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
-                        saveCV, saveJ = (strC,digitV,), revertToJ
-                elif strC == '0': # Still in the introduction
-                    # Each line is considered a new "verse" entry in chapter "zero"
-                    assert saveCV is None and saveJ is None
-                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
-                    #print( "makeIndexIntro", printIndexEntry( self.indexData[(strC,strV)] ) )
-                    Vi = int( strV )
-                    assert Vi == j
-                    strV = str( Vi + 1 ) # Increment the verse number
-                    lastJ = j
-                    assert lineCount == 0
-                else: # All the other lines don't cause a new index entry to be made
-                    lineCount += 1
-                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
             saveAnythingOutstanding()
 
         if errorData: # We got some overwriting errors
@@ -876,6 +887,12 @@ class InternalBibleIndex:
                 errorDataString += ('' if errorDataString[-1]==':' else ',') + V
             logging.warning( "makeIndex.saveAnythingOutstanding: Needed to combine multiple index entries for {}".format( errorDataString ) )
         self._indexedFlag = True
+        if 0:
+            print( self )
+            print( ' ', self.__indexData )
+            for j, (iKey,iEntry) in enumerate( self.__indexData.items() ):
+                print( " {:3} {}: {}".format( j, iKey, iEntry ) )
+            halt
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkIndex()
     # end of InternalBibleIndex.makeIndex
 
@@ -884,10 +901,10 @@ class InternalBibleIndex:
         """
         Just run a quick internal check on the index.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries…").format( len(self.indexData), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries…").format( len(self.__indexData), self.name, self.BBB ) )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( self )
 
-        for ixKey in self.indexData:
+        for ixKey in self.__indexData:
             #print( ixKey ); halt
             C, V = ixKey
             if not C.isdigit():
@@ -895,13 +912,13 @@ class InternalBibleIndex:
             if not V.isdigit():
                 logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {} {}:{}".format( self.name, self.BBB, repr(C), repr(V) ) )
 
-        try: sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
+        try: sortedIndex = sorted( self.__indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
         except ValueError: # non-numbers in C or V -- should already have received notification above
             logging.error( "InternalBibleIndex.checkIndex: Unable to sort index for {} {}".format( self.name, self.BBB ) )
-            sortedIndex = self.indexData # for now
+            sortedIndex = self.__indexData # for now
         #for j, key in enumerate( sortedIndex ):
             #C, V = key
-            #indexEntry = self.indexData[key]
+            #indexEntry = self.__indexData[key]
             #entries = self.getEntries( key )
             #print( "checkIndex display", j, key, indexEntry, entries )
             #if self.BBB!='FRT' and j>30: break
@@ -918,7 +935,7 @@ class InternalBibleIndex:
             except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
             C, V = key
 
-            indexEntry = self.indexData[key]
+            indexEntry = self.__indexData[key]
             entries = self.getEntries( key )
             foundMarkers = []
             anyText = anyExtras = False
@@ -1015,7 +1032,7 @@ class InternalBibleIndex:
                     #print( self.BBB, C, V, foundMarkers, entries )
                     #newKey = (C, '1')
                     #try:
-                        #iE = self.indexData[newKey]
+                        #iE = self.__indexData[newKey]
                         #iD, ct = self.getEntries( newKey )
                     #except KeyError: pass
                     #print( self
