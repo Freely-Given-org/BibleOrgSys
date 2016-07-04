@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-07-04' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -92,6 +92,7 @@ EXTRA_COLOUR = 'royalBlue1'
 
 SUPERSCRIPT_OFFSET = '4'
 
+# These are the styles for formatted mode
 # Asterisk in front of a tag name indicates the currently selected verse
 DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 # The following fields from InternalBible all contain their own (self-contained) text (in _processedLines)
@@ -166,6 +167,52 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+
+# These are the styles for unformatted mode that are different from above
+# Headings
+    'mt1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold', },
+    'mt2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold2', },
+    'mt3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold3', },
+    'mt4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold4', },
+    's1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    's2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    's3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    's4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'ms1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'ms2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'ms3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'ms4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'cl#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+
+# Other
+    'r#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
+    'mr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
+    'sr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
+
+# Paragraph level fields can contain text, or can influence the next v~ text
+    'p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    '*p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    'q1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'q2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'q3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'q4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    '*q1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    '*q2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    '*q3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    '*q4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    'mi#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ),  'background':'pink', },
+    '*mi#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ),  'background':'pink', },
+    'pi1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
+    'pi2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'purple', },
+    'pi3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'green', },
+    'pi4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'brown', },
+    '*pi1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', },
+    '*pi2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', },
+    '*pi3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', },
+    '*pi4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', },
+
+# Lines without markers (continuation lines)
+    '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
     }
 
 
@@ -186,9 +233,17 @@ class BibleStylesheet():
 
     def loadDefault( self ):
         """
+        Load the above styles
+            and copy any unformatted styles not explicitly declared.
         """
         self.dataDict = DEFAULT_STYLE_DICT
         self.name = 'Default'
+
+        for marker,style in self.dataDict.copy().items():
+            if marker[0]!='*' and marker[-1]!='#':
+                if marker+'#' not in self.dataDict:
+                    self.dataDict[marker+'#'] = style
+
         self.validate()
         return self  # So this command can be chained after the object creation
     # end of BibleStylesheet.loadDefault
@@ -223,7 +278,10 @@ class BibleStylesheet():
         from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("validate"), USFMMarker, styleData )
+            if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
+            if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
+            #print( USFMMarker )
             assert USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
     # end of BibleStylesheet.load
 
