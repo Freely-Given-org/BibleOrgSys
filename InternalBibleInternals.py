@@ -48,10 +48,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-07-07' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.64'
+ProgVersion = '0.65'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -733,7 +733,7 @@ class InternalBibleIndex:
                             ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
                             for ixx in range( ix, ix+lc ):
                                 logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                        except KeyError: pass
+                        except (KeyError,ValueError): pass
                         logging.error( "  mI:sAO was {}".format( self.__indexData[saveCV] ) )
                         ie = self.__indexData[saveCV]
                         ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()

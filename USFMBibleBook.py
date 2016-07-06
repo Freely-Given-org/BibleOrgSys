@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-04' # by RJH
+LastModifiedDate = '2016-07-07' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.46'
+ProgVersion = '0.47'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -145,12 +145,28 @@ class USFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} {!r}".format( BBB, C, V, marker, text ) )
+            #print( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
-            if marker=='c' and text: C, V = text.split()[0], '0'
+            if marker=='c' and text:
+                #print( "bits", text.split() )
+                try: C = text.split()[0]
+                except IndexError: # Seems we had a \c field that's just whitespace
+                    loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
+                                        .format( self.BBB, C, V, text ) )
+                    logging.error( _("Found {!r} invalid chapter field after {} {}:{}") \
+                                        .format( text, self.BBB, C, V ) )
+                    self.addPriorityError( 100, C, V, _("Found invalid/empty chapter field in file") )
+                V = '0'
             elif marker=='v' and text:
-                V = text.split()[0]
+                newV = text.split()[0]
+                if V=='0' and not ( newV=='1' or newV.startswith( '1-' ) ):
+                    loadErrors.append( _("{} {}:{} Expected v1 after chapter marker not {!r}") \
+                                        .format( self.BBB, C, V, newV ) )
+                    logging.error( _("Unexpected {!r} verse number immediately after chapter field after {} {}:{}") \
+                                        .format( newV, self.BBB, C, V ) )
+                    self.addPriorityError( 100, C, V, _("Got unexpected chapter number") )
+                V = newV
                 if C == '0': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif marker=='restore': continue # Ignore these lines completely
 
