@@ -48,10 +48,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-07-08' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -124,8 +124,8 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, sourceFolder, numLines=3 )
             if not firstLines or len(firstLines)<2: continue
-            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
@@ -167,8 +167,8 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
-                if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-                and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+                and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
@@ -252,8 +252,8 @@ class USFXXMLBible( Bible ):
         for thisFilename in sorted( foundFiles ):
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, sourceFolder, numLines=3 )
             if not firstLines or len(firstLines)<2: continue
-            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:

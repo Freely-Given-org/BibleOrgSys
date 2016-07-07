@@ -34,10 +34,10 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-07-08' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -111,8 +111,8 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
-            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<bible>' ):
@@ -154,8 +154,8 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
-                if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-                and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+                and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<bible>' ):
