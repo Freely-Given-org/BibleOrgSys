@@ -71,8 +71,8 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.28</version>
-      <date>2016-06-23</date>
+      <version>0.29</version>
+      <date>2016-07-08</date>
       <title>Traditional English Bible books names extensive list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -621,7 +621,7 @@ See the supplied ReadMe.txt for more details.
     <!-- Include mispellings -->
     <inputAbbreviation>Phillippians</inputAbbreviation>
     <inputAbbreviation>Phillipians</inputAbbreviation>
-    <inputAbbreviation>Philippians</inputAbbreviation>
+    <inputAbbreviation>Philipians</inputAbbreviation>
     <inputAbbreviation>Flppns</inputAbbreviation>
     <inputAbbreviation>Flpns</inputAbbreviation>
   </BibleBookNames>
