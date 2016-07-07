@@ -36,10 +36,10 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-22' # by RJH
+LastModifiedDate = '2016-07-08' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.52'
+ProgVersion = '0.53'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -133,8 +133,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=3 )
             if not firstLines or len(firstLines)<2: continue
-            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "OB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not (firstLines[1].startswith( '<osis ' ) or firstLines[2].startswith( '<osis ' )):
@@ -176,8 +176,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
-                if not firstLines[0].startswith( '<?xml version="1.0"' ) \
-                and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+                and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "OB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<osis ' ):

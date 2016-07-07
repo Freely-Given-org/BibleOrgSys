@@ -154,7 +154,7 @@ class USFMBibleBook( BibleBook ):
                 except IndexError: # Seems we had a \c field that's just whitespace
                     loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
                                         .format( self.BBB, C, V, text ) )
-                    logging.error( _("Found {!r} invalid chapter field after {} {}:{}") \
+                    logging.critical( _("Found {!r} invalid chapter field after {} {}:{}") \
                                         .format( text, self.BBB, C, V ) )
                     self.addPriorityError( 100, C, V, _("Found invalid/empty chapter field in file") )
                 V = '0'
