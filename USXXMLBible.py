@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-07-13' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.29'
@@ -419,7 +419,7 @@ def demo():
                 #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
                 ) # You can put your USX test folder here
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j, (name, testFolder) in enumerate( testData ):
             print( "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
             result1 = USXXMLBibleFileCheck( testFolder )

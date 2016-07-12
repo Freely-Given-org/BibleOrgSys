@@ -48,10 +48,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-07' # by RJH
+LastModifiedDate = '2016-07-13' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.65'
+ProgVersion = '0.66'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -582,7 +582,7 @@ class InternalBibleIndexEntry:
         #if context: print( "XXXXXXXX", entryIndex, entryCount, context )
         if context is None: context = []
         self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
-        self.indexNext = self.entryIndex + entryCount
+        #self.indexNext = self.entryIndex + entryCount
     # end of InternalBibleIndexEntry.__init__
 
     def __str__( self ):
@@ -590,13 +590,29 @@ class InternalBibleIndexEntry:
         Just display a simplified view of the index entry.
         """
         result = "InternalBibleIndexEntry object: ix={} cnt={} ixE={}{}" \
-            .format( self.entryIndex, self.entryCount, self.indexNext,
+            .format( self.entryIndex, self.entryCount, self.entryIndex + self.entryCount,
                     " ctxt={}".format(self.context) if self.context else '' )
         return result
     # end of InternalBibleIndexEntry.__str__
 
+    def __len__( self ): return 3
+    def __getitem__( self, keyIndex ):
+        if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
+            halt # not done yet
+            #print( "ki2", keyIndex )
+            #assert keyIndex.step is None
+            #print( "param", *keyIndex.indices(len(self)) )
+            #return InternalBibleEntryList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
+        # Otherwise assume keyIndex is an int
+        if keyIndex == 0: return self.entryIndex
+        elif keyIndex == 1: return self.entryCount
+        #elif keyIndex == 2: return self.indexNext
+        elif keyIndex == 2: return self.context
+        else: raise IndexError
+    # end of InternalBibleIndexEntry.__getitem__
+
     def getEntryIndex( self ): return self.entryIndex
-    def getNextEntryIndex( self ): return self.indexNext
+    def getNextEntryIndex( self ): return self.entryIndex + self.entryCount # self.indexNext
     def getEntryCount( self ): return self.entryCount
     def getContext( self ): return self.context
 # end of class InternalBibleIndexEntry
@@ -698,6 +714,7 @@ class InternalBibleIndex:
             context is a list containing contextual markers which still apply to this entry.
         """
         #print( "InternalBibleIndex.makeIndex( {} )".format( givenBibleEntries ) )
+        #if self.BBB == 'EXO': halt
         self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
         #if self.BBB=='PHM':
         #print( self.givenBibleEntries )
@@ -715,11 +732,12 @@ class InternalBibleIndex:
 
         def saveAnythingOutstanding():
             """
-            Save the outstanding index entry if any.
+            Save the outstanding index entry if any
+                into self.__indexData.
             """
-            nonlocal saveCV, saveJ, lineCount, context
+            nonlocal saveCV, saveJ, lineCount
             if saveCV and saveJ is not None:
-                #print( "saveAnythingOutstanding", self.BBB, saveCV, saveJ, lineCount, context )
+                #print( "saveAnythingOutstanding", self.BBB, saveCV, saveJ, lineCount )
                 #if saveCV == ('0','0'): halt
                 #assert 1 <= lineCount <= 120 # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.__indexData: # we already have an index entry for this C:V
@@ -728,34 +746,37 @@ class InternalBibleIndex:
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
                         print( 'saveAnythingOutstanding @ ', self.BBB, saveCV )
                         try: # printing the previous index entry
-                            iep = self.__indexData[(saveCV[0],str(int(saveCV[1])-1))]
-                            logging.error( "  mI:sAO previous {}".format( iep ) )
-                            ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
+                            ix, lc = self.__indexData[(saveCV[0],str(int(saveCV[1])-1))]
+                            logging.error( "  mI:sAO previous {} {}".format( ix, lc ) )
                             for ixx in range( ix, ix+lc ):
-                                logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                                logging.error( "   mI:sAO prev {}".format( self.givenBibleEntries[ixx] ) )
                         except (KeyError,ValueError): pass
                         logging.error( "  mI:sAO was {}".format( self.__indexData[saveCV] ) )
-                        ie = self.__indexData[saveCV]
-                        ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
+                        ix, lc = self.__indexData[saveCV]
                         for ixx in range( ix, ix+lc ):
-                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                        logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
+                            logging.error( "   mI:sAO {}".format( self.givenBibleEntries[ixx] ) )
+                        logging.error( "  mI:sAO now {}".format( (saveJ,lineCount) ) )
                         for ixx in range( saveJ, saveJ+lineCount ):
-                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
+                            logging.error( "   mI:sAO {}".format( self.givenBibleEntries[ixx] ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             C, V = saveCV
                             if C != '0' and V != '0': # intros aren't so important
                                 halt # This is a serious error that is losing Biblical text
                     # Let's combine the entries
-                    ie = self.__indexData[saveCV]
-                    ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
-                    self.__indexData[saveCV] = InternalBibleIndexEntry( ix, lc+lineCount, ct[:] )
+                    ix, lc = self.__indexData[saveCV]
+                    #print( "About to save1 index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
+                    #print( "  ix={} {}".format( ix, lc+lineCount ) )
+                    self.__indexData[saveCV] = ( ix, lc+lineCount )
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2):
-                        logging.error( "  mI:sAO combined {}".format( (ix,lc+lineCount,ct) ) )
+                        logging.error( "  mI:sAO combined {}".format( (ix,lc+lineCount) ) )
                         for ixx in range( ix, ix+lc+lineCount ):
-                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                            logging.error( "   mI:sAO {}".format( self.givenBibleEntries[ixx] ) )
                 else: # no pre-existing duplicate
-                    self.__indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
+                    #print( "About to save2 index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
+                    #print( "  ix={} {}".format( saveJ, lineCount ) )
+                    #for pqr in range( saveJ, saveJ+lineCount ):
+                        #print( "   {}".format( self.givenBibleEntries[pqr] ) )
+                    self.__indexData[saveCV] = (saveJ, lineCount)
                 #print( 'sAO', printIndexEntry( self.__indexData[saveCV] ) )
                 saveCV = saveJ = None
                 lineCount = 0
@@ -763,21 +784,23 @@ class InternalBibleIndex:
 
 
         # Main code of InternalBibleIndex.makeIndex
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.name, self.BBB ) )
+
+        # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
             # It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
-            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
+            lineCount = 0 # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
-                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
-                    # Save anything before the first verse number as verse "zero"
+                    # Save anything before the first verse number as verse 'zero'
                     strC, strV = entry.getCleanText(), '0'
                     assert strC != '0'
                     #saveCV, saveJ = (strC,strV,), j
@@ -786,7 +809,8 @@ class InternalBibleIndex:
                     assert strC != '0' # Should be in a chapter by now
                     print( "Why do we have a verse number in a {} book without chapters?".format( self.BBB ) )
                     if debuggingThisModule:
-                        print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
+                        print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
+                            entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                     saveAnythingOutstanding() # with the adjusted lineCount
                     if 0:
                         # Remove verse ranges, etc. and then save the verse number
@@ -802,7 +826,7 @@ class InternalBibleIndex:
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
                     assert saveCV is None and saveJ is None
-                    self.__indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    self.__indexData[(strC,strV)] = ( j, 1)
                     #print( "makeIndexIntro", printIndexEntry( self.__indexData[(strC,strV)] ) )
                     Vi = int( strV )
                     assert Vi == j
@@ -811,21 +835,20 @@ class InternalBibleIndex:
                     assert lineCount == 0
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
-                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
             saveAnythingOutstanding()
-        else: # Assume it's a C/V book
+        else: # Assume it's a normal C/V book
             saveCV = saveJ = None
-            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
+            lineCount = 0 # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                    # All text should have been moved into the following p~ marker
                     assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
-                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
-                    # Save anything before the first verse number as verse "zero"
+                    # Save anything before the first verse number as verse 'zero'
                     strC, strV = entry.getCleanText(), '0'
                     assert strC != '0'
                     saveCV, saveJ = (strC,strV,), j
@@ -836,15 +859,14 @@ class InternalBibleIndex:
                     revertToJ = j
                     if revertToJ >= 1: # we have a processedLine to go back to
                         aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                        if 1: # new code
-                            while revertToJ >= 1 and aM not in ('c','v', 'v~','p~') and not aM.startswith('¬'):
-                                # Anything else gets pulled down into this next verse
-                                #   especially p & q markers and section heading & references
-                                revertToJ -= 1
-                                assert lineCount > 0
-                                lineCount -= 1
-                                if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
-                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                        while revertToJ >= 1 and aM not in ('c','v', 'v~','p~') and not aM.startswith('¬'):
+                            # Anything else gets pulled down into this next verse
+                            #   especially p & q markers and section heading & references
+                            revertToJ -= 1
+                            assert lineCount > 0
+                            lineCount -= 1
+                            if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
+                            aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
                     saveAnythingOutstanding() # with the adjusted lineCount
                     # Remove verse ranges, etc. and then save the verse number
                     strV = entry.getCleanText()
@@ -860,7 +882,7 @@ class InternalBibleIndex:
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new 'verse' entry in chapter 'zero'
                     assert saveCV is None and saveJ is None
-                    self.__indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    self.__indexData[(strC,strV)] = ( j, 1 )
                     #print( "makeIndex", printIndexEntry( self.__indexData[(strC,strV)] ) )
                     Vi = int( strV )
                     assert Vi == j
@@ -869,8 +891,6 @@ class InternalBibleIndex:
                     assert lineCount == 0
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
-                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
-                #if j > 10: break
             saveAnythingOutstanding()
 
         if errorData: # We got some overwriting errors
@@ -886,6 +906,32 @@ class InternalBibleIndex:
                     lastC = C
                 errorDataString += ('' if errorDataString[-1]==':' else ',') + V
             logging.warning( "makeIndex.saveAnythingOutstanding: Needed to combine multiple index entries for {}".format( errorDataString ) )
+
+        # Now calculate the context and create the proper InternalBibleIndexEntries
+        context = []
+        for (C,V), (indexStart,count) in self.__indexData.items():
+            #print( self.BBB, C, V, indexStart, count, context )
+            # Replace the existing (temporary) index entry to include a copy of the previous context
+            self.__indexData[(C,V)] = InternalBibleIndexEntry( indexStart, count, context[:] )
+            for j in range( indexStart, indexStart+count ):
+                entry = self.givenBibleEntries[j]
+                marker = entry.getMarker()
+                #print( "  Marker:", marker, entry.getCleanText() )
+                if marker[0]=='¬' and marker != '¬v':
+                    originalMarker = marker[1:]
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                        assert context.count(originalMarker ) == 1
+                    try: # Remove first open occurence of the marker just closed (e.g., s1 can occur after c and still be open)
+                        context.remove( originalMarker )
+                    except ValueError: # oops something went wrong
+                        logging.critical( "makeIndex found a nesting error for {} {} around {}:{}".format( self.name, self.BBB, C, V ) )
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                        assert context.count( originalMarker ) == 0
+                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+            assert not context # Should be empty at end if nesting for the book is correct
+
         self._indexedFlag = True
         if 0:
             print( self )
