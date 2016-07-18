@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2016-07-18' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.16'
@@ -666,6 +666,9 @@ class DBPBible:
 
     def getContextVerseData( self, key ):
         """
+        Given a BCV key, get the verse data.
+
+        (The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )

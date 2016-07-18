@@ -54,10 +54,10 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-17' # by RJH
+LastModifiedDate = '2016-07-18' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.44'
+ProgVersion = '0.45'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -255,11 +255,11 @@ class SwordModuleConfiguration:
         # Checked for locked modules
         if 'CipherKey' in self.confDict:
             if self.confDict['CipherKey']:
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
                 self.locked = False
             else:
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
                 self.locked = True
 
