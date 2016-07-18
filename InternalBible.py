@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-07-17' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.72'
+ProgVersion = '0.73'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1994,7 +1994,7 @@ class InternalBible:
             print( "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
-        else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKeyObject
+        else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
         #print( " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books: return self.books[BBB].getContextVerseData( BCVReference )
@@ -2072,7 +2072,7 @@ class InternalBible:
 
     def searchText( self, optionsDict ):
         """
-        Search the Bible for the given text which is contained in a dictionary of options.
+        Search the internal Bible for the given text which is contained in a dictionary of options.
             Search string must be in optionsDict['searchText'].
             (We add default options for any missing ones as well as updating the 'searchHistoryList'.)
 
@@ -2088,8 +2088,6 @@ class InternalBible:
             SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
 
         NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough.
-
-        TODO: Get regex working
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
@@ -2140,22 +2138,24 @@ class InternalBible:
                 ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
 
         ourSearchText = optionsDict['searchText']
+        # Save the search history (with the 'regex:' text still prefixed if applicable)
         try: optionsDict['searchHistoryList'].remove( ourSearchText )
         except ValueError: pass
         optionsDict['searchHistoryList'].append( ourSearchText ) # Make sure it goes on the end
+
         if ourSearchText.lower().startswith( 'regex:' ):
             optionsDict['regexFlag'] = True
             ourSearchText = ourSearchText[6:]
+            compiledSearchText = re.compile( ourSearchText )
         if optionsDict['ignoreDiacriticsFlag']: ourSearchText = BibleOrgSysGlobals.removeAccents( ourSearchText )
         if optionsDict['caselessFlag']: ourSearchText = ourSearchText.lower()
         searchLen = len( ourSearchText )
         if BibleOrgSysGlobals.debugFlag: assert searchLen
         #print( "  Searching for {!r} in {} loaded books".format( ourSearchText, len(self) ) )
 
-        # The first entry in the result list is a dictionary containing the parameters
-        #   Following entries are SimpleVerseKey objects
+        # Now do the actual search
         resultSummaryDict = { 'searchedBookList':[], 'foundBookList':[], }
-        resultList = []
+        resultList = [] # Contains 4-tuples or 5-tuples -- first entry is the SimpleVerseKey
         for BBB,bookObject in self.books.items():
             #print( exp("  searchText: got book {}").format( BBB ) )
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
@@ -2212,8 +2212,23 @@ class InternalBible:
                         if optionsDict['caselessFlag']: textToBeSearched = textToBeSearched.lower()
                         textLen = len( textToBeSearched )
 
-                        if optionsDict['regexFlag']:
-                            halt
+                        if optionsDict['regexFlag']: # ignores wordMode flag
+                            for match in compiledSearchText.finditer( textToBeSearched ):
+                                ix, ixAfter = match.span()
+
+                                if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
+                                    contextBefore = origTextToBeSearched[max(0,ix-optionsDict['contextLength']):ix]
+                                    contextAfter = origTextToBeSearched[ixAfter:ixAfter+optionsDict['contextLength']]
+                                else: contextBefore = contextAfter = None
+
+                                ixHyphen = V.find( '-' )
+                                if ixHyphen != -1: V = V[:ixHyphen] # Remove verse bridges
+                                resultTuple = (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore,
+                                                                    origTextToBeSearched[ix:ixAfter], contextAfter, ) \
+                                            if optionsDict['caselessFlag'] else \
+                                                (SimpleVerseKey(BBB, C, V, ix), lineEntry.getOriginalMarker(), contextBefore, contextAfter, )
+                                resultList.append( resultTuple )
+                                if BBB not in resultSummaryDict['foundBookList']: resultSummaryDict['foundBookList'].append( BBB )
                         else: # not regExp
                             ix = -1
                             while True:

@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-11' # by RJH
+LastModifiedDate = '2016-07-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -242,8 +242,6 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
 
     NOTE: We currently handle undo, by cache all files which need to be saved to disk.
         We might need to make this more efficient, e.g., save under a temp filename.
-
-    TODO: Get regex working
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
@@ -296,6 +294,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
             #ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
 
     ourSearchText = optionsDict['searchText']
+    # Save the search history (with the 'regex:' text still prefixed if applicable)
     try: optionsDict['searchHistoryList'].remove( ourSearchText )
     except ValueError: pass
     optionsDict['searchHistoryList'].append( ourSearchText ) # Make sure it goes on the end
@@ -306,14 +305,17 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     optionsDict['replaceHistoryList'].append( ourReplaceText ) # Make sure it goes on the end
 
     if ourSearchText.lower().startswith( 'regex:' ):
+        resultDict['hadRegexError'] = False
         optionsDict['regexFlag'] = True
         ourSearchText = ourSearchText[6:]
+        compiledSearchText = re.compile( ourSearchText )
+    else:
+        replaceLen = len( ourReplaceText )
+        #diffLen = replaceLen - searchLen
     #if optionsDict['ignoreDiacriticsFlag']: ourSearchText = BibleOrgSysGlobals.removeAccents( ourSearchText )
     #if optionsDict['caselessFlag']: ourSearchText = ourSearchText.lower()
     searchLen = len( ourSearchText )
     if BibleOrgSysGlobals.debugFlag: assert searchLen
-    replaceLen = len( ourReplaceText )
-    diffLen = replaceLen - searchLen
     #print( "  Searching for {!r} in {} loaded books".format( ourSearchText, len(self) ) )
 
     if not self.preloadDone: self.preload()
@@ -336,8 +338,49 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                 resultDict['searchedBookList'].append( BBB )
 
                 #C = V = '0'
-                if optionsDict['regexFlag']:
-                    halt
+                if optionsDict['regexFlag']: # ignores wordMode flag
+                    ix = 0
+                    while True:
+                        match = compiledSearchText.search( bookText, ix )
+                        if not match: break # none / no more found
+                        ix, ixAfter = match.span()
+                        regexFoundText = bookText[ix:ixAfter]
+                        try: regexReplacementText = compiledSearchText.sub( ourReplaceText, regexFoundText, count=1 )
+                        except re.error as err:
+                            print( "Search/Replace regex error: {}".format( err ) )
+                            resultDict['hadRegexError'] = True
+                            stopFlag = True; break
+                        #print( "Found regex {!r} at {:,} in {}".format( ourSearchText, ix, BBB ) )
+                        #print( "  Found text was {!r}, replacement will be {!r}".format( regexFoundText, regexReplacementText ) )
+                        resultDict['numFinds'] += 1
+                        if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
+
+                        if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
+                            contextBefore = bookText[max(0,ix-optionsDict['contextLength']):ix]
+                            contextAfter = bookText[ixAfter:ixAfter+optionsDict['contextLength']]
+                        else: contextBefore = contextAfter = None
+                        #print( "  After  {!r}".format( contextBefore ) )
+                        #print( "  Before {!r}".format( contextAfter ) )
+
+                        result = None
+                        if not replaceAllFlag:
+                            ref = BBB
+                            willBeText = contextBefore + regexReplacementText + contextAfter
+                            result = confirmCallback( ref, contextBefore, regexFoundText, contextAfter, willBeText, resultDict['numReplaces']>0 )
+                            #print( "searchReplaceText got", result )
+                            assert result in 'YNASU'
+                            if result == 'A': replaceAllFlag = True
+                            elif result == 'S': stopFlag = True; break
+                            elif result == 'U': undoFlag = True; break
+                        if replaceAllFlag or result == 'Y':
+                            #print( "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
+                            bookText = bookText[:ix] + regexReplacementText + bookText[ixAfter:]
+                            ix += len( regexReplacementText ) # Start searching after the replacement
+                            #print( "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
+                            resultDict['numReplaces'] += 1
+                            if BBB not in resultDict['replacedBookList']: resultDict['replacedBookList'].append( BBB )
+                            filesToSave[BBB] = (bookFilepath,bookText)
+                        else: ix += 1 # So don't keep repeating the same find
                 else: # not regExp
                     ix = 0
                     while True:
@@ -382,7 +425,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                             #print( "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
                             resultDict['numReplaces'] += 1
                             if BBB not in resultDict['replacedBookList']: resultDict['replacedBookList'].append( BBB )
-                            if BBB not in filesToSave: filesToSave[BBB] = (bookFilepath,bookText)
+                            filesToSave[BBB] = (bookFilepath,bookText)
                         else: ix += 1 # So don't keep repeating the same find
 
             if stopFlag:
