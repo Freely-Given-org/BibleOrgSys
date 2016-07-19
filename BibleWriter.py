@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-07-18' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.91'
@@ -386,9 +386,9 @@ class BibleWriter( InternalBible ):
             shutil.rmtree( outputFolder, ignore_errors=True )
         os.makedirs( outputFolder ) # Make the empty folder
 
-        self.writeBOSBCVFiles( outputFolder )
+        self.writeBOSBCVFiles( outputFolder ) # This function is part of InternalBible
 
-        # Now create a zipped collection
+        # Now create a zipped collection (for easier download)
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BCV files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
