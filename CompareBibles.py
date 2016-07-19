@@ -30,14 +30,14 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-14' # by RJH
+LastModifiedDate = '2016-07-19' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.05'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os.path, logging
@@ -172,7 +172,7 @@ def compareBooksPedantic( book1, book2,
 
     ix1 = ix2 = offset1 = offset2 = 0
     numMismatchedMarkers = 0
-    C = V = '0'
+    C, V = '0', '-1' # id line should be 0:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
         #print( 'entry', entry1, entry2 )
@@ -183,7 +183,7 @@ def compareBooksPedantic( book1, book2,
         elif marker1 == 'v':
             if C == '0': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '0': V = str( int(V) + 1 )
+        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
         #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )
@@ -381,7 +381,7 @@ def segmentizeBooks( book1, book2 ):
 
     ix1 = ix2 = offset1 = offset2 = 0
     numMismatchedMarkers = 0
-    C = V = '0'
+    C, V = '0', '-1' # id line should be 0:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
         #print( 'entry', entry1, entry2 )
@@ -392,7 +392,7 @@ def segmentizeBooks( book1, book2 ):
         elif marker1 == 'v':
             if C == '0': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '0': V = str( int(V) + 1 )
+        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
         #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )
