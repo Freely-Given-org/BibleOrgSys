@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-07-24' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -50,12 +50,8 @@ from Bible import Bible
 
 
 
-#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
-                    #'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    #'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
-#BibleFilenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
+
 
 
 def t( messageString ):

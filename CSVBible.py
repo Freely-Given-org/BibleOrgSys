@@ -38,10 +38,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-07-24' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -56,7 +56,8 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', ) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX',
+                      'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', 'SAVE', 'SAV' ) # Must be UPPERCASE
 
 
 

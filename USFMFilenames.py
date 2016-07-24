@@ -28,10 +28,10 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-05' # by RJH
+LastModifiedDate = '2016-07-24' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
-ProgVersion = '0.66'
+ProgVersion = '0.67'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,9 +87,9 @@ ALTERNATE_FILENAMES = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers',
 FILENAMES_TO_IGNORE = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
 FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
 # NOTE: Extensions ending in ~ are also ignored
-EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
-                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
+                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'SAV', 'SAVE', 'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 

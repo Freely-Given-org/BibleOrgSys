@@ -28,10 +28,10 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-21' # by RJH
+LastModifiedDate = '2016-07-24' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
-ProgVersion = '0.52'
+ProgVersion = '0.53'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -48,9 +48,9 @@ import BibleOrgSysGlobals
 filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
 # NOTE: Extensions ending in ~ are also ignored
-extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
-                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'STY', 'SSF', 'USFM', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
+                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'SAV', 'SAVE', 'STY', 'SSF', 'USFM', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 class USXFilenames:
