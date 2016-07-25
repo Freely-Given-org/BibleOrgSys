@@ -70,10 +70,10 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-18' # by RJH
+LastModifiedDate = '2016-07-26' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = '0.91'
+ProgVersion = '0.92'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -7062,9 +7062,9 @@ class BibleWriter( InternalBible ):
         defaultFontSize, defaultLeadingRatio = 20, 1.2
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
         maxLineCharacters, maxLines = 23, 12 # Reduced from 26 to 23 for SIL fonts
-        maxLineCharactersManualSetting = self.getSetting( 'BPMaxChars' )
+        maxLineCharactersManualSetting = self.getSetting( 'PBMaxChars' )
         if maxLineCharactersManualSetting: maxLineCharacters = int( maxLineCharactersManualSetting )
-        maxLinesManualSetting = self.getSetting( 'BPMaxLines' )
+        maxLinesManualSetting = self.getSetting( 'PBMaxLines' )
         if maxLinesManualSetting: maxLines = int( maxLinesManualSetting )
         assert 20 <= maxLineCharacters <= 40
         assert 10 <= maxLines <= 20
@@ -7082,7 +7082,11 @@ class BibleWriter( InternalBible ):
             #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman", "Liberation-Sans-Bold"
         #else:
             #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman-Regular", "FreeSans-Bold"
-        defaultTextFontname, defaultHeadingFontname = 'Charis-SIL', 'Andika' # was 'Charis-SIL-Regular', 'Andika-Regular'
+        defaultTextFontname = self.getSetting( 'PBTextFont' )
+        if not defaultTextFontname: defaultTextFontname = 'Charis-SIL'
+        defaultHeadingFontname = self.getSetting( 'PBHeadingFont' )
+        if not defaultHeadingFontname: defaultHeadingFontname = 'Andika'
+
         topLineColor = 'opaque'
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = 'indigo', 'red1', 'royalBlue'
         #defaultVerseNumberFontcolor = 'DarkOrange1'
