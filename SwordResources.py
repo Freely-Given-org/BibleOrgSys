@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-17' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.22'
@@ -1607,7 +1607,7 @@ def demo():
     if SwordType == 'CrosswireLibrary':
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
-            print( "Version", Sword.SWVersion().getText() )
+            print( 'version', Sword.SWVersion().getText() )
             print( "Versions", Sword.SWVersion().major, Sword.SWVersion().minor, Sword.SWVersion().minor2, Sword.SWVersion().minor3 ) # ints
 
         library = Sword.SWMgr()

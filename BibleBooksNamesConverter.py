@@ -28,10 +28,10 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -94,15 +94,15 @@ class BibleBooksNamesConverter:
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
-                    self.__XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
-                    assert self.__XMLSystems[booksNamesSystemCode]["tree"] # Fail here if we didn't load anything at all
+                    self.__XMLSystems[booksNamesSystemCode]['tree'] = ElementTree().parse( os.path.join( folder, filename ) )
+                    assert self.__XMLSystems[booksNamesSystemCode]['tree'] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.__XMLSystems[booksNamesSystemCode]["tree"].tag  == self.treeTag:
-                        header = self.__XMLSystems[booksNamesSystemCode]["tree"][0]
+                    if self.__XMLSystems[booksNamesSystemCode]['tree'].tag  == self.treeTag:
+                        header = self.__XMLSystems[booksNamesSystemCode]['tree'][0]
                         if header.tag == self.headerTag:
                             self.__XMLSystems[booksNamesSystemCode]["header"] = header
-                            self.__XMLSystems[booksNamesSystemCode]["tree"].remove( header )
+                            self.__XMLSystems[booksNamesSystemCode]['tree'].remove( header )
                             BibleOrgSysGlobals.checkXMLNoText( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
@@ -116,7 +116,7 @@ class BibleBooksNamesConverter:
                                 BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
-                                    self.__XMLSystems[booksNamesSystemCode]["version"] = work.find("version").text
+                                    self.__XMLSystems[booksNamesSystemCode]['version'] = work.find('version').text
                                     self.__XMLSystems[booksNamesSystemCode]["date"] = work.find("date").text
                                     self.__XMLSystems[booksNamesSystemCode]["title"] = work.find("title").text
                                 else:
@@ -124,11 +124,13 @@ class BibleBooksNamesConverter:
                         else:
                             logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]['tree'].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self.__XMLSystems[booksNamesSystemCode]["tree"]:
+                    for subelement in self.__XMLSystems[booksNamesSystemCode]['tree']:
                         bookCount += 1
-                    logging.info( _("    Loaded {} books").format( bookCount ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
+                    logging.info( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         self.__validateSystem( booksNamesSystemCode )
@@ -140,7 +142,7 @@ class BibleBooksNamesConverter:
         Checks for basic formatting/content errors in a Bible book name system.
         """
         assert systemName
-        assert self.__XMLSystems[systemName]["tree"]
+        assert self.__XMLSystems[systemName]['tree']
 
         if len(self.__XMLSystems[systemName]["languageCode"]) != 3:
             logging.error( _("Couldn't find 3-letter language code in {!r} book names system").format( systemName ) )
@@ -153,7 +155,7 @@ class BibleBooksNamesConverter:
             for attributeName in self.uniqueAttributes[index]: uniqueDict["Attribute_"+str(index)+"_"+attributeName] = []
 
         expectedID = 1
-        for k,element in enumerate(self.__XMLSystems[systemName]["tree"]):
+        for k,element in enumerate(self.__XMLSystems[systemName]['tree']):
             if element.tag in self.mainElementTags:
                 BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
@@ -237,13 +239,13 @@ class BibleBooksNamesConverter:
                     result += ('\n' if result else '') + "    " + _("Language code {} = {}").format( self.__XMLSystems[x]["languageCode"], self.__ISOLanguages.getLanguageName( self.__XMLSystems[x]["languageCode"]) )
                 title = self.__XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    {}".format( title )
-                version = self.__XMLSystems[x]["version"]
+                version = self.__XMLSystems[x]['version']
                 if version: result += ('\n' if result else '') + '    ' + _("Version: {}").format( version )
                 date = self.__XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + '    ' + _("Last updated: {}").format( date )
-                result += ('\n' if result else '') + '    ' + _("Number of entries = {}").format( len(self.__XMLSystems[x]["tree"]) )
+                result += ('\n' if result else '') + '    ' + _("Number of entries = {}").format( len(self.__XMLSystems[x]['tree']) )
                 numDivisions, numLeaders, numBooks = 0, 0, 0
-                for element in self.__XMLSystems[x]["tree"]:
+                for element in self.__XMLSystems[x]['tree']:
                     if element.tag == "BibleDivisionNames":
                         numDivisions += 1
                     elif element.tag == "BibleBooknameLeaders":
@@ -307,7 +309,7 @@ class BibleBooksNamesConverter:
             #print( booksNamesSystemCode )
             # Make the data dictionary for this booksNames system
             myDivisionsNamesDict, myBooknameLeadersDict, myBookNamesDict = {}, {}, {}
-            for element in self.__XMLSystems[booksNamesSystemCode]["tree"]:
+            for element in self.__XMLSystems[booksNamesSystemCode]['tree']:
                 if element.tag == "BibleDivisionNames":
                     standardAbbreviation = element.get("standardAbbreviation")
                     defaultName = element.find("defaultName").text

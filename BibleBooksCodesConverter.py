@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
 ProgVersion = '0.78'
@@ -157,7 +157,7 @@ class BibleBooksCodesConverter:
                     BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                     BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                     if work.tag == "work":
-                        self.ProgVersion = work.find("version").text
+                        self.ProgVersion = work.find('version').text
                         self.dateString = work.find("date").text
                         self.titleString = work.find("title").text
                     else:

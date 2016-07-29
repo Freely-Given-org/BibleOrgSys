@@ -31,10 +31,10 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleVersificationSystemsConverter"
 ProgName = "Bible Versification Systems converter"
-ProgVersion = '0.50'
+ProgVersion = '0.51'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -96,15 +96,15 @@ class BibleVersificationSystemsConverter:
                     versificationSystemCode = filepart[len(filenamePrefix):]
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading{} versification system from {}…").format( versificationSystemCode, filename ) )
                     self.__XMLSystems[versificationSystemCode] = {}
-                    self.__XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
-                    assert self.__XMLSystems[versificationSystemCode]["tree"] # Fail here if we didn't load anything at all
+                    self.__XMLSystems[versificationSystemCode]['tree'] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
+                    assert self.__XMLSystems[versificationSystemCode]['tree'] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.__XMLSystems[versificationSystemCode]["tree"].tag  == self.__treeTag:
-                        header = self.__XMLSystems[versificationSystemCode]["tree"][0]
+                    if self.__XMLSystems[versificationSystemCode]['tree'].tag  == self.__treeTag:
+                        header = self.__XMLSystems[versificationSystemCode]['tree'][0]
                         if header.tag == self.__headerTag:
                             self.__XMLSystems[versificationSystemCode]["header"] = header
-                            self.__XMLSystems[versificationSystemCode]["tree"].remove( header )
+                            self.__XMLSystems[versificationSystemCode]['tree'].remove( header )
                             if len(header)>1:
                                 logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
@@ -112,7 +112,7 @@ class BibleVersificationSystemsConverter:
                             else:
                                 work = header[0]
                                 if work.tag == "work":
-                                    self.__XMLSystems[versificationSystemCode]["version"] = work.find("version").text
+                                    self.__XMLSystems[versificationSystemCode]['version'] = work.find('version').text
                                     self.__XMLSystems[versificationSystemCode]["date"] = work.find("date").text
                                     self.__XMLSystems[versificationSystemCode]["title"] = work.find("title").text
                                 else:
@@ -120,14 +120,16 @@ class BibleVersificationSystemsConverter:
                         else:
                             logging.warning( _("Missing header element (looking for {!r} tag)").format( self.__headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.__treeTag, self.__XMLSystems[versificationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.__treeTag, self.__XMLSystems[versificationSystemCode]['tree'].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self.__XMLSystems[versificationSystemCode]["tree"]:
+                    for subelement in self.__XMLSystems[versificationSystemCode]['tree']:
                         bookCount += 1
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
+                    logging.info( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
-                        self._validateSystem( self.__XMLSystems[versificationSystemCode]["tree"] )
+                        self._validateSystem( self.__XMLSystems[versificationSystemCode]['tree'] )
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible versification systems are already loaded -- your different folder of {!r} was ignored").format( XMLFolder ) )
         return self
@@ -223,13 +225,13 @@ class BibleVersificationSystemsConverter:
                 result += ('\n' if result else '') + " {}".format( x )
                 title = self.__XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "   {}".format( title )
-                version = self.__XMLSystems[x]["version"]
+                version = self.__XMLSystems[x]['version']
                 if version: result += ('\n    ' if result else '    ') + _("Version: {}").format( version )
                 date = self.__XMLSystems[x]["date"]
                 if date: result += ('\n    ' if result else '    ') + _("Last updated: {}").format( date )
-                result += ('\n' if result else '') + "    Number of books = {}".format( len(self.__XMLSystems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Number of books = {}".format( len(self.__XMLSystems[x]['tree']) )
                 totalChapters, totalVerses, totalOmittedVerses, numCombinedVersesInstances, numRecorderedVersesInstances = 0, 0, 0, 0, 0
-                for bookElement in self.__XMLSystems[x]["tree"]:
+                for bookElement in self.__XMLSystems[x]['tree']:
                     totalChapters += int( bookElement.find("numChapters").text )
                     for chapterElement in bookElement.findall("numVerses"):
                         totalVerses += int( chapterElement.text )
@@ -268,7 +270,7 @@ class BibleVersificationSystemsConverter:
             #print( versificationSystemCode )
             # Make the data dictionary for this versification system
             chapterDataDict, omittedVersesDict, combinedVersesDict, reorderedVersesDict = OrderedDict(), OrderedDict(), {}, {}
-            for bookElement in self.__XMLSystems[versificationSystemCode]["tree"]:
+            for bookElement in self.__XMLSystems[versificationSystemCode]['tree']:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #print( BBB )
                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):

@@ -28,10 +28,10 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
-ProgVersion = '0.83'
+ProgVersion = '0.84'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -94,15 +94,15 @@ class BibleBookOrdersConverter:
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}…").format( bookOrderSystemCode, filename ) )
                     self._XMLSystems[bookOrderSystemCode] = {}
-                    self._XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
-                    assert self._XMLSystems[bookOrderSystemCode]["tree"] # Fail here if we didn't load anything at all
+                    self._XMLSystems[bookOrderSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
+                    assert self._XMLSystems[bookOrderSystemCode]['tree'] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self._XMLSystems[bookOrderSystemCode]["tree"].tag  == self.treeTag:
-                        header = self._XMLSystems[bookOrderSystemCode]["tree"][0]
+                    if self._XMLSystems[bookOrderSystemCode]['tree'].tag  == self.treeTag:
+                        header = self._XMLSystems[bookOrderSystemCode]['tree'][0]
                         if header.tag == self.headerTag:
                             self._XMLSystems[bookOrderSystemCode]["header"] = header
-                            self._XMLSystems[bookOrderSystemCode]["tree"].remove( header )
+                            self._XMLSystems[bookOrderSystemCode]['tree'].remove( header )
                             BibleOrgSysGlobals.checkXMLNoText( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
@@ -116,7 +116,7 @@ class BibleBookOrdersConverter:
                                 BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
-                                    self._XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
+                                    self._XMLSystems[bookOrderSystemCode]['version'] = work.find('version').text
                                     self._XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
                                     self._XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
                                 else:
@@ -124,14 +124,16 @@ class BibleBookOrdersConverter:
                         else:
                             logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[bookOrderSystemCode]['tree'].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self._XMLSystems[bookOrderSystemCode]["tree"]:
+                    for subelement in self._XMLSystems[bookOrderSystemCode]['tree']:
                         bookCount += 1
-                    logging.info( _("    Loaded {} books").format( bookCount ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
+                    logging.info( _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
 
                 if BibleOrgSysGlobals.strictCheckingFlag:
-                    self.__validateSystem( self._XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+                    self.__validateSystem( self._XMLSystems[bookOrderSystemCode]['tree'], bookOrderSystemCode )
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systems are already loaded -- your different folder of {!r} was ignored").format( self.__XMLFolder ) )
         return self
@@ -237,11 +239,11 @@ class BibleBookOrdersConverter:
                 result += ('\n' if result else '') + " {}".format( x )
                 title = self._XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "   {}".format( title )
-                version = self._XMLSystems[x]["version"]
+                version = self._XMLSystems[x]['version']
                 if version: result += ('\n' if result else '') + "    Version:{}".format( version )
                 date = self._XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + "    Last updated:{}".format( date )
-                result += ('\n' if result else '') + "    Number of books = {}".format( len(self._XMLSystems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Number of books = {}".format( len(self._XMLSystems[x]['tree']) )
         return result
     # end of __str__
 
@@ -263,7 +265,7 @@ class BibleBookOrdersConverter:
             #print( bookOrderSystemCode )
             # Make the data dictionary for this book order system
             bookDataDict, idDataDict, BBBList = OrderedDict(), OrderedDict(), []
-            for bookElement in self._XMLSystems[bookOrderSystemCode]["tree"]:
+            for bookElement in self._XMLSystems[bookOrderSystemCode]['tree']:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )

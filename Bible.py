@@ -209,7 +209,7 @@ class Bible( BibleWriter ):
         #result = _("Bible object")
         #result += ('\n' if result else '') + "  " + _("Type = {}").format( self.objectTypeString )
         #if "title" in self.metadata: result += ('\n' if result else '') + self.metadata["title"]
-        #if "version" in self.metadata: result += ('\n' if result else '') + "  " + _("Version: {} ").format(self.metadata["version"] )
+        #if 'version' in self.metadata: result += ('\n' if result else '') + "  " + _("Version: {} ").format(self.metadata['version'] )
         #if "publicationDate" in self.metadata: result += ('\n' if result else '') + "  " + _("Date: {}").format(self.metadata["publicationDate"] )
         #if self.divisions: result += ('\n' if result else '') + "  " + _("Number of divisions = {}").format(len(self.divisions) )
         #result += ('\n' if result else '') + "  " + _("Number of books = {}").format(len(self.books) )

@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "USFMMarkersConverter"
 ProgName = "USFM Markers converter"
 ProgVersion = "0.62"
@@ -130,7 +130,7 @@ class USFMMarkersConverter:
                     BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                     BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                     if work.tag == "work":
-                        self.ProgVersion = work.find("version").text
+                        self.ProgVersion = work.find('version').text
                         self.dateString = work.find("date").text
                         self.titleString = work.find("title").text
                     else:

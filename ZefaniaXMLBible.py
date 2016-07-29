@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
 ProgVersion = '0.35'
@@ -303,7 +303,7 @@ class ZefaniaXMLBible( Bible ):
                     BibleType = value
                 elif attrib == "revision":
                     revision = value
-                elif attrib == "version":
+                elif attrib == 'version':
                     version = value
                 else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
             if name: self.name = name

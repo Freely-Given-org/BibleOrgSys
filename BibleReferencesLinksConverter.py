@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
@@ -149,7 +149,7 @@ class BibleReferencesLinksConverter:
                     BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                     BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                     if work.tag == "work":
-                        self.ProgVersion = work.find("version").text
+                        self.ProgVersion = work.find('version').text
                         self.dateString = work.find("date").text
                         self.titleString = work.find("title").text
                     else:

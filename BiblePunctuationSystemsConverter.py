@@ -28,10 +28,10 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BiblePunctuationSystemsConverter"
 ProgName = "Bible Punctuation Systems handler"
-ProgVersion = '0.43'
+ProgVersion = '0.44'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -96,15 +96,15 @@ class BiblePunctuationSystemsConverter:
                     punctuationSystemCode = filepart[len(filenamePrefix):]
                     if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} punctuation system from {}…").format( punctuationSystemCode, filename ) )
                     self._XMLSystems[punctuationSystemCode] = {}
-                    self._XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
-                    assert self._XMLSystems[punctuationSystemCode]["tree"] # Fail here if we didn't load anything at all
+                    self._XMLSystems[punctuationSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
+                    assert self._XMLSystems[punctuationSystemCode]['tree'] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self._XMLSystems[punctuationSystemCode]["tree"].tag  == self.treeTag:
-                        header = self._XMLSystems[punctuationSystemCode]["tree"][0]
+                    if self._XMLSystems[punctuationSystemCode]['tree'].tag  == self.treeTag:
+                        header = self._XMLSystems[punctuationSystemCode]['tree'][0]
                         if header.tag == self.headerTag:
                             self._XMLSystems[punctuationSystemCode]["header"] = header
-                            self._XMLSystems[punctuationSystemCode]["tree"].remove( header )
+                            self._XMLSystems[punctuationSystemCode]['tree'].remove( header )
                             BibleOrgSysGlobals.checkXMLNoText( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
                             BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
@@ -118,7 +118,7 @@ class BiblePunctuationSystemsConverter:
                                 BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
-                                    self._XMLSystems[punctuationSystemCode]["version"] = work.find("version").text
+                                    self._XMLSystems[punctuationSystemCode]['version'] = work.find('version').text
                                     self._XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
                                     self._XMLSystems[punctuationSystemCode]["title"] = work.find("title").text
                                 else:
@@ -126,14 +126,16 @@ class BiblePunctuationSystemsConverter:
                         else:
                             logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self._XMLSystems[punctuationSystemCode]['tree'].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self._XMLSystems[punctuationSystemCode]["tree"]:
+                    for subelement in self._XMLSystems[punctuationSystemCode]['tree']:
                         bookCount += 1
-                    logging.info( _("    Loaded {} books").format( bookCount ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( _("    Loaded {} books for {}").format( bookCount, punctuationSystemCode ) )
+                    logging.info( _("    Loaded {} books for {}").format( bookCount, punctuationSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
-                        self._validateSystem( self._XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
+                        self._validateSystem( self._XMLSystems[punctuationSystemCode]['tree'], punctuationSystemCode )
         return self
     # end of loadSystems
 
@@ -224,11 +226,11 @@ class BiblePunctuationSystemsConverter:
                 result += ('\n' if result else '') + "  {}".format( x )
                 title = self._XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    {}".format( title )
-                version = self._XMLSystems[x]["version"]
+                version = self._XMLSystems[x]['version']
                 if version: result += ('\n    ' if result else '    ') + _("Version: {}").format( version )
                 date = self._XMLSystems[x]["date"]
                 if date: result += ('\n    ' if result else '    ') + _("Last updated: {}").format( date )
-                result += ('\n    ' if result else '    ') + _("Number of values = {}").format( len(self._XMLSystems[x]["tree"]) )
+                result += ('\n    ' if result else '    ') + _("Number of values = {}").format( len(self._XMLSystems[x]['tree']) )
         return result
     # end of __str__
 
@@ -249,7 +251,7 @@ class BiblePunctuationSystemsConverter:
         for punctuationSystemCode in self._XMLSystems.keys():
             # Make the data dictionary for this punctuation system
             punctuationDict = {}
-            for element in self._XMLSystems[punctuationSystemCode]["tree"]:
+            for element in self._XMLSystems[punctuationSystemCode]['tree']:
                 tag = element.tag
                 text = element.text
                 if text is None: text = '' # If a tag was given, but contained an empty string, indicate that

@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.33'
@@ -271,7 +271,7 @@ class HaggaiXMLBible( Bible ):
                     BibleType = value
                 elif attrib == "revision":
                     revision = value
-                elif attrib == "version":
+                elif attrib == 'version':
                     version = value
                 else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
             if name: self.name = name

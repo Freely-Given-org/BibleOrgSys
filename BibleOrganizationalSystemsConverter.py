@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2016-07-29' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
 ProgVersion = "0.25"
@@ -157,7 +157,7 @@ class BibleOrganizationalSystemsConverter:
                 else:
                     work = header[0]
                     if work.tag == "work":
-                        self.version = work.find("version").text
+                        self.version = work.find('version').text
                         self.date = work.find("date").text
                         self.title = work.find("title").text
                     else:
