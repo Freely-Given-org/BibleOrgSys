@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-17' # by RJH
+LastModifiedDate = '2016-08-09' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.73'
@@ -120,7 +120,7 @@ class InternalBible:
         """
         # Set up empty variables for the object
         #       some of which will be filled in later depending on what is known from the Bible type
-        self.name = self.givenName = self.shortName = self.abbreviation = None
+        self.name = self.givenName = self.shortName = self.projectName = self.abbreviation = None
         self.sourceFolder = self.sourceFilename = self.sourceFilepath = self.fileExtension = None
         self.status = self.revision = self.version = self.encoding = None
 
@@ -330,7 +330,7 @@ class InternalBible:
 
     def getAName( self ):
         """
-        Try to find a name to identify this Bible.
+        Try to find a name to identify this internal Bible.
 
         Returns a string or None.
         """
@@ -338,6 +338,8 @@ class InternalBible:
         if self.shortName: return self.shortName
         if self.projectName and self.projectName != 'Unknown': return self.projectName
         if self.abbreviation: return self.abbreviation
+        if self.sourceFilename: return self.sourceFilename
+        if self.sourceFolder: return os.path.basename( self.sourceFolder[:-1] if self.sourceFolder[-1] in ('\\','/') else self.sourceFolder )
     # end of InternalBible.getAName
 
 
