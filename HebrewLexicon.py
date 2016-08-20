@@ -44,8 +44,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os.path, re
-from xml.etree.ElementTree import ElementTree
+import logging, os.path, sys, re
+from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 
@@ -125,7 +125,13 @@ class AugmentedStrongsIndexFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
-        self.tree = ElementTree().parse( XMLFilepath )
+        try: self.tree = ElementTree().parse( XMLFilepath )
+        except FileNotFoundError:
+            logging.critical( t("HebrewStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
+            raise FileNotFoundError
+        except ParseError as err:
+            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
+            raise ParseError
         if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         self.entries1, self.entries2 = {}, {}

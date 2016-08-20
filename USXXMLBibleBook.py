@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-18' # by RJH
+LastModifiedDate = '2016-08-15' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.19'
@@ -527,7 +527,8 @@ def demo():
                                 mismatchCount += 1
                                 break
                             if mismatchCount > 5: print( "…" ); break
-                        if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
+                        if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
                 else: print( "Sorry, USFM test folder {!r} doesn't exist on this computer.".format( testFolder2 ) )
             elif BibleOrgSysGlobals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", BBB )

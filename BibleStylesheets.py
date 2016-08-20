@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-04' # by RJH
+LastModifiedDate = '2016-08-02' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -94,6 +94,7 @@ SUPERSCRIPT_OFFSET = '4'
 
 # These are the styles for formatted mode
 # Asterisk in front of a tag name indicates the currently selected verse
+# Hash sign after a tag name indicates "unformatted" mode
 DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 # The following fields from InternalBible all contain their own (self-contained) text (in _processedLines)
 # File beginning
@@ -142,18 +143,19 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*iq3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*iq4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
 
-# The next two should theoretically never be used (because v~ fields should take on the previous paragraph tag)
+# The next two should theoretically never be used in formatted Bibles
+#  (because v~ fields should take on the previous paragraph tag)
     'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
+    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'lightYellow', },
 
-# The following paragraph level fields can contain text, or can influence the next v~ text
+# The following paragraph level fields can contain text, or can influence the next v~/p~ text
     'p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
     '*p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
     'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
     'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, 'background':'yellow', },
     '*q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     '*q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },

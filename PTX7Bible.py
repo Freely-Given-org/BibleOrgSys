@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# PTXBible.py
+# PTX7Bible.py
 #
-# Module handling UBS/SIL Paratext (PTX) collections of USFM Bible books
+# Module handling UBS/SIL Paratext (PTX 7) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
 # Copyright (C) 2015-2016 Robert Hunt
@@ -24,23 +24,27 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for defining and manipulating complete or partial Paratext Bibles
+Module for defining and manipulating complete or partial Paratext 7 Bibles
     along with any enclosed metadata.
 
-The Paratext Bible (PTXBible) object contains USFMBibleBooks.
+On typical Windows installations, Paratext 7 projects are in folders inside
+    'C:\My Paratext Projects' and contain the project settings information
+    in a .SSF (XML) file in the above folder (not in the project folder).
+
+The Paratext 7 Bible (PTX7Bible) object contains USFMBibleBooks.
 
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
 
-TODO: Check if PTXBible object should be based on USFMBible.
+TODO: Check if PTX7Bible object should be based on USFMBible.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-10' # by RJH
+LastModifiedDate = '2016-08-18' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.18'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -82,7 +86,7 @@ def exp( messageString ):
 
 
 
-def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Paratext Bible bundles in the folder and in the next level down.
 
@@ -92,10 +96,10 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         returns None, or the number of bundles found.
 
     if autoLoad is true and exactly one Paratext Bible bundle is found,
-        returns the loaded PTXBible object.
+        returns the loaded PTX7Bible object.
     """
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "PTXBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+        print( "PTX7BibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert strictCheck in (True,False,)
@@ -104,10 +108,10 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("PTXBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("PTX7BibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("PTXBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("PTX7BibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
         return False
 
     # Check that there's a USFM Bible here first
@@ -116,7 +120,7 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " PTXBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " PTX7BibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -149,9 +153,9 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         #numFound += 1
 
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBibleFileCheck got", numFound, givenFolderName )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7BibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            dB = PTXBible( givenFolderName )
+            dB = PTX7Bible( givenFolderName )
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
@@ -164,9 +168,9 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("PTXBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("PTX7BibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    PTXBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    PTX7BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -200,32 +204,32 @@ def PTXBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             #numFound += 1
 
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7BibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            dB = PTXBible( foundProjects[0] )
+            dB = PTX7Bible( foundProjects[0] )
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
             return dB
         return numFound
-# end of PTXBibleFileCheck
+# end of PTX7BibleFileCheck
 
 
 
 # The following loadPTX…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
-def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
+def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
     """
-    Process the Paratext SSF data file from the given filepath into SSFDict.
+    Process the Paratext 7 SSF data file (XML) from the given filepath into PTXSettingsDict.
 
     Returns a dictionary.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("Loading Paratext SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
+        print( exp("Loading Paratext 7 SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
     #if encoding is None: encoding = 'utf-8'
     BibleObject.ssfFilepath = ssfFilepath
 
-    SSFDict = {}
+    PTXSettingsDict = {}
 
     # This is actually an XML file, but we'll assume it's nicely formed with one XML field per line
     lastLine, lineCount, status = '', 0, 0
@@ -242,7 +246,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         #print( "ssfData line", repr(line) )
         lineCount += 1
         if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-            logging.info( exp("loadPTXSSFData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
+            logging.info( exp("loadPTXProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
             line = line[1:] # Remove the Byte Order Marker (BOM)
         #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
         line = line.strip() # Remove leading and trailing whitespace
@@ -258,7 +262,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a BibleObject-closing (empty) field
             fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
             if ' ' not in fieldname:
-                SSFDict[fieldname] = ''
+                PTXSettingsDict[fieldname] = ''
                 processed = True
             elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                 bits = fieldname.split( None, 1 )
@@ -266,7 +270,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                 fieldname = bits[0]
                 attributes = bits[1]
                 #print( "attributes = {!r}".format( attributes) )
-                SSFDict[fieldname] = (contents, attributes)
+                PTXSettingsDict[fieldname] = (contents, attributes)
                 processed = True
         elif status==1 and line[0]=='<' and line[-1]=='>' and '/' in line:
             ix1 = line.find('>')
@@ -275,7 +279,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                 fieldname = line[1:ix1]
                 contents = line[ix1+1:ix2]
                 if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                    SSFDict[fieldname] = contents
+                    PTXSettingsDict[fieldname] = contents
                     processed = True
                 elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                     bits = fieldname.split( None, 1 )
@@ -284,7 +288,7 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
                     attributes = bits[1]
                     #print( "attributes = {!r}".format( attributes) )
                     if line[ix2+2:-1]==fieldname:
-                        SSFDict[fieldname] = (contents, attributes)
+                        PTXSettingsDict[fieldname] = (contents, attributes)
                         processed = True
         elif status==1 and line.startswith( '<ValidCharacters>' ):
             fieldname = 'ValidCharacters'
@@ -307,16 +311,16 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
         logging.critical( _("PTX SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
     if BibleOrgSysGlobals.debugFlag: assert status == 9
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + exp("Got {} PTX SSF entries:").format( len(SSFDict) ) )
+        print( "  " + exp("Got {} PTX SSF entries:").format( len(PTXSettingsDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
-            for key in sorted(SSFDict):
-                print( "    {}: {}".format( key, SSFDict[key] ) )
+            for key in sorted(PTXSettingsDict):
+                print( "    {}: {}".format( key, PTXSettingsDict[key] ) )
 
     #BibleObject.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
     ## Determine our encoding while we're at it
-    #if BibleObject.encoding is None and 'Encoding' in SSFDict: # See if the SSF file gives some help to us
-        #ssfEncoding = SSFDict['Encoding']
+    #if BibleObject.encoding is None and 'Encoding' in PTXSettingsDict: # See if the SSF file gives some help to us
+        #ssfEncoding = PTXSettingsDict['Encoding']
         #if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
         #else:
             #if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -328,9 +332,9 @@ def loadPTXSSFData( BibleObject, ssfFilepath, encoding='utf-8' ):
             #else:
                 #logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
 
-    #print( 'SSFDict', SSFDict )
-    return SSFDict
-# end of loadPTXSSFData
+    #print( 'PTXSettingsDict', PTXSettingsDict )
+    return PTXSettingsDict
+# end of loadPTXProjectData
 
 
 
@@ -355,7 +359,7 @@ def loadPTXLanguages( BibleObject ):
         languageName = languageFilename[:-4] # Remove the .lds
 
         languageFilepath = os.path.join( BibleObject.sourceFilepath, languageFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading language from {}…".format( languageFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading language from {}…".format( languageFilepath ) )
 
         assert languageName not in PTXLanguages
         PTXLanguages[languageName] = {}
@@ -391,7 +395,7 @@ def loadPTXLanguages( BibleObject ):
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} languages.".format( len(PTXLanguages) ) )
     #print( 'PTXLanguages', PTXLanguages )
     return PTXLanguages
-# end of PTXBible.loadPTXLanguages
+# end of PTX7Bible.loadPTXLanguages
 
 
 
@@ -405,7 +409,7 @@ def loadPTXVersifications( BibleObject ):
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}…".format( versificationFilepath ) )
+    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading versification from {}…".format( versificationFilepath ) )
 
     #PTXVersifications = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
@@ -423,7 +427,7 @@ def loadPTXVersifications( BibleObject ):
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
         versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading versification from {}…".format( versificationFilepath ) )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading versification from {}…".format( versificationFilepath ) )
 
         assert versificationName not in PTXVersifications
         PTXVersifications[versificationName] = {}
@@ -501,16 +505,16 @@ def loadPTXVersifications( BibleObject ):
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versifications.".format( len(PTXVersifications) ) )
     #print( 'PTXVersifications', PTXVersifications )
     return PTXVersifications
-# end of PTXBible.loadPTXVersifications
+# end of PTX7Bible.loadPTXVersifications
 
 
 
-class PTXBible( Bible ):
+class PTX7Bible( Bible ):
     """
     Class to load and manipulate Paratext Bible bundles.
 
-    The PTXBible object contains USFMBibleBooks.
-        (i.e., there's not PTXBibleBook object types.)
+    The PTX7Bible object contains USFMBibleBooks.
+        (i.e., there's not PTX7BibleBook object types.)
     """
     def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
         """
@@ -529,17 +533,17 @@ class PTXBible( Bible ):
         # Do a preliminary check on the readability of our folder
         if givenName:
             if not os.access( self.sourceFolder, os.R_OK ):
-                logging.error( "PTXBible: Folder '{}' is unreadable".format( self.sourceFolder ) )
+                logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFolder ) )
             self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         else: self.sourceFilepath = self.sourceFolder
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
-            logging.error( "PTXBible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
+            logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.ssfFilepath = None
 
         # Create empty containers for loading the XML metadata files
         #projectUsersDict = self.PTXStyles = self.PTXVersification = self.PTXLanguage = None
-    # end of PTXBible.__init__
+    # end of PTX7Bible.__init__
 
 
     def preload( self ):
@@ -590,10 +594,10 @@ class PTXBible( Bible ):
             if len(ssfFilepathList) > 1:
                 logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             if len(ssfFilepathList) >= 1: # Seems we found the right one
-                from PTXBible import loadPTXSSFData
-                SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
-                if SSFDict:
-                    self.suppliedMetadata['PTX']['SSF'] = SSFDict
+                from PTX7Bible import loadPTXProjectData
+                PTXSettingsDict = loadPTXProjectData( self, ssfFilepathList[0] )
+                if PTXSettingsDict:
+                    self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to self.settingsDict
 
         #self.name = self.givenName
@@ -658,7 +662,7 @@ class PTXBible( Bible ):
             except Exception as err: logging.error( 'loadPTXLanguages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
-    # end of PTXBible.preload
+    # end of PTX7Bible.preload
 
 
     def loadPTXBooksNames( self ):
@@ -671,7 +675,7 @@ class PTXBible( Bible ):
         bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
         if not os.path.exists( bookNamesFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading books names data from {}…".format( bookNamesFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.tree = ElementTree().parse( bookNamesFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -714,7 +718,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         #print( "booksNamesDict", booksNamesDict )
         if booksNamesDict: self.suppliedMetadata['PTX']['BooksNames'] = booksNamesDict
-    # end of PTXBible.loadPTXBooksNames
+    # end of PTX7Bible.loadPTXBooksNames
 
 
     def loadPTXProjectUsers( self ):
@@ -727,7 +731,7 @@ class PTXBible( Bible ):
         projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUsers.xml' )
         if not os.path.exists( projectUsersFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}…".format( projectUsersFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.tree = ElementTree().parse( projectUsersFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -784,7 +788,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         #print( "projectUsersDict", projectUsersDict )
         if projectUsersDict: self.suppliedMetadata['PTX']['ProjectUsers'] = projectUsersDict
-    # end of PTXBible.loadPTXProjectUsers
+    # end of PTX7Bible.loadPTXProjectUsers
 
 
     def loadPTXLexicon( self ):
@@ -797,7 +801,7 @@ class PTXBible( Bible ):
         lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
         if not os.path.exists( lexiconFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading project user data from {}…".format( lexiconFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
         self.tree = ElementTree().parse( lexiconFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -918,7 +922,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
         #print( "lexiconDict", lexiconDict )
         if lexiconDict: self.suppliedMetadata['PTX']['Lexicon'] = lexiconDict
-    # end of PTXBible.loadPTXLexicon
+    # end of PTX7Bible.loadPTXLexicon
 
 
     def loadPTXSpellingStatus( self ):
@@ -931,7 +935,7 @@ class PTXBible( Bible ):
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.tree = ElementTree().parse( spellingStatusFilepath )
         assert len ( self.tree ) # Fail here if we didn't load anything at all
 
@@ -989,7 +993,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         #print( "spellingStatusDict", spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX']['SpellingStatus'] = spellingStatusDict
-    # end of PTXBible.loadPTXSpellingStatus
+    # end of PTX7Bible.loadPTXSpellingStatus
 
 
     def loadPTXComments( self ):
@@ -1018,7 +1022,7 @@ class PTXBible( Bible ):
             commentsList[commenterName] = []
 
             commentFilepath = os.path.join( self.sourceFilepath, commentFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading comments from {}…".format( commentFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading comments from {}…".format( commentFilepath ) )
 
             self.tree = ElementTree().parse( commentFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1089,7 +1093,7 @@ class PTXBible( Bible ):
         #print( "commentsList", commentsList )
         # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
         if commentsList: self.suppliedMetadata['PTX']['PTXComments'] = commentsList
-    # end of PTXBible.loadPTXComments
+    # end of PTX7Bible.loadPTXComments
 
 
     def loadPTXBiblicalTerms( self ):
@@ -1118,7 +1122,7 @@ class PTXBible( Bible ):
             BiblicalTermsDict[versionName] = {}
 
             BiblicalTermsFilepath = os.path.join( self.sourceFilepath, BiblicalTermsFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
 
             self.tree = ElementTree().parse( BiblicalTermsFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1200,7 +1204,7 @@ class PTXBible( Bible ):
         #print( "BiblicalTermsDict", BiblicalTermsDict )
         #print( BiblicalTermsDict['MBTV']['חָנוּן'] )
         if BiblicalTermsDict: self.suppliedMetadata['PTX']['BiblicalTerms'] = BiblicalTermsDict
-    # end of PTXBible.loadPTXBiblicalTerms
+    # end of PTX7Bible.loadPTXBiblicalTerms
 
 
     def loadPTXProgress( self ):
@@ -1229,7 +1233,7 @@ class PTXBible( Bible ):
             progressDict[versionName] = {}
 
             progressFilepath = os.path.join( self.sourceFilepath, progressFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading Progress from {}…".format( progressFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading Progress from {}…".format( progressFilepath ) )
 
             self.tree = ElementTree().parse( progressFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1354,7 +1358,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(progressDict) ) )
         #print( "progressDict", progressDict )
         if progressDict: self.suppliedMetadata['PTX']['Progress'] = progressDict
-    # end of PTXBible.loadPTXProgress
+    # end of PTX7Bible.loadPTXProgress
 
 
     def loadPTXPrintConfig( self ):
@@ -1383,7 +1387,7 @@ class PTXBible( Bible ):
             printConfigDict[printConfigType] = {}
 
             printConfigFilepath = os.path.join( self.sourceFilepath, printConfigFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading PrintConfig from {}…".format( printConfigFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.tree = ElementTree().parse( printConfigFilepath )
             assert len ( self.tree ) # Fail here if we didn't load anything at all
@@ -1440,7 +1444,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         #print( "printConfigDict", printConfigDict )
         if printConfigDict: self.suppliedMetadata['PTX']['PrintConfig'] = printConfigDict
-    # end of PTXBible.loadPTXPrintConfig
+    # end of PTX7Bible.loadPTXPrintConfig
 
 
     def loadPTXAutocorrects( self ):
@@ -1455,7 +1459,7 @@ class PTXBible( Bible ):
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
         if not os.path.exists( autocorrectFilepath ): return
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading autocorrect from {}…".format( autocorrectFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading autocorrect from {}…".format( autocorrectFilepath ) )
         PTXAutocorrects = {}
 
         lineCount = 0
@@ -1481,12 +1485,12 @@ class PTXBible( Bible ):
                     bits = line.split( '-->', 1 )
                     #print( 'bits', bits )
                     PTXAutocorrects[bits[0]] = bits[1]
-                else: logging.error( "Invalid {!r} autocorrect line in PTXBible.loading autocorrect".format( line ) )
+                else: logging.error( "Invalid {!r} autocorrect line in PTX7Bible.loading autocorrect".format( line ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         #print( 'PTXAutocorrects', PTXAutocorrects )
         if PTXAutocorrects: self.suppliedMetadata['PTX']['Autocorrects'] = PTXAutocorrects
-    # end of PTXBible.loadPTXAutocorrects
+    # end of PTX7Bible.loadPTXAutocorrects
 
 
     def loadPTXStyles( self ):
@@ -1510,7 +1514,7 @@ class PTXBible( Bible ):
             styleName = styleFilename[:-4] # Remove the .sty
 
             styleFilepath = os.path.join( self.sourceFilepath, styleFilename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTXBible.loading style from {}…".format( styleFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading style from {}…".format( styleFilepath ) )
 
             assert styleName not in PTXStyles
             PTXStyles[styleName] = {}
@@ -1560,7 +1564,7 @@ class PTXBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style files.".format( len(PTXStyles) ) )
         #print( 'PTXStyles', PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX']['Styles'] = PTXStyles
-    # end of PTXBible.loadPTXStyles
+    # end of PTX7Bible.loadPTXStyles
 
 
     def loadBook( self, BBB, filename=None ):
@@ -1570,7 +1574,7 @@ class PTXBible( Bible ):
         NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "PTXBible.loadBook( {}, {} )".format( BBB, filename ) )
+            print( "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
@@ -1579,16 +1583,16 @@ class PTXBible( Bible ):
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTXBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
-        if filename is None: raise FileNotFoundError( "PTXBible.loadBook: Unable to find file for {}".format( BBB ) )
+        if filename is None: raise FileNotFoundError( "PTX7Bible.loadBook: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.saveBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
-    # end of PTXBible.loadBook
+    # end of PTX7Bible.loadBook
 
 
     def _loadBookMP( self, BBB_Filename ):
@@ -1616,7 +1620,7 @@ class PTXBible( Bible ):
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )
         return UBB
-    # end of PTXBible.loadBookMP
+    # end of PTX7Bible.loadBookMP
 
 
     def loadBooks( self ):
@@ -1641,18 +1645,18 @@ class PTXBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  PTXBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     if BBB not in self.books:
                         self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
-    # end of PTXBible.loadBooks
+    # end of PTX7Bible.loadBooks
 
     def load( self ):
         self.loadBooks()
-# end of class PTXBible
+# end of class PTX7Bible
 
 
 
@@ -1676,11 +1680,11 @@ def demo():
                             ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nTestfolder is: {}".format( testFolder ) )
-            result1 = PTXBibleFileCheck( testFolder )
+            result1 = PTX7BibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA1", result1 )
-            result2 = PTXBibleFileCheck( testFolder, autoLoad=True )
+            result2 = PTX7BibleFileCheck( testFolder, autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA2", result2 )
-            result3 = PTXBibleFileCheck( testFolder, autoLoadBooks=True )
+            result3 = PTX7BibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA3", result3 )
 
     testFolder = "Tests/DataFilesForTests/PTXTest/"
@@ -1691,7 +1695,7 @@ def demo():
     if 0: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX C/ Trying installed {} module".format( singleModule ) )
-        PTX_Bible = PTXBible( testFolder, singleModule )
+        PTX_Bible = PTX7Bible( testFolder, singleModule )
         PTX_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
             BBB = 'JN1'
@@ -1708,7 +1712,7 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            PTX_Bible = PTXBible( testFolder, testFilename )
+            PTX_Bible = PTX7Bible( testFolder, testFilename )
             PTX_Bible.load()
 
 
@@ -1723,13 +1727,13 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( PTXBible, parameters ) # have the pool do our loads
+                results = pool.map( PTX7Bible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                PTXBible( testFolder, someFolder )
+                PTX7Bible( testFolder, someFolder )
     if 0:
         testFolders = (
                     "Tests/DataFilesForTests/PTXTest/",
@@ -1737,7 +1741,7 @@ def demo():
 
         for testFolder in testFolders:
             if os.access( testFolder, os.R_OK ):
-                PTX_Bible = PTXBible( testFolder )
+                PTX_Bible = PTX7Bible( testFolder )
                 PTX_Bible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
@@ -1758,7 +1762,7 @@ def demo():
 
         for testFolder in testFolders:
             if os.access( testFolder, os.R_OK ):
-                PTX_Bible = PTXBible( testFolder )
+                PTX_Bible = PTX7Bible( testFolder )
                 PTX_Bible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
@@ -1783,4 +1787,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of PTXBible.py
+# end of PTX7Bible.py

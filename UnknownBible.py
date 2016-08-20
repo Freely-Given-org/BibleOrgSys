@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-14' # by RJH
+LastModifiedDate = '2016-08-17' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -52,7 +52,8 @@ import logging, os.path
 
 import BibleOrgSysGlobals
 from ESFMBible import ESFMBibleFileCheck
-from PTXBible import PTXBibleFileCheck
+from PTX8Bible import PTX8BibleFileCheck
+from PTX7Bible import PTX7BibleFileCheck
 from USFMBible import USFMBibleFileCheck
 from DBLBible import DBLBibleFileCheck
 from USXXMLBible import USXXMLBibleFileCheck
@@ -244,13 +245,19 @@ class UnknownBible:
                 typesStrictlyFound.append( 'ESFM:' + str(ESFMBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
 
-            # Search for PTX Bibles -- put BEFORE USFM
-            PTXBibleStrictCount = PTXBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if PTXBibleStrictCount:
-                totalBibleStrictCount += PTXBibleStrictCount
+            # Search for Paratext (PTX) Bibles -- put BEFORE USFM
+            PTX8BibleStrictCount = PTX8BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if PTX8BibleStrictCount:
+                totalBibleStrictCount += PTX8BibleStrictCount
                 totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'PTX:' + str(PTXBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTXBibleStrictCount", PTXBibleStrictCount )
+                typesStrictlyFound.append( 'PTX8:' + str(PTX8BibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
+            PTX7BibleStrictCount = PTX7BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if PTX7BibleStrictCount:
+                totalBibleStrictCount += PTX7BibleStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
 
             # Search for USFM Bibles
             USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -452,13 +459,19 @@ class UnknownBible:
             typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
 
-        # Search for PTX Bibles -- put BEFORE USFM
-        PTXBibleCount = PTXBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PTXBibleCount:
-            totalBibleCount += PTXBibleCount
+        # Search for Paratext (PTX) Bibles -- put BEFORE USFM
+        PTX8BibleCount = PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PTX8BibleCount:
+            totalBibleCount += PTX8BibleCount
             totalBibleTypes += 1
-            typesFound.append( 'PTX:' + str(PTXBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTXBibleCount", PTXBibleCount )
+            typesFound.append( 'PTX8:' + str(PTX8BibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
+        PTX7BibleCount = PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PTX7BibleCount:
+            totalBibleCount += PTX7BibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
 
         # Search for USFM Bibles
         USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -652,9 +665,13 @@ class UnknownBible:
                 self.foundType = "ESFM Bible"
                 if autoLoad: return ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
-            elif PTXBibleCount == 1: # Must be ahead of USFM
-                self.foundType = "PTX Bible"
-                if autoLoad: return PTXBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+            elif PTX8BibleCount == 1: # Must be ahead of USFM
+                self.foundType = "PTX8 Bible"
+                if autoLoad: return PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif PTX7BibleCount == 1: # Must be ahead of USFM
+                self.foundType = "PTX7 Bible"
+                if autoLoad: return PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFMBibleCount == 1:
                 self.foundType = "USFM Bible"

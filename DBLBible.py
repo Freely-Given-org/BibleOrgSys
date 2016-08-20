@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-08-17' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -52,7 +52,7 @@ from xml.etree.ElementTree import ElementTree
 import BibleOrgSysGlobals
 from Bible import Bible
 from USXXMLBibleBook import USXXMLBibleBook
-from PTXBible import loadPTXLanguages, loadPTXVersifications
+from PTX7Bible import loadPTXLanguages, loadPTXVersifications
 
 
 

@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-13' # by RJH
+LastModifiedDate = '2016-08-17' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -43,7 +43,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from USXFilenames import USXFilenames
-from PTXBible import loadPTXSSFData
+from PTX7Bible import loadPTXProjectData
 from USXXMLBibleBook import USXXMLBibleBook
 from Bible import Bible
 
@@ -209,10 +209,10 @@ class USXXMLBible( Bible ):
                 if len(ssfFilepathList) > 1:
                     logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
                 if len(ssfFilepathList) >= 1: # Seems we found the right one
-                    SSFDict = loadPTXSSFData( self, ssfFilepathList[0] )
-                    if SSFDict:
+                    PTXSettingsDict = loadPTXProjectData( self, ssfFilepathList[0] )
+                    if PTXSettingsDict:
                         if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                        self.suppliedMetadata['PTX']['SSF'] = SSFDict
+                        self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
                         self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
@@ -314,10 +314,10 @@ class USXXMLBible( Bible ):
             ## Attempt to load the metadata file
             #ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             #if len(ssfFilepathList) == 1: # Seems we found the right one
-                #SSFDict = loadPTXSSFData( ssfFilepathList[0] )
-                #if SSFDict:
+                #PTXSettingsDict = loadPTXProjectData( ssfFilepathList[0] )
+                #if PTXSettingsDict:
                     #if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                    #self.suppliedMetadata['PTX']['SSF'] = SSFDict
+                    #self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
                     #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames

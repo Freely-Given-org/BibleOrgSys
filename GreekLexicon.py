@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-12' # by RJH
+LastModifiedDate = '2016-08-15' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.17'
@@ -44,9 +44,9 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os.path, re
+import logging, os.path, sys, re
 #from collections import OrderedDict
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 
@@ -135,6 +135,9 @@ class GreekStrongsFileConverter:
         except FileNotFoundError:
             logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
             raise FileNotFoundError
+        except ParseError as err:
+            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
+            raise ParseError
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         if self.tree.tag == GreekStrongsFileConverter.treeTag:

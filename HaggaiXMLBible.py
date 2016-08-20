@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2016-08-15' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.33'
@@ -69,8 +69,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import logging, os
-from xml.etree.ElementTree import ElementTree
+import logging, os, sys
+from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -248,7 +248,11 @@ class HaggaiXMLBible( Bible ):
         Load a single source XML file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
-        self.tree = ElementTree().parse( self.sourceFilepath )
+        try: self.tree = ElementTree().parse( self.sourceFilepath )
+        except ParseError as err:
+            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
+            #loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
+            #self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( self.givenName, err ) )
         if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
