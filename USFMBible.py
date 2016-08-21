@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-17' # by RJH
+LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -667,7 +667,7 @@ def demo():
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
-                            "Tests/DataFilesForTests/PTXTest/",
+                            "Tests/DataFilesForTests/PTX7Test/",
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
                             "MadeUpFolder/",

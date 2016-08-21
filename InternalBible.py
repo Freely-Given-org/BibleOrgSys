@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-09' # by RJH
+LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.73'
@@ -167,7 +167,7 @@ class InternalBible:
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
         if (BibleOrgSysGlobals.debugFlag or debuggingThisModule) and BibleOrgSysGlobals.verbosityLevel > 3 \
-        and self.suppliedMetadata and self.objectTypeString!='PTX': # There's too much potential Paratext metadata
+        and self.suppliedMetadata and self.objectTypeString not in ('PTX7','PTX8'): # There's too much potential Paratext metadata
             for metadataType in self.suppliedMetadata:
                 for fieldName in self.suppliedMetadata[metadataType]:
                     if fieldName not in set3:
@@ -2309,7 +2309,7 @@ def demo():
     # But we'll load a USFM Bible so we can test some other functions
     from UnknownBible import UnknownBible
     from Bible import Bible
-    testFolder = "Tests/DataFilesForTests/PTXTest/"
+    testFolder = "Tests/DataFilesForTests/PTX7Test/"
     uB = UnknownBible( testFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "IB Test", result )

@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-17' # by RJH
+LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.30'
@@ -736,7 +736,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    'Tests/DataFilesForTests/PTXTest/',
+                    'Tests/DataFilesForTests/PTX7Test/',
                     'Tests/DataFilesForTests/DBLTest/',
                     '../../../../../Data/Work/Bibles/theWord modules/',
                     '../../../../../Data/Work/Bibles/Biola Unbound modules/',

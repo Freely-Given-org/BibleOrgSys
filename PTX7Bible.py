@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-18' # by RJH
+LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
 ProgVersion = '0.20'
@@ -303,15 +303,15 @@ def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
             contents += ' ' + line
             #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
             processed = True
-        if not processed: print( _("ERROR: Unexpected {} line in PTX SSF file").format( repr(line) ) )
+        if not processed: print( _("ERROR: Unexpected {} line in PTX7 SSF file").format( repr(line) ) )
     if status == 0:
-        logging.critical( _("PTX SSF file was empty: {}").format( BibleObject.ssfFilepath ) )
+        logging.critical( _("PTX7 SSF file was empty: {}").format( BibleObject.ssfFilepath ) )
         status = 9
     if status != 9:
-        logging.critical( _("PTX SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
+        logging.critical( _("PTX7 SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
     if BibleOrgSysGlobals.debugFlag: assert status == 9
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + exp("Got {} PTX SSF entries:").format( len(PTXSettingsDict) ) )
+        print( "  " + exp("Got {} PTX7 SSF entries:").format( len(PTXSettingsDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(PTXSettingsDict):
                 print( "    {}: {}".format( key, PTXSettingsDict[key] ) )
@@ -522,8 +522,8 @@ class PTX7Bible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'Paratext Bible object'
-        self.objectTypeString = 'PTX'
+        self.objectNameString = 'Paratext-7 Bible object'
+        self.objectTypeString = 'PTX7'
 
         self.sourceFolder, self.givenName, self.encoding = givenFolderName, givenName, encoding # Remember our parameters
 
@@ -684,7 +684,7 @@ class PTX7Bible( Bible ):
 
         # Find the main container
         if self.tree.tag=='BookNames':
-            treeLocation = "PTX {} file".format( self.tree.tag )
+            treeLocation = "PTX7 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -708,7 +708,7 @@ class PTX7Bible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
                     try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bnCode )
                     except:
-                        logging.warning( "loadPTXBooksNames can't find BOS code for PTX {!r} book".format( bnCode ) )
+                        logging.warning( "loadPTXBooksNames can't find BOS code for PTX7 {!r} book".format( bnCode ) )
                         BBB = bnCode # temporarily use their code
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert BBB not in booksNamesDict
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
@@ -740,7 +740,7 @@ class PTX7Bible( Bible ):
 
         # Find the main container
         if self.tree.tag=='ProjectUsers':
-            treeLocation = "PTX {} file".format( self.tree.tag )
+            treeLocation = "PTX7 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
 
@@ -875,7 +875,7 @@ class PTX7Bible( Bible ):
 
         # Find the main container
         if self.tree.tag=='Lexicon':
-            treeLocation = "PTX {} file".format( self.tree.tag )
+            treeLocation = "PTX7 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -944,7 +944,7 @@ class PTX7Bible( Bible ):
 
         # Find the main container
         if self.tree.tag=='SpellingStatus':
-            treeLocation = "PTX {} file".format( self.tree.tag )
+            treeLocation = "PTX7 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -1029,7 +1029,7 @@ class PTX7Bible( Bible ):
 
             # Find the main container
             if self.tree.tag=='CommentList':
-                treeLocation = "PTX {} file for {}".format( self.tree.tag, commenterName )
+                treeLocation = "PTX7 {} file for {}".format( self.tree.tag, commenterName )
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -1129,7 +1129,7 @@ class PTX7Bible( Bible ):
 
             # Find the main container
             if self.tree.tag=='TermRenderingsList':
-                treeLocation = "PTX {} file for {}".format( self.tree.tag, versionName )
+                treeLocation = "PTX7 {} file for {}".format( self.tree.tag, versionName )
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -1240,7 +1240,7 @@ class PTX7Bible( Bible ):
 
             # Find the main container
             if self.tree.tag=='ProjectProgress':
-                treeLocation = "PTX {} file for {}".format( self.tree.tag, versionName )
+                treeLocation = "PTX7 {} file for {}".format( self.tree.tag, versionName )
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -1394,7 +1394,7 @@ class PTX7Bible( Bible ):
 
             # Find the main container
             if self.tree.tag=='PrintDraftConfiguration':
-                treeLocation = "PTX {} file for {}".format( self.tree.tag, printConfigType )
+                treeLocation = "PTX7 {} file for {}".format( self.tree.tag, printConfigType )
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -1537,7 +1537,7 @@ class PTX7Bible( Bible ):
                             #print( lineCount, "line", repr(line) )
 
                             if len(line)<5: # '\Bold' is the shortest valid line
-                                logging.warning( "Why was PTX style line #{} so short? {!r}".format( lineCount, line ) )
+                                logging.warning( "Why was PTX7 style line #{} so short? {!r}".format( lineCount, line ) )
                                 continue
 
                             if line[0] == '\\':
@@ -1635,7 +1635,7 @@ class PTX7Bible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( exp("Loading {} PTX books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    print( exp("Loading {} PTX7 books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -1672,7 +1672,7 @@ def demo():
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
-                            "Tests/DataFilesForTests/PTXTest/",
+                            "Tests/DataFilesForTests/PTX7Test/",
                             "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
@@ -1681,20 +1681,20 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nTestfolder is: {}".format( testFolder ) )
             result1 = PTX7BibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA1", result1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA1", result1 )
             result2 = PTX7BibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA2", result2 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA2", result2 )
             result3 = PTX7BibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX TestA3", result3 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA3", result3 )
 
-    testFolder = "Tests/DataFilesForTests/PTXTest/"
+    testFolder = "Tests/DataFilesForTests/PTX7Test/"
     if 0: # specify testFolder containing a single module
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX B/ Trying single module in {}".format( testFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
         testPTX_B( testFolder )
 
     if 0: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX C/ Trying installed {} module".format( singleModule ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 C/ Trying installed {} module".format( singleModule ) )
         PTX_Bible = PTX7Bible( testFolder, singleModule )
         PTX_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
@@ -1709,7 +1709,7 @@ def demo():
         nonEnglish = ( '', )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX D{}/ Trying {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             PTX_Bible = PTX7Bible( testFolder, testFilename )
@@ -1731,13 +1731,13 @@ def demo():
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX E{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 PTX7Bible( testFolder, someFolder )
     if 0:
         testFolders = (
-                    "Tests/DataFilesForTests/PTXTest/",
-                    ) # You can put your PTX test folder here
+                    "Tests/DataFilesForTests/PTX7Test/",
+                    ) # You can put your PTX7 test folder here
 
         for testFolder in testFolders:
             if os.access( testFolder, os.R_OK ):
@@ -1758,7 +1758,7 @@ def demo():
         testFolders = (
                     "Tests/DataFilesForTests/theWordRoundtripTestFiles/acfPTX 2013-02-03",
                     "Tests/DataFilesForTests/theWordRoundtripTestFiles/aucPTX 2013-02-26",
-                    ) # You can put your PTX test folder here
+                    ) # You can put your PTX7 test folder here
 
         for testFolder in testFolders:
             if os.access( testFolder, os.R_OK ):

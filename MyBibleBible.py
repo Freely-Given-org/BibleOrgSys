@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.15'
@@ -1466,7 +1466,7 @@ def demo():
 
     if 1: # F: test the export
         testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    'Tests/DataFilesForTests/PTXTest/',
+                    'Tests/DataFilesForTests/PTX7Test/',
                     'Tests/DataFilesForTests/DBLTest/',
                     '../../../../../Data/Work/Bibles/theWord modules/',
                     '../../../../../Data/Work/Bibles/Biola Unbound modules/',
