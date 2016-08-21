@@ -44,7 +44,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-08-22' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.01'
+ProgVersion = '0.02'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -67,7 +67,7 @@ from USFMBibleBook import USFMBibleBook
 MARKER_FILENAMES = ( 'AUTOCORRECT.TXT.XXX', 'BOOKNAMES.XML.XXX', 'CHECKINGSTATUS.XML.XXX', 'COMMENTTAGS.XML.XXX',
                     'LEXICON.XML.XXX', 'PRINTDRAFTCONFIGBASIC.XML.XXX', 'PROJECTUSERS.XML.XXX',
                     'PROJECTUSERFIELDS.XML.XXX', 'SPELLINGSTATUS.XML.XXX', 'USFM-COLOR.STY.XXX', ) # Must all be UPPER-CASE
-MARKER_FILE_EXTENSIONS = ( '.SSF', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above list
+MARKER_FILE_EXTENSIONS = ( '.SSFXXX', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above list
 MARKER_THRESHOLD = 3 # How many of the above must be found
 
 
