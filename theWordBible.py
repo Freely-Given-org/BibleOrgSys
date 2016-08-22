@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-08-23' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.51'
@@ -1230,7 +1230,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-    # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
+    # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLS, etc.)
     if len(self) <= (39+6) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
         testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
         booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines

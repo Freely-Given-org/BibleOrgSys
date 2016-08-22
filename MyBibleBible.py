@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-22' # by RJH
+LastModifiedDate = '2016-08-23' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.15'
@@ -1159,7 +1159,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     extension = '.SQLite3'
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-    ## Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+    ## Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)
     #if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
         #testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
         #booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines

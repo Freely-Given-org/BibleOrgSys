@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-08-23' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.31'
@@ -1260,7 +1260,7 @@ def createESwordModule( self, outputFolder, controlDict ):
     BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-    # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+    # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)
     if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
         testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
         booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
