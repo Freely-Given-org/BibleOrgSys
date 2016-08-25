@@ -27,7 +27,7 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-02' # by RJH
+LastModifiedDate = '2016-08-26' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
 ProgVersion = '0.13'
@@ -91,6 +91,8 @@ SECTION_REFERENCE_COLOUR = 'green'
 EXTRA_COLOUR = 'royalBlue1'
 
 SUPERSCRIPT_OFFSET = '4'
+
+# NOTE: Should we add fields from "leadingText", "trailingText" ???
 
 # These are the styles for formatted mode
 # Asterisk in front of a tag name indicates the currently selected verse
@@ -159,6 +161,8 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     '*q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'm': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    '*m': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
     'mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
     '*mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
     'pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
@@ -169,6 +173,17 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+
+# Lists
+    'li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'li2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*li2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'li3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*li3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'li4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
+    '*li4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
+
 
 # These are the styles for unformatted mode that are different from above
 # Headings
@@ -216,6 +231,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 # Lines without markers (continuation lines)
     '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
     }
+
 
 
 class BibleStylesheet():
