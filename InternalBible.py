@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-22' # by RJH
+LastModifiedDate = '2016-08-29' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.73'
@@ -1533,7 +1533,7 @@ class InternalBible:
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="stylesheet" href="__TOP_PATH__Overall.css" type="text/css"/>
     <title>__TITLE__</title>
 </head>
@@ -1553,7 +1553,7 @@ class InternalBible:
 </div>
 
 <div id="Footer">
-    <p class="GeneratedNotice">This page automatically generated __DATE__ from a template created 2014-11-23</p>
+    <p class="GeneratedNotice">This page automatically generated __DATE__ from a template created 2016-08-29</p>
     </p></div>
 </body></html>
 """
