@@ -30,7 +30,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-19' # by RJH
+LastModifiedDate = '2016-09-14' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.06'
@@ -285,7 +285,7 @@ def compareBooksPedantic( book1, book2,
                     bcResults.append( (reference,"Skipping book2 marker: {!r}".format( marker2 )) )
                     continue # Doesn't advance ix1 and ix2
             else:
-                bcResults.append( (reference,"Mismatched markers: {!r} vs {!r}—aborted checking {} now!".format( marker1, marker2, book1.BBB )) )
+                bcResults.append( (reference,"Mismatched markers: {!r} vs {!r}—aborted checking of {} now!".format( marker1, marker2, book1.BBB )) )
                 break # things are too bad -- not worth continuing
         ix1 += 1; ix2 += 1
 
@@ -424,7 +424,7 @@ def segmentizeBooks( book1, book2 ):
                     abResults.append( (reference,"Skipping book2 marker to continue: {!r}".format( marker2 )) )
                     continue # Doesn't advance ix1 and ix2
             else:
-                abResults.append( (reference,"Mismatched markers: {!r} vs {!r}—aborted checking {} now!".format( marker1, marker2, book1.BBB )) )
+                abResults.append( (reference,"Mismatched markers: {!r} vs {!r}—aborted checking of {} now!".format( marker1, marker2, book1.BBB )) )
                 break # things are too bad -- not worth continuing
         ix1 += 1; ix2 += 1
 
