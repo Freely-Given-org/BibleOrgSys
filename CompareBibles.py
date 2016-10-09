@@ -3,7 +3,8 @@
 #
 # CompareBibles.py
 #
-# Module handling a internal Bible object
+# Module to check and compare two closely related Bibles
+#   e.g., a book and its back-translation.
 #
 # Copyright (C) 2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,17 +24,42 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling an internal Bible object.
+Module to check and compare two closely related Bibles
+   e.g., a book and its back-translation.
 
-A class which extends BibleWriter (which itself extends InternalBible).
+Includes:
+    loadWordCompares( folder, filename )
+    compareBooksPedantic( book1, book2,
+                        compareQuotes=DEFAULT_COMPARE_QUOTES,
+                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+                        compareDigits=DEFAULT_COMPARE_DIGITS,
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        breakOnOne=False )
+    _doCompare( parameters ) # for multiprocessing
+    segmentizeLine( line, segmentEndPunctuation='.?!;' )
+    segmentizeBooks( book1, book2 )
+    analyzeWords( segmentList, dict12=None, dict21=None )
+    analyzeBibles( Bible1, Bible2 )
+    compareBibles( Bible1, Bible2,
+                        compareQuotes=DEFAULT_COMPARE_QUOTES,
+                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+                        compareDigits=DEFAULT_COMPARE_DIGITS,
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        matchingPairs=DEFAULT_MATCHING_PAIRS,
+                        breakOnOne=False )
+    demo()
+    main()
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-09-14' # by RJH
+LastModifiedDate = '2016-10-05' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.06'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -83,14 +109,18 @@ def exp( messageString ):
 
 def loadWordCompares( folder, filename ):
     """
+    Returns two OrderedDicts (longest entries first)
     """
     if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("loadWordCompares( {}, {} )").format( folder, filename ) )
 
-    dict12, dict21 = {}, {}
+    dict12, dict21 = {}, {} # Not worried about sorting yet
 
     filepath = os.path.join( folder, filename )
+    if BibleOrgSysGlobals.verbosityLevel > 1:
+        print( "Loading word compares from {}…".format( filepath ) )
+
     lineCount = 0
     with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
         for line in inputFile:
@@ -131,7 +161,14 @@ def loadWordCompares( folder, filename ):
 
     #print( '\ndict12', len(dict12), sorted(dict12.items()) )
     #print( '\ndict21', len(dict21), sorted(dict21.items()) )
-    return dict12, dict21
+
+    # Now sort the dictionaries with the longest entries first
+    dict12s, dict21s = OrderedDict(), OrderedDict()
+    for dKey in sorted(dict12, key=len, reverse=True):
+        dict12s[dKey] = dict12[dKey]
+    for dKey in sorted(dict21, key=len, reverse=True):
+        dict21s[dKey] = dict21[dKey]
+    return dict12s, dict21s
 # end of loadWordCompares
 
 
@@ -362,7 +399,7 @@ def segmentizeBooks( book1, book2 ):
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being CV and error message.
     """
-    if 1 or BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
         assert book1.BBB == book2.BBB
@@ -448,37 +485,114 @@ def segmentizeBooks( book1, book2 ):
 
 
 
+def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, resultsList ):
+    """
+    """
+    #print( "\nanalyzeWordsInSegment( {}, {}, {}, {}, … )".format( reference, segmentAList, segmentBList, len(dictAB) ) )
+    #print( 'segmentBList {}'.format( segmentBList ) )
+    #print( 'segmentAList {}'.format( segmentAList ) )
+    assert isinstance( reference, tuple )
+    assert isinstance( segmentAList, list )
+    assert isinstance( segmentBList, list )
+    assert isinstance( dictAB, OrderedDict )
+    assert isinstance( resultsList, list )
+
+    foundLPhrases = []
+    for lEntry,rEntryList in dictAB.items():
+        assert isinstance( lEntry, str )
+        assert isinstance( rEntryList, list )
+
+        # First count how many times the lEntry occurs in segmentAList
+        if ' ' in lEntry: # lEntry is multiple words -- requires extra handling
+            #print( 'multiple lEntry {!r}'.format( lEntry ) ) # lEntry is language2
+            lWords = lEntry.split()
+            #print( 'lWords (split) =', lWords )
+            numLSearchWords = len( lWords )
+            seglenA = len( segmentAList )
+            ix = -1
+            lCount = 0
+            while True:
+                #print( lWords, ix, lCount, segmentAList )
+                try: ix = segmentAList.index( lWords[0], ix+1 )
+                except ValueError: break # none / no more found
+                matched = True
+                for iy in range( 1, numLSearchWords ):
+                    if ix+iy >= seglenA: matched = False; break # Too near the end
+                    if segmentAList[ix+iy] != lWords[iy]: matched = False; break
+                if matched:
+                    #print( "lMatched" ); halt
+                    lCount += 1
+                    #if lCount > 1: print( "multiple lMatches" ); halt
+                #else: print( "not lMatched" )
+            if lCount: foundLPhrases.extend( lWords )
+        else: # lEntry is a single word -- easy
+            lCount = segmentAList.count( lEntry )
+
+        if lCount:
+            #print( 'lEntry {!r}'.format( lEntry ) ) # lEntry is a string
+            #print( 'lCount', lCount )
+            #print( 'rEntryList {}'.format( rEntryList ) ) # rEntryList is a list
+            # Now count how many times the rEntries occur in segmentBList
+            rCount = 0
+            for rEntry in rEntryList:
+                #print( 'rEntry {!r}'.format( rEntry ) ) # rEntry is language1 string
+                assert isinstance( rEntry, str )
+                if ' ' in rEntry: # lEntry is multiple words -- requires extra handling
+                    rWords = rEntry.split()
+                    #print( 'rWords (split) =', rWords )
+                    numRSearchWords = len( rWords )
+                    seglenB = len( segmentBList )
+                    ix = -1
+                    while True:
+                        print( rWords, ix, rCount, segmentBList )
+                        try: ix = segmentBList.index( rWords[0], ix+1 )
+                        except ValueError: break # none / no more found
+                        matched = True
+                        for iy in range( 1, numRSearchWords ):
+                            if ix+iy >= seglenB: matched = False; break # Too near the end
+                            if segmentBList[ix+iy] != rWords[iy]: matched = False; break
+                        if matched:
+                            #print( "rMatched" ); halt
+                            rCount += 1
+                            #if rCount > 1: print( "multiple rMatches", lEntry ); halt
+                        #else: print( "not rMatched" )
+                else: # rEntry is a single word -- easy
+                    rCount += segmentBList.count( rEntry )
+            #print( 'rCount', rCount )
+
+            # Now check the results
+            if lCount > rCount:
+                if ' ' not in lEntry and lEntry in foundLPhrases:
+                    #print( lEntry, foundLPhrases ); halt
+                    print( "Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
+                else:
+                    resultsList.append( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
+                    #resultsList.append( ((' ',' ',' '), rEntry) )
+                    print( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
+                    print( "   {!r}:{}".format( lEntry, rEntry ) )
+            #elif lCount < rCount:
+                #resultsList.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, rCount, segmentAList )) )
+# end of analyzeWordsInSegment
+
+
 def analyzeWords( segmentList, dict12=None, dict21=None ):
     """
+    Given a list of segments (mostly sentences) from two different but closely related versions,
+        use the given dictionaries to check that the corresponding word(s) are in the related version.
+
+    Returns a list of results.
     """
     if 1 or BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("analyzeWords( … )") )
         assert isinstance( segmentList, list )
+        #print( "\ndict12", dict12 )
+        #print( "\ndict21", dict21 )
 
     awResults = []
-
     for j,(reference,segment1,segment2) in enumerate( segmentList ):
-        for word in dict12:
-            if word in segment1:
-                wordCount = segment1.count( word )
-                foundCount = 0
-                for rWord in dict12[word]:
-                    foundCount += segment2.count( rWord )
-                if wordCount > foundCount:
-                    awResults.append( (reference,"Word matches for {!r} not enough ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
-                #elif wordCount < foundCount:
-                    #awResults.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
-        for word in dict21:
-            if word in segment2:
-                wordCount = segment2.count( word )
-                foundCount = 0
-                for rWord in dict21[word]:
-                    foundCount += segment1.count( rWord )
-                if wordCount > foundCount:
-                    awResults.append( (reference,"Word matches for {!r} not enough ({}/{}) in {!r}".format( word, wordCount, foundCount, segment1 )) )
-                #elif wordCount < foundCount:
-                    #awResults.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, foundCount, segment2 )) )
+        if dict12: analyzeWordsInSegment( reference, segment1, segment2, dict12, awResults )
+        if dict21: analyzeWordsInSegment( reference, segment2, segment1, dict21, awResults )
 
     #print( '\nawResults', len(awResults), awResults )
     return awResults
@@ -763,7 +877,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     #parser.add_argument('Bible1', help="Bible folder or file path 1" )
     #parser.add_argument('Bible2', help="Bible folder or file path 2" )
-    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
     demo()
 
