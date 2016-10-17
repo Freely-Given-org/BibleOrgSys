@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-22' # by RJH
+LastModifiedDate = '2016-10-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -293,6 +293,8 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
         #for marker in optionsDict['markerList']:
             #ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
 
+    resultDict = { 'numFinds':0, 'numReplaces':0, 'searchedBookList':[], 'foundBookList':[], 'replacedBookList':[], 'aborted':False, }
+
     ourSearchText = optionsDict['searchText']
     # Save the search history (with the 'regex:' text still prefixed if applicable)
     try: optionsDict['searchHistoryList'].remove( ourSearchText )
@@ -326,7 +328,6 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     if encoding is None: encoding = 'utf-8'
 
     replaceAllFlag = stopFlag = undoFlag = False
-    resultDict = { 'numFinds':0, 'numReplaces':0, 'searchedBookList':[], 'foundBookList':[], 'replacedBookList':[], 'aborted':False, }
     filesToSave = OrderedDict()
     if self.maximumPossibleFilenameTuples:
         for BBB,filename in self.maximumPossibleFilenameTuples:
