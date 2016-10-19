@@ -456,6 +456,8 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
             BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=4 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Saving {} with {} encoding".format( filepath, encoding ) )
         with open( filepath, 'wt', encoding=encoding, newline='\r\n' ) as bookFile:
             bookFile.write( fileText )
         self.bookNeedsReloading[BBB] = True
