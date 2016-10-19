@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-22' # by RJH
+LastModifiedDate = '2016-10-19' # by RJH
 ShortProgName = "ParatextBible"
 ProgName = "Paratext Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1311,7 +1311,7 @@ class PTX7Bible( Bible ):
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                     BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
                                     assert subelement.tag not in bookStatusDict # No duplicates please
-                                    if sub2element.tag in ( 'Versification', 'StageContents', 'Summaries' ):
+                                    if sub2element.tag in ( 'Versification', 'Summaries' ):
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                         bookStatusDict[sub2element.tag] = sub2element.text # can be None
                                     elif sub2element.tag == 'StageStatus':
@@ -1343,6 +1343,38 @@ class PTX7Bible( Bible ):
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                                 bookStatusDict[sub2element.tag].append( sub3element.text )
+                                            else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                    elif sub2element.tag == 'StageContents':
+                                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
+                                        BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                        assert sub2element.tag not in bookStatusDict
+                                        bookStatusDict[sub2element.tag] = []
+                                        for sub3element in sub2element:
+                                            sub3location = sub3element.tag + ' ' + sub2location
+                                            if sub3element.tag == 'BookStageContents':
+                                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
+                                                BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
+                                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
+                                                bookStageContentsList = []
+                                                for sub4element in sub3element:
+                                                    sub4location = sub4element.tag + ' ' + sub3location
+                                                    if sub4element.tag == 'ChapterHead':
+                                                        BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location )
+                                                        BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
+                                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location )
+                                                        chapterHeadList = []
+                                                        for sub5element in sub4element:
+                                                            sub5location = sub5element.tag + ' ' + sub4location
+                                                            if sub5element.tag == 'string':
+                                                                BibleOrgSysGlobals.checkXMLNoAttributes( sub5element, sub5location )
+                                                                BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5location )
+                                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5location )
+                                                                chapterHeadList.append( sub5element.text )
+                                                            else: logging.error( _("Unprocessed {} sub5element '{}' in {}").format( sub5element.tag, sub5element.text, sub5location ) )
+                                                        bookStageContentsList.append( chapterHeadList )
+                                                    else: logging.error( _("Unprocessed {} sub4element '{}' in {}").format( sub4element.tag, sub4element.text, sub4location ) )
+                                                bookStatusDict[sub2element.tag].append( bookStageContentsList )
                                             else: logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
                                     else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
                             else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
