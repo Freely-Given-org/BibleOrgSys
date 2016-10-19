@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-19' # by RJH
+LastModifiedDate = '2016-10-19' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.68'
@@ -789,7 +789,7 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
     Give an error if the element text contains anything other than whitespace.
     """
     if element.text and element.text.strip():
-        errorString = "{}Unexpected {!r} element text in {}" \
+        errorString = "{}Unexpected {!r} XML element text in {}" \
                         .format( (idString+' ') if idString else '', element.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
@@ -801,7 +801,7 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
     Give a warning if the element tail contains anything other than whitespace.
     """
     if element.tail and element.tail.strip():
-        warningString = "{}Unexpected {!r} element tail in {}" \
+        warningString = "{}Unexpected {!r} XML element tail in {}" \
                         .format( (idString+' ') if idString else '', element.tail, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
@@ -814,7 +814,7 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
     Give a warning if the element contains any attributes.
     """
     for attrib,value in element.items():
-        warningString = "{}Unexpected {!r} attribute ({}) in {}" \
+        warningString = "{}Unexpected {!r} XML attribute ({}) in {}" \
                         .format( (idString+' ') if idString else '', attrib, value, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
@@ -827,7 +827,7 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     Give an error if the element contains any sub-elements.
     """
     for subelement in element:
-        errorString = "{}Unexpected {!r} sub-element ({}) in {}" \
+        errorString = "{}Unexpected {!r} XML sub-element ({}) in {}" \
                         .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
         logger = logging.critical if subelement.text else logging.error
         logger( errorString )
@@ -842,7 +842,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
         for subelement in element.getchildren():
-            warningString = "{}Unexpected {!r} sub-element ({}) in {} with text/tail {}/{}" \
+            warningString = "{}Unexpected {!r} XML sub-element ({}) in {} with text/tail {}/{}" \
                             .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
                                 element.text.strip() if element.text else element.text,
                                 element.tail.strip() if element.tail else element.tail )
