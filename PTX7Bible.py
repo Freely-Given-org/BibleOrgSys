@@ -41,9 +41,9 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-19' # by RJH
-ShortProgName = "ParatextBible"
-ProgName = "Paratext Bible handler"
+LastModifiedDate = '2016-10-21' # by RJH
+ShortProgName = "Paratext7Bible"
+ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
