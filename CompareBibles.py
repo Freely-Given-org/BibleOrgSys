@@ -33,8 +33,8 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
                         breakOnOne=False )
     _doCompare( parameters ) # for multiprocessing
@@ -46,8 +46,8 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
                         matchingPairs=DEFAULT_MATCHING_PAIRS,
                         breakOnOne=False )
     demo()
@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-05' # by RJH
+LastModifiedDate = '2016-10-25' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -177,8 +177,8 @@ def compareBooksPedantic( book1, book2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
                         breakOnOne=False ):
     """
@@ -251,35 +251,52 @@ def compareBooksPedantic( book1, book2,
                         bcResults.append( (reference,"Mismatched digit: {} vs {} {!r}".format( c1, c2, digit )) )
                         if breakOnOne: break
                 for left,right in matchingPairs:
-                    # NOTE: Code below doesn't give error with ( ( )
+                    hadMatchingError1 = hadMatchingError2 = False
                     ixl = -1
                     while True:
                         ixl = line1.find( left, ixl+1 )
                         if ixl == -1: break
                         ixr = line1.find( right, ixl+2 )
                         if ixr == -1:
-                            bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, left )) )
+                            bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, line1[max(0,ixl-4):ixl+6] )) )
+                            hadMatchingError1 = True
                     ixl = -1
                     while True:
                         ixl = line2.find( left, ixl+1 )
                         if ixl == -1: break
                         ixr = line2.find( right, ixl+2 )
                         if ixr == -1:
-                            bcResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, left )) )
+                            bcResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, line2[max(0,ixl-4):ixl+6] )) )
+                            hadMatchingError2 = True
                     ixr = 9999
                     while True:
                         ixr = line1.rfind( right, 0, ixr )
                         if ixr == -1: break
                         ixl = line1.rfind( left, 0, ixr )
                         if ixl == -1:
-                            bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, right )) )
+                            bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, line1[max(0,ixr-5):ixr+5] )) )
+                            hadMatchingError1 = True
                     ixr = 9999
                     while True:
                         ixr = line2.rfind( right, 0, ixr )
                         if ixr == -1: break
                         ixl = line2.rfind( left, 0, ixr )
                         if ixl == -1:
-                            bcResults.append( (reference,"Missing first part of pair in Bible2: {!r} before {!r}".format( left, right )) )
+                            bcResults.append( (reference,"Missing first part of pair in Bible2: {!r} before {!r}".format( left, line2[max(0,ixr-5):ixr+5] )) )
+                            hadMatchingError2 = True
+                    # The above doesn't detect ( ) ) so we do it here
+                    if not hadMatchingError1: # already
+                        l1cl, l1cr = line1.count( left ), line1.count( right )
+                        if l1cl > l1cr:
+                            bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
+                        elif l1cr > l1cl:
+                            bcResults.append( (reference,"Too many {!r} in Bible1".format( right )) )
+                    if not hadMatchingError2: # already
+                        l2cl, l2cr = line2.count( left ), line2.count( right )
+                        if l2cl > l2cr:
+                            bcResults.append( (reference,"Too many {!r} in Bible2".format( left )) )
+                        elif l2cr > l2cl:
+                            bcResults.append( (reference,"Too many {!r} in Bible2".format( right )) )
                 if marker1 not in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
                     extras = entry1.getExtras()
                     if extras is None: extras = () # So it's always iterable
@@ -672,8 +689,8 @@ def compareBibles( Bible1, Bible2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # Case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # Case sensitive
+                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
+                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
                         matchingPairs=DEFAULT_MATCHING_PAIRS,
                         breakOnOne=False ):
     """
