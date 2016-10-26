@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-17' # by RJH
+LastModifiedDate = '2016-10-26' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -40,6 +40,7 @@ debuggingThisModule = False
 
 import os, logging
 import multiprocessing
+from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from USXFilenames import USXFilenames
@@ -195,9 +196,16 @@ class USXXMLBible( Bible ):
 
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
-        self.possibleFilenameDict = {}
-        for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
+        #print( "DDFSDF", self.USXFilenamesObject )
+        #print( "DFSFGE", self.USXFilenamesObject.getPossibleFilenameTuples() )
+        #print( "SDFSDQ", self.USXFilenamesObject.getConfirmedFilenameTuples() )
+        self.possibleFilenameDict = OrderedDict()
+        filenameTuples = self.USXFilenamesObject.getConfirmedFilenameTuples()
+        if not filenameTuples: # Try again
+            filenameTuples = self.USXFilenamesObject.getPossibleFilenameTuples()
+        for BBB,filename in filenameTuples:
             self.possibleFilenameDict[BBB] = filename
+        #print( "GHJGHR", self.possibleFilenameDict ); halt
 
         if 0: # we don't have a getSSFFilenames function :(
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -347,7 +355,7 @@ class USXXMLBible( Bible ):
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
         else: # Just single threaded
             #print( self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
-            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
+            for BBB,filename in self.possibleFilenameDict.items():
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.givenFolderName, self.encoding )
                 UBB.validateMarkers()
@@ -412,12 +420,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
+        ('BDBTest', '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Press_Bible.2016-10-26_16.12_0.46884400_1477451520/YourSourceFiles/Unzipped/USX_1/' ),
                 #('Test1','Tests/DataFilesForTests/USXTest1',),
                 #('Test2','Tests/DataFilesForTests/USXTest2',),
                 #("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
                 #("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
-                ("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/NET08/",),
+                #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/NET08/",),
                 ) # You can put your USX test folder here
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
