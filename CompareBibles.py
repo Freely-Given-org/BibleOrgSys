@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-25' # by RJH
+LastModifiedDate = '2016-11-02' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -147,15 +147,17 @@ def loadWordCompares( folder, filename ):
             if use in (12,1221):
                 for lBit in lBits:
                     if lBit in dict12:
-                        print( "  We already had {!r} in dict12".format( lBit ) )
-                    dict12[lBit] = rBits
+                        #print( "  We already had {!r} = {} (now got {}) in dict12 ({})".format( lBit, dict12[lBit], rBits, use ) )
+                        dict12[lBit].extend( rBits )
+                    else: dict12[lBit] = rBits
                     #if lBit.title() != lBit:
                         #dict12[lBit.title()] = rBits
             if use in (21,1221):
                 for rBit in rBits:
                     if rBit in dict21:
-                        print( "  We already had {!r} in dict21".format( rBit ) )
-                    dict21[rBit] = lBits
+                        #print( "  We already had {!r} = {} (now got {}) in dict21 ({})".format( rBit, dict21[rBit], lBits, use ) )
+                        dict21[rBit].extend( lBits )
+                    else: dict21[rBit] = lBits
                     #if rBit.title() != rBit:
                         #dict21[rBit.title()] = lBits
 
@@ -800,7 +802,7 @@ def demo():
             print( "Comparing {} gave:".format( BBB ) )
             #print( ' 1s', len(segmentResult), segmentResult )
             print( ' 2o', len(otherResult), otherResult )
-        dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'BTCheckWords.txt' )
+        dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "Comparing {} gave:".format( BBB ) )
@@ -820,7 +822,7 @@ def demo():
                 print( "Comparing {} gave:".format( BBB ) )
                 #print( ' 1s', len(segmentResult), segmentResult )
                 print( ' 2o', len(otherResult), otherResult )
-            dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'BTCheckWords.txt' )
+            dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
             awResult = analyzeWords( segmentResult, dict12, dict21 )
             totalCount += len( awResult )
             if BibleOrgSysGlobals.verbosityLevel > 0:

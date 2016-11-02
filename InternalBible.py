@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-29' # by RJH
+LastModifiedDate = '2016-11-02' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.73'
+ProgVersion = '0.74'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -488,8 +488,10 @@ class InternalBible:
                 if line[0] == '#': continue # Just discard comment lines
                 if not continuedFlag:
                     if '=' not in line:
-                        logging.warning( exp("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {}").format( repr(line) ) )
+                        logging.warning( exp("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {!r}").format( line ) )
                     else: # Seems like a field=something type line
+                        if line.count( '=' ) > 1:
+                            logging.warning( exp("loadMetadataTextFile: Surprised to find multiple equal signs in line: {!r}").format( line ) )
                         bits = line.split( '=', 1 )
                         assert len(bits) == 2
                         fieldName = bits[0]
@@ -499,14 +501,14 @@ class InternalBible:
                             fieldContents = fieldContents[:-1] # Remove the continuation character
                         else:
                             if not fieldContents:
-                                logging.warning( "Metadata line has a blank entry for {}".format( repr(fieldName) ) )
+                                logging.warning( "Metadata line has a blank entry for {!r}".format( fieldName ) )
                             saveMetadataField( fieldName, fieldContents )
                 else: # continuedFlag
                     if line.endswith( '\\' ): line = line[:-1] # Remove the continuation character
                     else: continuedFlag = False
                     fieldContents += line
                     if not continuedFlag:
-                        logging.warning( exp("loadMetadataTextFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
+                        logging.warning( exp("loadMetadataTextFile: Metadata lines result in a blank entry for {!r}").format( fieldName ) )
                         saveMetadataField( fieldName, fieldContents )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
@@ -1176,7 +1178,7 @@ class InternalBible:
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
-                    elif value != -1.0: logging.warning( exp("discover: invalid ratio (float) {} {} {}").format( BBB, key, repr(value) ) )
+                    elif value != -1.0: logging.warning( exp("discover: invalid ratio (float) {} {} {!r}").format( BBB, key, value ) )
                 elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
                     #print( "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
@@ -1210,7 +1212,7 @@ class InternalBible:
                     #halt
                     #pass # No action needed here
                 else:
-                    logging.warning( exp("discover: unactioned discovery result {} {} {}").format( BBB, key, repr(value) ) )
+                    logging.warning( exp("discover: unactioned discovery result {} {} {!r}").format( BBB, key, value ) )
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
@@ -1519,8 +1521,7 @@ class InternalBible:
         """
         from datetime import datetime
         if BibleOrgSysGlobals.debugFlag:
-            print( "makeErrorHTML( {}, {}, {} )" \
-                .format( repr(givenOutputFolder), repr(titlePrefix), repr(webPageTemplate) ) )
+            print( "makeErrorHTML( {!r}, {!r}, {!r} )".format( givenOutputFolder, titlePrefix, webPageTemplate ) )
         #logging.info( "Doing Bible checks…" )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks…" )
 
@@ -1966,7 +1967,7 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
+            print( exp("getNumVerses( {}, {!r} )").format( BBB, C ) )
             assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
@@ -2067,7 +2068,7 @@ class InternalBible:
                     if not firstWord: verseText += ' '
                     verseText += cleanText
                     firstWord = False
-                else: logging.warning( "InternalBible.getVerseText Unknown marker {}={}".format( marker, repr(cleanText) ) )
+                else: logging.warning( "InternalBible.getVerseText Unknown marker {}={!r}".format( marker, cleanText ) )
             return verseText
     # end of InternalBible.getVerseText
 

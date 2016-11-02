@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-26' # by RJH
+LastModifiedDate = '2016-11-02' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -116,9 +116,13 @@ def exp( messageString ):
 
 defaultControlFolder = 'ControlFiles/' # Relative to the current working directory
 def setDefaultControlFolder( newFolderName ):
+    """
+    Set the global default folder for control files.
+    """
     global defaultControlFolder
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "defaultControlFolder changed from {} to {}".format( defaultControlFolder, newFolderName ) )
+
     defaultControlFolder = newFolderName
 # end of BibleWriter.setDefaultControlFolder
 
@@ -557,7 +561,7 @@ class BibleWriter( InternalBible ):
                                 #print( BBB, repr(value), repr(vEnd) )
                                 try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                 except ValueError:
-                                    print( "toUSFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                    print( "toUSFM: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                 #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
@@ -672,16 +676,16 @@ class BibleWriter( InternalBible ):
                     elif j==2 and pseudoMarker=='rem':
                         #print( "Write REM 3" )
                         if value != 'ESFM v0.5 {}'.format( BBB ):
-                            logging.info( "Updating {} ESFM rem line from {} to v0.5".format( BBB, repr(value) ) )
+                            logging.info( "Updating {} ESFM rem line from {!r} to v0.5".format( BBB, value ) )
                         ESFMLine = '\\rem ESFM v0.5 {}'.format( BBB )
                     else:
                         if '¬' in pseudoMarker:
                             if indentLevel > 0:
                                 indentLevel -= 1
                             else:
-                                logging.error( "toESFM: Indent level can't go negative at {} {} {} {}".format( BBB, j, pseudoMarker, repr(value) ) )
+                                logging.error( "toESFM: Indent level can't go negative at {} {} {} {!r}".format( BBB, j, pseudoMarker, value ) )
                                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                    print( "toESFM: Indent level can't go negative at {} {} {} {}".format( BBB, j, pseudoMarker, repr(value) ) )
+                                    print( "toESFM: Indent level can't go negative at {} {} {} {!r}".format( BBB, j, pseudoMarker, value ) )
                                     halt
                         ESFMLine = ' ' * indentLevel * indentSize
 
@@ -710,7 +714,7 @@ class BibleWriter( InternalBible ):
                                         #print( BBB, repr(value), repr(vEnd) )
                                         try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                         except ValueError:
-                                            logging.warning( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                            logging.warning( "toESFM: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                             vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                         #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                         break
@@ -1019,7 +1023,7 @@ class BibleWriter( InternalBible ):
                         if ix != -1: result = result[:ix] # Remove verse bridges
                     #print( " returns", result )
                     if result.count('C')>1 or result.count('V')>1:
-                        logging.critical( "toMarkdown.liveCV created a bad link: {} at {} {}:{}".format( repr(result), BBB, C, V ) )
+                        logging.critical( "toMarkdown.liveCV created a bad link: {!r} at {} {}:{}".format( result, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     return '#' + result
                 # end of liveCV
@@ -1182,7 +1186,7 @@ class BibleWriter( InternalBible ):
 
                     NOTE: The parameter here already has the /fig and /fig* removed.
                     """
-                    logging.critical( "toMD: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(MDfigure) ) )
+                    logging.critical( "toMD: figure not handled yet at {} {}:{} {!r}".format( BBB, C, V, MDfigure ) )
                     figureMD = ''
                     #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                     #.format( fnTitle, fnIndex )
@@ -1278,9 +1282,9 @@ class BibleWriter( InternalBible ):
             text = text.replace( '\\sc ', '' ).replace( '\\sc*', '' )
 
             if '\\' in text or '<' in text or '>' in text:
-                logging.error( "formatMarkdownVerseText programming error: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                logging.error( "formatMarkdownVerseText programming error: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "formatMarkdownVerseText: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                    print( "formatMarkdownVerseText: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             return text
         # end of __formatMarkdownVerseText
@@ -1617,7 +1621,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 else:
                     if adjText:
-                        logging.error( "toDoor43: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
+                        logging.error( "toDoor43: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, adjText ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.error( "toDoor43: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -1723,7 +1727,7 @@ class BibleWriter( InternalBible ):
                     if ix != -1: result = result[:ix] # Remove verse bridges
                 #print( " returns", result )
                 if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1):
-                    print( "formatHTMLVerseText.liveCV: programming error: Didn't handle reference correctly: {} -> {}".format( repr(CV), repr(result) ) )
+                    print( "formatHTMLVerseText.liveCV: programming error: Didn't handle reference correctly: {!r} -> {!r}".format( CV, result ) )
                 return '#' + result
             # end of liveCV
 
@@ -1887,7 +1891,7 @@ class BibleWriter( InternalBible ):
 
                 NOTE: The parameter here already has the /fig and /fig* removed.
                 """
-                logging.critical( "toHTML5: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(HTML5figure) ) )
+                logging.critical( "toHTML5: figure not handled yet at {} {}:{} {!r}".format( BBB, C, V, HTML5figure ) )
                 figureHTML5 = ''
                 #footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                 #.format( fnTitle, fnIndex )
@@ -1981,9 +1985,9 @@ class BibleWriter( InternalBible ):
         text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
 
         if '\\' in text:
-            logging.error( "formatHTMLVerseText programming error: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+            logging.error( "formatHTMLVerseText programming error: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "formatHTMLVerseText: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                print( "formatHTMLVerseText: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         return text
     # end of __formatHTMLVerseText
@@ -2149,7 +2153,7 @@ class BibleWriter( InternalBible ):
             assert refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) #BBB
             if refTuple[0] in filenameDict:
                 return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
-            else: logging.error( "toHTML5.convertToPageReference can't find book: {}".format( repr(refTuple[0]) ) )
+            else: logging.error( "toHTML5.convertToPageReference can't find book: {!r}".format( refTuple[0] ) )
         # end of toHTML5.convertToPageReference
 
 
@@ -2407,7 +2411,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toHTML5: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.critical( "toHTML5: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
                         logging.critical( "toHTML5: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -2597,12 +2601,12 @@ class BibleWriter( InternalBible ):
         for shortString, longString in CBCompressions:
             usageCount[shortString] = 0
             if shortString in codeSet: # check for duplicates
-                logging.critical( "Duplicate {} in compression dict".format( repr(shortString) ) )
+                logging.critical( "Duplicate {!r} in compression dict".format( shortString ) )
                 print( shortString, codeSet )
                 halt
             codeSet.append( shortString )
             if longString in dataSet: # check for duplicates
-                logging.critical( "Duplicate {} in compression dict".format( repr(longString) ) )
+                logging.critical( "Duplicate {!r} in compression dict".format( longString ) )
                 print( longString, dataSet )
                 halt
             dataSet.append( longString )
@@ -2824,9 +2828,9 @@ class BibleWriter( InternalBible ):
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
-                    logging.error( "toCustomBible programming error: unprocessed backslash code in {} {}:{} section: …{}…".format( BBB, C, V, repr(segment) ) )
+                    logging.error( "toCustomBible programming error: unprocessed backslash code in {} {}:{} section: …{!r}…".format( BBB, C, V, segment ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( "toCustomBible: unprocessed backslash code in {} {}:{} section: …{}…".format( BBB, C, V, repr(segment) ) )
+                        print( "toCustomBible: unprocessed backslash code in {} {}:{} section: …{!r}…".format( BBB, C, V, segment ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
@@ -2835,8 +2839,8 @@ class BibleWriter( InternalBible ):
                                             + sectionHTML + '</body></html>' )
                     checkHTML = decompress( compressedHTML )
                     if checkHTML != sectionHTML:
-                        print( "\noriginal: {} {}".format( len(sectionHTML), repr(sectionHTML) ) )
-                        print( "\ndecompressed: {} {}".format( len(checkHTML), repr(checkHTML) ) )
+                        print( "\noriginal: {} {!r}".format( len(sectionHTML), sectionHTML ) )
+                        print( "\ndecompressed: {} {!r}".format( len(checkHTML), checkHTML ) )
                         for ix in range( 0, min( len(sectionHTML), len(checkHTML) ) ):
                             if checkHTML[ix] != sectionHTML[ix]:
                                 if ix > 10: print( '\n', repr(sectionHTML[ix-10:ix+2]), '\n', repr(checkHTML[ix-10:ix+2]) )
@@ -3102,7 +3106,7 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag and marker=='nb': assert not text and not extras
                 else:
                     if text:
-                        logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
                         logging.critical( "toCustomBible: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -3720,7 +3724,7 @@ class BibleWriter( InternalBible ):
                     C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
                     if adjText != text:
-                        logging.warning( "toUSXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
+                        logging.warning( "toUSXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logging.warning( "toUSXXML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
@@ -4167,7 +4171,7 @@ class BibleWriter( InternalBible ):
                     C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'c', ('id',C) )
                     if adjText != text:
-                        logging.warning( "toUSFXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
+                        logging.warning( "toUSFXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logging.warning( "toUSFXXML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USFX handles them yet
@@ -4987,7 +4991,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toOSIS: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.critical( "toOSIS: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.critical( "toOSIS: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -5187,11 +5191,11 @@ class BibleWriter( InternalBible ):
                             #print( BBB, repr(value), repr(vEnd) )
                             try: vBridgeStartInt = int( value )
                             except ValueError: # Not an integer
-                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
+                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {!r}".format( BBB, verseNumberString ) )
                                 vBridgeStartInt = value
                             try: vBridgeEndInt = int( vEnd )
                             except ValueError: # Not an integer
-                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {}".format( BBB, repr(verseNumberString) ) )
+                                print( "toZefaniaXML1: bridge doesn't seem to be integers in {} {!r}".format( BBB, verseNumberString ) )
                                 vBridgeEndInt = vEnd
                             #print( ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, vBridgeStartInt, vBridgeEndInt ) )
                             return vBridgeStartInt, vBridgeEndInt
@@ -5483,7 +5487,7 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
                 else:
                     if text:
-                        logging.error( "toZefania: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.error( "toZefania: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.error( "toZefania: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -5663,7 +5667,7 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
                 else:
                     if text:
-                        logging.error( "toHaggai: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.error( "toHaggai: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.error( "toHaggai: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -5817,7 +5821,7 @@ class BibleWriter( InternalBible ):
                     if startedFlag: accumulator += (' ' if accumulator else '') + BibleOrgSysGlobals.makeSafeXML( text )
                 else:
                     if text:
-                        logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.warning( "toOpenSong: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -6524,7 +6528,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.critical( "toSwordModule: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -6795,7 +6799,7 @@ class BibleWriter( InternalBible ):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
-                        logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logging.critical( "toSwordSearcher: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -6908,7 +6912,7 @@ class BibleWriter( InternalBible ):
             textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3}[ \*])', '', textField ) # Remove any remaining character end fields, e.g., '\+add*'
             if '\\' in textField: # Catch any left-overs
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "toDrupalBible.doDrupalTextFormat: unprocessed code in {} from {}".format( repr(textField), repr(givenTextField) ) )
+                    print( "toDrupalBible.doDrupalTextFormat: unprocessed code in {!r} from {!r}".format( textField, givenTextField ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             return textField
         # end of doDrupalTextFormat
@@ -6972,7 +6976,7 @@ class BibleWriter( InternalBible ):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
-                        logging.warning( "toDrupalBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        logging.warning( "toDrupalBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logging.critical( "toDrupalBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -7153,7 +7157,7 @@ class BibleWriter( InternalBible ):
                 commands.append( '-fill' ); commands.append( fontcolor )
                 lastFontcolor = fontcolor
             commands.append( '-draw' )
-            commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
+            commands.append( 'text {},{} {!r}'.format( across, down, text ) )
             return commands
         # end of toPhotoBible.renderLine
 
@@ -7475,7 +7479,7 @@ class BibleWriter( InternalBible ):
                     C, V = cleanText, '0'
                     if marker == 'c':
                         try: intC = int( C ) # But cp text might not be an integer
-                        except ValueError: logging.critical( "toPhotoBible: will overwrite chapter {} of {} (couldn't process {})".format( intC, BBB, repr(C) ) )
+                        except ValueError: logging.critical( "toPhotoBible: will overwrite chapter {} of {} (couldn't process {!r})".format( intC, BBB, C ) )
                     numVerses = 0
                 elif marker == 'cl': # specific chapter label
                     textBuffer += '\n' + cleanText
@@ -7526,7 +7530,7 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n'
                 else:
                     if cleanText:
-                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
+                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, cleanText ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',):
@@ -8469,7 +8473,7 @@ class BibleWriter( InternalBible ):
 
                 NOTE: The parameter here already has the /fig and /fig* removed.
                 """
-                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(extraText) ) )
+                logging.critical( "toODF: figure not handled yet at {} {}:{} {!r}".format( BBB, C, V, extraText ) )
                 figureMD = ''
                 #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                 #.format( fnTitle, fnIndex )
@@ -8520,13 +8524,13 @@ class BibleWriter( InternalBible ):
                             csn = 'Alternative Chapter Number' if marker=='ca' else 'Alternative Verse Number'
                             try: textCursor.setPropertyValue( "CharStyleName", csn )
                             except IllegalArgumentException:
-                                logging.critical( "toODF: {} character style doesn't seem to exist".format( repr(csn) ) )
+                                logging.critical( "toODF: {!r} character style doesn't seem to exist".format( csn ) )
                             documentText.insertString( textCursor, '('+txt+')', 0 )
                         elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
                             assert not txt
                             logging.warning( "toODF: ignored blank {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
                         else:
-                            logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
+                            logging.critical( "toODF: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, textSegment ) )
                             unhandledMarkers.add( "{} (char)".format( marker ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 elif textSegment: # No character formatting here
@@ -8626,7 +8630,7 @@ class BibleWriter( InternalBible ):
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
                 except IllegalArgumentException:
-                    logging.critical( "toODF: {} paragraph style doesn't seem to exist".format( repr(paragraphStyleName) ) )
+                    logging.critical( "toODF: {!r} paragraph style doesn't seem to exist".format( paragraphStyleName ) )
                 if adjText or extras:
                     insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
                 firstEverParagraphFlag = False
@@ -8761,7 +8765,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if adjText:
-                        logging.error( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
+                        logging.error( "toODF: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, adjText ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
                         logging.error( "toODF: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -8783,7 +8787,7 @@ class BibleWriter( InternalBible ):
                 if 'libreoffice' in line and "ServiceManager" in line:
                     pid = int( line.split(None, 1)[0] )
                     #print( "pid", pid )
-                    if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "Killing {}".format( repr(line) ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "Killing {!r}".format( line ) )
                     os.kill( pid, signal.SIGKILL )
 
         if ignoredMarkers:
@@ -8932,7 +8936,7 @@ class BibleWriter( InternalBible ):
 
             if '\\' in text: # Catch any left-overs
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                    print( "toTeX.texText: unprocessed code in {!r} from {!r}".format( text, givenText ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             return text.replace( '~^~', '\\' )
         # end of toTeX:texText
@@ -9077,7 +9081,7 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "{}\n".format( texText(text) ) )
                         else:
                             if text:
-                                logging.error( "toTeX: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                                logging.error( "toTeX: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                                 #if BibleOrgSysGlobals.debugFlag: halt
                             unhandledMarkers.add( marker )
                         #if extras and marker not in ('v~','p~',): logging.critical( "toTeX: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
