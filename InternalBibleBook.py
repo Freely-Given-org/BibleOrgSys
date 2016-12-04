@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-30' # by RJH
+LastModifiedDate = '2016-12-05' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -482,7 +482,7 @@ class InternalBibleBook:
                 if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                     logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, text ) )
                 else: # we've reached our limit
-                    logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed…') )
+                    logging.warning( _('processLineFix: Additional "Removed trailing space" messages suppressed…') )
                     rtsCount = -1 # So we don't do this again (for this book)
             self.addPriorityError( 10, C, V, _("Trailing space at end of line") )
             adjText = adjText.rstrip()

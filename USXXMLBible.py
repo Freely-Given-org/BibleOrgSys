@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-26' # by RJH
+LastModifiedDate = '2016-12-05' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.31'
@@ -420,9 +420,8 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
-        ('BDBTest', '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Press_Bible.2016-10-26_16.12_0.46884400_1477451520/YourSourceFiles/Unzipped/USX_1/' ),
-                #('Test1','Tests/DataFilesForTests/USXTest1',),
-                #('Test2','Tests/DataFilesForTests/USXTest2',),
+                ('Test1','Tests/DataFilesForTests/USXTest1',),
+                ('Test2','Tests/DataFilesForTests/USXTest2',),
                 #("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
                 #("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),

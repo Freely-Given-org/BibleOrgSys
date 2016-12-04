@@ -34,10 +34,10 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-05' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = '0.35'
+ProgVersion = '0.37'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -49,6 +49,7 @@ from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleBooksNames import BibleBooksNamesSystems
 from Bible import Bible, BibleBook
 
 
@@ -56,6 +57,7 @@ filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+BibleBooksNames = None
 
 
 
@@ -101,7 +103,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #print( 'ff', foundFiles )
+    #print( 'osx1', foundFiles )
 
     # See if there's an OpenSong project here in this folder
     numFound = 0
@@ -110,6 +112,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     for thisFilename in sorted( foundFiles ):
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+            #print( 'osx1b', firstLines )
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
@@ -147,7 +150,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
                 if ignore: continue
                 if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                     foundSubfiles.append( something )
-        #print( 'fsf', foundSubfiles )
+        #print( 'osx2', foundSubfiles )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -259,6 +262,7 @@ class OpenSongXMLBible( Bible ):
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
         """
+        global BibleBooksNames
 
         if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating OpenSong XML book…") )
 
@@ -269,7 +273,12 @@ class OpenSongXMLBible( Bible ):
                 bookName = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookName:
-            BBB = self.genericBOS.getBBBFromText( bookName ) # Booknames are in English
+            BBB = self.genericBOS.getBBBFromText( bookName ) # Booknames are usually in English
+            if not BBB: # wasn't English
+                if BibleBooksNames is None:
+                    BibleBooksNames = BibleBooksNamesSystems().loadData()
+                BBB = BibleBooksNames.getBBBFromText( bookName ) # Try non-English booknames
+                #print( "bookName", bookName, BBB )
             if BBB:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
@@ -321,7 +330,6 @@ class OpenSongXMLBible( Bible ):
             if element.tag == OpenSongXMLBible.verseTag:
                 sublocation = "verse in {} {}".format( BBB, chapterNumber )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'l5ks' )
-                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5f7h' )
                 verseNumber = toVerseNumber = None
                 for attrib,value in element.items():
                     if attrib=="n":
@@ -331,9 +339,18 @@ class OpenSongXMLBible( Bible ):
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert verseNumber
                 #thisBook.addLine( 'v', verseNumber )
-                vText = element.text
+                vText = element.text if element.text else ''
+                for subelement in element:
+                    sub2location = "{} in {}".format( subelement.tag, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location, 'ks03' )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location, 'ks05' )
+                    if subelement.tag == 'i':
+                        vText += '\\it {}\\it*{}'.format( subelement.text, subelement.tail )
+                    else: logging.error( "Expected to find 'i' but got {!r}".format( subelement.tag ) )
+                vText += element.tail if element.tail else ''
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
+                #print( 'vText1', vText )
                 if vText: # This is the main text of the verse (follows the verse milestone)
                     #print( "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     if '\n' in vText: # This is how they represent poety
@@ -345,6 +362,7 @@ class OpenSongXMLBible( Bible ):
                             else: thisBook.addLine( 'q1', textBit )
                     else: # Just one verse line
                         thisBook.addLine( 'v', verseNumber + ' ' + vText )
+                #print( 'vText2', vText )
             else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class
@@ -356,7 +374,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    testFolder = "Tests/DataFilesForTests/VerseViewXML/" # These are very similar
+    #testFolder = "Tests/DataFilesForTests/VerseViewXML/" # These are very similar
     testFolder = "../../../../../Data/Work/Bibles/OpenSong Bibles/"
     single1 = ( "KJV.xmm", )
     single2 = ( "BIBLIA warszawska", )
@@ -386,7 +404,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB3", resultB3 )
 
 
-    if 1:
+    if 0:
         for j, testFilename in enumerate( allOfThem ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )

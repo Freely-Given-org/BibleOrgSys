@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-19' # by RJH
+LastModifiedDate = '2016-11-29' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.68'
+ProgVersion = '0.69'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -427,22 +427,24 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
         in which case a list of strings is returned (including empty strings for empty lines).
     """
     if debugFlag: assert 1 <= numLines < 5
-    if encoding is None: encoding = 'utf-8'
+    if encoding is None: encodingList = ['utf-8', 'iso-8859-1', 'iso-8859-15',]
+    else: encodingList = [encoding]
     filepath = os.path.join( folderName, filenameOrFilepath ) if folderName else filenameOrFilepath
-    lines = []
-    try:
-        with open( filepath, 'rt', encoding=encoding ) as possibleUSFMFile: # Automatically closes the file when done
-            lineNumber = 0
-            for line in possibleUSFMFile:
-                lineNumber += 1
-                if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                #print( thisFilename, lineNumber, line )
-                if numLines==1: return line # Always returns the first line (string)
-                lines.append( line )
-                if lineNumber >= numLines: return lines # Return a list of lines
-    except UnicodeDecodeError: # Could be binary or a different encoding
-        #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        logging.warning( "{}peekIntoFile: Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.' if debugFlag else '', filepath ) )
+    for tryEncoding in encodingList:
+        lines = []
+        try:
+            with open( filepath, 'rt', encoding=tryEncoding ) as possibleBibleFile: # Automatically closes the file when done
+                lineNumber = 0
+                for line in possibleBibleFile:
+                    lineNumber += 1
+                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    #if debuggingThisModule: print( filenameOrFilepath, lineNumber, line )
+                    if numLines==1: return line # Always returns the first line (string)
+                    lines.append( line )
+                    if lineNumber >= numLines: return lines # Return a list of lines
+        except UnicodeDecodeError: # Could be binary or a different encoding
+            #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
+            logging.warning( "{}peekIntoFile: Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.' if debugFlag else '', filepath ) )
 # end of BibleOrgSysGlobals.peekIntoFile
 
 
