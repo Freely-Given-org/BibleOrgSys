@@ -1605,7 +1605,7 @@ class PTX7Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if 1 or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
