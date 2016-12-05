@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-21' # by RJH
+LastModifiedDate = '2016-12-05' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.21'
@@ -1605,15 +1605,16 @@ class PTX7Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
+        if 1 or BibleOrgSysGlobals.verbosityLevel > 2:
             print( "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
-        if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
-            return # Already loaded
-        if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
-            return # We've already attempted to load this book
+        if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
+            if BBB in self.books:
+                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                return # Already loaded
+            if BBB in self.triedLoadingBook:
+                logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+                return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
@@ -1624,6 +1625,7 @@ class PTX7Bible( Bible ):
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.saveBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
+        self.bookNeedsReloading[BBB] = False
     # end of PTX7Bible.loadBook
 
 
@@ -1678,8 +1680,8 @@ class PTX7Bible( Bible ):
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
                         #print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-                    if BBB not in self.books:
-                        self.loadBook( BBB, filename ) # also saves it
+                    #if BBB not in self.books and not self.bookNeedsReloading[BBB]:
+                    self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )

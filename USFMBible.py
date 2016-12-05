@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-10-18' # by RJH
+LastModifiedDate = '2016-12-05' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -570,14 +570,14 @@ class USFMBible( Bible ):
             print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
-        if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
-            return # Already loaded
-        if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
-            return # We've already attempted to load this book
+        if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
+            if BBB in self.books:
+                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                return # Already loaded
+            if BBB in self.triedLoadingBook:
+                logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+                return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
@@ -587,6 +587,7 @@ class USFMBible( Bible ):
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.saveBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
+        self.bookNeedsReloading[BBB] = False
     # end of USFMBible.loadBook
 
 
