@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.17'
@@ -328,7 +328,7 @@ class BCVBible( Bible ):
             bcvBB.load( self.sourceFolder )
             if bcvBB._processedLines:
                 bcvBB.validateMarkers()
-                self.saveBook( bcvBB )
+                self.stashBook( bcvBB )
             else: logging.info( "BCV book {} was completely blank".format( BBB ) )
         else: logging.info( "BCV book {} is not listed as being available".format( BBB ) )
     # end of BCVBible.loadBook
@@ -372,7 +372,7 @@ class BCVBible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
                     assert len(results) == len(self.givenBookList)
-                    for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
+                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:

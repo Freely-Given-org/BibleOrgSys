@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.11'
@@ -285,7 +285,7 @@ class DrupalBible( Bible ):
                     BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
                         if lastBBB is not None:
-                            self.saveBook( thisBook )
+                            self.stashBook( thisBook )
                         thisBook = BibleBook( self, BBB )
                         thisBook.objectNameString = 'DrupalBible Bible Book object'
                         thisBook.objectTypeString = 'DrupalBible'
@@ -300,7 +300,7 @@ class DrupalBible( Bible ):
                 else: halt
 
         # Save the final book
-        self.saveBook( thisBook )
+        self.stashBook( thisBook )
         self.doPostLoadProcessing()
     # end of DrupalBible.load
 # end of DrupalBible class

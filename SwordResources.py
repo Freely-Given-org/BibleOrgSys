@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.22'
@@ -1282,7 +1282,7 @@ class SwordInterface():
 
             if haveText: # Save the book
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", moduleAbbreviation, currentBBB, bookCount )
-                BibleObject.saveBook( thisBook )
+                BibleObject.stashBook( thisBook )
 
 
         elif SwordType=='OurCode': # module is already loaded above in getModule call
@@ -1380,7 +1380,7 @@ class SwordInterface():
                 if BBB != currentBBB:
                     if currentBBB is not None and haveText: # Save the previous book
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
                     thisBook = BibleBook( self, BBB )
@@ -1406,7 +1406,7 @@ class SwordInterface():
 
             if currentBBB is not None and haveText: # Save the very last book
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", moduleAbbreviation, currentBBB, bookCount )
-                BibleObject.saveBook( thisBook )
+                BibleObject.stashBook( thisBook )
 
 
         elif SwordType=='OurCode': # module is already loaded above in getModule call

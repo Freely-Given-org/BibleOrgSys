@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-13' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = '0.07'
@@ -249,7 +249,7 @@ class GreekNT( Bible ):
                 #else: print( 'Possible encoding error -- expected', encoding )
         if self.thisBook:
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "    {} words loaded from {}".format( len(self.thisBook), filename ) )
-            self.saveBook( self.thisBook )
+            self.stashBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
 

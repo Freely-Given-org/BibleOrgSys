@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.54'
@@ -1062,7 +1062,7 @@ class OSISXMLBible( Bible ):
                                     lastLineTuple = None
                                 #if bookResults: self.bkData[BBB] = bookResults
                                 #if USFMResults: self.USFMBooks[BBB] = USFMResults
-                                self.saveBook( self.thisBook )
+                                self.stashBook( self.thisBook )
                                 #bookResults, USFMResults = [], []
                                 #if lastBookResult:
                                     #lastBookResultList = list( lastBookResult )
@@ -3117,7 +3117,7 @@ class OSISXMLBible( Bible ):
             #print( mainDivOsisID, "results", BBB, bookResults[:10], "…" )
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
-            self.saveBook( self.thisBook )
+            self.stashBook( self.thisBook )
     # end of OSISXMLBible.validateAndExtractBookDiv
 
 

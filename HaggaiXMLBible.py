@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-15' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.33'
@@ -485,7 +485,7 @@ class HaggaiXMLBible( Bible ):
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.chapterTag, element.tag ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
 

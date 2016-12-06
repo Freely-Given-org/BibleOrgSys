@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.30'
@@ -262,7 +262,7 @@ class CSVBible( Bible ):
 
                 if bookNumber != lastBookNumber: # We've started a new book
                     if lastBookNumber != -1: # Better save the last book
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )  # Try to guess
                     assert BBB
                     thisBook = BibleBook( self, BBB )
@@ -329,7 +329,7 @@ class CSVBible( Bible ):
                 lastVerseNumber = verseNumber
 
         # Save the final book
-        self.saveBook( thisBook )
+        self.stashBook( thisBook )
         self.doPostLoadProcessing()
     # end of CSVBible.load
 # end of CSVBible class

@@ -86,7 +86,7 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
 ProgVersion = '0.26'
@@ -330,7 +330,7 @@ class UnboundBible( Bible ):
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'Unbound Bible Book object'
@@ -365,7 +365,7 @@ class UnboundBible( Bible ):
                 lastVerseNumber = verseNumber
 
         # Save the final book
-        self.saveBook( thisBook )
+        self.stashBook( thisBook )
         self.applySuppliedMetadata( 'Unbound' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of UnboundBible.load

@@ -37,7 +37,7 @@ Some of this code (esp. filtering) should probably be moved into
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.32'
@@ -437,7 +437,7 @@ class SwordBible( Bible ):
                 #if BBB != currentBBB:
                     #if currentBBB is not None and haveText: # Save the previous book
                         #if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
-                        #self.saveBook( thisBook )
+                        #self.stashBook( thisBook )
                     ## Create the new book
                     #if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( self.moduleName, BBB ) )
                     #thisBook = BibleBook( self, BBB )
@@ -463,7 +463,7 @@ class SwordBible( Bible ):
 
             #if currentBBB is not None and haveText: # Save the very last book
                 #if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", self.moduleName, currentBBB, bookCount )
-                #self.saveBook( thisBook )
+                #self.stashBook( thisBook )
 
 
         #elif SwordType=='OurCode': # module is already loaded above

@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.26'
@@ -531,7 +531,7 @@ class USFXXMLBible( Bible ):
                 logging.critical( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
                 #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-        self.saveBook( self.thisBook )
+        self.stashBook( self.thisBook )
     # end of USFXXMLBible.loadBook
 
 

@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-23' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.31'
@@ -682,7 +682,7 @@ class ESwordBible( Bible ):
                 if C > numC: # Save this book now
                     if haveLines:
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  e-Sword saving", BBB, bookCount+1 )
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
@@ -874,7 +874,7 @@ class ESwordBible( Bible ):
                 else: # Save this book now
                     if haveLines:
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  ESwordBible saving", BBB )
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     #else: print( "Not saving", BBB )
                     break
 

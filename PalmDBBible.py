@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.66'
@@ -841,7 +841,7 @@ class PalmDBBible( Bible ):
                 #print( "verse", repr(verse[:100]) )
                 #print( "Done", byteOffset, len(binary) )
                 #assert byteOffset == len(binary)
-                self.saveBook( thisBook )
+                self.stashBook( thisBook )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
 

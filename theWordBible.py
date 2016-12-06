@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-23' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.51'
@@ -905,7 +905,7 @@ class theWordBible( Bible ):
                                 if C > numC: # Save this book now
                                     if hadText:
                                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                                        self.saveBook( thisBook )
+                                        self.stashBook( thisBook )
                                     else: logging.warning( "theWordBible.load: Didn't save {} because it was blank".format( BBB ) )
 
                                     bookCount += 1
@@ -951,7 +951,7 @@ class theWordBible( Bible ):
                                     self.suppliedMetadata['theWord'][fieldName] = fieldContents
                                     continued = False
                         #if lineCount > 3:
-                            #self.saveBook( thisBook )
+                            #self.stashBook( thisBook )
                             #break
 
                 if lineCount < textLineCountExpected:

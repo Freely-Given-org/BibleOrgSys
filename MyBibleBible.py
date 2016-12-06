@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-23' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.15'
@@ -623,7 +623,7 @@ class MyBibleBible( Bible ):
 
         if haveLines:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleBook saving", BBB )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
         #else: print( "Not saving", BBB )
 
         #if ourGlobals['haveParagraph']:
@@ -741,7 +741,7 @@ class MyBibleBible( Bible ):
 
         if haveLines:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleCommentaryBook saving", BBB )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
         #else: print( "Not saving", BBB )
 
         #if ourGlobals['haveParagraph']:

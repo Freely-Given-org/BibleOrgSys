@@ -50,16 +50,16 @@ self.suppliedMetadata is a dictionary containing the following possible entries 
     'OSIS', 'DBL', 'BCV' for other Bibles
 
 The calling class then fills
-    self.books by calling saveBook() which updates:
+    self.books by calling stashBook() which updates:
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-11-02' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.74'
+ProgVersion = '0.75'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -253,7 +253,7 @@ class InternalBible:
             if myPropertyName in ( 'containsAnyOT39Books', 'containsAnyNT27Books', '_InternalBible__getNames',
                               'loadBookIfNecessary', 'reloadBook', 'doPostLoadProcessing', 'xxxunloadBooks',
                               'loadMetadataTextFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
-                              'getShortTOCName', 'getBooknameAbbreviation', 'saveBook', 'guessXRefBBB',
+                              'getShortTOCName', 'getBooknameAbbreviation', 'stashBook', 'guessXRefBBB',
                               'getVersification', 'getAddedUnits', 'discover', '_aggregateDiscoveryResults',
                               'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
                               'getVerseData', 'getVerseText', 'writeBOSBCVFiles' ):
@@ -803,17 +803,25 @@ class InternalBible:
         return [BBB for BBB in self.books]
 
 
-    def saveBook( self, bookData ):
+    def stashBook( self, bookData ):
         """
-        Save the Bible book into our object
-            and uupdate our indexes.
+        Save the Bible book into our Bible object
+            and update our indexes.
         """
-        #print( "saveBook( {} )".format( bookData ) )
+        #print( "stashBook( {} )".format( bookData ) )
         BBB = bookData.BBB
         if BBB in self.books: # already
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( exp("saveBook: Already have"), self.getBookList() )
-            logging.critical( exp("saveBook: overwriting already existing {} book!").format( BBB ) )
+                print( exp("stashBook: Already have"), self.getBookList() )
+            import __main__
+            #print( "main file", __main__.__file__ )
+            suppressErrorFlag = False
+            try:
+                if 'Biblelator' in __main__.__file__: # This is normal behaviour for a Bible editor
+                    suppressErrorFlag = True
+            except AttributeError: pass
+            if not suppressErrorFlag:
+                logging.critical( exp("stashBook: stashing already stashed {} book!").format( BBB ) )
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()
@@ -823,7 +831,7 @@ class InternalBible:
             self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
             self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
             if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-    # end of InternalBible.saveBook
+    # end of InternalBible.stashBook
 
 
     def pickle( self, filename=None, folder=None ):
@@ -2109,7 +2117,7 @@ class InternalBible:
         # Go through all the given options
         if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
         if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
-        if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'Ends' or 'Begins'
+        if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'EndsWord' or 'Begins' or 'EndsLine'
         if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
         if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
         if 'includeIntroFlag' not in optionsDict: optionsDict['includeIntroFlag'] = True
@@ -2126,7 +2134,7 @@ class InternalBible:
             if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
                                 or optionsDict['chapterList'] == [0] # Only combinations that make sense
             assert '\r' not in optionsDict['searchText'] and '\n' not in optionsDict['searchText']
-            assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
+            assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'EndsWord', 'EndsLine', )
             if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['searchText']
             if optionsDict['markerList']:
                 assert isinstance( markerList, list )
@@ -2245,8 +2253,10 @@ class InternalBible:
                                     if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
                                 elif optionsDict['wordMode'] == 'Begins':
                                     if ix>0 and textToBeSearched[ix-1].isalpha(): continue
-                                elif optionsDict['wordMode'] == 'Ends':
+                                elif optionsDict['wordMode'] == 'EndsWord':
                                     if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
+                                elif optionsDict['wordMode'] == 'EndsLine':
+                                    if ixAfter<textLen: continue
 
                                 if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
                                     contextBefore = origTextToBeSearched[max(0,ix-optionsDict['contextLength']):ix]

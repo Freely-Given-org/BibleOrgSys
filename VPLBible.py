@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.35'
@@ -577,7 +577,7 @@ class VPLBible( Bible ):
                 if bookCode:
                     if bookCode != lastBookCode: # We've started a new book
                         if lastBookCode != -1: # Better save the last book
-                            self.saveBook( thisBook )
+                            self.stashBook( thisBook )
                         if BBB:
                             if BBB in self:
                                 logging.critical( "Have duplicated {} book in {}".format( self.givenName, BBB ) )
@@ -630,7 +630,7 @@ class VPLBible( Bible ):
                     logging.warning( "VPLBible.load{} is skipping unknown pre-book line: {}".format( vplType, line ) )
 
         # Save the final book
-        if thisBook is not None: self.saveBook( thisBook )
+        if thisBook is not None: self.stashBook( thisBook )
 
         # Clean up
         if settingsDict:

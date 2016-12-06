@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.18'
@@ -1149,7 +1149,7 @@ class OnlineBible( Bible ):
                 if BBB != currentBBB:
                     if currentBBB is not None: # Save the last book
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                        self.saveBook( thisBook )
+                        self.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}…'.format( BBB ) )
                     thisBook = BibleBook( self, BBB )
@@ -1169,7 +1169,7 @@ class OnlineBible( Bible ):
 
             if currentBBB is not None: # Save the very last book
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                self.saveBook( thisBook )
+                self.stashBook( thisBook )
         # end of load.loadBooks
 
 

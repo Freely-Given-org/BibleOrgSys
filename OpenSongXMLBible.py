@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-05' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.37'
@@ -297,7 +297,7 @@ class OpenSongXMLBible( Bible ):
                         self.__validateAndExtractChapter( BBB, thisBook, element )
                     else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.chapterTag, element.tag ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
-                self.saveBook( thisBook )
+                self.stashBook( thisBook )
             else: logging.error( _("OpenSong load doesn't recognize book name: {!r}").format( bookName ) ) # no BBB
         else: logging.error( _("OpenSong load can't find a book name") ) # no bookName
     # end of OpenSongXMLBible.__validateAndExtractBook

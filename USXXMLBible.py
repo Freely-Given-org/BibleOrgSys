@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-05' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.31'
@@ -261,7 +261,7 @@ class USXXMLBible( Bible ):
             #print( j, something )
             #if j > 50: break
         #halt
-        self.saveBook( UBB )
+        self.stashBook( UBB )
     # end of USXXMLBible.loadBook
 
 
@@ -344,7 +344,7 @@ class USXXMLBible( Bible ):
                 for j, UBB in enumerate( results ):
                     BBB = parameters[j]
                     #self.books[BBB] = UBB
-                    self.saveBook( UBB )
+                    self.stashBook( UBB )
                     # Make up our book name dictionaries while we're at it
                     assumedBookNames = UBB.getAssumedBookNames()
                     for assumedBookName in assumedBookNames:
@@ -360,7 +360,7 @@ class USXXMLBible( Bible ):
                 UBB.load( filename, self.givenFolderName, self.encoding )
                 UBB.validateMarkers()
                 #print( UBB )
-                self.saveBook( UBB )
+                self.stashBook( UBB )
                 #self.books[BBB] = UBB
                 ## Make up our book name dictionaries while we're at it
                 #assumedBookNames = UBB.getAssumedBookNames()

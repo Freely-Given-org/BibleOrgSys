@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-05' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.21'
@@ -1623,7 +1623,7 @@ class PTX7Bible( Bible ):
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-            self.saveBook( UBB )
+            self.stashBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
         self.bookNeedsReloading[BBB] = False
     # end of PTX7Bible.loadBook
@@ -1674,14 +1674,14 @@ class PTX7Bible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
-                    for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
+                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
                         #print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     #if BBB not in self.books and not self.bookNeedsReloading[BBB]:
-                    self.loadBook( BBB, filename ) # also saves it
+                    self.loadBook( BBB, filename ) # also saves it in our Bible object
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )

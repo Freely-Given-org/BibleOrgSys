@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-17' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -464,7 +464,7 @@ class ESFMBible( Bible ):
         EBB.load( filename, self.sourceFolder )
         if EBB._rawLines:
             EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-            self.saveBook( EBB )
+            self.stashBook( EBB )
         else: logging.info( "ESFM book {} was completely blank".format( BBB ) )
     # end of ESFMBible.loadBook
 
@@ -512,7 +512,7 @@ class ESFMBible( Bible ):
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
-                        if bBook is not None: self.saveBook( bBook ) # Saves them in the correct order
+                        if bBook is not None: self.stashBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:

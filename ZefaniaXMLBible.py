@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
 ProgVersion = '0.35'
@@ -499,7 +499,7 @@ class ZefaniaXMLBible( Bible ):
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.chapterTag, element.tag ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
 

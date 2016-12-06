@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-05' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -261,7 +261,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     # Go through all the given options
     if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
     if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
-    if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'Ends' or 'Begins'
+    if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'EndsWord' or 'Begins' or 'EndsLine'
     #if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
     #if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
     #if 'includeIntroFlag' not in optionsDict: optionsDict['includeIntroFlag'] = True
@@ -279,7 +279,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
         if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
                             or optionsDict['chapterList'] == [0] # Only combinations that make sense
         assert '\r' not in optionsDict['searchText'] and '\n' not in optionsDict['searchText']
-        assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'Ends' )
+        assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'EndsWord', 'EndsLine', )
         if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['searchText']
         #if optionsDict['markerList']:
             #assert isinstance( markerList, list )
@@ -399,8 +399,10 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                             if ixAfter<len(bookText) and bookText[ixAfter].isalpha(): ix+=1; continue
                         elif optionsDict['wordMode'] == 'Begins':
                             if ix>0 and bookText[ix-1].isalpha(): ix+=1; continue
-                        elif optionsDict['wordMode'] == 'Ends':
+                        elif optionsDict['wordMode'] == 'EndsWord':
                             if ixAfter<len(bookText) and bookText[ixAfter].isalpha(): ix+=1; continue
+                        elif optionsDict['wordMode'] == 'EndsLine':
+                            if ixAfter<len(bookText): ix+=1; continue
 
                         if optionsDict['contextLength']: # Find the context in the original (fully-cased) string
                             contextBefore = bookText[max(0,ix-optionsDict['contextLength']):ix]
@@ -585,7 +587,7 @@ class USFMBible( Bible ):
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-            self.saveBook( UBB )
+            self.stashBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
         self.bookNeedsReloading[BBB] = False
     # end of USFMBible.loadBook
@@ -639,7 +641,7 @@ class USFMBible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
-                    for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
+                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:

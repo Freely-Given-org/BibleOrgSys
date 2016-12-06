@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.08'
@@ -419,7 +419,7 @@ class YETBible( Bible ):
                         else: halt
                         #print( "mV", marker, repr(bit), repr(verseString) )
                         thisBook.addLine( marker, bit.rstrip() )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
         self.doPostLoadProcessing()
     # end of YETBible.load
 # end of YETBible class

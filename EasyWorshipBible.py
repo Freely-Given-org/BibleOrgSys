@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-29' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.04'
@@ -328,7 +328,7 @@ class EasyWorshipBible( Bible ):
                 thisBook.addLine( 'v', V + ' ' + verseText )
 
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
 
         self.doPostLoadProcessing()
         return keep

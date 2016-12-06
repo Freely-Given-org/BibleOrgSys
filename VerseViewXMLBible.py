@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2016-12-06' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.17'
@@ -368,7 +368,7 @@ class VerseViewXMLBible( Bible ):
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "vb26 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.chapterTag, element.tag ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
-            self.saveBook( thisBook )
+            self.stashBook( thisBook )
     # end of VerseViewXMLBible.__validateAndExtractBook
 
 
