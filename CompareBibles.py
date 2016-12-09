@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-11-02' # by RJH
+LastModifiedDate = '2016-12-09' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -78,7 +78,7 @@ from Bible import Bible
 
 MAX_MISMATCHED_MARKERS = 4
 DEFAULT_COMPARE_QUOTES =  '“”‘’«»‹›"¿¡' # Doesn't include apostrophe
-DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–' # Doesn't include illegal punctuation or () [] and hyphen, so these can vary
+DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–…' # Doesn't include illegal punctuation or () [] and hyphen, so these can vary
 DEFAULT_COMPARE_DIGITS = '0123456789'
 DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’", '<','=','>', '{','}',
                                   '&','%','$','#','@','~','`','|','^',
