@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-11-29' # by RJH
+LastModifiedDate = '2016-12-09' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.69'
@@ -121,7 +121,7 @@ MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>
 LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '–—' # en-dash and em-dash
-TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
+TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>…"""
 TRAILING_WORD_END_CHARS = ' ' + TRAILING_WORD_PUNCT_CHARS
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
