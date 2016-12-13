@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-14' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.75'
+ProgVersion = '0.76'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -543,7 +543,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert applyMetadataType in ( 'Project','File', 'SSF', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX8', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -645,6 +645,50 @@ class InternalBible:
                 else: # we have a conflict of encodings for some reason !
                     logging.critical( exp("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSSFencoding
+                    logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+
+        elif applyMetadataType == 'PTX8':
+            # This is a special case (coz it's inside the PTX metadata)
+            wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX']['Settings']), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata['PTX']['Settings'].items():
+                if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
+                    newKey = wantedDict[oldKey]
+                    if newKey in self.settingsDict: # We have a duplicate
+                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                    else: # Also check for "duplicates" with a different case
+                        ucNewKey = newKey.upper()
+                        for key in self.settingsDict:
+                            ucKey = key.upper()
+                            if ucKey == ucNewKey:
+                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                break
+                    self.settingsDict[newKey] = value
+            # Determine our encoding while we're at it
+            if 'Encoding' in self.suppliedMetadata['PTX']['Settings']: # See if the settings file gives some help to us
+                settingsEncoding = self.suppliedMetadata['PTX']['Settings']['Encoding']
+                if settingsEncoding == '65001': adjSettingsEncoding = 'utf-8'
+                else:
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
+                        print( exp("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
+                    if settingsEncoding.isdigit():
+                        adjSettingsEncoding = 'cp' + settingsEncoding
+                        if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( exp("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
+                    else:
+                        logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( settingsEncoding ) )
+                        adjSettingsEncoding = settingsEncoding
+                if self.encoding is None:
+                    self.encoding = adjSettingsEncoding
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( exp("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                elif self.encoding == adjSettingsEncoding:
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( exp("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                else: # we have a conflict of encodings for some reason !
+                    logging.critical( exp("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    self.encoding = adjSettingsEncoding
                     logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
 
         elif applyMetadataType == 'OSIS':

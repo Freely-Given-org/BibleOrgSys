@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-14' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.03'
@@ -64,11 +64,10 @@ from USFMBibleBook import USFMBibleBook
 
 
 # NOTE: All currently disabled by adding .XXX after filenames
-MARKER_FILENAMES = ( 'AUTOCORRECT.TXT.XXX', 'BOOKNAMES.XML.XXX', 'CHECKINGSTATUS.XML.XXX', 'COMMENTTAGS.XML.XXX',
-                    'LEXICON.XML.XXX', 'PRINTDRAFTCONFIGBASIC.XML.XXX', 'PROJECTUSERS.XML.XXX',
-                    'PROJECTUSERFIELDS.XML.XXX', 'SPELLINGSTATUS.XML.XXX', 'USFM-COLOR.STY.XXX', ) # Must all be UPPER-CASE
-MARKER_FILE_EXTENSIONS = ( '.SSFXXX', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above list
-MARKER_THRESHOLD = 3 # How many of the above must be found
+MARKER_FILENAMES = ( 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML', 'LICENSE.JSON',
+                    'PROJECTPROGRESS.CSV', 'PROJECTPROGRESS.XML', 'SETTINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
+MARKER_FILE_EXTENSIONS = ( '.LDML', ) # Must all be UPPER-CASE plus shouldn't be included in the above list
+MARKER_THRESHOLD = 6 # How many of the above must be found
 
 
 def exp( messageString ):
@@ -219,35 +218,35 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 # The following loadPTX…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
-def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
+def loadPTX8ProjectData( BibleObject, settingsFilepath, encoding='utf-8' ):
     """
     Process the Paratext 8 project settings data file (XML) from the given filepath into PTXSettingsDict.
 
     Returns a dictionary.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("Loading Paratext project settings data from {!r} ({})").format( ssfFilepath, encoding ) )
+        print( exp("Loading Paratext project settings data from {!r} ({})").format( settingsFilepath, encoding ) )
     #if encoding is None: encoding = 'utf-8'
-    BibleObject.ssfFilepath = ssfFilepath
+    BibleObject.settingsFilepath = settingsFilepath
 
     PTXSettingsDict = {}
 
     # This is actually an XML file, but we'll assume it's nicely formed with one XML field per line
     lastLine, lineCount, status = '', 0, 0
-    with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-        ssfData = myFile.read() # Read it all first
-    #print( "ssfData", ssfData )
+    with open( settingsFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
+        settingsData = myFile.read() # Read it all first
+    #print( "settingsData", settingsData )
 
     # Handle Paratext 'bug' that produces XML files in different format
-    ssfData = ssfData.replace( '></', '=QwErTy=' ) # Protect a blank field like in "<CallerSequence></CallerSequence>"
-    ssfData = ssfData.replace( '><', '>\n<' )
-    ssfData = ssfData.replace( '=QwErTy=', '></' )
+    settingsData = settingsData.replace( '></', '=QwErTy=' ) # Protect a blank field like in "<CallerSequence></CallerSequence>"
+    settingsData = settingsData.replace( '><', '>\n<' )
+    settingsData = settingsData.replace( '=QwErTy=', '></' )
 
-    for line in ssfData.split( '\n' ):
-        #print( "ssfData line", repr(line) )
+    for line in settingsData.split( '\n' ):
+        #print( "settingsData line", repr(line) )
         lineCount += 1
         if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-            logging.info( exp("loadPTXProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
+            logging.info( exp("loadPTX8ProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( settingsFilepath ) )
             line = line[1:] # Remove the Byte Order Marker (BOM)
         #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
         line = line.strip() # Remove leading and trailing whitespace
@@ -304,38 +303,22 @@ def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
             contents += ' ' + line
             #print( "Added {!r} to get {!r} for {}".format( line, contents, fieldname ) )
             processed = True
-        if not processed: print( _("ERROR: Unexpected {} line in PTX8 SSF file").format( repr(line) ) )
+        if not processed: print( _("ERROR: Unexpected {} line in PTX8 settings file").format( repr(line) ) )
     if status == 0:
-        logging.critical( _("PTX8 SSF file was empty: {}").format( BibleObject.ssfFilepath ) )
+        logging.critical( _("PTX8 settings file was empty: {}").format( BibleObject.settingsFilepath ) )
         status = 9
     if status != 9:
-        logging.critical( _("PTX8 SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
+        logging.critical( _("PTX8 settings file parsing error: {}").format( BibleObject.settingsFilepath ) )
     if BibleOrgSysGlobals.debugFlag: assert status == 9
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + exp("Got {} PTX8 SSF entries:").format( len(PTXSettingsDict) ) )
+        print( "  " + exp("Got {} PTX8 settings entries:").format( len(PTXSettingsDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(PTXSettingsDict):
                 print( "    {}: {}".format( key, PTXSettingsDict[key] ) )
 
-    #BibleObject.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
-
-    ## Determine our encoding while we're at it
-    #if BibleObject.encoding is None and 'Encoding' in PTXSettingsDict: # See if the SSF file gives some help to us
-        #ssfEncoding = PTXSettingsDict['Encoding']
-        #if ssfEncoding == '65001': BibleObject.encoding = 'utf-8'
-        #else:
-            #if BibleOrgSysGlobals.verbosityLevel > 0:
-                #print( exp("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
-            #if ssfEncoding.isdigit():
-                #BibleObject.encoding = 'cp' + ssfEncoding
-                #if BibleOrgSysGlobals.verbosityLevel > 0:
-                    #print( exp("__init__: Switched to {!r} file encoding").format( BibleObject.encoding ) )
-            #else:
-                #logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
-
     #print( 'PTXSettingsDict', PTXSettingsDict )
     return PTXSettingsDict
-# end of loadPTXProjectData
+# end of loadPTX8ProjectData
 
 
 
@@ -540,7 +523,7 @@ class PTX8Bible( Bible ):
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
             logging.error( "PTX8Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
-        self.ssfFilepath = None
+        self.settingsFilepath = None
 
         # Create empty containers for loading the XML metadata files
         #projectUsersDict = self.PTXStyles = self.PTXVersification = self.PTXLanguage = None
@@ -549,7 +532,7 @@ class PTX8Bible( Bible ):
 
     def preload( self ):
         """
-        Loads the SSF file if it can be found.
+        Loads the settings file if it can be found.
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
@@ -587,19 +570,15 @@ class PTX8Bible( Bible ):
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['PTX'] = {}
 
-        if self.ssfFilepath is None: # it might have been loaded first
-            # Attempt to load the SSF file
+        if self.settingsFilepath is None: # it might have been loaded first
+            # Attempt to load the settings file
             #self.suppliedMetadata, self.settingsDict = {}, {}
-            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            #print( "ssfFilepathList", ssfFilepathList )
-            if len(ssfFilepathList) > 1:
-                logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
-            if len(ssfFilepathList) >= 1: # Seems we found the right one
-                from PTX8Bible import loadPTXProjectData
-                PTXSettingsDict = loadPTXProjectData( self, ssfFilepathList[0] )
-                if PTXSettingsDict:
-                    self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
-                    self.applySuppliedMetadata( 'SSF' ) # Copy some to self.settingsDict
+            settingsFilepath = os.path.join( self.sourceFolder, 'Settings.xml' )
+            #print( "settingsFilepath", settingsFilepath )
+            PTXSettingsDict = loadPTX8ProjectData( self, settingsFilepath )
+            if PTXSettingsDict:
+                self.suppliedMetadata['PTX']['Settings'] = PTXSettingsDict
+                self.applySuppliedMetadata( 'PTX8' ) # Copy some to self.settingsDict
 
         #self.name = self.givenName
         #if self.name is None:
@@ -1723,9 +1702,11 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
     testFolder = "Tests/DataFilesForTests/PTX8Test/"
-    if 0: # specify testFolder containing a single module
+    if 1: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
-        testPTX_B( testFolder )
+        PTX_Bible = PTX8Bible( testFolder )
+        PTX_Bible.load()
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
 
     if 0: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
@@ -1739,7 +1720,7 @@ def demo():
                 for entryKey in PTX_Bible.books[BBB]._CVIndex:
                     print( BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 1: # specified installed modules
+    if 0: # specified installed modules
         good = ( '',)
         nonEnglish = ( '', )
         bad = ( )

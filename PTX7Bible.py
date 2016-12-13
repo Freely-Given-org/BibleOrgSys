@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-14' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -218,7 +218,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 # The following loadPTX…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
-def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
+def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
     """
     Process the Paratext 7 SSF data file (XML) from the given filepath into PTXSettingsDict.
 
@@ -246,7 +246,7 @@ def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
         #print( "ssfData line", repr(line) )
         lineCount += 1
         if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-            logging.info( exp("loadPTXProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
+            logging.info( exp("loadPTX7ProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
             line = line[1:] # Remove the Byte Order Marker (BOM)
         #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
         line = line.strip() # Remove leading and trailing whitespace
@@ -334,7 +334,7 @@ def loadPTXProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
 
     #print( 'PTXSettingsDict', PTXSettingsDict )
     return PTXSettingsDict
-# end of loadPTXProjectData
+# end of loadPTX7ProjectData
 
 
 
@@ -594,8 +594,7 @@ class PTX7Bible( Bible ):
             if len(ssfFilepathList) > 1:
                 logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             if len(ssfFilepathList) >= 1: # Seems we found the right one
-                from PTX7Bible import loadPTXProjectData
-                PTXSettingsDict = loadPTXProjectData( self, ssfFilepathList[0] )
+                PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                 if PTXSettingsDict:
                     self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to self.settingsDict
@@ -1700,7 +1699,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
                             "Tests/DataFilesForTests/USFMTest2/",
                             "Tests/DataFilesForTests/USFMTest3/",
@@ -1722,9 +1721,11 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA3", result3 )
 
     testFolder = "Tests/DataFilesForTests/PTX7Test/"
-    if 0: # specify testFolder containing a single module
+    if 1: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
-        testPTX_B( testFolder )
+        PTX_Bible = PTX7Bible( testFolder )
+        PTX_Bible.load()
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
 
     if 0: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
@@ -1738,7 +1739,7 @@ def demo():
                 for entryKey in PTX_Bible.books[BBB]._CVIndex:
                     print( BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 1: # specified installed modules
+    if 0: # specified installed modules
         good = ( '',)
         nonEnglish = ( '', )
         bad = ( )

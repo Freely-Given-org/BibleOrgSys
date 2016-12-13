@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-14' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -43,7 +43,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from USFMFilenames import USFMFilenames
-from PTX7Bible import loadPTXProjectData
+from PTX7Bible import loadPTX7ProjectData
 from ESFMFile import ESFMFile
 from ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from Bible import Bible
@@ -284,7 +284,7 @@ class ESFMBible( Bible ):
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
-            PTXSettingsDict = loadPTXProjectData( self, self.ssfFilepath )
+            PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
             if PTXSettingsDict:
                 if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
                 self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict

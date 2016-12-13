@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-14' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.31'
@@ -44,7 +44,7 @@ from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from USXFilenames import USXFilenames
-from PTX7Bible import loadPTXProjectData
+from PTX7Bible import loadPTX7ProjectData
 from USXXMLBibleBook import USXXMLBibleBook
 from Bible import Bible
 
@@ -217,7 +217,7 @@ class USXXMLBible( Bible ):
                 if len(ssfFilepathList) > 1:
                     logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
                 if len(ssfFilepathList) >= 1: # Seems we found the right one
-                    PTXSettingsDict = loadPTXProjectData( self, ssfFilepathList[0] )
+                    PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                     if PTXSettingsDict:
                         if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
                         self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
@@ -322,7 +322,7 @@ class USXXMLBible( Bible ):
             ## Attempt to load the metadata file
             #ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             #if len(ssfFilepathList) == 1: # Seems we found the right one
-                #PTXSettingsDict = loadPTXProjectData( ssfFilepathList[0] )
+                #PTXSettingsDict = loadPTX7ProjectData( ssfFilepathList[0] )
                 #if PTXSettingsDict:
                     #if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
                     #self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
