@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2016-12-18' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -243,10 +243,13 @@ class USXXMLBible( Bible ):
             print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
-        if BBB in self.books: return # Already loaded
-        if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
-            return # We've already attempted to load this book
+        if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
+            if BBB in self.books:
+                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                return # Already loaded
+            if BBB in self.triedLoadingBook:
+                logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
+                return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
@@ -262,6 +265,7 @@ class USXXMLBible( Bible ):
             #if j > 50: break
         #halt
         self.stashBook( UBB )
+        self.bookNeedsReloading[BBB] = False
     # end of USXXMLBible.loadBook
 
 
@@ -356,20 +360,12 @@ class USXXMLBible( Bible ):
         else: # Just single threaded
             #print( self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
             for BBB,filename in self.possibleFilenameDict.items():
-                UBB = USXXMLBibleBook( self, BBB )
-                UBB.load( filename, self.givenFolderName, self.encoding )
-                UBB.validateMarkers()
+                self.loadBook( BBB, filename ) # also saves it
+                #UBB = USXXMLBibleBook( self, BBB )
+                #UBB.load( filename, self.givenFolderName, self.encoding )
+                #UBB.validateMarkers()
                 #print( UBB )
-                self.stashBook( UBB )
-                #self.books[BBB] = UBB
-                ## Make up our book name dictionaries while we're at it
-                #assumedBookNames = UBB.getAssumedBookNames()
-                #for assumedBookName in assumedBookNames:
-                    #self.BBBToNameDict[BBB] = assumedBookName
-                    #assumedBookNameLower = assumedBookName.lower()
-                    #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                    #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                    #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+                #self.stashBook( UBB )
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:

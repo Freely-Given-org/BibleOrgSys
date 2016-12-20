@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2016-12-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -580,6 +580,7 @@ class USFMBible( Bible ):
                 logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
+
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
@@ -647,7 +648,8 @@ class USFMBible( Bible ):
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
                         #print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-                    loadedBook = self.loadBook( BBB, filename ) # also saves it
+                    #loadedBook = self.loadBook( BBB, filename ) # also saves it
+                    self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
