@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2016-12-21' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.76'
+ProgVersion = '0.77'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -883,6 +883,8 @@ class InternalBible:
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
             If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
             Created the folder(s) if necessary.
+
+        Returns a True/False flag for success.
         """
         #print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
         #print( repr(self.objectNameString), repr(self.objectTypeString) )
@@ -896,7 +898,7 @@ class InternalBible:
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        BibleOrgSysGlobals.pickleObject( self, filename, folder )
+        return BibleOrgSysGlobals.pickleObject( self, filename, folder )
     # end of InternalBible.pickle
 
 

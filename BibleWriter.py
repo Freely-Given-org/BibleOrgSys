@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-11-02' # by RJH
+LastModifiedDate = '2016-12-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -161,23 +161,26 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Bible_Object_Pickle/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        self.pickle( folder=outputFolder )
+        result = self.pickle( folder=outputFolder )
 
-        # Now create a zipped version
-        filename = self.abbreviation if self.abbreviation else self.name
-        if filename is None:
-            filename = self.objectTypeString
-        if BibleOrgSysGlobals.debugFlag: assert filename
-        filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
-        filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file…".format( filename ) )
-        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
-        zf.write( filepath, filename )
-        zf.close()
+        if result: # now create a zipped version
+            filename = self.abbreviation if self.abbreviation else self.name
+            if filename is None:
+                filename = self.objectTypeString
+            if BibleOrgSysGlobals.debugFlag: assert filename
+            filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
+            filepath = os.path.join( outputFolder, filename )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file…".format( filename ) )
+            zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+            zf.write( filepath, filename )
+            zf.close()
 
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toPickle finished successfully." )
-        return True
+            if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+                print( "  BibleWriter.toPickle finished successfully." )
+            return True
+        else:
+            print( "  BibleWriter.toPickle failed." )
+            return False
     # end of BibleWriter.toPickle
 
 

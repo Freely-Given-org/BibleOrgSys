@@ -76,17 +76,17 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-09' # by RJH
+LastModifiedDate = '2016-12-21' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.69'
+ProgVersion = '0.70'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-import logging, os.path, pickle
+import sys, logging, os.path, pickle
 import unicodedata
 from argparse import ArgumentParser
 
@@ -965,6 +965,8 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         Creates the folderName(s) if necessary.
 
     disassembleObjectFlag is used to find segfaults by pickling the object piece by piece.
+
+    Returns True if successful.
     """
     assert theObject is not None
     assert filename
@@ -998,7 +1000,13 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
             else: print( '  skip' )
 
     with open( filepath, 'wb' ) as pickleOutputFile:
-        pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
+        try:
+            pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
+        except pickle.PicklingError as err:
+            logging.error( "BibleOrgSysGlobals: Unexpected error in pickleObject: {0} {1}".format( sys.exc_info()[0], err ) )
+            logging.critical( "BibleOrgSysGlobals.pickleObject: Unable to pickle into {}".format( filename ) )
+            return False
+    return True
 # end of BibleOrgSysGlobals.pickleObject
 
 
