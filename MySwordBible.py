@@ -776,7 +776,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
-                #break # only do the first one.........temp
+                #break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MySword modules/"
@@ -798,7 +798,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
-                #break # only do the first one.........temp
+                #break # only do the first one…temp
 # end of demo
 
 if __name__ == '__main__':

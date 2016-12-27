@@ -37,7 +37,7 @@ TODO: Needs internationalisation _("around strings")
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-09-17' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
 ProgVersion = '0.15'
@@ -245,7 +245,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
 
 
     # Work through the files again comparing lines
-    #   Trying to resync if there's a different number of lines....................NOT FINISHED YET XXXXXXXXXXXXXXX
+    #   Trying to resync if there's a different number of lines…NOT FINISHED YET XXXXXXXXXXXXXXX
     resultDict['Same']['SameMarkerCount'] = resultDict['Different']['DifferentMarkerCount'] = 0
     resultDict['Same']['SameLineCount'] = resultDict['Different']['DifferentLineCount'] = 0
     lineIndex = lineOffset = 0

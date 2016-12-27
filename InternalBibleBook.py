@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-05' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -652,7 +652,7 @@ class InternalBibleBook:
                     if debuggingThisModule:
                         print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
                         print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
-                    note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
+                    note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix …
             adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
             # Now prepare a cleaned version
             cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
@@ -1391,7 +1391,7 @@ class InternalBibleBook:
                 adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
                 logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
-                adjustedMarker = originalMarker # temp....................
+                adjustedMarker = originalMarker # temp……
 
             def splitCNumber( inputString ):
                 """
@@ -3930,7 +3930,7 @@ class InternalBibleBook:
                                     xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have no anchor reference: {!r}").format( extraText ) )
                                     self.addPriorityError( 38, C, V, _("Missing anchor reference for cross-reference") )
 
-                    # much more yet to be written ................
+                    # much more yet to be written …
 
         if (footnoteErrors or xrefErrors or noteMarkerErrors or footnoteList or xrefList or leaderCounts) and 'Notes' not in self.errorDictionary:
             self.errorDictionary['Notes'] = OrderedDict() # So we hopefully get the errors first
@@ -3968,7 +3968,7 @@ class InternalBibleBook:
         self.doCheckIntroduction()
         self.doCheckNotes( discoveryDict ) # footnotes and cross-references
 
-        if self.checkAddedUnitsFlag: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
+        if self.checkAddedUnitsFlag: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX …
             if typicalAddedUnitData is None: # Get our recommendations for added units
                 import pickle
                 folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd

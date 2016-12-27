@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-18' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.45'
@@ -1701,13 +1701,13 @@ class SwordModule():
             data = rawData.strip()
             if 'SourceType' in self.SwordModuleConfiguration.confDict:
                 if self.SwordModuleConfiguration.confDict['SourceType'] == 'ThML':
-                    # What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    # What do we do here??? …… XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxx
                     return data
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'OSIS':
-                    # What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    # What do we do here??? …… XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxx
                     return data
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'GBF':
-                    # What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    # What do we do here??? …… XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxx
                     return data
                 else:
                     logging.critical( "Missing filterToHTML SourceType code for {}".format( self.SwordModuleConfiguration.confDict['SourceType'] ) )
@@ -1745,7 +1745,7 @@ class SwordModule():
             data = rawData.strip()
             if 'SourceType' in self.SwordModuleConfiguration.confDict:
                 if self.SwordModuleConfiguration.confDict['SourceType'] == 'OSIS':
-                    ## What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    ## What do we do here??? …… XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxx
                     #return data
                     return filterOSISVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'GBF':
@@ -1756,7 +1756,7 @@ class SwordModule():
                     return filterGBFVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'ThML':
                 ##    #if data: print( "ThML data is", data )
-                    ## What do we do here??? ............................................................. XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    ## What do we do here??? … XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxx
                     #return data
                     return filterTHMLVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] in ('Plaintext','Plain',):

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-21' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.77'
@@ -403,7 +403,7 @@ class InternalBible:
             #if BibleOrgSysGlobals.debugFlag: print( exp("reloadBook has no discoveryResults to delete") )
 
         if 'discoveryResults' in dir(self): # need to update them
-            # Need to double-check that this doesn't cause any double-ups .....................XXXXXXXXXXXXXXXXXXXXXX
+            # Need to double-check that this doesn't cause any double-ups …XXXXXXXXXXXXXXXXXXXXXX
             self.discoveryResults[BBB] = self.books[BBB]._discover()
             self._aggregateDiscoveryResults()
     # end of InternalBible.reProcessBook
@@ -997,12 +997,12 @@ class InternalBible:
         if count == 0:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("  guessXRefBBB using first plus other characters…") )
             for bookName in self.bookNameDict:
-                if not bookName: print( self.bookNameDict ); halt # temp…
+                if not bookName: print( self.bookNameDict ); halt # temp……
                 #print( "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
                 for char in adjRefString[1:]:
-                    if char not in bookName[1:]: # We could also check that they're in the correct order........................might give less ambiguities???
+                    if char not in bookName[1:]: # We could also check that they're in the correct order…might give less ambiguities???
                         found = False
                         break
                 if not found: continue
@@ -1023,7 +1023,7 @@ class InternalBible:
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
-                        if char not in bookName: # We could also check that they're in the correct order........................might give less ambiguities???
+                        if char not in bookName: # We could also check that they're in the correct order…might give less ambiguities???
                             found = False
                             break
                     if not found: continue
@@ -1360,7 +1360,7 @@ class InternalBible:
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
-        # xxxxxxxxxxxxxxxxx ......................................
+        # xxxxxxxxxxxxxxxxx …
     # end of InternalBible.check
 
 
@@ -1868,7 +1868,7 @@ class InternalBible:
                                     else: print( "A weird 2" ); halt
                         else:
                             print( "Have left-over thisKey", thisKey )
-                            continue # ignore for now temp ....................................................................
+                            continue # ignore for now temp …
                             raise KeyError# it wasn't a list or a dictionary
                 else: # it's a subcategory
                     for thisKey in errorDictionary['ByCategory'][category]:
@@ -1918,7 +1918,7 @@ class InternalBible:
                                     else: print( "A weird 2" ); halt
                         else:
                             print( "Have left-over thisKey", thisKey )
-                            continue # ignore for now temp ....................................................................
+                            continue # ignore for now temp …
                             raise KeyError# it wasn't a list or a dictionary
                 if categoryPart: # Create the error page for this catebory
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \

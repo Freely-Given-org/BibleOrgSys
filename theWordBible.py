@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.51'
@@ -724,7 +724,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
             # Don't yet handle lines like this: βιβλος<WG976><WTN-NSF> γενεσεως<WG1078><WTN-GSF> ιησου<WG2424><WTN-GSM> χριστου<WG5547><WTN-GSM> υιου<WG5207><WTN-GSM> δαυιδ<WG1138><WTN-PRI> υιου<WG5207><WTN-GSM> αβρααμ<WG11><WTN-PRI>
             logging.error( "{} original line: {}".format( myName, repr(originalLine) ) )
             logging.error( "theWordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
-            if 1: # Unhandled stuff -- not done properly yet...............................................
+            if 1: # Unhandled stuff -- not done properly yet……
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
@@ -1418,7 +1418,7 @@ def demo():
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
-                    #break # only do the first one.........temp
+                    #break # only do the first one……temp
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     if 1: # all discovered modules in the test folder
@@ -1443,7 +1443,7 @@ def demo():
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
-                    #break # only do the first one.........temp
+                    #break # only do the first one…temp
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 

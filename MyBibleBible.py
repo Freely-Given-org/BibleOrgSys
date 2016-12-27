@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.15'
@@ -536,7 +536,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("importVerseLine( {!r}, {} {}:{}, {!r}, ... )").format( name, BBB, C, V, originalLine ) )
+                #print( exp("importVerseLine( {!r}, {} {}:{}, {!r}, … )").format( name, BBB, C, V, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -648,7 +648,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, ... )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
+                #print( exp("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, … )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -1434,7 +1434,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
-                #break # only do the first one.........temp
+                #break # only do the first one…temp
 
     if 1: # E: all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MyBible modules/"
@@ -1462,7 +1462,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
-                #break # only do the first one.........temp
+                #break # only do the first one…temp
 
     if 1: # F: test the export
         testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here

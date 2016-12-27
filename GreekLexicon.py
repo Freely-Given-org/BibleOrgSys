@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-15' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.17'
@@ -327,7 +327,7 @@ class GreekStrongsFileConverter:
         if BibleOrgSysGlobals.debugFlag:
             assert len ( self.tree )
             assert self.StrongsEntries
-        return self.StrongsEntries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+        return self.StrongsEntries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of GreekStrongsFileConverter.importDataToPython
 # end of GreekStrongsFileConverter class
 

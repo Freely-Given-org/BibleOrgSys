@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-21' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.32'
@@ -355,7 +355,7 @@ class ESwordBible( Bible ):
                 logging.error( "{} original line: {!r}".format( myName, originalLine ) )
                 logging.error( "Saved line: {!r}".format( savedLine ) )
             logging.error( "ESwordBible.load: Doesn't handle {} {}:{} formatted line yet: {!r}".format( BBB, C, V, line ) )
-            if 1: # Unhandled stuff -- not done properly yet...............................................
+            if 1: # Unhandled stuff -- not done properly yet… xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
             if 0 and BibleOrgSysGlobals.debugFlag: halt
         line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
@@ -1497,7 +1497,7 @@ def demo():
                 #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, someFile ) )
                 ##myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 #testeSwB( indexString, testFolder, someFile )
-                ##break # only do the first one.........temp
+                ##break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/e-Sword modules/" # Put your test folder here
@@ -1519,7 +1519,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( indexString, testFolder, someFile )
-                #break # only do the first one.........temp
+                #break # only do the first one…temp
 # end of demo
 
 if __name__ == '__main__':

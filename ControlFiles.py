@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # ControlFiles.py
-#   Last modified: 2014-12-21 (also update ProgVersion below)
 #
 # Control file module
 #
-# Copyright (C) 2008-2014 Robert Hunt
+# Copyright (C) 2008-2016 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,9 +26,16 @@
 Module for reading and parsing simple text control files.
 """
 
-ProgName = "ControlFiles"
+from gettext import gettext as _
+
+LastModifiedDate = '2016-12-28' # by RJH
+ShortProgName = "ControlFiles"
+ProgName = "Control Files"
 ProgVersion = '0.06'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+
+debuggingThisModule = False
 
 
 import os, logging

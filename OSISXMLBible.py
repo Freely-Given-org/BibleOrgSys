@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.54'
@@ -1612,15 +1612,15 @@ class OSISXMLBible( Bible ):
                     else: # Let's assume it's a simple note
                         self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
                 elif noteType == 'study':
-                    #print( "Need to handle study note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    #print( "Need to handle study note properly here" ) # … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     self.thisBook.appendToLastLine( '\\ft {}'.format( clean(noteText) ) )
                     #print( "study note dg32", location, "Type =", noteType, "N =", repr(noteN), "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement )
                 elif noteType == 'translation':
-                    #print( "Need to handle translation note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    #print( "Need to handle translation note properly here" ) # … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     self.thisBook.appendToLastLine( '\\ft {}'.format( clean(noteText) ) )
                     #print( "translation note fgd1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement )
                 elif noteType == 'x-index':
-                    #print( "Need to handle index note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    #print( "Need to handle index note properly here" ) # … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     #self.thisBook.addLine( 'ix~', noteText )
                     self.thisBook.appendToLastLine( '\\ft {}'.format( clean(noteText) ) )
                 elif noteType == 'x-strongsMarkup':
@@ -1677,19 +1677,19 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert referenceText and not noteText
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( clean(referenceText) ) )
-                    elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly …xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT={!r} nT={!r} rTail={!r}".format( referenceText, noteText, referenceTail ) )
                         if BibleOrgSysGlobals.debugFlag: assert referenceText and not noteText.strip()
                         if not referenceText[-1] == ' ': referenceText += ' '
                         #else: logging.warning( "How come there's no tail? rT={!r} nT={!r} rTail={!r}".format( referenceText, noteText, referenceTail ) )
                         #print( "study note3", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement ); halt
-                    elif noteType=='translation' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    elif noteType=='translation' and referenceType=='source': # This bit needs fixing up properly …xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "{}: rT={!r} nT={!r} rTail={!r}".format( self.abbreviation, referenceText, noteText, referenceTail ) )
                             assert referenceText and not noteText
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
-                    elif noteType=='translation' and referenceType is None: # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    elif noteType=='translation' and referenceType is None: # This bit needs fixing up properly …xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "{}: rT={!r} nT={!r} rTail={!r}".format( self.abbreviation, referenceText, noteText, referenceTail ) )
                             assert referenceText
@@ -2717,7 +2717,7 @@ class OSISXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'jas7', loadErrors )
                         self.thisBook.appendToLastLine( '\\cls {}\\cls*{}'.format( clsText, clsTail if clsTail else '' ) )
 ###                 ### table in div
-                    elif subelement.tag == OSISXMLBible.OSISNameSpace+'table': # not actually written yet! XXXXXXX ...............
+                    elif subelement.tag == OSISXMLBible.OSISNameSpace+'table': # not actually written yet! XXXXXXX ……
                         sublocation = 'table of ' + location
                         verseMilestone = validateTable( subelement, sublocation, verseMilestone )
 ###                 ### w in colophon div
@@ -2964,7 +2964,7 @@ class OSISXMLBible( Bible ):
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+'seg':
                                                 sub3location = "seg of " + sub2location
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
-                                                segText, segTail = sub3element.text, sub3element.tail # XXX unused .............................................
+                                                segText, segTail = sub3element.text, sub3element.tail # XXXxxxxxxxxxxxxxx unused …
                                                 # Process the attributes
                                                 segType = None
                                                 for attrib,value in sub3element.items():

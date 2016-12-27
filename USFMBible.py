@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-18' # by RJH
+LastModifiedDate = '2016-12-26' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -442,7 +442,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                         print( "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
                 elif BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "Search/Replace was aborted (by undo) in {}.".format( BBB ) )
-                filesToSave = {}
+                filesToSave = OrderedDict()
                 resultDict['replacedBookList'] = []
                 resultDict['numReplaces'] = 0
                 resultDict['aborted'] = True
@@ -690,12 +690,12 @@ def demo():
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    UsfmBErrors = UsfmB.getErrors()
+                    #print( result3.books['GEN']._processedLines[0:40] )
+                    UsfmBErrors = result3.getErrors()
                     # print( UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
-                    ##UsfmB.toDrupalBible()
+                    ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 

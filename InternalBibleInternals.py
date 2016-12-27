@@ -48,7 +48,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-13' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.66'
@@ -1044,7 +1044,7 @@ class InternalBibleIndex:
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','vp#','c#','¬p'):
                             if lastKey and debuggingThisModule: print( "InternalBibleIndex.checkIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey ) )
-# NOTE: temporarily down-graded from critical ...................................
+# NOTE: temporarily down-graded from critical …
                             logging.error( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if debuggingThisModule:
                                 if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey ) )

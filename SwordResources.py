@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.22'
@@ -881,7 +881,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
     while True:
         match = re.search( '<WT(.+?)>', verseLine ) # What's this
         if not match: break
-        replacement = '' # TEMP .................................... xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        replacement = '' # TEMP …… xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         #print( 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
@@ -995,7 +995,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
     while True:
         match = re.search( '<WT(.+?)>', verseLine ) # What's this
         if not match: break
-        replacement = '' # TEMP .................................... xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        replacement = '' # TEMP …… xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         #print( 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
 
@@ -1764,7 +1764,7 @@ def demo():
                     print( " ", tk.getText() )
                     # Keep track of the information for custom implementation
                     #Class *item = storeItemInfoForLaterUse(parent, text);
-                    item = (parent) # temp ....................
+                    item = (parent) # temp ……
                     if tk.hasChildren():
                         print( "  Getting children…" )
                         getGenBookTOC( tk, item )

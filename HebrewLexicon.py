@@ -34,7 +34,7 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-12' # by RJH
+LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = '0.18'
@@ -174,7 +174,7 @@ class AugmentedStrongsIndexFileConverter:
         if BibleOrgSysGlobals.debugFlag:
             assert len( self.tree )
             assert self.entries1 and self.entries2
-        return self.entries1, self.entries2 # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+        return self.entries1, self.entries2 # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of AugmentedStrongsIndexFileConverter.importDataToPython
 # end of AugmentedStrongsIndexFileConverter class
 
@@ -366,7 +366,7 @@ class LexicalIndexFileConverter:
         if BibleOrgSysGlobals.debugFlag:
             assert len( self.tree )
             assert self.entries
-        return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+        return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of LexicalIndexFileConverter.importDataToPython
 # end of LexicalIndexFileConverter class
 
@@ -547,7 +547,7 @@ class HebrewStrongsFileConverter:
         if BibleOrgSysGlobals.debugFlag:
             assert len( self.tree )
             assert self.entries
-        return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+        return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of HebrewStrongsFileConverter.importDataToPython
 # end of HebrewStrongsFileConverter class
 
@@ -739,7 +739,7 @@ class BrownDriverBriggsFileConverter:
         if BibleOrgSysGlobals.debugFlag:
             assert len( self.tree )
             assert self.entries
-        return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+        return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of BrownDriverBriggsFileConverter.importDataToPython
 # end of BrownDriverBriggsFileConverter class
 
