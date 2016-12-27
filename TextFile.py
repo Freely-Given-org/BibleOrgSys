@@ -31,7 +31,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "TextFile"
 ProgName = "Text File"
-ProgVersion = '0.01'
+ProgVersion = '0.02'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -92,7 +92,7 @@ class TextFile:
         assert self.fileText is not None
 
         if self.changed:
-            with open( self.filepath, mode='wt', encoding=encoding ) as myFile: # Automatically closes the file when done
+            with open( self.filepath, mode='wt', encoding=self.encoding ) as myFile: # Automatically closes the file when done
                 myFile.write( self.fileText )
             self.changed = False
     # end of TextFile.save
@@ -138,6 +138,11 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
 
     tf = TextFile( 'TextFile.py' ) # Read myself!
+    tf.replace( "TextFile", "ABRACADABRA" )
+    print( tf.fileText )
+    #tf.saveAs( "/tmp/fred.py" )
+
+    tf = TextFile( folderPathname='./', filename='TextFile.py' ) # Read myself!
     tf.replace( "TextFile", "ABRACADABRA" )
     print( tf.fileText )
     #tf.saveAs( "/tmp/fred.py" )
