@@ -31,7 +31,7 @@ from gettext import gettext as _
 LastModifiedDate = '2016-12-28' # by RJH
 ShortProgName = "TextFile"
 ProgName = "Text File"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -46,7 +46,7 @@ class TextFile:
     """
     """
     def __init__( self, filepath=None, folderPathname=None, filename=None, encoding=None, autoLoad=True ):
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>0:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
             print( "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding, autoLoad ) )
 
         self.encoding = encoding if encoding else 'utf-8'
@@ -75,7 +75,7 @@ class TextFile:
 
 
     def replace( self, findString, replaceString, replaceCount=None ):
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>0:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
             print( "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
         assert self.fileText is not None
 
@@ -87,7 +87,7 @@ class TextFile:
 
 
     def save( self ):
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>0:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
             print( "TextFile.save()" )
         assert self.fileText is not None
 
@@ -99,7 +99,7 @@ class TextFile:
 
 
     def saveAs( self, filepath=None, folderPathname=None, filename=None, encoding=None ):
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>0:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>1:
             print( "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding ) )
         assert self.fileText is not None
 
