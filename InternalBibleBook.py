@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,12 +45,12 @@ To use the InternalBibleBook class,
     Then call processLines() which works through _rawLines
         removes footnotes and other additional info
         and places the processed Bible info into _processedLines.
-    Finally, call makeIndex() to index _processedLines by CV.
+    Finally, call makeCVIndex() to index _processedLines by CV.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -1746,11 +1746,11 @@ class InternalBibleBook:
 
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
-        self.makeIndex()
+        self.makeCVIndex()
     # end of InternalBibleBook.processLines
 
 
-    def makeIndex( self ):
+    def makeCVIndex( self ):
         """
         Index the InternalBibleBook processed lines InternalBibleEntryList for faster reference.
 
@@ -1764,7 +1764,7 @@ class InternalBibleBook:
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._CVIndex = InternalBibleIndex( self.workName, self.BBB )
-        self._CVIndex.makeIndex( self._processedLines )
+        self._CVIndex.makeCVIndex( self._processedLines )
 
         #if self.BBB=='GEN':
             #for j, entry in enumerate( self._processedLines):
@@ -3995,6 +3995,7 @@ class InternalBibleBook:
         Returns the number of chapters (int) in this book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getNumChapters()") )
+
         self.getVersificationIfNecessary()
         #print( self.getVersification() )
         lastChapterNumberString =  self.versificationList[-1][0] # The last chapter number
@@ -4031,8 +4032,11 @@ class InternalBibleBook:
 
         Raises a KeyError if the C:V reference is not found
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
+        if BibleOrgSysGlobals.debugFlag:
+            if debuggingThisModule:
+                print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
+            assert self._processedFlag
+            assert self._indexedFlag
 
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB

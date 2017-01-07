@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-02' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.54'
@@ -1036,8 +1036,8 @@ class OSISXMLBible( Bible ):
                         try:
                             cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
                         except KeyError:
-                            logging.critical( _("{!r} is not a valid OSIS book identifier").format( bits[0] ) )
-                            loadErrors.append( _("{!r} is not a valid OSIS book identifier").format( bits[0] ) )
+                            logging.critical( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
+                            loadErrors.append( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
                         if cmBBB and isinstance( cmBBB, list ): # There must be multiple alternatives for BBB from the OSIS one
                             if BibleOrgSysGlobals.verbosityLevel > 2: print( "Multiple alternatives for OSIS {!r}: {} (Choosing the first one)".format( mainDivOsisID, cmBBB ) )
                             cmBBB = cmBBB[0]
@@ -1747,7 +1747,8 @@ class OSISXMLBible( Bible ):
                             if BibleOrgSysGlobals.debugFlag: assert not (qWho or qReferenceType)
                     #print( "noteType", repr(noteType) )
                     if BibleOrgSysGlobals.debugFlag: assert noteType in ('footnote','translation','study',)
-                    qText, qTail = subelement.text.strip(), subelement.tail
+                    qText = subelement.text.strip() if subelement.text else ''
+                    qTail = subelement.tail
                     #print( 'qText', repr(qText) )
                     #if BibleOrgSysGlobals.debugFlag: assert qText
                     if '\n' in qText: # why's this
@@ -2463,7 +2464,10 @@ class OSISXMLBible( Bible ):
             try:
                 BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( mainDivOsisID )
             except KeyError:
-                logging.critical( _("{!r} is not a valid OSIS book identifier").format( mainDivOsisID ) )
+                logging.critical( _("{!r} is not a valid OSIS book identifier in mainDiv").format( mainDivOsisID ) )
+                for tryBBB in ( 'XXA', 'XXB', 'XXC', 'XXD', 'XXE' ):
+                    if tryBBB not in self:
+                        BBB = tryBBB; break
             if BBB:
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "Multiple alternatives for OSIS {!r}: {} (Choosing the first one)".format( mainDivOsisID, BBB ) )

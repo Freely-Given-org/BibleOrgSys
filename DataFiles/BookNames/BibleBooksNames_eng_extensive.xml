@@ -72,7 +72,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.29</version>
-      <date>2016-07-08</date>
+      <date>2017-01-03</date>
       <title>Traditional English Bible books names extensive list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -741,6 +741,7 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>PrAz</defaultAbbreviation>
     <inputAbbreviation>Pryr Azrh</inputAbbreviation>
     <inputAbbreviation>Azariah</inputAbbreviation>
+    <inputAbbreviation>PrAz</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="BEL">
     <defaultName>Bel and the Dragon</defaultName>

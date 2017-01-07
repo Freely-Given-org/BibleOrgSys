@@ -5,7 +5,7 @@
 #
 # Module handling downloading and installing of Sword resources
 #
-# Copyright (C) 2016 Robert Hunt
+# Copyright (C) 2016-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2017-01-01' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -131,10 +131,10 @@ def processConfLines( abbreviation, openFile, confDict ):
         lineCount += 1
         if lineCount==1:
             if line[0]==chr(65279): #U+FEFF
-                logging.info( "processConfLines1: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                logging.info( "processConfLines1: Detected Unicode Byte Order Marker (BOM) in {!r} conf file".format( abbreviation ) )
                 line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
             elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
-                logging.info( "processConfLines2: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                logging.info( "processConfLines2: Detected Unicode Byte Order Marker (BOM) in {!r} conf file".format( abbreviation ) )
                 line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
         if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
         if not line: continue # Just discard blank lines

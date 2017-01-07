@@ -5,7 +5,7 @@
 #
 # Module handling "e-Sword" Bible module files
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-02' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -391,7 +391,8 @@ class ESwordBible( Bible ):
                             print( "marker", marker )
                             print( "leftovers", repr(leftovers) )
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                            assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'r')
+                            if BibleOrgSysGlobals.debugFlag:
+                                assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                             bookObject.addLine( marker, bits[1] )
                         elif not writtenV:
                             bookObject.addLine( 'v', '{} \\{} {}'.format( V, marker, segment ) )

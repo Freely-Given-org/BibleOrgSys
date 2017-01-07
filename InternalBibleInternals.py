@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-01' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.66'
@@ -697,7 +697,7 @@ class InternalBibleIndex:
     # end of InternalBibleIndex.getEntriesWithContext
 
 
-    def makeIndex( self, givenBibleEntries ):
+    def makeCVIndex( self, givenBibleEntries ):
         """
         Index the lines for faster reference.
 
@@ -713,7 +713,7 @@ class InternalBibleIndex:
             lineCount is the number of entries for this verse, and
             context is a list containing contextual markers which still apply to this entry.
         """
-        #print( "InternalBibleIndex.makeIndex( {} )".format( givenBibleEntries ) )
+        #print( "InternalBibleIndex.makeCVIndex( {} )".format( givenBibleEntries ) )
         #if self.BBB == 'EXO': halt
         self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
         #if self.BBB=='PHM':
