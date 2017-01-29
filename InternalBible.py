@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-22' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.77'
+ProgVersion = '0.78'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -126,6 +126,7 @@ class InternalBible:
 
         # Set up empty containers for the object
         self.books = OrderedDict()
+        self.BBBs = None # Will eventually contain a set of the books codes which we know are in this particular Bible (even if the book is not loaded yet)
         self.suppliedMetadata = None
         self.settingsDict = {} # This is often filled from self.suppliedMetadata in applySuppliedMetadata()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
@@ -196,11 +197,15 @@ class InternalBible:
         """
         This method checks whether the Bible (as loaded so far) contains the BBB book.
 
+        Note that we also have a member self.BBBs which contains a set of all
+            books which we know to be in this Bible even if not yet loaded.
+
         Returns True or False.
         """
         if BibleOrgSysGlobals.debugFlag: assert isinstance(BBB,str) and len(BBB)==3
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not self.loadedAllBooks:
             logging.critical( exp("__contains__ result is unreliable because all books not loaded!") )
+
         return BBB in self.books
     # end of InternalBible.__contains__
 
@@ -229,6 +234,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
             logging.critical( exp("__iter__ result is unreliable because all books not loaded!") )
+
         for BBB in self.books:
             yield self.books[BBB]
     # end of InternalBible.__iter__

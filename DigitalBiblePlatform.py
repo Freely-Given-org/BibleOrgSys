@@ -5,7 +5,7 @@
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-18' # by RJH
+LastModifiedDate = '2017-01-22' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.16'
@@ -503,6 +503,8 @@ class DBPBible:
     """
     Class to download and manipulate an online DBP Bible.
 
+    Note that this Bible class is NOT based on the Bible class
+        because it's so unlike most Bibles which are local.
     """
     def __init__( self, damRoot ):
         """

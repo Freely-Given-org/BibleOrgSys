@@ -6,7 +6,7 @@
 # Interface module handling Sword resources
 #   using either the Sword engine (if available) or else our own software
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-15' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1069,6 +1069,7 @@ class SwordInterface():
     def __init__( self ):
         """
         """
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "SwordResources.SwordInterface is using {!r}".format( SwordType ) )
         if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -1077,7 +1078,24 @@ class SwordInterface():
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( 'Sword library', self.library )
+        else: halt # programming error
     # end of SwordInterface.__init__
+
+
+    def augmentModules( self, newPath ):
+        """
+        Adds another path to search for modules in.
+        """
+        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("SwordInterface.augmentModules( {} )").format( newPath ) )
+            assert self.library is not None
+
+        someFlag = 0 # Don't know what this means in undocumented Sword library
+        if SwordType == 'CrosswireLibrary':
+            self.library.augmentModules( newPath, someFlag )
+        elif SwordType == 'OurCode':
+            self.library.augmentModules( newPath, someFlag )
+    # end of SwordInterface.augmentModules
 
 
     def getAvailableModuleCodes( self, onlyModuleTypes=None ):

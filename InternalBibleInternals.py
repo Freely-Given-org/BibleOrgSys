@@ -48,7 +48,7 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-01' # by RJH
+LastModifiedDate = '2017-01-24' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.66'
@@ -807,7 +807,7 @@ class InternalBibleIndex:
                     lineCount += 1
                 elif marker == 'v':
                     assert strC != '0' # Should be in a chapter by now
-                    print( "Why do we have a verse number in a {} book without chapters?".format( self.BBB ) )
+                    print( "Why do we have a verse number in a {} {} book without chapters?".format( self.name, self.BBB ) )
                     if debuggingThisModule:
                         print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
                             entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )

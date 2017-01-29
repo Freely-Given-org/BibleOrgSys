@@ -5,7 +5,7 @@
 #
 # Module handling Sword modules directly
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,10 +54,10 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-01-15' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.45'
+ProgVersion = '0.46'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -88,6 +88,8 @@ DEFAULT_SWORD_SEARCH_FOLDERS = ( '/usr/share/sword/',
                         'C:\\Users\\{}\\AppData\\Local\\VirtualStore\\Program Files\\BPBible\\resources\\'.format( os.getlogin() ),
                         'C:\\Program Files\\BPBible\\resources\\', 'C:\\Program Files (x86)\\BPBible\\resources\\',
                         'TestData/', )
+SwordSearchFolders = list( DEFAULT_SWORD_SEARCH_FOLDERS )
+
 
 GENERIC_SWORD_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblical Texts',
                 'RawCom':'Commentaries', 'RawCom4':'Commentaries', 'zCom':'Commentaries',
@@ -2162,7 +2164,7 @@ class SwordModules:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModules.__init__()") )
 
-        self.searchFolders = list( DEFAULT_SWORD_SEARCH_FOLDERS )
+        self.searchFolders = SwordSearchFolders
         self.inMemoryFlag = True
 
         # Go find them and load them all!
@@ -2183,11 +2185,14 @@ class SwordModules:
         """
         Adds another path to search for modules in.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModules.augmentModules( {}, {} )").format( newPath, someFlag ) )
             assert newPath not in self.searchFolders
 
-        self.searchFolders.append( newPath )
+        global SwordSearchFolders # Saved between object instances
+        SwordSearchFolders.append( newPath )
+        self.searchFolders = SwordSearchFolders # (now augmented)
+
         self.__loadAllConfs() # Reload them
     # end of SwordModules.augmentModules
 
@@ -2375,13 +2380,15 @@ class SwordModules:
             return result
             #return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
-            print( exp("getAvailableModuleCodeDuples--confs") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( exp("getAvailableModuleCodeDuples--confs") )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
                 #print( "  ", j, moduleRoughName )
             result = []
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):
                 swMC = self.confs[moduleRoughName]
-                print( moduleRoughName, swMC.modType )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    print( "  {} {}".format( moduleRoughName, swMC.modType ) )
                 #print( repr(swMC.modType), repr(GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType]) )
                 if onlyModuleTypes is None \
                 or swMC.modType in onlyModuleTypes or GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType] in onlyModuleTypes:
