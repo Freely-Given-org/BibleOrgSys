@@ -46,7 +46,7 @@ If you have access to any metadata, that goes in self.suppliedMetadata dictionar
 self.suppliedMetadata is a dictionary containing the following possible entries (all dictionaries):
     'Project' for metadata supplied for the project
     'File' for metadata submitted in a separate text file (this is given priority)
-    'SSF' for USFM/Paratext Bibles
+    'SSF','PTX7','PTX8' for USFM/Paratext Bibles
     'OSIS', 'DBL', 'BCV' for other Bibles
 
 The calling class then fills
@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-22' # by RJH
+LastModifiedDate = '2017-02-01' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.78'
@@ -1354,8 +1354,12 @@ class InternalBible:
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}…").format( pickleFilepath ) )
-        with open( pickleFilepath, 'rb' ) as pickleFile:
-            typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+        try:
+            with open( pickleFilepath, 'rb' ) as pickleFile:
+                typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+        except FileNotFoundError:
+                logging.error( "InternalBible.check: Unable to find file for typical added units checks: {}".format( pickleFilepath ) )
+                typicalAddedUnitData = None
 
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running checks on {}…").format( self.name ) )
@@ -1603,12 +1607,7 @@ class InternalBible:
 <div id="TopBar"><a href="__TOP_PATH__"><img class="Banner" height="120" src="__TOP_PATH__Logo/FG-Banner.jpg" alt="Top logo banner graphic"/></a>
     <h1 class="PageHeading">__HEADING__</h1></div>
 <div id="MainContent">
-<div id="LeftSidebar">
-    <p>
-    <br /><a href="__TOP_PATH__index.html">Checks</a>
-    </p></div>
-
-<div id="MainSection">
+    <div id="MainSection">
     __MAIN_PART__
     </div>
 </div>
@@ -1957,7 +1956,7 @@ class InternalBible:
                     '<p><b>Lines</b> entries list all lines in certain categories (such as titles or headings) so that you can visually check through the lists in order to see how consistent you have been throughout your work.</p>' + \
                     '<p><b>List</b> entries also list similar items for you to scan through. The <b>Modified Marker List</b> gives you a quick way to scan through all of the main USFM markers used in your file—if a marker occurs several times in a row, it only lists it once.</p>' + \
                     '<p><b>Counts</b> entries list counts of characters and words, etc. and are usually provided sorted in different ways. It’s often helpful to look at items that only occur one or two times in your work as they might indicate possible mistakes.</p>' + \
-                    '<p>We are still working on improving error detection, removing false alarms, and better prioritising the errors and warnings. If you have any suggestions, use the <a href="__TOP_PATH__Contact.html">Contact Page</a> to let us know. Thanks.</p>'
+                    '<p>We are still working on improving error detection, removing false alarms, and better prioritising the errors and warnings. If you have any suggestions, feel free to let us know. Thanks.</p>'
         if BBBIndexPart: # Create the by book index page
             BBBIndexPart += '<small>{}</small>'.format( help1Part )
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
