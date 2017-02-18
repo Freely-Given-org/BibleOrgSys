@@ -9469,6 +9469,21 @@ class BibleWriter( InternalBible ):
                     logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
+            finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
+                "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
+                "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
+                    .format( pickleResult, listOutputResult, BCVExportResult,
+                        pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
+                        textExportResult, VPLExportResult,
+                        markdownExportResult, D43ExportResult, htmlExportResult,
+                        CBExportResult, EWBExportResult,
+                        USXExportResult, USFXExportResult, OSISExportResult,
+                        ZefExportResult, HagExportResult, OSExportResult,
+                        swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
+                        SwSExportResult, DrExportResult,
+                        PhotoBibleExportResult, ODFExportResult, TeXExportResult )
+            trueCount = finishString.count('True')
+
             if pickleResult and listOutputResult and BCVExportResult \
             and pseudoUSFMExportResult and USFMExportResult and ESFMExportResult and textExportResult \
             and VPLExportResult and markdownExportResult and D43ExportResult and htmlExportResult \
@@ -9478,22 +9493,9 @@ class BibleWriter( InternalBible ):
             and swExportResult and tWExportResult and MySwExportResult and ESwExportResult and MyBExportResult \
             and SwSExportResult and DrExportResult \
             and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
-                print( "BibleWriter.doAllExports finished all 29 exports successfully!" )
+                print( "BibleWriter.doAllExports finished all requested {}/29 exports successfully!".format( trueCount ) )
             else:
-                finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
-                    "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
-                    "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
-                    .format( pickleResult, listOutputResult, BCVExportResult,
-                            pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
-                            textExportResult, VPLExportResult,
-                            markdownExportResult, D43ExportResult, htmlExportResult,
-                            CBExportResult, EWBExportResult,
-                            USXExportResult, USFXExportResult, OSISExportResult,
-                            ZefExportResult, HagExportResult, OSExportResult,
-                            swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
-                            SwSExportResult, DrExportResult,
-                            PhotoBibleExportResult, ODFExportResult, TeXExportResult )
-                print( "{} ({} True, {} False)".format( finishString, finishString.count( 'True' ), finishString.count( 'False' ) ) )
+                print( "{} ({} True, {} False, {} None)".format( finishString, trueCount, finishString.count('False'), finishString.count('None') ) )
         return { 'Pickle':pickleResult, 'listOutput':listOutputResult, 'BCVOutput':BCVExportResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
