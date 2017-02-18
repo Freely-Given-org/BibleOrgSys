@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-05' # by RJH
+LastModifiedDate = '2017-02-18' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -9478,9 +9478,10 @@ class BibleWriter( InternalBible ):
             and swExportResult and tWExportResult and MySwExportResult and ESwExportResult and MyBExportResult \
             and SwSExportResult and DrExportResult \
             and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
-                print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={} VPL={}  md={} D43={}  "
-                    "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
+                print( "BibleWriter.doAllExports finished all 29 exports successfully!" )
+            else:
+                finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
+                    "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
                     "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
                     .format( pickleResult, listOutputResult, BCVExportResult,
                             pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
@@ -9491,7 +9492,8 @@ class BibleWriter( InternalBible ):
                             ZefExportResult, HagExportResult, OSExportResult,
                             swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
                             SwSExportResult, DrExportResult,
-                            PhotoBibleExportResult, ODFExportResult, TeXExportResult ) )
+                            PhotoBibleExportResult, ODFExportResult, TeXExportResult )
+                print( "{} ({} True, {} False)".format( finishString, finishString.count( 'True' ), finishString.count( 'False' ) ) )
         return { 'Pickle':pickleResult, 'listOutput':listOutputResult, 'BCVOutput':BCVExportResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
