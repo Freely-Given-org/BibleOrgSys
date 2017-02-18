@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -450,7 +450,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
@@ -1306,7 +1306,7 @@ class BibleWriter( InternalBible ):
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
@@ -1535,7 +1535,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             bookName = gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             #verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
@@ -2254,7 +2254,7 @@ class BibleWriter( InternalBible ):
             html5Globals['nextFootnoteIndex'] = html5Globals['nextEndnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'], html5Globals['endnoteHTML5'], html5Globals['xrefHTML5'] = [], [], []
             gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #if BBB=='MRK': print( "writeHTML5Book", marker, text )
@@ -2864,8 +2864,8 @@ class BibleWriter( InternalBible ):
 
             lastHTML = sectionHTML = outputHTML = ''
             lastMarker = gotVP = None
-            C = lastC = V = '0'
-            lastV = '999' # For introduction section
+            C, V = '0', '-1' # So id line starts at 0:0
+            lastC, lastV = '0', '999' # For introduction section
             BCV = (BBB,C,V)
             sOpen = sJustOpened = pOpen = vOpen = False
             listOpen = {}
@@ -3689,7 +3689,7 @@ class BibleWriter( InternalBible ):
 
             version = 2
             xtra = ' ' if version<2 else ''
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( USXNumber+USXAbbrev+".usx" ), filesFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
@@ -4140,7 +4140,7 @@ class BibleWriter( InternalBible ):
 
             version = 2
             xtra = ' ' if version<2 else ''
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             xw.writeLineOpen( 'book', ('id',USFXAbbrev) )
             haveOpenPara = paraJustOpened = False
             gotVP = None
@@ -4803,7 +4803,7 @@ class BibleWriter( InternalBible ):
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -5432,7 +5432,7 @@ class BibleWriter( InternalBible ):
 
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
@@ -5611,7 +5611,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
             gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
@@ -5772,7 +5772,7 @@ class BibleWriter( InternalBible ):
                 return
             writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
             haveOpenChapter, startedFlag, gotVP, accumulator = False, False, None, ""
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
@@ -6320,7 +6320,7 @@ class BibleWriter( InternalBible ):
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -6767,7 +6767,7 @@ class BibleWriter( InternalBible ):
 
             pseudoUSFMData = bookObject._processedLines
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -6932,7 +6932,7 @@ class BibleWriter( InternalBible ):
                 return
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             linemark = ''
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -7457,7 +7457,7 @@ class BibleWriter( InternalBible ):
             if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
 
             # First of all, get the text (by chapter) into textBuffer
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             intC = numVerses = 0
             lastMarker = gotVP = None
             textBuffer = ''
@@ -8645,7 +8645,7 @@ class BibleWriter( InternalBible ):
             startingNewParagraphFlag = True
             inTextParagraph = False
             lastMarker = gotVP = None
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", j, BBB, C, V, marker, repr(adjText) )
@@ -9006,7 +9006,7 @@ class BibleWriter( InternalBible ):
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
                     gotVP = None
-                    C = V = '0'
+                    C, V = '0', '-1' # So id line starts at 0:0
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here

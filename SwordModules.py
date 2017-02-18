@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-15' # by RJH
+LastModifiedDate = '2017-02-15' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.46'
@@ -2185,12 +2185,13 @@ class SwordModules:
         """
         Adds another path to search for modules in.
         """
-        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordModules.augmentModules( {}, {} )").format( newPath, someFlag ) )
-            assert newPath not in self.searchFolders
+            #assert newPath not in self.searchFolders
 
         global SwordSearchFolders # Saved between object instances
-        SwordSearchFolders.append( newPath )
+        if newPath not in SwordSearchFolders:
+            SwordSearchFolders.append( newPath )
         self.searchFolders = SwordSearchFolders # (now augmented)
 
         self.__loadAllConfs() # Reload them

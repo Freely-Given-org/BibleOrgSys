@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-03' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
@@ -363,7 +363,7 @@ class ESFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath )
 
         # Do some important cleaning up before we save the data
-        C = V = '0'
+        C, V = '0', '-1' # So id line starts at 0:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
@@ -374,6 +374,7 @@ class ESFMBibleBook( BibleBook ):
             elif marker=='v' and originalText:
                 V = originalText.split()[0]
                 if C == '0': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
+            elif C == '0' and marker!='intro': V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             text = ESFMPreprocessing( self.BBB, C, V, originalText ) # Convert ESFM encoding to pseudo-USFM

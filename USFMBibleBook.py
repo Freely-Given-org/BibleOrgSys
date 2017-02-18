@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-07' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.47'
@@ -141,7 +141,7 @@ class USFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
-        C = V = '0'
+        C, V = '0', '-1' # So id line starts at 0:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines

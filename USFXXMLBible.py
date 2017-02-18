@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-02' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.27'
@@ -400,7 +400,7 @@ class USFXXMLBible( Bible ):
         self.thisBook.objectNameString = 'USFX XML Bible Book object'
         self.thisBook.objectTypeString = 'USFX'
 
-        C = V = '0'
+        C, V = '0', '-1' # So id line starts at 0:0
         for element in bookElement:
             #print( "element", repr(element.tag) )
             location = "{} of {} {}:{}".format( element.tag, mainLocation, BBB, C, V )

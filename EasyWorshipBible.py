@@ -5,7 +5,7 @@
 #
 # Module handling EasyWorship Bible files
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.04'
@@ -293,7 +293,7 @@ class EasyWorshipBible( Bible ):
             thisBook.objectTypeString = 'EasyWorship Bible'
             if bookAbbrev: thisBook.addLine( 'toc3', bookAbbrev )
 
-            C = V = '0'
+            C, V = '0', '-1' # So id line starts at 0:0
             for line in textResult.split( '\r\n' ):
                 if not line: continue # skip blank lines
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:

@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-15' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.19'
@@ -296,7 +296,7 @@ class USXXMLBibleBook( BibleBook ):
                     if BibleOrgSysGlobals.debugFlag: halt
         # end of loadParagraph
 
-        C = V = '0'
+        C, V = '0', '-1' # So id line starts at 0:0
         loadErrors = []
         lastMarker = None
 

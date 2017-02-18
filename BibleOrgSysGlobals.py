@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-21' # by RJH
+LastModifiedDate = '2017-02-05' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.70'
@@ -621,7 +621,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Now compare the actual lines
     diffCount = 0
-    C = V = '0'
+    C, V = '0', '-1' # So id line starts at 0:0
     for k in range( 0, min( len1, len2 ) ):
         originalLine1, originalLine2 = lines1[k], lines2[k]
         adjustedLine1, adjustedLine2 = originalLine1, originalLine2

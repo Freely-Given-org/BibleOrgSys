@@ -2235,7 +2235,7 @@ class InternalBible:
                     if marker in ('intro','chapters'): continue # we'll always ignore these added lines
                     if marker == 'c': C, V = cleanText, '0'
                     elif marker == 'v': V = cleanText
-                    elif C == '0': V = str( int(V) + 1 )
+                    elif C == '0' and marker!='intro': V = str( int(V) + 1 )
                     if ourMarkerList:
                         if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
                             continue

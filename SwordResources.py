@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-15' # by RJH
+LastModifiedDate = '2017-02-15' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.23'
@@ -1086,7 +1086,7 @@ class SwordInterface():
         """
         Adds another path to search for modules in.
         """
-        if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("SwordInterface.augmentModules( {} )").format( newPath ) )
             assert self.library is not None
 
