@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-15' # by RJH
+LastModifiedDate = '2017-02-24' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -3037,7 +3037,7 @@ class InternalBibleBook:
 
         if 'USFMs' not in self.errorDictionary: self.errorDictionary['USFMs'] = OrderedDict() # So we hopefully get the errors first
         if newlineMarkerErrors: self.errorDictionary['USFMs']['Newline Marker Errors'] = newlineMarkerErrors
-        if newlineMarkerErrors and self.BBB not in ('NEH','GLS',): print( newlineMarkerErrors ); halt
+        #if newlineMarkerErrors and self.BBB not in ('NEH','GLS',): print( newlineMarkerErrors ); halt
         if internalMarkerErrors: self.errorDictionary['USFMs']['Internal Marker Errors'] = internalMarkerErrors
         if noteMarkerErrors: self.errorDictionary['USFMs']['Footnote and Cross-Reference Marker Errors'] = noteMarkerErrors
         if modifiedMarkerList:
