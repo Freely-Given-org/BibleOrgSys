@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-19' # by RJH
+LastModifiedDate = '2017-02-24' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -3576,7 +3576,11 @@ class BibleWriter( InternalBible ):
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            if BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
+                            #if BibleOrgSysGlobals.debugFlag:
+                                #print( "toUSXXML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
+                                #assert fTextOpen and not frOpen and not fCharOpen
+                            if frOpen or fCharOpen or not fTextOpen:
+                                logging.error( "toUSXXML.processFootnote: Problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
                             USXfootnoteXML += '>' + adjToken + '</char>'
                             fTextOpen = False
                         else: # Could be character formatting (or closing of character formatting)
@@ -4032,7 +4036,9 @@ class BibleWriter( InternalBible ):
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            if BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
+                            #if BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
+                            if frOpen or fCharOpen or not fTextOpen:
+                                logging.error( "toUSFXXML.processFootnote: Problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USFXfootnote ) )
                             USFXfootnoteXML += '>' + adjToken + '</char>'
                             fTextOpen = False
                         else: # Could be character formatting (or closing of character formatting)
@@ -9539,8 +9545,8 @@ def demo():
                 #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/',),
                 #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/',),
                 #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/',),
-                ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
-                #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
+                #('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
+                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
                 #('MS-Notes', 'MBTBC', '../../../../../Data/Work/Matigsalug/Bible/MBTBC/',),
                 #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/',),
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
