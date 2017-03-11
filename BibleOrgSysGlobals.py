@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-05' # by RJH
+LastModifiedDate = '2017-03-08' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.70'
@@ -1231,39 +1231,44 @@ def demo():
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
-    print( "Bible.py starts with {!r}".format( line1a ) )
+    if verbosityLevel > 0: print( "Bible.py starts with {!r}".format( line1a ) )
     line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folderName
-    print( "ReadMe.txt starts with {!r}".format( line1b ) )
+    if verbosityLevel > 0: print( "ReadMe.txt starts with {!r}".format( line1b ) )
     line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
-    print( "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
+    if verbosityLevel > 0: print( "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
 
-    print( "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
-    print( "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
-    print( "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
-    print( "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
+    if verbosityLevel > 0:
+        print( "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
+        print( "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
+        print( "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
+        print( "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
 
     accentedString1 = 'naïve café'
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
-    print( "\nRemoving accents…" )
+    if verbosityLevel > 0: print( "\nRemoving accents…" )
     for accentedString in ( accentedString1, dan11, ):
         for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
-            print( "  Given: {}".format( thisAccentedString ) )
-            print( "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+            if verbosityLevel > 0:
+                print( "  Given: {}".format( thisAccentedString ) )
+                print( "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
     for accentedChar in ACCENT_DICT:
         got = removeAccents(accentedChar)
         wanted = ACCENT_DICT[accentedChar]
-        print( "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+        if verbosityLevel > 0:
+            print( "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
 
     longText = "The quick brown fox jumped over the lazy brown dog."
-    print( "\nGiven: {}".format( longText ) )
+    if verbosityLevel > 0: print( "\nGiven: {}".format( longText ) )
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    print( "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
+    if verbosityLevel > 0:
+        print( "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
 
-    print( '\nstripWordPunctuation() tests…' )
+    if verbosityLevel > 0: print( '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        print( '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
+        if verbosityLevel > 0:
+            print( '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
 
-    print( "\ncpu_count", os.cpu_count() )
+    if verbosityLevel > 0: print( "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.demo
 
 
