@@ -5,7 +5,7 @@
 #
 # Control file module
 #
-# Copyright (C) 2008-2016 Robert Hunt
+# Copyright (C) 2008-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for reading and parsing simple text control files.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-03-08' # by RJH
 ShortProgName = "ControlFiles"
 ProgName = "Control Files"
 ProgVersion = '0.06'
@@ -43,7 +43,9 @@ import BibleOrgSysGlobals
 
 
 def readListFile( folder, filename, outputList, debug=False ):
-    """Read a simple list file into a list (checking only for duplicate lines)"""
+    """
+    Read a simple list file into a list (checking only for duplicate lines)
+    """
     if debug:
         if not isinstance( outputList, list): raise ValueError('List expected here')
         oldlen = len( outputList )
@@ -65,7 +67,9 @@ def readListFile( folder, filename, outputList, debug=False ):
 
 
 def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
-    """Read and parse a control (text) file into the given list."""
+    """
+    Read and parse a control (text) file into the given list.
+    """
 
     displayFolder = folder
     if not displayFolder:
