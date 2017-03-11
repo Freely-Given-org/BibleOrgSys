@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-24' # by RJH
+LastModifiedDate = '2017-03-07' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -1819,7 +1819,7 @@ class InternalBibleBook:
         C, V = '0', '-1' # So id line starts at 0:0
         for j, entry in enumerate(self._processedLines):
             marker, text = entry.getMarker(), entry.getText()
-            #print( marker, text[:40] )
+            #print( "{} {}:{} {!r} {!r}".format( self.BBB, C, V, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
             if marker == 'c':
@@ -1827,6 +1827,7 @@ class InternalBibleBook:
                 else:
                     validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing chapter number").format( self.BBB, C, V ) )
                     logging.error( _("Missing chapter number after") + " {} {}:{}".format( self.BBB, C, V ) )
+                    if C == '0': C = '1' # Makes it more robust since we had a chapter marker at least
                 V = '0'
             elif marker == 'v':
                 if text: V = text.split()[0]
