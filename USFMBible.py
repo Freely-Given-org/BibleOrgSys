@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-26' # by RJH
+LastModifiedDate = '2017-03-22' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -240,7 +240,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     If it's called from an edit window, it's essential that all editing changes
         are saved to the file first.
 
-    NOTE: We currently handle undo, by cache all files which need to be saved to disk.
+    NOTE: We currently handle undo, by caching all files which need to be saved to disk.
         We might need to make this more efficient, e.g., save under a temp filename.
     """
     if BibleOrgSysGlobals.debugFlag:
@@ -249,7 +249,8 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
             assert 'searchText' in optionsDict
             assert 'replaceText' in optionsDict
 
-    optionsList = ( 'searchText', 'replaceText', 'work', 'searchHistoryList', 'replaceHistoryList', 'wordMode',
+    optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
+            'searchText', 'replaceText', 'searchHistoryList', 'replaceHistoryList', 'wordMode',
             #'caselessFlag', 'ignoreDiacriticsFlag', 'includeIntroFlag', 'includeMainTextFlag',
             #'includeMarkerTextFlag', 'includeExtrasFlag', 'markerList', 'chapterList',
             'contextLength', 'bookList', 'regexFlag', 'currentBCV', 'doBackups', )
@@ -259,7 +260,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
             if debuggingThisModule: halt
 
     # Go through all the given options
-    if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
+    if 'workName' not in optionsDict: optionsDict['workName'] = self.abbreviation if self.abbreviation else self.name
     if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
     if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'EndsWord' or 'Begins' or 'EndsLine'
     #if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
@@ -629,7 +630,7 @@ class USFMBible( Bible ):
         """
         Load all the Bible books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name if self.name else self.abbreviation, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 

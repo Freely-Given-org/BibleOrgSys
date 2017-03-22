@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-01' # by RJH
+LastModifiedDate = '2017-03-22' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.78'
@@ -334,12 +334,14 @@ class InternalBible:
     # end of InternalBible.__getNames
 
 
-    def getAName( self ):
+    def getAName( self, abbrevFirst=False ):
         """
         Try to find a name to identify this internal Bible.
 
         Returns a string or None.
         """
+        if abbrevFirst and self.abbreviation: return self.abbreviation
+
         if self.name: return self.name
         if self.shortName: return self.shortName
         if self.projectName and self.projectName != 'Unknown': return self.projectName
@@ -363,13 +365,13 @@ class InternalBible:
                 #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
                     logging.info( _("No 'loadBook()' function to load individual {} Bible book for {}") \
-                        .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
+                        .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
                 else: # it's some other attribute error in the loadBook function
                     raise
             except KeyError: logging.critical( _("No individual {} Bible book available for {}") \
-                                    .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
+                                    .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
             except FileNotFoundError: logging.critical( _("Unable to find and load individual {} Bible book for {}") \
-                                    .format( BBB, self.abbreviation if self.abbreviation else self.name ) ) # Ignore errors
+                                    .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
@@ -896,7 +898,7 @@ class InternalBible:
         #print( repr(self.objectNameString), repr(self.objectTypeString) )
         #print( (self.abbreviation), repr(self.name) )
         if filename is None:
-            filename = self.abbreviation if self.abbreviation else self.name
+            filename = self.getAName( abbrevFirst=True )
         if filename is None:
             filename = self.objectTypeString
         if BibleOrgSysGlobals.debugFlag: assert filename
@@ -2156,7 +2158,8 @@ class InternalBible:
                 print( exp("searchText( {} )").format( optionsDict ) )
                 assert 'searchText' in optionsDict
 
-        optionsList = ( 'searchText', 'work', 'searchHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
+        optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
+                'searchText', 'searchHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
                 'includeIntroFlag', 'includeMainTextFlag', 'includeMarkerTextFlag', 'includeExtrasFlag',
                 'contextLength', 'bookList', 'chapterList', 'markerList', 'regexFlag',
                 'currentBCV', )
@@ -2166,7 +2169,7 @@ class InternalBible:
                 if debuggingThisModule: halt
 
         # Go through all the given options
-        if 'work' not in optionsDict: optionsDict['work'] = self.abbreviation if self.abbreviation else self.name
+        if 'workName' not in optionsDict: optionsDict['workName'] = self.getAName( abbrevFirst=True )
         if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
         if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'EndsWord' or 'Begins' or 'EndsLine'
         if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True

@@ -5,7 +5,7 @@
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,10 +30,10 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-24' # by RJH
+LastModifiedDate = '2017-03-22' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -197,7 +197,22 @@ class Bible( BibleWriter ):
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData() if BibleOrgSysGlobals.strictCheckingFlag else None
-    # end of __init__
+    # end of Bible.__init__
+
+    #def getAName( self ):
+        #"""
+        #Try to find a name to identify this Bible.
+
+        #Returns a string or None.
+        #"""
+        #if self.name: return self.name
+        #if self.shortName: return self.shortName
+        #if self.projectName and self.projectName != 'Unknown': return self.projectName
+        #if self.abbreviation: return self.abbreviation
+        #if self.sourceFilename: return self.sourceFilename
+        #if self.sourceFolder: return os.path.basename( self.sourceFolder[:-1] if self.sourceFolder[-1] in ('\\','/') else self.sourceFolder )
+    ## end of Bible.getAName
+
 
     #def x__str__( self ):
         #"""

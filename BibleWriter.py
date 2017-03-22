@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-24' # by RJH
+LastModifiedDate = '2017-03-22' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -884,7 +884,7 @@ class BibleWriter( InternalBible ):
 
             #print( 'VPL', repr(self.name), repr(self.shortName), repr(self.projectName), repr(self.abbreviation) )
             abbreviation = self.abbreviation if self.abbreviation else 'Unknown'
-            title = self.name if self.name else self.projectName
+            title = self.getAName()
 
             ForgeBookNames = { 'GEN':'Ge', 'LEV':'Le', 'LAM':'La',
                               'MAT':'Mt', 'JDE':'Jude' }
@@ -3304,7 +3304,7 @@ class BibleWriter( InternalBible ):
             compressedDictionary[BBB] = bookBytes
 
         # Get the "compressed" (osfuscated) module name
-        #name = self.name if self.name else self.abbreviation
+        #name = self.getAName()
         ##print( 'sn', repr(self.shortName) )
         #if len(name)>18:
             #if self.shortName: name = shortName

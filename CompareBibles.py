@@ -6,7 +6,7 @@
 # Module to check and compare two closely related Bibles
 #   e.g., a book and its back-translation.
 #
-# Copyright (C) 2016 Robert Hunt
+# Copyright (C) 2016-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-09' # by RJH
+LastModifiedDate = '2017-03-22' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -870,8 +870,8 @@ def main():
     if allOkay:
         results = compareBibles( Bible1, Bible2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            name1 = Bible1.abbreviation if Bible1.abbreviation else Bible1.name
-            name2 = Bible2.abbreviation if Bible2.abbreviation else Bible2.name
+            name1 = Bible1.abbreviation if Bible1.abbreviation else Bible1.getAName()
+            name2 = Bible2.abbreviation if Bible2.abbreviation else Bible2.getAName()
             print( "\nComparing the entire Bibles gave:" )
             for BBB,bookResults in results.items():
                 if bookResults:
