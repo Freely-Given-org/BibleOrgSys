@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-22' # by RJH
+LastModifiedDate = '2017-03-27' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.78'
@@ -2142,16 +2142,19 @@ class InternalBible:
 
         Assumes that all Bible books are already loaded.
 
-        Always returns a list of tuples.
-            The first entry is always a dictionary of all parameters.
-            Following entries are (zero or more) search results.
+        Always returns three values:.
+            1/ The updated dictionary of all parameters, i.e., updated optionsDict
+            2/ The result summary dict, containing the following entries:
+                searchedBookList, foundBookList
+            3/ A list with (zero or more) search results
+                being 4-tuples or 5-tuples for caseless searches.
 
         For the normal search, the 4-tuples are:
             SimpleVerseKey, marker (none if v~), contextBefore, contextAfter
         If the search is caseless, the 5-tuples are:
             SimpleVerseKey, marker (none if v~), contextBefore, foundWordForm, contextAfter
 
-        NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough.
+        NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough for all languages.
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
