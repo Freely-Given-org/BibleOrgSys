@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2017-03-29' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.79'
@@ -300,7 +300,10 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        if BibleOrgSysGlobals.debugFlag: assert someText and isinstance( someText, str )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+            assert someText and isinstance( someText, str )
+
         SomeUppercaseText = someText.upper()
         #print( '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
         if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:

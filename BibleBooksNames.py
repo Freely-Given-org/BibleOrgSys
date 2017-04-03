@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2017-03-29' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.39'
@@ -319,7 +319,10 @@ class BibleBooksNamesSystems:
 
         Tries all the known Bible Books Names systems.
         """
-        if BibleOrgSysGlobals.debugFlag: assert bookNameOrAbbreviation
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+            assert bookNameOrAbbreviation
+
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
 
         for systemName in self.__DataDicts:
@@ -482,8 +485,13 @@ class BibleBooksNamesSystem:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
+
+        If it fails, tries BibleBooksCodes
         """
-        if BibleOrgSysGlobals.debugFlag: assert bookNameOrAbbreviation
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+            assert bookNameOrAbbreviation
+
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         try:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
@@ -501,6 +509,8 @@ class BibleBooksNamesSystem:
             for key in self.__sortedBookNamesDict.keys():
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             print( "Possibility list is", myList )
+
+        return BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
 
 

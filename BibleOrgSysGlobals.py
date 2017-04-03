@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-08' # by RJH
+LastModifiedDate = '2017-03-30' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.70'
@@ -124,6 +124,7 @@ DASH_CHARS = '–—' # en-dash and em-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>…"""
 TRAILING_WORD_END_CHARS = ' ' + TRAILING_WORD_PUNCT_CHARS
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
+MAX_NESTED_QUOTE_LEVELS = 5
 
 if debuggingThisModule:
     assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)

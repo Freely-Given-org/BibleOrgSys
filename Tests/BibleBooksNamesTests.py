@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNamesTests.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
 # Module testing BibleBooksNames.py
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,8 +26,9 @@
 Module testing BibleBooksNamesConverter.py and BibleBooksNames.py.
 """
 
+LastModifiedDate = '2017-03-29' # by RJH
 ProgName = "Bible Books Names tests"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -130,7 +130,7 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
         # Do it for a specified language code
         results = self.bbnss.getAvailableBooksNamesSystemNames( 'eng' )
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 1 <= len(results) < 3 )
+        self.assertTrue( 2 <= len(results) <= 3 ) # 'extensive', 'deuterocanon', 'traditional'
         self.assertTrue( len(results) < len(self.bbnss) )
         self.assertFalse( None in results )
         for name in ("traditional",): self.assertTrue( name in results )
@@ -224,16 +224,16 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbns.getBookAbbreviation, badBBB )
     # end of test_3040_getBookAbbreviation
 
-    def test_3050_getBBB( self ):
-        """ Test the getBBB function. """
+    def test_3050_getBBBFromText( self ):
+        """ Test the getBBBFromText function. """
         tests = ( ('GEN',('GEN','Gen','Ge','G')),    ('EXO',('Exo','Exd','eX','E','e')),    ('MAL',('Mal','MALACHI','MaLaChI')), )
         for BBB,inputs in tests:
             for thisInput in inputs:
-                result = self.bbns.getBBB( thisInput )
+                result = self.bbns.getBBBFromText( thisInput )
                 self.assertEqual( result, BBB )
         for badInput in ('XYZ','MAT','REV',):
-            self.assertEqual( self.bbns.getBBB(badInput), None )
-    # end of test_3050_getBBB
+            self.assertEqual( self.bbns.getBBBFromText(badInput), None )
+    # end of test_3050_getBBBFromText
 
     def test_3060_getDivisionAbbreviation( self ):
         """ Test the getDivisionAbbreviation function. """
