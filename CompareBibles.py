@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-22' # by RJH
+LastModifiedDate = '2017-04-03' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -80,11 +80,14 @@ MAX_MISMATCHED_MARKERS = 4
 DEFAULT_COMPARE_QUOTES =  '“”‘’«»‹›"¿¡' # Doesn't include apostrophe
 DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–…' # Doesn't include illegal punctuation or () [] and hyphen, so these can vary
 DEFAULT_COMPARE_DIGITS = '0123456789'
-DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’", '<','=','>', '{','}',
+DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’", ',,', '..', '!!', '??', '::', ';;',
+                                  '<','=','>', '{','}',
                                   '&','%','$','#','@','~','`','|','^',
                                   ' -','- ','--', '__', '_ _',
-                                  ' –','– ',' —','— ', # en-dash and em-dash
-                                  '*,','*.','*?','*!', 'XXX','ALT','NEW', )
+                                  ' –','– ','––', ' —','— ','——', # en-dash and em-dash
+                                  '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
+                                  '*,','*.','*?','*!',
+                                  'XXX','ALT','NEW', )
 DEFAULT_ILLEGAL_STRINGS_1 = ( "'", '/', ) + DEFAULT_ILLEGAL_STRINGS_COMMON
 DEFAULT_ILLEGAL_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_STRINGS_COMMON
 DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
