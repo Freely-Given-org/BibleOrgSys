@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2017-04-11' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -428,11 +428,11 @@ class USFMFilenames:
     # end of getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self, doubleCheck=False ):
+    def getConfirmedFilenameTuples( self, strictCheck=False ):
         """
         Starting with the theoretical list of filenames derived from the deduced template (if we have one),
                 return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
-            If the doubleCheck flag is set, the program also looks at the id lines inside the files.
+            If the strictCheck flag is set, the program also looks at the id lines inside the files.
 
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
@@ -442,7 +442,7 @@ class USFMFilenames:
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
-                if doubleCheck:
+                if strictCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
                         logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', BBB, derivedFilename ) )
@@ -611,7 +611,7 @@ def demo():
             result = UFns.getDerivedFilenameTuples(); print( "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
             result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-            result = UFns.getConfirmedFilenameTuples( doubleCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getConfirmedFilenameTuples( strictCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
             result = UFns.getPossibleFilenameTuplesExt(); print( "\nPossibleExt:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )

@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-22' # by RJH
+LastModifiedDate = '2017-04-11' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -220,17 +220,17 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 
 
-def searchReplaceText( self, optionsDict, confirmCallback ):
+def findReplaceText( self, optionsDict, confirmCallback ):
     """
     Search the Bible book files for the given text which is contained in a dictionary of options.
-        Search string must be in optionsDict['searchText'].
-        (We add default options for any missing ones as well as updating the 'searchHistoryList'.)
+        Find string must be in optionsDict['findText'].
+        (We add default options for any missing ones as well as updating the 'findHistoryList'.)
     Then go through and replace.
 
     "self" in this case is either a USFMBible or a PTXBible object.
 
     The confirmCallback function must be a function that takes
-        6 parameters: ref, contextBefore, ourSearchText, contextAfter, willBeText, haveUndosFlag
+        6 parameters: ref, contextBefore, ourFindText, contextAfter, willBeText, haveUndosFlag
     and returns a single UPPERCASE character
         'N' (no), 'Y' (yes), 'A' (all), or 'S' (stop).
 
@@ -245,23 +245,23 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("searchReplaceText( {}, {}, … )").format( self, optionsDict ) )
-            assert 'searchText' in optionsDict
+            print( exp("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
+            assert 'findText' in optionsDict
             assert 'replaceText' in optionsDict
 
     optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
-            'searchText', 'replaceText', 'searchHistoryList', 'replaceHistoryList', 'wordMode',
+            'findText', 'replaceText', 'findHistoryList', 'replaceHistoryList', 'wordMode',
             #'caselessFlag', 'ignoreDiacriticsFlag', 'includeIntroFlag', 'includeMainTextFlag',
             #'includeMarkerTextFlag', 'includeExtrasFlag', 'markerList', 'chapterList',
             'contextLength', 'bookList', 'regexFlag', 'currentBCV', 'doBackups', )
     for someKey in optionsDict:
         if someKey not in optionsList:
-            print( "searchReplaceText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+            print( "findReplaceText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
             if debuggingThisModule: halt
 
     # Go through all the given options
     if 'workName' not in optionsDict: optionsDict['workName'] = self.abbreviation if self.abbreviation else self.name
-    if 'searchHistoryList' not in optionsDict: optionsDict['searchHistoryList'] = [] # Oldest first
+    if 'findHistoryList' not in optionsDict: optionsDict['findHistoryList'] = [] # Oldest first
     if 'wordMode' not in optionsDict: optionsDict['wordMode'] = 'Any' # or 'Whole' or 'EndsWord' or 'Begins' or 'EndsLine'
     #if 'caselessFlag' not in optionsDict: optionsDict['caselessFlag'] = True
     #if 'ignoreDiacriticsFlag' not in optionsDict: optionsDict['ignoreDiacriticsFlag'] = False
@@ -279,9 +279,9 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     if BibleOrgSysGlobals.debugFlag:
         if optionsDict['chapterList']: assert optionsDict['bookList'] is None or len(optionsDict['bookList']) == 1 \
                             or optionsDict['chapterList'] == [0] # Only combinations that make sense
-        assert '\r' not in optionsDict['searchText'] and '\n' not in optionsDict['searchText']
+        assert '\r' not in optionsDict['findText'] and '\n' not in optionsDict['findText']
         assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'EndsWord', 'EndsLine', )
-        if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['searchText']
+        if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['findText']
         #if optionsDict['markerList']:
             #assert isinstance( markerList, list )
             #assert not optionsDict['includeIntroFlag']
@@ -296,30 +296,30 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
 
     resultDict = { 'numFinds':0, 'numReplaces':0, 'searchedBookList':[], 'foundBookList':[], 'replacedBookList':[], 'aborted':False, }
 
-    ourSearchText = optionsDict['searchText']
+    ourFindText = optionsDict['findText']
     # Save the search history (with the 'regex:' text still prefixed if applicable)
-    try: optionsDict['searchHistoryList'].remove( ourSearchText )
+    try: optionsDict['findHistoryList'].remove( ourFindText )
     except ValueError: pass
-    optionsDict['searchHistoryList'].append( ourSearchText ) # Make sure it goes on the end
+    optionsDict['findHistoryList'].append( ourFindText ) # Make sure it goes on the end
 
     ourReplaceText = optionsDict['replaceText']
     try: optionsDict['replaceHistoryList'].remove( ourReplaceText )
     except ValueError: pass
     optionsDict['replaceHistoryList'].append( ourReplaceText ) # Make sure it goes on the end
 
-    if ourSearchText.lower().startswith( 'regex:' ):
+    if ourFindText.lower().startswith( 'regex:' ):
         resultDict['hadRegexError'] = False
         optionsDict['regexFlag'] = True
-        ourSearchText = ourSearchText[6:]
-        compiledSearchText = re.compile( ourSearchText )
+        ourFindText = ourFindText[6:]
+        compiledFindText = re.compile( ourFindText )
     else:
         replaceLen = len( ourReplaceText )
         #diffLen = replaceLen - searchLen
-    #if optionsDict['ignoreDiacriticsFlag']: ourSearchText = BibleOrgSysGlobals.removeAccents( ourSearchText )
-    #if optionsDict['caselessFlag']: ourSearchText = ourSearchText.lower()
-    searchLen = len( ourSearchText )
+    #if optionsDict['ignoreDiacriticsFlag']: ourFindText = BibleOrgSysGlobals.removeAccents( ourFindText )
+    #if optionsDict['caselessFlag']: ourFindText = ourFindText.lower()
+    searchLen = len( ourFindText )
     if BibleOrgSysGlobals.debugFlag: assert searchLen
-    #print( "  Searching for {!r} in {} loaded books".format( ourSearchText, len(self) ) )
+    #print( "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
 
     if not self.preloadDone: self.preload()
 
@@ -333,7 +333,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
     if self.maximumPossibleFilenameTuples:
         for BBB,filename in self.maximumPossibleFilenameTuples:
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #print( exp("searchReplaceText: will search book {}").format( BBB ) )
+                #print( exp("findReplaceText: will search book {}").format( BBB ) )
                 bookFilepath = os.path.join( self.sourceFolder, filename )
                 with open( bookFilepath, 'rt', encoding=encoding ) as bookFile:
                     bookText = bookFile.read()
@@ -343,16 +343,16 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                 if optionsDict['regexFlag']: # ignores wordMode flag
                     ix = 0
                     while True:
-                        match = compiledSearchText.search( bookText, ix )
+                        match = compiledFindText.search( bookText, ix )
                         if not match: break # none / no more found
                         ix, ixAfter = match.span()
                         regexFoundText = bookText[ix:ixAfter]
-                        try: regexReplacementText = compiledSearchText.sub( ourReplaceText, regexFoundText, count=1 )
+                        try: regexReplacementText = compiledFindText.sub( ourReplaceText, regexFoundText, count=1 )
                         except re.error as err:
                             print( "Search/Replace regex error: {}".format( err ) )
                             resultDict['hadRegexError'] = True
                             stopFlag = True; break
-                        #print( "Found regex {!r} at {:,} in {}".format( ourSearchText, ix, BBB ) )
+                        #print( "Found regex {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
                         #print( "  Found text was {!r}, replacement will be {!r}".format( regexFoundText, regexReplacementText ) )
                         resultDict['numFinds'] += 1
                         if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
@@ -369,7 +369,7 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                             ref = BBB
                             willBeText = contextBefore + regexReplacementText + contextAfter
                             result = confirmCallback( ref, contextBefore, regexFoundText, contextAfter, willBeText, resultDict['numReplaces']>0 )
-                            #print( "searchReplaceText got", result )
+                            #print( "findReplaceText got", result )
                             assert result in 'YNASU'
                             if result == 'A': replaceAllFlag = True
                             elif result == 'S': stopFlag = True; break
@@ -386,9 +386,9 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                 else: # not regExp
                     ix = 0
                     while True:
-                        ix = bookText.find( ourSearchText, ix )
+                        ix = bookText.find( ourFindText, ix )
                         if ix == -1: break # none / no more found
-                        #print( "Found {!r} at {:,} in {}".format( ourSearchText, ix, BBB ) )
+                        #print( "Found {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
                         resultDict['numFinds'] += 1
                         if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
 
@@ -416,8 +416,8 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
                         if not replaceAllFlag:
                             ref = BBB
                             willBeText = contextBefore + ourReplaceText + contextAfter
-                            result = confirmCallback( ref, contextBefore, ourSearchText, contextAfter, willBeText, resultDict['numReplaces']>0 )
-                            #print( "searchReplaceText got", result )
+                            result = confirmCallback( ref, contextBefore, ourFindText, contextAfter, willBeText, resultDict['numReplaces']>0 )
+                            #print( "findReplaceText got", result )
                             assert result in 'YNASU'
                             if result == 'A': replaceAllFlag = True
                             elif result == 'S': stopFlag = True; break
@@ -465,9 +465,9 @@ def searchReplaceText( self, optionsDict, confirmCallback ):
             bookFile.write( fileText )
         self.bookNeedsReloading[BBB] = True
 
-    #print( exp("searchReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
+    #print( exp("findReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
     return optionsDict, resultDict
-# end of searchReplaceText
+# end of findReplaceText
 
 
 

@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-18' # by RJH
+LastModifiedDate = '2017-04-11' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -104,7 +104,10 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     numFound = 0
     UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-    filenameTuples = UFns.getPossibleFilenameTuples()
+    #filenameTuples = UFns.getPossibleFilenameTuples( strictCheck=True )
+    #print( 'P', len(filenameTuples) )
+    filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
+    #print( 'C', len(filenameTuples) )
     if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
     if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
@@ -136,7 +139,8 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         # See if there's an USX Bible with standard Paratext style filenames here in this folder
         UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
-        filenameTuples = UFns.getPossibleFilenameTuples()
+        #filenameTuples = UFns.getPossibleFilenameTuples()
+        filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
@@ -418,10 +422,10 @@ def demo():
     testData = (
                 ('Test1','Tests/DataFilesForTests/USXTest1',),
                 ('Test2','Tests/DataFilesForTests/USXTest2',),
-                #("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
-                #("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
-                #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
-                #("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/NET08/",),
+                ('MatigsalugUSFM',"../../../../../Data/Work/Matigsalug/Bible/MBTV/"), # USFM not USX !
+                ("Matigsalug3", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+                ("Matigsalug4", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                ("Matigsalug5", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/",),
                 ) # You can put your USX test folder here
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -430,9 +434,9 @@ def demo():
             result1 = USXXMLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}a".format( j+1 ), result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}b".format( j+1 ), result2 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}b (autoLoad)".format( j+1 ), result2 )
             result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}c".format( j+1 ), result3 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}c (autoLoadBooks)".format( j+1 ), result3 )
 
     if 1:
         for j, (name, testFolder) in enumerate( testData ):

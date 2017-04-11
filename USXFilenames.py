@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-24' # by RJH
+LastModifiedDate = '2017-04-11' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
-ProgVersion = '0.53'
+ProgVersion = '0.54'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -218,9 +218,11 @@ class USXFilenames:
     # end of USXFilenames.getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self ):
+    def getConfirmedFilenameTuples( self, strictCheck=False ):
         """
         Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames.
+            If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
+
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
@@ -229,16 +231,27 @@ class USXFilenames:
             possibleFilepath = os.path.join( self.givenFolderName, possibleFilename )
             #print( '  Looking for: ' + possibleFilename )
             if os.access( possibleFilepath, os.R_OK ):
+                #print( "possibleFilepath", possibleFilepath )
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
+                if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                    firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
+                    #print( "firstLinesGCFT", firstLines )
+                    if not firstLines or len(firstLines)<3: continue
+                    if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+                    and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
+                        continue # so it doesn't get added
                 resultList.append( (BBB, possibleFilename,) )
         return resultList # No need to sort these, coz the above call produce sorted results
     # end of USXFilenames.getConfirmedFilenameTuples
 
 
-    def getPossibleFilenameTuples( self ):
+    def getPossibleFilenameTuples( self, strictCheck=False ):
         """
         Return a list of filenames just derived from the list of files in the folder,
                 i.e., look only externally at the filenames.
+            If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
         #print( "getPossibleFilenameTuples()" )
         resultList = []
@@ -253,6 +266,15 @@ class USXFilenames:
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                            firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
+                            #print( "firstLinesGPFT", firstLines )
+                            if not firstLines or len(firstLines)<3: continue
+                            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
+                            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                            if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
+                                continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         #print( "resultList", resultList )
