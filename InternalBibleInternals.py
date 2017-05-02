@@ -48,10 +48,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-24' # by RJH
+LastModifiedDate = '2017-05-01' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.66'
+ProgVersion = '0.67'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -910,16 +910,18 @@ class InternalBibleIndex:
         # Now calculate the context and create the proper InternalBibleIndexEntries
         context = []
         for (C,V), (indexStart,count) in self.__indexData.items():
-            #print( self.BBB, C, V, indexStart, count, context )
+            #print( "makeIndex for {} {} {}:{} {} {} {}".format( self.name, self.BBB, C, V, indexStart, count, context ) )
             # Replace the existing (temporary) index entry to include a copy of the previous context
             self.__indexData[(C,V)] = InternalBibleIndexEntry( indexStart, count, context[:] )
             for j in range( indexStart, indexStart+count ):
                 entry = self.givenBibleEntries[j]
                 marker = entry.getMarker()
-                #print( "  Marker:", marker, entry.getCleanText() )
+                #print( "  makeIndex Marker:", marker, entry.getCleanText() )
                 if marker[0]=='¬' and marker != '¬v':
                     originalMarker = marker[1:]
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                        # Should be exactly one of these markers (open) in the context
+                        # XXXXXXXXX Gets messed up by GNT Mrk 16:9 has two \s headings in a row !!!!!!!!!!!!!!!!!!!
                         assert context.count(originalMarker ) == 1
                     try: # Remove first open occurence of the marker just closed (e.g., s1 can occur after c and still be open)
                         context.remove( originalMarker )
@@ -1035,7 +1037,7 @@ class InternalBibleIndex:
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp#':
                         #print( nextMarker )
-                        if self.BBB!='ESG': assert nextMarker == 'v'
+                        if self.BBB!='ESG': assert nextMarker in ('v','p',)
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )

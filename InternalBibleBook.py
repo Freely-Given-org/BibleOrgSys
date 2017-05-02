@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-07' # by RJH
+LastModifiedDate = '2017-05-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.95'
@@ -674,7 +674,7 @@ class InternalBibleBook:
             if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
                 #print( "InternalBibleBook.processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
-                if BibleOrgSysGlobals.debugFlag: assert originalMarker == 'v~' # Shouldn't occur in other fields
+                if BibleOrgSysGlobals.debugFlag: assert originalMarker in ('v~','p~',) # Shouldn't occur in other fields
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
@@ -1097,7 +1097,7 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
             elif marker == 'vp#':
-                if BibleOrgSysGlobals.debugFlag and self.BBB!='ESG': assert nextMarker == 'v' # after vp#
+                if BibleOrgSysGlobals.debugFlag and self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
             elif marker == 'v':

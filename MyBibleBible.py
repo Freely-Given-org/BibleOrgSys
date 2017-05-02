@@ -5,7 +5,7 @@
 #
 # Module handling "MyBible" Bible module files
 #
-# Copyright (C) 2016 Robert Hunt
+# Copyright (C) 2016-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.15'
@@ -1086,7 +1086,9 @@ def createMyBibleModule( self, outputFolder, controlDict ):
         Writes a book to the MyBible sqlObject file.
         """
         #nonlocal lineCount
+        print( "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
         #print( bkData._processedLines )
+
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
         #nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )

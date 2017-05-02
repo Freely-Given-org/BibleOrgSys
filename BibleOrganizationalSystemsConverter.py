@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2017-04-28' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
 ProgVersion = "0.25"
@@ -63,22 +63,22 @@ class BibleOrganizationalSystemsConverter:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        self._filenameBase = "BibleOrganizationalSystems"
+        self._filenameBase = 'BibleOrganizationalSystems'
 
         # These fields are used for parsing the XML
-        self._treeTag = "BibleOrganizationalSystems"
-        self._headerTag = "header"
-        self._mainElementTag = "BibleOrganizationalSystem"
+        self._treeTag = 'BibleOrganizationalSystems'
+        self._headerTag = 'header'
+        self._mainElementTag = 'BibleOrganizationalSystem'
 
         # These fields are used for automatically checking/validating the XML
-        self._compulsoryAttributes = ( "type", )
+        self._compulsoryAttributes = ( 'type', )
         self._optionalAttributes = ()
         self._uniqueAttributes = ()
-        self._compulsoryElements = ( "referenceAbbreviation", "languageCode", )
-        self._optionalElements = ( "name", "completionDate", "publicationDate", "copyright", "versificationSystem", "punctuationSystem", "bookOrderSystem", "booksNamesSystem",
-                                    "translator", "publisher", "derivedFrom", "usesText", "includesBooks", "url", "comment", )
+        self._compulsoryElements = ( 'referenceAbbreviation', 'languageCode', )
+        self._optionalElements = ( 'name', 'completionDate', 'publicationDate', 'copyright', 'versificationSystem', 'punctuationSystem', 'bookOrderSystem', 'booksNamesSystem',
+                                    'translator', 'publisher', 'derivedFrom', 'usesText', 'includesBooks', 'url', 'comment', )
         self._uniqueElements = ()
-        self._allowedMultiple = ( "name", "translator", "derivedFrom", "usesText", "url", "comment", )
+        self._allowedMultiple = ( 'name', 'translator', 'derivedFrom', 'usesText', 'url', 'comment', )
 
         # These are fields that we will fill later
         self.title, self.version, self.date = None, None, None
@@ -240,8 +240,8 @@ class BibleOrganizationalSystemsConverter:
                         uniqueDict["Element_"+elementName].append( text )
 
                 # Special checks of particular fields
-                if element.find("includesBooks") is not None:
-                    bookList = element.find("includesBooks").text.split()
+                if element.find('includesBooks') is not None:
+                    bookList = element.find('includesBooks').text.split()
                     for BBB in bookList:
                         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.critical( _("Unrecognized {!r} Bible book code found in 'includesBooks' in record with ID {!r} (record {})").format( BBB, ID, j) )

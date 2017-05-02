@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -46,6 +46,8 @@ BibleOrganizationalSystem class:
     getFirstBookCode( self )
     getPreviousBookCode( self, BBB )
     getNextBookCode( self, BBB )
+    getAlternativeBBBIfNecessary( self, BBB )
+    getNumVersesList( self, BBB, allowAlternatives=False )
     isValidBCVRef( self, referenceTuple, referenceString, extended=False )
     __makeAbsoluteVerseList( self )
     getAbsoluteVerseNumber( self, BBB, C, V )
@@ -54,10 +56,10 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-04' # by RJH
+LastModifiedDate = '2017-04-30' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -331,10 +333,10 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             BiblePunctuationSystem.__init__( self, punctuationSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown':
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "Uses {!r} books name system".format( booksNamesSystemName ) )
-            BibleBooksNamesSystem.__init__( self, booksNamesSystemName, getOrganizationalSystemValue( "includesBooks" ) ) # Does one extra step To create the input abbreviations
+            BibleBooksNamesSystem.__init__( self, booksNamesSystemName, getOrganizationalSystemValue( 'includesBooks' ) ) # Does one extra step To create the input abbreviations
 
         # Do some cross-checking
-        myBooks = getOrganizationalSystemValue( "includesBooks" )
+        myBooks = getOrganizationalSystemValue( 'includesBooks' )
         if myBooks is not None:
             for BBB in myBooks:
                 if not BibleBookOrderSystem.containsBook( self, BBB ):
@@ -421,14 +423,16 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns the list of book reference codes (BBB) for books in this system.
         Returns an empty list if there's no known books.
         """
-        result = self.getOrganizationalSystemValue( "includesBooks" )
+        result = self.getOrganizationalSystemValue( 'includesBooks' )
         if result is None: return []
         else: return result
     # end of BibleOrganizationalSystem.getBookList
 
 
     def containsBook( self, BBB ):
-        """ Returns True or False if this book is in this system. """
+        """
+        Returns True or False if this book is in this system.
+        """
         assert BBB and isinstance( BBB, str ) and len(BBB)==3
         return BBB in self.getBookList()
     # end of BibleOrganizationalSystem.containsBook
@@ -441,7 +445,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         if 1: return BibleBookOrderSystem.getBookAtOrderPosition( self, 1 )
         else: # I think this is wrong! Should use BookOrderSystem -- see next function
-            bookList = self.getOrganizationalSystemValue( "includesBooks" )
+            bookList = self.getOrganizationalSystemValue( 'includesBooks' )
             if bookList is None: return None
             return bookList[0]
     # end of BibleOrganizationalSystem.getFirstBookCode
@@ -467,6 +471,43 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if self.containsBook( nextCode ): return nextCode
             BBB = nextCode
     # end of BibleOrganizationalSystem.getNextBookCode
+
+
+    def getAlternativeBBBIfNecessary( self, BBB ):
+        """
+        If BBB is not in this BOS, try to return an alternative that is.
+
+        If none, return None.
+        """
+        if self.containsBook( BBB ): return BBB
+        # else
+        # temp .... needs a try/except
+        return BibleOrgSysGlobals.BibleBooksCodes.getPossibleAlternativeBooksCodes( BBB )[0]
+    # end of BibleOrganizationalSystem.getAlternativeBBBIfNecessary
+
+
+    def getNumVersesList( self, BBB, allowAlternatives=False ):
+        """
+        Returns a list containing an integer for each chapter indicating the number of verses.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("getNumVersesList( {} )").format( BBB ) )
+            assert len(BBB) == 3
+
+        if not allowAlternatives: return BibleVersificationSystem.getNumVersesList( self, BBB )
+
+        # Well, we are allowed alternatives, but try the given BBB first anyway
+        bookVersesList = None
+        try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, BBB )
+        except KeyError: # BBB doesn't exist in this BOS -- try an alternative
+            # Next line will raise an error if no alternatives (coz returns None)
+            for altBBB in BibleOrgSysGlobals.BibleBooksCodes.getPossibleAlternativeBooksCodes( BBB ):
+                try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, altBBB ); break
+                except KeyError: continue # BBB doesn't exist in this BOS -- try an alternative
+            if bookVersesList is not None:
+                print( "Changed {} to {} in {!r} versification scheme".format( BBB, altBBB, BibleVersificationSystem.getVersificationSystemName( self ) ) )
+        return bookVersesList
+    # end of BibleOrganizationalSystem.getNumVersesList
 
 
     def isValidBCVRef( self, referenceTuple, referenceString, extended=False ):

@@ -27,9 +27,9 @@ and then these optional fields (optional because not all systems handle the less
     The three-character USFM abbreviation (no spaces but may begin with a digit)
         Also used for Paratext Bible editor and Digital Bible Library (DBL) bundles
     The two-digit USFM ID number
-        UBS Paratext uses both the number and the abbreviation above (and USFM format)
+        UBS/SIL Paratext uses both the number and the abbreviation above (and USFM format)
     The three-digit USX ID number
-        UBS Paratext can export to USX files
+        UBS/SIL Paratext can export to USX files
     The 1-2 digit Bibledit ID number
     The three-character NET Bible abbreviation
     The three-character DrupalBible abbreviation

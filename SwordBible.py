@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,14 +30,11 @@ Files are usually:
     ot.vss
     nt
     nt.vss
-
-Some of this code (esp. filtering) should probably be moved into
-    the SwordResources module.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2017-04-30' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.32'
@@ -292,7 +289,8 @@ class SwordBible( Bible ):
                 elif len(foundConfs) > 1:
                     logging.critical( "Too many .conf files found in {}".format( confFolder ) )
                 else:
-                    print( "SwordBible.__init__ got", foundConfs[0] )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        print( "SwordBible.__init__ got", foundConfs[0] )
                     self.moduleName = foundConfs[0]
         self.abbreviation = self.moduleName # First attempt
 
@@ -345,7 +343,7 @@ class SwordBible( Bible ):
         Load the compressed data file and import book elements.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordBible.load()") )
+            print( exp("SwordBible.loadBooks()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( _("\nLoading {} module…").format( self.moduleName ) )
@@ -532,7 +530,7 @@ def demo():
     testFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
 
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Sword TestA1", result1 )
         result2 = SwordBibleFileCheck( testFolder, autoLoad=True )
@@ -555,7 +553,7 @@ def demo():
                 for entryKey in SwBible.books[BBB]._CVIndex:
                     print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 1: # specified installed modules
+    if 0: # specified installed modules
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB','ESV','ISV','NET','OEB',
                 'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
                 'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',

@@ -5,7 +5,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,7 +64,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2017-04-28' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.57'
@@ -602,14 +602,19 @@ class BibleVersificationSystem:
 
 
     def __len__( self ):
-        """ Returns the number of books defined in this versification system.
-            NOTE: This value is not useful for finding the number of books in a particular Bible. """
+        """
+        Returns the number of books defined in this versification system.
+
+        NOTE: This value is not useful for finding the number of books in a particular Bible.
+        """
         return len( self.__chapterDataDict  )
     # end of BibleVersificationSystem.__len__
 
 
     def __contains__( self, BBB ):
-        """ Returns True/False if the book is in this system. """
+        """
+        Returns True/False if the book is in this system.
+        """
         return BBB in self.__chapterDataDict
     # end of BibleVersificationSystem.__contains__
 
@@ -625,7 +630,9 @@ class BibleVersificationSystem:
 
 
     def getVersificationSystemName( self ):
-        """ Return the book order system name. """
+        """
+        Return the versification system name.
+        """
         return self._systemName
     # end of BibleVersificationSystem.getVersificationSystemName
 
@@ -641,6 +648,19 @@ class BibleVersificationSystem:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else return None
     # end of BibleVersificationSystem.getNumChapters
+
+
+    def isSingleChapterBook( self, BBB ):
+        """
+        Returns True/False to indicate if this book only contains a single chapter.
+        Returns None if we don't have any chapter information for this book.
+        """
+        assert len(BBB) == 3
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if BBB in self.__chapterDataDict:
+            return self.__chapterDataDict[BBB]['numChapters'] == '1'
+        # else return None
+    # end of BibleVersificationSystem.isSingleChapterBook
 
 
     def getNumVerses( self, BBB, C ):
@@ -662,21 +682,10 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVerses
 
 
-    def isSingleChapterBook( self, BBB ):
-        """
-        Returns True/False to indicate if this book only contains a single chapter.
-        Returns None if we don't have any chapter information for this book.
-        """
-        assert len(BBB) == 3
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
-        if BBB in self.__chapterDataDict:
-            return self.__chapterDataDict[BBB]['numChapters'] == '1'
-        # else return None
-    # end of BibleVersificationSystem.isSingleChapterBook
-
-
     def getNumVersesList( self, BBB ):
-        """ Returns a list containing an integer for each chapter indicating the number of verses. """
+        """
+        Returns a list containing an integer for each chapter indicating the number of verses.
+        """
         assert len(BBB) == 3
         myList = []
         for x in self.__chapterDataDict[BBB].keys():

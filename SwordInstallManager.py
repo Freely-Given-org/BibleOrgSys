@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-01' # by RJH
+LastModifiedDate = '2017-04-30' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.08'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -97,7 +97,8 @@ def exp( messageString ):
 
 
 
-IMPORTANT_SWORD_CONF_FIELD_NAMES = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version', 'History', 'Description',
+IMPORTANT_SWORD_CONF_FIELD_NAMES = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version',
+            'History', 'Description',
             'TextSource', 'Source', 'LCSH', 'ShortPromo', 'Promo', 'Obsoletes', 'GlossaryFrom', 'GlossaryTo',
             'DistributionSource', 'DistributionNotes', 'DistributionLicense',
             'Category', 'Feature', 'Versification', 'Scope', 'About',
@@ -114,7 +115,17 @@ TECHNICAL_SWORD_CONF_FIELD_NAMES = ( 'ModDrv', 'DataPath', 'Encoding', 'SourceTy
             'DisplayLevel', 'LangSortOrder', 'LangSortSkipChars', 'StrongsPadding',
             'CipherKey', 'InstallSize', 'BlockCount', 'OSISqToTick', 'MinimumBlockNumber', 'MaximumBlockNumber', )
 ALL_SWORD_CONF_FIELD_NAMES = IMPORTANT_SWORD_CONF_FIELD_NAMES + TECHNICAL_SWORD_CONF_FIELD_NAMES
-SPECIAL_SWORD_CONF_FIELD_NAMES = ('History','Description','About','Copyright','DistributionNotes',) # Ones that have an underline and then a subfield
+
+# Ones that have an underline and then a subfield
+SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING = ('History', 'Description', 'About', 'Copyright', 'DistributionNotes',)
+
+# These are the only ones where we expect multiple values (and some of these are probably module bugs)
+SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES = ('Feature', 'GlobalOptionFilter', 'DistributionLicense', 'LCSH',
+                                             'TextSource', 'DictionaryModule', 'Obsoletes', )
+    # LCSH in sentiment.conf
+    # DictionaryModule in ruscars.conf (rubbish) and tkl.conf (seems genuine)
+    # TextSource in spavnt.conf
+    # Obsoletes in tr.conf
 
 
 
@@ -155,29 +166,53 @@ def processConfLines( abbreviation, openFile, confDict ):
                 if '=' not in thisLine:
                     logging.error( "Missing = in {} conf file line (line will be ignored): {!r}".format( abbreviation, thisLine ) )
                     continue
-                if 'History=1.4-081031=' in thisLine: thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
+                if 'History=1.4-081031=' in thisLine and not BibleOrgSysGlobals.strictCheckingFlag:
+                    thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
                 bits = thisLine.split( '=', 1 )
-                #print( bits )
+                #print( "processConfLines", abbreviation, bits )
                 assert len(bits) == 2
-                for fieldName in SPECIAL_SWORD_CONF_FIELD_NAMES:
-                    if bits[0].startswith(fieldName+'_'): # Just extract the various versions and put into a tuple
-                        bits = [fieldName, (bits[0][len(fieldName)+1:],bits[1]) ]
-                if bits[0]=='MinumumVersion': bits[0] = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
-                if bits[0]=='CompressType' and bits[1]=='Zip': bits[1] = 'ZIP' # Fix error in romcor.conf
-                if bits[0] in confDict: # already
-                    if bits[1]==confDict[bits[0]]:
-                        logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( abbreviation, bits[0], bits[1] ) )
+                fieldName, fieldContents = bits
+                for specialFieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING:
+                    if fieldName.startswith(specialFieldName+'_'): # Just extract the various versions and put into a tuple
+                        fieldName, fieldContents = specialFieldName, (fieldName[len(specialFieldName)+1:],fieldContents)
+                    elif fieldName.startswith(specialFieldName) and len(fieldName) > len(specialFieldName) \
+                    and fieldName[len(specialFieldName)].isdigit() and '.' in fieldName[len(specialFieldName):] \
+                    and not BibleOrgSysGlobals.strictCheckingFlag: # Could this be like History.1.0 in kapingamarangi
+                        logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
+                                        .format( abbreviation, fieldName, fieldContents ) )
+                        fieldName, fieldContents = specialFieldName, (fieldName[len(specialFieldName):],fieldContents)
+                        #print( repr(fieldName), repr(fieldContents) )
+                if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING and fieldContents and isinstance( fieldContents, str ) \
+                and fieldContents[0].isdigit() and fieldContents[1] in '1234567890.' and fieldContents[2] in '1234567890.' \
+                and '.' in fieldContents[0:3] and ' ' in fieldContents[2:5] \
+                and not BibleOrgSysGlobals.strictCheckingFlag: # Could this be one also like in pohnold???
+                    logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
+                                    .format( abbreviation, fieldName, fieldContents ) )
+                    fieldContents = tuple( fieldContents.split( None, 1 ) )
+                    #print( "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
+                    assert len(fieldContents) == 2
+                    #print( j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
+                if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                    assert '_' not in fieldName # now
+                if fieldName=='MinumumVersion': fieldName = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
+                if fieldName=='CompressType' and fieldContents=='Zip': fieldContents = 'ZIP' # Fix error in romcor.conf
+                if fieldName in confDict and abbreviation!='ruscars': # ruscars has very untidy conf file
+                    if fieldContents==confDict[fieldName]: # already
+                        logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( abbreviation, fieldName, fieldContents ) )
                     else: # We have multiple different entries for this field name
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( exp("processConfLines found inconsistency"), abbreviation, bits[0], bits[1] )
-                            assert bits[0] in SPECIAL_SWORD_CONF_FIELD_NAMES or bits[0] in ('GlobalOptionFilter','DictionaryModule','DistributionLicense','Feature','LCSH','Obsoletes','TextSource',) # These are the only ones where we expect multiple values (and some of these are probably module bugs)
-                        if bits[0] in SPECIAL_SWORD_CONF_FIELD_NAMES: # Try to handle these duplicate entries -- we're expecting 2-tuples later
-                            try: confDict[bits[0]].append( ('???',bits[1]) ) #; print( bits[0], 'lots' )
-                            except AttributeError: confDict[bits[0]] = [('???',confDict[bits[0]]), ('???',bits[1]) ] #; print( bits[0], 'made list' )
-                        else:
-                            try: confDict[bits[0]].append( bits[1] ) #; print( bits[0], 'lots' )
-                            except AttributeError: confDict[bits[0]] = [confDict[bits[0]], bits[1] ] #; print( bits[0], 'made list' )
-                else: confDict[bits[0]] = bits[1] # Most fields only occur once
+                            print( exp("processConfLines found inconsistency"), abbreviation, fieldName, repr(fieldContents) )
+                            print( "  existing entry is", repr(confDict[fieldName]) )
+                            assert fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING or fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES
+                        #if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING: # Try to handle these duplicate entries
+                            #try: confDict[fieldName].append( ('???',fieldContents) ) #; print( fieldName, 'lots' )
+                            #except AttributeError: confDict[fieldName] = [('???',confDict[fieldName]), ('???',fieldContents) ] #; print( fieldName, 'made list' )
+                        #else:
+                        try: confDict[fieldName].append( fieldContents ) #; print( fieldName, 'lots' )
+                        except AttributeError: confDict[fieldName] = [confDict[fieldName], fieldContents ] #; print( fieldName, 'made list' )
+                    #print( "here", repr(fieldName), confDict[fieldName] )
+                else: confDict[fieldName] = fieldContents # Most fields only occur once
+                #print( "done", repr(fieldName), confDict[fieldName] )
         lastLine = line
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:

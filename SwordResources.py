@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-15' # by RJH
+LastModifiedDate = '2017-05-01' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -67,6 +67,7 @@ try:
     SWORD_ENCODINGS = { Sword.ENC_UNKNOWN:'Unknown', Sword.ENC_LATIN1:'Latin1',
                     Sword.ENC_UTF8:'UTF8', Sword.ENC_SCSU:'SCSU', Sword.ENC_UTF16:'UTF16',
                     Sword.ENC_RTF:'RTF', Sword.ENC_HTML:'HTML' }
+    from Bible import BibleBook
 except ImportError: # Sword library (dll and python bindings) seem to be not available
     try:
         import SwordModules # Not as good/reliable/efficient as the real Sword library, but better than nothing
@@ -166,6 +167,8 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 
         Returns the string to replace the attributes.
         """
+        originalAttributeString = attributeString
+
         attributeReplacementResult = ''
         attributeCount = attributeString.count( '="' )
         #print( 'Attributes={} {!r}'.format( attributeCount, attributeString ) )
@@ -209,8 +212,12 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
             match2 = re.search( 'type="(.+?)"', attributeString )
             if match2:
                 typeValue = match2.group(1)
-                #print( 'typeValue', repr(typeValue) ) # Seems to have an incrementing value on the end for some reason
-                assert typeValue.startswith( 'x-split' ) # e.g., x-split or x-split-1 -- what do these mean?
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    print( 'handleOSISWordAttributes CH424 {} {} {}:{} typeValue {!r} \n  from {!r}' \
+                        .format( moduleName, BBB, C, V, typeValue, originalAttributeString ) ) # Seems to have an incrementing value on the end for some reason
+                # In wlc module it's x-ketiv or x-qere
+                assert typeValue in ('x-ketiv','x-qere','x-invertednun',) \
+                or typeValue.startswith( 'x-split' ) # e.g., x-split or x-split-1 -- what do these mean?
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
             match2 = re.search( 'subType="(.+?)"', attributeString )
             if match2:
@@ -224,6 +231,12 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
                 #print( 'src', repr(src) ) # What does this mean?
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
+            match2 = re.search( 'gloss="(.+?)"', attributeString )
+            if match2:
+                gloss = match2.group(1)
+                #print( 'gloss', repr(gloss) ) # What does this mean?
+                attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
+
             match2 = re.search( 'wn="(\d+?)"', attributeString )
             if match2:
                 wn = match2.group(1)
@@ -231,8 +244,8 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
         if attributeString.strip():
-            print( 'Unhandled word attributes', repr(attributeString) )
-            if BibleOrgSysGlobals.debugFlag: halt
+            print( 'Unhandled {} word attributes: {!r} from {!r}'.format( moduleName, attributeString, originalAttributeString ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         #print( 'attributeReplacementResult', repr(attributeReplacementResult) )
         return attributeReplacementResult
     # end of handleOSISWordAttributes
@@ -282,8 +295,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<div ([^/>]*?)type="section"([^/>]*?)>', verseLine )
         if not match: break
         attributes = match.group(1) + match.group(2)
-        #print( "Div section attributes={!r}".format( attributes ) )
-        assert 'scope="' in attributes
+        #print( "filterOSISVerseLine QP472 {} {} {}:{} Div section attributes={!r} from {!r}".format( moduleName, BBB, C, V, attributes, verseLine ) )
+        if moduleName not in ('mxt_BL_1983','zpq_BL_1987',): # has both!
+            if moduleName in ('farflb','ury_WBTI_2005','vietlccmn','vietnvb',):
+                assert len(attributes) == 0 # seems to have no other attributes
+            else: assert 'scope="' in attributes
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     while True:
         match = re.search( '<div [^/>]*?type="colophon"[^/>]*?/>', verseLine )
@@ -308,9 +324,13 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
     match = re.search( '<chapter ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>', verseLine )
     if match:
         attributes, sID = match.group(1) + match.group(3), match.group(2)
-        #print( 'Chapter sID {!r} attributes={!r} @ {} {}:{}'.format( sID, attributes, BBB, C, V ) )
+        #print( 'filterOSISVerseLine CD734 {} {} {}:{} Chapter sID {!r} attributes={!r}'.format( moduleName, BBB, C, V, sID, attributes ) )
         assert C and C != '0'
-        assert V == '0'
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            if moduleName not in ('adg','agl','bela','bur','chv','cslelizabeth','ctt','frekhan','kaz','khk',
+                              'mapm','oshb','oss','porcap','ruscars','russynodal',) \
+            and BBB not in ('EZR','NEH','EST','JOB','PSA','PRO','ECC',): # not sure what this is about---------needs attention
+                assert V == '0'
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     match = re.search( '<chapter ([^/>]*?)osisID="([^/>]+?)"([^/>]*?)>', verseLine )
@@ -330,11 +350,16 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
             print( 'Div title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
-        elif sectionType == 'x-subSubSection': titleMarker = 's3'
-        elif sectionType == 'majorSection': titleMarker = 'sr'
+        elif sectionType == 'majorSection': titleMarker = 'ms'
         elif sectionType == 'book': titleMarker = 'mt1'
+        elif sectionType == 'bookGroup': titleMarker = 'ms1'
         elif sectionType == 'introduction': titleMarker = 'iot'
-        else: print( 'Matched:', repr(match.group(0)) ); halt
+        elif sectionType == 'x-majorSection1': titleMarker = 'ms1' # in vietlccmn
+        elif sectionType == 'x-majorSection2': titleMarker = 'ms2' # in vietlccmn
+        elif sectionType == 'x-subSubSection': titleMarker = 's3'
+        else:
+            print( 'filterOSISVerseLine HF253 matched:', repr(match.group(0)) ); halt
+            if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
         replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -346,7 +371,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
         elif sectionType == 'x-subSubSection': titleMarker = 's3'
-        else: print( 'Matched:', repr(match.group(0)) ); halt
+        else: print( 'filterOSISVerseLine CV745 matched:', repr(match.group(0)) ); halt
         replacement = '\\NL**\\{} '.format( titleMarker )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -356,7 +381,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         attributes, sectionType, words = match.group(1) + match.group(3), match.group(2), match.group(4)
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Section title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
         if sectionType == 'outline': titleMarker = 'iot'
-        else: print( 'Matched:', repr(match.group(0)) ); halt
+        else: print( 'filterOSISVerseLine KG535 matched:', repr(match.group(0)) ); halt
         replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -372,9 +397,18 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif divType == 'paragraph': replacement = '\\NL**\\ip ' if C=='0' else '\\NL**\\p\\NL**'
         elif divType == 'majorSection': replacement = '\\NL**\\ms\\NL**'
         elif divType == 'section': replacement = '\\NL**\\s1 '
+        elif divType == 'subSection': replacement = '\\NL**\\s2 '
+        elif divType == 'afterword': replacement = '\\NL**\\cls ' # or pmc ???
+        elif divType == 'x-subSubSection': replacement = '\\NL**\\s3 '
+        elif divType == 'x-Synodal-empty': replacement = '\\NL**\\rem DIV Synodal-empty'
         elif divType in ( 'preface', 'titlePage', 'introduction', ): replacement = '\\NL**\\ip '
         elif divType in ( 'x-license', 'x-trademark', ): replacement = '\\NL**\\rem '
-        else: print( 'Matched:', repr(match.group(0)) ); halt
+        elif divType.startswith( 'x-' ): replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
+        else:
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( 'filterOSISVerseLine CS456 matched:', repr(match.group(0)) )
+            if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
+            replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     verseLine = verseLine.replace( '</div>', '' )
@@ -486,18 +520,18 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
-        match = re.search( '<l ([^/>]*?)level="(.+?)"([^/>]*?)/>', verseLine )
+        match = re.search( '<l ([^/>]*?)level="([^/>]+?)"([^/>]*?)/>', verseLine ) # self-closing l
         if not match: break
         attributes, level = match.group(1)+match.group(3), match.group(2)
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( 'AttributesL={!r} Level={!r}'.format( attributes, level ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'filterOSISVerseLine AD354 {} {} {}:{} AttributesL={!r} Level={!r} \n  from {!r}'.format( moduleName, BBB, C, V, attributes, level, verseLine ) )
         assert level in '1234'
         if 'sID="' in attributes:
             replacement = '\\NL**\\q{} '.format( level )
         elif 'eID="' in attributes:
             replacement = '' # Remove eIDs completely
         else:
-            print( 'Level attributesLl2={!r} Level={!r}'.format( attributes, level ) )
+            print( 'filterOSISVerseLine MR562 Level attributesLl2={!r} Level={!r}'.format( attributes, level ) )
             halt
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -506,13 +540,13 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         if not match: break
         attributes = match.group(1)
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( 'Level Attributes={!r}'.format( attributes ) )
+            print( 'filterOSISVerseLine SJ430 Level Attributes={!r}'.format( attributes ) )
         if 'sID="' in attributes:
             replacement = '\\NL**\\q1 '
         elif 'eID="' in attributes:
             replacement = '\\NL**' # Remove eIDs completely
         else:
-            print( 'AttributesL2={!r} Level={!r}'.format( attributes, level ) )
+            print( 'filterOSISVerseLine BD534 AttributesL2={!r} Level={!r}'.format( attributes, level ) )
             halt
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -520,8 +554,9 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<item ([^/>]*?)type="(.+?)"([^/>]*?)>(.+?)</item>', verseLine )
         if not match: break
         attributes, itemType, item = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( 'Item={!r} Type={!r} attributes={!r}'.format( item, itemType, attributes ) )
-        assert itemType in ( 'x-indent-1', 'x-indent-2', )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'filterOSISVerseLine ND463 {} Item={!r} Type={!r} attributes={!r}'.format( moduleName, item, itemType, attributes ) )
+        assert itemType in ( 'x-indent-1', 'x-indent-2', 'x-listitem', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
         replacement = '\\NL**\\{} {}\\NL**'.format( marker+itemType[-1], item )
         #print( 'replacement', repr(replacement) )
@@ -555,7 +590,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif 'type="verseNumber"' in attributes: replacement = '\\vp {}\\NL**'.format( words)
         elif 'type="x-us-time"' in attributes: replacement = '{}'.format( words)
         elif 'type="x-transChange"' in attributes and 'subType="x-added"' in attributes: replacement = '\\add {}\\add*'.format( words)
-        else: halt
+        elif 'type="x-big"' in attributes: replacement = '\\em {}\\em*'.format( words) # not sure what this should be
+        else:
+            #print( 'filterOSISVerseLine FG353 {} {} {}:{} Matched: {!r}'.format( moduleName, BBB, C, V, match.group(0) ) )
+            if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
+            replacement = '\\it {}\\it*'.format( words) # default to italic
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #print( "verseLineC", repr(verseLine) )
@@ -603,7 +642,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif '"bold"' in attributes: marker = 'bd'
         elif '"underline"' in attributes: marker = 'em' # We don't have an underline marker
         elif '"x-superscript"' in attributes: marker = 'ord' # We don't have a superscript marker
-        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+        else:
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( 'FX353 Matched:', repr(match.group(0)) )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule: halt
+            marker = attributes
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -738,8 +781,9 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        print( "filterOSISVerseLine {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             if BBB!='PSA' or V not in ('1','5',): print( "Stopped at", moduleName, BBB, C, V ); halt
     #if V == '3': halt
 
@@ -913,8 +957,10 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        print( "filterGBFVerseLine {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "Stopped at", moduleName, BBB, C, V ); halt
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "Stopped at", moduleName, BBB, C, V ); halt
 
     return verseLine
 # end of filterGBFVerseLine
@@ -1016,33 +1062,35 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        print( "filterTHMLVerseLine: {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "Stopped at", moduleName, BBB, C, V ); halt
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "Stopped at", moduleName, BBB, C, V ); halt
 
     return verseLine
 # end of filterTHMLVerseLine
 
-def importTHMLVerseLine( thmlVerseString, thisBook, moduleName, BBB, C, V ):
+def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB, C, V ):
     """
     Given a verse entry string made up of THML segments,
         convert it into our internal format
-        and add the line(s) to thisBook.
+        and add the line(s) to thisBookObject.
 
     moduleName, BBB, C, V are just used for more helpful error/information messages.
 
     We use \\NL** as an internal code for a newline
         to show where a verse line needs to be broken into internal chunks.
 
-    Adds the line(s) to thisBook. No return value.
+    Adds the line(s) to thisBookObject. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "\nimportTHMLVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
 
-    verseLine = importTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V )
+    verseLine = filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V )
 
     # Now divide up lines and enter them
     location = '{} {} {}:{} {!r}'.format( moduleName, BBB, C, V, thmlVerseString ) if debuggingThisModule else '{} {} {}:{}'.format( moduleName, BBB, C, V )
-    thisBook.addVerseSegments( V, verseLine, location )
+    thisBookObject.addVerseSegments( V, verseLine, location )
 # end of importTHMLVerseLine
 
 
@@ -1116,7 +1164,7 @@ class SwordInterface():
                     #print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
                     #try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
                     #except UnicodeDecodeError: print( "   Description is not Unicode!" )
-                print( "moduleID", repr(moduleID) )
+                #print( "moduleID", repr(moduleID) )
                 availableModuleCodes.append( moduleID )
             return availableModuleCodes
         elif SwordType == 'OurCode':
@@ -1169,13 +1217,11 @@ class SwordInterface():
 
         if SwordType == 'CrosswireLibrary':
             #print( "gM", module.getName() )
-            result1 = self.library.getModule( moduleAbbreviation )
-            #print( 'getModule.result1', result1 )
-            if result1 is not None: return result1
-            # Try again with a capital
-            result2 = self.library.getModule( moduleAbbreviation.title() )
-            #print( 'getModule.result2', result2 )
-            return result2
+            for tryAbbreviation in ( moduleAbbreviation, moduleAbbreviation.title(),
+                                    moduleAbbreviation.upper(), moduleAbbreviation.lower() ):
+                result = self.library.getModule( tryAbbreviation )
+                #print( 'getModule.result', tryAbbreviation, result )
+                if result is not None: return result
         elif SwordType == 'OurCode':
             #lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
             #except KeyError: lmResult = self.library.loadBooks( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
@@ -1206,7 +1252,7 @@ class SwordInterface():
 
         # Create the new book
         if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
-        thisBook = BibleBook( self, BBB )
+        thisBook = BibleBook( BibleObject, BBB )
         thisBook.objectNameString = 'Sword Bible Book object'
         thisBook.objectTypeString = 'Sword Bible'
         currentC, haveText = '0', False
@@ -1214,9 +1260,9 @@ class SwordInterface():
         if SwordType=='CrosswireLibrary': # need to load the module
             markupCode = ord( module.getMarkup() )
             encoding = ord( module.getEncoding() )
-            if encoding == ENC_LATIN1: BibleObject.encoding = 'latin-1'
-            elif encoding == ENC_UTF8: BibleObject.encoding = 'utf-8'
-            elif encoding == ENC_UTF16: BibleObject.encoding = 'utf-16'
+            if encoding == Sword.ENC_LATIN1: BibleObject.encoding = 'latin-1'
+            elif encoding == Sword.ENC_UTF8: BibleObject.encoding = 'utf-8'
+            elif encoding == Sword.ENC_UTF16: BibleObject.encoding = 'utf-16'
             elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
             if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1261,7 +1307,7 @@ class SwordInterface():
                     if BibleOrgSysGlobals.debugFlag:
                         assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                     if BibleOrgSysGlobals.verbosityLevel > 3:
-                        if markupCode == FMT_OSIS:
+                        if markupCode == Sword.FMT_OSIS:
                             match = re.search( '<milestone ([^/>]*?)type="x-importer"([^/>]*?)/>', nativeVerseText )
                             if match:
                                 attributes = match.group(1) + match.group(2)
@@ -1290,9 +1336,9 @@ class SwordInterface():
 
                 if nativeVerseText:
                     haveText = True
-                    if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
-                    elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
-                    elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    if markupCode == Sword.FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    elif markupCode == Sword.FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    elif markupCode == Sword.FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
                     else:
                         print( 'markupCode', repr(markupCode) )
                         if BibleOrgSysGlobals.debugFlag: halt
@@ -1303,7 +1349,8 @@ class SwordInterface():
                 BibleObject.stashBook( thisBook )
 
 
-        elif SwordType=='OurCode': # module is already loaded above in getModule call
+        elif SwordType=='OurCode':
+            # module is already loaded above in getModule call WRONG...........
             #print( "moduleConfig =", module.SwordModuleConfiguration )
             BibleObject.books = module.books
     # end of SwordInterface.loadBook
@@ -1324,9 +1371,9 @@ class SwordInterface():
         if SwordType=='CrosswireLibrary': # need to load the module
             markupCode = ord( module.getMarkup() )
             encoding = ord( module.getEncoding() )
-            if encoding == ENC_LATIN1: BibleObject.encoding = 'latin-1'
-            elif encoding == ENC_UTF8: BibleObject.encoding = 'utf-8'
-            elif encoding == ENC_UTF16: BibleObject.encoding = 'utf-16'
+            if encoding == Sword.ENC_LATIN1: BibleObject.encoding = 'latin-1'
+            elif encoding == Sword.ENC_UTF8: BibleObject.encoding = 'utf-8'
+            elif encoding == Sword.ENC_UTF16: BibleObject.encoding = 'utf-16'
             elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
             if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1372,7 +1419,7 @@ class SwordInterface():
                     if BibleOrgSysGlobals.debugFlag:
                         assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                     if BibleOrgSysGlobals.verbosityLevel > 3:
-                        if markupCode == FMT_OSIS:
+                        if markupCode == Sword.FMT_OSIS:
                             match = re.search( '<milestone ([^/>]*?)type="x-importer"([^/>]*?)/>', nativeVerseText )
                             if match:
                                 attributes = match.group(1) + match.group(2)
@@ -1398,10 +1445,10 @@ class SwordInterface():
                 if BBB != currentBBB:
                     if currentBBB is not None and haveText: # Save the previous book
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
-                        self.stashBook( thisBook )
+                        BibleObject.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
-                    thisBook = BibleBook( self, BBB )
+                    thisBook = BibleBook( BibleObject, BBB )
                     thisBook.objectNameString = 'Sword Bible Book object'
                     thisBook.objectTypeString = 'Sword Bible'
                     currentBBB, currentC, haveText = BBB, '0', False
@@ -1414,9 +1461,9 @@ class SwordInterface():
 
                 if nativeVerseText:
                     haveText = True
-                    if markupCode == FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
-                    elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
-                    elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    if markupCode == Sword.FMT_OSIS: importOSISVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    elif markupCode == Sword.FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
+                    elif markupCode == Sword.FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, moduleAbbreviation, BBB, C, V )
                     else:
                         print( 'markupCode', repr(markupCode) )
                         if BibleOrgSysGlobals.debugFlag: halt
@@ -1427,9 +1474,11 @@ class SwordInterface():
                 BibleObject.stashBook( thisBook )
 
 
-        elif SwordType=='OurCode': # module is already loaded above in getModule call
+        elif SwordType=='OurCode':
             #print( "moduleConfig =", module.SwordModuleConfiguration )
-            BibleObject.books = module.books
+            result, module = self.library.loadModule( moduleAbbreviation )
+            #print( result, module ); halt
+            if result: BibleObject.books = module.books
     # end of SwordInterface.loadBooks
 
 
@@ -1735,6 +1784,7 @@ def demo():
 
         try: print( "\n{} {}: {}".format( mod1.getName(), "Jonny 1:1", mod1.renderText( Sword.VerseKey("Jn 1:1") ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", mod1.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", mod1.getName() )
 
         mod1.increment()
         print( "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.stripText(  ) ) )
@@ -1742,18 +1792,24 @@ def demo():
         print( "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.renderText(  ) ) )
         try: print( "\n{} {}: {}".format( mod2.getName(), vk.getText(), mod2.renderText( vk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", mod2.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", mod2.getName() )
         try: print( "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", mod3.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", mod3.getName() )
         try: print( "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", mod3.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", mod3.getName() )
 
         try: print( "\n{} {}: {}".format( abbott.getName(), vk.getText(), abbott.renderText( vk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", abbott.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", abbott.getName() )
 
         try: print( "\n{} {}: {}".format( strongsGreek.getName(), sk.getText(), strongsGreek.renderText( Sword.SWKey("G746") ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", strongsGreek.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", strongsGreek.getName() )
         try: print( "\n{} {}: {}".format( strongsHebrew.getName(), sk.getText(), strongsHebrew.renderText( sk ) ) )
         except UnicodeDecodeError: print( "Unicode decode error in", strongsHebrew.getName() )
+        except UnicodeEncodeError: print( "Unicode encode error in", strongsHebrew.getName() )
 
         if 0: # Get all vernacular booknames
             # VerseKey vk; while (!vk.Error()) { cout << vk.getBookName(); vk.setBook(vk.getBook()+1); }
