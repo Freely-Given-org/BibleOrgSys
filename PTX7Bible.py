@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 7) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -66,7 +66,9 @@ from USFMBibleBook import USFMBibleBook
 MARKER_FILENAMES = ( 'AUTOCORRECT.TXT', 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML',
                     'LEXICON.XML', 'PRINTDRAFTCONFIGBASIC.XML', 'PROJECTUSERS.XML',
                     'PROJECTUSERFIELDS.XML', 'SPELLINGSTATUS.XML', 'USFM-COLOR.STY', ) # Must all be UPPER-CASE
-MARKER_FILE_EXTENSIONS = ( '.SSF', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above list
+EXCLUDE_FILENAMES = ( 'PROJECTUSERACCESS.XML', 'SETTINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
+MARKER_FILE_EXTENSIONS = ( '.SSF', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
+EXCLUDE_FILE_EXTENSIONS = ( '.LDML', ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
 MARKER_THRESHOLD = 3 # How many of the above must be found
 
 
@@ -134,8 +136,11 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     for filename in foundFiles:
         filenameUpper = filename.upper()
         if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
+        elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
         for extension in MARKER_FILE_EXTENSIONS:
             if filenameUpper.endswith( extension ): numFilesFound += 1; break
+        for extension in EXCLUDE_FILE_EXTENSIONS:
+            if filenameUpper.endswith( extension ): numFilesFound -= 2; break
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
     #for folderName in foundFolders:
@@ -182,8 +187,11 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         for filename in foundFiles:
             filenameUpper = filename.upper()
             if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
+            elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
             for extension in MARKER_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound += 1; break
+            for extension in EXCLUDE_FILE_EXTENSIONS:
+                if filenameUpper.endswith( extension ): numFilesFound -= 2; break
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
@@ -1699,13 +1707,15 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
                             "Tests/DataFilesForTests/USFMTest2/",
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
                             "Tests/DataFilesForTests/PTX7Test/",
+                            "Tests/DataFilesForTests/PTX8Test1/",
+                            "Tests/DataFilesForTests/PTX8Test2/",
                             "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
@@ -1721,7 +1731,7 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA3", result3 )
 
     testFolder = "Tests/DataFilesForTests/PTX7Test/"
-    if 1: # specify testFolder containing a single module
+    if 0: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
         PTX_Bible = PTX7Bible( testFolder )
         PTX_Bible.load()

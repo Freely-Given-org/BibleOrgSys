@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.30'
@@ -736,7 +736,8 @@ def demo():
 
     # Now demo the class
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    'Tests/DataFilesForTests/PTX8Test/',
+                    'Tests/DataFilesForTests/PTX8Test1/',
+                    'Tests/DataFilesForTests/PTX8Test2/',
                     'Tests/DataFilesForTests/PTX7Test/',
                     'Tests/DataFilesForTests/DBLTest/',
                     '../../../../../Data/Work/Bibles/theWord modules/',

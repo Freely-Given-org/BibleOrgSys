@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 8) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.03'
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -65,8 +65,11 @@ from USFMBibleBook import USFMBibleBook
 
 # NOTE: All currently disabled by adding .XXX after filenames
 MARKER_FILENAMES = ( 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML', 'LICENSE.JSON',
-                    'PROJECTPROGRESS.CSV', 'PROJECTPROGRESS.XML', 'SETTINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
-MARKER_FILE_EXTENSIONS = ( '.LDML', ) # Must all be UPPER-CASE plus shouldn't be included in the above list
+                    'PROJECTPROGRESS.CSV', 'PROJECTPROGRESS.XML', 'PROJECTUSERACCESS.XML',
+                    'SETTINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
+EXCLUDE_FILENAMES = ( 'PROJECTUSERS.XML', 'PROJECTUSERFIELDS.XML', ) # Must all be UPPER-CASE
+MARKER_FILE_EXTENSIONS = ( '.LDML', '.VRS', ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
+EXCLUDE_FILE_EXTENSIONS = ( '.SSF', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
 MARKER_THRESHOLD = 6 # How many of the above must be found
 
 
@@ -134,8 +137,11 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     for filename in foundFiles:
         filenameUpper = filename.upper()
         if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
+        elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
         for extension in MARKER_FILE_EXTENSIONS:
             if filenameUpper.endswith( extension ): numFilesFound += 1; break
+        for extension in EXCLUDE_FILE_EXTENSIONS:
+            if filenameUpper.endswith( extension ): numFilesFound -= 2; break
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
     #for folderName in foundFolders:
@@ -182,8 +188,11 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         for filename in foundFiles:
             filenameUpper = filename.upper()
             if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
+            elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
             for extension in MARKER_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound += 1; break
+            for extension in EXCLUDE_FILE_EXTENSIONS:
+                if filenameUpper.endswith( extension ): numFilesFound -= 2; break
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
@@ -1686,7 +1695,9 @@ def demo():
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
-                            "Tests/DataFilesForTests/PTX8Test/",
+                            "Tests/DataFilesForTests/PTX7Test/",
+                            "Tests/DataFilesForTests/PTX8Test1/",
+                            "Tests/DataFilesForTests/PTX8Test2/",
                             "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                             "OutputFiles/BOS_USFM_Export/",
                             "OutputFiles/BOS_USFM_Reexport/",
@@ -1701,8 +1712,8 @@ def demo():
             result3 = PTX8BibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
-    testFolder = "Tests/DataFilesForTests/PTX8Test/"
-    if 1: # specify testFolder containing a single module
+    testFolder = "Tests/DataFilesForTests/PTX8Test1/"
+    if 0: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
         PTX_Bible = PTX8Bible( testFolder )
         PTX_Bible.load()
@@ -1752,7 +1763,8 @@ def demo():
                 PTX8Bible( testFolder, someFolder )
     if 0:
         testFolders = (
-                    "Tests/DataFilesForTests/PTX8Test/",
+                    "Tests/DataFilesForTests/PTX8Test1/",
+                    "Tests/DataFilesForTests/PTX8Test2/",
                     ) # You can put your PTX8 test folder here
 
         for testFolder in testFolders:
