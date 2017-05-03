@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-01' # by RJH
+LastModifiedDate = '2017-05-04' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1019,12 +1019,12 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
         replacement = '\\s {}'.format( match.group(1) )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
-    #while True:
-        #match = re.search( '<scripRef>(.+?)</scripRef>', verseLine )
-        #if not match: break
-        #replacement = '\\x {}\\x*'.format( match.group(1) )
-        ##print( 'replacement', repr(replacement) )
-        #verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<p>(.+?)</p>', verseLine )
+        if not match: break
+        replacement = '\\p {}\\NL**'.format( match.group(1) )
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<scripRef([^/>]+?)>(.+?)</scripRef>', verseLine )
         if not match: break
@@ -1036,6 +1036,15 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
         version = matchb.group(1) if matchb else ''
         #print( 'match1   passage={!r}   version={!r}'.format( passage, version ) )
         replacement = '\\x - \\xo {} \\xt {} {} \\x*'.format( contents, version, passage )
+        #print( 'replacement', repr(replacement) )
+        verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    while True:
+        match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
+        if not match: break
+        attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        replacement = linkContents
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
@@ -1053,8 +1062,10 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
     # Now scan for fixed open and close fields
     replacementList = ( ('<font color="#ff0000">','\\wj ', '</font>','\\wj*'),
                         ( '<small>', '\\sc ', '</small>', '\\sc*' ),
+                        ( '<sc>', '\\sc ', '</sc>', '\\sc*' ),
                         ( '<note>', '\\f ', '</note>', '\\f*' ),
                         ( '<scripRef>', '\\x ', '</scripRef>', '\\x*' ),
+                        ( '<b>', '\\bd ', '</b>', '\\bd*' ),
                         ( '<i>', '\\it ', '</i>', '\\it*' ),
                         ( '<sup>', '\\ord ', '</sup>', '\\ord*' ), # Ord is the best we have for superscript
                         )

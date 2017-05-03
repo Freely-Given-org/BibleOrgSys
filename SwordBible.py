@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-30' # by RJH
+LastModifiedDate = '2017-05-04' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -56,15 +56,15 @@ from SwordResources import SwordType, SwordInterface
 
  # Must be lowercase
 compulsoryTopFolders = ( 'mods.d', 'modules', ) # Both should be there -- the first one contains the .conf file(s)
-compulsoryBottomFolders = ( 'rawtext', 'ztext', ) # Either one
+#compulsoryBottomFolders = ( 'rawtext', 'ztext', ) # Either one
 compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'nt.bzs','nt.bzv','nt.bzz', ) # At least two
 
 
 # Sword enums
 #DIRECTION_LTR = 0; DIRECTION_RTL = 1; DIRECTION_BIDI = 2
-FMT_UNKNOWN = 0; FMT_PLAIN = 1; FMT_THML = 2; FMT_GBF = 3; FMT_HTML = 4; FMT_HTMLHREF = 5; FMT_RTF = 6; FMT_OSIS = 7; FMT_WEBIF = 8; FMT_TEI = 9; FMT_XHTML = 10
-FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML', 11:'LaTeX' }
-ENC_UNKNOWN = 0; ENC_LATIN1 = 1; ENC_UTF8 = 2; ENC_UTF16 = 3; ENC_RTF = 4; ENC_HTML = 5
+#FMT_UNKNOWN = 0; FMT_PLAIN = 1; FMT_THML = 2; FMT_GBF = 3; FMT_HTML = 4; FMT_HTMLHREF = 5; FMT_RTF = 6; FMT_OSIS = 7; FMT_WEBIF = 8; FMT_TEI = 9; FMT_XHTML = 10
+#FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML', 11:'LaTeX' }
+#ENC_UNKNOWN = 0; ENC_LATIN1 = 1; ENC_UTF8 = 2; ENC_UTF16 = 3; ENC_RTF = 4; ENC_HTML = 5
 
 
 
@@ -133,13 +133,13 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 else:
                     logging.warning( _("SwordBibleFileCheck: Didn't expect this file in conf folder: {}").format( something ) )
         if not foundConfFiles: return 0
-        #print( foundConfFiles )
+        #print( "confirmThisFolder:foundConfFiles", foundConfFiles )
 
         # See if there's folders for the Sword module files matching the .conf files
         compressedFolder = os.path.join( checkFolderPath, 'modules/', 'texts/', 'ztext/' )
         foundTextFolders = []
-        for folderType in ( 'rawtext', 'ztext' ):
-            mainTextFolder = os.path.join( checkFolderPath, 'modules/', 'texts/', folderType+'/' )
+        for folderType,subfolderType in ( ('texts','rawtext'), ('texts','ztext'), ('comments','zcom'), ('comments','rawcom'), ('comments','rawcom4'), ):
+            mainTextFolder = os.path.join( checkFolderPath, 'modules/', folderType+'/', subfolderType+'/' )
             if os.access( mainTextFolder, os.R_OK ): # The subfolder is readable
                 for something in os.listdir( mainTextFolder ):
                     somepath = os.path.join( mainTextFolder, something )
@@ -156,10 +156,14 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                                     if something2 != 'lucene':
                                         logging.warning( _("SwordBibleFileCheck1: Didn't expect a subfolder in {} text folder: {}").format( something, something2 ) )
                                 elif os.path.isfile( somepath2 ):
-                                    if folderType == 'rawtext' and something2 in ( 'ot','ot.vss', 'nt','nt.vss' ):
+                                    if subfolderType == 'rawtext' and something2 in ( 'ot','ot.vss', 'nt','nt.vss' ):
                                         foundTextFiles.append( something2 )
-                                    elif folderType == 'ztext' and something2 in ( 'ot.bzs','ot.bzv','ot.bzz', 'nt.bzs','nt.bzv','nt.bzz' ):
+                                    elif subfolderType == 'ztext' and something2 in ( 'ot.bzs','ot.bzv','ot.bzz', 'nt.bzs','nt.bzv','nt.bzz' ):
                                         foundTextFiles.append( something2 )
+                                    elif subfolderType == 'zcom' and something2 in ( 'ot.czs','ot.czv','ot.czz', 'nt.czs','nt.czv','nt.czz' ):
+                                        foundTextFiles.append( something2 )
+                                    elif subfolderType in ('rawcom','rawcom4',):
+                                        logging.critical( "Program not finished yet (confirmThisFolder)" )
                                     else:
                                         if something2 not in ( 'errata', 'appendix', ):
                                             logging.warning( _("SwordBibleFileCheck1: Didn't expect this file in {} text folder: {}").format( something, something2 ) )
@@ -173,7 +177,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         if not foundTextFolders:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual module folders or files found" )
             return None
-        #print( foundTextFolders )
+        #print( "confirmThisFolder: foundTextFolders", foundTextFolders )
         return foundTextFolders
     # end of confirmThisFolder
 
@@ -528,7 +532,7 @@ def demo():
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
     testFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
-
+    testFolder = '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/English.2017-05-04_04.47_0.26446200_1493830030/YourSourceFiles/Unzipped'
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
