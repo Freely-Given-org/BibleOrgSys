@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-04' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -346,12 +346,12 @@ def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
 
 
 
-def loadPTXLanguages( BibleObject ):
+def loadPTX7Languages( BibleObject ):
     """
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("loadPTXLanguagess()") )
+        print( exp("loadPTX7Languagess()") )
 
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
@@ -378,7 +378,7 @@ def loadPTXLanguages( BibleObject ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "loadPTXLanguages: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
+                    logging.info( "loadPTX7Languages: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -387,7 +387,7 @@ def loadPTXLanguages( BibleObject ):
                 #print( "line", repr(line) )
 
                 if len(line)<5:
-                    print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    if debuggingThisModule: print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
                     continue
 
                 if line[0]=='[' and line[-1]==']': # it's a new section name
@@ -403,7 +403,7 @@ def loadPTXLanguages( BibleObject ):
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} languages.".format( len(PTXLanguages) ) )
     #print( 'PTXLanguages', PTXLanguages )
     return PTXLanguages
-# end of PTX7Bible.loadPTXLanguages
+# end of PTX7Bible.loadPTX7Languages
 
 
 
@@ -635,7 +635,7 @@ class PTX7Bible( Bible ):
             self.loadPTXStyles() # from text files (if they exist)
             result = loadPTXVersifications( self ) # from text file (if it exists)
             if result: self.suppliedMetadata['PTX']['Versifications'] = result
-            result = loadPTXLanguages( self ) # from INI file (if it exists)
+            result = loadPTX7Languages( self ) # from INI file (if it exists)
             if result: self.suppliedMetadata['PTX']['Languages'] = result
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
@@ -664,9 +664,9 @@ class PTX7Bible( Bible ):
                 if result: self.suppliedMetadata['PTX']['Versifications'] = result
             except Exception as err: logging.error( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
-                result = loadPTXLanguages( self ) # from INI file (if it exists)
+                result = loadPTX7Languages( self ) # from INI file (if it exists)
                 if result: self.suppliedMetadata['PTX']['Languages'] = result
-            except Exception as err: logging.error( 'loadPTXLanguages failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTX7Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
     # end of PTX7Bible.preload
@@ -684,7 +684,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.tree = ElementTree().parse( bookNamesFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         booksNamesDict = OrderedDict()
         #loadErrors = []
@@ -740,7 +740,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.tree = ElementTree().parse( projectUsersFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         projectUsersDict = OrderedDict()
         #loadErrors = []
@@ -810,7 +810,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
         self.tree = ElementTree().parse( lexiconFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
         #loadErrors = []
@@ -944,7 +944,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.tree = ElementTree().parse( spellingStatusFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         spellingStatusDict = OrderedDict()
         #loadErrors = []
@@ -1032,7 +1032,7 @@ class PTX7Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading comments from {}…".format( commentFilepath ) )
 
             self.tree = ElementTree().parse( commentFilepath )
-            assert len ( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.tree ) # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.tree.tag=='CommentList':
@@ -1132,7 +1132,7 @@ class PTX7Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
 
             self.tree = ElementTree().parse( BiblicalTermsFilepath )
-            assert len ( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.tree ) # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.tree.tag=='TermRenderingsList':
@@ -1243,7 +1243,7 @@ class PTX7Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading Progress from {}…".format( progressFilepath ) )
 
             self.tree = ElementTree().parse( progressFilepath )
-            assert len ( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.tree ) # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.tree.tag=='ProjectProgress':
@@ -1429,7 +1429,7 @@ class PTX7Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.tree = ElementTree().parse( printConfigFilepath )
-            assert len ( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.tree ) # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.tree.tag=='PrintDraftConfiguration':
@@ -1731,13 +1731,13 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX7 TestA3", result3 )
 
     testFolder = "Tests/DataFilesForTests/PTX7Test/"
-    if 0: # specify testFolder containing a single module
+    if 1: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
         PTX_Bible = PTX7Bible( testFolder )
         PTX_Bible.load()
         if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
 
-    if 0: # specified single installed module
+    if 1: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 C/ Trying installed {} module".format( singleModule ) )
         PTX_Bible = PTX7Bible( testFolder, singleModule )
@@ -1749,7 +1749,7 @@ def demo():
                 for entryKey in PTX_Bible.books[BBB]._CVIndex:
                     print( BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 0: # specified installed modules
+    if 1: # specified installed modules
         good = ( '',)
         nonEnglish = ( '', )
         bad = ( )
@@ -1761,7 +1761,7 @@ def demo():
             PTX_Bible.load()
 
 
-    if 0: # all discovered modules in the test folder
+    if 1: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -1779,7 +1779,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 PTX7Bible( testFolder, someFolder )
-    if 0:
+    if 1:
         testFolders = (
                     "Tests/DataFilesForTests/PTX7Test/",
                     ) # You can put your PTX7 test folder here
@@ -1799,7 +1799,7 @@ def demo():
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 0:
+    if 1:
         testFolders = (
                     "Tests/DataFilesForTests/theWordRoundtripTestFiles/acfPTX 2013-02-03",
                     "Tests/DataFilesForTests/theWordRoundtripTestFiles/aucPTX 2013-02-26",
