@@ -1022,7 +1022,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
     while True:
         match = re.search( '<p>(.+?)</p>', verseLine )
         if not match: break
-        replacement = '\\p {}\\NL**'.format( match.group(1) )
+        replacement = '\\p {}'.format( match.group(1) )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:

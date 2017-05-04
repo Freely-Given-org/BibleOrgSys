@@ -6,7 +6,7 @@
 # Module handling Digital Bible Library (DBL) compilations of USX XML Bible books
 #                                               along with XML and other metadata
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-17' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.18'
@@ -52,7 +52,7 @@ from xml.etree.ElementTree import ElementTree
 import BibleOrgSysGlobals
 from Bible import Bible
 from USXXMLBibleBook import USXXMLBibleBook
-from PTX7Bible import loadPTXLanguages, loadPTXVersifications
+from PTX7Bible import loadPTX7Languages, loadPTXVersifications
 
 
 
@@ -245,7 +245,7 @@ class DBLBible( Bible ):
         self.loadDBLStyles()
         result = loadPTXVersifications( self )
         if result: self.suppliedMetadata['DBL']['Versifications'] = result
-        result = loadPTXLanguages( self )
+        result = loadPTX7Languages( self )
         if result: self.suppliedMetadata['DBL']['Languages'] = result
         #print( 'DBLLicense', len(DBLLicense), DBLLicense )
         #print( 'DBLMetadata', len(self.suppliedMetadata), self.suppliedMetadata )
@@ -267,7 +267,7 @@ class DBLBible( Bible ):
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading license data from {}…".format( licenseFilepath ) )
         self.tree = ElementTree().parse( licenseFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         DBLLicense = OrderedDict()
         #loadErrors = []
@@ -327,7 +327,7 @@ class DBLBible( Bible ):
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
         self.tree = ElementTree().parse( mdFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         def getContents( element, location ):
             """
@@ -694,7 +694,7 @@ class DBLBible( Bible ):
         styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading styles from {}…".format( styleFilepath ) )
         self.tree = ElementTree().parse( styleFilepath )
-        assert len ( self.tree ) # Fail here if we didn't load anything at all
+        assert len( self.tree ) # Fail here if we didn't load anything at all
 
         def getStyle( element, location ):
             """

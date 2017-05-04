@@ -5,7 +5,7 @@
 #
 # Module handling OpenSong XML Bibles
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.37'
@@ -224,7 +224,7 @@ class OpenSongXMLBible( Bible ):
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == OpenSongXMLBible.treeTag:

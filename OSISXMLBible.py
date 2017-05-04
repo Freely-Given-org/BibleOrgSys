@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-01' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.55'
@@ -326,7 +326,7 @@ class OSISXMLBible( Bible ):
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
             loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
         if self.tree.tag == OSISXMLBible.treeTag:

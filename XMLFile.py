@@ -5,7 +5,7 @@
 #
 # Module handling simple XML files
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "XMLFile"
 ProgName = "XML file handler"
 ProgVersion = "0.04"
@@ -116,7 +116,7 @@ class XMLFile():
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         try:
             self.tree = ElementTree().parse( self.sourceFilepath )
-            assert len ( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.tree ) # Fail here if we didn't load anything at all
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:

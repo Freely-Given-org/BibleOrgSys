@@ -5,7 +5,7 @@
 #
 # Module handling Haggai XML Bibles
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.33'
@@ -253,7 +253,7 @@ class HaggaiXMLBible( Bible ):
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
             #loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
             #self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( self.givenName, err ) )
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == HaggaiXMLBible.treeTag:

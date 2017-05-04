@@ -5,7 +5,7 @@
 #
 # Module handling the Greek lexicon
 #
-# Copyright (C) 2014-2016 Robert Hunt
+# Copyright (C) 2014-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.17'
@@ -138,7 +138,7 @@ class GreekStrongsFileConverter:
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
             raise ParseError
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         if self.tree.tag == GreekStrongsFileConverter.treeTag:
             for segment in self.tree:
@@ -325,7 +325,7 @@ class GreekStrongsFileConverter:
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len ( self.tree )
+            assert len( self.tree )
             assert self.StrongsEntries
         return self.StrongsEntries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of GreekStrongsFileConverter.importDataToPython

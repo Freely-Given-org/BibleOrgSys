@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-05' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.19'
@@ -311,7 +311,7 @@ class USXXMLBibleBook( BibleBook ):
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main container
         if 'tree' in dir(self) \

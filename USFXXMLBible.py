@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-01' # by RJH
+LastModifiedDate = '2017-05-02' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.28'
@@ -281,7 +281,7 @@ class USFXXMLBible( Bible ):
             errorString = sys.exc_info()[1]
             logging.critical( "USFXXMLBible.load: failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert len ( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
         prefix = self.tree.tag[:-4] if self.tree.tag[0]=='{' and self.tree.tag[-5]=='}' else ''
