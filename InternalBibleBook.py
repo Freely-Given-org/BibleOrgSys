@@ -50,10 +50,10 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-01' # by RJH
+LastModifiedDate = '2017-05-08' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.95'
+ProgVersion = '0.96'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -545,22 +545,58 @@ class InternalBibleBook:
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
         dummyValue = 99999
         ixFN = adjText.find( '\\f ' )
-        if ixFN == -1: ixFN = adjText.find( '\\F ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixFN == -1:
+                ixFN = adjText.find( '\\F ' )
+                if ixFN != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE footnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
         if ixFN == -1: ixFN = dummyValue
         ixEN = adjText.find( '\\fe ' )
-        if ixEN == -1: ixEN = adjText.find( '\\FE ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixEN == -1:
+                ixEN = adjText.find( '\\FE ' )
+                if ixEN != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE endnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
         if ixEN == -1: ixEN = dummyValue
         ixXR = adjText.find( '\\x ' )
-        if ixXR == -1: ixXR = adjText.find( '\\X ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixXR == -1:
+                ixXR = adjText.find( '\\X ' )
+                if ixXR != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE cross-reference marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
         if ixXR == -1: ixXR = dummyValue
         ixFIG = adjText.find( '\\fig ' )
-        if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixFIG == -1:
+                ixFIG = adjText.find( '\\FIG ' )
+                if ixFIG != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE figure marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
         if ixFIG == -1: ixFIG = dummyValue
         ixSTR = adjText.find( '\\str ' )
-        if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixSTR == -1:
+                ixSTR = adjText.find( '\\STR ' )
+                if ixSTR != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE Strongs marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
         if ixSTR == -1: ixSTR = dummyValue
         ixSEM = adjText.find( '\\sem ' )
-        if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
+        if not BibleOrgSysGlobals.strictCheckingFlag:
+            if ixSEM == -1:
+                ixSEM = adjText.find( '\\SEM ' )
+                if ixSEM != -1:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
         if ixSEM == -1: ixSEM = dummyValue
         ixVP = adjText.find( '\\vp ' )
         if ixVP == -1: ixVP = adjText.find( '\\VP ' )
@@ -623,7 +659,7 @@ class InternalBibleBook:
                 ix2 = 99999 # Go to the end
             elif ix2 < ix1: # closing marker is before opening marker
                 fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, thisOne, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
                 ix1, ix2 = ix2, ix1 # swap them then
             # Remove the footnote or endnote or xref or figure
@@ -649,12 +685,50 @@ class InternalBibleBook:
                     note = note.rstrip()
                     #print( "QQQ3: rstrip in note" )
                 if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found illegal nested footnote or cross-reference in {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found illegal nested footnote or cross-reference in {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 85, C, V, _("{} seems to have illegal nested footnote or cross-reference").format( thisOne.title() ) )
                     if debuggingThisModule:
                         print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
                         print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                     note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix …
-            adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
+                if len(note)<6:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems too short in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: {} seems to short after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 43, C, V, _("{} seems too short").format( thisOne.title() ) )
+
+            # Now fix some common errors
+            if thisOne in ('footnote','endnote','cross-reference'):
+                if note.startswith( '\\' ):
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} without any caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} without any caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 86, C, V, _("{} should have a caller").format( thisOne.title() ) )
+                    note = '+ ' + note
+                if len(note)>2 and note[0] in '+-' and note[1] == '\\':
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} specified with no space after caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} specified with no space after caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 76, C, V, _("{} should have space after caller").format( thisOne.title() ) )
+                    note = note[0] + ' ' + note[1:] # Add in the space
+                if note.startswith( '- ' ):
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} specified with no caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} specified with no caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 8, C, V, _("{} should not have specified no caller").format( thisOne.title() ) )
+                    note = '+ ' + note[2:] # Replace - (no caller) with + (automatic caller)
+                try: caller,rest = note.split( None, 1 ) # Split off the caller and get the rest
+                except ValueError: # presumably no spaces in note
+                    rest = ''
+                #print( "\ncaller {!r}, rest {!r}".format( caller, rest ) )
+                if not rest.startswith( '\\' ):
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 84, C, V, _("{} should have a internal fields marked").format( thisOne.title() ) )
+                    # Add the expected fields (could be the wrong ones, but saves lots of problems later, especially if exporting)
+                    if thisOne == 'cross-reference': add = 'xt'
+                    else: add = 'ft'
+                    note = '{} \\{} {}'.format( caller, add, rest ) # Add in a default field
+
             # Now prepare a cleaned version
+            adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
             cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
             for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                 cleanedNote = cleanedNote.replace( sign, '' )
@@ -669,6 +743,7 @@ class InternalBibleBook:
                 logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
                 self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
                 cleanedNote = cleanedNote.replace( '\\', '' )
+            #print( "Note: {!r} Cleaned note: {!r}".format( note, cleanedNote ) )
 
             # Save it all and finish off
             if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
