@@ -716,12 +716,12 @@ class InternalBibleBook:
                     note = '+ ' + note[2:] # Replace - (no caller) with + (automatic caller)
                 try: caller,rest = note.split( None, 1 ) # Split off the caller and get the rest
                 except ValueError: # presumably no spaces in note
-                    rest = ''
+                    caller, rest = note.strip(), ''
                 #print( "\ncaller {!r}, rest {!r}".format( caller, rest ) )
                 if not rest.startswith( '\\' ):
                     fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 84, C, V, _("{} should have a internal fields marked").format( thisOne.title() ) )
+                    self.addPriorityError( 84, C, V, _("{} should have an internal field marked").format( thisOne.title() ) )
                     # Add the expected fields (could be the wrong ones, but saves lots of problems later, especially if exporting)
                     if thisOne == 'cross-reference': add = 'xt'
                     else: add = 'ft'
