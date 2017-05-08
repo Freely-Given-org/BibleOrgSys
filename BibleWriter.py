@@ -5387,7 +5387,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 if not ZefFootnote: ZefFootnote = '<NOTE '
                                 #print( repr(osisRef), repr(token[3:]) )
-                                ZefFootnote += 'ref={}>'.format( osisRef.replace('.',',') )
+                                ZefFootnote += 'ref="{}">'.format( osisRef.replace('.',',') )
 # Temp disabled
 #                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
 #                                    logging.error( _("toZefania: Footnote at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
