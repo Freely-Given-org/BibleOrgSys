@@ -48,10 +48,10 @@ Module for defining and manipulating internal Bible objects including:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-01' # by RJH
+LastModifiedDate = '2017-05-11' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.67'
+ProgVersion = '0.68'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -157,12 +157,14 @@ class InternalBibleExtra:
     This class represents an entry in the _processedLines list.
     """
 
-    def __init__( self, myType, index, noteText, cleanNoteText ):
+    def __init__( self, myType, index, noteText, cleanNoteText, location ):
         """
         Accept the parameters and double-check them if requested.
+
+        location parameter is just for better error messages and is not currently stored.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
+            #print( "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, index, noteText, cleanNoteText, location ) )
             assert myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES # Mustn't be blank
             assert '\\' not in myType and ' ' not in myType and '*' not in myType
             assert isinstance( index, int ) and index >= 0

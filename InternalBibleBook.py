@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-08' # by RJH
+LastModifiedDate = '2017-05-11' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -469,6 +469,8 @@ class InternalBibleBook:
                 print( "InternalBibleBook.processLineFix( {}:{}, {}, {!r} ) for {} ({})".format( C,V, originalMarker, text, self.BBB, self.objectTypeString ) )
             assert originalMarker and isinstance( originalMarker, str )
             assert isinstance( text, str )
+        lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+        lineLocationSpace = lineLocation + ' '
         adjText = text
         cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
         if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
@@ -476,7 +478,7 @@ class InternalBibleBook:
         # Remove trailing spaces
         if adjText and adjText[-1].isspace():
             #print( 10, self.BBB, C, V, _("Trailing space at end of line") )
-            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
+            fixErrors.append( lineLocationSpace + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
             if rtsCount != -1:
                 rtsCount += 1
                 if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
@@ -495,11 +497,11 @@ class InternalBibleBook:
                 if '<' in adjText or '>' in adjText:
                     if not self.givenAngleBracketWarning: # Just give the warning once (per book)
                         if self.replaceAngleBracketsFlag:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
+                            fixErrors.append( lineLocationSpace + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
                             logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
                             self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
                         else:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
+                            fixErrors.append( lineLocationSpace + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
                             logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
                             self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
                         self.givenAngleBracketWarning = True
@@ -508,11 +510,11 @@ class InternalBibleBook:
                 if '"' in adjText:
                     if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
                         if self.replaceStraightDoubleQuotesFlag:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
+                            fixErrors.append( lineLocationSpace + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
                             logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                             self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
                         else: # we're not attempting to replace them
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
+                            fixErrors.append( lineLocationSpace + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
                             logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                             self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
                         self.givenDoubleQuoteWarning = True
@@ -549,7 +551,7 @@ class InternalBibleBook:
             if ixFN == -1:
                 ixFN = adjText.find( '\\F ' )
                 if ixFN != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE footnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
         if ixFN == -1: ixFN = dummyValue
@@ -558,7 +560,7 @@ class InternalBibleBook:
             if ixEN == -1:
                 ixEN = adjText.find( '\\FE ' )
                 if ixEN != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE endnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
         if ixEN == -1: ixEN = dummyValue
@@ -567,7 +569,7 @@ class InternalBibleBook:
             if ixXR == -1:
                 ixXR = adjText.find( '\\X ' )
                 if ixXR != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE cross-reference marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
         if ixXR == -1: ixXR = dummyValue
@@ -576,7 +578,7 @@ class InternalBibleBook:
             if ixFIG == -1:
                 ixFIG = adjText.find( '\\FIG ' )
                 if ixFIG != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE figure marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
         if ixFIG == -1: ixFIG = dummyValue
@@ -585,7 +587,7 @@ class InternalBibleBook:
             if ixSTR == -1:
                 ixSTR = adjText.find( '\\STR ' )
                 if ixSTR != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE Strongs marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
         if ixSTR == -1: ixSTR = dummyValue
@@ -594,7 +596,7 @@ class InternalBibleBook:
             if ixSEM == -1:
                 ixSEM = adjText.find( '\\SEM ' )
                 if ixSEM != -1:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
         if ixSEM == -1: ixSEM = dummyValue
@@ -610,7 +612,7 @@ class InternalBibleBook:
                 #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
                 if ixFN and adjText[ixFN-1]==' ':
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 52, C, V, _("Footnote is preceded by a space") )
             elif ix1 == ixEN:
@@ -619,7 +621,7 @@ class InternalBibleBook:
                 #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
                 if ixEN and adjText[ixEN-1]==' ':
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 52, C, V, _("Endnote is preceded by a space") )
             elif ix1 == ixXR:
@@ -644,7 +646,7 @@ class InternalBibleBook:
                 noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found unexpected 'vp' field after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
                 ix2 = adjText.find( '\\vp*' )
@@ -653,12 +655,12 @@ class InternalBibleBook:
                 noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
             elif BibleOrgSysGlobals.debugFlag: halt # programming error
             if ix2 == -1: # no closing marker
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                fixErrors.append( lineLocationSpace + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
                 ix2 = 99999 # Go to the end
             elif ix2 < ix1: # closing marker is before opening marker
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                fixErrors.append( lineLocationSpace + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
                 ix1, ix2 = ix2, ix1 # swap them then
@@ -668,24 +670,24 @@ class InternalBibleBook:
             note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
             #print( "\nNote is", repr(note) )
             if not note:
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                fixErrors.append( lineLocationSpace + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                 self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
             else: # there is a note
                 if note[0].isspace():
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
                     note = note.lstrip()
                     #print( "QQQ2: lstrip in note" ); halt
                 if note and note[-1].isspace():
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 11, C, V, _("{} ends with space").format( thisOne.title() ) )
                     note = note.rstrip()
                     #print( "QQQ3: rstrip in note" )
                 if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found illegal nested footnote or cross-reference in {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found illegal nested footnote or cross-reference in {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found illegal nested footnote or cross-reference in {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 85, C, V, _("{} seems to have illegal nested footnote or cross-reference").format( thisOne.title() ) )
                     if debuggingThisModule:
@@ -693,24 +695,24 @@ class InternalBibleBook:
                         print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                     note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix …
                 if len(note)<6:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems too short in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("{} seems too short in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.warning( _("processLineFix: {} seems to short after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 43, C, V, _("{} seems too short").format( thisOne.title() ) )
 
             # Now fix some common errors
             if thisOne in ('footnote','endnote','cross-reference'):
                 if note.startswith( '\\' ):
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} without any caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} without any caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found {} without any caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 86, C, V, _("{} should have a caller").format( thisOne.title() ) )
                     note = '+ ' + note
                 if len(note)>2 and note[0] in '+-' and note[1] == '\\':
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} specified with no space after caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} specified with no space after caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found {} specified with no space after caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 76, C, V, _("{} should have space after caller").format( thisOne.title() ) )
                     note = note[0] + ' ' + note[1:] # Add in the space
                 if note.startswith( '- ' ):
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} specified with no caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} specified with no caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found {} specified with no caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 8, C, V, _("{} should not have specified no caller").format( thisOne.title() ) )
                     note = '+ ' + note[2:] # Replace - (no caller) with + (automatic caller)
@@ -719,7 +721,7 @@ class InternalBibleBook:
                     caller, rest = note.strip(), ''
                 #print( "\ncaller {!r}, rest {!r}".format( caller, rest ) )
                 if not rest.startswith( '\\' ):
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    fixErrors.append( lineLocationSpace + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 84, C, V, _("{} should have an internal field marked").format( thisOne.title() ) )
                     # Add the expected fields (could be the wrong ones, but saves lots of problems later, especially if exporting)
@@ -739,14 +741,14 @@ class InternalBibleBook:
                                 + BibleOrgSysGlobals.internal_SFMs_to_remove:
                 cleanedNote = cleanedNote.replace( marker, '' )
             if '\\' in cleanedNote:
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
+                fixErrors.append( lineLocationSpace + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
                 logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
                 self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
                 cleanedNote = cleanedNote.replace( '\\', '' )
             #print( "Note: {!r} Cleaned note: {!r}".format( note, cleanedNote ) )
 
             # Save it all and finish off
-            if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+            if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote,lineLocation) ) # Saves 4 bits: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
                 #print( "InternalBibleBook.processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
                 if BibleOrgSysGlobals.debugFlag: assert originalMarker in ('v~','p~',) # Shouldn't occur in other fields
@@ -781,7 +783,7 @@ class InternalBibleBook:
 
         # Check for anything left over
         if '\\f ' in adjText or '\\f*' in adjText or '\\x ' in adjText or '\\x*' in adjText:
-            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
+            fixErrors.append( lineLocationSpace + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
             logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
             self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
 
@@ -937,7 +939,7 @@ class InternalBibleBook:
         # Check trailing spaces again now
         if adjText and adjText[-1].isspace():
             #print( 10, self.BBB, C, V, _("Trailing space before note at end of line") )
-            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space before note in \\{}: {!r}").format( originalMarker, text ) )
+            fixErrors.append( lineLocationSpace + _("Removed trailing space before note in \\{}: {!r}").format( originalMarker, text ) )
             logging.warning( _("processLineFix: Removed trailing space before note after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, text ) )
             self.addPriorityError( 10, C, V, _("Trailing space before note at end of line") )
             adjText = adjText.rstrip()
@@ -1426,7 +1428,7 @@ class InternalBibleBook:
             #print( "marker {!r} text {!r}, adjText {!r}".format( adjMarker, text, adjText ) )
             if not adjText and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
-                #fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} should always have text").format( originalMarker ) )
+                #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
                 if self.objectTypeString in ('USFM','USX',):
                     if sahtCount != -1:
                         sahtCount += 1
@@ -1619,14 +1621,14 @@ class InternalBibleBook:
                 ix = min( ixSP, ixBS ) # Break at the first space or backslash
                 if ix<ixSP: # It must have been the backslash first
                     #print( "processLine had an unusual case in {} {}:{}: {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unusual field (after verse number): {!r}").format( originalText ) )
+                    fixErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Unusual field (after verse number): {!r}").format( originalText ) )
                     logging.error( "InternalBibleBook.processLine: " + _("Unexpected backslash touching verse number (missing space?) after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                     self.addPriorityError( 94, C, V, _("Unexpected backslash touching verse number (missing space?) in {!r}").format( originalText ) )
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: {!r} {!r} {} {} {}".format( self.BBB, C, V, originalMarker, originalText, ix, ixSP, ixBS ) )
                     # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                     # (and especially coz we don't know yet if this is a finished translation)
-                    #fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Nothing after verse number: {!r}").format( originalText ) )
+                    #fixErrors.append( lineLocationSpace + _("Nothing after verse number: {!r}").format( originalText ) )
                     #priority = 92
                     if self.objectTypeString in ('USFM','USX',):
                         #if nfvnCount == -1:
@@ -1688,6 +1690,9 @@ class InternalBibleBook:
                     #print( 'Gs', goodStart, repr(verseNumberRest[1:] if goodStart else strippedVerseText) )
                     adjustedMarker, text = 'v~', verseNumberRest[1:] if goodStart else strippedVerseText
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             #if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
             if self.objectTypeString == 'USFM':
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
@@ -1695,7 +1700,7 @@ class InternalBibleBook:
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} shouldn't appear within line in \\{}: {!r}").format( insideMarker, originalMarker, text ) )
+                            fixErrors.append( lineLocationSpace + _("Marker {!r} shouldn't appear within line in \\{}: {!r}").format( insideMarker, originalMarker, text ) )
                             logging.error( "InternalBibleBook.processLine: " + _("Marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, originalMarker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, C, V, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
@@ -1900,14 +1905,14 @@ class InternalBibleBook:
             if marker == 'c':
                 if text: C = text.split()[0]
                 else:
-                    validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing chapter number").format( self.BBB, C, V ) )
+                    validationErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Missing chapter number").format( self.BBB, C, V ) )
                     logging.error( _("Missing chapter number after") + " {} {}:{}".format( self.BBB, C, V ) )
                     if C == '0': C = '1' # Makes it more robust since we had a chapter marker at least
                 V = '0'
             elif marker == 'v':
                 if text: V = text.split()[0]
                 else:
-                    validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing verse number").format( self.BBB, C, V ) )
+                    validationErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Missing verse number").format( self.BBB, C, V ) )
                     logging.error( _("Missing verse number after") + " {} {}:{}".format( self.BBB, C, V ) )
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
 
@@ -1916,32 +1921,35 @@ class InternalBibleBook:
             if marker == 'v~': marker = 'v'
             if marker == 'p~': marker = 'v'
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             # Do a rough check of the SFMs
             if marker=='id' and j!=0:
-                validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
+                validationErrors.append( lineLocationSpace + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
             or ( marker[0]!='¬' and marker not in ('c#','vp#',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
-                validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
+                validationErrors.append( lineLocationSpace + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )
             if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( marker ):
-                validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Deprecated {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
+                validationErrors.append( lineLocationSpace + _("Deprecated {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Deprecated {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 90, C, V, _("Newline marker {!r} is deprecated in USFM standard").format( marker ) )
             markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:{!r}".format(marker,text)); print( markerList )
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                 if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( insideMarker ):
-                    validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Deprecated {!r} internal marker in Bible book (Text is {!r})").format( insideMarker, text ) )
+                    validationErrors.append( lineLocationSpace + _("Deprecated {!r} internal marker in Bible book (Text is {!r})").format( insideMarker, text ) )
                     logging.warning( _("Deprecated {!r} internal marker in Bible book after {} {}:{} (Text is {!r})").format( insideMarker, self.BBB, C, V, text ) )
                     self.addPriorityError( 89, C, V, _("Internal marker {!r} is deprecated in USFM standard").format( insideMarker ) )
             ix = 0
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check newline markers
                 if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker):
-                    validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} must not appear within line in {}: {}").format( insideMarker, marker, text ) )
+                    validationErrors.append( lineLocationSpace + _("Marker {!r} must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker {!r} must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.BBB, C, V, marker, text ) )
                     self.addPriorityError( 90, C, V, _("Newline marker {!r} should be at start of line").format( insideMarker ) )
 
@@ -2759,9 +2767,9 @@ class InternalBibleBook:
                             #sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( emptyFieldPriority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if emptyFieldPriority >= HIGH_EMPTY_FIELD_PRIORITY:
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} has no content").format( marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} has no content").format( marker ) )
                 else:
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} should always have text").format( originalMarker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
                 if logger is not None:
                     logger( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
 
@@ -2798,25 +2806,25 @@ class InternalBibleBook:
 
                 if section=='' and newSection!='Header':
                     if discoveryDict and 'haveMainHeadings' in discoveryDict and discoveryDict['haveMainHeadings']:
-                        newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                        newlineMarkerErrors.append( lineLocationSpace + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
                 elif section!='' and newSection=='Header':
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
 
                 if section=='Header' and newSection!='Introduction':
                     if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
-                        newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Introduction section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
-                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                        newlineMarkerErrors.append( lineLocationSpace + _("Missing Introduction section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
+                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( lineLocationSpace + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
                 if section=='Introduction' and newSection!='Numbering':
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Numbering section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Missing Numbering section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
                 if section=='Numbering' and newSection not in ('Text','Canonical Text','Text, Poetry',):
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Text section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Missing Text section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
                 if section=='Text' and newSection not in ('Canonical Text','Text, Poetry',):
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
                 #elif section!='Text' and newSection=='Text, Poetry':
-                    #newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    #newlineMarkerErrors.append( lineLocationSpace + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
 
                 if newSection=='Text' and section not in ('Introduction','Numbering','Canonical Text','Text, Poetry',):
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("DDidn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("DDidn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
                 #print( "section", newSection )
                 section = newSection
 
@@ -2830,7 +2838,7 @@ class InternalBibleBook:
 
             # Check for known bad combinations
             if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
-                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after {!r} section heading").format( marker ) )
+                newlineMarkerErrors.append( lineLocationSpace + _("'nb' not allowed immediately after {!r} section heading").format( marker ) )
             if self.checkUSFMSequencesFlag: # Check for known good combinations
                 commonGoodNewlineMarkerCombinations = (
                     # If a marker has nothing after it, it must contain data
@@ -2872,35 +2880,35 @@ class InternalBibleBook:
                 if lastMarkerEmpty and markerEmpty:
                     if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
                         if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty {!r} not commonly used following empty {!r} marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty {!r} not commonly used following empty {!r} marker").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("(Warning only) Empty {!r} not commonly used following empty {!r} marker").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("(Warning only) Empty {!r} not commonly used following empty {!r} marker").format( marker, lastMarker ) )
                         else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty {!r} not normally used following empty {!r} marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty {!r} not normally used following empty {!r} marker").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("Empty {!r} not normally used following empty {!r} marker").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("Empty {!r} not normally used following empty {!r} marker").format( marker, lastMarker ) )
                 elif lastMarkerEmpty and not markerEmpty and marker!='rem':
                     if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
                         if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) {!r} with text not commonly used following empty {!r} marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) {!r} with text not commonly used following empty {!r} marker").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("(Warning only) {!r} with text not commonly used following empty {!r} marker").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("(Warning only) {!r} with text not commonly used following empty {!r} marker").format( marker, lastMarker ) )
                         else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{!r} with text not normally used following empty {!r} marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("{!r} with text not normally used following empty {!r} marker").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("{!r} with text not normally used following empty {!r} marker").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("{!r} with text not normally used following empty {!r} marker").format( marker, lastMarker ) )
                 elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
                     if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
                         if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty {!r} not commonly used following {!r} with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty {!r} not commonly used following {!r} with text").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("(Warning only) Empty {!r} not commonly used following {!r} with text").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("(Warning only) Empty {!r} not commonly used following {!r} with text").format( marker, lastMarker ) )
                         else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty {!r} not normally used following {!r} with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty {!r} not normally used following {!r} with text").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("Empty {!r} not normally used following {!r} with text").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("Empty {!r} not normally used following {!r} with text").format( marker, lastMarker ) )
                 elif lastMarker!='rem' and marker!='rem': # both not empty
                     if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
                         if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) {!r} with text not commonly used following {!r} with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) {!r} with text not commonly used following {!r} with text").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("(Warning only) {!r} with text not commonly used following {!r} with text").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("(Warning only) {!r} with text not commonly used following {!r} with text").format( marker, lastMarker ) )
                         else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
+                            newlineMarkerErrors.append( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
+                            #print( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
 
             markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
             if text:
@@ -2928,19 +2936,19 @@ class InternalBibleBook:
                         if internalMarker and internalMarker[-1] == '*':
                             closedMarkerText = internalMarker[:-1]
                             shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
-                            if shouldBeClosed == 'N': internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {} cannot be closed").format( closedMarkerText ) )
+                            if shouldBeClosed == 'N': internalMarkerErrors.append( lineLocationSpace + _("Marker {} cannot be closed").format( closedMarkerText ) )
                             elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
-                            elif closedMarkerText in hierarchy: internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Internal markers appear to overlap: {}").format( internalTextMarkers ) )
-                            else: internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected internal closing marker: {} in {}").format( internalMarker, internalTextMarkers ) )
+                            elif closedMarkerText in hierarchy: internalMarkerErrors.append( lineLocationSpace + _("Internal markers appear to overlap: {}").format( internalTextMarkers ) )
+                            else: internalMarkerErrors.append( lineLocationSpace + _("Unexpected internal closing marker: {} in {}").format( internalMarker, internalTextMarkers ) )
                         else: # it's not a closing marker
                             shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( internalMarker )
                             if shouldBeClosed == 'N': continue # N for never
                             else: hierarchy.append( internalMarker ) # but what if it's optional ????????????????????????????????
                     if hierarchy: # it should be empty
-                        internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("These markers {} appear not to be closed in {}").format( hierarchy, internalTextMarkers ) )
+                        internalMarkerErrors.append( lineLocationSpace + _("These markers {} appear not to be closed in {}").format( hierarchy, internalTextMarkers ) )
 
                 if markerShouldHaveContent == 'N': # Never
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} should not have content: {!r}").format( marker, text ) )
+                    newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} should not have content: {!r}").format( marker, text ) )
                     logging.warning( _("Marker {!r} should not have content after {} {}:{} with: {!r}").format( marker, self.BBB, C, V, text ) )
                     self.addPriorityError( 83, C, V, _("Marker {} shouldn't have content").format( marker ) )
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
@@ -2948,21 +2956,21 @@ class InternalBibleBook:
                 openList = []
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                     if not BibleOrgSysGlobals.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
-                        internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
+                        internalMarkerErrors.append( lineLocationSpace + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
                         logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.BBB, C, V, marker, text ) )
                         self.addPriorityError( 66, C, V, _("Non-internal {} marker").format( insideMarker, ) )
                     else:
                         if not openList: # no open markers
                             if nextSignificantChar in ('',' '): openList.append( insideMarker ) # Got a new marker
                             else:
-                                internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {}{} marker in {}: {}").format( insideMarker, nextSignificantChar, marker, text ) )
+                                internalMarkerErrors.append( lineLocationSpace + _("Unexpected {}{} marker in {}: {}").format( insideMarker, nextSignificantChar, marker, text ) )
                                 logging.warning( _("Unexpected {}{} marker after {} {}:{} in {}: {}").format( insideMarker, nextSignificantChar, self.BBB, C, V, marker, text ) )
                                 self.addPriorityError( 66, C, V, _("Unexpected {}{} marker").format( insideMarker, nextSignificantChar ) )
                         else: # have at least one open marker
                             if nextSignificantChar=='*':
                                 if insideMarker==openList[-1]: openList.pop() # We got the correct closing marker
                                 else:
-                                    internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Wrong {}* closing marker for {} in {}: {}").format( insideMarker, openList[-1], marker, text ) )
+                                    internalMarkerErrors.append( lineLocationSpace + _("Wrong {}* closing marker for {} in {}: {}").format( insideMarker, openList[-1], marker, text ) )
                                     logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.BBB, C, V, marker, text ) )
                                     self.addPriorityError( 66, C, V, _("Wrong {}* closing marker for {}").format( insideMarker, openList[-1] ) )
                             else: # it's not an asterisk so appears to be another marker
@@ -2972,19 +2980,19 @@ class InternalBibleBook:
                     closedFlag = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( openList[0] )
                     if closedFlag != 'A': # always
                         if closedFlag == 'S': # sometimes
-                            internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
+                            internalMarkerErrors.append( lineLocationSpace + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
                             logging.info( _("Marker(s) {} don't appear to be (optionally) closed after {} {}:{} in {}: {}").format( openList, self.BBB, C, V, marker, text ) )
                             self.addPriorityError( 26, C, V, _("Marker(s) {} isn't closed").format( openList ) )
                         openList.pop() # This marker can (always or sometimes) be closed by the end of line
                 if openList:
-                    internalMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker(s) {} don't appear to be closed in {}: {}").format( openList, marker, text ) )
+                    internalMarkerErrors.append( lineLocationSpace + _("Marker(s) {} don't appear to be closed in {}: {}").format( openList, marker, text ) )
                     logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.BBB, C, V, marker, text ) )
                     self.addPriorityError( 36, C, V, _("Marker(s) {} should be closed").format( openList ) )
                     if len(openList) == 1: text += '\\' + openList[-1] + '*' # Try closing the last one for them
             # The following is handled above
             #else: # There's no text
                 #if markerShouldHaveContent == 'A': # Always
-                    #newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {!r} has no content").format( marker ) )
+                    #newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} has no content").format( marker ) )
                     #logging.warning( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
@@ -3004,16 +3012,16 @@ class InternalBibleBook:
                         assert extraType in BOS_EXTRA_TYPES
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
-                        newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Programming error with extras: {}").format( extraText ) )
+                        newlineMarkerErrors.append( lineLocationSpace + _("Programming error with extras: {}").format( extraText ) )
                         logging.warning( _("Programming error with {} notes after").format( extraText ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 99, C, V, _("Extras {} have a programming error").format( extraText ) )
                         continue # we have a programming error -- just skip this one
                     thisExtraMarkers = []
                     if '\\\\' in extraText:
-                        noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("doubled backslash characters in  {}: {}").format( extraType, extraText ) )
+                        noteMarkerErrors.append( lineLocationSpace + _("doubled backslash characters in  {}: {}").format( extraType, extraText ) )
                         while '\\\\' in extraText: extraText = extraText.replace( '\\\\', '\\' )
                     #if '  ' in extraText:
-                    #    noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("doubled space characters in  {}: {}").format( extraType, extraText ) )
+                    #    noteMarkerErrors.append( lineLocationSpace + _("doubled space characters in  {}: {}").format( extraType, extraText ) )
                     #    while '  ' in extraText: extraText = extraText.replace( '  ', ' ' )
                     if '\\' in extraText:
                         #print( extraText )
@@ -3038,10 +3046,10 @@ class InternalBibleBook:
                                 closedMarkerText = extraMarker[:-1]
                                 shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
                                 #print( "here with", extraType, extraText, thisExtraMarkers, hierarchy, closedMarkerText, shouldBeClosed )
-                                if shouldBeClosed == 'N': noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker {} is not closeable").format( closedMarkerText ) )
+                                if shouldBeClosed == 'N': noteMarkerErrors.append( lineLocationSpace + _("Marker {} is not closeable").format( closedMarkerText ) )
                                 elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
-                                elif closedMarkerText in hierarchy: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Internal {} markers appear to overlap: {}").format( extraName, thisExtraMarkers ) )
-                                else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {} closing marker: {} in {}").format( extraName, extraMarker, thisExtraMarkers ) )
+                                elif closedMarkerText in hierarchy: noteMarkerErrors.append( lineLocationSpace + _("Internal {} markers appear to overlap: {}").format( extraName, thisExtraMarkers ) )
+                                else: noteMarkerErrors.append( lineLocationSpace + _("Unexpected {} closing marker: {} in {}").format( extraName, extraMarker, thisExtraMarkers ) )
                             else: # it's not a closing marker -- for extras, it probably automatically closes the previous marker
                                 shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( extraMarker )
                                 if shouldBeClosed == 'N': continue # N for never
@@ -3055,14 +3063,14 @@ class InternalBibleBook:
                             hierarchy.pop()
                         if hierarchy: # it should be empty
                             #print( "here with remaining", extraType, extraText, thisExtraMarkers, hierarchy )
-                            noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("These {} markers {} appear not to be closed in {}").format( extraName, hierarchy, extraText ) )
+                            noteMarkerErrors.append( lineLocationSpace + _("These {} markers {} appear not to be closed in {}").format( extraName, hierarchy, extraText ) )
                     adjExtraMarkers = thisExtraMarkers
                     for uninterestingMarker in allAvailableCharacterMarkers: # Remove character formatting markers so we can check the footnote/xref hierarchy
                         while uninterestingMarker in adjExtraMarkers: adjExtraMarkers.remove( uninterestingMarker )
                     if adjExtraMarkers and adjExtraMarkers not in BibleOrgSysGlobals.USFMMarkers.getTypicalNoteSets( extraType ):
                         #print( "Got", extraType, extraText, thisExtraMarkers )
-                        if thisExtraMarkers: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unusual {} marker set: {} in {}").format( extraName, thisExtraMarkers, extraText ) )
-                        else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing {} formatting in {}").format( extraName, extraText ) )
+                        if thisExtraMarkers: noteMarkerErrors.append( lineLocationSpace + _("Unusual {} marker set: {} in {}").format( extraName, thisExtraMarkers, extraText ) )
+                        else: noteMarkerErrors.append( lineLocationSpace + _("Missing {} formatting in {}").format( extraName, extraText ) )
 
                     # Moved to checkNotes
                     #if len(extraText) > 2 and extraText[1] == ' ':
@@ -3075,7 +3083,7 @@ class InternalBibleBook:
                     #        functionalCounts['Cross-References'] = 1 if 'Cross-References' not in functionalCounts else (functionalCounts['Cross-References'] + 1)
                     #        leaderName = "Cross-reference leader {!r}".format( leaderChar )
                     #        functionalCounts[leaderName] = 1 if leaderName not in functionalCounts else (functionalCounts[leaderName] + 1)
-                    #else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
+                    #else: noteMarkerErrors.append( lineLocationSpace + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
                     if extraType == 'fn':
                         functionalCounts['Footnotes'] = 1 if 'Footnotes' not in functionalCounts else (functionalCounts['Footnotes'] + 1)
                     elif extraType == 'xr':
@@ -3105,7 +3113,7 @@ class InternalBibleBook:
 
         for otherHeaderMarker in ( 'ide','sts', ):
             if otherHeaderMarker in modifiedMarkerList and modifiedMarkerList.index(otherHeaderMarker) > 8:
-                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("USFM {!r} field in file should have been earlier in {}…").format( otherHeaderMarker, modifiedMarkerList[:10] ) )
+                newlineMarkerErrors.append( lineLocationSpace + _("USFM {!r} field in file should have been earlier in {}…").format( otherHeaderMarker, modifiedMarkerList[:10] ) )
         if 'mt2' in modifiedMarkerList: # Must be before or after a mt1
             ix = modifiedMarkerList.index( 'mt2' )
             if (ix==0 or modifiedMarkerList[ix-1]!='mt1') and (ix==len(modifiedMarkerList)-1 or modifiedMarkerList[ix+1]!='mt1'):
@@ -3150,15 +3158,15 @@ class InternalBibleBook:
             nonlocal haveNonAsciiChars
             #print( "countCharacters: {!r}".format( adjText ) )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
+                characterErrors.append( lineLocationSpace + _("Multiple spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
                 self.addPriorityError( 7, C, V, _("Multiple spaces in text line") )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple non-breaking spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
+                characterErrors.append( lineLocationSpace + _("Multiple non-breaking spaces in {!r}").format( adjText.replace( '  ', '··' ) ) )
                 self.addPriorityError( 9, C, V, _("Multiple non-breaking spaces in text line") )
             if adjText[-1].isspace(): # Most trailing spaces have already been removed, but this can happen in a note after the markers have been removed
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {!r}").format( adjText ) )
+                characterErrors.append( lineLocationSpace + _("Trailing space in {!r}").format( adjText ) )
                 self.addPriorityError( 5, C, V, _("Trailing space in text line") )
-                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {} {!r}").format( marker, adjText ) )
+                #print( lineLocationSpace + _("Trailing space in {} {!r}").format( marker, adjText ) )
             if BibleOrgSysGlobals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
@@ -3201,7 +3209,7 @@ class InternalBibleBook:
                     elif not char.isalnum(): # Assume it's punctuation
                         punctuationCounts[simpleCharName] = 1 if simpleCharName not in punctuationCounts else punctuationCounts[simpleCharName] + 1
                         if char not in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS:
-                            characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Invalid {!r} ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
+                            characterErrors.append( lineLocationSpace + _("Invalid {!r} ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                             self.addPriorityError( 10, C, V, _("Invalid {!r} ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                 for char in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
                     if char not in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS and len(adjText)>1 \
@@ -3212,7 +3220,7 @@ class InternalBibleBook:
                         else: simpleCharName = char
                         unicodeCharName = unicodedata.name( char )
                         #print( "{} {}:{} char is {!r} {}".format( char, simpleCharName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Misplaced {!r} ({}) word leading character").format( simpleCharName, unicodeCharName ) )
+                        characterErrors.append( lineLocationSpace + _("Misplaced {!r} ({}) word leading character").format( simpleCharName, unicodeCharName ) )
                         self.addPriorityError( 21, C, V, _("Misplaced {!r} ({}) word leading character").format( simpleCharName, unicodeCharName ) )
                 for char in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
                     if char not in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS and len(adjText)>1 \
@@ -3223,7 +3231,7 @@ class InternalBibleBook:
                         else: simpleCharName = char
                         unicodeCharName = unicodedata.name( char )
                         #print( "{} {}:{} char is {!r} {}".format( char, simpleCharName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Misplaced {!r} ({}) word trailing character").format( simpleCharName, unicodeCharName ) )
+                        characterErrors.append( lineLocationSpace + _("Misplaced {!r} ({}) word trailing character").format( simpleCharName, unicodeCharName ) )
                         self.addPriorityError( 20, C, V, _("Misplaced {!r} ({}) word trailing character").format( simpleCharName, unicodeCharName ) )
         # end of countCharacters
 
@@ -3339,14 +3347,14 @@ class InternalBibleBook:
                 if newSection and closeQuotesAtSectionEnd \
                 or newParagraph and closeQuotesAtParagraphEnd:
                     match = openChars if len(openChars)>1 else "{!r}".format( openChars[0] )
-                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
+                    speechMarkErrors.append( lineLocationSpace + _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
                     logging.error( _("Unclosed speech marks matching {} before {} marker at").format( match, bitMarker ) \
                                                             + " {} {}:{}".format( self.BBB, C, V ) )
                     self.addPriorityError( 56, C, V, _("Unclosed speech marks matching {} after {} marker").format( match, bitMarker ) )
                     openChars = []
                 elif newParagraph and reopenQuotesAtParagraph and not startsWithOpen:
                     match = openChars if len(openChars)>1 else "{!r}".format( openChars[0] )
-                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) \
+                    speechMarkErrors.append( lineLocationSpace \
                                                 + _("Unclosed speech marks matching {} before {} marker or missing reopening quotes").format( match, originalMarker ) )
                     logging.error( _("Unclosed speech marks matching {} before {} marker or missing reopening quotes at").format( match, originalMarker ) \
                                                             + " {} {}:{}".format( self.BBB, C, V ) )
@@ -3355,7 +3363,7 @@ class InternalBibleBook:
 
             if newSection and startsWithOpen and endedWithClose and not closeQuotesAtSectionEnd:
                 if openQuoteIndex == closeQuoteIndex:
-                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unnecessary closing of speech marks before section heading") )
+                    speechMarkErrors.append( lineLocationSpace + _("Unnecessary closing of speech marks before section heading") )
                     logging.error( _("Unnecessary closing of speech marks before section heading") + " {} {}:{}".format( self.BBB, C, V ) )
                     self.addPriorityError( 50, C, V, _("Unnecessary closing of speech marks before section heading") )
 
@@ -3370,25 +3378,25 @@ class InternalBibleBook:
                         #print( "here0 with ", char, C, V, openChars )
                         if openChars and char==openChars[-1]:
                             if newBit:
-                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) \
+                                speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Seemed to reopen {!r} speech marks after {}").format( char, bitMarker ) )
                                 logging.warning( _("Seemed to reopen {!r} speech marks after {} at").format( char, bitMarker ) \
                                                                             + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 43, C, V, _("Seemed to reopen {!r} speech marks after {}").format( char, bitMarker ) )
                                 openChars.pop()
                             else:
-                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) \
+                                speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
                                 logging.error( _("Unclosed {!r} speech marks (or improperly nested speech marks) after {} at").format( char, openChars ) \
                                                                             + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 53, C, V, _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
                         openChars.append( char )
                     if len(openChars)>4:
-                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Excessive nested speech marks {}").format( openChars ) )
+                        speechMarkErrors.append( lineLocationSpace + _("Excessive nested speech marks {}").format( openChars ) )
                         logging.error( _("Excessive nested speech marks {} at").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 50, C, V, _("Excessive nested speech marks {}").format( openChars ) )
                     elif len(openChars)>3:
-                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Lots of nested speech marks {}").format( openChars ) )
+                        speechMarkErrors.append( lineLocationSpace + _("Lots of nested speech marks {}").format( openChars ) )
                         logging.warning( _("Lots of nested speech marks {} at").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 40, C, V, _("Lots of nested speech marks {}").format( openChars ) )
                 elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
@@ -3396,7 +3404,7 @@ class InternalBibleBook:
                     if not openChars:
                         #print( "here1 with ", char, C, V, openChars )
                         if char not in '?!': # Ignore the dual purpose punctuation characters
-                            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {!r} speech closing character").format( char ) )
+                            speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
                             logging.error( _("Unexpected {!r} speech closing character at").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
                             self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
@@ -3405,7 +3413,7 @@ class InternalBibleBook:
                     elif char not in '?!': # Ignore the dual purpose punctuation characters
                         # We have closing marker that doesn't match
                         #print( "here3 with ", char, C, V, openChars )
-                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
+                        speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
                         logging.error( _("Mismatched {!r} speech closing character after {} at").format( char, openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
 
@@ -3432,7 +3440,7 @@ class InternalBibleBook:
                     for char in extraText:
                         if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
                             if extraOpenChars and char==extraOpenChars[-1]:
-                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
+                                speechMarkErrors.append( lineLocationSpace + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
                                 logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extraOpenChars ) \
                                                                         + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
@@ -3442,7 +3450,7 @@ class InternalBibleBook:
                             if not extraOpenChars:
                                 #print( "here1 with ", char, C, V, extraOpenChars )
                                 if char not in '?!': # Ignore the dual purpose punctuation characters
-                                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected {!r} speech closing character in note").format( char ) )
+                                    speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character in note").format( char ) )
                                     logging.error( _("Unexpected {!r} speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
                                     self.addPriorityError( 43, C, V, _("Unexpected {!r} speech closing character in note").format( char ) )
                             elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(extraOpenChars[-1]): # A good closing match
@@ -3450,18 +3458,18 @@ class InternalBibleBook:
                                 extraOpenChars.pop()
                             elif char not in '?!': # Ignore the dual purpose punctuation characters
                                 #print( "here3 with ", char, C, V, extraOpenChars )
-                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched {!r} speech closing character after {} in note").format( char, extraOpenChars ) )
+                                speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {} in note").format( char, extraOpenChars ) )
                                 logging.error( _("Mismatched {!r} speech closing character after {} in note in").format( char, extraOpenChars ) \
                                                                             + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 42, C, V, _("Mismatched {!r} speech closing character after {} in note").format( char, extraOpenChars ) )
                     if extraOpenChars: # We've finished the note but some things weren't closed
-                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
+                        speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
                         logging.error( _("Unclosed {} speech marks at end of note in").format( extraOpenChars ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 47, C, V, _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
 
         if openChars: # We've finished the book but some things weren't closed
             #print( "here9 with ", openChars )
-            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unclosed {} speech marks at end of book").format( openChars ) )
+            speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of book").format( openChars ) )
             logging.error( _("Unclosed {} speech marks at end of book after").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
             self.addPriorityError( 54, C, V, _("Unclosed {} speech marks at end of book").format( openChars ) )
 
@@ -3506,14 +3514,14 @@ class InternalBibleBook:
                 word = stripWordPunctuation( word )
                 if word and not word[0].isalnum():
                     #print( word, stripWordPunctuation( word ) )
-                    #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected character starting word {!r}").format( word ) )
-                    wordErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected character starting word {!r}").format( word ) )
+                    #print( lineLocationSpace + _("Have unexpected character starting word {!r}").format( word ) )
+                    wordErrors.append( lineLocationSpace + _("Have unexpected character starting word {!r}").format( word ) )
                     word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
                             if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
-                                wordErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
+                                wordErrors.append( lineLocationSpace + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:
@@ -3525,7 +3533,7 @@ class InternalBibleBook:
 
                     # Check for repeated words (case insensitive comparison)
                     if lcWord==ourLastWord.lower(): # Have a repeated word (might be across sentences)
-                        repeatedWordErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Have possible repeated word with {} {}").format( ourLastRawWord, rawWord ) )
+                        repeatedWordErrors.append( lineLocationSpace + _("Have possible repeated word with {} {}").format( ourLastRawWord, rawWord ) )
                     ourLastWord, ourLastRawWord = word, rawWord
             return ourLastWord, ourLastRawWord
         # end of countWords
@@ -3632,49 +3640,49 @@ class InternalBibleBook:
             if marker.startswith('mt'):
                 titleList.append( "{} {}:{} Main Title {}: '{}'".format( self.BBB, C, V, marker[2:], text ) )
                 if not text:
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing title text for marker {}").format( marker ) )
+                    headingErrors.append( lineLocationSpace + _("Missing title text for marker {}").format( marker ) )
                     self.addPriorityError( 59, C, V, _("Missing title text") )
                 elif text[-1] in '.።':
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} title ends with a period: {}").format( marker, text ) )
+                    headingErrors.append( lineLocationSpace + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, C, V, _("Title ends with a period") )
             elif marker in ('s1','s2','s3','s4',):
                 if marker=='s1': sectionHeadingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: sectionHeadingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not text:
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
+                    headingErrors.append( lineLocationSpace + _("Missing heading text for marker {}").format( marker ) )
                     priority = 58
                     if discoveryDict:
                         if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 28
                         if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 18
                     self.addPriorityError( priority, C, V, _("Missing heading text") )
                 elif text[-1] in '.።':
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
+                    headingErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 68, C, V, _("Heading ends with a period") )
             elif marker=='r':
                 sectionReferenceList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 if not text:
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing section cross-reference text for marker {}").format( marker ) )
+                    headingErrors.append( lineLocationSpace + _("Missing section cross-reference text for marker {}").format( marker ) )
                     self.addPriorityError( 57, C, V, _("Missing section cross-reference text") )
                 else: # We have a section reference with text
                     if discoveryDict and 'sectionReferencesParenthesisFlag' in discoveryDict and discoveryDict['sectionReferencesParenthesisFlag']==False:
                         if text[0]=='(' or text[-1]==')':
-                            headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Section cross-reference not expected to have parenthesis: {}").format( text ) )
+                            headingErrors.append( lineLocationSpace + _("Section cross-reference not expected to have parenthesis: {}").format( text ) )
                             self.addPriorityError( 67, C, V, _("Section cross-reference not expected to have parenthesis") )
                     else: # assume that parenthesis are required
                         if text[0]!='(' or text[-1]!=')':
-                            headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Section cross-reference not in parenthesis: {}").format( text ) )
+                            headingErrors.append( lineLocationSpace + _("Section cross-reference not in parenthesis: {}").format( text ) )
                             self.addPriorityError( 67, C, V, _("Section cross-reference not in parenthesis") )
             elif marker=='d':
                 descriptiveTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 if not text:
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
+                    headingErrors.append( lineLocationSpace + _("Missing heading text for marker {}").format( marker ) )
                     priority = 57
                     if discoveryDict:
                         if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 27
                         if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
                     self.addPriorityError( priority, C, V, _("Missing heading text") )
                 elif text[-1] != ':' and not hasClosingPunctuation( text ):
-                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading should have closing punctuation (period): {}").format( marker, text ) )
+                    headingErrors.append( lineLocationSpace + _("{} heading should have closing punctuation (period): {}").format( marker, text ) )
                     self.addPriorityError( 67, C, V, _("Heading should have closing punctuation (period)") )
 
         if (headingErrors or titleList or sectionHeadingList or sectionReferenceList or descriptiveTitleList) and 'Headings' not in self.errorDictionary:
@@ -3711,48 +3719,48 @@ class InternalBibleBook:
                 if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
+                    introductionErrors.append( lineLocationSpace + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
                 elif cleanText[-1] in '.።':
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
+                    introductionErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker in ('is1','is2','is3','is4',):
                 if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: headingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
+                    introductionErrors.append( lineLocationSpace + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
                 elif cleanText[-1] in '.።':
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
+                    introductionErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker=='iot':
                 titleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 if not cleanText:
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline title text for marker {}").format( marker ) )
+                    introductionErrors.append( lineLocationSpace + _("Missing outline title text for marker {}").format( marker ) )
                     self.addPriorityError( 38, C, V, _("Missing outline title text") )
                 elif cleanText[-1] in '.።':
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
+                    introductionErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 48, C, V, _("Heading ends with a period") )
             elif marker in ('io1','io2','io3','io4',):
                 if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline text for marker {}").format( marker ) )
+                    introductionErrors.append( lineLocationSpace + _("Missing outline text for marker {}").format( marker ) )
                     self.addPriorityError( 37, C, V, _("Missing outline text") )
                 elif cleanText[-1] in '.።':
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} outline entry ends with a period: {}").format( marker, text ) )
+                    introductionErrors.append( lineLocationSpace + _("{} outline entry ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 47, C, V, _("Outline entry ends with a period") )
             elif marker in ('ip','ipi','im','imi',):
                 if not cleanText:
-                    introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing introduction text for marker {}").format( marker ) )
+                    introductionErrors.append( lineLocationSpace + _("Missing introduction text for marker {}").format( marker ) )
                     self.addPriorityError( 36, C, V, _("Missing introduction text") )
                 elif cleanText[-1] != ':' and not hasClosingPeriod( cleanText ):
                 #and not cleanText.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
                     if cleanText.endswith(')') or cleanText.endswith(']'): # do we still need this
-                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text possibly does not have closing punctuation (period): {}").format( marker, text ) )
+                        introductionErrors.append( lineLocationSpace + _("{} introduction text possibly does not have closing punctuation (period): {}").format( marker, text ) )
                         self.addPriorityError( 26, C, V, _("Introduction text possibly ends without closing punctuation (period)") )
                     else:
-                        introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} introduction text does not have closing punctuation (period): {}").format( marker, text ) )
+                        introductionErrors.append( lineLocationSpace + _("{} introduction text does not have closing punctuation (period): {}").format( marker, text ) )
                         self.addPriorityError( 46, C, V, _("Introduction text ends without closing punctuation (period)") )
 
         if (introductionErrors or mainTitleList or headingList or titleList or outlineList) and 'Introduction' not in self.errorDictionary:
@@ -3852,10 +3860,10 @@ class InternalBibleBook:
                                         status, myString, lastCode = 1, '', ''
                                     else:
                                         if extraType == 'fn':
-                                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote markers don't match: {!r} and {!r}").format( lastCode, myString+'*' ) )
+                                            footnoteErrors.append( lineLocationSpace + _("Footnote markers don't match: {!r} and {!r}").format( lastCode, myString+'*' ) )
                                             self.addPriorityError( 32, C, V, _("Mismatching footnote markers") )
                                         elif extraType == 'xr':
-                                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference don't match: {!r} and {!r}").format( lastCode, myString+'*' ) )
+                                            xrefErrors.append( lineLocationSpace + _("Cross-reference don't match: {!r} and {!r}").format( lastCode, myString+'*' ) )
                                             self.addPriorityError( 31, C, V, _("Mismatching cross-reference markers") )
                                         #print( "checkNotes: error with", lastCode, extraList, myString, self.BBB, C, V, ); halt
                                         status, myString, lastCode = 1, '', '' # Treat the last one as closed
@@ -3876,33 +3884,33 @@ class InternalBibleBook:
                             haveFinalPeriod = True
                             footnoteList.append( line )
                             if cleanExtraText.endswith(' '):
-                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have an extra space at end: {!r}").format( extraText ) )
+                                footnoteErrors.append( lineLocationSpace + _("Footnote seems to have an extra space at end: {!r}").format( extraText ) )
                                 self.addPriorityError( 32, C, V, _("Extra space at end of footnote") )
                             elif cleanExtraText and not hasClosingPunctuation( cleanExtraText ):
                             #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                                 haveFinalPeriod = False
                             if discoveryDict and 'footnotesPeriodFlag' in discoveryDict:
                                 if discoveryDict['footnotesPeriodFlag']==True and not haveFinalPeriod:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to be missing closing punctuation (period): {!r}").format( extraText ) )
+                                    footnoteErrors.append( lineLocationSpace + _("Footnote seems to be missing closing punctuation (period): {!r}").format( extraText ) )
                                     self.addPriorityError( 33, C, V, _("Missing closing punctuation (period) at end of footnote") )
                                 if discoveryDict['footnotesPeriodFlag']==False and haveFinalPeriod:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
+                                    footnoteErrors.append( lineLocationSpace + _("Footnote seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
                                     self.addPriorityError( 32, C, V, _("Possible unnecessary closing punctuation (period) at end of footnote") )
                         elif extraType == 'xr':
                             haveFinalPeriod = True
                             xrefList.append( line )
                             if cleanExtraText.endswith(' '):
-                                xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have an extra space at end: {!r}").format( extraText ) )
+                                xrefErrors.append( lineLocationSpace + _("Cross-reference seems to have an extra space at end: {!r}").format( extraText ) )
                                 self.addPriorityError( 30, C, V, _("Extra space at end of cross-reference") )
                             elif cleanExtraText and not hasClosingPunctuation( cleanExtraText ):
                             #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                                 haveFinalPeriod = False
                             if discoveryDict and 'crossReferencesPeriodFlag' in discoveryDict:
                                 if discoveryDict['crossReferencesPeriodFlag']==True and not haveFinalPeriod:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to be missing closing punctuation (period): {!r}").format( extraText ) )
+                                    xrefErrors.append( lineLocationSpace + _("Cross-reference seems to be missing closing punctuation (period): {!r}").format( extraText ) )
                                     self.addPriorityError( 31, C, V, _("Missing closing punctuation (period) at end of cross-reference") )
                                 if discoveryDict['crossReferencesPeriodFlag']==False and haveFinalPeriod:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
+                                    xrefErrors.append( lineLocationSpace + _("Cross-reference seems to include possible unnecessary closing punctuation (period): {!r}").format( extraText ) )
                                     self.addPriorityError( 32, C, V, _("Possible unnecessary closing punctuation (period) at end of cross-reference") )
 
                         # Check for two identical fields in a row
@@ -3910,10 +3918,10 @@ class InternalBibleBook:
                         for noteMarker,noteText in extraList:
                             if noteMarker == lastNoteMarker: # Have two identical fields in a row
                                 if extraType == 'fn':
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in footnote: {!r}").format( noteMarker, extraText ) )
+                                    footnoteErrors.append( lineLocationSpace + _("Consecutive {} fields in footnote: {!r}").format( noteMarker, extraText ) )
                                     self.addPriorityError( 35, C, V, _("Consecutive {} fields in footnote").format( noteMarker ) )
                                 elif extraType == 'xr':
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in cross-reference: {!r}").format( noteMarker, extraText ) )
+                                    xrefErrors.append( lineLocationSpace + _("Consecutive {} fields in cross-reference: {!r}").format( noteMarker, extraText ) )
                                     self.addPriorityError( 35, C, V, _("Consecutive {} fields in cross-reference").format( noteMarker ) )
                                 #print( "Consecutive fields in {!r}".format( extraText ) )
                             lastNoteMarker = noteMarker
@@ -3936,7 +3944,7 @@ class InternalBibleBook:
                                 leaderName = "Cross-reference leader {!r}".format( leader )
                                 leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
                                 if leader not in xrefLeaderList: xrefLeaderList.append( leader )
-                        else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
+                        else: noteMarkerErrors.append( lineLocationSpace + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
 
                         # Find, count and check CVSeparators
                         #  and also check that the references match
@@ -3949,7 +3957,7 @@ class InternalBibleBook:
                                     anchor = BibleAnchorReference( self.BBB, C, V )
                                     #print( "here at BibleAnchorReference", self.BBB, C, V, anchor )
                                     if not anchor.matchesAnchorString( noteText, 'footnote' ):
-                                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference seems not to match: {!r}").format( noteText ) )
+                                        footnoteErrors.append( lineLocationSpace + _("Footnote anchor reference seems not to match: {!r}").format( noteText ) )
                                         logging.error( _("Footnote anchor reference seems not to match after {} {}:{} in {!r}").format( self.BBB, C, V, noteText ) )
                                         self.addPriorityError( 42, C, V, _("Footnote anchor reference mismatch") )
                                         #print( self.BBB, C, V, 'FN0', '"'+noteText+'"' )
@@ -3969,11 +3977,11 @@ class InternalBibleBook:
                                     if CV2 != noteText:
                                         if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
                                             #print( "{} fn m={!r} V={} myV={} CV1={!r} CV2={!r} nT={!r}".format( self.BBB, marker, V, myV, CV1, CV2, noteText ) )
-                                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference seems not to match: {!r}").format( noteText ) )
+                                            footnoteErrors.append( lineLocationSpace + _("Footnote anchor reference seems not to match: {!r}").format( noteText ) )
                                             self.addPriorityError( 42, C, V, _("Footnote anchor reference mismatch") )
                                             print( self.BBB, 'FN1', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
                                         else:
-                                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference possibly does not match: {!r}").format( noteText ) )
+                                            footnoteErrors.append( lineLocationSpace + _("Footnote anchor reference possibly does not match: {!r}").format( noteText ) )
                                             print( self.BBB, 'FN2', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
                                 break # Only process the first fr field
                             elif noteMarker=='xo':
@@ -3981,7 +3989,7 @@ class InternalBibleBook:
                                 if 1: # new code
                                     anchor = BibleAnchorReference( self.BBB, C, V )
                                     if not anchor.matchesAnchorString( noteText, 'cross-reference' ):
-                                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: {!r}").format( noteText ) )
+                                        footnoteErrors.append( lineLocationSpace + _("Cross-reference anchor reference seems not to match: {!r}").format( noteText ) )
                                         logging.error( _("Cross-reference anchor reference seems not to match after {} {}:{} in {!r}").format( self.BBB, C, V, noteText ) )
                                         self.addPriorityError( 41, C, V, _("Cross-reference anchor reference mismatch") )
                                         #print( self.BBB, C, V, 'XR0', '"'+noteText+'"' )
@@ -4001,7 +4009,7 @@ class InternalBibleBook:
                                         #print( "V={!r}  xrT={!r}  CV1={!r}  CV2={!r}  NT={!r}".format( V, xrTrailer, CV1, CV2, noteText ) )
                                         if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
                                             #print( 'xr', CV1, noteText )
-                                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: {!r}").format( noteText ) )
+                                            xrefErrors.append( lineLocationSpace + _("Cross-reference anchor reference seems not to match: {!r}").format( noteText ) )
                                             self.addPriorityError( 41, C, V, _("Cross-reference anchor reference mismatch") )
                                             print( self.BBB, 'XR1', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
                                         elif noteText.startswith(CV2) or noteText.startswith(CV1+',') or noteText.startswith(CV1+'-'):
@@ -4009,17 +4017,17 @@ class InternalBibleBook:
                                             pass # it seems that the reference is contained there in the anchor
                                             #print( self.BBB, 'XR2', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
                                         else:
-                                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference possibly does not match: {!r}").format( noteText ) )
+                                            xrefErrors.append( lineLocationSpace + _("Cross-reference anchor reference possibly does not match: {!r}").format( noteText ) )
                                             print( self.BBB, 'XR3', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
                                 break # Only process the first xo field
                         if not haveAnchor:
                             if extraType == 'fn':
                                 if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']>0:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have no anchor reference: {!r}").format( extraText ) )
+                                    footnoteErrors.append( lineLocationSpace + _("Footnote seems to have no anchor reference: {!r}").format( extraText ) )
                                     self.addPriorityError( 39, C, V, _("Missing anchor reference for footnote") )
                             elif extraType == 'xr':
                                 if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']>0:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have no anchor reference: {!r}").format( extraText ) )
+                                    xrefErrors.append( lineLocationSpace + _("Cross-reference seems to have no anchor reference: {!r}").format( extraText ) )
                                     self.addPriorityError( 38, C, V, _("Missing anchor reference for cross-reference") )
 
                     # much more yet to be written …
