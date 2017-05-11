@@ -50,9 +50,10 @@ BibleVersificationSystem class:
     numAvailableBooks( self )
     getVersificationSystemName( self )
     getNumChapters( self, BBB )
-    getNumVerses( self, BBB, C )
     isSingleChapterBook( self, BBB )
+    getNumVerses( self, BBB, C )
     getNumVersesList( self, BBB )
+    getTotalNumVerses( self, BBB )
     getOmittedVerseList( self, BBB, fullRefs=False )
     isOmittedVerse( self, referenceTuple )
     getAuxilliaryVerseList( self, listName )
@@ -64,10 +65,10 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-28' # by RJH
+LastModifiedDate = '2017-05-11' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.57'
+ProgVersion = '0.58'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -692,6 +693,18 @@ class BibleVersificationSystem:
             if x!='numChapters': myList.append( int( self.__chapterDataDict[BBB][x] ) )
         return myList
     # end of BibleVersificationSystem.getNumVersesList
+
+
+    def getTotalNumVerses( self, BBB ):
+        """
+        Returns an integer indicating the total number of verses in the book.
+        """
+        assert len(BBB) == 3
+        verseCount = 0
+        for x in self.__chapterDataDict[BBB].keys():
+            if x!='numChapters': verseCount += int( self.__chapterDataDict[BBB][x] )
+        return verseCount
+    # end of BibleVersificationSystem.getTotalNumVerses
 
 
     def getOmittedVerseList( self, BBB, fullRefs=False ):
