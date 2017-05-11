@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-04' # by RJH
+LastModifiedDate = '2017-05-07' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.25'
@@ -1591,7 +1591,7 @@ class SwordInterface():
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
-                print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                logging.critical( "getVerseData: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 if '\n' in verseText or '\r' in verseText:
@@ -1634,7 +1634,7 @@ class SwordInterface():
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
-                print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                logging.critical( "getVerseText: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
         elif SwordType == 'OurCode':
             verseData = module.getContextVerseData( key )

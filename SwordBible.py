@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-04' # by RJH
+LastModifiedDate = '2017-05-07' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.33'
@@ -511,6 +511,7 @@ def testSwB( SwFolderPath, SwModuleName=None ):
         shortText = svk.getShortText()
         try:
             verseText = SwBible.getVerseText( svk )
+            #print( "verseText", verseText )
             fullVerseText = SwBible.getVerseText( svk, fullTextFlag=True )
         except KeyError:
             verseText = fullVerseText = "Verse not available!"
@@ -532,7 +533,6 @@ def demo():
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
     testFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
-    testFolder = '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/English.2017-05-04_04.47_0.26446200_1493830030/YourSourceFiles/Unzipped'
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
@@ -542,11 +542,11 @@ def demo():
         result3 = SwordBibleFileCheck( testFolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Sword TestA3", result3 )
 
-    if 0: # specify testFolder containing a single module
+    if 1: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword B/ Trying single module in {}".format( testFolder ) )
         testSwB( testFolder )
 
-    if 0: # specified single installed module
+    if 1: # specified single installed module
         singleModule = 'ASV'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword C/ Trying installed {} module".format( singleModule ) )
         SwBible = testSwB( None, singleModule )
@@ -557,7 +557,7 @@ def demo():
                 for entryKey in SwBible.books[BBB]._CVIndex:
                     print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 0: # specified installed modules
+    if 1: # specified installed modules
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB','ESV','ISV','NET','OEB',
                 'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
                 'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',

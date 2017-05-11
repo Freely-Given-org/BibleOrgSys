@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-04' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.07'
@@ -791,6 +791,7 @@ class PTX8Bible( Bible ):
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
+            self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
 
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:

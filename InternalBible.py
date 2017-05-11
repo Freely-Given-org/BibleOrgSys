@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-11' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.78'
@@ -126,7 +126,7 @@ class InternalBible:
 
         # Set up empty containers for the object
         self.books = OrderedDict()
-        self.BBBs = None # Will eventually contain a set of the books codes which we know are in this particular Bible (even if the book is not loaded yet)
+        self.availableBBBs = set() # Will eventually contain a set of the books codes which we know are in this particular Bible (even if the book is not loaded yet)
         self.suppliedMetadata = None
         self.settingsDict = {} # This is often filled from self.suppliedMetadata in applySuppliedMetadata()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
@@ -197,7 +197,7 @@ class InternalBible:
         """
         This method checks whether the Bible (as loaded so far) contains the BBB book.
 
-        Note that we also have a member self.BBBs which contains a set of all
+        Note that we also have a member self.availableBBBs which contains a set of all
             books which we know to be in this Bible even if not yet loaded.
 
         Returns True or False.
@@ -875,6 +875,8 @@ class InternalBible:
             if not suppressErrorFlag:
                 logging.critical( exp("stashBook: stashing already stashed {} book!").format( BBB ) )
         self.books[BBB] = bookData
+        self.availableBBBs.add( BBB )
+
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()
         for assumedBookName in assumedBookNames:

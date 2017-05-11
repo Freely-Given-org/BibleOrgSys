@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-01' # by RJH
+LastModifiedDate = '2017-05-10' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -221,6 +221,8 @@ class BCVBible( Bible ):
         #if self.metadataFilepath is None: # it might have been loaded first
         # Attempt to load the metadata file
         self.loadMetadata( os.path.join( self.sourceFolder, METADATA_FILENAME ) )
+        if isinstance( self.givenBookList, list ):
+            self.availableBBBs.update( self.givenBookList )
 
         #self.name = self.givenName
         #if self.name is None:
@@ -291,7 +293,9 @@ class BCVBible( Bible ):
             BL = self.suppliedMetadata['BCV']['BookList']
             if BL and BL[0]=='[' and BL[-1]==']': self.givenBookList = eval( BL )
             #print( 'x1', repr(self.givenBookList), repr(self.givenBookList[2]) )
-            if isinstance( self.givenBookList, list ): pass # del self.suppliedMetadata['BCV']['BookList']
+            if isinstance( self.givenBookList, list ):
+                # del self.suppliedMetadata['BCV']['BookList']
+                pass
             else: print( exp("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
             #bl = self.suppliedMetadata['BCV']['BookList']
             #if bl[0]=='[' and bl[-1]==']':
@@ -330,6 +334,7 @@ class BCVBible( Bible ):
                 bcvBB.validateMarkers()
                 self.stashBook( bcvBB )
             else: logging.info( "BCV book {} was completely blank".format( BBB ) )
+            self.availableBBBs.add( BBB )
         else: logging.info( "BCV book {} is not listed as being available".format( BBB ) )
     # end of BCVBible.loadBook
 

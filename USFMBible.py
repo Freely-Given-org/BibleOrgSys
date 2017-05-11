@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-11' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -557,6 +557,7 @@ class USFMBible( Bible ):
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
+            self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
 
         self.preloadDone = True

@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -626,6 +626,19 @@ class DBLBible( Bible ):
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
         #print( '\n', self.suppliedMetadata['DBL'] )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} supplied metadata elements.".format( len(self.suppliedMetadata['DBL']) ) )
+
+        # Find available books
+        possibilities = []
+        haveDefault = False
+        for someKey in self.suppliedMetadata['DBL']['contents']:
+            if someKey.startswith( 'bookList' ): possibilities.append( someKey )
+            if '(default)' in someKey: haveDefault = someKey
+        #print( "possibilities", possibilities )
+        bookListKey = haveDefault if haveDefault else possibilities[0]
+        for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
+            #print( "USFMBookCode", USFMBookCode )
+            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+            self.availableBBBs.add( BBB )
     # end of DBLBible.loadDBLMetadata
 
 

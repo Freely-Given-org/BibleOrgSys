@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-11' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -208,6 +208,7 @@ class USXXMLBible( Bible ):
         if not filenameTuples: # Try again
             filenameTuples = self.USXFilenamesObject.getPossibleFilenameTuples()
         for BBB,filename in filenameTuples:
+            self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
         #print( "GHJGHR", self.possibleFilenameDict ); halt
 

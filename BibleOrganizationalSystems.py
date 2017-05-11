@@ -35,6 +35,7 @@ BibleOrganizationalSystems class:
     getOrganizationalSystemValue( self, systemName, valueName, suppressErrors=False )
 
 BibleOrganizationalSystem class:
+        based on: BibleBookOrderSystem, BibleVersificationSystem, BiblePunctuationSystem, BibleBooksNamesSystem
     __init__( self, systemName )
     __str__( self )
     getOrganizationalSystemName( self )
@@ -56,7 +57,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-30' # by RJH
+LastModifiedDate = '2017-05-11' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.32'

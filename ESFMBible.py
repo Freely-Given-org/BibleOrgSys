@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-14' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.59'
@@ -302,6 +302,7 @@ class ESFMBible( Bible ):
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
+            self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
 
         self.preloadDone = True

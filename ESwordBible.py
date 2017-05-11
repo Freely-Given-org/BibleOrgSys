@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-02' # by RJH
+LastModifiedDate = '2017-05-09' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.33'
@@ -533,7 +533,7 @@ class ESwordBible( Bible ):
         ##halt
 
         self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-    # end of ESwordBible.load
+    # end of ESwordBible.preload
 
 
     def load( self ):

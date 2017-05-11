@@ -466,7 +466,9 @@ class MyBibleBible( Bible ):
                 loadedBookInfo = True
             except sqlite3.OperationalError: pass # Table is not in older module versions
 
-        if not loadedBookInfo:
+        if loadedBookInfo:
+            self.availableBBBs.update( self.suppliedMetadata['MyBible']['BookInfo'].keys() )
+        else: # no book info loaded
             if '.commentaries.' not in self.sourceFilename:
                 logging.critical( "MyBibleBible.preload for {} had no books table".format( self.sourceFilename ) )
         #print( self.suppliedMetadata['MyBible'] ); halt
