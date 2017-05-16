@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-05-16' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.78'
+ProgVersion = '0.79'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -908,7 +908,17 @@ class InternalBible:
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        return BibleOrgSysGlobals.pickleObject( self, filename, folder )
+        try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folder )
+        except TypeError: # Could be a yet undebugged SWIG error
+            pResult = False
+            errorClass, exceptionInstance, traceback = sys.exc_info()
+            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            if 'SwigPyObject' in str(exceptionInstance):
+                logging.critical( _("SWIG binding error when pickling {} Bible") \
+                    .format( self.getAName( abbrevFirst=True ) ) ) # Ignore errors
+            else: # it's some other attribute error in the loadBook function
+                raise
+        return pResult
     # end of InternalBible.pickle
 
 
