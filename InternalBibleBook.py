@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-11' # by RJH
+LastModifiedDate = '2017-05-16' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -2745,6 +2745,9 @@ class InternalBibleBook:
                 functionalCounts['Verses'] = 1 if 'Verses' not in functionalCounts else (functionalCounts['Verses'] + 1)
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             # Do other useful functional counts
             if marker=='id':
                 functionalCounts['Book ID'] = 1 if 'Book ID' not in functionalCounts else (functionalCounts['Book ID'] + 1)
@@ -3247,6 +3250,9 @@ class InternalBibleBook:
             elif marker=='v' and text: V = text.split()[0]
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             if cleanText: countCharacters( cleanText )
 
             extras = entry.getExtras()
@@ -3323,6 +3329,9 @@ class InternalBibleBook:
                 if text: V = text.split()[0]
                 continue # v fields contain no quote signs and don't affect formatting blocks
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
 
             if marker in ('s1','s2','s3','s4', ): newSection = True; bitMarker = originalMarker; continue # Nothing more to process here (although will miss check rare notes in section headings)
             if marker in ('p','ip','b', ): # Note 'm' is NOT included in this list
@@ -3552,6 +3561,9 @@ class InternalBibleBook:
             elif marker=='v' and text: V = text.split()[0]
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             if text and BibleOrgSysGlobals.USFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
@@ -3637,6 +3649,9 @@ class InternalBibleBook:
             elif marker=='v' and text: V = text.split()[0]
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
 
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
+
             if marker.startswith('mt'):
                 titleList.append( "{} {}:{} Main Title {}: '{}'".format( self.BBB, C, V, marker[2:], text ) )
                 if not text:
@@ -3714,6 +3729,9 @@ class InternalBibleBook:
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
 
             if marker in ('imt1','imt2','imt3','imt4',):
                 if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
@@ -3797,6 +3815,9 @@ class InternalBibleBook:
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+
+            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
+            lineLocationSpace = lineLocation + ' '
 
             extras = entry.getExtras()
             if extras:
