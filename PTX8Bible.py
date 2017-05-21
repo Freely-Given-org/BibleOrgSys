@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-05-21' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.07'
@@ -225,7 +225,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 
 
-# The following loadPTX…() functions are placed here because
+# The following loadPTX8…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
 def loadPTX8ProjectData( BibleObject, settingsFilepath, encoding='utf-8' ):
     """
@@ -282,6 +282,16 @@ def loadPTX8Languages( BibleObject ):
 
     debuggingThisFunction = False
 
+    urnPrefix = '{urn://www.sil.org/ldml/0.1}'
+    lenUrnPrefix = len( urnPrefix )
+    def removeSILPrefix( someText ):
+        """
+        Remove the SIL URN which might be prefixed to the element tag.
+        """
+        if someText and someText.startswith( urnPrefix ): return someText[lenUrnPrefix:]
+        return someText
+    # end of removeSILPrefix
+
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
         somepath = os.path.join( BibleObject.sourceFilepath, something )
@@ -320,6 +330,7 @@ def loadPTX8Languages( BibleObject ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                 assert element.tag not in PTXLanguages[languageName]
                 PTXLanguages[languageName][element.tag] = OrderedDict()
+
                 if element.tag == 'identity':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -352,21 +363,22 @@ def loadPTX8Languages( BibleObject ):
                             PTXLanguages[languageName][element.tag][subelement.tag] = lgType
                         elif subelement.tag == 'special':
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoText( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsubelementLocation )
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                                 windowsLCID = None
-                                for attrib,value in subsubelement.items():
+                                for attrib,value in sub2element.items():
                                     if attrib=='windowsLCID': windowsLCID = value
-                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subsubelementLocation ) )
+                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                 assert subelement.tag not in PTXLanguages[languageName][element.tag]
-                                PTXLanguages[languageName][element.tag][subelement.tag] = (subsubelement.tag,windowsLCID)
+                                PTXLanguages[languageName][element.tag][subelement.tag] = (sub2element.tag,windowsLCID)
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
                 elif element.tag == 'characters':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -386,21 +398,22 @@ def loadPTX8Languages( BibleObject ):
                             BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                             assert subelement.tag not in PTXLanguages[languageName][element.tag]
                             PTXLanguages[languageName][element.tag][subelement.tag] = {}
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsubelementLocation )
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                                 secType = None
-                                for attrib,value in subsubelement.items():
+                                for attrib,value in sub2element.items():
                                     if attrib=='type': secType = value
-                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subsubelementLocation ) )
-                                if subsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag]:
-                                    PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag] = []
-                                PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag].append( (secType,subsubelement.text) )
+                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                if sub2element.tag not in PTXLanguages[languageName][element.tag][subelement.tag]:
+                                    PTXLanguages[languageName][element.tag][subelement.tag][sub2element.tag] = []
+                                PTXLanguages[languageName][element.tag][subelement.tag][sub2element.tag].append( (secType,sub2element.text) )
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
                 elif element.tag == 'delimiters':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -415,41 +428,55 @@ def loadPTX8Languages( BibleObject ):
                             BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                             assert subelement.tag not in PTXLanguages[languageName][element.tag]
                             PTXLanguages[languageName][element.tag][subelement.tag] = OrderedDict()
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoText( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                if subsubelement.tag not in PTXLanguages[languageName][element.tag]:
-                                    PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag] = {}
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                adjusted2Tag = removeSILPrefix( sub2element.tag )
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                if adjusted2Tag not in PTXLanguages[languageName][element.tag]:
+                                    PTXLanguages[languageName][element.tag][subelement.tag][adjusted2Tag] = {}
                                 paraContinueType = None
-                                for attrib,value in subsubelement.items():
+                                for attrib,value in sub2element.items():
                                     #print( "here9", attrib, value )
                                     if attrib=='paraContinueType': paraContinueType = value
-                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subsubelementLocation ) )
-                                for subsubsubelement in subsubelement:
-                                    subsubsubelementLocation = subsubsubelement.tag + ' in ' + subsubelementLocation
-                                    if debuggingThisFunction: print( "        Processing {}…".format( subsubsubelementLocation ) )
-                                    BibleOrgSysGlobals.checkXMLNoText( subsubsubelement, subsubsubelementLocation )
-                                    BibleOrgSysGlobals.checkXMLNoTail( subsubsubelement, subsubsubelementLocation )
-                                    BibleOrgSysGlobals.checkXMLNoSubelements( subsubsubelement, subsubsubelementLocation )
-                                    openA = close = level = paraClose = pattern = context = None
-                                    for attrib,value in subsubsubelement.items():
+                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                for sub3element in sub2element:
+                                    sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                    adjusted3Tag = removeSILPrefix( sub3element.tag )
+                                    if debuggingThisFunction: print( "        Processing {}…".format( sub3elementLocation ) )
+                                    #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation, "ABC" )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                    openA = close = level = paraClose = pattern = context = qContinue = qType = None
+                                    for attrib,value in sub3element.items():
                                         #print( attrib, value )
                                         if attrib=='open': openA = value
                                         elif attrib=='close': close = value
-                                        elif attrib=='level': level = value; assert level in ('3',)
-                                        elif attrib=='paraClose': paraClose = value; assert paraClose in ('false',)
+                                        elif attrib=='level':
+                                            level = value
+                                            if debuggingThisModule: assert level in '123'
+                                        elif attrib=='paraClose':
+                                            paraClose = value
+                                            if debuggingThisModule: assert paraClose in ('false',)
                                         elif attrib=='pattern': pattern = value
-                                        elif attrib=='context': context = value; assert context in ('medial','final',)
-                                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subsubsubelementLocation ) )
-                                    if subsubsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag]:
-                                        PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag][subsubsubelement.tag] = []
-                                    PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag][subsubsubelement.tag] \
-                                            .append( (openA,close,level,paraClose,pattern,context,paraContinueType) )
+                                        elif attrib=='context':
+                                            context = value
+                                            if debuggingThisModule: assert context in ('medial','final',)
+                                        elif attrib=='continue':
+                                            qContinue = value
+                                        elif attrib=='type':
+                                            qType = value
+                                        else: logging.error( _("DS Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                    if adjusted3Tag not in PTXLanguages[languageName][element.tag][subelement.tag][adjusted2Tag]:
+                                        PTXLanguages[languageName][element.tag][subelement.tag][adjusted2Tag][adjusted3Tag] = []
+                                    PTXLanguages[languageName][element.tag][subelement.tag][adjusted2Tag][adjusted3Tag] \
+                                            .append( (openA,close,level,paraClose,pattern,context,paraContinueType,qContinue,qType,sub3element.text) )
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                    #print( '\n', element.tag, PTXLanguages[languageName][element.tag] )
+
                 elif element.tag == 'layout':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -460,17 +487,18 @@ def loadPTX8Languages( BibleObject ):
                         if subelement.tag == 'orientation':
                             assert subelement.tag not in PTXLanguages[languageName][element.tag]
                             PTXLanguages[languageName][element.tag][subelement.tag] = {}
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoAttributes( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsubelementLocation )
-                                assert subsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag]
-                                PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag] = subsubelement.text
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                                assert sub2element.tag not in PTXLanguages[languageName][element.tag][subelement.tag]
+                                PTXLanguages[languageName][element.tag][subelement.tag][sub2element.tag] = sub2element.text
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
                 elif element.tag == 'numbers':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -494,6 +522,7 @@ def loadPTX8Languages( BibleObject ):
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
                 elif element.tag == 'collations':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -514,25 +543,26 @@ def loadPTX8Languages( BibleObject ):
                                 else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
                             assert cType not in PTXLanguages[languageName][element.tag][subelement.tag]
                             PTXLanguages[languageName][element.tag][subelement.tag][cType] = {}
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoAttributes( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                if subsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType]:
-                                    PTXLanguages[languageName][element.tag][subelement.tag][cType][subsubelement.tag] = {}
-                                for subsubsubelement in subsubelement:
-                                    subsubsubelementLocation = subsubsubelement.tag + ' in ' + subsubelementLocation
-                                    if debuggingThisFunction: print( "        Processing {}…".format( subsubsubelementLocation ) )
-                                    BibleOrgSysGlobals.checkXMLNoAttributes( subsubsubelement, subsubsubelementLocation )
-                                    BibleOrgSysGlobals.checkXMLNoTail( subsubsubelement, subsubsubelementLocation )
-                                    BibleOrgSysGlobals.checkXMLNoSubelements( subsubsubelement, subsubsubelementLocation )
-                                    if subsubsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType][subsubelement.tag]:
-                                        PTXLanguages[languageName][element.tag][subelement.tag][cType][subsubelement.tag][subsubsubelement.tag] = []
-                                    PTXLanguages[languageName][element.tag][subelement.tag][cType][subsubelement.tag][subsubsubelement.tag].append( subsubsubelement.text )
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                if sub2element.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType]:
+                                    PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag] = {}
+                                for sub3element in sub2element:
+                                    sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                    if debuggingThisFunction: print( "        Processing {}…".format( sub3elementLocation ) )
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                    if sub3element.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag]:
+                                        PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag][sub3element.tag] = []
+                                    PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag][sub3element.tag].append( sub3element.text )
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
                 elif element.tag == 'special':
                     for subelement in element:
                         subelementLocation = subelement.tag + ' in ' + elementLocation
@@ -542,23 +572,24 @@ def loadPTX8Languages( BibleObject ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                         #BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                         assert subelement.tag not in PTXLanguages[languageName][element.tag]
-                        PTXLanguages[languageName][element.tag][subelement.tag] = {}
-                        if subelement.tag == '{urn://www.sil.org/ldml/0.1}external-resources':
-                            for subsubelement in subelement:
-                                subsubelementLocation = subsubelement.tag + ' in ' + subelementLocation
-                                if debuggingThisFunction: print( "      Processing {}…".format( subsubelementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoText( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoTail( subsubelement, subsubelementLocation )
-                                BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsubelementLocation )
+                        if subelement.tag.endswith( 'external-resources' ):
+                            adjustedTag = removeSILPrefix( subelement.tag )
+                            PTXLanguages[languageName][element.tag][adjustedTag] = {}
+                            for sub2element in subelement:
+                                sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                                if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                                 name = None
-                                for attrib,value in subsubelement.items():
+                                for attrib,value in sub2element.items():
                                     #print( "here7", attrib, value )
                                     if attrib=='name': name = value
-                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subsubsubelementLocation ) )
+                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                 assert name
-                                if subsubelement.tag not in PTXLanguages[languageName][element.tag][subelement.tag]:
-                                    PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag] = []
-                                PTXLanguages[languageName][element.tag][subelement.tag][subsubelement.tag].append( name )
+                                if sub2element.tag not in PTXLanguages[languageName][element.tag][adjustedTag]:
+                                    PTXLanguages[languageName][element.tag][adjustedTag][sub2element.tag] = []
+                                PTXLanguages[languageName][element.tag][adjustedTag][sub2element.tag].append( name )
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -767,7 +798,7 @@ class PTX8Bible( Bible ):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        self.suppliedMetadata['PTX'] = {}
+        self.suppliedMetadata['PTX8'] = {}
 
         if self.settingsFilepath is None: # it might have been loaded first
             # Attempt to load the settings file
@@ -776,7 +807,7 @@ class PTX8Bible( Bible ):
             #print( "settingsFilepath", settingsFilepath )
             PTXSettingsDict = loadPTX8ProjectData( self, settingsFilepath )
             if PTXSettingsDict:
-                self.suppliedMetadata['PTX']['Settings'] = PTXSettingsDict
+                self.suppliedMetadata['PTX8']['Settings'] = PTXSettingsDict
                 self.applySuppliedMetadata( 'PTX8' ) # Copy some to self.settingsDict
 
         #self.name = self.givenName
@@ -794,10 +825,10 @@ class PTX8Bible( Bible ):
             self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
 
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        if 1 or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             # Load the paratext metadata (and stop if any of them fail)
             self.loadPTXBooksNames() # from XML (if it exists)
-            self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
+            self.loadPTX8ProjectUserAccess() # from XML (if it exists)
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
             self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
@@ -807,15 +838,15 @@ class PTX8Bible( Bible ):
             self.loadPTXAutocorrects() # from text file (if it exists)
             self.loadPTXStyles() # from text files (if they exist)
             result = loadPTXVersifications( self ) # from text file (if it exists)
-            if result: self.suppliedMetadata['PTX']['Versifications'] = result
+            if result: self.suppliedMetadata['PTX8']['Versifications'] = result
             result = loadPTX8Languages( self ) # from INI file (if it exists)
-            if result: self.suppliedMetadata['PTX']['Languages'] = result
+            if result: self.suppliedMetadata['PTX8']['Languages'] = result
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadPTXBooksNames() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
-            except Exception as err: logging.error( 'loadPTXProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8ProjectUserAccess() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8ProjectUserAccess failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXLexicon() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXSpellingStatus() # from XML (if it exists)
@@ -834,11 +865,11 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTXVersifications( self ) # from text file (if it exists)
-                if result: self.suppliedMetadata['PTX']['Versifications'] = result
+                if result: self.suppliedMetadata['PTX8']['Versifications'] = result
             except Exception as err: logging.error( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTX8Languages( self ) # from INI file (if it exists)
-                if result: self.suppliedMetadata['PTX']['Languages'] = result
+                if result: self.suppliedMetadata['PTX8']['Languages'] = result
             except Exception as err: logging.error( 'loadPTX8Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
@@ -900,18 +931,28 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         if debuggingThisModule: print( "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
-        if booksNamesDict: self.suppliedMetadata['PTX']['BooksNames'] = booksNamesDict
+        if booksNamesDict: self.suppliedMetadata['PTX8']['BooksNames'] = booksNamesDict
     # end of PTX8Bible.loadPTXBooksNames
 
 
-    def loadPTXProjectUsers( self ):
+    def loadPTX8ProjectUserAccess( self ):
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXProjectUsers()") )
+            print( exp("loadPTX8ProjectUserAccess()") )
 
-        projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUsers.xml' )
+        def getFlag( attributeName, attributeValue ):
+            """
+            Get a 'true' or 'false' string and convert to True/False.
+            """
+            if attributeValue == 'true': return True
+            if attributeValue == 'false': return False
+            logging.error( _("Unexpected {} attribute value of {}").format( attributeName, attributeValue ) )
+            return attributeValue
+        # end of getFlag
+
+        projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUserAccess.xml' )
         if not os.path.exists( projectUsersFilepath ): return
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX8Bible.loading project user data from {}…".format( projectUsersFilepath ) )
@@ -922,17 +963,17 @@ class PTX8Bible( Bible ):
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='ProjectUsers':
+        if self.tree.tag=='ProjectUserAccess':
             treeLocation = "PTX8 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
 
             # Process the attributes first
-            peerSharing = None
+            peerSharingFlag = None
             for attrib,value in self.tree.items():
-                if attrib=='PeerSharing': peerSharing = value
+                if attrib=='PeerSharing': peerSharingFlag = getFlag( attrib, value )
                 else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
-            projectUsersDict['PeerSharing'] = peerSharing
+            projectUsersDict['PeerSharingFlag'] = peerSharingFlag
 
             # Now process the actual entries
             for element in self.tree:
@@ -944,26 +985,67 @@ class PTX8Bible( Bible ):
                 # Now process the subelements
                 if element.tag == 'User':
                     # Process the user attributes first
-                    userName = firstUserFlag = None
+                    userName = firstUserFlag = unregisteredUserFlag = None
                     for attrib,value in element.items():
                         if attrib=='UserName': userName = value
-                        elif attrib=='FirstUser': firstUserFlag = value
+                        elif attrib=='FirstUser': firstUserFlag = getFlag( attrib, value )
+                        elif attrib=='UnregisteredUser': unregisteredUserFlag = getFlag( attrib, value )
                         else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     if 'Users' not in projectUsersDict: projectUsersDict['Users'] = {}
                     assert userName not in projectUsersDict['Users'] # no duplicates allowed presumably
                     projectUsersDict['Users'][userName] = {}
-                    projectUsersDict['Users'][userName]['FirstUser'] = firstUserFlag
+                    projectUsersDict['Users'][userName]['FirstUserFlag'] = firstUserFlag
+                    projectUsersDict['Users'][userName]['UnregisteredUserFlag'] = unregisteredUserFlag
 
                     for subelement in element:
-                        sublocation = subelement.tag + ' ' + elementLocation
+                        sublocation = subelement.tag + ' in ' + elementLocation
                         #print( "  Processing {}…".format( sublocation ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
-                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
-                        if subelement.tag in ('Role', 'AllBooks', 'Books', ):
-                            #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
+
+                        if subelement.tag in ('Role', 'AllBooks', ):
+                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                            if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
                             assert subelement.tag not in projectUsersDict['Users'][userName]
                             projectUsersDict['Users'][userName][subelement.tag] = subelement.text
+                        elif subelement.tag in ('Books','AutomaticBooks',):
+                            BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                            if subelement.tag not in projectUsersDict['Users'][userName]:
+                                projectUsersDict['Users'][userName][subelement.tag] = []
+                            for sub2element in subelement:
+                                sub2location = sub2element.tag + ' in ' + sublocation
+                                #print( "  Processing {}…".format( sub2location ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                if sub2element.tag == 'Book':
+                                    bookID = None
+                                    for attrib,value in sub2element.items():
+                                        if attrib=='Id': bookID = value
+                                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                    projectUsersDict['Users'][userName][subelement.tag].append( bookID )
+                                else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                        elif subelement.tag in ('Permissions','AutomaticPermissions',):
+                            BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                            if subelement.tag not in projectUsersDict['Users'][userName]:
+                                projectUsersDict['Users'][userName][subelement.tag] = {}
+                            for sub2element in subelement:
+                                sub2location = sub2element.tag + ' in ' + sublocation
+                                #print( "  Processing {}…".format( sub2location ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                if sub2element.tag == 'Permission':
+                                    permissionType = grantedFlag = None
+                                    for attrib,value in sub2element.items():
+                                        if attrib=='Type':
+                                            permissionType = value
+                                            if debuggingThisModule:
+                                                assert permissionType in ('TermsList','Renderings','Spellings','Passages','Progress',)
+                                        elif attrib=='Granted': grantedFlag = getFlag( attrib, value )
+                                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                    projectUsersDict['Users'][userName][subelement.tag][permissionType] = grantedFlag
+                                else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
@@ -972,9 +1054,14 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
-        if debuggingThisModule: print( "\nprojectUsersDict", len(projectUsersDict), projectUsersDict )
-        if projectUsersDict: self.suppliedMetadata['PTX']['ProjectUsers'] = projectUsersDict
-    # end of PTX8Bible.loadPTXProjectUsers
+        if debuggingThisModule:
+            #print( "\nprojectUsersDict", len(projectUsersDict), projectUsersDict )
+            for somekey in projectUsersDict:
+                if somekey == 'Users':
+                    for userKey in projectUsersDict['Users']: print( '\n   User', userKey, projectUsersDict['Users'][userKey] )
+                else: print( '\n  ', somekey, projectUsersDict[somekey] )
+        if projectUsersDict: self.suppliedMetadata['PTX8']['ProjectUsers'] = projectUsersDict
+    # end of PTX8Bible.loadPTX8ProjectUserAccess
 
 
     def loadPTXLexicon( self ):
@@ -1110,7 +1197,7 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
         if debuggingThisModule: print( "\nlexiconDict", len(lexiconDict), lexiconDict )
-        if lexiconDict: self.suppliedMetadata['PTX']['Lexicon'] = lexiconDict
+        if lexiconDict: self.suppliedMetadata['PTX8']['Lexicon'] = lexiconDict
     # end of PTX8Bible.loadPTXLexicon
 
 
@@ -1184,13 +1271,13 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         if debuggingThisModule: print( "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
-        if spellingStatusDict: self.suppliedMetadata['PTX']['SpellingStatus'] = spellingStatusDict
+        if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
     # end of PTX8Bible.loadPTXSpellingStatus
 
 
     def loadPTXComments( self ):
         """
-        Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX'].
+        Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXComments()") )
@@ -1287,13 +1374,13 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} commenters.".format( len(commentsList) ) )
         if debuggingThisModule: print( "\ncommentsList", len(commentsList), commentsList )
         # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
-        if commentsList: self.suppliedMetadata['PTX']['PTXComments'] = commentsList
+        if commentsList: self.suppliedMetadata['PTX8']['PTXComments'] = commentsList
     # end of PTX8Bible.loadPTXComments
 
 
     def loadPTXBiblicalTerms( self ):
         """
-        Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXBiblicalTerms()") )
@@ -1401,13 +1488,13 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} Biblical terms.".format( len(BiblicalTermsDict) ) )
         if debuggingThisModule: print( "\nBiblicalTermsDict", len(BiblicalTermsDict), BiblicalTermsDict )
         #print( BiblicalTermsDict['MBTV']['חָנוּן'] )
-        if BiblicalTermsDict: self.suppliedMetadata['PTX']['BiblicalTerms'] = BiblicalTermsDict
+        if BiblicalTermsDict: self.suppliedMetadata['PTX8']['BiblicalTerms'] = BiblicalTermsDict
     # end of PTX8Bible.loadPTXBiblicalTerms
 
 
     def loadPTXProgress( self ):
         """
-        Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXProgress()") )
@@ -1590,13 +1677,13 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(progressDict) ) )
         if debuggingThisModule: print( "\nprogressDict", len(progressDict), progressDict )
-        if progressDict: self.suppliedMetadata['PTX']['Progress'] = progressDict
+        if progressDict: self.suppliedMetadata['PTX8']['Progress'] = progressDict
     # end of PTX8Bible.loadPTXProgress
 
 
     def loadPTXPrintConfig( self ):
         """
-        Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXPrintConfig()") )
@@ -1679,7 +1766,7 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         if debuggingThisModule: print( "\nprintConfigDict", len(printConfigDict), printConfigDict )
-        if printConfigDict: self.suppliedMetadata['PTX']['PrintConfig'] = printConfigDict
+        if printConfigDict: self.suppliedMetadata['PTX8']['PrintConfig'] = printConfigDict
     # end of PTX8Bible.loadPTXPrintConfig
 
 
@@ -1725,7 +1812,7 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         if debuggingThisModule: print( '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
-        if PTXAutocorrects: self.suppliedMetadata['PTX']['Autocorrects'] = PTXAutocorrects
+        if PTXAutocorrects: self.suppliedMetadata['PTX8']['Autocorrects'] = PTXAutocorrects
     # end of PTX8Bible.loadPTXAutocorrects
 
 
@@ -1799,7 +1886,7 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style files.".format( len(PTXStyles) ) )
         if debuggingThisModule: print( '\nPTXStyles', len(PTXStyles), PTXStyles )
-        if PTXStyles: self.suppliedMetadata['PTX']['Styles'] = PTXStyles
+        if PTXStyles: self.suppliedMetadata['PTX8']['Styles'] = PTXStyles
     # end of PTX8Bible.loadPTXStyles
 
 
@@ -1905,18 +1992,18 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
-        for testFolder in ( "Tests/DataFilesForTests/USFMTest1/",
-                            "Tests/DataFilesForTests/USFMTest2/",
-                            "Tests/DataFilesForTests/USFMTest3/",
-                            "Tests/DataFilesForTests/USFMAllMarkersProject/",
-                            "Tests/DataFilesForTests/USFMErrorProject/",
-                            "Tests/DataFilesForTests/PTX7Test/",
-                            "Tests/DataFilesForTests/PTX8Test1/",
-                            "Tests/DataFilesForTests/PTX8Test2/",
-                            "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                            "OutputFiles/BOS_USFM_Export/",
-                            "OutputFiles/BOS_USFM_Reexport/",
-                            "MadeUpFolder/",
+        for testFolder in ( 'Tests/DataFilesForTests/USFMTest1/',
+                            'Tests/DataFilesForTests/USFMTest2/',
+                            'Tests/DataFilesForTests/USFMTest3/',
+                            'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                            'Tests/DataFilesForTests/USFMErrorProject/',
+                            'Tests/DataFilesForTests/PTX7Test/',
+                            'Tests/DataFilesForTests/PTX8Test1/',
+                            'Tests/DataFilesForTests/PTX8Test2/',
+                            '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
+                            'OutputFiles/BOS_USFM_Export/',
+                            'OutputFiles/BOS_USFM_Reexport/',
+                            'MadeUpFolder/',
                             ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nTestfolder is: {}".format( testFolder ) )
@@ -1927,8 +2014,8 @@ def demo():
             result3 = PTX8BibleFileCheck( testFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
-    testFolder = "Tests/DataFilesForTests/PTX8Test2/"
-    if 1: # specify testFolder containing a single module
+    testFolder = 'Tests/DataFilesForTests/PTX8Test2/'
+    if 0: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
         PTX_Bible = PTX8Bible( testFolder )
         PTX_Bible.load()
@@ -1976,10 +2063,13 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 PTX8Bible( testFolder, someFolder )
-    if 0:
+    if 1:
         testFolders = (
-                    "Tests/DataFilesForTests/PTX8Test1/",
-                    "Tests/DataFilesForTests/PTX8Test2/",
+                    'Tests/DataFilesForTests/PTX8Test1/',
+                    'Tests/DataFilesForTests/PTX8Test2/',
+                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV',
+                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
+                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
                     ) # You can put your PTX8 test folder here
 
         for testFolder in testFolders:

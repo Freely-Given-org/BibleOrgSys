@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-05-20' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -224,7 +224,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 
 
-# The following loadPTX…() functions are placed here because
+# The following loadPTX7…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
 def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
     """
@@ -592,7 +592,7 @@ class PTX7Bible( Bible ):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        self.suppliedMetadata['PTX'] = {}
+        self.suppliedMetadata['PTX7'] = {}
 
         if self.ssfFilepath is None: # it might have been loaded first
             # Attempt to load the SSF file
@@ -604,7 +604,7 @@ class PTX7Bible( Bible ):
             if len(ssfFilepathList) >= 1: # Seems we found the right one
                 PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                 if PTXSettingsDict:
-                    self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
+                    self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to self.settingsDict
 
         #self.name = self.givenName
@@ -625,7 +625,9 @@ class PTX7Bible( Bible ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             # Load the paratext metadata (and stop if any of them fail)
             self.loadPTXBooksNames() # from XML (if it exists)
-            self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
+            self.loadPTX7ProjectUsers() # from XML (if it exists)
+            if 'ProjectUsers' in self.suppliedMetadata['PTX7']:
+                self.loadPTX7ProjectUserFields() # from XML (if it exists)
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
             self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
@@ -635,15 +637,18 @@ class PTX7Bible( Bible ):
             self.loadPTXAutocorrects() # from text file (if it exists)
             self.loadPTXStyles() # from text files (if they exist)
             result = loadPTXVersifications( self ) # from text file (if it exists)
-            if result: self.suppliedMetadata['PTX']['Versifications'] = result
+            if result: self.suppliedMetadata['PTX7']['Versifications'] = result
             result = loadPTX7Languages( self ) # from INI file (if it exists)
-            if result: self.suppliedMetadata['PTX']['Languages'] = result
+            if result: self.suppliedMetadata['PTX7']['Languages'] = result
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadPTXBooksNames() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXProjectUsers() # from XML (if it exists) but we don't do the ProjectUserFields.xml yet
-            except Exception as err: logging.error( 'loadPTXProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:
+                self.loadPTX7ProjectUsers() # from XML (if it exists)
+                if 'ProjectUsers' in self.suppliedMetadata['PTX7']:
+                    self.loadPTX7ProjectUserFields() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX7ProjectUsers failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXLexicon() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXSpellingStatus() # from XML (if it exists)
@@ -662,11 +667,11 @@ class PTX7Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTXVersifications( self ) # from text file (if it exists)
-                if result: self.suppliedMetadata['PTX']['Versifications'] = result
+                if result: self.suppliedMetadata['PTX7']['Versifications'] = result
             except Exception as err: logging.error( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTX7Languages( self ) # from INI file (if it exists)
-                if result: self.suppliedMetadata['PTX']['Languages'] = result
+                if result: self.suppliedMetadata['PTX7']['Languages'] = result
             except Exception as err: logging.error( 'loadPTX7Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
@@ -680,7 +685,8 @@ class PTX7Bible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXBooksNames()") )
 
-        bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
+        thisFilename = 'BookNames.xml'
+        bookNamesFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( bookNamesFilepath ): return
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
@@ -722,21 +728,24 @@ class PTX7Bible( Bible ):
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, thisFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         #print( "booksNamesDict", booksNamesDict )
-        if booksNamesDict: self.suppliedMetadata['PTX']['BooksNames'] = booksNamesDict
+        if booksNamesDict: self.suppliedMetadata['PTX7']['BooksNames'] = booksNamesDict
     # end of PTX7Bible.loadPTXBooksNames
 
 
-    def loadPTXProjectUsers( self ):
+    def loadPTX7ProjectUsers( self ):
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXProjectUsers()") )
+            print( exp("loadPTX7ProjectUsers()") )
 
-        projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUsers.xml' )
+        thisFilename = 'ProjectUsers.xml'
+        projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( projectUsersFilepath ): return
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
@@ -748,6 +757,79 @@ class PTX7Bible( Bible ):
 
         # Find the main container
         if self.tree.tag=='ProjectUsers':
+            treeLocation = "PTX7 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            # Process the attributes first
+            peerSharingFlag = None
+            for attrib,value in self.tree.items():
+                if attrib=='PeerSharing': peerSharingFlag = value
+                else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+            projectUsersDict['PeerSharingFlag'] = peerSharingFlag
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+
+                # Now process the subelements
+                if element.tag == 'User':
+                    # Process the user attributes first
+                    userName = firstUserFlag = None
+                    for attrib,value in element.items():
+                        if attrib=='UserName': userName = value
+                        elif attrib=='FirstUser': firstUserFlag = value
+                        else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    if 'Users' not in projectUsersDict: projectUsersDict['Users'] = {}
+                    assert userName not in projectUsersDict['Users'] # no duplicates allowed presumably
+                    projectUsersDict['Users'][userName] = {}
+                    projectUsersDict['Users'][userName]['FirstUserFlag'] = firstUserFlag
+
+                    for subelement in element:
+                        sublocation = subelement.tag + ' ' + elementLocation
+                        #print( "  Processing {}…".format( sublocation ) )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                        if subelement.tag in ('Role', 'AllBooks', 'Books', ):
+                            #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
+                            assert subelement.tag not in projectUsersDict['Users'][userName]
+                            projectUsersDict['Users'][userName][subelement.tag] = subelement.text
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, thisFilename ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
+        #print( "projectUsersDict", projectUsersDict )
+        if projectUsersDict: self.suppliedMetadata['PTX7']['ProjectUsers'] = projectUsersDict
+    # end of PTX7Bible.loadPTX7ProjectUsers
+
+
+    def loadPTX7ProjectUserFields( self ):
+        """
+        Load the ProjectUserFields.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTX7ProjectUserFields()") )
+
+        thisFilename = 'ProjectUserFields.xml'
+        projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
+        if not os.path.exists( projectUsersFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user field data from {}…".format( projectUsersFilepath ) )
+        self.tree = ElementTree().parse( projectUsersFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        projectUsersDict = OrderedDict()
+        #loadErrors = []
+
+        # Find the main container
+        if self.tree.tag=='ProjectUserFields':
             treeLocation = "PTX7 {} file".format( self.tree.tag )
             BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
@@ -792,11 +874,13 @@ class PTX7Bible( Bible ):
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, thisFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         #print( "projectUsersDict", projectUsersDict )
-        if projectUsersDict: self.suppliedMetadata['PTX']['ProjectUsers'] = projectUsersDict
-    # end of PTX7Bible.loadPTXProjectUsers
+        if projectUsersDict: self.suppliedMetadata['PTX7']['ProjectUserFields'] = projectUsersDict
+    # end of PTX7Bible.loadPTX7ProjectUserFields
 
 
     def loadPTXLexicon( self ):
@@ -806,7 +890,8 @@ class PTX7Bible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXLexicon()") )
 
-        lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
+        thisFilename = 'Lexicon.xml'
+        lexiconFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( lexiconFilepath ): return
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
@@ -926,10 +1011,12 @@ class PTX7Bible( Bible ):
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, thisFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
         #print( "lexiconDict", lexiconDict )
-        if lexiconDict: self.suppliedMetadata['PTX']['Lexicon'] = lexiconDict
+        if lexiconDict: self.suppliedMetadata['PTX7']['Lexicon'] = lexiconDict
     # end of PTX7Bible.loadPTXLexicon
 
 
@@ -940,7 +1027,8 @@ class PTX7Bible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXSpellingStatus()") )
 
-        spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
+        thisFilename = 'SpellingStatus.xml'
+        spellingStatusFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( spellingStatusFilepath ): return
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
@@ -997,16 +1085,18 @@ class PTX7Bible( Bible ):
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, thisFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         #print( "spellingStatusDict", spellingStatusDict )
-        if spellingStatusDict: self.suppliedMetadata['PTX']['SpellingStatus'] = spellingStatusDict
+        if spellingStatusDict: self.suppliedMetadata['PTX7']['SpellingStatus'] = spellingStatusDict
     # end of PTX7Bible.loadPTXSpellingStatus
 
 
     def loadPTXComments( self ):
         """
-        Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX'].
+        Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXComments()") )
@@ -1096,17 +1186,19 @@ class PTX7Bible( Bible ):
                         logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "commentDict", commentDict )
                     commentsList[commenterName].append( commentDict )
+            else:
+                logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, commentFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} commenters.".format( len(commentsList) ) )
         #print( "commentsList", commentsList )
         # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
-        if commentsList: self.suppliedMetadata['PTX']['PTXComments'] = commentsList
+        if commentsList: self.suppliedMetadata['PTX7']['PTXComments'] = commentsList
     # end of PTX7Bible.loadPTXComments
 
 
     def loadPTXBiblicalTerms( self ):
         """
-        Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXBiblicalTerms()") )
@@ -1207,17 +1299,19 @@ class PTX7Bible( Bible ):
                         logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "termRenderingDict", termRenderingDict )
                     #BiblicalTermsDict[versionName].append( termRenderingDict )
+            else:
+                logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, BiblicalTermsFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} Biblical terms.".format( len(BiblicalTermsDict) ) )
         #print( "BiblicalTermsDict", BiblicalTermsDict )
         #print( BiblicalTermsDict['MBTV']['חָנוּן'] )
-        if BiblicalTermsDict: self.suppliedMetadata['PTX']['BiblicalTerms'] = BiblicalTermsDict
+        if BiblicalTermsDict: self.suppliedMetadata['PTX7']['BiblicalTerms'] = BiblicalTermsDict
     # end of PTX7Bible.loadPTXBiblicalTerms
 
 
     def loadPTXProgress( self ):
         """
-        Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXProgress()") )
@@ -1394,16 +1488,18 @@ class PTX7Bible( Bible ):
                         logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "bookStatusDict", bookStatusDict )
                     #progressDict[versionName].append( bookStatusDict )
+            else:
+                logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, progressFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} progress.".format( len(progressDict) ) )
         #print( "progressDict", progressDict )
-        if progressDict: self.suppliedMetadata['PTX']['Progress'] = progressDict
+        if progressDict: self.suppliedMetadata['PTX7']['Progress'] = progressDict
     # end of PTX7Bible.loadPTXProgress
 
 
     def loadPTXPrintConfig( self ):
         """
-        Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX'].
+        Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadPTXPrintConfig()") )
@@ -1480,10 +1576,12 @@ class PTX7Bible( Bible ):
                         logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     #print( "bookStatusDict", bookStatusDict )
                     #printConfigDict[printConfigType].append( bookStatusDict )
+            else:
+                logging.critical( _("Unprocessed {} tree in {}").format( self.tree.tag, printConfigFilename ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         #print( "printConfigDict", printConfigDict )
-        if printConfigDict: self.suppliedMetadata['PTX']['PrintConfig'] = printConfigDict
+        if printConfigDict: self.suppliedMetadata['PTX7']['PrintConfig'] = printConfigDict
     # end of PTX7Bible.loadPTXPrintConfig
 
 
@@ -1529,7 +1627,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         #print( 'PTXAutocorrects', PTXAutocorrects )
-        if PTXAutocorrects: self.suppliedMetadata['PTX']['Autocorrects'] = PTXAutocorrects
+        if PTXAutocorrects: self.suppliedMetadata['PTX7']['Autocorrects'] = PTXAutocorrects
     # end of PTX7Bible.loadPTXAutocorrects
 
 
@@ -1603,7 +1701,7 @@ class PTX7Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style files.".format( len(PTXStyles) ) )
         #print( 'PTXStyles', PTXStyles )
-        if PTXStyles: self.suppliedMetadata['PTX']['Styles'] = PTXStyles
+        if PTXStyles: self.suppliedMetadata['PTX7']['Styles'] = PTXStyles
     # end of PTX7Bible.loadPTXStyles
 
 
