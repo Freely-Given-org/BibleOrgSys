@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-07' # by RJH
+LastModifiedDate = '2017-05-17' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -68,6 +68,8 @@ try:
                     Sword.ENC_UTF8:'UTF8', Sword.ENC_SCSU:'SCSU', Sword.ENC_UTF16:'UTF16',
                     Sword.ENC_RTF:'RTF', Sword.ENC_HTML:'HTML' }
     from Bible import BibleBook
+    try: import SwordModules #anyway, even if only used for testing
+    except ImportError: pass # doesn't really matter
 except ImportError: # Sword library (dll and python bindings) seem to be not available
     try:
         import SwordModules # Not as good/reliable/efficient as the real Sword library, but better than nothing
@@ -159,6 +161,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         print( "\nfilterOSISVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
 
     verseLine = osisVerseString
+    haveFootnoteFlag = False
 
 
     def handleOSISWordAttributes( attributeString ):
@@ -321,7 +324,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
 
     # Other regular expression data extractions
-    match = re.search( '<chapter ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>', verseLine )
+    match = re.search( '<chapter ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>', verseLine ) # milestone (self-closing)
     if match:
         attributes, sID = match.group(1) + match.group(3), match.group(2)
         #print( 'filterOSISVerseLine CD734 {} {} {}:{} Chapter sID {!r} attributes={!r}'.format( moduleName, BBB, C, V, sID, attributes ) )
@@ -333,7 +336,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
                 assert V == '0'
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "CCCC {!r}(:{!r})".format( C, V ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
-    match = re.search( '<chapter ([^/>]*?)osisID="([^/>]+?)"([^/>]*?)>', verseLine )
+    match = re.search( '<chapter ([^/>]*?)osisID="([^/>]+?)"([^/>]*?)>', verseLine ) # open chapter container
     if match:
         attributes, osisID = match.group(1) + match.group(3), match.group(2)
         #print( 'Chapter osisID {!r} attributes={!r} @ {} {}:{}'.format( osisID, attributes, BBB, C, V ) )
@@ -738,6 +741,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         replacement = '\\f + \\ft {}\\f*'.format( noteContents )
         #print( 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+        haveFootnoteFlag = True
     while True:
         match = re.search( '<abbr([^/>]*?)>(.*?)</abbr>', verseLine )
         if not match: break
@@ -777,6 +781,9 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
     if '<transChange>' in verseLine:
         replacementList.append( ('<transChange>','\\add ','</transChange>','\\add*') )
     else: replacementList.append( ('<transChange type="added">','\\add ','</transChange>','\\add*') )
+    if haveFootnoteFlag:
+        replacementList.append( ('<rdg type="alternative">','\\fqa ','</rdg>','') ) # Presumably inside a footnote
+        replacementList.append( ('<rdg type="x-literal">','\\fl Lit. \\fq ','</rdg>','') ) # Presumably inside a footnote
     verseLine = replaceFixedPairs( replacementList, verseLine )
 
     # Check for anything left that we should have caught above

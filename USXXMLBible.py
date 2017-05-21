@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-05-20' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.34'
@@ -224,8 +224,8 @@ class USXXMLBible( Bible ):
                 if len(ssfFilepathList) >= 1: # Seems we found the right one
                     PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                     if PTXSettingsDict:
-                        if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                        self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
+                        if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+                        self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
                         self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName
@@ -333,8 +333,8 @@ class USXXMLBible( Bible ):
             #if len(ssfFilepathList) == 1: # Seems we found the right one
                 #PTXSettingsDict = loadPTX7ProjectData( ssfFilepathList[0] )
                 #if PTXSettingsDict:
-                    #if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                    #self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
+                    #if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+                    #self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
                     #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames

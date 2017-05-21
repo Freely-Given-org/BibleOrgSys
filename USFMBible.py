@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-05-20' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -541,8 +541,8 @@ class USFMBible( Bible ):
                 PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                 if PTXSettingsDict:
                     if self.suppliedMetadata is None: self.suppliedMetadata = {}
-                    if 'PTX' not in self.suppliedMetadata: self.suppliedMetadata['PTX'] = {}
-                    self.suppliedMetadata['PTX']['SSF'] = PTXSettingsDict
+                    if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+                    self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
                     self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         #self.name = self.givenName

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-16' # by RJH
+LastModifiedDate = '2017-05-20' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -536,7 +536,7 @@ class InternalBible:
             and try to standardise it at the same time.
 
         Note that this function also takes 'SSF' as a special case
-            since it's a commonly used subset of self.suppliedMetadata['PTX'].
+            since it's a commonly used subset of self.suppliedMetadata['PTXn'].
 
         Note that some importers might prefer to supply their own function instead.
             (DBL Bible does this.)
@@ -551,7 +551,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX8', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -615,8 +615,8 @@ class InternalBible:
             # This is a special case (coz it's inside the PTX metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX']['SSF']), applyMetadataType ) )
-            for oldKey,value in self.suppliedMetadata['PTX']['SSF'].items():
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata['PTX7']['SSF'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
@@ -630,8 +630,8 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
-            if 'Encoding' in self.suppliedMetadata['PTX']['SSF']: # See if the SSF file gives some help to us
-                ssfEncoding = self.suppliedMetadata['PTX']['SSF']['Encoding']
+            if 'Encoding' in self.suppliedMetadata['PTX7']['SSF']: # See if the SSF file gives some help to us
+                ssfEncoding = self.suppliedMetadata['PTX7']['SSF']['Encoding']
                 if ssfEncoding == '65001': adjSSFencoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
@@ -659,8 +659,8 @@ class InternalBible:
             # This is a special case (coz it's inside the PTX metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX']['Settings']), applyMetadataType ) )
-            for oldKey,value in self.suppliedMetadata['PTX']['Settings'].items():
+                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX8']['Settings']), applyMetadataType ) )
+            for oldKey,value in self.suppliedMetadata['PTX8']['Settings'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
@@ -674,8 +674,8 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
-            if 'Encoding' in self.suppliedMetadata['PTX']['Settings']: # See if the settings file gives some help to us
-                settingsEncoding = self.suppliedMetadata['PTX']['Settings']['Encoding']
+            if 'Encoding' in self.suppliedMetadata['PTX8']['Settings']: # See if the settings file gives some help to us
+                settingsEncoding = self.suppliedMetadata['PTX8']['Settings']['Encoding']
                 if settingsEncoding == '65001': adjSettingsEncoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
