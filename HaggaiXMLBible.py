@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-21' # by RJH
 ShortProgName = "HaggaiBible"
 ProgName = "Haggai XML Bible format handler"
 ProgVersion = '0.33'
@@ -623,16 +623,16 @@ class HaggaiXMLBible( Bible ):
                         print( "HaggaiXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
                     vText += nTail
-                for subsubelement in subelement:
-                    if subsubelement.tag == HaggaiXMLBible.styleTag:
-                        subsublocation = "style in " + sublocation
-                        BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
+                for sub2element in subelement:
+                    if sub2element.tag == HaggaiXMLBible.styleTag:
+                        sub2location = "style in " + sublocation
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'fyt4' )
                         fs = css = idStyle = None
-                        for attrib,value in subsubelement.items():
+                        for attrib,value in sub2element.items():
                             if attrib=='fs': fs = value
                             #elif attrib=="css": css = value
                             #elif attrib=="id": idStyle = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
+                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style sub2element".format( attrib, value ) )
                         if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
                         SFM = None
                         if fs == 'italic': SFM = '\\it'
@@ -645,12 +645,12 @@ class HaggaiXMLBible( Bible ):
                         #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                         #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         #else: print( "css is", css, "idStyle is", idStyle ); halt
-                        sText, sTail = subsubelement.text.strip(), subsubelement.tail
+                        sText, sTail = sub2element.text.strip(), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got {!r} in {}".format( HaggaiXMLBible.styleTag, subsubelement.tag, sublocation ) )
+                    else: logging.error( "Expected to find {} but got {!r} in {}".format( HaggaiXMLBible.styleTag, sub2element.tag, sublocation ) )
 
             elif subelement.tag == HaggaiXMLBible.styleTag:
                 sublocation = "style in " + location

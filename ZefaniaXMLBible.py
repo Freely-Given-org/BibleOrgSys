@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-21' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
 ProgVersion = '0.35'
@@ -601,17 +601,17 @@ class ZefaniaXMLBible( Bible ):
                         print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
                     thisBook.addLine( 'v~', nTail )
-                for subsubelement in subelement:
-                    if subsubelement.tag == ZefaniaXMLBible.styleTag:
-                        subsublocation = "style in " + sublocation
-                        BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
+                for sub2element in subelement:
+                    if sub2element.tag == ZefaniaXMLBible.styleTag:
+                        sub2location = "style in " + sublocation
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'fyt4' )
                         css = idStyle = None
-                        for attrib,value in subsubelement.items():
+                        for attrib,value in sub2element.items():
                             if attrib == 'css':
                                 css = value
                             elif attrib == 'id':
                                 idStyle = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
+                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style sub2element".format( attrib, value ) )
                         if BibleOrgSysGlobals.debugFlag: assert css or idStyle
                         SFM = None
                         if css=='font-style:italic' or css=='font-style:italic;': SFM = '\\it'
@@ -622,12 +622,12 @@ class ZefaniaXMLBible( Bible ):
                         else:
                             logging.error( "Ignored1 css is {!r} idStyle is {!r}".format( css, idStyle ) )
                             if BibleOrgSysGlobals.debugFlag: halt
-                        sText, sTail = subsubelement.text.strip(), subsubelement.tail
+                        sText, sTail = sub2element.text.strip(), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got {!r} in {}".format( ZefaniaXMLBible.styleTag, subsubelement.tag, sublocation ) )
+                    else: logging.error( "Expected to find {} but got {!r} in {}".format( ZefaniaXMLBible.styleTag, sub2element.tag, sublocation ) )
 
             elif subelement.tag == ZefaniaXMLBible.styleTag:
                 sublocation = "style in " + location
