@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-21' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.55'
@@ -1324,7 +1324,7 @@ class OSISXMLBible( Bible ):
             #print( "validateSEG( {}, {}, {} )".format( BibleOrgSysGlobals.elementStr(element), locationDescription, verseMilestone ) )
             location = 'validateSEG: ' + locationDescription
             SegText, SegTail = element.text, element.tail
-            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'mjd4', loadErrors )
+
             # Process the attributes
             theType = None
             for attrib,value in element.items():
@@ -1348,6 +1348,13 @@ class OSISXMLBible( Bible ):
             elif marker.startswith( 'x-' ): # We don't have marker for this
                 self.thisBook.appendToLastLine( clean(SegText) )
             else: self.thisBook.appendToLastLine( '\\{} {}'.format( marker, clean(SegText) ) )
+            for subelement in element:
+                if subelement.tag == OSISXMLBible.OSISNameSpace+'divineName':
+                    validateDivineName( subelement, sublocation, verseMilestone )
+                else:
+                    logging.error( "8k1w Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
+                    loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (8k3s)".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             if SegTail:
                 self.thisBook.appendToLastLine( '\\f* {}'.format( clean(SegTail) ) ) # Do we need that space?
         # end of validateSEG
