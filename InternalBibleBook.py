@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-16' # by RJH
+LastModifiedDate = '2017-05-19' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1433,9 +1433,9 @@ class InternalBibleBook:
                     if sahtCount != -1:
                         sahtCount += 1
                         if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                            logging.error( _("doAppendEntry: Marker {!r} at {} {}:{} should always have text").format( originalMarker, self.BBB, C, V ) )
+                            logging.error( _("doAppendEntry: Marker {!r} at {!r} {} {}:{} should always have text").format( originalMarker, self.workName, self.BBB, C, V ) )
                         else: # we've reached our limit
-                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed…') )
+                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {}…').format( self.workName ) )
                             sahtCount = -1 # So we don't do this again (for this book)
                 #self.addPriorityError( 96, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
@@ -1637,9 +1637,9 @@ class InternalBibleBook:
                         if nfvnCount != -1:
                             nfvnCount += 1
                             if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {!r} {} {}:{} in \\{}: {!r}").format( self.workName, self.BBB, C, V, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed…') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed for {}…').format( self.workName ) )
                                 nfvnCount = -1 # So we don't do this again (for this book)
                                 #priority = 12
                     #self.addPriorityError( priority, C, V, _("Nothing following verse number in {!r}").format( originalText ) )
@@ -1677,9 +1677,9 @@ class InternalBibleBook:
                         if owfvnCount != -1:
                             owfvnCount += 1
                             if owfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {!r} {} {}:{} in \\{}: {!r}").format( self.workName, self.BBB, C, V, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed…') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed for {}…').format( self.workName ) )
                                 owfvnCount = -1 # So we don't do this again (for this book)
                         # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                         # (and especially coz we don't know yet if this is a finished translation)
