@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-05-19' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.30'
@@ -736,10 +736,6 @@ def demo():
 
     # Now demo the class
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    'Tests/DataFilesForTests/PTX8Test1/',
-                    'Tests/DataFilesForTests/PTX8Test2/',
-                    'Tests/DataFilesForTests/PTX7Test/',
-                    'Tests/DataFilesForTests/DBLTest/',
                     '../../../../../Data/Work/Bibles/theWord modules/',
                     '../../../../../Data/Work/Bibles/Biola Unbound modules/',
                     '../../../../../Data/Work/Bibles/EasyWorship Bibles/',
@@ -753,6 +749,9 @@ def demo():
                     'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
                     'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
                     'Tests/DataFilesForTests/DBLTest/',
+                    'Tests/DataFilesForTests/PTX7Test/',
+                    'Tests/DataFilesForTests/PTX8Test1/',
+                    'Tests/DataFilesForTests/PTX8Test2/',
                     'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
                     'Tests/DataFilesForTests/USFXTest1/', 'Tests/DataFilesForTests/USFXTest2/',
                     'Tests/DataFilesForTests/USFX-ASV/', 'Tests/DataFilesForTests/USFX-WEB/',
