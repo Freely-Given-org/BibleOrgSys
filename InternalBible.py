@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-20' # by RJH
+LastModifiedDate = '2017-05-28' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -612,7 +612,7 @@ class InternalBible:
                     self.settingsDict[newKey] = value
 
         elif applyMetadataType == 'SSF':
-            # This is a special case (coz it's inside the PTX metadata)
+            # This is a special case (coz it's inside the PTX7 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
@@ -656,7 +656,7 @@ class InternalBible:
                     logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
 
         elif applyMetadataType == 'PTX8':
-            # This is a special case (coz it's inside the PTX metadata)
+            # This is a special case (coz it's inside 'Settings' inside the PTX8 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX8']['Settings']), applyMetadataType ) )
