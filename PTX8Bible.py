@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-28' # by RJH
+LastModifiedDate = '2017-05-29' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.08'
@@ -261,10 +261,10 @@ def loadPTX8ProjectData( BibleObject, settingsFilepath, encoding='utf-8' ):
                 prePart = postPart = bookNameForm = None
                 for attrib,value in element.items():
                     if attrib=='PrePart': prePart = value
-                    elif attrib=='PostPart': prePart = value
-                    elif attrib=='BookNameForm': prePart = value
+                    elif attrib=='PostPart': postPart = value
+                    elif attrib=='BookNameForm': bookNameForm = value
                     else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
-                PTXSettingsDict[element.tag] = (prePart,postPart,bookNameForm)
+                PTXSettingsDict[element.tag] = { 'PrePart':prePart, 'PostPart':postPart, 'BookNameForm':bookNameForm }
             else:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                 PTXSettingsDict[element.tag] = element.text
@@ -310,7 +310,7 @@ def loadPTX8Languages( BibleObject ):
         #logging.error( "Got more than one language file: {}".format( languageFilenames ) )
     if not languageFilenames: return
 
-    PTXLanguages = OrderedDict()
+    PTXLanguages = {}
 
     for languageFilename in languageFilenames:
         languageName = languageFilename[:-5] # Remove the .ldml
@@ -835,7 +835,7 @@ class PTX8Bible( Bible ):
             self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
 
-        if 1 or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             # Load the paratext metadata (and stop if any of them fail)
             self.loadPTXBooksNames() # from XML (if it exists)
             self.loadPTX8ProjectUserAccess() # from XML (if it exists)
@@ -2075,11 +2075,11 @@ def demo():
                 PTX8Bible( testFolder, someFolder )
     if 1:
         testFolders = (
-                    'Tests/DataFilesForTests/PTX8Test1/',
-                    'Tests/DataFilesForTests/PTX8Test2/',
+                    #'Tests/DataFilesForTests/PTX8Test1/',
+                    #'Tests/DataFilesForTests/PTX8Test2/',
                     '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV',
-                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
-                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
+                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
+                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
                     ) # You can put your PTX8 test folder here
 
         for testFolder in testFolders:
