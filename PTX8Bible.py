@@ -1114,7 +1114,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='Homograph': lexemeHomograph = value
                         else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
                     #print( "Lexeme {} form={!r} homograph={}".format( lexemeType, lexemeForm, lexemeHomograph ) )
-                    assert lexemeType in ( 'Word', 'Phrase', )
+                    assert lexemeType in ( 'Word', 'Phrase', 'Stem', )
                     if lexemeType not in lexiconDict['Entries']: lexiconDict['Entries'][lexemeType] = {}
                     assert lexemeForm not in lexiconDict['Entries'][lexemeType]
                     lexiconDict['Entries'][lexemeType][lexemeForm] = { 'Homograph':lexemeHomograph, 'senseIDs':{} }
