@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-21' # by RJH
+LastModifiedDate = '2017-05-28' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -254,10 +254,20 @@ def loadPTX8ProjectData( BibleObject, settingsFilepath, encoding='utf-8' ):
         for element in settingsTree:
             elementLocation = element.tag + ' in ' + treeLocation
             #print( "  Processing settings {}…".format( elementLocation ) )
-            BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
             BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
-            PTXSettingsDict[element.tag] = element.text
+            if element.tag == 'Naming':
+                BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                prePart = postPart = bookNameForm = None
+                for attrib,value in element.items():
+                    if attrib=='PrePart': prePart = value
+                    elif attrib=='PostPart': prePart = value
+                    elif attrib=='BookNameForm': prePart = value
+                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
+                PTXSettingsDict[element.tag] = (prePart,postPart,bookNameForm)
+            else:
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                PTXSettingsDict[element.tag] = element.text
 
     if BibleOrgSysGlobals.verbosityLevel > 2:
         print( "  " + exp("Got {} PTX8 settings entries:").format( len(PTXSettingsDict) ) )
