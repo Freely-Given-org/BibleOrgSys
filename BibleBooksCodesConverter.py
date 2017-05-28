@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2017-05-28' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = '0.78'
+ProgVersion = '0.79'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -853,8 +853,8 @@ def demo():
     if BibleOrgSysGlobals.commandLineArguments.export:
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         bbcc.pickle() # Produce a pickle output file
-        bbcc.exportDataToPython() # Produce the .py tables
         bbcc.exportDataToJSON() # Produce a json output file
+        bbcc.exportDataToPython() # Produce the .py tables
         bbcc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
