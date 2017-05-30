@@ -56,14 +56,14 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-04' # by RJH
+LastModifiedDate = '2017-05-29' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os.path, logging
