@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-29' # by RJH
+LastModifiedDate = '2017-05-30' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1268,10 +1268,9 @@ class PTX8Bible( Bible ):
                         if attrib=='Word': word = value
                         elif attrib=='State': state = value
                         else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
-                    if 'SpellingWords' not in spellingStatusDict: spellingStatusDict['SpellingWords'] = {}
-                    assert word not in spellingStatusDict['SpellingWords'] # no duplicates allowed presumably
-                    spellingStatusDict['SpellingWords'][word] = {}
-                    spellingStatusDict['SpellingWords'][word]['State'] = state
+                    assert word not in spellingStatusDict # no duplicates allowed presumably
+                    spellingStatusDict[word] = {}
+                    spellingStatusDict[word]['State'] = state
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
@@ -1281,8 +1280,8 @@ class PTX8Bible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                         if subelement.tag in ( 'SpecificCase', 'Correction', ):
                             #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
-                            assert subelement.tag not in spellingStatusDict['SpellingWords'][word]
-                            spellingStatusDict['SpellingWords'][word][subelement.tag] = subelement.text
+                            assert subelement.tag not in spellingStatusDict[word]
+                            spellingStatusDict[word][subelement.tag] = subelement.text
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else:
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
@@ -1290,7 +1289,7 @@ class PTX8Bible( Bible ):
             logging.critical( _("Unrecognised PTX8 spelling tag: {}").format( self.tree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict) ) )
         if debuggingThisModule: print( "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
     # end of PTX8Bible.loadPTXSpellingStatus
@@ -1359,8 +1358,8 @@ class PTX8Bible( Bible ):
                             #if attrib=='Word': word = value
                             #elif attrib=='State': state = value
                             #else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
-                        #if 'SpellingWords' not in commentsList: commentsList['SpellingWords'] = {}
-                        #assert word not in commentsList['SpellingWords'] # no duplicates allowed presumably
+                        #if 'SpellingWords' not in commentsList: commentsList = {}
+                        #assert word not in commentsList # no duplicates allowed presumably
 
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
@@ -1433,62 +1432,62 @@ class PTX8Bible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
                 # Now process the elements
-                termRenderingDict = {}
+                termRenderingEntryDict = {}
                 if element.tag == 'TermRendering':
                     Id =  guessFlag = None
                     for attrib,value in element.items():
                         if attrib=='Id': Id = value
                         elif attrib=='Guess': guessFlag = getFlagFromAttribute( attrib, value )
                         else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sublocation ) )
-                    termRenderingDict['guessFlag'] = guessFlag
+                    termRenderingEntryDict['guessFlag'] = guessFlag
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
-                        assert element.tag not in termRenderingDict # No duplicates please
+                        assert element.tag not in termRenderingEntryDict # No duplicates please
                         if subelement.tag in ( 'Tag', 'Notes', 'Changes', 'Glossary', ):
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
-                            termRenderingDict[subelement.tag] = subelement.text # can be None
+                            termRenderingEntryDict[subelement.tag] = subelement.text # can be None
                         elif subelement.tag == 'Renderings':
                             # This seems to be a string containing a comma separated list!
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
-                            termRenderingDict[subelement.tag] = subelement.text.split( ', ' ) if subelement.text else None
+                            termRenderingEntryDict[subelement.tag] = subelement.text.split( ', ' ) if subelement.text else None
                         #elif subelement.tag == 'Notes':
-                            #termRenderingDict[subelement.tag] = []
+                            #termRenderingEntryDict[subelement.tag] = []
                             #for sub2element in subelement:
                                 #sub2location = sub2element.tag + ' ' + sublocation
                                 #BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                 #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
-                                #termRenderingDict[subelement.tag].append( sub2element.text )
+                                #termRenderingEntryDict[subelement.tag].append( sub2element.text )
                         elif subelement.tag == 'Denials':
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
-                            termRenderingDict[subelement.tag] = None
+                            termRenderingEntryDict[subelement.tag] = None
                             for sub2element in subelement:
                                 sub2location = sub2element.tag + ' ' + sublocation
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
-                                if termRenderingDict[subelement.tag] == None:
-                                    termRenderingDict[subelement.tag] = []
+                                if termRenderingEntryDict[subelement.tag] == None:
+                                    termRenderingEntryDict[subelement.tag] = []
                                 #if sub2element.tag == 'VerseRef':
                                     ## Process the VerseRef attributes first
                                     #versification = None
                                     #for attrib,value in sub2element.items():
                                         #if attrib=='Versification': versification = value
                                         #else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
-                                    #termRenderingDict[subelement.tag].append( (sub2element.text,versification) )
+                                    #termRenderingEntryDict[subelement.tag].append( (sub2element.text,versification) )
                                 if sub2element.tag == 'Denial':
-                                    termRenderingDict[subelement.tag].append ( (sub2element.tag,sub2element.text) )
+                                    termRenderingEntryDict[subelement.tag].append ( (sub2element.tag,sub2element.text) )
                                 else: logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
-                                #print( "termRenderingDict", termRenderingDict ); halt
+                                #print( "termRenderingEntryDict", termRenderingEntryDict ); halt
                         else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                 else: logging.error( _("Unprocessed {} element '{}' in {}").format( element.tag, element.text, elementLocation ) )
-                #print( "termRenderingDict", termRenderingDict )
+                #print( "termRenderingEntryDict", termRenderingEntryDict )
                 assert Id not in TermRenderingsDict # No duplicate ids allowed
-                TermRenderingsDict[Id] = termRenderingDict
-                #print( "termRenderingDict", termRenderingDict ); halt
+                TermRenderingsDict[Id] = termRenderingEntryDict
+                #print( "termRenderingEntryDict", termRenderingEntryDict ); halt
         else:
             logging.critical( _("Unrecognised PTX8 {} term renderings tag: {}").format( versionName, self.tree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2003,7 +2002,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in ( 'Tests/DataFilesForTests/USFMTest1/',
                             'Tests/DataFilesForTests/USFMTest2/',
                             'Tests/DataFilesForTests/USFMTest3/',
@@ -2077,11 +2076,11 @@ def demo():
                 PTX8Bible( testFolder, someFolder )
     if 1:
         testFolders = (
-                    #'Tests/DataFilesForTests/PTX8Test1/',
-                    #'Tests/DataFilesForTests/PTX8Test2/',
+                    'Tests/DataFilesForTests/PTX8Test1/',
+                    'Tests/DataFilesForTests/PTX8Test2/',
                     '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV',
-                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
-                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
+                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
+                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
                     ) # You can put your PTX8 test folder here
 
         for testFolder in testFolders:
@@ -2097,6 +2096,17 @@ def demo():
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+
+                # Test BDB code for display PTX8 metadata files
+                import sys; sys.path.append( '../../../../../../home/autoprocesses/Scripts/' )
+                from ProcessUploadFunctions import doGlobalTemplateFixes
+                from ProcessTemplates import webPageTemplate
+                readyWebPageTemplate = doGlobalTemplateFixes( 'Matigsalug', 'MBTV', "Test", webPageTemplate )
+                from ProcessLoadedBible import makeSettingsPage
+                outputFolderPath = 'OutputFiles/BDBSettings/'
+                if not os.path.exists( outputFolderPath ):
+                        os.makedirs( outputFolderPath, 0o755 )
+                makeSettingsPage( 'Matigsalug', PTX_Bible, readyWebPageTemplate, outputFolderPath )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     if 0:
