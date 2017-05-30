@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-29' # by RJH
+LastModifiedDate = '2017-05-30' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.26'
@@ -66,7 +66,7 @@ from USFMBibleBook import USFMBibleBook
 MARKER_FILENAMES = ( 'AUTOCORRECT.TXT', 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML',
                     'LEXICON.XML', 'PRINTDRAFTCONFIGBASIC.XML', 'PROJECTUSERS.XML',
                     'PROJECTUSERFIELDS.XML', 'SPELLINGSTATUS.XML', 'USFM-COLOR.STY', ) # Must all be UPPER-CASE
-EXCLUDE_FILENAMES = ( 'PROJECTUSERACCESS.XML', 'SETTINGS.XML', 'TERMRENDERINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
+EXCLUDE_FILENAMES = ( 'LICENSE.JSON', 'PROJECTUSERACCESS.XML', 'SETTINGS.XML', 'TERMRENDERINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
 MARKER_FILE_EXTENSIONS = ( '.SSF', '.VRS', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
 EXCLUDE_FILE_EXTENSIONS = ( '.LDML', ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
 MARKER_THRESHOLD = 3 # How many of the above must be found
