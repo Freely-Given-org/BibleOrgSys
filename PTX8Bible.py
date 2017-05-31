@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-31' # by RJH
+LastModifiedDate = '2017-06-01' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -64,14 +64,14 @@ from USFMBibleBook import USFMBibleBook
 
 
 
-# NOTE: All currently disabled by adding .XXX after filenames
+# NOTE: File names and extensions must all be UPPER-CASE
 MARKER_FILENAMES = ( 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML', 'LICENSE.JSON',
                     'PROJECTPROGRESS.CSV', 'PROJECTPROGRESS.XML', 'PROJECTUSERACCESS.XML',
-                    'SETTINGS.XML', 'TERMRENDERINGS.XML', 'UNIQUE.ID', ) # Must all be UPPER-CASE
-EXCLUDE_FILENAMES = ( 'PROJECTUSERS.XML', 'PROJECTUSERFIELDS.XML', ) # Must all be UPPER-CASE
-MARKER_FILE_EXTENSIONS = ( '.LDML', '.VRS', ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
-EXCLUDE_FILE_EXTENSIONS = ( '.SSF', '.LDS' ) # Must all be UPPER-CASE plus shouldn't be included in the above filenames lists
-MARKER_THRESHOLD = 6 # How many of the above must be found
+                    'SETTINGS.XML', 'TERMRENDERINGS.XML', 'UNIQUE.ID', 'WORDANALYSES.XML', )
+EXCLUDE_FILENAMES = ( 'PROJECTUSERS.XML', 'PROJECTUSERFIELDS.XML', )
+MARKER_FILE_EXTENSIONS = ( '.LDML', '.VRS', ) # Shouldn't be included in the above filenames lists
+EXCLUDE_FILE_EXTENSIONS = ( '.SSF', '.LDS' ) # Shouldn't be included in the above filenames lists
+MARKER_THRESHOLD = 6 # How many of the above must be found (after EXCLUDEs are subtracted)
 
 
 def exp( messageString ):
@@ -856,6 +856,7 @@ class PTX8Bible( Bible ):
             self.loadPTX8ProjectUserAccess() # from XML (if it exists)
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
+            self.loadPTXWordAnalyses() # from XML (if it exists)
             self.loadPTXCheckingStatus() # from XML (if it exists)
             self.loadPTXComments() # from XML (if they exist)
             self.loadPTXCommentTags() # from XML (if they exist)
@@ -879,6 +880,8 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXSpellingStatus() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            self.loadPTXWordAnalyses() # from XML (if it exists)
+            #except Exception as err: logging.error( 'loadPTXWordAnalyses failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXCheckingStatus() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXCheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
@@ -1385,6 +1388,99 @@ class PTX8Bible( Bible ):
         if checkingStatusByBookDict: self.suppliedMetadata['PTX8']['CheckingStatusByBook'] = checkingStatusByBookDict
         if checkingStatusByCheckDict: self.suppliedMetadata['PTX8']['CheckingStatusByCheck'] = checkingStatusByCheckDict
     # end of PTX8Bible.loadPTXCheckingStatus
+
+
+    def loadPTXWordAnalyses( self ):
+        """
+        Load the WordAnalyses.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTXWordAnalyses()") )
+
+        wordAnalysesFilepath = os.path.join( self.sourceFilepath, 'WordAnalyses.xml' )
+        if not os.path.exists( wordAnalysesFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading word analysis data from {}…".format( wordAnalysesFilepath ) )
+        self.tree = ElementTree().parse( wordAnalysesFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        wordAnalysesDict = OrderedDict()
+        #loadErrors = []
+
+
+        def processWordAnalysis( word, element, treeLocation ):
+            """
+            """
+            #print( "processWordAnalysis( {} )".format( word ) )
+
+            analysisDict = {}
+
+            # Now process the actual items
+            for subelement in element:
+                elementLocation = subelement.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, elementLocation )
+
+                # Now process the subelements
+                if subelement.tag == 'Lexeme':
+                    assert subelement.tag not in analysisDict
+                    analysisDict[subelement.tag] = subelement.text
+                else:
+                    logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, elementLocation ) )
+            #print( "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
+            return analysisDict
+        # end of processWordAnalysis
+
+
+        # Find the main container
+        if self.tree.tag == 'WordAnalyses':
+            treeLocation = "PTX8 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+
+                # Now process the subelements
+                if element.tag == 'Entry':
+                    # Process the user attributes first
+                    word = None
+                    for attrib,value in element.items():
+                        if attrib=='Word': word = value
+                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    assert word not in wordAnalysesDict # no duplicates allowed presumably
+                    #wordAnalysesDict[word] = {}
+
+                    for subelement in element:
+                        sublocation = subelement.tag + ' ' + elementLocation
+                        #print( "  Processing {}…".format( sublocation ) )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                        if subelement.tag == 'Analysis':
+                            #assert subelement.tag not in wordAnalysesDict[word]
+                            assert word not in wordAnalysesDict
+                            wordAnalysesDict[word] = processWordAnalysis( word, subelement, sublocation )
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unrecognised PTX8 spelling tag: {}").format( self.tree.tag ) )
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} spelling status entries.".format( len(wordAnalysesDict) ) )
+        if debuggingThisModule: print( "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
+        if wordAnalysesDict: self.suppliedMetadata['PTX8']['WordAnalyses'] = wordAnalysesDict
+    # end of PTX8Bible.loadPTXWordAnalyses
+
 
 
     def loadPTXComments( self ):
