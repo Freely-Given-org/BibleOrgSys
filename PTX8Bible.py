@@ -857,7 +857,8 @@ class PTX8Bible( Bible ):
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
             self.loadPTXCheckingStatus() # from XML (if it exists)
-            self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
+            self.loadPTXComments() # from XML (if they exist)
+            self.loadPTXCommentTags() # from XML (if they exist)
             self.loadPTXTermRenderings() # from XML (if they exist)
             self.loadPTXProgress() # from XML (if it exists)
             self.loadPTXPrintConfig()  # from XML (if it exists)
@@ -882,6 +883,8 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXCheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             except Exception as err: logging.error( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXCommentTags() # from XML (if they exist)
+            except Exception as err: logging.error( 'loadPTXCommentTags failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXTermRenderings() # from XML (if they exist)
             except Exception as err: logging.error( 'loadPTXTermRenderings failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXProgress() # from XML (if it exists)
@@ -1486,6 +1489,66 @@ class PTX8Bible( Bible ):
         # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
         if commentsList: self.suppliedMetadata['PTX8']['PTXComments'] = commentsList
     # end of PTX8Bible.loadPTXComments
+
+
+    def loadPTXCommentTags( self ):
+        """
+        Load the CommentTags_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTXCommentTags()") )
+
+        commentTagFilepath = os.path.join( self.sourceFilepath, 'CommentTags.xml' )
+        if not os.path.exists( commentTagFilepath ): return
+
+        commentTagDict = {}
+        #loadErrors = []
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
+
+        self.tree = ElementTree().parse( commentTagFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        # Find the main container
+        if self.tree.tag == 'TagList':
+            treeLocation = "PTX8 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
+
+                # Now process the subelements
+                if element.tag == 'Tag':
+                    BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                    # Process the tag attributes
+                    Id = name = icon = creatorResolveFlag = None
+                    for attrib,value in element.items():
+                        if attrib=='Id': Id = value
+                        elif attrib=='Name': name = value
+                        elif attrib=='Icon': icon = value
+                        elif attrib=='CreatorResolve': creatorResolveFlag = getFlagFromAttribute( attrib, value )
+                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    commentTagDict[element.tag] = { 'Id':Id, 'Name':name, 'Icon':icon, 'CreatorResolve':creatorResolveFlag }
+                elif element.tag == 'LastUsedID':
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                    commentTagDict[element.tag] = element.text
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unrecognised PTX8 comment tag list tag: {}").format( self.tree.tag ) )
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} comment tags.".format( len(commentTagDict) ) )
+        if debuggingThisModule: print( "\ncommentTagDict", len(commentTagDict), commentTagDict )
+        if commentTagDict: self.suppliedMetadata['PTX8']['CommentTags'] = commentTagDict
+    # end of PTX8Bible.loadPTXCommentTags
 
 
     def loadPTXTermRenderings( self ):
