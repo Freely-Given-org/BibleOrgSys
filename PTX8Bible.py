@@ -44,7 +44,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-05-31' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -856,6 +856,7 @@ class PTX8Bible( Bible ):
             self.loadPTX8ProjectUserAccess() # from XML (if it exists)
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
+            self.loadPTXCheckingStatus() # from XML (if it exists)
             self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             self.loadPTXTermRenderings() # from XML (if they exist)
             self.loadPTXProgress() # from XML (if it exists)
@@ -877,6 +878,8 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXSpellingStatus() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXCheckingStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTXCheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             except Exception as err: logging.error( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXTermRenderings() # from XML (if they exist)
@@ -1297,6 +1300,88 @@ class PTX8Bible( Bible ):
         if debuggingThisModule: print( "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
     # end of PTX8Bible.loadPTXSpellingStatus
+
+
+    def loadPTXCheckingStatus( self ):
+        """
+        Load the CheckingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTXCheckingStatus()") )
+
+        checkingStatusFilepath = os.path.join( self.sourceFilepath, 'CheckingStatus.xml' )
+        if not os.path.exists( checkingStatusFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading checking status data from {}…".format( checkingStatusFilepath ) )
+        self.tree = ElementTree().parse( checkingStatusFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        checkingStatusByBookDict, checkingStatusByCheckDict = OrderedDict(), OrderedDict()
+        #loadErrors = []
+
+        # Find the main container
+        if self.tree.tag == 'CheckingStatuses':
+            treeLocation = "PTX8 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            ## Process the attributes first
+            #peerSharing = None
+            #for attrib,value in self.tree.items():
+                #if attrib=='PeerSharing': peerSharing = value
+                #else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+            #checkingStatusDict['PeerSharing'] = peerSharing
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+
+                # Now process the subelements
+                if element.tag == 'CheckingStatus':
+                    tempDict = OrderedDict()
+                    for subelement in element:
+                        sublocation = subelement.tag + ' ' + elementLocation
+                        #print( "  Processing {}…".format( sublocation ) )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                        if subelement.tag in ( 'BookName', 'Check', 'MD5', 'Date', 'Errors', 'DeniedErrors', ):
+                            if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
+                            assert subelement.tag not in tempDict
+                            tempDict[subelement.tag] = subelement.text
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                    assert tempDict and 'BookName' in tempDict and 'Check' in tempDict
+                    bn, chk = tempDict['BookName'], tempDict['Check']
+                    del tempDict['BookName'], tempDict['Check']
+                    if bn not in checkingStatusByBookDict: checkingStatusByBookDict[bn] = {}
+                    if chk not in checkingStatusByCheckDict: checkingStatusByCheckDict[chk] = {}
+                    assert chk not in checkingStatusByBookDict[bn] # Duplicates not expected
+                    checkingStatusByBookDict[bn][chk] = tempDict
+                    assert bn not in checkingStatusByCheckDict[chk] # Duplicates not expected
+                    checkingStatusByCheckDict[chk][bn] = tempDict # Saved both ways
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.tree.tag ) )
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  Loaded {:,} checking status books.".format( len(checkingStatusByBookDict) ) )
+            print( "  Loaded {:,} checking status checks.".format( len(checkingStatusByCheckDict) ) )
+        if debuggingThisModule:
+            print( "\ncheckingStatusByBookDict", len(checkingStatusByBookDict), checkingStatusByBookDict )
+            print( "\ncheckingStatusByCheckDict", len(checkingStatusByCheckDict), checkingStatusByCheckDict )
+        #for something in checkingStatusDict:
+            #print( "\n  {} = {}".format( something, checkingStatusDict[something] ) )
+        if checkingStatusByBookDict: self.suppliedMetadata['PTX8']['CheckingStatusByBook'] = checkingStatusByBookDict
+        if checkingStatusByCheckDict: self.suppliedMetadata['PTX8']['CheckingStatusByCheck'] = checkingStatusByCheckDict
+    # end of PTX8Bible.loadPTXCheckingStatus
 
 
     def loadPTXComments( self ):
