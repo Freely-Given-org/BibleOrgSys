@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-30' # by RJH
+LastModifiedDate = '2017-05-31' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -55,6 +55,7 @@ import sys, os, logging
 from collections import OrderedDict
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
+import json
 
 import BibleOrgSysGlobals
 from Bible import Bible
@@ -865,6 +866,7 @@ class PTX8Bible( Bible ):
             if result: self.suppliedMetadata['PTX8']['Versifications'] = result
             result = loadPTX8Languages( self ) # from INI file (if it exists)
             if result: self.suppliedMetadata['PTX8']['Languages'] = result
+            self.loadPTX8Licence() # from JSON file (if it exists)
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadPTXBooksNames() # from XML (if it exists)
@@ -895,6 +897,8 @@ class PTX8Bible( Bible ):
                 result = loadPTX8Languages( self ) # from INI file (if it exists)
                 if result: self.suppliedMetadata['PTX8']['Languages'] = result
             except Exception as err: logging.error( 'loadPTX8Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Licence() # from JSON file (if it exists)
+            except Exception as err: logging.error( 'loadPTX8Licence failed with {} {}'.format( sys.exc_info()[0], err ) )
 
         self.preloadDone = True
     # end of PTX8Bible.preload
@@ -1901,6 +1905,36 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTXStyles
 
 
+    def loadPTX8Licence( self ):
+        """
+        Load the license.json file and parse it into the dictionary.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTX8Licence()") )
+
+        licenceFilename = 'license.json'
+        licenceFilepath = os.path.join( self.sourceFilepath, licenceFilename )
+        if not os.path.exists( licenceFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading PTX8 licence from {}…".format( licenceFilepath ) )
+
+        with open( licenceFilepath, 'rt', encoding='utf-8' ) as lFile: # Automatically closes the file when done
+            licenceString = lFile.read()
+        #print( "licenceString", licenceString )
+        if licenceString[0]==chr(65279): #U+FEFF
+            logging.info( "loadPTX8Licence: Detected Unicode Byte Order Marker (BOM) in {}".format( licenceFilename ) )
+            licenceString = licenceString[1:] # Remove the Unicode Byte Order Marker (BOM)
+        jsonData = json.loads( licenceString )
+        #print( "jsonData", jsonData )
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule: assert isinstance( jsonData, dict )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} licence elements.".format( len(jsonData) ) )
+        if debuggingThisModule: print( '\nPTX8Licence', len(jsonData), jsonData )
+        if jsonData: self.suppliedMetadata['PTX8']['Licence'] = jsonData
+    # end of PTX8Bible.loadPTX8Licence
+
+
     def loadBook( self, BBB, filename=None ):
         """
         Load the requested book into self.books if it's not already loaded.
@@ -2103,7 +2137,7 @@ def demo():
                 from ProcessTemplates import webPageTemplate
                 readyWebPageTemplate = doGlobalTemplateFixes( 'Matigsalug', 'MBTV', "Test", webPageTemplate )
                 from ProcessLoadedBible import makeSettingsPage
-                outputFolderPath = 'OutputFiles/BDBSettings/'
+                outputFolderPath = 'OutputFiles/BDBSettingsPages/'
                 if not os.path.exists( outputFolderPath ):
                         os.makedirs( outputFolderPath, 0o755 )
                 makeSettingsPage( 'Matigsalug', PTX_Bible, readyWebPageTemplate, outputFolderPath )
