@@ -97,7 +97,7 @@ from argparse import ArgumentParser
 commandLineArguments = None
 
 strictCheckingFlag = debugFlag = False
-haltOnXMLWarning = True # Used for XML debugging
+haltOnXMLWarning = False # Used for XML debugging
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
