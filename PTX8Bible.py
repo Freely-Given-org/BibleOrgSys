@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-05' # by RJH
+LastModifiedDate = '2017-06-10' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -65,7 +65,8 @@ from USFMBibleBook import USFMBibleBook
 
 
 # NOTE: File names and extensions must all be UPPER-CASE
-MARKER_FILENAMES = ( 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML', 'LICENSE.JSON',
+MARKER_FILENAMES = ( 'BOOKNAMES.XML', 'CHECKINGSTATUS.XML', 'COMMENTTAGS.XML',
+                    'DERIVEDTRANSLATIONSTATUS.XML', 'LICENSE.JSON',
                     'PROJECTPROGRESS.CSV', 'PROJECTPROGRESS.XML', 'PROJECTUSERACCESS.XML',
                     'SETTINGS.XML', 'TERMRENDERINGS.XML', 'UNIQUE.ID', 'WORDANALYSES.XML', )
 EXCLUDE_FILENAMES = ( 'PROJECTUSERS.XML', 'PROJECTUSERFIELDS.XML', )
@@ -585,14 +586,14 @@ def loadPTX8Languages( BibleObject ):
                             for sub2element in subelement:
                                 sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
                                 if debuggingThisFunction: print( "      Processing {}…".format( sub2elementLocation ) )
-                                BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation, "DGD561" )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                                 if sub2element.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType]:
                                     PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag] = {}
                                 for sub3element in sub2element:
                                     sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                                     if debuggingThisFunction: print( "        Processing {}…".format( sub3elementLocation ) )
-                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation, "DSD354" )
                                     BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                     if sub3element.tag not in PTXLanguages[languageName][element.tag][subelement.tag][cType][sub2element.tag]:
@@ -620,15 +621,16 @@ def loadPTX8Languages( BibleObject ):
                                 BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
-                                name = None
+                                erName = erSize = None
                                 for attrib,value in sub2element.items():
                                     #print( "here7", attrib, value )
-                                    if attrib=='name': name = value
-                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
-                                assert name
+                                    if attrib=='name': erName = value
+                                    elif attrib=='size': erSize = value
+                                    else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                assert erName
                                 if sub2element.tag not in PTXLanguages[languageName][element.tag][adjustedTag]:
                                     PTXLanguages[languageName][element.tag][adjustedTag][sub2element.tag] = []
-                                PTXLanguages[languageName][element.tag][adjustedTag][sub2element.tag].append( name )
+                                PTXLanguages[languageName][element.tag][adjustedTag][sub2element.tag].append( (erName,erSize) )
                         else:
                             logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -892,6 +894,7 @@ class PTX8Bible( Bible ):
             self.loadPTXSpellingStatus() # from XML (if it exists)
             self.loadPTXWordAnalyses() # from XML (if it exists)
             self.loadPTXCheckingStatus() # from XML (if it exists)
+            self.loadPTXDerivedTranslationStatus() # from XML (if it exists)
             self.loadPTXNotes() # from XML (if they exist)
             self.loadPTXCommentTags() # from XML (if they exist)
             self.loadPTXTermRenderings() # from XML (if they exist)
@@ -922,6 +925,8 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXWordAnalyses failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXCheckingStatus() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXCheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXDerivedTranslationStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTXDerivedTranslationStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXNotes() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             except Exception as err: logging.error( 'loadPTXNotes failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXCommentTags() # from XML (if they exist)
@@ -1478,6 +1483,81 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTXCheckingStatus
 
 
+    def loadPTXDerivedTranslationStatus( self ):
+        """
+        Load the DerivedTranslationStatus.xml file (if it exists)
+            and parse it into the dictionary self.suppliedMetadata.
+
+        This is usually used for a project like a back translation or daughter translation.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTXDerivedTranslationStatus()") )
+
+        derivedTranslationStatusFilepath = os.path.join( self.sourceFilepath, 'DerivedTranslationStatus.xml' )
+        if not os.path.exists( derivedTranslationStatusFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading derived translation status data from {}…".format( derivedTranslationStatusFilepath ) )
+        self.tree = ElementTree().parse( derivedTranslationStatusFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        derivedTranslationStatusByBookDict = OrderedDict()
+        #loadErrors = []
+
+        # Find the main container
+        if self.tree.tag == 'DerivedTranslationVerseList':
+            treeLocation = "PTX8 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
+
+                # Now process the subelements
+                if element.tag == 'Verse':
+
+                    # Process the entry attributes first
+                    referenceString = derivedCode = None
+                    for attrib,value in element.items():
+                        if attrib=='ref': referenceString = value
+                        elif attrib=='derived': derivedCode = value
+                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    assert referenceString.count( ' ' ) == 1
+                    assert referenceString.count( ':' ) == 1
+                    assert len(derivedCode) == 8
+                    ptBookCode, CV = referenceString.split( ' ', 1 )
+                    C, V = CV.split( ':', 1 )
+
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( ptBookCode )
+                    if BBB not in derivedTranslationStatusByBookDict:
+                        derivedTranslationStatusByBookDict[BBB] = OrderedDict()
+
+                    derivedFrom = element.text
+                    derivedTranslationStatusByBookDict[BBB][(C,V)] = (derivedCode,derivedFrom)
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+        else:
+            logging.critical( _("Unrecognised PTX8 derived translation tag: {}").format( self.tree.tag ) )
+            if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: halt
+
+        try: self.filepathsNotYetLoaded.remove( derivedTranslationStatusFilepath )
+        except ValueError: logging.error( "PTX8 derived translation status file seemed unexpected: {}".format( derivedTranslationStatusFilepath ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  Loaded {:,} derived translation status books.".format( len(derivedTranslationStatusByBookDict) ) )
+        if debuggingThisModule:
+            print( "\nderivedTranslationStatusByBookDict", len(derivedTranslationStatusByBookDict), derivedTranslationStatusByBookDict )
+        #for something in derivedTranslationStatusByBookDict:
+            #print( "\n  {} = {}".format( something, derivedTranslationStatusByBookDict[something] ) )
+        if derivedTranslationStatusByBookDict: self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'] = derivedTranslationStatusByBookDict
+    # end of PTX8Bible.loadPTXDerivedTranslationStatus
+
+
     def loadPTXWordAnalyses( self ):
         """
         Load the WordAnalyses.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
@@ -1539,7 +1619,7 @@ class PTX8Bible( Bible ):
 
                 # Now process the subelements
                 if element.tag == 'Entry':
-                    # Process the user attributes first
+                    # Process the entry attributes first
                     word = None
                     for attrib,value in element.items():
                         if attrib=='Word': word = value
@@ -2296,10 +2376,130 @@ class PTX8Bible( Bible ):
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
         if not os.path.exists( autocorrectFilepath ): return
 
+
+        def processUnicode( changesString ):
+            """
+            """
+            #if BibleOrgSysGlobals.debugFlag or BibleOrSysGlobals.verbosityLevel > 2:
+                #print( exp("processUnicode( {} {!r}={} )").format( len(changesString), changesString, changesString ) )
+
+            import re
+            while True:
+                match = re.search( '\\\\u[a-fA-F0-9]{4,4}', changesString )
+                if match:
+                    newOrd = int( match.group(0)[2:], 16 )
+                    #print( "NO", newOrd )
+                    newChar = chr(newOrd)
+                    #print( "NC", len(newChar), newChar )
+                    assert len(newChar) == 1
+                    changesString = changesString[:match.start()] + newChar + changesString[match.end():]
+                else:
+                    #print( "Return {} {!r}={}".format( len(changesString), changesString, changesString ) )
+                    break
+
+            return changesString
+        # end of processUnicode
+
+
+        def processPrintDraftChangesLine( line, lineNumber ):
+            """
+            Uses a state machine to process the line from the PrintDraftChanges files.
+
+            Updates PTXPrintDraftChanges dictionary.
+
+            States:
+                0: looking for left side
+                1: inside quotes for left side
+                2: processing left side
+                3: searching for >
+                4: looking for right side
+                5: inside quotes for right side
+                6: processing right side
+                7: processing after right side
+                8: processing comment
+            """
+            #if BibleOrgSysGlobals.debugFlag or BibleOrSysGlobals.verbosityLevel > 2:
+                #print( exp("processPrintDraftChangesLine( {}, {!r} )").format( lineNumber, line ) )
+
+            pdState = ix = 0
+            quoteStart = leftSide = rightSide = comment = ''
+            lenLine = len( line )
+            while ix < lenLine:
+                char = line[ix]
+                #print( "processPrintDraftChangesLine {}: {!r} at state {} position {}".format( lineNumber, char, pdState, ix ) )
+
+                if pdState == 0:
+                    if char.isspace(): pass
+                    elif char in ( '"', "'" ):
+                        quoteStart = char
+                        pdState = 1
+                    elif char == '#':
+                        pdState = 8
+                    else:
+                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
+                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                elif pdState == 1:
+                    if char == quoteStart:
+                        pdState = 3
+                    else: leftSide += char
+
+                elif pdState == 3:
+                    if char.isspace(): pass
+                    elif char == '>':
+                        pdState = 4
+                    else:
+                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
+                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                elif pdState == 4:
+                    if char.isspace(): pass
+                    elif char in ( '"', "'" ):
+                        quoteStart = char
+                        pdState = 5
+                    elif char == '#':
+                        pdState = 8
+                    else:
+                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
+                                        .format( char, pdState, ix+1, lineNumber, line ) )
+
+                elif pdState == 5:
+                    if char == quoteStart:
+                        pdState = 7
+                    else: rightSide += char
+
+                elif pdState == 7:
+                    if char.isspace(): pass
+                    elif char == '#':
+                        pdState = 8
+                    else:
+                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
+                                        .format( char, pdState, ix+1, lineNumber, line ) )
+
+                elif pdState == 8: # accept anything in a comment
+                    comment += char
+
+                else:
+                    logging.error( "Unexpected print-draft changes {} state at position {} in line {}: {!r}" \
+                                    .format( pdState, ix+1, lineNumber, line ) )
+                ix += 1
+
+            if pdState < 7:
+                logging.error( "Unexpected print-draft changes {} end state at end of line {}: {!r}" \
+                                .format( pdState, lineNumber, line ) )
+            else:
+                assert leftSide or comment
+                if leftSide:
+                    assert rightSide
+                    assert leftSide not in PTXPrintDraftChanges
+                    PTXPrintDraftChanges[processUnicode(leftSide)] = (processUnicode(rightSide),comment.strip())
+        # end of processPrintDraftChangesLine
+
+
+        # Main code for loadPTXPrintDraftChanges
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading print draft changes from {}…".format( autocorrectFilepath ) )
-        PTXPrintDraftChanges = {}
+        PTXPrintDraftChanges = OrderedDict()
 
+        # NOTE: These lines are actually regex's on the left side
         lineCount = 0
         with open( autocorrectFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
@@ -2311,25 +2511,22 @@ class PTX8Bible( Bible ):
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#': continue # Just discard comment lines
-                print( "Print draft changes line", repr(line) )
+                #print( "Print draft changes line", repr(line) )
 
                 if len(line)<4:
-                    print( "Why was print draft changes line #{} so short? {!r}".format( lineCount, line ) )
+                    logging.error( "Why was print draft changes line #{} so short? {!r}".format( lineCount, line ) )
                     continue
-                if len(line)>30:
-                    print( "Why was print draft changes line #{} so long? {!r}".format( lineCount, line ) )
-
-                if '  >  ' in line: # we really need something more selective (REGEX?) here XXXXXXXXXXXXXXXXXXXXXXXX
-                    bits = line.split( '  >  ', 1 )
-                    #print( 'bits', bits )
-                    PTXPrintDraftChanges[bits[0]] = bits[1] # NOTE: Trailing comments not yet removed :(
-                else: logging.error( "Invalid {!r} print draft changes line in PTX8Bible.loading print draft changes".format( line ) )
+                if len(line)>100:
+                    logging.warning( "Why was print draft changes line #{} so long? {!r}".format( lineCount, line ) )
+                if line and '>' not in line and '#' not in line:
+                    logging.error( "What is this print draft changes line #{}? {!r}".format( lineCount, line ) )
+                else: processPrintDraftChangesLine( line, lineCount )
 
         try: self.filepathsNotYetLoaded.remove( autocorrectFilepath )
         except ValueError: logging.error( "PTX8 print draft changes file seemed unexpected: {}".format( autocorrectFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} print draft changes elements.".format( len(PTXPrintDraftChanges) ) )
-        if 1 or debuggingThisModule: print( '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
+        if debuggingThisModule: print( '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
         if PTXPrintDraftChanges: self.suppliedMetadata['PTX8']['PrintDraftChanges'] = PTXPrintDraftChanges
     # end of PTX8Bible.loadPTXPrintDraftChanges
 
@@ -2510,7 +2707,8 @@ class PTX8Bible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( exp("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -2539,6 +2737,31 @@ class PTX8Bible( Bible ):
 
     def load( self ):
         self.loadBooks()
+
+
+    def discoverPTX8( self ):
+        """
+        Discover statistics from PTX8 metadata files
+            and put the results into self.discoveryResults list (which must already exist)
+            and will already be populated with dictionaries for each book.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( exp("Discovering PTX8 stats for {}…").format( self.name ) )
+
+        for BBB in self.books: # Do individual book prechecks
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( '  ' + exp("PTX8 discovery for {}…").format( BBB ) )
+            assert BBB in self.discoveryResults
+            #print( self.discoveryResults[BBB].keys() )
+
+            if 'DerivedTranslationStatusByBook' in self.suppliedMetadata['PTX8']:
+                if BBB in self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook']:
+                    derivedVersesCompleted = len(self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'][BBB])
+                else: derivedVersesCompleted = 0
+                self.discoveryResults[BBB]['derivedVersesCompleted'] = derivedVersesCompleted
+                if 'verseCount' in self.discoveryResults[BBB] and isinstance( self.discoveryResults[BBB]['verseCount'], int ):
+                    self.discoveryResults[BBB]['percentageDerivedVersesCompleted'] = \
+                        round( derivedVersesCompleted * 100 / self.discoveryResults[BBB]['verseCount'] )
+    # end of PTX8Bible.discoverPTX8
 # end of class PTX8Bible
 
 
@@ -2621,13 +2844,14 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 PTX8Bible( testFolder, someFolder )
-    if 1:
+
+    if 1: # Test statistics discovery and creation of BDB stats page
         testFolders = (
-                    'Tests/DataFilesForTests/PTX8Test1/',
-                    'Tests/DataFilesForTests/PTX8Test2/',
-                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV',
+                    #'Tests/DataFilesForTests/PTX8Test1/',
+                    #'Tests/DataFilesForTests/PTX8Test2/',
+                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV',
                     '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT',
-                    '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
+                    #'../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC',
                     ) # You can put your PTX8 test folder here
 
         for testFolder in testFolders:
@@ -2636,6 +2860,7 @@ def demo():
                 PTX_Bible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX_Bible )
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
+
                 #DBErrors = PTX_Bible.getErrors()
                 # print( DBErrors )
                 #print( PTX_Bible.getVersification () )
@@ -2644,12 +2869,15 @@ def demo():
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
 
-                # Print unloaded files
+                # Print unloaded metadata filepaths
                 if PTX_Bible.filepathsNotYetLoaded and BibleOrgSysGlobals.verbosityLevel > 0:
                     print( "\nFollowing {} file paths seemed unused:".format( len(PTX_Bible.filepathsNotYetLoaded) ) )
                     for filepath in PTX_Bible.filepathsNotYetLoaded:
                         print( "  Failed to load: {}".format( filepath ) )
                     print()
+
+                # Test discovery code
+                PTX_Bible.discover() # Quite time-consuming
 
                 # Test BDB code for display PTX8 metadata files
                 import sys; sys.path.append( '../../../../../../home/autoprocesses/Scripts/' )
