@@ -1152,6 +1152,9 @@ class InternalBible:
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
 
+        if self.objectTypeString == 'PTX8':
+            self.discoverPTX8()
+
         self._aggregateDiscoveryResults()
     # end of InternalBible.discover
 
