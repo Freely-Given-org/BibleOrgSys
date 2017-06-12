@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-08' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.92'
@@ -2262,6 +2262,8 @@ class BibleWriter( InternalBible ):
             C, V = '0', '-1' # So id line starts at 0:0
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                haveExtraFormatting = True if extras else False
+                if text != verseDataEntry.getCleanText(): haveExtraFormatting = True
                 #if BBB=='MRK': print( "writeHTML5Book", marker, text )
                 #print( "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
 
@@ -2289,7 +2291,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenSection:
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text or extras:
-                        writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class',BibleWriter.ipHTMLClassDict[marker]), noTextCheck=True )
+                        writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class',BibleWriter.ipHTMLClassDict[marker]), noTextCheck=haveExtraFormatting )
                         #writerObject.writeLineText( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), noTextCheck=True )
                 elif marker == 'iot':
                     if haveOpenParagraph:
@@ -2362,7 +2364,7 @@ class BibleWriter( InternalBible ):
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]) )
+                    if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]), noTextCheck=haveExtraFormatting )
                 elif marker in ('r', 'sr', 'mr',):
                     if BibleOrgSysGlobals.debugFlag: assert not haveOpenVerse
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -2375,7 +2377,7 @@ class BibleWriter( InternalBible ):
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
                     if text: writerObject.writeLineOpenClose( 'p', createSectionCrossReference(text), ('class',rClass), noTextCheck=True )
                 elif marker == 'd': # descriptive title or Hebrew subtitle
-                    if text or extras: writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','descriptiveTitle') )
+                    if text or extras: writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','descriptiveTitle'), noTextCheck=haveExtraFormatting )
                 elif marker == 'sp': # speaker
                     if text: writerObject.writeLineOpenClose( 'p', text, ('class','speaker') )
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
@@ -9580,10 +9582,10 @@ def demo():
                 #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/',),
                 #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/',),
                 #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/',),
-                #('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
+                ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
                 #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
                 #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/',),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/',),
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/',),
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/',),
@@ -9596,7 +9598,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toDrupalBible(); halt
+                #UB.toHTML5(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
