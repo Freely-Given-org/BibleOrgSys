@@ -76,10 +76,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-30' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.70'
+ProgVersion = '0.71'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -766,23 +766,37 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 # Validating XML fields (from element tree)
 #
 
-def elementStr( element ):
+def elementStr( element, level=0 ):
     """
     Return a string representation of an element (from element tree).
+
+    This is suitable for debugging
     """
-    resultStr = 'Element {!r}: '.format( element.tag )
+    resultStr = '{}Element {!r}: '.format( 'Sub'*level, element.tag )
+
+    # Do attributes first
     printed = False
     for attrib,value in element.items():
         if printed: resultStr += ','
-        else: resultStr += 'Attribs:'; printed = True
+        else: resultStr += 'Attribs: '; printed = True
         resultStr += '{}={!r}'.format( attrib, value )
-    if element.text is not None: resultStr += 'Text={!r}'.format( element.text )
+
+    if element.text is not None:
+        if resultStr[-1] != ' ': resultStr += ' '
+        resultStr += 'Text={!r}'.format( element.text )
+
+    # Now do subelements
     printed = False
     for subelement in element:
         if printed: resultStr += ','
-        else: resultStr += 'Children:'; printed = True
-        resultStr += elementStr( subelement ) # recursive call
-    if element.tail is not None: resultStr += 'Tail={!r}'.format( element.tail )
+        else:
+            if resultStr[-1] != ' ': resultStr += ' '
+            resultStr += 'Children: '; printed = True
+        resultStr += elementStr( subelement, level+1 ) # recursive call
+
+    if element.tail is not None:
+        if resultStr[-1] != ' ': resultStr += ' '
+        resultStr += 'Tail={!r}'.format( element.tail )
     return resultStr
 # end of BibleOrgSysGlobals.elementStr
 
@@ -1133,6 +1147,7 @@ def setStrictCheckingFlag( newValue=True ):
 
 # Some global variables
 BibleBooksCodes = USFMMarkers = USFMParagraphMarkers = internal_SFMs_to_remove = None
+
 def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
     Adds our standardOptions to the command line parser.
@@ -1142,10 +1157,11 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
         print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
 
     verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
-    verbosityGroup.add_argument( '-s', '--silent', action='store_const', dest='verbose', const=0, help="output no information to the console" )
-    verbosityGroup.add_argument( '-q', '--quiet', action='store_const', dest='verbose', const=1, help="output less information to the console" )
-    verbosityGroup.add_argument( '-i', '--informative', action='store_const', dest='verbose', const=3, help="output more information to the console" )
-    verbosityGroup.add_argument( '-v', '--verbose', action='store_const', dest='verbose', const=4, help="output lots of information for the user" )
+    mainVerbosityGroup = verbosityGroup.add_mutually_exclusive_group()
+    mainVerbosityGroup.add_argument( '-s', '--silent', action='store_const', dest='verbose', const=0, help="output no information to the console" )
+    mainVerbosityGroup.add_argument( '-q', '--quiet', action='store_const', dest='verbose', const=1, help="output less information to the console" )
+    mainVerbosityGroup.add_argument( '-i', '--informative', action='store_const', dest='verbose', const=3, help="output more information to the console" )
+    mainVerbosityGroup.add_argument( '-v', '--verbose', action='store_const', dest='verbose', const=4, help="output lots of information for the user" )
     EWgroup = verbosityGroup.add_mutually_exclusive_group()
     EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
     EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
