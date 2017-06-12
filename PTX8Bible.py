@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-11' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1651,30 +1651,32 @@ class PTX8Bible( Bible ):
                         commentDict = { 'Thread':thread, 'User':user, 'VerseRef':verseRef, 'Language':language, 'Date':date }
 
                         for subelement in element:
-                            sublocation = subelement.tag + ' ' + elementLocation
+                            sublocation = subelement.tag + ' in ' + elementLocation
                             #print( "  Processing {}…".format( sublocation ) )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                             assert subelement.tag not in commentDict # No duplicates please
-                            if subelement.tag in ( 'BiblicalTermId', 'ContextBefore', 'ContextAfter',
+                            if subelement.tag in ( 'AcceptedChangeXml', 'BiblicalTermId',
+                                            'ContextBefore', 'ContextAfter',
                                             'ConflictType', 'ExtraHeadingInfo', 'HideInTextWindow',
                                             'ReplyToUser', 'SelectedText', 'Status', 'StartPosition',
                                             'TagAdded', 'Type', 'Verse', ):
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                                 commentDict[subelement.tag] = subelement.text # can be None
                             elif subelement.tag == 'Contents':
-                                contentsText = ''
-                                if subelement.text: contentsText += subelement.text.lstrip()
-                                for sub2element in subelement:
-                                    sub2location = sub2element.tag + ' ' + sublocation
-                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
-                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
-                                    BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
-                                    if sub2element.text:
-                                        contentsText += '<{}>{}</{}>'.format( sub2element.tag, sub2element.text, sub2element.tag )
-                                    else: contentsText += '<{}/>'.format( sub2element.tag )
-                                #print( 'contentsText', repr(contentsText) )
-                                commentDict[subelement.tag] = contentsText
+                                #print( "QQQ", BibleOrgSysGlobals.getFlattenedXML( subelement, sublocation ) )
+                                #contentsText = ''
+                                #if subelement.text: contentsText += subelement.text.lstrip()
+                                #for sub2element in subelement:
+                                    #sub2location = sub2element.tag + ' ' + sublocation
+                                    #BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
+                                    #BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
+                                    #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
+                                    #if sub2element.text:
+                                        #contentsText += '<{}>{}</{}>'.format( sub2element.tag, sub2element.text, sub2element.tag )
+                                    #else: contentsText += '<{}/>'.format( sub2element.tag )
+                                ##print( 'contentsText', repr(contentsText) )
+                                commentDict[subelement.tag] = BibleOrgSysGlobals.getFlattenedXML( subelement, sublocation )
                             else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                     elif element.tag == 'ConflictType':halt
                     else:
@@ -2262,7 +2264,7 @@ class PTX8Bible( Bible ):
         def processUnicode( changesString ):
             """
             """
-            #if BibleOrgSysGlobals.debugFlag or BibleOrSysGlobals.verbosityLevel > 2:
+            #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 #print( exp("processUnicode( {} {!r}={} )").format( len(changesString), changesString, changesString ) )
 
             import re
@@ -2300,7 +2302,7 @@ class PTX8Bible( Bible ):
                 7: processing after right side
                 8: processing comment
             """
-            #if BibleOrgSysGlobals.debugFlag or BibleOrSysGlobals.verbosityLevel > 2:
+            #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 #print( exp("processPrintDraftChangesLine( {}, {!r} )").format( lineNumber, line ) )
 
             pdState = ix = 0
@@ -2998,8 +3000,8 @@ def demo():
         testFolders = (
                     #( 'Test1', 'Tests/DataFilesForTests/PTX8Test1/' ),
                     #( 'Test2', 'Tests/DataFilesForTests/PTX8Test2/' ),
-                    ( 'MBTV', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ),
-                    #( 'MBTBT', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT' ),
+                    #( 'MBTV', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ),
+                    ( 'MBTBT', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT' ),
                     #( 'MBTBC', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC' ),
                     ) # You can put your PTX8 test folder here
 
