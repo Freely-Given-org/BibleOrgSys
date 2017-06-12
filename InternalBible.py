@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-28' # by RJH
+LastModifiedDate = '2017-06-12' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -260,7 +260,7 @@ class InternalBible:
                               'loadBookIfNecessary', 'reloadBook', 'doPostLoadProcessing', 'xxxunloadBooks',
                               'loadMetadataTextFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
                               'getShortTOCName', 'getBooknameAbbreviation', 'stashBook', 'guessXRefBBB',
-                              'getVersification', 'getAddedUnits', 'discover', '_aggregateDiscoveryResults',
+                              'getVersification', 'getAddedUnits', 'discover', '__aggregateDiscoveryResults',
                               'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
                               'getVerseData', 'getVerseText', 'writeBOSBCVFiles' ):
                 continue # ignore my own functions
@@ -413,7 +413,7 @@ class InternalBible:
         if 'discoveryResults' in dir(self): # need to update them
             # Need to double-check that this doesn't cause any double-ups …XXXXXXXXXXXXXXXXXXXXXX
             self.discoveryResults[BBB] = self.books[BBB]._discover()
-            self._aggregateDiscoveryResults()
+            self.__aggregateDiscoveryResults()
     # end of InternalBible.reProcessBook
 
 
@@ -1155,16 +1155,16 @@ class InternalBible:
         if self.objectTypeString == 'PTX8':
             self.discoverPTX8()
 
-        self._aggregateDiscoveryResults()
+        self.__aggregateDiscoveryResults()
     # end of InternalBible.discover
 
 
-    def _aggregateDiscoveryResults( self ):
+    def __aggregateDiscoveryResults( self ):
         """
         Assuming that the individual discoveryResults have been collected for each book,
             puts them all together.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:_aggregateDiscoveryResults()" )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:__aggregateDiscoveryResults()" )
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
@@ -1347,7 +1347,7 @@ class InternalBible:
                 else:
                     #print( "key", repr(key), "value", repr(value) )
                     print( " ", key, "in", value if value<len(self) else "all", "books" )
-    # end of InternalBible._aggregateDiscoveryResults
+    # end of InternalBible.__aggregateDiscoveryResults
 
 
     def check( self, givenBookList=None ):

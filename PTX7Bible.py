@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-30' # by RJH
+LastModifiedDate = '2017-06-12' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.26'
+ProgVersion = '0.27'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -631,7 +631,7 @@ class PTX7Bible( Bible ):
             self.loadPTXLexicon() # from XML (if it exists)
             self.loadPTXSpellingStatus() # from XML (if it exists)
             self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
-            self.loadPTXBiblicalTerms() # from XML (if they exist)
+            self.loadPTXBiblicalTermRenderings() # from XML (if they exist)
             self.loadPTXProgress() # from XML (if it exists)
             self.loadPTXPrintConfig()  # from XML (if it exists)
             self.loadPTXAutocorrects() # from text file (if it exists)
@@ -655,8 +655,8 @@ class PTX7Bible( Bible ):
             except Exception as err: logging.error( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXComments() # from XML (if they exist) but we don't do the CommentTags.xml file yet
             except Exception as err: logging.error( 'loadPTXComments failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXBiblicalTerms() # from XML (if they exist)
-            except Exception as err: logging.error( 'loadPTXBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTXBiblicalTermRenderings() # from XML (if they exist)
+            except Exception as err: logging.error( 'loadPTXBiblicalTermRenderings failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXProgress() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTXProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTXPrintConfig() # from XML (if it exists)
@@ -1196,12 +1196,12 @@ class PTX7Bible( Bible ):
     # end of PTX7Bible.loadPTXComments
 
 
-    def loadPTXBiblicalTerms( self ):
+    def loadPTXBiblicalTermRenderings( self ):
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXBiblicalTerms()") )
+            print( exp("loadPTXBiblicalTermRenderings()") )
 
         BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1306,7 +1306,7 @@ class PTX7Bible( Bible ):
         #print( "BiblicalTermsDict", BiblicalTermsDict )
         #print( BiblicalTermsDict['MBTV']['חָנוּן'] )
         if BiblicalTermsDict: self.suppliedMetadata['PTX7']['BiblicalTerms'] = BiblicalTermsDict
-    # end of PTX7Bible.loadPTXBiblicalTerms
+    # end of PTX7Bible.loadPTXBiblicalTermRenderings
 
 
     def loadPTXProgress( self ):
