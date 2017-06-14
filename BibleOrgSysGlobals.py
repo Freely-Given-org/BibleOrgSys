@@ -76,7 +76,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-06-14' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.71'
@@ -810,7 +810,7 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
                         .format( (idString+' ') if idString else '', element.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
-        if debugFlag and haltOnXMLWarning: halt
+        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoText
 
 def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ):
@@ -822,7 +822,7 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
                         .format( (idString+' ') if idString else '', element.tail, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-        if debugFlag and haltOnXMLWarning: halt
+        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoTail
 
 
@@ -835,7 +835,7 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
                         .format( (idString+' ') if idString else '', attrib, value, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-        if debugFlag and haltOnXMLWarning: halt
+        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoAttributes
 
 
@@ -865,7 +865,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
                                 element.tail.strip() if element.tail else element.tail )
             logging.warning( warningString )
             if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-            if debugFlag and haltOnXMLWarning: halt
+            if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoSubelementsWithText
 
 
@@ -1186,6 +1186,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     # Determine multiprocessing strategy
     maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
+    # FORCE SINGLE PROCESS coz multiple processes are much slower!!!! :(
     if 1 or commandLineArguments.single: maxProcesses = 1 # Multiprocessing is currently disabled (since it mostly slows things down at present)
     if debugFlag or debuggingThisModule:
         maxProcesses = 1 # Limit to one process
