@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-06-15' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -424,8 +424,8 @@ class DBLBible( Bible ):
                 else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
             if BibleOrgSysGlobals.debugFlag:
                 assert mdType == 'text'
-                assert mdTypeVersion == '1.3'
-                assert mdRevision in ( '1','2','3', )
+                assert mdTypeVersion in ( '1.3', '1.5', )
+                assert mdRevision in ( '1','2','3', '4', )
 
             # Now process the actual metadata
             for element in self.tree:
@@ -443,10 +443,16 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('name','nameLocal','abbreviation','abbreviationLocal','scope','description','dateCompleted','systemId','bundleProducer'):
                             thisTag = subelement.tag
-                            if subelement.tag == 'systemId':
-                                items = subelement.items()
-                                assert len(items)==1 and items[0][0]=='type'
-                                thisTag = thisTag + '-' + items[0][1]
+                            if subelement.tag == 'systemId': # Can have multiples of these
+                                systemIdType = csetid = fullname = name = None
+                                for attrib,value in subelement.items():
+                                    if attrib=='type': systemIdType = value
+                                    elif attrib=='csetid': csetid = value
+                                    elif attrib=='fullname': fullname = value
+                                    elif attrib=='name': name = value
+                                    else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                pass # Xxxxxxxxxxxxx not stored
+                                #thisTag = thisTag + '-' + items[0][1]
                             else: BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                             assert subelement.text
                             self.suppliedMetadata['DBL'][element.tag][thisTag] = subelement.text
@@ -462,9 +468,13 @@ class DBLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
-                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
+                        url = None
+                        for attrib,value in subelement.items():
+                            if attrib=='url': url = value
+                            else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                        pass # url isn't saved XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
                         if subelement.tag in ('etenPartner','creator','publisher','contributor'):
                             #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
@@ -528,7 +538,9 @@ class DBLBible( Bible ):
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                             if sub2element.tag in ('long','short','abbr'):
-                                assert sub2element.text
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                                    if sub2element.tag != 'abbr':
+                                        assert sub2element.text # Seems abbreviations can be missing
                                 self.suppliedMetadata['DBL'][element.tag][bookCode][sub2element.tag] = sub2element.text
                             else: logging.warning( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub3location ) )
                 elif element.tag == 'contents':
@@ -548,7 +560,7 @@ class DBLBible( Bible ):
                         for attrib,value in subelement.items():
                             if attrib=='code': bookCode = value
                             elif attrib=='stage': stage = value
-                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                            else: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                         #print( bookCode, stage )
                         assert len(bookCode) == 3
                         if bookCode not in self.suppliedMetadata['DBL']['bookNames']:
@@ -1010,9 +1022,9 @@ def demo():
 
     if 0: # specify testFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL B/ Trying single module in {}".format( testFolder ) )
-        testDBL_B( testFolder )
+        XXXtestDBL_B( testFolder )
 
-    if 0: # specified single installed module
+    if 1: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL C/ Trying installed {} module".format( singleModule ) )
         DBL_Bible = DBLBible( testFolder, singleModule )
@@ -1071,6 +1083,7 @@ def demo():
                 DB.preload()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( DB )
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
+                DB.loadBooks()
                 #DBErrors = DB.getErrors()
                 # print( DBErrors )
                 #print( DB.getVersification () )
