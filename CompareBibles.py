@@ -56,7 +56,7 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-29' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.13'
@@ -119,7 +119,7 @@ def loadWordCompares( folder, filename ):
     """
     Returns two OrderedDicts (longest entries first)
     """
-    if 1 or BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("loadWordCompares( {}, {} )").format( folder, filename ) )
 
@@ -609,7 +609,7 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
 
     Returns a list of results.
     """
-    if 1 or BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( exp("analyzeWords( … )") )
         assert isinstance( segmentList, list )
