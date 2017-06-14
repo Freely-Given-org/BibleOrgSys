@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-06-15' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -611,6 +611,8 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
 
+# NOTE: Some of these could be spread out into individual modules, e.g., the DBL example ???
+#           Either that, or bring the DBL one into here
         elif applyMetadataType == 'SSF':
             # This is a special case (coz it's inside the PTX7 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }

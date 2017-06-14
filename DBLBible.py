@@ -38,7 +38,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-06-15' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -662,8 +662,13 @@ class DBLBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("applySuppliedMetadata({} )").format( applyMetadataType ) )
-        assert applyMetadataType == 'DBL'
+        assert applyMetadataType in ( 'DBL', 'Project', )
 
+        if applyMetadataType == 'Project': # This is different stuff
+            Bible.applySuppliedMetadata( applyMetadataType )
+            return
+
+        # (else) Apply our specialized DBL metadata
         self.name = self.suppliedMetadata['DBL']['identification']['name']
         self.abbreviation = self.suppliedMetadata['DBL']['identification']['abbreviation']
 
