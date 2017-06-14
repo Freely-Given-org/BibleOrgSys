@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-07' # by RJH
+LastModifiedDate = '2017-06-14' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -321,7 +321,15 @@ class SwordBible( Bible ):
         availableModuleCodes = []
         for j,something in enumerate(self.SwordInterface.library.getModules()):
             # something can be a moduleBuffer (Crosswire) or just a string (BOS)
-            moduleID = something.getRawData() if SwordType=='CrosswireLibrary' else something
+            if SwordType=='CrosswireLibrary':
+                if isinstance( something, str ):
+                    print( "Why did we get a string instead of a module? {}".format( something ) )
+                if BibleOrgSysGlobals.strictCheckingFlag: assert not isinstance( something, str )
+                moduleID = something.getRawData()
+            else:
+                if BibleOrgSysGlobals.strictCheckingFlag: assert isinstance( something, str )
+                moduleID = something
+            if BibleOrgSysGlobals.strictCheckingFlag: assert isinstance( moduleID, str )
 
             if moduleID.upper() == self.moduleName.upper(): self.moduleName = moduleID # Get the case correct
             #module = SWMgr.getModule( moduleID )
