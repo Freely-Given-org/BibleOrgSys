@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-06-15' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -289,11 +289,16 @@ class USXXMLBibleBook( BibleBook ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     self.addPriorityError( 2, C, V, _("Unmatched element in {}").format( location) )
+                elif element.tag == 'optbreak':
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    self.appendToLastLine( '//' + element.tail ) # Not completely sure what optbreak is
                 else:
                     logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._rawLines[x] )
-                    if BibleOrgSysGlobals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         # end of loadParagraph
 
         C, V = '0', '-1' # So id line starts at 0:0
