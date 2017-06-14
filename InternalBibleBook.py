@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-19' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1693,7 +1693,6 @@ class InternalBibleBook:
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
 
-            #if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
             if self.objectTypeString == 'USFM':
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
