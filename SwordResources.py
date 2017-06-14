@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-17' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.26'
+ProgVersion = '0.27'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1285,10 +1285,10 @@ class SwordInterface():
 
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 print( 'Description: {!r}'.format( module.getDescription() ) )
-                print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
-                print( 'Encoding: {!r}'.format( encoding ) )
+                print( 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
+                print( 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
                 print( 'Language: {!r}'.format( module.getLanguage() ) )
-                print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
+                print( 'Markup: {!r}={}'.format( markupCode, SWORD_MARKUPS[markupCode] ) )
                 print( 'Name: {!r}'.format( module.getName() ) )
                 print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
                 print( 'Type: {!r}'.format( module.getType() ) )
@@ -1396,10 +1396,10 @@ class SwordInterface():
 
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 print( 'Description: {!r}'.format( module.getDescription() ) )
-                print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
-                print( 'Encoding: {!r}'.format( encoding ) )
+                print( 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
+                print( 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
                 print( 'Language: {!r}'.format( module.getLanguage() ) )
-                print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
+                print( 'Markup: {!r}={}'.format( markupCode, SWORD_MARKUPS[markupCode] ) )
                 print( 'Name: {!r}'.format( module.getName() ) )
                 print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
                 print( 'Type: {!r}'.format( module.getType() ) )
@@ -1427,9 +1427,10 @@ class SwordInterface():
                 #print( 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
                 #print( 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
                 #print( 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
-                try: nativeVerseText = module.getRawEntry()
+                try: nativeVerseText = module.getRawEntry().encode( BibleObject.encoding, 'namereplace' ).decode( 'utf-8', 'namereplace' )
                 #try: nativeVerseText = str( module.renderText() )
                 except UnicodeDecodeError: nativeVerseText = ''
+                assert isinstance( nativeVerseText, str )
 
                 if ':' not in verseKeyText:
                     if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -1630,16 +1631,23 @@ class SwordInterface():
 
     def getVerseText( self, module, key ):
         """
+        Gets all the lines representing a verse and converts to a single string.
+
+        Returns a string that represents the verse
+            with chapter and verse number metadata removed
+            and with some temporary/proprietary/minimal encoding:
+                ¶: start of paragraph
+                §: back to margin
         """
         #cacheKey = (module.getName(), key.getShortText())
         #if cacheKey in self.verseCache:
             #print( "Cached", cacheKey )
             #return self.verseCache[cacheKey]
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
 
         if SwordType == 'CrosswireLibrary':
-            try: verseText = module.stripText( key )
+            try: verseText = module.stripText( key ) #.encode( 'utf-8', 'namereplace' )
             except UnicodeDecodeError:
                 logging.critical( "getVerseText: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
