@@ -665,7 +665,7 @@ class DBLBible( Bible ):
         assert applyMetadataType in ( 'DBL', 'Project', )
 
         if applyMetadataType == 'Project': # This is different stuff
-            Bible.applySuppliedMetadata( applyMetadataType )
+            Bible.applySuppliedMetadata( self, applyMetadataType )
             return
 
         # (else) Apply our specialized DBL metadata
