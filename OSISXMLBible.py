@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-21' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.55'
@@ -1349,6 +1349,7 @@ class OSISXMLBible( Bible ):
                 self.thisBook.appendToLastLine( clean(SegText) )
             else: self.thisBook.appendToLastLine( '\\{} {}'.format( marker, clean(SegText) ) )
             for subelement in element:
+                sublocation = element.tag + ' in ' + location
                 if subelement.tag == OSISXMLBible.OSISNameSpace+'divineName':
                     validateDivineName( subelement, sublocation, verseMilestone )
                 else:
@@ -3121,42 +3122,6 @@ class OSISXMLBible( Bible ):
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
             self.stashBook( self.thisBook )
     # end of OSISXMLBible.validateAndExtractBookDiv
-
-
-    #def getVerseDataList( self, reference ):
-        #"""Returns a list of 2-tuples containing (word, lemma)."""
-        #assert len(reference) == 3 # BBB,C,V
-        #BBB, chapterString, verseString = reference
-        #assert isinstance(BBB,str) and len(BBB)==3
-        #assert BBB in BibleOrgSysGlobals.BibleBooksCodes
-        #assert isinstance( chapterString, str )
-        #assert isinstance( verseString, str )
-        #if BBB in self.books:
-            #foundChapter, foundVerse, result = False, False, []
-            #for info in self.books[BBB]:
-                #if len(info)==2:
-                    #name, value = info
-                    #if name == 'chapter':
-                        #foundChapter = value == chapterString
-                        #foundVerse = False
-                    #if foundChapter and name=='verse': foundVerse = value == verseString
-                    #if foundVerse:
-                        #if name=='word': result.append( value )
-                        #elif name=='segment': result.append( value )
-                        #elif name!='chapter' and name!='verse': print( "OSISXMLBible got", name, value )
-            #return result
-    ## end of getVerseData
-
-    #def getVerseText( self, reference ):
-        #"""Returns the text for the verse."""
-        #assert len(reference) == 3 # BBB,C,V
-        #result = ''
-        #data = self.getVerseDataList( reference )
-        #if data:
-            #for word, lemma in data: # throw away the lemma data and segment types
-                #if result: result += ' '
-                #result += word
-            #return result
 # end of OSISXMLBible class
 
 
