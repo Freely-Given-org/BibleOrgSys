@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-12' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -1121,7 +1121,7 @@ class InternalBible:
         Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:discover()" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "InternalBible:discover()" )
         if BibleOrgSysGlobals.debugFlag and 'discoveryResults' in dir(self):
             logging.warning( exp("discover: We had done this already!") ) # We've already called this once
             halt
@@ -1164,7 +1164,7 @@ class InternalBible:
         Assuming that the individual discoveryResults have been collected for each book,
             puts them all together.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:__aggregateDiscoveryResults()" )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "InternalBible:__aggregateDiscoveryResults()" )
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
@@ -2117,6 +2117,9 @@ class InternalBible:
 
         Raises a KeyError if the key isn't found/valid.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( exp("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
+
         result = self.getContextVerseData( BCVReference )
         if result is not None:
             verseData, context = result
