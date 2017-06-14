@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-30' # by RJH
+LastModifiedDate = '2017-06-13' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.47'
@@ -1682,7 +1682,7 @@ class SwordModule():
 
         else:
             print( "filterToHTML rawData is ", rawData ) # unexpected data type
-            if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
     # end of SwordModule.filterToHTML
 
 
@@ -1736,7 +1736,7 @@ class SwordModule():
 
         else:
             print( "filterToUSFM rawData is ", rawData ) # unexpected data type
-            if 1 or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
     # end of SwordModule.filterToUSFM
 
 
