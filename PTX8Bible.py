@@ -657,13 +657,13 @@ def loadPTX8Languages( BibleObject ):
 
 
 
-def loadPTXVersifications( BibleObject ):
+def loadPTX8Versifications( BibleObject ):
     """
     Load the versification files (which is a text file)
         and parse it into the dictionary PTXVersifications.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("loadPTXVersifications()") )
+        print( exp("loadPTX8Versifications()") )
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
@@ -696,7 +696,7 @@ def loadPTXVersifications( BibleObject ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "loadPTXVersifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
+                    logging.info( "loadPTX8Versifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -759,7 +759,7 @@ def loadPTXVersifications( BibleObject ):
                             if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
                             PTXVersifications[versificationName]['VerseCounts'][BBB][C] = V
                     except KeyError:
-                        logging.error( "Unknown {!r} USFM book code in loadPTXVersifications from {}".format( USFMBookCode, versificationFilepath ) )
+                        logging.error( "Unknown {!r} USFM book code in loadPTX8Versifications from {}".format( USFMBookCode, versificationFilepath ) )
 
         try: BibleObject.filepathsNotYetLoaded.remove( versificationFilepath )
         except ValueError: logging.error( "PTX8 versification file seemed unexpected: {}".format( versificationFilepath ) )
@@ -767,7 +767,7 @@ def loadPTXVersifications( BibleObject ):
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versifications.".format( len(PTXVersifications) ) )
     if debuggingThisModule: print( '\nPTXVersifications', len(PTXVersifications), PTXVersifications )
     return PTXVersifications
-# end of PTX8Bible.loadPTXVersifications
+# end of PTX8Bible.loadPTX8Versifications
 
 
 
@@ -887,74 +887,77 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             # Load the paratext metadata (and stop if any of them fail)
-            self.loadUniqueId() # Text file
-            self.loadPTXBooksNames() # from XML (if it exists)
-            self.loadPTX8ProjectUserAccess() # from XML (if it exists)
-            self.loadPTXLexicon() # from XML (if it exists)
-            self.loadPTXSpellingStatus() # from XML (if it exists)
-            self.loadPTXWordAnalyses() # from XML (if it exists)
-            self.loadPTXCheckingStatus() # from XML (if it exists)
-            self.loadPTXDerivedTranslationStatus() # from XML (if it exists)
-            self.loadPTXNotes() # from XML (if they exist)
-            self.loadPTXCommentTags() # from XML (if they exist)
-            self.loadPTXTermRenderings() # from XML (if they exist)
-            self.loadPTXParallelPassageStatus() # from XML (if it exists)
-            self.loadPTXProjectBiblicalTerms() # from XML (if it exists)
-            self.loadPTXProjectProgress() # from XML (if it exists)
-            self.loadPTXProjectProgressCSV() # from text file (if it exists)
-            self.loadPTXPrintConfig()  # from XML (if it exists)
-            self.loadPTXAutocorrects() # from text file (if it exists)
-            self.loadPTXStyles() # from text files (if they exist)
-            self.loadPTXPrintDraftChanges() # from text file (if it exists)
-            result = loadPTXVersifications( self ) # from text file (if it exists)
-            if result: self.suppliedMetadata['PTX8']['Versifications'] = result
+            self.loadPTX8Autocorrects() # from text file (if it exists)
+            self.loadPTX8BooksNames() # from XML (if it exists)
+            self.loadPTX8Canons() # from XML (if it exists)
+            self.loadPTX8CheckingStatus() # from XML (if it exists)
+            self.loadPTX8CommentTags() # from XML (if they exist)
+            self.loadPTX8DerivedTranslationStatus() # from XML (if it exists)
             result = loadPTX8Languages( self ) # from INI file (if it exists)
             if result: self.suppliedMetadata['PTX8']['Languages'] = result
+            self.loadPTX8Lexicon() # from XML (if it exists)
             self.loadPTX8Licence() # from JSON file (if it exists)
+            self.loadPTX8Notes() # from XML (if they exist)
+            self.loadPTX8TermRenderings() # from XML (if they exist)
+            self.loadPTX8ParallelPassageStatus() # from XML (if it exists)
+            self.loadPTX8ProjectBiblicalTerms() # from XML (if it exists)
+            self.loadPTX8ProjectProgress() # from XML (if it exists)
+            self.loadPTX8ProjectProgressCSV() # from text file (if it exists)
+            self.loadPTX8ProjectUserAccess() # from XML (if it exists)
+            self.loadPTX8PrintConfig()  # from XML (if it exists)
+            self.loadPTX8SpellingStatus() # from XML (if it exists)
+            self.loadPTX8Styles() # from text files (if they exist)
+            self.loadPTX8PrintDraftChanges() # from text file (if it exists)
+            self.loadUniqueId() # Text file
+            result = loadPTX8Versifications( self ) # from text file (if it exists)
+            if result: self.suppliedMetadata['PTX8']['Versifications'] = result
+            self.loadPTX8WordAnalyses() # from XML (if it exists)
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadUniqueId() # Text file
             except Exception as err: logging.error( 'loadUniqueId failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXBooksNames() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXBooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8BooksNames() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8BooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTX8ProjectUserAccess() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTX8ProjectUserAccess failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXLexicon() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXLexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXSpellingStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXSpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXWordAnalyses() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXWordAnalyses failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXCheckingStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXCheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXDerivedTranslationStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXDerivedTranslationStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXNotes() # from XML (if they exist) but we don't do the CommentTags.xml file yet
-            except Exception as err: logging.error( 'loadPTXNotes failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXCommentTags() # from XML (if they exist)
-            except Exception as err: logging.error( 'loadPTXCommentTags failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXTermRenderings() # from XML (if they exist)
-            except Exception as err: logging.error( 'loadPTXTermRenderings failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try:self.loadPTXParallelPassageStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXParallelPassageStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try:self.loadPTXProjectBiblicalTerms() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXProjectBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try:self.loadPTXProjectProgress() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXProjectProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try:self.loadPTXProjectProgressCSV() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXProjectProgressCSV failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXPrintConfig() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTXPrintConfig failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXAutocorrects() # from text file (if it exists)
-            except Exception as err: logging.error( 'loadPTXAutocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXStyles() # from text files (if they exist)
-            except Exception as err: logging.error( 'loadPTXStyles failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try: self.loadPTXPrintDraftChanges() # from text files (if they exist)
-            except Exception as err: logging.error( 'loadPTXPrintDraftChanges failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Lexicon() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8Lexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8SpellingStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8SpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8WordAnalyses() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8WordAnalyses failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Canons() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8Canons failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8CheckingStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8CheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8CommentTags() # from XML (if they exist)
+            except Exception as err: logging.error( 'loadPTX8CommentTags failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8DerivedTranslationStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8DerivedTranslationStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Notes() # from XML (if they exist) but we don't do the CommentTags.xml file yet
+            except Exception as err: logging.error( 'loadPTX8Notes failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8TermRenderings() # from XML (if they exist)
+            except Exception as err: logging.error( 'loadPTX8TermRenderings failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:self.loadPTX8ParallelPassageStatus() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8ParallelPassageStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:self.loadPTX8ProjectBiblicalTerms() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8ProjectBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:self.loadPTX8ProjectProgress() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8ProjectProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:self.loadPTX8ProjectProgressCSV() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8ProjectProgressCSV failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8PrintConfig() # from XML (if it exists)
+            except Exception as err: logging.error( 'loadPTX8PrintConfig failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Autocorrects() # from text file (if it exists)
+            except Exception as err: logging.error( 'loadPTX8Autocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8Styles() # from text files (if they exist)
+            except Exception as err: logging.error( 'loadPTX8Styles failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try: self.loadPTX8PrintDraftChanges() # from text files (if they exist)
+            except Exception as err: logging.error( 'loadPTX8PrintDraftChanges failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
-                result = loadPTXVersifications( self ) # from text file (if it exists)
+                result = loadPTX8Versifications( self ) # from text file (if it exists)
                 if result: self.suppliedMetadata['PTX8']['Versifications'] = result
-            except Exception as err: logging.error( 'loadPTXVersifications failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( 'loadPTX8Versifications failed with {} {}'.format( sys.exc_info()[0], err ) )
             try:
                 result = loadPTX8Languages( self ) # from INI file (if it exists)
                 if result: self.suppliedMetadata['PTX8']['Languages'] = result
@@ -966,7 +969,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.preload
 
 
-    def loadPTXAutocorrects( self ):
+    def loadPTX8Autocorrects( self ):
         """
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXAutocorrects.
@@ -974,7 +977,7 @@ class PTX8Bible( Bible ):
         These lines use --> as the main operator.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXAutocorrects()") )
+            print( exp("loadPTX8Autocorrects()") )
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -989,7 +992,7 @@ class PTX8Bible( Bible ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "loadPTXAutocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
+                    logging.info( "loadPTX8Autocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -1015,15 +1018,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         if debuggingThisModule: print( '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
         if PTXAutocorrects: self.suppliedMetadata['PTX8']['Autocorrects'] = PTXAutocorrects
-    # end of PTX8Bible.loadPTXAutocorrects
+    # end of PTX8Bible.loadPTX8Autocorrects
 
 
-    def loadPTXBooksNames( self ):
+    def loadPTX8BooksNames( self ):
         """
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXBooksNames()") )
+            print( exp("loadPTX8BooksNames()") )
 
         bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
         if not os.path.exists( bookNamesFilepath ): return
@@ -1062,7 +1065,7 @@ class PTX8Bible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
                     try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bnCode )
                     except:
-                        logging.warning( "loadPTXBooksNames can't find BOS code for PTX8 {!r} book".format( bnCode ) )
+                        logging.warning( "loadPTX8BooksNames can't find BOS code for PTX8 {!r} book".format( bnCode ) )
                         BBB = bnCode # temporarily use their code
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert BBB not in booksNamesDict
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
@@ -1078,15 +1081,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         if debuggingThisModule: print( "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
         if booksNamesDict: self.suppliedMetadata['PTX8']['BooksNames'] = booksNamesDict
-    # end of PTX8Bible.loadPTXBooksNames
+    # end of PTX8Bible.loadPTX8BooksNames
 
 
-    def loadPTXLexicon( self ):
+    def loadPTX8Lexicon( self ):
         """
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXLexicon()") )
+            print( exp("loadPTX8Lexicon()") )
 
         lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
         if not os.path.exists( lexiconFilepath ): return
@@ -1215,7 +1218,7 @@ class PTX8Bible( Bible ):
             print( "  Loaded {} lexicon types ({:,} total entries).".format( len(lexiconDict['Entries']), totalEntries ) )
         if debuggingThisModule: print( "\nlexiconDict", len(lexiconDict), lexiconDict )
         if lexiconDict: self.suppliedMetadata['PTX8']['Lexicon'] = lexiconDict
-    # end of PTX8Bible.loadPTXLexicon
+    # end of PTX8Bible.loadPTX8Lexicon
 
 
     def loadPTX8ProjectUserAccess( self ):
@@ -1341,12 +1344,107 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ProjectUserAccess
 
 
-    def loadPTXCheckingStatus( self ):
+    def loadPTX8Canons( self ):
+        """
+        Load the Canons.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+        """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( exp("loadPTX8Canons()") )
+
+        canonsFilepath = os.path.join( self.sourceFilepath, 'Canons.xml' )
+        if not os.path.exists( canonsFilepath ): return
+
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "PTX8Bible.loading canons data from {}…".format( canonsFilepath ) )
+        self.tree = ElementTree().parse( canonsFilepath )
+        assert len( self.tree ) # Fail here if we didn't load anything at all
+
+        canonsDict = OrderedDict()
+        #loadErrors = []
+
+        # Find the main container
+        if self.tree.tag == 'Canons':
+            treeLocation = "PTX8 {} file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+
+            # Process the attributes first
+            nextId = None
+            for attrib,value in self.tree.items():
+                if attrib=='NextId': nextId = value
+                else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+
+            # Now process the actual entries
+            for element in self.tree:
+                elementLocation = element.tag + ' in ' + treeLocation
+                #print( "Processing {}…".format( elementLocation ) )
+
+                # Now process the subelements
+                if element.tag == 'Canon':
+                    BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
+
+                    tempDict = OrderedDict()
+
+                    # Process the canon attributes
+                    Id = defaultFlag = Psa151inPsaFlag = LjeInBarFlag = DagPartialFlag = None
+                    for attrib,value in element.items():
+                        if attrib=='Id': Id = value
+                        elif attrib=='Default': defaultFlag = getFlagFromAttribute( attrib, value )
+                        elif attrib=='Psa151inPsa': Psa151inPsaFlag = getFlagFromAttribute( attrib, value )
+                        elif attrib=='LjeInBar': LjeInBarFlag = getFlagFromAttribute( attrib, value )
+                        elif attrib=='DagPartial': DagPartialFlag = getFlagFromAttribute( attrib, value )
+                        else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    tempDict['DefaultFlag'] = defaultFlag
+                    tempDict['Psa151inPsaFlag'] = Psa151inPsaFlag
+                    tempDict['LjeInBarFlag'] = LjeInBarFlag
+                    tempDict['DagPartialFlag'] = DagPartialFlag
+
+                    bookList = []
+                    for subelement in element:
+                        sublocation = subelement.tag + ' in ' + elementLocation
+                        #print( "  Processing {}…".format( sublocation ) )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+
+                        if subelement.tag in ( 'Name', 'NameLocal', 'Abbreviation', 'AbbreviationLocal', 'Description', 'DescriptionLocal', ):
+                            if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
+                            assert subelement.tag not in tempDict
+                            tempDict[subelement.tag] = subelement.text
+                        elif subelement.tag == 'Book':
+                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( subelement.text )
+                            bookList.append( BBB )
+                        else: logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                    if bookList:
+                        assert 'BookList' not in tempDict
+                        tempDict['BookList'] = bookList
+                else:
+                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                assert Id not in canonsDict
+                canonsDict[Id] = tempDict
+        else:
+            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.tree.tag ) )
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+
+        try: self.filepathsNotYetLoaded.remove( canonsFilepath )
+        except ValueError: logging.error( "PTX8 checking status file seemed unexpected: {}".format( canonsFilepath ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} canons.".format( len(canonsDict) ) )
+        if debuggingThisModule: print( "\ncanonsDict", len(canonsDict), canonsDict )
+        #for something in canonsDict:
+            #print( "\n  {} = {}".format( something, canonsDict[something] ) )
+        if canonsDict: self.suppliedMetadata['PTX8']['Canons'] = canonsDict
+    # end of PTX8Bible.loadPTX8Canons
+
+
+    def loadPTX8CheckingStatus( self ):
         """
         Load the CheckingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXCheckingStatus()") )
+            print( exp("loadPTX8CheckingStatus()") )
 
         checkingStatusFilepath = os.path.join( self.sourceFilepath, 'CheckingStatus.xml' )
         if not os.path.exists( checkingStatusFilepath ): return
@@ -1416,15 +1514,15 @@ class PTX8Bible( Bible ):
             #print( "\n  {} = {}".format( something, checkingStatusDict[something] ) )
         if checkingStatusByBookDict: self.suppliedMetadata['PTX8']['CheckingStatusByBook'] = checkingStatusByBookDict
         if checkingStatusByCheckDict: self.suppliedMetadata['PTX8']['CheckingStatusByCheck'] = checkingStatusByCheckDict
-    # end of PTX8Bible.loadPTXCheckingStatus
+    # end of PTX8Bible.loadPTX8CheckingStatus
 
 
-    def loadPTXCommentTags( self ):
+    def loadPTX8CommentTags( self ):
         """
         Load the CommentTags_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXCommentTags()") )
+            print( exp("loadPTX8CommentTags()") )
 
         commentTagFilepath = os.path.join( self.sourceFilepath, 'CommentTags.xml' )
         if not os.path.exists( commentTagFilepath ): return
@@ -1479,10 +1577,10 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} comment tags.".format( len(commentTagDict) ) )
         if debuggingThisModule: print( "\ncommentTagDict", len(commentTagDict), commentTagDict )
         if commentTagDict: self.suppliedMetadata['PTX8']['CommentTags'] = commentTagDict
-    # end of PTX8Bible.loadPTXCommentTags
+    # end of PTX8Bible.loadPTX8CommentTags
 
 
-    def loadPTXDerivedTranslationStatus( self ):
+    def loadPTX8DerivedTranslationStatus( self ):
         """
         Load the DerivedTranslationStatus.xml file (if it exists)
             and parse it into the dictionary self.suppliedMetadata.
@@ -1490,7 +1588,7 @@ class PTX8Bible( Bible ):
         This is usually used for a project like a back translation or daughter translation.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXDerivedTranslationStatus()") )
+            print( exp("loadPTX8DerivedTranslationStatus()") )
 
         derivedTranslationStatusFilepath = os.path.join( self.sourceFilepath, 'DerivedTranslationStatus.xml' )
         if not os.path.exists( derivedTranslationStatusFilepath ): return
@@ -1554,7 +1652,7 @@ class PTX8Bible( Bible ):
         #for something in derivedTranslationStatusByBookDict:
             #print( "\n  {} = {}".format( something, derivedTranslationStatusByBookDict[something] ) )
         if derivedTranslationStatusByBookDict: self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'] = derivedTranslationStatusByBookDict
-    # end of PTX8Bible.loadPTXDerivedTranslationStatus
+    # end of PTX8Bible.loadPTX8DerivedTranslationStatus
 
 
     def loadPTX8Licence( self ):
@@ -1590,12 +1688,12 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Licence
 
 
-    def loadPTXNotes( self ):
+    def loadPTX8Notes( self ):
         """
         Load the Notes_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXNotes()") )
+            print( exp("loadPTX8Notes()") )
 
         noteFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1694,15 +1792,15 @@ class PTX8Bible( Bible ):
         if debuggingThisModule: print( "\nnotesList", len(notesList), notesList )
         # Call this 'PTXNotes' rather than just 'Notes' which might just be a note on the particular version
         if notesList: self.suppliedMetadata['PTX8']['PTXNotes'] = notesList
-    # end of PTX8Bible.loadPTXNotes
+    # end of PTX8Bible.loadPTX8Notes
 
 
-    def loadPTXParallelPassageStatus( self ):
+    def loadPTX8ParallelPassageStatus( self ):
         """
         Load the ParallelPassageStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXParallelPassageStatus()") )
+            print( exp("loadPTX8ParallelPassageStatus()") )
 
         parallelPassageStatusFilepath = os.path.join( self.sourceFilepath, 'ParallelPassageStatus.xml' )
         if not os.path.exists( parallelPassageStatusFilepath ): return
@@ -1768,15 +1866,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} parallel passage status entries.".format( len(parallelPassageStatusDict) ) )
         if debuggingThisModule: print( "\nparallelPassageStatusDict", len(parallelPassageStatusDict), parallelPassageStatusDict )
         if parallelPassageStatusDict: self.suppliedMetadata['PTX8']['ParallelPassageStatus'] = parallelPassageStatusDict
-    # end of PTX8Bible.loadPTXParallelPassageStatus
+    # end of PTX8Bible.loadPTX8ParallelPassageStatus
 
 
-    def loadPTXProjectBiblicalTerms( self ):
+    def loadPTX8ProjectBiblicalTerms( self ):
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXProjectBiblicalTerms()") )
+            print( exp("loadPTX8ProjectBiblicalTerms()") )
 
         projectBiblicalTermsFilepath = os.path.join( self.sourceFilepath, 'ProjectBiblicalTerms.xml' )
         if not os.path.exists( projectBiblicalTermsFilepath ): return
@@ -1858,15 +1956,15 @@ class PTX8Bible( Bible ):
         #for someKey, someValue in projectBiblicalTermsDict.items():
             #print( "\n  {} = {}".format( someKey, someValue ) )
         if projectBiblicalTermsDict: self.suppliedMetadata['PTX8']['ProjectBiblicalTerms'] = projectBiblicalTermsDict
-    # end of PTX8Bible.loadPTXProjectBiblicalTerms
+    # end of PTX8Bible.loadPTX8ProjectBiblicalTerms
 
 
-    def loadPTXProjectProgress( self ):
+    def loadPTX8ProjectProgress( self ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXProjectProgress()") )
+            print( exp("loadPTX8ProjectProgress()") )
 
         projectProgressFilepath = os.path.join( self.sourceFilepath, 'ProjectProgress.xml' )
         if not os.path.exists( projectProgressFilepath ): return
@@ -2114,15 +2212,15 @@ class PTX8Bible( Bible ):
         #for someKey, someValue in projectProgressDict.items():
             #print( "\n  {} = {}".format( someKey, someValue ) )
         if projectProgressDict: self.suppliedMetadata['PTX8']['ProjectProgress'] = projectProgressDict
-    # end of PTX8Bible.loadPTXProjectProgress
+    # end of PTX8Bible.loadPTX8ProjectProgress
 
 
-    def loadPTXProjectProgressCSV( self ):
+    def loadPTX8ProjectProgressCSV( self ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXProjectProgressCSV()") )
+            print( exp("loadPTX8ProjectProgressCSV()") )
 
         projectProgressCSVFilename = 'ProjectProgress.csv'
         projectProgressCSVFilepath = os.path.join( self.sourceFilepath, projectProgressCSVFilename )
@@ -2136,11 +2234,11 @@ class PTX8Bible( Bible ):
             for line in projectProgressCSVFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "loadPTXProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {}".format( projectProgressCSVFilename ) )
+                    logging.info( "loadPTX8ProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {}".format( projectProgressCSVFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 lastLine = line
-                #print( "  loadPTXProjectProgressCSV: ({}) {!r}".format( lineCount, line ) )
+                #print( "  loadPTX8ProjectProgressCSV: ({}) {!r}".format( lineCount, line ) )
                 # Each line is in the format: '2PE,61,0,10,0,30'
                 if line: assert line.count( ',' ) == 5 # five commas between six values
                 lines.append( line )
@@ -2149,15 +2247,15 @@ class PTX8Bible( Bible ):
 
         try: self.filepathsNotYetLoaded.remove( projectProgressCSVFilepath )
         except ValueError: logging.error( "PTX8 project progress CSV file seemed unexpected: {}".format( projectProgressCSVFilepath ) )
-    # end of PTX8Bible.loadPTXProjectProgressCSV
+    # end of PTX8Bible.loadPTX8ProjectProgressCSV
 
 
-    def loadPTXPrintConfig( self ):
+    def loadPTX8PrintConfig( self ):
         """
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXPrintConfig()") )
+            print( exp("loadPTX8PrintConfig()") )
 
 # XXXXXXXXXXXXXXX IS THERE REALLY MORE THAN ONE OF THESE???
         printConfigFilenames = []
@@ -2243,10 +2341,10 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         if debuggingThisModule: print( "\nprintConfigDict", len(printConfigDict), printConfigDict )
         if printConfigDict: self.suppliedMetadata['PTX8']['PrintConfig'] = printConfigDict
-    # end of PTX8Bible.loadPTXPrintConfig
+    # end of PTX8Bible.loadPTX8PrintConfig
 
 
-    def loadPTXPrintDraftChanges( self ):
+    def loadPTX8PrintDraftChanges( self ):
         """
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXPrintDraftChanges.
@@ -2254,7 +2352,7 @@ class PTX8Bible( Bible ):
         These lines use the CC (Consisent Changes) format and so use > as the main operator.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXPrintDraftChanges()") )
+            print( exp("loadPTX8PrintDraftChanges()") )
 
         autocorrectFilename = 'PrintDraftChanges.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -2378,7 +2476,7 @@ class PTX8Bible( Bible ):
         # end of processPrintDraftChangesLine
 
 
-        # Main code for loadPTXPrintDraftChanges
+        # Main code for loadPTX8PrintDraftChanges
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading print draft changes from {}…".format( autocorrectFilepath ) )
         PTXPrintDraftChanges = OrderedDict()
@@ -2389,7 +2487,7 @@ class PTX8Bible( Bible ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                    logging.info( "loadPTXPrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
+                    logging.info( "loadPTX8PrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -2412,15 +2510,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} print draft changes elements.".format( len(PTXPrintDraftChanges) ) )
         if debuggingThisModule: print( '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
         if PTXPrintDraftChanges: self.suppliedMetadata['PTX8']['PrintDraftChanges'] = PTXPrintDraftChanges
-    # end of PTX8Bible.loadPTXPrintDraftChanges
+    # end of PTX8Bible.loadPTX8PrintDraftChanges
 
 
-    def loadPTXSpellingStatus( self ):
+    def loadPTX8SpellingStatus( self ):
         """
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXSpellingStatus()") )
+            print( exp("loadPTX8SpellingStatus()") )
 
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
@@ -2482,15 +2580,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict) ) )
         if debuggingThisModule: print( "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
-    # end of PTX8Bible.loadPTXSpellingStatus
+    # end of PTX8Bible.loadPTX8SpellingStatus
 
 
-    def loadPTXStyles( self ):
+    def loadPTX8Styles( self ):
         """
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXStyles()") )
+            print( exp("loadPTX8Styles()") )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -2521,7 +2619,7 @@ class PTX8Bible( Bible ):
                         for line in vFile:
                             lineCount += 1
                             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                                logging.info( "loadPTXStyles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
+                                logging.info( "loadPTX8Styles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             if not line: continue # Just discard blank lines
@@ -2546,13 +2644,13 @@ class PTX8Bible( Bible ):
                                 elif name in ( 'Name', 'Description', 'OccursUnder', 'Rank', 'StyleType', 'Endmarker', 'SpaceBefore', 'SpaceAfter', 'LeftMargin', 'RightMargin', 'FirstLineIndent', 'TextType', 'TextProperties', 'Justification', 'FontSize', 'Bold', 'Italic', 'Smallcaps', 'Superscript', 'Underline', 'Color', 'color', ):
                                     if name == 'color': name = 'Color' # fix inconsistency
                                     if name in currentStyle: # already
-                                        logging.error( "loadPTXStyles found duplicate {!r}={!r} in {} {} at line #{}".format( name, value, styleName, styleMarker, lineCount ) )
+                                        logging.error( "loadPTX8Styles found duplicate {!r}={!r} in {} {} at line #{}".format( name, value, styleName, styleMarker, lineCount ) )
                                     currentStyle[name] = value
                                 else: logging.error( "What's this style marker? {!r}".format( line ) )
                             else: logging.error( "What's this style line? {!r}".format( line ) )
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
-                    logging.error( _("loadPTXStyles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )
+                    logging.error( _("loadPTX8Styles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )
 
             try: self.filepathsNotYetLoaded.remove( styleFilepath )
             except ValueError: logging.error( "PTX8 style file seemed unexpected: {}".format( styleFilepath ) )
@@ -2560,15 +2658,15 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style files.".format( len(PTXStyles) ) )
         if debuggingThisModule: print( '\nPTXStyles', len(PTXStyles), PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX8']['Styles'] = PTXStyles
-    # end of PTX8Bible.loadPTXStyles
+    # end of PTX8Bible.loadPTX8Styles
 
 
-    def loadPTXTermRenderings( self ):
+    def loadPTX8TermRenderings( self ):
         """
         Load the TermRenderings*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXTermRenderings()") )
+            print( exp("loadPTX8TermRenderings()") )
 
         renderingTermsFilepath = os.path.join( self.sourceFilepath, 'TermRenderings.xml' )
         if not os.path.exists( renderingTermsFilepath ): return
@@ -2663,7 +2761,7 @@ class PTX8Bible( Bible ):
         if debuggingThisModule: print( "\nTermRenderingsDict", len(TermRenderingsDict), TermRenderingsDict )
         #print( TermRenderingsDict['חָנוּן'] )
         if TermRenderingsDict: self.suppliedMetadata['PTX8']['TermRenderings'] = TermRenderingsDict
-    # end of PTX8Bible.loadPTXTermRenderings
+    # end of PTX8Bible.loadPTX8TermRenderings
 
 
     def loadUniqueId( self ):
@@ -2697,12 +2795,12 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadUniqueId
 
 
-    def loadPTXWordAnalyses( self ):
+    def loadPTX8WordAnalyses( self ):
         """
         Load the WordAnalyses.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("loadPTXWordAnalyses()") )
+            print( exp("loadPTX8WordAnalyses()") )
 
         wordAnalysesFilepath = os.path.join( self.sourceFilepath, 'WordAnalyses.xml' )
         if not os.path.exists( wordAnalysesFilepath ): return
@@ -2789,7 +2887,7 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} word analysis entries.".format( len(wordAnalysesDict) ) )
         if debuggingThisModule: print( "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
         if wordAnalysesDict: self.suppliedMetadata['PTX8']['WordAnalyses'] = wordAnalysesDict
-    # end of PTX8Bible.loadPTXWordAnalyses
+    # end of PTX8Bible.loadPTX8WordAnalyses
 
 
 
@@ -2896,7 +2994,7 @@ class PTX8Bible( Bible ):
             and put the results into self.discoveryResults list (which must already exist)
             and will already be populated with dictionaries for each book.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 0:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("Discovering PTX8 stats for {}…").format( self.name ) )
 
         for BBB in self.books: # Do individual book prechecks
@@ -2998,11 +3096,11 @@ def demo():
 
     if 1: # Test statistics discovery and creation of BDB stats page
         testFolders = (
-                    #( 'Test1', 'Tests/DataFilesForTests/PTX8Test1/' ),
-                    #( 'Test2', 'Tests/DataFilesForTests/PTX8Test2/' ),
-                    #( 'MBTV', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ),
+                    ( 'Test1', 'Tests/DataFilesForTests/PTX8Test1/' ),
+                    ( 'Test2', 'Tests/DataFilesForTests/PTX8Test2/' ),
+                    ( 'MBTV', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ),
                     ( 'MBTBT', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT' ),
-                    #( 'MBTBC', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC' ),
+                    ( 'MBTBC', '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC' ),
                     ) # You can put your PTX8 test folder here
 
         for testName,testFolder in testFolders:
