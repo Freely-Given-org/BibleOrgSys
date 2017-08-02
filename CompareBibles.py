@@ -35,6 +35,8 @@ Includes:
                         compareDigits=DEFAULT_COMPARE_DIGITS,
                         illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
                         illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
                         breakOnOne=False )
     _doCompare( parameters ) # for multiprocessing
@@ -48,6 +50,8 @@ Includes:
                         compareDigits=DEFAULT_COMPARE_DIGITS,
                         illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
                         illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
                         matchingPairs=DEFAULT_MATCHING_PAIRS,
                         breakOnOne=False )
     demo()
@@ -194,6 +198,8 @@ def compareBooksPedantic( book1, book2,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
                         illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
                         illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
                         breakOnOne=False ):
     """
@@ -319,8 +325,8 @@ def compareBooksPedantic( book1, book2,
                         entryText = entry1.getCleanText()
                         iCount = entryText.count( iString ) # So markers don't confuse things
                         if iCount:
-                            if iString in DEFAULT_LEGAL_PAIRS_1:
-                                iCount -= entryText.count( DEFAULT_LEGAL_PAIRS_1[iString] )
+                            if iString in legalPairs1:
+                                iCount -= entryText.count( legalPairs1[iString] )
                             if iCount:
                                 bcResults.append( (reference,"Illegal string in Bible1: {!r}".format( iString )) )
                         for extra in extras:
@@ -337,8 +343,8 @@ def compareBooksPedantic( book1, book2,
                         entryText = entry2.getCleanText()
                         iCount = entryText.count( iString ) # So markers don't confuse things
                         if iCount:
-                            if iString in DEFAULT_LEGAL_PAIRS_2:
-                                iCount -= entryText.count( DEFAULT_LEGAL_PAIRS_2[iString] )
+                            if iString in legalPairs2:
+                                iCount -= entryText.count( legalPairs2[iString] )
                             if iCount:
                                 bcResults.append( (reference,"Illegal string in Bible2: {!r}".format( iString )) )
                         for extra in extras:
@@ -723,6 +729,8 @@ def compareBibles( Bible1, Bible2,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
                         illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
                         illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
                         matchingPairs=DEFAULT_MATCHING_PAIRS,
                         breakOnOne=False ):
     """
