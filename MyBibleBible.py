@@ -84,10 +84,10 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-08-03' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -111,7 +111,7 @@ FILENAME_PARTS_TO_REJECT = ( '.DICTIONARY.', '.CROSSREFERENCES.', ) # Must be UP
 
 
 KNOWN_INFO_FIELD_NAMES = ( 'description',
-                          'chapter_string', 'chapter_string_ot', 'chapter_string_nt',
+                          'chapter_string', 'chapter_string_ot', 'chapter_string_nt', 'chapter_string_ps',
                             'language', 'language_iso639-2b', 'region', 'russian_numbering',
                             'strong_numbers', 'strong_numbers_prefix',
                             'right_to_left', 'right_to_left_ot', 'right_to_left_nt',
@@ -397,8 +397,9 @@ class MyBibleBible( Bible ):
         for row in rows:
             assert len(row) == 2 # name, value
             name, value = row
-            #if debuggingThisModule: print( '  INFO', name, repr(value) )
-            assert name in KNOWN_INFO_FIELD_NAMES
+            if debuggingThisModule: print( '  INFO', name, repr(value) )
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                assert name in KNOWN_INFO_FIELD_NAMES
             # NOTE: detailed_info may contain HTML formatting
             if value == 'false': value = False
             elif value == 'true': value = True
@@ -1087,9 +1088,8 @@ def createMyBibleModule( self, outputFolder, controlDict ):
         """
         Writes a book to the MyBible sqlObject file.
         """
-        #nonlocal lineCount
-        print( "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
-        #print( bkData._processedLines )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
