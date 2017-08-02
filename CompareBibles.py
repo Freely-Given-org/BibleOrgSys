@@ -56,10 +56,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-08-02' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.13'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -80,8 +80,10 @@ MAX_MISMATCHED_MARKERS = 4
 DEFAULT_COMPARE_QUOTES =  '“”‘’«»‹›"¿¡' # Doesn't include apostrophe
 DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–…' # Doesn't include illegal punctuation or () [] and hyphen, so these can vary
 DEFAULT_COMPARE_DIGITS = '0123456789'
+DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
+
 DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’",
-                                  '“ ', '. ”', ', ”', '‘ ', '. ’', ', ’',
+                                  '“ ', ' ”', '‘ ', ' ’',
                                   '""', "''", # straight quotes (doubled)
                                    ',,', '..', '!!', '??', '::', ';;',
                                    ' ,', ' .', ' !', ' ?', ' :', ' ;',
@@ -95,7 +97,10 @@ DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’",
                                   'XXX','ALT','NEW', )
 DEFAULT_ILLEGAL_STRINGS_1 = ( "'", '/', ) + DEFAULT_ILLEGAL_STRINGS_COMMON
 DEFAULT_ILLEGAL_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_STRINGS_COMMON
-DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
+
+DEFAULT_LEGAL_PAIRS_COMMON = { '“ ':'“ ‘', ' ”':'’ ”' }
+DEFAULT_LEGAL_PAIRS_1 = DEFAULT_LEGAL_PAIRS_COMMON
+DEFAULT_LEGAL_PAIRS_2 = DEFAULT_LEGAL_PAIRS_COMMON
 
 
 
@@ -311,8 +316,13 @@ def compareBooksPedantic( book1, book2,
                     extras = entry1.getExtras()
                     if extras is None: extras = () # So it's always iterable
                     for iString in illegalStrings1:
-                        if iString in entry1.getCleanText(): # So markers don't confuse things
-                            bcResults.append( (reference,"Illegal string in Bible1: {!r}".format( iString )) )
+                        entryText = entry1.getCleanText()
+                        iCount = entryText.count( iString ) # So markers don't confuse things
+                        if iCount:
+                            if iString in DEFAULT_LEGAL_PAIRS_1:
+                                iCount -= entryText.count( DEFAULT_LEGAL_PAIRS_1[iString] )
+                            if iCount:
+                                bcResults.append( (reference,"Illegal string in Bible1: {!r}".format( iString )) )
                         for extra in extras:
                             #print( extra )
                             #print( ' ', extra.getType() )
@@ -324,8 +334,13 @@ def compareBooksPedantic( book1, book2,
                     extras = entry2.getExtras()
                     if extras is None: extras = () # So it's always iterable
                     for iString in illegalStrings2:
-                        if iString in entry2.getCleanText(): # So markers don't confuse things
-                            bcResults.append( (reference,"Illegal string in Bible2: {!r}".format( iString )) )
+                        entryText = entry2.getCleanText()
+                        iCount = entryText.count( iString ) # So markers don't confuse things
+                        if iCount:
+                            if iString in DEFAULT_LEGAL_PAIRS_2:
+                                iCount -= entryText.count( DEFAULT_LEGAL_PAIRS_2[iString] )
+                            if iCount:
+                                bcResults.append( (reference,"Illegal string in Bible2: {!r}".format( iString )) )
                         for extra in extras:
                             #print( extra )
                             #print( ' ', extra.getType() )
@@ -420,11 +435,18 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
 
 def segmentizeBooks( book1, book2 ):
     """
-    Given two Bible book objects, analyse the two carefully
-        and return differences.
+    Given two Bible book objects,
+        break them into a list of segments
+            as well as a list of left-overs if the segments don't match.
 
-    The returned list is sorted by C:V
-    Each list entry is a 2-tuple, being CV and error message.
+    Each segment list entry is a 3-tuple:
+        1/ 3-tuple being C, V, optional marker
+        2/ Segment list for book1
+        3/ Segment list for book2
+
+    Each left-over list entry is a 2-tuple:
+        1/ 3-tuple being C, V, optional marker
+        2/ Error message string
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
