@@ -33,11 +33,15 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For book1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For book2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
                         breakOnOne=False )
     _doCompare( parameters ) # for multiprocessing
     segmentizeLine( line, segmentEndPunctuation='.?!;' )
@@ -48,11 +52,15 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
-                        matchingPairs=DEFAULT_MATCHING_PAIRS,
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For Bible1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For Bible2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
                         breakOnOne=False )
     demo()
     main()
@@ -60,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-02' # by RJH
+LastModifiedDate = '2017-08-03' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -71,6 +79,7 @@ debuggingThisModule = False
 
 
 import os.path, logging
+import re
 import unicodedata
 import multiprocessing
 from collections import OrderedDict
@@ -86,26 +95,52 @@ DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–…' # Doesn't include illegal punctu
 DEFAULT_COMPARE_DIGITS = '0123456789'
 DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
 
-DEFAULT_ILLEGAL_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’",
+DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’",
                                   '“ ', ' ”', '‘ ', ' ’',
                                   '""', "''", # straight quotes (doubled)
                                    ',,', '..', '!!', '??', '::', ';;',
                                    ' ,', ' .', ' !', ' ?', ' :', ' ;',
-                                  '<','=','>', '{','}',
+                                  '<','=','>', '{','}', '+','*',
                                   '&','%','$','#','@','~','`','|','^',
                                   ' -','- ','--', '__', '_ _',
                                   ' _ ', # underscore
                                   ' –','– ','––', ' —','— ','——', # en-dash and em-dash
                                   '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
-                                  '*,','*.','*?','*!',
                                   'XXX','ALT','NEW', )
-DEFAULT_ILLEGAL_STRINGS_1 = ( "'", '/', ) + DEFAULT_ILLEGAL_STRINGS_COMMON
-DEFAULT_ILLEGAL_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_STRINGS_COMMON
+DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( "'", '/', ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
 
-DEFAULT_LEGAL_PAIRS_COMMON = { '“ ':'“ ‘', ' ”':'’ ”' }
-DEFAULT_LEGAL_PAIRS_1 = DEFAULT_LEGAL_PAIRS_COMMON
-DEFAULT_LEGAL_PAIRS_2 = DEFAULT_LEGAL_PAIRS_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON = ( '  ',"''", "‘‘","’’",
+                                  '“ ', ' ”', '‘ ', ' ’',
+                                  '""', "''", # straight quotes (doubled)
+                                   ',,', '..', '!!', '??', '::', ';;',
+                                   ' ,', ' .', ' !', ' ?', ' :', ' ;', ' *',
+                                  ' -','- ','--', '__', '_ _',
+                                  ' _ ', # underscore
+                                  ' –','– ','––', ' —','— ','——', # en-dash and em-dash
+                                  '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
+                                  'f*,','f*.','f*?','f*!','f*:', # footnote at end of sentence
+                                  'fe*,','fe*.','fe*?','fe*!','fe*:', # endnote at end of sentence
+                                  'x*,','x*.','x*?','x*!','x*:', # cross-reference at end of sentence
+                                  )
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
 
+DEFAULT_LEGAL_PAIRS_COMMON = ( ('“ ','“ ‘'), (' ”','’ ”'), (' ’','” ’'), ) # First field in tuple can be repeated in other tuples
+DEFAULT_LEGAL_PAIRS_1 = () + DEFAULT_LEGAL_PAIRS_COMMON
+DEFAULT_LEGAL_PAIRS_2 = () + DEFAULT_LEGAL_PAIRS_COMMON
+
+DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
+                                                '\\\\f [^+]', # Footnote that doesn't start with +
+                                                '\\\\f \\+ [^\\\\][^f][^r][^ ]', # Footnote that doesn't start with \ft
+                                                '[^.?!)”*]\\\\f\\*', # Footnote that doesn't end with period, etc.
+                                                '\\\\x [^+]', # Cross-reference that doesn't start with +
+                                                '\\\\x \\+ [^\\\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
+                                                '[^.]\\\\x\\*', # Cross-reference that doesn't end with period
+                                                ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
+                                                )
+DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 
 
 def exp( messageString ):
@@ -196,11 +231,15 @@ def compareBooksPedantic( book1, book2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For book1 -- case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For book1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For book2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
                         breakOnOne=False ):
     """
     Given two Bible book objects, compare the two carefully
@@ -216,7 +255,7 @@ def compareBooksPedantic( book1, book2,
         if debuggingThisModule:
             print( exp("compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
                     .format( book1, book2, compareQuotes, comparePunctuation, compareDigits,
-                                        illegalStrings1, illegalStrings2, matchingPairs,
+                                        illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
         assert book1.BBB == book2.BBB
         assert book1.workName != book2.workName
@@ -226,7 +265,7 @@ def compareBooksPedantic( book1, book2,
     len1, len2 = len(book1), len(book2)
     #print( 'len', len1, len2 )
     if len1 != len2:
-        bcResults.append( (('0','0',' '),"Book lengths don't match: {} vs {}".format( len1, len2 )) )
+        bcResults.append( (('0','0',' '),"Book lengths don't match: {} vs {} newline markers".format( len1, len2 )) )
 
     ix1 = ix2 = offset1 = offset2 = 0
     numMismatchedMarkers = 0
@@ -318,43 +357,77 @@ def compareBooksPedantic( book1, book2,
                             bcResults.append( (reference,"Too many {!r} in Bible2".format( left )) )
                         elif l2cr > l2cl:
                             bcResults.append( (reference,"Too many {!r} in Bible2".format( right )) )
-                if marker1 not in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
-                    extras = entry1.getExtras()
-                    if extras is None: extras = () # So it's always iterable
-                    for iString in illegalStrings1:
-                        entryText = entry1.getCleanText()
-                        iCount = entryText.count( iString ) # So markers don't confuse things
+
+                entryCleanText1, entryCleanText2 = entry1.getCleanText(), entry2.getCleanText() # So markers don't confuse things
+                entryFullText1, entryFullText2 = entry1.getFullText(), entry2.getFullText() # So can check AROUND markers also
+                extras1, extras2 = entry1.getExtras(), entry2.getExtras()
+                if marker1 in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
+                    assert not extras1
+                    assert not extras2
+                else:
+                    if extras1 is None: extras1 = () # So it's always iterable
+                    if extras2 is None: extras2 = () # So it's always iterable
+                    if len(extras1) != len(extras2):
+                        bcResults.append( (reference,"Differing numbers of extras/notes: {} vs {}".format( len(extras1), len(extras2) )) )
+                    for iString in illegalCleanTextOnlyStrings1:
+                        iCount = entryCleanText1.count( iString )
                         if iCount:
-                            if iString in legalPairs1:
-                                iCount -= entryText.count( legalPairs1[iString] )
-                            if iCount:
+                            for illegalString,legalString in legalPairs1:
+                                if illegalString==iString:
+                                    iCount -= entryCleanText1.count( legalString )
+                            if iCount > 0:
+                                bcResults.append( (reference,"Illegal string in Bible1 main text: {!r}".format( iString )) )
+                        for extra in extras1:
+                            #print( extra )
+                            #print( ' ', extra.getType() )
+                            #print( ' ', extra.getIndex() )
+                            #print( ' ', extra.getText() )
+                            #print( ' ', extra.getCleanText() )
+                            if iString in extra.getCleanText(): # So markers don't confuse things
+                                bcResults.append( (reference,"Illegal string in Bible1 note main text: {!r}".format( iString )) )
+                    for iString in illegalCompleteLineStrings1:
+                        iCount = entryFullText1.count( iString )
+                        if iCount:
+                            for illegalString,legalString in legalPairs1:
+                                if illegalString==iString:
+                                    iCount -= entryFullText1.count( legalString )
+                            if iCount > 0:
                                 bcResults.append( (reference,"Illegal string in Bible1: {!r}".format( iString )) )
-                        for extra in extras:
-                            #print( extra )
-                            #print( ' ', extra.getType() )
-                            #print( ' ', extra.getIndex() )
-                            #print( ' ', extra.getText() )
-                            #print( ' ', extra.getCleanText() )
-                            if iString in extra.getCleanText(): # So markers don't confuse things
+                        for extra in extras1:
+                            if iString in extra.getText(): # with all markers
                                 bcResults.append( (reference,"Illegal string in Bible1 note: {!r}".format( iString )) )
-                    extras = entry2.getExtras()
-                    if extras is None: extras = () # So it's always iterable
-                    for iString in illegalStrings2:
-                        entryText = entry2.getCleanText()
-                        iCount = entryText.count( iString ) # So markers don't confuse things
+                    for iRegex in illegalCompleteLineRegexes1:
+                        reMatch = re.search( iRegex, entryFullText1 )
+                        if reMatch:
+                            bcResults.append( (reference,"Illegal {} regex string in Bible1: {!r}".format( iRegex, reMatch.group(0) )) )
+                            break # Stop at one
+                    for iString in illegalCleanTextOnlyStrings2:
+                        iCount = entryCleanText2.count( iString )
                         if iCount:
-                            if iString in legalPairs2:
-                                iCount -= entryText.count( legalPairs2[iString] )
-                            if iCount:
-                                bcResults.append( (reference,"Illegal string in Bible2: {!r}".format( iString )) )
-                        for extra in extras:
-                            #print( extra )
-                            #print( ' ', extra.getType() )
-                            #print( ' ', extra.getIndex() )
-                            #print( ' ', extra.getText() )
-                            #print( ' ', extra.getCleanText() )
+                            for illegalString,legalString in legalPairs1:
+                                if illegalString==iString:
+                                    iCount -= entryCleanText2.count( legalString )
+                            if iCount > 0:
+                                bcResults.append( (reference,"Illegal string in Bible2 main text: {!r}".format( iString )) )
+                        for extra in extras2:
                             if iString in extra.getCleanText(): # So markers don't confuse things
+                                bcResults.append( (reference,"Illegal string in Bible2 note main text: {!r}".format( iString )) )
+                    for iString in illegalCompleteLineStrings2:
+                        iCount = entryFullText2.count( iString )
+                        if iCount:
+                            for illegalString,legalString in legalPairs2:
+                                if illegalString==iString:
+                                    iCount -= entryFullText2.count( legalString )
+                            if iCount > 0:
+                                bcResults.append( (reference,"Illegal string in Bible2: {!r}".format( iString )) )
+                        for extra in extras2:
+                            if iString in extra.getText(): # with all markers
                                 bcResults.append( (reference,"Illegal string in Bible2 note: {!r}".format( iString )) )
+                    for iRegex in illegalCompleteLineRegexes2:
+                        reMatch = re.search( iRegex, entryFullText2 )
+                        if reMatch:
+                            bcResults.append( (reference,"Illegal {} regex string in Bible2: {!r}".format( iRegex, reMatch.group(0) )) )
+                            break # Stop at one
         else: # markers are different
             numMismatchedMarkers += 1
             if numMismatchedMarkers < MAX_MISMATCHED_MARKERS:
@@ -727,11 +800,15 @@ def compareBibles( Bible1, Bible2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalStrings1=DEFAULT_ILLEGAL_STRINGS_1, # For Bible1 -- case sensitive
-                        illegalStrings2=DEFAULT_ILLEGAL_STRINGS_2, # For Bible2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1,
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2,
-                        matchingPairs=DEFAULT_MATCHING_PAIRS,
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For Bible1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For Bible2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
                         breakOnOne=False ):
     """
     Runs a series of checks and count on each book of the Bible
@@ -767,8 +844,12 @@ def compareBibles( Bible1, Bible2,
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )
             bResults[BBB] = compareBooksPedantic( Bible1[BBB], Bible2[BBB], compareQuotes=compareQuotes,
                                                 comparePunctuation=comparePunctuation, compareDigits=compareDigits,
-                                                illegalStrings1=illegalStrings1, illegalStrings2=illegalStrings2,
-                                                matchingPairs=matchingPairs, breakOnOne=breakOnOne )
+                                                illegalCleanTextOnlyStrings1=illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2=illegalCleanTextOnlyStrings2,
+                                                illegalCompleteLineStrings1=illegalCompleteLineStrings1, illegalCompleteLineStrings2=illegalCompleteLineStrings2,
+                                                legalPairs1=legalPairs1, legalPairs2=legalPairs2,
+                                                matchingPairs=matchingPairs,
+                                                illegalCompleteLineRegexes1=illegalCompleteLineRegexes1, illegalCompleteLineRegexes2=illegalCompleteLineRegexes2,
+                                                breakOnOne=breakOnOne )
     return bResults
 # end of compareBibles
 
@@ -785,10 +866,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nLoading USFM Bible…" )
     name1, encoding1, testFolder1 = "MBTV", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
     name2, encoding2, testFolder2 = "MS-BT", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
-    MS_ILLEGAL_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_STRINGS_1
-    MS_ILLEGAL_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
+    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1
+    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
-                             'Your ','your ','yours ',' the the ', ) + DEFAULT_ILLEGAL_STRINGS_2
+                             'Your ','your ','yours ',' the the ', ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_1 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_2 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2
+    MS_LEGAL_PAIRS = ( ('/',' 1/ '), ('/',' 2/ '), ('/',' 3/ '), ('/',' 4/ '), ) + DEFAULT_LEGAL_PAIRS_COMMON
 
     if os.access( testFolder1, os.R_OK ):
         UB1 = USFMBible( testFolder1, name1, encoding1 )
@@ -811,14 +895,20 @@ def demo():
     if 0: # Test one book
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTesting one book only…" )
         BBB = 'JDE'
-        result = compareBooksPedantic( UB1[BBB], UB2[BBB], illegalStrings1=MS_ILLEGAL_STRINGS_1, illegalStrings2=MS_ILLEGAL_STRINGS_2 )
+        result = compareBooksPedantic( UB1[BBB], UB2[BBB],
+                                        illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
+                                        illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
+                                        legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "Comparing {} gave:".format( BBB ) )
             print( ' ', result )
 
     if 1: # Test the whole Bibles
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTesting for whole Bible…" )
-        results = compareBibles( UB1, UB2, illegalStrings1=MS_ILLEGAL_STRINGS_1, illegalStrings2=MS_ILLEGAL_STRINGS_2 )
+        results = compareBibles( UB1, UB2,
+                                        illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
+                                        illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
+                                        legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         totalCount = resultsBooksCount = 0
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "\nComparing the entire Bibles gave:" )
@@ -871,7 +961,6 @@ def demo():
                 print( "  {:,} results in {}".format( len(awResult), BBB ) )
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
-
 # end of demo
 
 
