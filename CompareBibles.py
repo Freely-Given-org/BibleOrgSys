@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-03' # by RJH
+LastModifiedDate = '2017-08-07' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -131,14 +131,20 @@ DEFAULT_LEGAL_PAIRS_1 = () + DEFAULT_LEGAL_PAIRS_COMMON
 DEFAULT_LEGAL_PAIRS_2 = () + DEFAULT_LEGAL_PAIRS_COMMON
 
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
-                                                '\\\\f [^+]', # Footnote that doesn't start with +
-                                                '\\\\f \\+ [^\\\\][^f][^r][^ ]', # Footnote that doesn't start with \ft
-                                                '[^.?!)”*]\\\\f\\*', # Footnote that doesn't end with period, etc.
-                                                '\\\\x [^+]', # Cross-reference that doesn't start with +
-                                                '\\\\x \\+ [^\\\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
-                                                '[^.]\\\\x\\*', # Cross-reference that doesn't end with period
-                                                ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
-                                                )
+                    '\\\\f [^+][^ ]', # Footnote that doesn't start with +
+                    '\\\\f \\+ [^\\\\][^f][^r][^ ]', # Footnote that doesn't start with \fr
+                    '\\\\fr [0-9]{1,3}:[0-9]{1,3} [^\\\\][^f][^t][^ ]', # Footnote that doesn't start with \ft
+                    '\\\\fr [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3} [^\\\\][^f][^t][^ ]', # Bridged footnote that doesn't start with \ft
+                    '[^.?!)”*]\\\\f\\*', # Footnote that doesn't end with period, etc.
+                    '\\\\x [^+][^ ]', # Cross-reference that doesn't start with +
+                    '\\\\x \\+ [^\\\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
+                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}(-[0-9]{1,3})? ', # Cross-reference (incl. bridged) that doesn't end with colon
+                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}: a [^\\\\][^x][^t][^ ]', # Cross-reference that doesn't start with \xt
+                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}: a [^\\\\][^x][^t][^ ]', # Bridged cross-reference that doesn't start with \xt
+                    '[^.]\\\\x\\*', # Cross-reference that doesn't end with period
+                    '\\\\x\\* ', # Cross-reference followed by a space
+                    ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
+                    )
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 
@@ -399,7 +405,7 @@ def compareBooksPedantic( book1, book2,
                     for iRegex in illegalCompleteLineRegexes1:
                         reMatch = re.search( iRegex, entryFullText1 )
                         if reMatch:
-                            bcResults.append( (reference,"Illegal {} regex string in Bible1: {!r}".format( iRegex, reMatch.group(0) )) )
+                            bcResults.append( (reference,"Illegal {!r} regex string in Bible1: {!r}".format( iRegex, reMatch.group(0) )) )
                             break # Stop at one
                     for iString in illegalCleanTextOnlyStrings2:
                         iCount = entryCleanText2.count( iString )
@@ -426,7 +432,7 @@ def compareBooksPedantic( book1, book2,
                     for iRegex in illegalCompleteLineRegexes2:
                         reMatch = re.search( iRegex, entryFullText2 )
                         if reMatch:
-                            bcResults.append( (reference,"Illegal {} regex string in Bible2: {!r}".format( iRegex, reMatch.group(0) )) )
+                            bcResults.append( (reference,"Illegal {!r} regex string in Bible2: {!r}".format( iRegex, reMatch.group(0) )) )
                             break # Stop at one
         else: # markers are different
             numMismatchedMarkers += 1
