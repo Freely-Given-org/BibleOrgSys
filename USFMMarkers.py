@@ -36,10 +36,10 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-05' # by RJH
+LastModifiedDate = '2017-08-06' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
-ProgVersion = '0.68'
+ProgVersion = '0.69'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -53,6 +53,7 @@ from singleton import singleton
 import BibleOrgSysGlobals
 
 
+# STATIC USFM TABLES
 OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl¤', )
 # NOTE: the following sets include unnumbered markers, e.g., q, as well as q1
 USFM_TITLE_MARKERS = ( 'mt','mt1','mt2','mt3','mt4', 'mte','mte1','mte2','mte3','mte4',
@@ -68,6 +69,8 @@ USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr'
                             'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
                             'li','li1','li2','li3','li4', ) # (37) Doesn't include nb and qa -- WHY NOT???
                                                             #   but does include q, qm, li, pi, and ph
+
+USFM_PRECHAPTER_MARKERS = OFTEN_IGNORED_USFM_HEADER_MARKERS + USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS + ('ie',)
 USFM_PRINTABLE_MARKERS = ('v',) + USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS \
                             + USFM_SECTION_HEADING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 
