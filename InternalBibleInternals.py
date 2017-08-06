@@ -44,11 +44,34 @@ Module for defining and manipulating internal Bible objects including:
             and each successive line has a successive verse number.
         Everything before verse 1 in regular chapters
             is considered as verse 0, e.g., many section headings, etc.
+
+Some notes about internal formats:
+    The BibleOrgSys internal format is based on
+        ESFM (see http://Freely-Given.org/Software/BibleDropBox/ESFMBibles.html )
+        which is turn is based on USFM (currently USFM 2.4).
+    Each Bible book (including front and back matter) is stored in
+        a separate InternalBibleBook object.
+    Each "new line" type field is considered a separate line in
+        a list of "lines" inside the book object.
+        These are stored as InternalBible Entry fields
+            inside the InternalBibleEntryList in the Bible book object.
+
+        Three types of text fields can be retrieved from the InternalBibleEntry:
+            1/ The full and complete ESFM/USFM text of the "line"
+            2/ The adjusted text which has "note" fields
+                (e.g., footnotes and cross-references) removed
+            3/ The clean text which also has inline formatting
+                (e.g., bold, bookname, word-of-Jesus) removed
+
+        Notes are removed from the text and placed into a list of "extras"
+            stored in an InternalBibleExtraList object.
+        Each InternalBibleExtra contains an index back to the adjusted text
+            (and hence that index must be adjusted if the text string is edited).
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-11' # by RJH
+LastModifiedDate = '2017-08-06' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.68'
@@ -79,7 +102,8 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
     v~  verse text -- anything after the verse number on a \v line is split off into here
     p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.) is split off into here
     cl¤ used to rename cl markers BEFORE the '\c 1' marker --
-                            represents the text for "chapter" to be used throughout the book
+                            represents the text for "chapter" (e.g., Psalm) to be used throughout the book
+        cl markers AFTER the '\c 1' marker remain unchanged (the text for the individual chapter/psalm heading)
     vp# used for the vp (character field) when it is copied and converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s) that contained the vp (character) field.
 
@@ -117,6 +141,7 @@ BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
 
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
+# "EXTRA" here means footnote type fields that are not part of the main line of text.
 BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
 BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'vp', )
 """

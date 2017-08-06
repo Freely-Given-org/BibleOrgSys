@@ -69,7 +69,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-02' # by RJH
+LastModifiedDate = '2017-08-07' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.37'
@@ -97,6 +97,10 @@ import BibleOrgSysGlobals
 #       *       Matches sequence zero or more times (greedy) -- same as {0,}
 #       +       Matches sequence one or more times -- same as {1,}
 #       {m,n}   Matches at least m repetitions, and at most n
+#
+#       |       Alternation, or "or" operator
+#
+#       All metacharacters (which must be escaped to search for literals): . ^ $ * + ? { } [ ] \ | ( )
 #
 BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Finds BBB codes only (as strict as possible) -- see Apps/TestBooksCodesRE.py
 C_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Chapter numbers 1..199

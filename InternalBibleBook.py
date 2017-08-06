@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-08-06' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1458,9 +1458,12 @@ class InternalBibleBook:
             nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
-                    print( "processLine: {} {!r} {!r}".format( self.BBB, originalMarker, originalText ) )
+                    print( "processLine: {} {}:{} {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
                 assert originalMarker and isinstance( originalMarker, str )
                 assert isinstance( originalText, str )
+            if C=='0': V = int(V) + 1 # Count intro lines
+            #if self.BBB == 'PSA':
+                #print( "processLine: {} {}:{} {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
             text = originalText
 
             # Convert USFM markers like s to standard markers like s1
@@ -1525,7 +1528,8 @@ class InternalBibleBook:
                 return nBits
             # end of splitCNumber
 
-            # Keep track of where we are
+
+            # Main code of processLine -- keep track of where we are
             if originalMarker=='c' and text:
                 if haveWaitingC: logging.warning( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.BBB, C, V ) )
                 #C = text.split()[0]; V = '0'
@@ -1572,7 +1576,7 @@ class InternalBibleBook:
                 haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='cl' and text:
                 if BibleOrgSysGlobals.debugFlag:
-                    if V != '0':
+                    if C != '0':
                         print( "InternalBibleBook.processLine: Something before cl", self.workName, self.BBB, C, V, repr(text) )
                     if debuggingThisModule: assert V == '0' # coz this should precede the first c, or follow the c and precede the v
                 if C == '0': # it's before the first c
