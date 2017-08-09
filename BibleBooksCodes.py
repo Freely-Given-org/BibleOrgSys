@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-29' # by RJH
+LastModifiedDate = '2017-08-10' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.79'
@@ -236,27 +236,38 @@ class BibleBooksCodes:
 
 
     def getUnboundBibleCode( self, BBB ):
-        """ Return the three character (two-digits and one uppercase letter) Unbound Bible code for the given book code (referenceAbbreviation). """
+        """
+        Return the three character (two-digits and one uppercase letter) Unbound Bible code
+            for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['UnboundCodeString']
 
 
     def getBibleditNumber( self, BBB ):
-        """ Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation). """
+        """
+        Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['BibleditNumberString']
 
 
     def getNETBibleAbbreviation( self, BBB ):
-        """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the NET Bible abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['NETBibleAbbreviation']
 
 
     def getDrupalBibleAbbreviation( self, BBB ):
-        """ Return the DrupalBible abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the DrupalBible abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['DrupalBibleAbbreviation']
 
 
     def getByzantineAbbreviation( self, BBB ):
-        """ Return the Byzantine abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the Byzantine abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
@@ -273,7 +284,9 @@ class BibleBooksCodes:
                 return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
 
     def getBBBFromUSFM( self, USFMAbbreviation, strict=False ):
-        """ Return the reference abbreviation string for the given USFM book code string. """
+        """
+        Return the reference abbreviation string for the given USFM (Paratext) book code string.
+        """
         assert len(USFMAbbreviation) == 3
         #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
         result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
@@ -283,13 +296,17 @@ class BibleBooksCodes:
 
 
     def getBBBFromUnboundBibleCode( self, UnboundBibleCode ):
-        """ Return the reference abbreviation string for the given Unbound Bible book code string. """
+        """
+        Return the reference abbreviation string for the given Unbound Bible book code string.
+        """
         return self.__DataDicts["UnboundCodeDict"][UnboundBibleCode.upper()][1]
     # end of BibleBooksCodes.getBBBFromUnboundBibleCode
 
 
     def getBBBFromDrupalBibleCode( self, DrupalBibleCode ):
-        """ Return the reference abbreviation string for the given DrupalBible book code string. """
+        """
+        Return the reference abbreviation string for the given DrupalBible book code string.
+        """
         return self.__DataDicts["DrupalBibleAbbreviationDict"][DrupalBibleCode.upper()][1]
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
