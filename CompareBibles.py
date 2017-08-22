@@ -68,7 +68,7 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-07' # by RJH
+LastModifiedDate = '2017-08-21' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.17'
@@ -294,7 +294,7 @@ def compareBooksPedantic( book1, book2,
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
-        if marker1 == marker2:
+        if marker1 == marker2: # ok, formats of both books match
             numMismatchedMarkers = 0
             if line1 or line2:
                 for quoteChar in compareQuotes:
@@ -434,7 +434,8 @@ def compareBooksPedantic( book1, book2,
                         if reMatch:
                             bcResults.append( (reference,"Illegal {!r} regex string in Bible2: {!r}".format( iRegex, reMatch.group(0) )) )
                             break # Stop at one
-        else: # markers are different
+
+        else: # markers are different in the two given books
             numMismatchedMarkers += 1
             if numMismatchedMarkers < MAX_MISMATCHED_MARKERS:
                 bcResults.append( (reference,"Mismatched markers: {!r} vs {!r}".format( marker1, marker2 )) )
@@ -678,7 +679,7 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                     seglenB = len( segmentBList )
                     ix = -1
                     while True:
-                        print( rWords, ix, rCount, segmentBList )
+                        #print( rWords, ix, rCount, segmentBList )
                         try: ix = segmentBList.index( rWords[0], ix+1 )
                         except ValueError: break # none / no more found
                         matched = True
@@ -698,12 +699,13 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
                     #print( lEntry, foundLPhrases ); halt
-                    print( "Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
                 else:
                     resultsList.append( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
                     #resultsList.append( ((' ',' ',' '), rEntry) )
-                    print( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
-                    print( "   {!r}:{}".format( lEntry, rEntry ) )
+                    #print( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
+                    #print( "   {!r}:{}".format( lEntry, rEntry ) )
             #elif lCount < rCount:
                 #resultsList.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, rCount, segmentAList )) )
 # end of analyzeWordsInSegment
