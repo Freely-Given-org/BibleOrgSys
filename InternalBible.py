@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-15' # by RJH
+LastModifiedDate = '2017-08-21' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -2132,9 +2132,11 @@ class InternalBible:
             for entry in verseData:
                 marker, cleanText = entry.getMarker(), entry.getOriginalText() if fullTextFlag else entry.getCleanText()
                 if marker[0] == '¬': pass # Ignore end markers
+                elif marker == 'id': verseText += 'ID: ' + cleanText
                 elif marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker
                 elif marker == 'c#': pass # Ignore print chapter number
+                elif marker == 'd': verseText += '¦' + cleanText + '¦'
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
                 elif marker == 'q1': verseText += '₁' + cleanText
