@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-06' # by RJH
+LastModifiedDate = '2017-08-21' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1140,8 +1140,8 @@ class InternalBibleBook:
                 openMarker( 'intro' )
                 haveIntro += 1 # now 'true' but counted to detect errors
                 if haveIntro > 1:
-                    print( "Multiple introduction sections!!! " )
-                    if BibleOrgSysGlobals.debugFlag: halt
+                    logging.warning( "Multiple introduction sections in {}!!!".format( self.BBB ) )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
             if 'iot' in openMarkers and marker not in ourIntroOutlineMarkers: closeOpenMarker( 'iot' )
             if 'ilist' in openMarkers and marker not in ourIntroListMarkers: closeOpenMarker( 'ilist' )
