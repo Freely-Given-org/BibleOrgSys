@@ -68,7 +68,7 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-21' # by RJH
+LastModifiedDate = '2017-08-24' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.17'
@@ -144,6 +144,7 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
                     '[^.]\\\\x\\*', # Cross-reference that doesn't end with period
                     '\\\\x\\* ', # Cross-reference followed by a space
                     ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
+                    '^\\([1-4][A-Z].*?\\)$', # \r reference without space e.g. 2Ki instead of 2 Ki
                     )
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
