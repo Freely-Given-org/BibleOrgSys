@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-06' # by RJH
+LastModifiedDate = '2017-09-09' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.68'
@@ -1063,8 +1063,9 @@ class InternalBibleIndex:
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp#':
-                        #print( nextMarker )
-                        if self.BBB!='ESG': assert nextMarker in ('v','p',)
+                        #print( "After ({}) vp#: {!r} {} {}:{} in {}".format( previousMarker, nextMarker, self.BBB, C, V, self.name ) )
+                        if debuggingThisModule:
+                            if self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )
@@ -1089,7 +1090,7 @@ class InternalBibleIndex:
                         elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
                             logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q3' and nextMarker not in ('p~', '¬q3'):
+                        elif marker=='q3' and nextMarker not in ('v','p~', '¬q3'):
                             logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q4' and nextMarker not in ('p~', '¬q3'):

@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-21' # by RJH
+LastModifiedDate = '2017-09-07' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1174,7 +1174,9 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
             elif marker == 'vp#':
-                if BibleOrgSysGlobals.debugFlag and self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
+                #print( "After ({}) vp#: {!r} {} {}:{} in {}".format( previousMarker, nextMarker, self.BBB, C, V, self.name ) )
+                if debuggingThisModule:
+                    if self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
                 if 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
             elif marker == 'v':

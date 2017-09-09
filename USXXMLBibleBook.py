@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-15' # by RJH
+LastModifiedDate = '2017-09-08' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -91,6 +91,115 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
 
+
+        def loadVerseNumberField( verseNumberElement, verseNumberLocation ):
+            """
+            Load a verse field from the USX XML.
+
+            Note that this is a milestone in USX (not a container).
+
+            Has no return value -- updates the data fields directly.
+            """
+            #nonlocal V # Why is this needed for the next line?
+            #print( "loadVerseNumberField( {}, {} @ {} {}:{} )".format( verseNumberElement.tag, verseNumberLocation, self.BBB, C, V ) )
+            assert verseNumberElement.tag == 'verse'
+
+            BibleOrgSysGlobals.checkXMLNoText( verseNumberElement, verseNumberLocation )
+            BibleOrgSysGlobals.checkXMLNoSubelements( verseNumberElement, verseNumberLocation )
+            # Process the attributes first
+            verseStyle = altNumber = pubNumber = None
+            for attrib,value in verseNumberElement.items():
+                if attrib=='number': V = value
+                elif attrib=='style': verseStyle = value
+                elif attrib=='altnumber': altNumber = value
+                elif attrib=='pubnumber': pubNumber = value # TODO: not used anywhere!
+                else:
+                    logging.error( _("KR60 Unprocessed {} attribute ({}) in {}").format( attrib, value, verseNumberLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            if verseStyle != 'v':
+                logging.error( _("Unexpected style attribute ({}) in {}").format( verseStyle, verseNumberLocation ) )
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            #if altNumber: print( repr(verseStyle), repr(altNumber) ); halt
+            altStuff = ' \\va {}\\va*'.format( altNumber ) if altNumber else ''
+            self.addLine( verseStyle, V + altStuff + ' ' )
+            # Now process the tail (if there's one) which is the verse text
+            if verseNumberElement.tail:
+                vText = verseNumberElement.tail
+                if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
+                if vText:
+                    #print( repr(vText) )
+                    self.appendToLastLine( vText )
+        # end of loadVerseNumberField
+
+
+        def loadCharField( charElement, charLocation ):
+            """
+            Load a formatted / char field from the USX XML.
+
+            Note that this can contain other nested fields.
+
+            Results the result as a string (to be appended to whatever came before)
+            """
+            #print( "loadCharField( {}, {} @ {} {}:{} )".format( charElement.tag, charLocation, self.BBB, C, V ) )
+            assert charElement.tag == 'char'
+
+            # Process the attributes first
+            charStyle = charClosed = None
+            for attrib,value in charElement.items():
+                if attrib=='style':
+                    charStyle = value # This is basically the USFM character marker name
+                    #print( "  charStyle", charStyle )
+                    assert not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle )
+                elif attrib == 'closed':
+                    assert value == 'false'
+                    charClosed = False
+                else:
+                    logging.error( _("QU52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            if BibleOrgSysGlobals.isBlank( charElement.text): charLine = '\\{} '.format( charStyle )
+            else: charLine = '\\{} {} '.format( charStyle, charElement.text )
+            assert '\n' not in charLine
+
+            # Now process the subelements -- chars are one of the few multiply embedded fields in USX
+            for subelement in charElement:
+                sublocation = subelement.tag + ' ' + location
+                #print( '{} {}:{} {}'.format( self.BBB, C, V, charElement.tag ) )
+                if subelement.tag == 'char': # milestone (not a container)
+                    charLine += loadCharField( subelement, sublocation ) # recursive call
+                elif subelement.tag == 'ref':
+                    #print( "ref", BibleOrgSysGlobals.elementStr( subelement ) )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                    # Process the attribute first
+                    refLoc = None
+                    for attrib,value in subelement.items():
+                        if attrib=='loc': refLoc = value
+                        else:
+                            logging.warning( _("KF24 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    #print( "ref", refLoc, repr(charElement.text), repr(charElement.tail), repr(charElement.text + (charElement.tail if element.tail else '')) )
+                    charLine += (charElement.text if not BibleOrgSysGlobals.isBlank(charElement.text) else '') \
+                                + (charElement.tail if not BibleOrgSysGlobals.isBlank(charElement.tail) else '')
+                    # TODO: How do we save reference in USFM???
+                else:
+                    logging.error( _("BD23 Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
+                    self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            # A character field must be added to the previous field
+            #if charElement.tail is not None: print( " tail2", repr(charElement.tail) )
+            charTail = ''
+            if charElement.tail:
+                charTail = charElement.tail
+                if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
+            assert '\n' not in charLine
+            assert '\n' not in charStyle
+            assert '\n' not in charTail
+            charLine += '\\{}*{}'.format( charStyle, charTail )
+            if debuggingThisModule: print( "USX.loadCharField: {} {}:{} {} {!r}".format( self.BBB, C, V, charStyle, charLine ) )
+            assert '\n' not in charLine
+            return charLine
+        # end of loadCharField
+
+
         def loadParagraph( paragraphXML, paragraphlocation ):
             """
             Load a paragraph from the USX XML.
@@ -104,87 +213,50 @@ class USXXMLBibleBook( BibleBook ):
             # Process the attributes first
             paragraphStyle = None
             for attrib,value in paragraphXML.items():
-                if attrib=='style':
-                    paragraphStyle = value # This is basically the USFM marker name
+                if attrib=='style': paragraphStyle = value # This is basically the USFM marker name
                 else:
                     logging.warning( _("CH46 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
             # Now process the paragraph text (or write a paragraph marker anyway)
             paragraphText = paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else ''
             if version is None: paragraphText = paragraphText.rstrip() # Don't need to strip extra spaces in v2
+            #print( "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
             self.addLine( paragraphStyle, paragraphText )
 
             # Now process the paragraph subelements
             for element in paragraphXML:
                 location = element.tag + ' ' + paragraphlocation
-                #print( "USXXMLBibleBook.load", C, V, element.tag, location )
-                if element.tag == 'verse': # milestone (not a container)
-                    BibleOrgSysGlobals.checkXMLNoText( element, location )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
-                    # Process the attributes first
-                    verseStyle = altNumber = None
-                    for attrib,value in element.items():
-                        if attrib=='number':
-                            V = value
-                        elif attrib=='style':
-                            verseStyle = value
-                        elif attrib=='altnumber':
-                            altNumber = value
-                        else:
-                            logging.error( _("KR60 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                    if verseStyle != 'v':
-                        logging.error( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
-                    #if altNumber: print( repr(verseStyle), repr(altNumber) ); halt
-                    altStuff = ' \\va {}\\va*'.format( altNumber ) if altNumber else ''
-                    self.addLine( verseStyle, V + altStuff + ' ' )
-                    # Now process the tail (if there's one) which is the verse text
-                    if element.tail:
-                        vText = element.tail
-                        if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
-                        if vText:
-                            #print( repr(vText) )
-                            self.appendToLastLine( vText )
+                #print( "USXXMLBibleBook.load {}:{} {!r} in {}".format( C, V, element.tag, location ) )
+                if element.tag == 'verse': # milestone (not a container in USX)
+                    loadVerseNumberField( element, location )
+                    #BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    #BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    ## Process the attributes first
+                    #verseStyle = altNumber = pubNumber = None
+                    #for attrib,value in element.items():
+                        #if attrib=='number': V = value
+                        #elif attrib=='style': verseStyle = value
+                        #elif attrib=='altnumber': altNumber = value
+                        #elif attrib=='pubnumber': pubNumber = value # TODO: not used anywhere!
+                        #else:
+                            #logging.error( _("KR60 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    #if verseStyle != 'v':
+                        #logging.error( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
+                        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    ##if altNumber: print( repr(verseStyle), repr(altNumber) ); halt
+                    #altStuff = ' \\va {}\\va*'.format( altNumber ) if altNumber else ''
+                    #self.addLine( verseStyle, V + altStuff + ' ' )
+                    ## Now process the tail (if there's one) which is the verse text
+                    #if element.tail:
+                        #vText = element.tail
+                        #if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
+                        #if vText:
+                            ##print( repr(vText) )
+                            #self.appendToLastLine( vText )
                 elif element.tag == 'char':
-                    # Process the attributes first
-                    charStyle = None
-                    for attrib,value in element.items():
-                        if attrib=='style':
-                            charStyle = value # This is basically the USFM character marker name
-                            #print( "  charStyle", charStyle )
-                            assert not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle )
-                        else:
-                            logging.error( _("QU52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                    charLine = "\\{} {} ".format( charStyle, element.text )
-                    # Now process the subelements -- chars are one of the few multiply embedded fields in USX
-                    for subelement in element:
-                        sublocation = subelement.tag + ' ' + location
-                        #print( '{} {}:{} {}'.format( self.BBB, C, V, element.tag ) )
-                        if subelement.tag == 'char': # milestone (not a container)
-                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
-                            # Process the attributes first
-                            subCharStyle, charClosed = None, True
-                            for attrib,value in subelement.items():
-                                if attrib=='style': subCharStyle = value
-                                elif attrib=='closed':
-                                    assert value=='false'
-                                    charClosed = False
-                                else:
-                                    logging.error( _("KS41 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
-                            charLine += "\\{} {}".format( subCharStyle, subelement.text )
-                            if charClosed: charLine += "\\{}*".format( subCharStyle )
-                            #if subelement.tail is not None: print( "  tail1", repr(subelement.tail) )
-                            charLine += '' if subelement.tail is None else subelement.tail
-                        else:
-                            logging.error( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
-                            self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
-                    # A character field must be added to the previous field
-                    #if element.tail is not None: print( " tail2", repr(element.tail) )
-                    charTail = ''
-                    if element.tail:
-                        charTail = element.tail
-                        if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
-                    charLine += "\\{}*{}".format( charStyle, charTail )
-                    #if debuggingThisModule: print( "USX.loadParagraph:", C, V, paragraphStyle, charStyle, repr(charLine) )
+                    charLine = loadCharField( element, location )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     #print( "NOTE", BibleOrgSysGlobals.elementStr( element ) )
@@ -193,55 +265,29 @@ class USXXMLBibleBook( BibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             noteStyle = value # This is basically the USFM marker name
-                            assert noteStyle in ('x','f',)
+                            assert noteStyle in ('x','f','fe')
                         elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
                             logging.error( _("CY38 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
                     assert noteStyle and noteCaller # both compulsory
-                    noteLine = "\\{} {} ".format( noteStyle, noteCaller )
+                    noteLine = '\\{} {} '.format( noteStyle, noteCaller )
                     if element.text:
                         noteText = element.text.strip()
                         noteLine += noteText
+                    else: # no note text!
+                        if len(element) == 0: # no subelements either
+                            logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, location ) )
+                            continue
+                    assert '\n' not in noteLine
                     # Now process the subelements -- notes are one of the few multiply embedded fields in USX
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + location
-                        #print( C, V, subelement.tag )
+                        #print( C, V, subelement.tag, repr(noteLine) )
                         if subelement.tag == 'char': # milestone (not a container)
-                            # Process the attributes first
-                            charStyle, charClosed = None, True
-                            for attrib,value in subelement.items():
-                                if attrib=='style':
-                                    charStyle = value
-                                elif attrib=='closed':
-                                    assert value=='false'
-                                    charClosed = False
-                                else:
-                                    logging.warning( _("GJ67 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
-                            noteLine += "\\{} {}".format( charStyle, subelement.text )
-                            # Now process the subelements -- notes are one of the few multiply embedded fields in USX
-                            for sub2element in subelement:
-                                sub2location = sub2element.tag + ' ' + sublocation
-                                #print( C, V, sub2element.tag )
-                                if sub2element.tag == 'char': # milestone (not a container)
-                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
-                                    # Process the attributes first
-                                    char2Style, char2Closed = None, True
-                                    for attrib,value in sub2element.items():
-                                        if attrib=='style':
-                                            char2Style = value
-                                        elif attrib=='closed':
-                                            assert value=='false'
-                                            char2Closed = False
-                                        else:
-                                            logging.warning( _("VH36 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
-                                    assert char2Closed
-                                    noteLine += "\\{} {}\\{}*{}".format( char2Style, sub2element.text, char2Style, sub2element.tail if sub2element.tail else '' )
-                            if charClosed: noteLine += "\\{}*".format( charStyle )
-                            if subelement.tail:
-                                charTail = subelement.tail
-                                if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts cross reference parts on a new line
-                                noteLine += charTail
+                            charLine = loadCharField( subelement, sublocation )
+                            noteLine += charLine
                         elif subelement.tag == 'unmatched': # Used to denote errors in the source text
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -252,19 +298,23 @@ class USXXMLBibleBook( BibleBook ):
                                     unmmatchedMarker = value
                                 else:
                                     logging.warning( _("NV21 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
                         else:
                             logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
                             self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
-                        if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
-                    #noteLine += "\\{}*".format( charStyle )
-                    noteLine += "\\{}*".format( noteStyle )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                        #print( BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteLine) )
+                        if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteLine += subelement.tail
+                        assert '\n' not in noteLine
+                    noteLine += '\\{}*'.format( noteStyle )
                     if element.tail:
                         #if '\n' in element.tail: halt
                         noteTail = element.tail
                         if noteTail[0]=='\n': noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
                         noteLine += noteTail
                     #print( "NoteLine", repr(noteLine) )
+                    assert '\n' not in noteLine
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'link': # Used to include extra resources
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -282,6 +332,7 @@ class USXXMLBibleBook( BibleBook ):
                             linkTarget = value # e.g., some reference
                         else:
                             logging.warning( _("KW54 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     self.addPriorityError( 3, C, V, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -294,13 +345,47 @@ class USXXMLBibleBook( BibleBook ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     self.appendToLastLine( '//' + element.tail ) # Not completely sure what optbreak is
+                elif element.tag == 'ref': # In later USX versions
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    # Process the attribute first
+                    refLoc = None
+                    for attrib,value in element.items():
+                        if attrib=='loc': refLoc = value
+                        else:
+                            logging.warning( _("KW74 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    #print( "ref", refLoc, repr(element.text), repr(element.tail), repr(element.text + (element.tail if element.tail else '')) )
+                    self.appendToLastLine( element.text + (element.tail if element.tail else '') )
+                    # TODO: How do we save reference in USFM???
+                elif element.tag == 'figure':
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'FG11' )
+                    # Process the attributes first
+                    figStyle = figDesc = figFile = figSize = figLoc = figCopy = figRef = ''
+                    for attrib,value in element.items():
+                        if attrib=='style': figStyle = value; assert figStyle == 'fig'
+                        elif attrib=='desc': figDesc = value
+                        elif attrib=='file': figFile = value
+                        elif attrib=='size': figSize = value
+                        elif attrib=='loc': figLoc = value
+                        elif attrib=='copy': figCopy = value
+                        elif attrib=='ref': figRef = value
+                        else:
+                            logging.warning( _("KW84 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    figCaption = element.text
+                    figLine = '\\fig {}|{}|{}|{}|{}|{}|{}\\fig*'.format( figDesc, figFile, figSize, figLoc, figCopy, figCaption, figRef )
+                    #print( "figLine", figLine )
+                    self.appendToLastLine( figLine )
+                    if not BibleOrgSysGlobals.isBlank( element.tail ): self.appendToLastLine( element.tail )
                 else:
-                    logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
+                    logging.warning( _("SW22 Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._rawLines[x] )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         # end of loadParagraph
 
+
+        # Main code for load()
         C, V = '0', '-1' # So id line starts at 0:0
         loadErrors = []
         lastMarker = None
@@ -321,69 +406,73 @@ class USXXMLBibleBook( BibleBook ):
         # Find the main container
         if 'tree' in dir(self) \
         and ( self.tree.tag=='usx' or self.tree.tag=='usfm' ): # Not sure why both are allowable
-            location = "USX ({}) file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+            treeLocation = "USX ({}) file".format( self.tree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
 
             # Process the attributes first
             self.schemaLocation = ''
             version = None
             for attrib,value in self.tree.items():
                 if attrib=='version': version = value
-                else: logging.warning( _("DG84 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-            if version not in ( None, '2.0' ):
+                else:
+                    logging.warning( _("DG84 Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            if version not in ( None, '2.0','2.5','2.6', ):
                 logging.warning( _("Not sure if we can handle v{} USX files").format( version ) )
+                if debuggingThisModule: halt
 
             # Now process the data
             for element in self.tree:
-                sublocation = element.tag + " " + location
+                location = element.tag + " " + treeLocation
                 if element.tag == 'book': # milestone (not a container)
-                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
-                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     # Process the attributes
                     idField = bookStyle = None
                     for attrib,value in element.items():
                         if attrib=='id' or attrib=='code':
                             idField = value # Should be USFM bookcode (not like BBB which is BibleOrgSys BBB bookcode)
                             #if idField != BBB:
-                            #    logging.warning( _("Unexpected book code ({}) in {}").format( idField, sublocation ) )
+                            #    logging.warning( _("Unexpected book code ({}) in {}").format( idField, location ) )
                         elif attrib=='style':
                             bookStyle = value
                         else:
-                            logging.warning( _("MD12 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.warning( _("MD12 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     if bookStyle != 'id':
-                        logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, sublocation ) )
+                        logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, location ) )
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     idLine = idField
                     if element.text and element.text.strip(): idLine += ' ' + element.text
                     self.addLine( 'id', idLine )
                 elif element.tag == 'chapter': # milestone (not a container)
                     V = '0'
-                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
-                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attributes
                     chapterStyle = pubNumber = None
                     for attrib,value in element.items():
-                        if attrib=='number':
-                            C = value
-                        elif attrib=='style':
-                            chapterStyle = value
-                        elif attrib=='pubnumber':
-                            pubNumber = value
+                        if attrib=='number': C = value
+                        elif attrib=='style': chapterStyle = value
+                        elif attrib=='pubnumber': pubNumber = value
                         else:
-                            logging.error( _("LY76 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.error( _("LY76 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     if chapterStyle != 'c':
-                        logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
+                        logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, location ) )
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     #if pubNumber: print( self.BBB, C, repr(pubNumber) ); halt
                     self.addLine( 'c', C )
                     if pubNumber: self.addLine( 'cp', pubNumber )
                 elif element.tag == 'para':
-                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
                         #if lastMarker: self.addLine( lastMarker, lastText )
                         #lastMarker, lastText = USFMMarker, text
-                        loadParagraph( element, sublocation )
+                        loadParagraph( element, location )
                     elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
@@ -422,9 +511,74 @@ class USXXMLBibleBook( BibleBook ):
                                     logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
                                     break
                         # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+                elif element.tag == 'table':
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'TT33' )
+                    BibleOrgSysGlobals.checkXMLNoText( element, location, 'TT42' )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location, 'TT88' )
+                    for subelement in element:
+                        sublocation = subelement.tag + " in " + location
+                        #print( "here1", sublocation )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'GR12' )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'JG78' )
+                        assert subelement.tag == 'row'
+                        # Process the attribute
+                        rowStyle = None
+                        for attrib,value in subelement.items():
+                            if attrib=='style': rowStyle = value
+                            else:
+                                logging.error( _("LK46 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                        assert rowStyle == 'tr'
+                        tableCode = ''
+                        for sub2element in subelement:
+                            sub2location = sub2element.tag + " in " + sublocation
+                            #print( "  here2", sub2location )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'TY45' )
+                            assert sub2element.tag == 'cell'
+                            # Process the attribute
+                            cellStyle = alignMode = None
+                            for attrib,value in sub2element.items():
+                                if attrib=='style': cellStyle = value
+                                elif attrib=='align': alignMode = value
+                                else:
+                                    logging.error( _("LP16 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            assert cellStyle in ('th1','th2','th3','th4', 'tc1','tc2','tc3','tc4')
+                            assert alignMode in (None, 'start', )
+                            tableCode += '\\{} {}'.format( cellStyle,
+                                            sub2element.text if not BibleOrgSysGlobals.isBlank(sub2element.text) else '' )
+                            assert '\n' not in tableCode
+                            for sub3element in sub2element:
+                                sub3location = sub3element.tag + " in " + sub2location
+                                #print( "    here3", sub3location )
+                                BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
+                                if sub3element.tag == 'note':
+                                    for sub4element in sub3element:
+                                        sub4location = sub4element.tag + " in " + sub3location
+                                        #print( "    here4", sub4location )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
+                                        if sub4element.tag == 'char':
+                                            tableCode += loadCharField( sub4element, sub4location )
+                                        else:
+                                            logging.error( _("KA28 Unprocessed {} sub4element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub4location ) )
+                                            self.addPriorityError( 1, C, V, _("Unprocessed {} sub4element").format( sub4element.tag ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
+                                        tableCode += sub3element.tail
+                                elif sub3element.tag == 'verse':
+                                    loadVerseNumberField( sub3element, sub3location )
+                                else:
+                                    logging.error( _("KA29 Unprocessed {} sub3element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub3location ) )
+                                    self.addPriorityError( 1, C, V, _("Unprocessed {} sub3element").format( sub3element.tag ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                assert '\n' not in tableCode
+                        assert '\n' not in tableCode
+                        #print( "tableCode: {}".format( tableCode ) )
+                        self.addLine( 'tr', tableCode )
                 else:
-                    logging.error( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, sublocation ) )
+                    logging.error( _("DV60 Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
     # end of USXXMLBibleBook.load

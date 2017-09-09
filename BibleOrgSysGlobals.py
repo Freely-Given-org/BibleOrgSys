@@ -53,6 +53,7 @@ Contains functions:
     checkXMLNoSubelements( element, locationString, idString=None )
     checkXMLNoSubelementsWithText( element, locationString, idString=None )
     getFlattenedXML( element, locationString, idString=None, level=0 )
+    isBlank( elementText )
 
     applyStringAdjustments( originalText, adjustmentList )
     stripWordPunctuation( wordToken )
@@ -76,10 +77,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-14' # by RJH
+LastModifiedDate = '2017-09-08' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -97,7 +98,7 @@ from argparse import ArgumentParser
 commandLineArguments = None
 
 strictCheckingFlag = debugFlag = False
-haltOnXMLWarning = False # Used for XML debugging
+haltOnXMLWarning = True # Used for XML debugging
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
@@ -898,6 +899,21 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     #else: print( "getFlattenedXML: Result is {!r}".format( result ) )
     return result
 # end of BibleOrgSysGlobals.getFlattenedXML
+
+
+def isBlank( elementText ):
+    """
+    Given some text from an XML element text or tail field (which might be None)
+        return a stripped value and with internal CRLF characters replaced by spaces.
+
+    If the text is None, returns None
+    """
+    #print( "isBlank( {!r} )".format( elementText ) )
+    if elementText is None: return True
+    #print( "isspace()", elementText.isspace() )
+    return elementText.isspace()
+# end of BibleOrgSysGlobals.isBlank
+
 
 
 ##########################################################################################################

@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-12' # by RJH
+LastModifiedDate = '2017-09-05' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.27'
@@ -351,7 +351,7 @@ def loadPTX7Languages( BibleObject ):
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("loadPTX7Languagess()") )
+        print( exp("loadPTX7Languages()") )
 
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
