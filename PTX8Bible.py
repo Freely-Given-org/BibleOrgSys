@@ -826,6 +826,7 @@ class PTX8Bible( Bible ):
             logging.error( "PTX8Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.settingsFilepath = None
+        self.filepathsNotYetLoaded = []
 
         # Create empty containers for loading the XML metadata files
         #projectUsersDict = self.PTXStyles = self.PTXVersification = self.PTXLanguage = None
@@ -862,7 +863,6 @@ class PTX8Bible( Bible ):
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
-        self.filepathsNotYetLoaded = []
         recurseFolder( self.sourceFolder )
         if foundFolders:
             unexpectedFolders = []
