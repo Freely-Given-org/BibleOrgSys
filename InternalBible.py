@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-21' # by RJH
+LastModifiedDate = '2017-09-11' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -780,7 +780,7 @@ class InternalBible:
             if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
         if not self.name: self.name = self.givenName
         if self.sourceFilename and not self.name: self.name = os.path.basename( self.sourceFilename )
-        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        if self.sourceFolder and not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
         if not self.name: self.name = self.objectTypeString + ' Bible'
 
         if not self.abbreviation: self.abbreviation = self.getSetting( 'Abbreviation' )
