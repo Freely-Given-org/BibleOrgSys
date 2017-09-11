@@ -77,14 +77,15 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-08' # by RJH
+LastModifiedDate = '2017-09-11' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.72'
+ProgVersion = '0.73'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
+haltOnXMLWarning = False # Used for XML debugging
 
 
 import sys, logging, os.path, pickle
@@ -98,7 +99,6 @@ from argparse import ArgumentParser
 commandLineArguments = None
 
 strictCheckingFlag = debugFlag = False
-haltOnXMLWarning = True # Used for XML debugging
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
@@ -850,7 +850,7 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
         logger = logging.critical if subelement.text else logging.error
         logger( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
-        if debugFlag and haltOnXMLWarning: halt
+        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoSubelements
 
 def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ):
@@ -1182,7 +1182,8 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
     EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
     verbosityGroup.add_argument( '-d', '--debug', action='store_true', dest='debug', default=False, help="output even more information for the programmer/debugger" )
-    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
+    # Commented out while multi-processing is disabled just about 20 lines below
+    #parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
     parserObject.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
     if exportAvailable:
         parserObject.add_argument('-x', '--export', action='store_true', dest='export', default=False, help="export the data file(s)")
