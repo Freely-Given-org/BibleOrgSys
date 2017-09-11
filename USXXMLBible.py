@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-20' # by RJH
+LastModifiedDate = '2017-09-11' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -116,7 +116,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( givenFolderName )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoad or autoLoadBooks: uB.preload() # Determine the filenames
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
@@ -152,7 +152,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( foundProjects[0] )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoad or autoLoadBooks: uB.preload() # Determine the filenames
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
             return uB
         return numFound
@@ -182,8 +182,6 @@ class USXXMLBible( Bible ):
         if not self.name: self.name = os.path.basename( self.givenFolderName )
         if not self.name: self.name = os.path.basename( self.givenFolderName[:-1] ) # Remove the final slash
         if not self.name: self.name = "USX Bible"
-
-        self.ssfFilepath = None
     # end of USXXMLBible.__init_
 
 
@@ -211,30 +209,6 @@ class USXXMLBible( Bible ):
             self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
         #print( "GHJGHR", self.possibleFilenameDict ); halt
-
-        if 0: # we don't have a getSSFFilenames function :(
-            if self.suppliedMetadata is None: self.suppliedMetadata = {}
-            if self.ssfFilepath is None: # it might have been loaded first
-                # Attempt to load the SSF file
-                #self.suppliedMetadata, self.settingsDict = {}, {}
-                ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-                #print( "ssfFilepathList", ssfFilepathList )
-                if len(ssfFilepathList) > 1:
-                    logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
-                if len(ssfFilepathList) >= 1: # Seems we found the right one
-                    PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
-                    if PTXSettingsDict:
-                        if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
-                        self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
-                        self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
-
-        #self.name = self.givenName
-        #if self.name is None:
-            #for field in ('FullName','Name',):
-                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        #if not self.name: self.name = os.path.basename( self.sourceFolder )
-        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        #if not self.name: self.name = "USFM Bible"
 
         self.preloadDone = True
     # end of USFMBible.preload
@@ -326,16 +300,6 @@ class USXXMLBible( Bible ):
         if not foundFiles:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.loadBooks: Couldn't find any files in {!r}".format( self.givenFolderName ) )
             return # No use continuing
-
-        #if 0: # We don't have a getSSFFilenames function
-            ## Attempt to load the metadata file
-            #ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            #if len(ssfFilepathList) == 1: # Seems we found the right one
-                #PTXSettingsDict = loadPTX7ProjectData( ssfFilepathList[0] )
-                #if PTXSettingsDict:
-                    #if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
-                    #self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
-                    #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
