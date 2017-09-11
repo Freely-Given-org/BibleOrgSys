@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-09' # by RJH
+LastModifiedDate = '2017-09-11' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.68'
@@ -79,7 +79,7 @@ ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
-MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
+MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 
 import logging
@@ -198,7 +198,7 @@ class InternalBibleExtra:
             for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
                 assert '\\'+letters+' ' not in noteText
                 assert '\\'+letters+'*' not in noteText
-            assert cleanNoteText and isinstance( cleanNoteText, str ) # Mustn't be blank
+            if debuggingThisModule: assert cleanNoteText and isinstance( cleanNoteText, str ) # Mustn't be blank
             assert '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText
         self.myType, self.index, self.noteText, self.cleanNoteText = myType, index, noteText, cleanNoteText
     # end of InternalBibleExtra.__init__
