@@ -253,15 +253,18 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
 # The following loadPTX8…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
-def loadPTX8ProjectData( BibleObject, settingsFilepath, encoding='utf-8' ):
+def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
     """
     Process the Paratext 8 project settings data file (XML) from the given filepath into PTXSettingsDict.
 
     Returns a dictionary.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( exp("Loading Paratext project settings data from {!r} ({})").format( settingsFilepath, encoding ) )
+        print( exp("Loading Paratext project settings data from {!r} ({})").format( sourceFolder, encoding ) )
     #if encoding is None: encoding = 'utf-8'
+    BibleObject.sourceFolder = sourceFolder
+    settingsFilepath = os.path.join( BibleObject.sourceFolder, 'Settings.xml' )
+    #print( "settingsFilepath", settingsFilepath )
     BibleObject.settingsFilepath = settingsFilepath
 
     PTXSettingsDict = {}
@@ -887,9 +890,7 @@ class PTX8Bible( Bible ):
         if self.settingsFilepath is None: # it might have been loaded first
             # Attempt to load the settings file
             #self.suppliedMetadata, self.settingsDict = {}, {}
-            settingsFilepath = os.path.join( self.sourceFolder, 'Settings.xml' )
-            #print( "settingsFilepath", settingsFilepath )
-            PTXSettingsDict = loadPTX8ProjectData( self, settingsFilepath )
+            PTXSettingsDict = loadPTX8ProjectData( self, self.sourceFolder )
             if PTXSettingsDict:
                 self.suppliedMetadata['PTX8']['Settings'] = PTXSettingsDict
                 self.applySuppliedMetadata( 'PTX8' ) # Copy some to self.settingsDict
