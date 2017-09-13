@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-07' # by RJH
+LastModifiedDate = '2017-09-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.93'
@@ -5575,9 +5575,10 @@ class BibleWriter( InternalBible ):
                 elif marker == 'p~':
                     if BibleOrgSysGlobals.debugFlag: assert text or extras
                     text = processZefXRefsAndFootnotes( text, extras )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                    text = checkZefaniaText( text, checkLeftovers=BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule )
+                    #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                         #if '\\' in text: print( "toZefaniaY: {} {}:{} {!r}".format( BBB,C,V, text ) )
-                        assert '\\' not in text
+                        #assert '\\' not in text
                     if '<NOTE' in text or '<XREF' in text: haveNotesFlag = True
                     if text: writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveNotesFlag )
                 else:
