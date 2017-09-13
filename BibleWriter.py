@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-13' # by RJH
+LastModifiedDate = '2017-09-14' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.93'
@@ -5171,6 +5171,7 @@ class BibleWriter( InternalBible ):
             converts the USFM information to a UTF-8 Zefania XML file.
 
         This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
+            and at http://www.bgfdb.de/zefaniaxml/bml/
             but more fields can be discovered by looking at downloaded files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toZefaniaXML…" )
@@ -5274,7 +5275,9 @@ class BibleWriter( InternalBible ):
                 """
 
                 def checkZefaniaTextHelper( marker, helpText ):
-                    """ Adjust the text to make the number of start and close markers equal. """
+                    """
+                    Adjust the text to make the number of start and close markers equal.
+                    """
                     count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers
                     while count1 < count2:
                         helpText = '\\'+marker+' ' + helpText
@@ -5282,10 +5285,12 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    if BibleOrgSysGlobals.debugFlag: assert count1 == count2
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert count1 == count2
                     return helpText
                 # end of checkZefaniaTextHelper
 
+                # Main code for checkZefaniaText
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
                     logging.warning( _("toZefania: Unexpected double angle brackets in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
@@ -5294,7 +5299,7 @@ class BibleWriter( InternalBible ):
                 #if '\\ior ' in adjText: adjText = checkZefaniaTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
                 if '\\add ' in adjText: adjText = checkZefaniaTextHelper('add',adjText).replace('\\add ','<STYLE fs="italic">').replace('\\add*','</STYLE>') # ???
                 if '\\nd ' in adjText: adjText = checkZefaniaTextHelper('nd',adjText).replace('\\nd ','<STYLE fs="divineName">').replace('\\nd*','</STYLE>')
-                #if '\\wj ' in adjText: adjText = checkZefaniaTextHelper('wj',adjText).replace('\\wj ','<q who="Jesus" marker="">').replace('\\wj*','</q>')
+                if '\\wj ' in adjText: adjText = checkZefaniaTextHelper('wj',adjText).replace('\\wj ','<STYLE fs="illuminated">').replace('\\wj*','</STYLE>') # Try this (not sure what it means)
                 if '\\sig ' in adjText: adjText = checkZefaniaTextHelper('sig',adjText).replace('\\sig ','<STYLE fs="italic">').replace('\\sig*','</STYLE>') # ???
                 if '\\it ' in adjText: adjText = checkZefaniaTextHelper('it',adjText).replace('\\it ','<STYLE fs="italic">').replace('\\it*','</STYLE>')
                 if '\\bd ' in adjText: adjText = checkZefaniaTextHelper('bd',adjText).replace('\\bd ','<STYLE fs="bold">').replace('\\bd*','</STYLE>')
@@ -5674,7 +5679,9 @@ class BibleWriter( InternalBible ):
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeHeader( writerObject ):
-            """Writes the Haggai header to the Haggai XML writerObject."""
+            """
+            Writes the Haggai header to the Haggai XML writerObject.
+            """
             writerObject.writeLineOpen( 'INFORMATION' )
             if 'HaggaiTitle' in controlDict and controlDict['HaggaiTitle']: writerObject.writeLineOpenClose( 'title' , controlDict['HaggaiTitle'] )
             if 'HaggaiSubject' in controlDict and controlDict['HaggaiSubject']: writerObject.writeLineOpenClose( 'subject', controlDict['HaggaiSubject'] )
@@ -5694,7 +5701,9 @@ class BibleWriter( InternalBible ):
         # end of toHaggaiXML.writeHeader
 
         def writeHagBook( writerObject, BBB, bkData ):
-            """Writes a book to the Haggai XML writerObject."""
+            """
+            Writes a book to the Haggai XML writerObject.
+            """
             #print( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
             if not OSISAbbrev:
