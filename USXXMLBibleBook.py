@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-08' # by RJH
+LastModifiedDate = '2017-09-19' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -184,15 +184,21 @@ class USXXMLBibleBook( BibleBook ):
                     logging.error( _("BD23 Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    assert '\n' not in charLine
+                    assert '\t' not in charLine
             # A character field must be added to the previous field
             #if charElement.tail is not None: print( " tail2", repr(charElement.tail) )
             charTail = ''
             if charElement.tail:
                 charTail = charElement.tail
                 if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
-            assert '\n' not in charLine
-            assert '\n' not in charStyle
-            assert '\n' not in charTail
+                if charTail and charTail[-1] in ('\n','\t'): charTail = charTail.rstrip()
+            #print( "charLine", repr(charLine), "charStyle", repr(charStyle), "charTail", repr(charTail) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                assert '\n' not in charLine
+                assert '\n' not in charStyle
+                assert '\n' not in charTail
             charLine += '\\{}*{}'.format( charStyle, charTail )
             if debuggingThisModule: print( "USX.loadCharField: {} {}:{} {} {!r}".format( self.BBB, C, V, charStyle, charLine ) )
             assert '\n' not in charLine
@@ -311,10 +317,11 @@ class USXXMLBibleBook( BibleBook ):
                     if element.tail:
                         #if '\n' in element.tail: halt
                         noteTail = element.tail
-                        if noteTail[0]=='\n': noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
+                        if noteTail[0] in ('\n','\t'): noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
+                        if noteTail and noteTail[-1] in ('\n','\t'): noteTail = noteTail.rstrip()
                         noteLine += noteTail
                     #print( "NoteLine", repr(noteLine) )
-                    assert '\n' not in noteLine
+                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteLine
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'link': # Used to include extra resources
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -543,8 +550,10 @@ class USXXMLBibleBook( BibleBook ):
                                 else:
                                     logging.error( _("LP16 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                            assert cellStyle in ('th1','th2','th3','th4', 'tc1','tc2','tc3','tc4')
-                            assert alignMode in (None, 'start', )
+                            #print( "cS", cellStyle, "aM", alignMode )
+                            if BibleOrgSysGlobals.strictCheckingFlag:
+                                assert cellStyle in ('th1','th2','th3','th4', 'thr1','thr2','thr3','thr4', 'tc1','tc2','tc3','tc4', 'tcr1','tcr2','tcr3','tcr4')
+                                assert alignMode in (None, 'start', 'end')
                             tableCode += '\\{} {}'.format( cellStyle,
                                             sub2element.text if not BibleOrgSysGlobals.isBlank(sub2element.text) else '' )
                             assert '\n' not in tableCode

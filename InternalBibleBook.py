@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-07' # by RJH
+LastModifiedDate = '2017-09-18' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -214,7 +214,9 @@ class InternalBibleBook:
 
 
     def addPriorityError( self, priority, C, V, string ):
-        """Adds a priority error to self.errorDictionary."""
+        """
+        Adds a priority error to self.errorDictionary.
+        """
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( priority, int ) and ( 0 <= priority <= 100 )
             assert isinstance( string, str ) and string
@@ -231,6 +233,20 @@ class InternalBibleBook:
     # end of InternalBibleBook.addPriorityError
 
 
+    def __makeErrorRef( self, C, V ):
+        """
+        Makes up an error reference string consisting of the BCV reference,
+            and if verbose enough, preceded by the work name.
+
+        Returns a string.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 1: # includes the work name
+            return '{!r} {} {}:{}'.format( self.workName, self.BBB, C, V )
+        # else verbosityLevel is 0 or 1
+        return '{} {}:{}'.format( self.BBB, C, V )
+    # end of InternalBibleBook.__makeErrorRef
+
+
     def addLine( self, marker, text ):
         """
         Append a (USFM-based) 2-tuple to self._rawLines.
@@ -239,7 +255,7 @@ class InternalBibleBook:
         """
         forceDebugHere = False
         if forceDebugHere or BibleOrgSysGlobals.debugFlag:
-            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.addLine( {!r}, {!r} ) for {} {} {}".format( marker, text, self.objectTypeString, self.workName, self.BBB ) )
+            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.addLine( {!r}, {!r} ) for {} {!r} {}".format( marker, text, self.objectTypeString, self.workName, self.BBB ) )
             #if len(self._rawLines ) > 200: halt
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
@@ -531,11 +547,11 @@ class InternalBibleBook:
             adjText = adjText.replace( '&', '&amp;' )
             #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
             if '<' in adjText or '>' in adjText:
-                logging.error( "processLineFix: {} {}:{} still has angle-brackets in {}:{!r}".format( self.BBB, C, V, originalMarker, adjText ) )
+                logging.error( "processLineFix: {} still has angle-brackets in {}:{!r}".format( self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 12, C, V, _("Contains angle-bracket(s)") )
                 adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
             if '"' in adjText:
-                logging.warning( "processLineFix: {} {}:{} straight-quotes in {}:{!r}".format( self.BBB, C, V, originalMarker, adjText ) )
+                logging.warning( "processLineFix: {} straight-quotes in {}:{!r}".format( self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 11, C, V, _("Contains straight-quote(s)") )
                 adjText = adjText.replace( '"', '&quot;' )
 
@@ -647,7 +663,7 @@ class InternalBibleBook:
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                     fixErrors.append( lineLocationSpace + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found unexpected 'vp' field after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found unexpected 'vp' field after {} in \\{}: {}").format( self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
                 ix2 = adjText.find( '\\vp*' )
                 if ix2 == -1: ix2 = adjText.find( '\\VP*' )
@@ -656,12 +672,12 @@ class InternalBibleBook:
             elif BibleOrgSysGlobals.debugFlag: halt # programming error
             if ix2 == -1: # no closing marker
                 fixErrors.append( lineLocationSpace + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found unmatched {} open after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
                 ix2 = 99999 # Go to the end
             elif ix2 < ix1: # closing marker is before opening marker
                 fixErrors.append( lineLocationSpace + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found unmatched {} after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
                 ix1, ix2 = ix2, ix1 # swap them then
             # Remove the footnote or endnote or xref or figure
@@ -671,12 +687,12 @@ class InternalBibleBook:
             #print( "\nNote is", repr(note) )
             if not note:
                 fixErrors.append( lineLocationSpace + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found empty {} after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
             else: # there is a note
                 if note[0].isspace():
                     fixErrors.append( lineLocationSpace + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found {} starting with space after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
                     note = note.lstrip()
                     #print( "QQQ2: lstrip in note" ); halt
@@ -688,7 +704,7 @@ class InternalBibleBook:
                     #print( "QQQ3: rstrip in note" )
                 if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
                     fixErrors.append( lineLocationSpace + _("Found illegal nested footnote or cross-reference in {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found illegal nested footnote or cross-reference in {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found illegal nested footnote or cross-reference in {} after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 85, C, V, _("{} seems to have illegal nested footnote or cross-reference").format( thisOne.title() ) )
                     if debuggingThisModule:
                         print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
@@ -703,17 +719,17 @@ class InternalBibleBook:
             if thisOne in ('footnote','endnote','cross-reference'):
                 if note.startswith( '\\' ):
                     fixErrors.append( lineLocationSpace + _("Found {} without any caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found {} without any caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} without any caller at {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 86, C, V, _("{} should have a caller").format( thisOne.title() ) )
                     note = '+ ' + note
                 if len(note)>2 and note[0] in '+-' and note[1] == '\\':
                     fixErrors.append( lineLocationSpace + _("Found {} specified with no space after caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found {} specified with no space after caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} specified with no space after caller at {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 76, C, V, _("{} should have space after caller").format( thisOne.title() ) )
                     note = note[0] + ' ' + note[1:] # Add in the space
                 if note.startswith( '- ' ):
                     fixErrors.append( lineLocationSpace + _("Found {} specified with no caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found {} specified with no caller at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found {} specified with no caller at {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 8, C, V, _("{} should not have specified no caller").format( thisOne.title() ) )
                     note = '+ ' + note[2:] # Replace - (no caller) with + (automatic caller)
                 try: caller,rest = note.split( None, 1 ) # Split off the caller and get the rest
@@ -1393,7 +1409,8 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
         if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
         if BibleOrgSysGlobals.debugFlag: assert self._rawLines # or else the book was totally blank
         #print( self._rawLines[:20] ); halt # for debugging
@@ -1435,7 +1452,7 @@ class InternalBibleBook:
                     if sahtCount != -1:
                         sahtCount += 1
                         if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                            logging.error( _("doAppendEntry: Marker {!r} at {!r} {} {}:{} should always have text").format( originalMarker, self.workName, self.BBB, C, V ) )
+                            logging.error( _("doAppendEntry: Marker {!r} at {} should always have text").format( originalMarker, self.__makeErrorRef(C,V) ) )
                         else: # we've reached our limit
                             logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {}…').format( self.workName ) )
                             sahtCount = -1 # So we don't do this again (for this book)
@@ -1551,15 +1568,15 @@ class InternalBibleBook:
                 if len(cBits) > 1: # We have extra stuff on the c line after the chapter number
                     if cBits[1] == ' ': # It's just a space
                         fixErrors.append( _("{} {}:{} Extra space after chapter marker").format( self.BBB, C, V ) )
-                        logging.warning( "InternalBibleBook.processLine: " + _("Extra space after chapter marker {} {}:{}").format( self.BBB, C, V ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra space after chapter marker at {}").format( self.__makeErrorRef(C,V) ) )
                         self.addPriorityError( 10, C, V, _("Extra space after chapter marker") )
                     elif not cBits[1].strip(): # It's more than a space but just whitespace
                         fixErrors.append( _("{} {}:{} Extra whitespace after chapter marker").format( self.BBB, C, V ) )
-                        logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker {} {}:{}").format( self.BBB, C, V ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker at {}").format( self.__makeErrorRef(C,V) ) )
                         self.addPriorityError( 20, C, V, _("Extra whitespace after chapter marker") )
                     else: # it's more than just whitespace
                         fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material {!r}").format( self.BBB, C, V, cBits[1] ) )
-                        logging.error( "InternalBibleBook.processLine: " + _("Extra {!r} material in chapter marker {} {}:{}").format( cBits[1], self.BBB, C, V ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Extra {!r} material in chapter marker {}").format( cBits[1], self.__makeErrorRef(C,V) ) )
                         self.addPriorityError( 30 if '\f ' in cBits[1] else 98, C, V, _("Extra {!r} material after chapter marker").format( cBits[1] ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "InternalBibleBook.processLine: Something on c line", self.BBB, C, V, repr(text), repr(cBits[1]) )
@@ -1643,7 +1660,7 @@ class InternalBibleBook:
                         if nfvnCount != -1:
                             nfvnCount += 1
                             if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {!r} {} {}:{} in \\{}: {!r}").format( self.workName, self.BBB, C, V, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
                                 logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed for {}…').format( self.workName ) )
                                 nfvnCount = -1 # So we don't do this again (for this book)
@@ -1683,7 +1700,7 @@ class InternalBibleBook:
                         if owfvnCount != -1:
                             owfvnCount += 1
                             if owfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {!r} {} {}:{} in \\{}: {!r}").format( self.workName, self.BBB, C, V, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
                                 logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed for {}…').format( self.workName ) )
                                 owfvnCount = -1 # So we don't do this again (for this book)
@@ -1847,7 +1864,7 @@ class InternalBibleBook:
             assert not self._indexedFlag
         if self._indexedFlag: return # Can only do it once
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._CVIndex = InternalBibleIndex( self.workName, self.BBB )
         self._CVIndex.makeCVIndex( self._processedLines )
 
@@ -1896,7 +1913,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         validationErrors = []
@@ -1996,7 +2013,7 @@ class InternalBibleBook:
         #print( "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
+                print( "InternalBibleBook {} {!r}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         results = []
@@ -2077,7 +2094,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'getVersification'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'getVersification'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         versificationErrors = []
@@ -2236,7 +2253,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         #print( "InternalBibleBook:discover", self.BBB )
@@ -2444,7 +2461,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'getAddedUnits'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'getAddedUnits'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         addedUnitErrors = []
@@ -3401,8 +3418,7 @@ class InternalBibleBook:
                             else:
                                 speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
-                                logging.error( _("Unclosed {!r} speech marks (or improperly nested speech marks) after {} at").format( char, openChars ) \
-                                                                            + " {} {}:{}".format( self.BBB, C, V ) )
+                                logging.error( _("Unclosed {!r} speech marks (or improperly nested speech marks) after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
                                 self.addPriorityError( 53, C, V, _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
                         openChars.append( char )
                     if len(openChars)>4:
@@ -3419,7 +3435,7 @@ class InternalBibleBook:
                         #print( "here1 with ", char, C, V, openChars )
                         if char not in '?!': # Ignore the dual purpose punctuation characters
                             speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
-                            logging.error( _("Unexpected {!r} speech closing character at").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
+                            logging.error( _("Unexpected {!r} speech closing character at {}").format( char, self.__makeErrorRef(C,V) ) )
                             self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
                         #print( "here2 with ", char, C, V )
@@ -3428,7 +3444,7 @@ class InternalBibleBook:
                         # We have closing marker that doesn't match
                         #print( "here3 with ", char, C, V, openChars )
                         speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
-                        logging.error( _("Mismatched {!r} speech closing character after {} at").format( char, openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+                        logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
                         self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
 
             # End of processing clean-up
@@ -3613,7 +3629,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'doCheckFileControls'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'doCheckFileControls'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3641,7 +3657,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'doCheckHeadings'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'doCheckHeadings'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3721,7 +3737,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'doCheckIntroduction'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'doCheckIntroduction'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -3802,7 +3818,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'doCheckNotes'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'doCheckNotes'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4079,7 +4095,7 @@ class InternalBibleBook:
         """
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'check'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'check'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4168,7 +4184,7 @@ class InternalBibleBook:
         else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "InternalBibleBook {} {}: processing lines called from 'getContextVerseData'".format( self.BBB, self.workName ) )
+                print( "InternalBibleBook {} {!r}: processing lines called from 'getContextVerseData'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines

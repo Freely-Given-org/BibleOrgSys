@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-08' # by RJH
+LastModifiedDate = '2017-09-20' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.22'
@@ -379,6 +379,8 @@ class DBLBible( Bible ):
             Load the contents information (which is more nested/complex).
             """
             assert element.tag == 'contents'
+            if element.tag not in self.suppliedMetadata['DBL']:
+                self.suppliedMetadata['DBL'][element.tag] = OrderedDict()
             ourDict = self.suppliedMetadata['DBL']['contents']
             BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
             BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -555,13 +557,17 @@ class DBLBible( Bible ):
                             rightsHolder = {}
                             for sub2element in subelement:
                                 sub3location = sub2element.tag + ' ' + sub2location
+                                #print( "sub3location", sub3location )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 rightsHolder[sub2element.tag] = sub2element.text
                             #print( "rightsHolder", rightsHolder )
-                            assert rightsHolder['uid'] not in rightsHolders
-                            rightsHolders[rightsHolder['uid']] = rightsHolder
+                            if 'uid' in rightsHolder:
+                                assert rightsHolder['uid'] not in rightsHolders
+                                rightsHolders[rightsHolder['uid']] = rightsHolder
+                            else:
+                                assert not rightsHolder
                         elif subelement.tag == 'rightsAdmin':
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sub2location )
@@ -591,9 +597,11 @@ class DBLBible( Bible ):
                             assert contributor['uid'] not in contributors
                             contributors[contributor['uid']] = contributor
                         elif subelement.tag in ('etenPartner','creator','publisher','contributor'):
+                            #print( "AgenciesStuff", sub2location, repr(subelement.text) )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                             #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
-                            self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
+                            if subelement.tag in agencies: agencies[subelement.tag].append( subelement.text )
+                            else: agencies[subelement.tag] = [ subelement.text ]
                         else:
                             logging.warning( _("KJ76 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -628,6 +636,8 @@ class DBLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
+                        if element.tag not in self.suppliedMetadata['DBL']:
+                            self.suppliedMetadata['DBL'][element.tag] = OrderedDict()
                         if subelement.tag in ('iso','name'):
                             if BibleOrgSysGlobals.debugFlag: assert subelement.text
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
@@ -698,7 +708,9 @@ class DBLBible( Bible ):
                         assert len(items)==1 and items[0][0]=='code'
                         bookCode = items[0][1]
                         assert len(bookCode) == 3
-                        self.suppliedMetadata['DBL'][element.tag][bookCode] = {}
+                        if element.tag not in self.suppliedMetadata['DBL']:
+                            self.suppliedMetadata['DBL'][element.tag] = OrderedDict()
+                        self.suppliedMetadata['DBL'][element.tag][bookCode] = OrderedDict()
                         for sub2element in subelement:
                             sub3location = sub2element.tag + ' ' + bookCode + ' ' + sub2location
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
@@ -1173,6 +1185,8 @@ class DBLBible( Bible ):
                                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                                     print( "How do we handle a tuple here???" )
                             else: print( "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                    elif isinstance( subValue, list ): # flatten this
+                        flattenedMetadata[mainKey+'--'+subKey] = '--'.join( subValue )
                     else: print( "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
             else: print( "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
         #print( "\nflattenedMetadata", flattenedMetadata )
@@ -1531,13 +1545,17 @@ def demo():
         result3 = DBLBibleFileCheck( testFolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "DBL TestA3", result3 )
 
-    if 0: # specify testFolder containing a single module
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL B/ Trying single module in {}".format( testFolder ) )
+    if 00: # demo the file checking code with temp folder
+        resultB = DBLBibleFileCheck( 'OutputFiles/TempFiles/', autoLoadBooks=True )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "DBL TestB", resultB )
+
+    if 00: # specify testFolder containing a single module
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL C/ Trying single module in {}".format( testFolder ) )
         XXXtestDBL_B( testFolder )
 
-    if 0: # specified single installed module
+    if 00: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL C/ Trying installed {} module".format( singleModule ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL D/ Trying installed {} module".format( singleModule ) )
         DBL_Bible = DBLBible( testFolder, singleModule )
         DBL_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
@@ -1547,7 +1565,7 @@ def demo():
                 for entryKey in DBL_Bible.books[BBB]._CVIndex:
                     print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 0: # specified installed modules
+    if 00: # specified installed modules
         good = ('eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30',
                 'eng-rv_dbl_40072c4a5aba4022-rev1-2014-09-24',
                 'eng-webbe_dbl_7142879509583d59-rev2-2014-09-24',
@@ -1557,7 +1575,7 @@ def demo():
         nonEnglish = ( 'ton_dbl_25210406001d9aae-rev2-2014-09-24', )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL D{}/ Trying {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL E{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             DBL_Bible = DBLBible( testFolder, testFilename )
@@ -1580,7 +1598,7 @@ def demo():
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL E{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL F{}/ Trying {}".format( j+1, someFolder ) )
                 myTestFolder = os.path.join( sampleFolder, someFolder+'/' )
                 DBL_Bible = DBLBible( myTestFolder, someFolder )
                 DBL_Bible.load()
@@ -1606,10 +1624,11 @@ def demo():
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL F{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL G{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 DBLBible( testFolder, someFolder )
-    if 0:
+
+    if 00:
         testFolders = (
                     "Tests/DataFilesForTests/DBLTest/",
                     ) # You can put your DBL test folder here

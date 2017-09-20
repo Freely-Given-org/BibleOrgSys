@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-11' # by RJH
+LastModifiedDate = '2017-09-20' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.17'
@@ -1025,11 +1025,12 @@ class PTX8Bible( Bible ):
                 if line[0]=='#': continue # Just discard comment lines
                 #print( "Autocorrect line", repr(line) )
 
-                if len(line)<4:
-                    print( "Why was autocorrect line #{} so short? {!r}".format( lineCount, line ) )
-                    continue
-                if len(line)>6:
-                    print( "Why was autocorrect line #{} so long? {!r}".format( lineCount, line ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    if len(line)<4:
+                        print( "Why was PTX8 autocorrect line #{} so short? {!r}".format( lineCount, line ) )
+                        continue
+                    if len(line)>6:
+                        print( "Why was PTX8 autocorrect line #{} so long? {!r}".format( lineCount, line ) )
 
                 if '-->' in line:
                     bits = line.split( '-->', 1 )
@@ -3305,7 +3306,8 @@ def demo():
 
                 # Print unloaded metadata filepaths
                 if PTX8_Bible.filepathsNotYetLoaded and BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "\nFollowing {} file paths have not been processed:".format( len(PTX8_Bible.filepathsNotYetLoaded) ) )
+                    print( "\nFollowing {} file paths have not been processed in folder {}:" \
+                                .format( len(PTX8_Bible.filepathsNotYetLoaded), testFolder ) )
                     for filepath in PTX8_Bible.filepathsNotYetLoaded:
                         print( "  Failed to load: {}".format( filepath ) )
                     print()

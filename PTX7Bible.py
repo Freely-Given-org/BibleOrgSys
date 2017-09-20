@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-05' # by RJH
+LastModifiedDate = '2017-09-20' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.27'
@@ -1613,11 +1613,12 @@ class PTX7Bible( Bible ):
                 if line[0]=='#': continue # Just discard comment lines
                 #print( "Autocorrect line", repr(line) )
 
-                if len(line)<4:
-                    print( "Why was autocorrect line #{} so short? {!r}".format( lineCount, line ) )
-                    continue
-                if len(line)>6:
-                    print( "Why was autocorrect line #{} so long? {!r}".format( lineCount, line ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    if len(line)<4:
+                        print( "Why was PTX7 autocorrect line #{} so short? {!r}".format( lineCount, line ) )
+                        continue
+                    if len(line)>8:
+                        print( "Why was PTX7 autocorrect line #{} so long? {!r}".format( lineCount, line ) )
 
                 if '-->' in line:
                     bits = line.split( '-->', 1 )
