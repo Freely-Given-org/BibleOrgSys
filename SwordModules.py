@@ -2414,7 +2414,7 @@ class SwordModules:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSwordModules.loadAllModules()…" )
         self.inMemoryFlag = inMemoryFlag
         displayCount = loadCount = 0
-        if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             parameters = [moduleRoughName for moduleRoughName in self.confs]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadModule, parameters ) # have the pool do our loads

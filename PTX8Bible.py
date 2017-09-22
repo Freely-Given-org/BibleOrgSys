@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-20' # by RJH
+LastModifiedDate = '2017-09-21' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.17'
@@ -3309,7 +3309,7 @@ def demo():
                     print( "\nFollowing {} file paths have not been processed in folder {}:" \
                                 .format( len(PTX8_Bible.filepathsNotYetLoaded), testFolder ) )
                     for filepath in PTX8_Bible.filepathsNotYetLoaded:
-                        print( "  Failed to load: {}".format( filepath ) )
+                        print( "  Failed to load PTX8 file: {}".format( filepath ) )
                     print()
 
                 # Test discovery code

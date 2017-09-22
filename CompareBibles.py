@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-29' # by RJH
+LastModifiedDate = '2017-09-21' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -785,8 +785,7 @@ def analyzeBibles( Bible1, Bible2 ):
     numBooks = len( commonBooks )
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running segmentizeBooks on both Bibles…") )
-    # TODO: Work out why multiprocessing is slower here -- yes, coz it has to pickle and unpickle entire Bible books
-    if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
+    if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
@@ -839,8 +838,7 @@ def compareBibles( Bible1, Bible2,
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running compareBooksPedantic on both Bibles…") )
     bResults = OrderedDict()
-    # TODO: Work out why multiprocessing is slower here -- yes, coz it has to pickle and unpickle entire Bible books
-    if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
+    if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-11' # by RJH
+LastModifiedDate = '2017-09-21' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.79'
@@ -1139,10 +1139,9 @@ class InternalBible:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
-        # TODO: Work out why multiprocessing is slower here!
         if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( exp("Prechecking {} books using {} CPUs…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+                print( exp("Prechecking/“discover” {} books using {} CPUs…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads

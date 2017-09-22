@@ -77,10 +77,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-11' # by RJH
+LastModifiedDate = '2017-09-21' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.73'
+ProgVersion = '0.74'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1182,8 +1182,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
     EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
     verbosityGroup.add_argument( '-d', '--debug', action='store_true', dest='debug', default=False, help="output even more information for the programmer/debugger" )
-    # Commented out while multi-processing is disabled just about 20 lines below
-    #parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
+    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
     parserObject.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
     if exportAvailable:
         parserObject.add_argument('-x', '--export', action='store_true', dest='export', default=False, help="export the data file(s)")
@@ -1203,9 +1202,10 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     # Determine multiprocessing strategy
     maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
-    # FORCE SINGLE PROCESS coz multiple processes are much slower!!!! :(
-    if 1 or commandLineArguments.single: maxProcesses = 1 # Multiprocessing is currently disabled (since it mostly slows things down at present)
+    if commandLineArguments.single: maxProcesses = 1
     if debugFlag or debuggingThisModule:
+        if maxProcesses > 1:
+            print( "DEBUG/SINGLE MODE: Reducing maxProcesses from {} down to 1".format( maxProcesses ) )
         maxProcesses = 1 # Limit to one process
         print( "commandLineArguments: {}".format( commandLineArguments ) )
 

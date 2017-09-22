@@ -1502,7 +1502,7 @@ def demo():
                     'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
                     'Tests/DataFilesForTests/', # Up a level
                     )
-        if 000 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
