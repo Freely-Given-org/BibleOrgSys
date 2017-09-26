@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-20' # by RJH
+LastModifiedDate = '2017-09-26' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.22'
@@ -45,7 +45,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import os, logging
+import os, logging, multiprocessing
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
@@ -229,8 +229,11 @@ class DBLBible( Bible ):
         """
         Create the internal DBL Bible object.
         """
-        #if debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             #print( t("__init__( {}, {}, {} )").format( givenFolderName, givenName, encoding ) )
+            assert isinstance( givenFolderName, str )
+            assert isinstance( givenName, str )
+            assert isinstance( encoding, str )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -249,8 +252,8 @@ class DBLBible( Bible ):
                 #logging.error( "DBLBible: Folder '{}' is unreadable".format( self.sourceFolder ) )
             #self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         #else: self.sourceFilepath = self.sourceFolder
-        if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.error( "DBLBible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
+        if not os.access( self.sourceFolder, os.R_OK ):
+            logging.error( "DBLBible: Folder '{}' is unreadable".format( self.sourceFolder ) )
 
         # Create empty containers for loading the XML metadata files
         #DBLLicense = DBLStyles = DBLVersification = DBLLanguage = None
@@ -398,7 +401,8 @@ class DBLBible( Bible ):
                     else:
                         logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                bookListTag = subelement.tag + '-' + bookListID + (' (default)' if bookListIsDefault=='true' else '')
+                #print( "bookListID={!r} bookListIsDefault={}".format( bookListID, bookListIsDefault ) )
+                bookListTag = '{}-{}{}'.format( subelement.tag, bookListID, ' (default)' if bookListIsDefault=='true' else '' )
                 assert bookListTag not in ourDict
                 ourDict[bookListTag] = {}
                 ourDict[bookListTag]['divisions'] = OrderedDict()
@@ -479,7 +483,7 @@ class DBLBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 print( "mdType={!r} mdTypeVersion={!r} mdVersion={!r} mdID={!r} mdRevision={!r}".format( mdType, mdTypeVersion, mdVersion, mdID, mdRevision ) )
                 assert mdType is None or mdType == 'text'
-                assert mdTypeVersion is None or mdTypeVersion in ( '1.3', '1.5', )
+                assert mdTypeVersion is None or mdTypeVersion in ( '1.2','1.3','1.5', )
                 assert mdVersion is None or mdVersion in ( '2.0', )
                 assert mdRevision in ( '1','2','3','4','5','6','7','8', )
 
@@ -567,7 +571,7 @@ class DBLBible( Bible ):
                                 assert rightsHolder['uid'] not in rightsHolders
                                 rightsHolders[rightsHolder['uid']] = rightsHolder
                             else:
-                                assert not rightsHolder
+                                assert not rightsHolder # empty XML field
                         elif subelement.tag == 'rightsAdmin':
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sub2location )
@@ -594,8 +598,11 @@ class DBLBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 contributor[sub2element.tag] = sub2element.text
                             #print( "contributor", contributor )
-                            assert contributor['uid'] not in contributors
-                            contributors[contributor['uid']] = contributor
+                            if 'uid' in contributor:
+                                assert contributor['uid'] not in contributors
+                                contributors[contributor['uid']] = contributor
+                            else:
+                                assert not contributor # empty XML field
                         elif subelement.tag in ('etenPartner','creator','publisher','contributor'):
                             #print( "AgenciesStuff", sub2location, repr(subelement.text) )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
@@ -755,6 +762,7 @@ class DBLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+                    self.suppliedMetadata['DBL'][element.tag] = {} # Don't need this ordered
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
@@ -1109,11 +1117,14 @@ class DBLBible( Bible ):
                 if '(default)' in someKey: haveDefault = someKey
             #print( "possibilities", possibilities )
             bookListKey = haveDefault if haveDefault else possibilities[0]
-            for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
-                #print( "USFMBookCode", USFMBookCode )
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
-                bookList.append( BBB )
-                self.availableBBBs.add( BBB )
+            print( "BL", self.suppliedMetadata['DBL']['contents'][bookListKey] )
+            if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
+                for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
+                    #print( "USFMBookCode", USFMBookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    bookList.append( BBB )
+                    self.availableBBBs.add( BBB )
+            else: print( "No books in contents (maybe has divisions?)" ) # need to add code if so
         elif 'publications' in self.suppliedMetadata['DBL']:
             for someKey,pubDict in self.suppliedMetadata['DBL']['publications'].items():
                 #print( someKey, pubDict )
@@ -1446,6 +1457,7 @@ class DBLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 
         if not self.preloadDone: self.preload()
+        if not self.preloadDone: return # coz it must have failed
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -1528,6 +1540,23 @@ class DBLBible( Bible ):
 
 
 
+def __processDBLBible( parametersTuple ): # for demo
+    """
+    Special shim function used for multiprocessing.
+    """
+    codeLetter, mainFolderName, subFolderName = parametersTuple
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL {} Trying {}".format( codeLetter, subFolderName ) )
+    DBL_Bible = DBLBible( mainFolderName, subFolderName )
+    DBL_Bible.load()
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+        BBB = 'JN1'
+        if BBB in DBL_Bible:
+            DBL_Bible.books[BBB].debugPrint()
+            for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+# end of __processDBLBible
+
+
 def demo():
     """
     Demonstrate reading and checking some Bible databases.
@@ -1582,8 +1611,8 @@ def demo():
             DBL_Bible.load()
 
 
-    sampleFolder = '../../../../../Data/Work/Bibles/DBL Bibles/DBL Open Access Bibles/'
     if 1: # Open access Bibles from DBL
+        sampleFolder = '../../../../../Data/Work/Bibles/DBL Bibles/DBL Open Access Bibles/'
         foundFolders, foundFiles = [], []
         for something in os.listdir( sampleFolder ):
             somepath = os.path.join( sampleFolder, something )
@@ -1591,16 +1620,20 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [(sampleFolder,folderName) for folderName in sorted(foundFolders)]
+            #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( _("Loading {} DBL modules using {} CPUs…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
+                                                for j,folderName in enumerate(sorted(foundFolders))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( DBLBible, parameters ) # have the pool do our loads
+                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
-            for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL F{}/ Trying {}".format( j+1, someFolder ) )
-                myTestFolder = os.path.join( sampleFolder, someFolder+'/' )
-                DBL_Bible = DBLBible( myTestFolder, someFolder )
+            for j, folderName in enumerate( sorted( foundFolders ) ):
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL F{}/ Trying {}".format( j+1, folderName ) )
+                myTestFolder = os.path.join( sampleFolder, folderName+'/' )
+                DBL_Bible = DBLBible( myTestFolder, folderName )
                 DBL_Bible.load()
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
                     BBB = 'JN1'
@@ -1617,16 +1650,27 @@ def demo():
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
+            #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( _("Loading {} DBL modules using {} CPUs…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            parameters = [('G'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
+                                                for j,folderName in enumerate(sorted(foundFolders))]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( DBLBible, parameters ) # have the pool do our loads
+                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
-            for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL G{}/ Trying {}".format( j+1, someFolder ) )
-                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                DBLBible( testFolder, someFolder )
+            for j, folderName in enumerate( sorted( foundFolders ) ):
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL G{}/ Trying {}".format( j+1, folderName ) )
+                myTestFolder = os.path.join( testFolder, folderName+'/' )
+                DBL_Bible = DBLBible( myTestFolder, folderName )
+                DBL_Bible.load()
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                    BBB = 'JN1'
+                    if BBB in DBL_Bible:
+                        DBL_Bible.books[BBB].debugPrint()
+                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                            print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 00:
         testFolders = (

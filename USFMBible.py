@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-20' # by RJH
+LastModifiedDate = '2017-09-26' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.73'
@@ -596,7 +596,7 @@ class USFMBible( Bible ):
     # end of USFMBible.loadBook
 
 
-    def _loadBookMP( self, BBB_Filename_tuple ):
+    def _loadBookMP( self, BBB_Filename_duple ):
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -606,9 +606,9 @@ class USFMBible( Bible ):
         Returns the book info.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( exp("loadBookMP( {} )").format( BBB_Filename_tuple ) )
+            print( exp("loadBookMP( {} )").format( BBB_Filename_duple ) )
 
-        BBB, filename = BBB_Filename_tuple
+        BBB, filename = BBB_Filename_duple
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
             return self.books[BBB] # Already loaded
