@@ -47,7 +47,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-09-27' # by RJH
 ShortProgName = "ReorderSongs"
 ProgName = "Reorder Songs"
-ProgVersion = '0.01'
+ProgVersion = '0.02'
 ProgNameVersion = '{} V{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -93,7 +93,7 @@ def main():
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             #print( keyPair )
-            outputFile.write( '\nc {}\n'.format( k+1 ) )
+            outputFile.write( '\n\\c {}\n'.format( k+1 ) )
             songRecord = songs.records[ keyPair[1] ]
             for s,songLine in enumerate( songRecord ):
                 #print( s, songLine )
