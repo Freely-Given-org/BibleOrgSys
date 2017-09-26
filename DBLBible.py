@@ -38,7 +38,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-09-26' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1117,7 +1117,7 @@ class DBLBible( Bible ):
                 if '(default)' in someKey: haveDefault = someKey
             #print( "possibilities", possibilities )
             bookListKey = haveDefault if haveDefault else possibilities[0]
-            print( "BL", self.suppliedMetadata['DBL']['contents'][bookListKey] )
+            #print( "BL", self.suppliedMetadata['DBL']['contents'][bookListKey] )
             if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
                 for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                     #print( "USFMBookCode", USFMBookCode )
