@@ -85,21 +85,24 @@ def main():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs loaded".format( len(songs.records) ) )
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( songs )
 
+    # Extract the information out of the file that we want to use for sorting
+    #   (We get the \s field, plus keep track of the index of each record)
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
         if debuggingThisModule: print( "songRecord", songRecord )
-        sFieldData = songRecord[1]
+        sFieldData = songRecord[1] # This is a 2-tuple of marker (without backslash) and marker contents
         assert sFieldData[0] == 's'
-        keyPairs.append( (sFieldData[1],j) )
+        keyPairs.append( (sFieldData[1],j) ) # Store the contents of the \s field, along with the index of this record
     if debuggingThisModule: print( "keyPairs", keyPairs )
 
+    # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             if debuggingThisModule: print( "keyPair", keyPair )
             outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record
-            songRecord = songs.records[ keyPair[1] ]
+            songRecord = songs.records[ keyPair[1] ] # Get the record (song) that we need
             for s,songLine in enumerate( songRecord ):
                 if debuggingThisModule: print( "songLine", s, songLine )
                 if s == 0: continue # skip old c line
