@@ -23,6 +23,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+A short app as part of BOS (Bible Organisational System) demos.
+Demonstrates the use of the SFMFile module
+    (which is typically used for dictionaries, etc. more than for Bibles).
+
 App to reorder songs which are records in a SFM file.
 
 Basically, read the file in, sort by the contents of \s and write it out with new \c numbers.
@@ -47,14 +51,14 @@ from gettext import gettext as _
 LastModifiedDate = '2017-09-27' # by RJH
 ShortProgName = "ReorderSongs"
 ProgName = "Reorder Songs"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} V{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
-import sys, os, logging
+import sys, os #, logging
 
 sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
@@ -76,30 +80,31 @@ def main():
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "Loading songs from {}…".format( songsInputFilepath ) )
     songs = SFMFile.SFMRecords()
+    # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  {} songs loaded".format( len(songs.records) ) )
-    if BibleOrgSysGlobals.debugFlag: print( songs )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs loaded".format( len(songs.records) ) )
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( songs )
 
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
-        #print( songRecord )
+        if debuggingThisModule: print( "songRecord", songRecord )
         sFieldData = songRecord[1]
         assert sFieldData[0] == 's'
         keyPairs.append( (sFieldData[1],j) )
-    #print( keyPairs )
+    if debuggingThisModule: print( "keyPairs", keyPairs )
 
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
-            #print( keyPair )
-            outputFile.write( '\n\\c {}\n'.format( k+1 ) )
+            if debuggingThisModule: print( "keyPair", keyPair )
+            outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record
             songRecord = songs.records[ keyPair[1] ]
             for s,songLine in enumerate( songRecord ):
-                #print( s, songLine )
+                if debuggingThisModule: print( "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  {} songs written".format( k+1 ) )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs written".format( k+1 ) )
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} finished.".format( ProgNameVersion ) )
 #end of main
