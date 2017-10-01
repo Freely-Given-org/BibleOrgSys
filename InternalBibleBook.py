@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-18' # by RJH
+LastModifiedDate = '2017-10-02' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -1412,7 +1412,8 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
         if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
-        if BibleOrgSysGlobals.debugFlag: assert self._rawLines # or else the book was totally blank
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            assert self._rawLines # or else the book was totally blank
         #print( self._rawLines[:20] ); halt # for debugging
 
 
@@ -1915,7 +1916,8 @@ class InternalBibleBook:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "InternalBibleBook {} {!r}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            assert self._processedLines
         validationErrors = []
 
         C, V = '0', '-1' # So id line starts at 0:0
@@ -1986,8 +1988,9 @@ class InternalBibleBook:
         if not self._processedFlag:
             if debuggingThisModule: print( "InternalBibleBook {}: calling processLines from 'getField'".format( self.BBB ) )
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag:
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
+        if BibleOrgSysGlobals.debugFlag:
             assert fieldName and isinstance( fieldName, str )
         adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( fieldName )
 
@@ -2015,7 +2018,8 @@ class InternalBibleBook:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "InternalBibleBook {} {!r}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
             self.processLines()
-        if BibleOrgSysGlobals.debugFlag: assert self._processedLines
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            assert self._processedLines
         results = []
 
         toc1Field = self.getField( 'toc1' ) # Long table of contents text

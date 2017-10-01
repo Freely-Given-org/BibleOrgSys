@@ -5,7 +5,7 @@
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,15 +34,15 @@ There are three kinds of SFM encoded files which can be loaded:
 
   In each case, the SFM and its data field are read into a 2-tuple and saved (in order) in the list.
 
-  Gives a fatal error (IOError) if file doesn't exist.
+  Raises IOError if file doesn't exist.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-27' # by RJH
+LastModifiedDate = '2017-09-27' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
-ProgVersion = '0.84'
+ProgVersion = '0.85'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -107,11 +107,12 @@ class SFMLines:
             result += ('\n' if result else '') + str( line )
         return result
 
-    def read( self, sfm_filename, ignoreSFMs=None, encoding='utf-8' ):
-        """Read a simple SFM (Standard Format Marker) file into a list of tuples.
+    def read( self, SFMFilepath, ignoreSFMs=None, encoding='utf-8' ):
+        """
+        Read a simple SFM (Standard Format Marker) file into a list of tuples.
 
-        @param sfm_filename: The filename
-        @type sfm_filename: string
+        @param SFMFilepath: The filename
+        @type SFMFilepath: string
         @param key: The SFM record marker (not including the backslash)
         @type encoding: string
         @rtype: list
@@ -122,12 +123,12 @@ class SFMLines:
         if ignoreSFMs is None: ignoreSFMs = ()
 
         lastLine, lineCount, result = '', 0, []
-        with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
+        with open( SFMFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             try:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
-                        logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( sfm_filename ) )
+                        logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -139,7 +140,7 @@ class SFMLines:
                     if line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
                             if BibleOrgSysGlobals.verbosityLevel > 2:
-                                logging.error( "Non-SFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                                logging.error( "Non-SFM line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
                                 #print( x, "'" + str(ord(line[x])) + "'" )
@@ -170,7 +171,7 @@ class SFMLines:
 
             except UnicodeError as err:
                 print( "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #print( line )
                 #raise
@@ -184,8 +185,9 @@ class SFMLines:
 class SFMRecords:
     """
     Class holding a list of SFM records.
-    Each record is a list of SFM lines. (The record always starts with the same SFMMarker, except perhaps the first record.)
-    Each line is a tuple consisting of (SFMMarker, SFMValue).
+    Each record is a list of SFM lines.
+        (The record always starts with the same SFMMarker, except perhaps the first record.)
+    Each line is a 2-tuple consisting of (SFMMarker, SFMValue).
     """
 
     def __init__(self):
@@ -206,12 +208,12 @@ class SFMRecords:
         return result
 
 
-    def read( self, sfm_filename, key=None, ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' ):
+    def read( self, SFMFilepath, key=None, ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' ):
         """
         Read a simple SFM (Standard Format Marker) file into a list of lists of tuples.
 
-        @param sfm_filename: The filename
-        @type sfm_filename: string
+        @param SFMFilepath: The filename
+        @type SFMFilepath: string
         @param key: The SFM record marker (not including the backslash)
         @type encoding: string
         @rtype: list
@@ -219,12 +221,16 @@ class SFMRecords:
         """
 
         def changeMarker( currentMarker, changePairs ):
-            """Change the SFM marker if required"""
+            """
+            Change the SFM marker if required
+            """
             if changePairs:
                 for findMarker, replaceMarker in changePairs:
                     if findMarker==currentMarker: return replaceMarker
             return currentMarker
+        # end of changeMarker
 
+        # Main code for SFMRecords.read()
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
         #print( "ignoreSFMs =", ignoreSFMs )
@@ -233,7 +239,7 @@ class SFMRecords:
         if key:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
-        self.sfm_filename = sfm_filename
+        self.SFMFilepath = SFMFilepath
         self.key = key
         self.ignoreSFMs = ignoreSFMs
         self.ignoreEntries = ignoreEntries
@@ -241,12 +247,12 @@ class SFMRecords:
         self.encoding = encoding
 
         lastLine, lineCount, record, result = '', 0, [], []
-        with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
+        with open( SFMFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             try:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( sfm_filename ) )
+                        logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -280,7 +286,7 @@ class SFMRecords:
                         if marker==key: print ("Warning: Have a blank key field after", record)
 
                     if not key and marker not in ignoreSFMs:
-                        print ('    Assuming', marker, 'to be the SFM key for', sfm_filename)
+                        print ('    Assuming', marker, 'to be the SFM key for', SFMFilepath)
                         key = marker
                     if marker==key: # Save the previous record
                         if record and record[0][1] not in ignoreEntries: # Looks at the text associated with the first (record key) marker
@@ -296,7 +302,7 @@ class SFMRecords:
 
             except UnicodeError as err:
                 print( "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
+                logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at " + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )
                 #raise

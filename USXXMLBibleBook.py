@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-19' # by RJH
+LastModifiedDate = '2017-10-02' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -91,6 +91,9 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
 
+        C, V = '0', '-1' # So id line starts at 0:0
+        loadErrors = []
+
 
         def loadVerseNumberField( verseNumberElement, verseNumberLocation ):
             """
@@ -100,7 +103,7 @@ class USXXMLBibleBook( BibleBook ):
 
             Has no return value -- updates the data fields directly.
             """
-            #nonlocal V # Why is this needed for the next line?
+            nonlocal V
             #print( "loadVerseNumberField( {}, {} @ {} {}:{} )".format( verseNumberElement.tag, verseNumberLocation, self.BBB, C, V ) )
             assert verseNumberElement.tag == 'verse'
 
@@ -180,13 +183,22 @@ class USXXMLBibleBook( BibleBook ):
                     charLine += (charElement.text if not BibleOrgSysGlobals.isBlank(charElement.text) else '') \
                                 + (charElement.tail if not BibleOrgSysGlobals.isBlank(charElement.tail) else '')
                     # TODO: How do we save reference in USFM???
+                elif subelement.tag == 'note':
+                    #print( "NOTE", BibleOrgSysGlobals.elementStr( subelement ) )
+                    processedNoteField = loadNoteField( subelement, sublocation )
+                    if BibleOrgSysGlobals.strictCheckingFlag:
+                        assert '\n' not in processedNoteField
+                        assert '\t' not in processedNoteField
+                    charLine += processedNoteField
                 else:
-                    logging.error( _("BD23 Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
+                    logging.error( _("BD23 Unprocessed {} subelement ({}) after {} {}:{} in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, self.BBB, C, V, sublocation ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     assert '\n' not in charLine
                     assert '\t' not in charLine
+            if charClosed != False:
+                charLine += '\\{}*'.format( charStyle )
             # A character field must be added to the previous field
             #if charElement.tail is not None: print( " tail2", repr(charElement.tail) )
             charTail = ''
@@ -199,11 +211,90 @@ class USXXMLBibleBook( BibleBook ):
                 assert '\n' not in charLine
                 assert '\n' not in charStyle
                 assert '\n' not in charTail
-            charLine += '\\{}*{}'.format( charStyle, charTail )
+            charLine += charTail
             if debuggingThisModule: print( "USX.loadCharField: {} {}:{} {} {!r}".format( self.BBB, C, V, charStyle, charLine ) )
             assert '\n' not in charLine
             return charLine
         # end of loadCharField
+
+
+        def loadNoteField( noteElement, noteLocation ):
+            """
+            Load a formatted / note field from the USX XML.
+
+            Note that this can contain other nested fields.
+
+            Results the result as a string (to be appended to whatever came before)
+            """
+            #print( "loadNoteField( {}, {} @ {} {}:{} )".format( noteElement.tag, noteLocation, self.BBB, C, V ) )
+            #print( "  {}".format( BibleOrgSysGlobals.elementStr( noteElement ) ) )
+            assert noteElement.tag == 'note'
+
+            # Process the attributes first
+            noteStyle = noteCaller = None
+            for attrib,value in noteElement.items():
+                if attrib=='style':
+                    noteStyle = value # This is basically the USFM marker name
+                    assert noteStyle in ('x','f','fe')
+                elif attrib=='caller':
+                    noteCaller = value # Usually hyphen or plus or a symbol to be used for the note
+                else:
+                    logging.error( _("CY38 Unprocessed {} attribute ({}) in {}").format( attrib, value, noteLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            #if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
+            assert noteStyle and noteCaller # both compulsory
+            noteField = '\\{} {} '.format( noteStyle, noteCaller )
+            if noteElement.text:
+                noteText = noteElement.text.strip()
+                noteField += noteText
+
+            # Now process the subelements -- notes are one of the few multiply embedded fields in USX
+            for subelement in noteElement:
+                sublocation = subelement.tag + ' ' + noteLocation
+                #print( C, V, subelement.tag, repr(noteField) )
+                if subelement.tag == 'char': # milestone (not a container)
+                    noteCharField = loadCharField( subelement, sublocation )
+                    #print( "noteCharField: {!r}".format( noteCharField ) )
+                    noteField += noteCharField
+                elif subelement.tag == 'unmatched': # Used to denote errors in the source text
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                    # Process the attributes first
+                    unmmatchedMarker = None
+                    for attrib,value in subelement.items():
+                        if attrib=='marker':
+                            unmmatchedMarker = value
+                        else:
+                            logging.warning( _("NV21 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
+                else:
+                    logging.error( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
+                    self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                #print( BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteField) )
+                if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
+                assert '\n' not in noteField
+            noteField += '\\{}*'.format( noteStyle )
+
+            if noteElement.text: # no note text!
+                if len(noteElement) == 0: # no subelements either
+                    logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, noteLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            assert '\n' not in noteField
+
+            # Now process the left-overs (tail)
+            if noteElement.tail:
+                #if '\n' in noteElement.tail: halt
+                noteTail = noteElement.tail
+                if noteTail[0] in ('\n','\t'): noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
+                if noteTail and noteTail[-1] in ('\n','\t'): noteTail = noteTail.rstrip()
+                noteField += noteTail
+
+            #print( "  loadNoteField returning noteField: {!r}".format( noteField ) )
+            assert '\n' not in noteField
+            return noteField
+        # end of loadNoteField
 
 
         def loadParagraph( paragraphXML, paragraphlocation ):
@@ -266,63 +357,9 @@ class USXXMLBibleBook( BibleBook ):
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     #print( "NOTE", BibleOrgSysGlobals.elementStr( element ) )
-                    # Process the attributes first
-                    noteStyle = noteCaller = None
-                    for attrib,value in element.items():
-                        if attrib=='style':
-                            noteStyle = value # This is basically the USFM marker name
-                            assert noteStyle in ('x','f','fe')
-                        elif attrib=='caller': noteCaller = value # Usually hyphen or a symbol to be used for the note
-                        else:
-                            logging.error( _("CY38 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
-                    assert noteStyle and noteCaller # both compulsory
-                    noteLine = '\\{} {} '.format( noteStyle, noteCaller )
-                    if element.text:
-                        noteText = element.text.strip()
-                        noteLine += noteText
-                    else: # no note text!
-                        if len(element) == 0: # no subelements either
-                            logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, location ) )
-                            continue
-                    assert '\n' not in noteLine
-                    # Now process the subelements -- notes are one of the few multiply embedded fields in USX
-                    for subelement in element:
-                        sublocation = subelement.tag + ' ' + location
-                        #print( C, V, subelement.tag, repr(noteLine) )
-                        if subelement.tag == 'char': # milestone (not a container)
-                            charLine = loadCharField( subelement, sublocation )
-                            noteLine += charLine
-                        elif subelement.tag == 'unmatched': # Used to denote errors in the source text
-                            BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
-                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
-                            # Process the attributes first
-                            unmmatchedMarker = None
-                            for attrib,value in subelement.items():
-                                if attrib=='marker':
-                                    unmmatchedMarker = value
-                                else:
-                                    logging.warning( _("NV21 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                            self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
-                        else:
-                            logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
-                            self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                        #print( BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteLine) )
-                        if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteLine += subelement.tail
-                        assert '\n' not in noteLine
-                    noteLine += '\\{}*'.format( noteStyle )
-                    if element.tail:
-                        #if '\n' in element.tail: halt
-                        noteTail = element.tail
-                        if noteTail[0] in ('\n','\t'): noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
-                        if noteTail and noteTail[-1] in ('\n','\t'): noteTail = noteTail.rstrip()
-                        noteLine += noteTail
-                    #print( "NoteLine", repr(noteLine) )
-                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteLine
-                    self.appendToLastLine( noteLine )
+                    processedNoteField = loadNoteField( element, location )
+                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
+                    self.appendToLastLine( processedNoteField )
                 elif element.tag == 'link': # Used to include extra resources
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
@@ -343,15 +380,15 @@ class USXXMLBibleBook( BibleBook ):
                     self.addPriorityError( 3, C, V, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
-                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
-                    BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
+                    #BibleOrgSysGlobals.checkXMLNoAttributes( element, location ) # We ignore attributes!!! XXXXXXXXXX
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     self.addPriorityError( 2, C, V, _("Unmatched element in {}").format( location) )
+                    if not BibleOrgSysGlobals.isBlank( element.tail ): self.appendToLastLine( element.tail )
                 elif element.tag == 'optbreak':
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
-                    self.appendToLastLine( '//' + element.tail ) # Not completely sure what optbreak is
+                    if not BibleOrgSysGlobals.isBlank( element.tail ): self.appendToLastLine( '//' + element.tail )
                 elif element.tag == 'ref': # In later USX versions
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attribute first
@@ -393,10 +430,7 @@ class USXXMLBibleBook( BibleBook ):
 
 
         # Main code for load()
-        C, V = '0', '-1' # So id line starts at 0:0
-        loadErrors = []
         lastMarker = None
-
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}…").format( filename, folder ) )
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
@@ -408,7 +442,8 @@ class USXXMLBibleBook( BibleBook ):
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            assert len( self.tree ) # Fail here if we didn't load anything at all
 
         # Find the main container
         if 'tree' in dir(self) \
@@ -473,6 +508,8 @@ class USXXMLBibleBook( BibleBook ):
                     #if pubNumber: print( self.BBB, C, repr(pubNumber) ); halt
                     self.addLine( 'c', C )
                     if pubNumber: self.addLine( 'cp', pubNumber )
+                elif element.tag == 'verse': # milestone (not a container in USX)
+                    loadVerseNumberField( element, location ) # Not in a paragraph!
                 elif element.tag == 'para':
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
@@ -562,18 +599,22 @@ class USXXMLBibleBook( BibleBook ):
                                 #print( "    here3", sub3location )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
                                 if sub3element.tag == 'note':
-                                    for sub4element in sub3element:
-                                        sub4location = sub4element.tag + " in " + sub3location
-                                        #print( "    here4", sub4location )
-                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
-                                        if sub4element.tag == 'char':
-                                            tableCode += loadCharField( sub4element, sub4location )
-                                        else:
-                                            logging.error( _("KA28 Unprocessed {} sub4element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub4location ) )
-                                            self.addPriorityError( 1, C, V, _("Unprocessed {} sub4element").format( sub4element.tag ) )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                                    if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
-                                        tableCode += sub3element.tail
+                                    #print( "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
+                                    processedNoteField = loadNoteField( sub3element, sub3location )
+                                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
+                                    tableCode += processedNoteField
+                                    #for sub4element in sub3element:
+                                        #sub4location = sub4element.tag + " in " + sub3location
+                                        ##print( "    here4", sub4location )
+                                        #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
+                                        #if sub4element.tag == 'char':
+                                            #tableCode += loadCharField( sub4element, sub4location )
+                                        #else:
+                                            #logging.error( _("KA28 Unprocessed {} sub4element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub4location ) )
+                                            #self.addPriorityError( 1, C, V, _("Unprocessed {} sub4element").format( sub4element.tag ) )
+                                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    #if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
+                                        #tableCode += sub3element.tail
                                 elif sub3element.tag == 'verse':
                                     loadVerseNumberField( sub3element, sub3location )
                                 else:

@@ -72,7 +72,7 @@ outputFolder = 'OutputFiles/'
 
 def main():
     """
-    Reorder songs by title (s line in record).
+    Reorder songs by title (\s line in song record -- assumed to always be the second line in the record).
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
@@ -90,8 +90,8 @@ def main():
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
         if debuggingThisModule: print( "songRecord", songRecord )
-        sFieldData = songRecord[1] # This is a 2-tuple of marker (without backslash) and marker contents
-        assert sFieldData[0] == 's'
+        sFieldData = songRecord[1] # Get the second line of the song record (assumed to be the \s or title line )
+        assert sFieldData[0] == 's' # This is a 2-tuple of marker (without backslash) and marker contents
         keyPairs.append( (sFieldData[1],j) ) # Store the contents of the \s field, along with the index of this record
     if debuggingThisModule: print( "keyPairs", keyPairs )
 

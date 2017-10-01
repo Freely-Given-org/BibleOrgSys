@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-26' # by RJH
+LastModifiedDate = '2017-10-01' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -755,7 +755,7 @@ class DBLBible( Bible ):
                         assert len(bookCode) == 3
                         if bookCode not in self.suppliedMetadata['DBL']['bookNames']:
                             logging.warning( _("Bookcode {} mentioned in progress but not found in bookNames").format( bookCode ) )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
                         assert stage in ('1','2','3','4')
                         self.suppliedMetadata['DBL'][element.tag][bookCode] = stage
                 elif element.tag == 'contact':
