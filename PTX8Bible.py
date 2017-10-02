@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-24' # by RJH
+LastModifiedDate = '2017-10-02' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -3014,14 +3014,14 @@ def demo():
         searchFolderHead = 'My Paratext 8 Projects' # often followed by a date
         possibleProjectFolders = 'engWEB14', 'MBTV', 'MBTBT', 'MBTBC'
 
-        for something in os.listdir( searchFolderName ):
+        for something in sorted( os.listdir( searchFolderName ) ):
             somepath = os.path.join( searchFolderName, something )
             if os.path.isdir( somepath ):
                 if something.startswith( searchFolderHead ):
                     if BibleOrgSysGlobals.verbosityLevel > 0:
                         print( "\n\nG Looking for projects in folder: {}".format( somepath ) )
 
-                    for something2 in os.listdir( somepath ):
+                    for something2 in sorted( os.listdir( somepath ) ):
                         somepath2 = os.path.join( somepath, something2 )
                         if os.path.isdir( somepath2 ):
                             if something2 in possibleProjectFolders:
