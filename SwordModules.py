@@ -54,10 +54,10 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.47'
+ProgVersion = '0.48'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2416,6 +2416,7 @@ class SwordModules:
         displayCount = loadCount = 0
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             parameters = [moduleRoughName for moduleRoughName in self.confs]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadModule, parameters ) # have the pool do our loads
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "SwordModules.loadAllModules: Have results from pool now" )
@@ -2431,6 +2432,7 @@ class SwordModules:
                         loadCount += 1
                         self.modules[moduleRoughName] = swM
                 print( "SwordModules.loadAllModules: All done here1" )
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
             print( "SwordModules.loadAllModules: All done here2" )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "SwordModules.loadAllModules here", displayCount, loadCount )
         else: # Just single threaded

@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-11' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -302,7 +302,9 @@ class USXXMLBible( Bible ):
             return # No use continuing
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
-        if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+            # Load all the books as quickly as possible
             parameters = []
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
@@ -310,6 +312,7 @@ class USXXMLBible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( _("Loading {} {} books using {} CPUs…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._loadBookMP, parameters ) # have the pool do our loads
                 #print( "results", results )
@@ -326,6 +329,7 @@ class USXXMLBible( Bible ):
                         self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             #print( self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
             for BBB,filename in self.possibleFilenameDict.items():
@@ -339,36 +343,37 @@ class USXXMLBible( Bible ):
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "USXXMLBible.loadBooks: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
-            for thisFilename in foundFiles:
-                # Look for BBB in the ID line (which should be the first line in a USX file)
-                isUSX = False
-                thisPath = os.path.join( self.givenFolderName, thisFilename )
-                try:
-                    with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
-                        for line in possibleUSXFile:
-                            if line.startswith( '\\id ' ):
-                                USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
-                                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
-                                isUSX = True
-                            break # We only look at the first line
-                except UnicodeDecodeError: isUSX = False
-                if isUSX:
-                    UBB = USXXMLBibleBook( self, BBB )
-                    UBB.load( self.givenFolderName, thisFilename, self.encoding )
-                    UBB.validateMarkers()
-                    print( UBB )
-                    self.books[BBB] = UBB
-                    # Make up our book name dictionaries while we're at it
-                    assumedBookNames = UBB.getAssumedBookNames()
-                    for assumedBookName in assumedBookNames:
-                        self.BBBToNameDict[BBB] = assumedBookName
-                        assumedBookNameLower = assumedBookName.lower()
-                        self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            if self.books: print( "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
+            #for thisFilename in foundFiles:
+                ## Look for BBB in the ID line (which should be the first line in a USX file)
+                #isUSX = False
+                #thisPath = os.path.join( self.givenFolderName, thisFilename )
+                #try:
+                    #with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
+                        #for line in possibleUSXFile:
+                            #if line.startswith( '\\id ' ):
+                                #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
+                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
+                                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
+                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
+                                #isUSX = True
+                            #break # We only look at the first line
+                #except UnicodeDecodeError: isUSX = False
+                #if isUSX:
+                    #UBB = USXXMLBibleBook( self, BBB )
+                    #UBB.load( self.givenFolderName, thisFilename, self.encoding )
+                    #UBB.validateMarkers()
+                    #print( UBB )
+                    #self.books[BBB] = UBB
+                    ## Make up our book name dictionaries while we're at it
+                    #assumedBookNames = UBB.getAssumedBookNames()
+                    #for assumedBookName in assumedBookNames:
+                        #self.BBBToNameDict[BBB] = assumedBookName
+                        #assumedBookNameLower = assumedBookName.lower()
+                        #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+            #if self.books: print( "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
+
         self.doPostLoadProcessing()
     # end of USXXMLBible.loadBooks
 

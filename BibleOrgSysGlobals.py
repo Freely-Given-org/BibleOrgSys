@@ -100,6 +100,7 @@ commandLineArguments = None
 
 strictCheckingFlag = debugFlag = False
 maxProcesses = 1
+alreadyMultiprocessing = False # Not used in this module, but set to prevent multiple levels of multiprocessing (illegal)
 verbosityLevel = None
 verbosityString = 'Normal'
 

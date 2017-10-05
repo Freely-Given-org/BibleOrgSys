@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-20' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -528,6 +528,8 @@ class PTX7Bible( Bible ):
         """
         Create the internal Paratext Bible object.
         """
+        print( "PTX7Bible.__init__( {!r}, {!r}, {!r}".format( givenFolderName, givenName, encoding ) )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Paratext-7 Bible object'
@@ -544,6 +546,7 @@ class PTX7Bible( Bible ):
                 logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFolder ) )
             self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         else: self.sourceFilepath = self.sourceFolder
+        print( "HEREPTX7", repr( self.sourceFilepath ) )
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
             logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
@@ -1065,7 +1068,7 @@ class PTX7Bible( Bible ):
                     word = state = None
                     for attrib,value in element.items():
                         if attrib=='Word': word = value
-                        elif attrib=='State': state = value
+                        elif attrib=='State': state = value; assert state in 'RW' # right/wrong
                         else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     if 'SpellingWords' not in spellingStatusDict: spellingStatusDict['SpellingWords'] = {}
                     assert word not in spellingStatusDict['SpellingWords'] # no duplicates allowed presumably
@@ -1773,15 +1776,19 @@ class PTX7Bible( Bible ):
         if not self.preloadDone: self.preload()
 
         if self.maximumPossibleFilenameTuples:
-            if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+            if BibleOrgSysGlobals.maxProcesses > 1 \
+            and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+                # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( exp("Loading {} PTX7 books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
@@ -1799,6 +1806,23 @@ class PTX7Bible( Bible ):
         self.loadBooks()
 # end of class PTX7Bible
 
+
+
+def __processPTX7Bible( parametersTuple ): # for demo
+    """
+    Special shim function used for multiprocessing.
+    """
+    codeLetter, mainFolderName, subFolderName = parametersTuple
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 {} Trying {}".format( codeLetter, subFolderName ) )
+    PTX7_Bible = PTX7Bible( mainFolderName, subFolderName )
+    PTX7_Bible.load()
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+        BBB = 'JN1'
+        if BBB in PTX7_Bible:
+            PTX7_Bible.books[BBB].debugPrint()
+            for entryKey in PTX7_Bible.books[BBB]._CVIndex:
+                print( BBB, entryKey, PTX7_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+# end of __processPTX7Bible
 
 
 def demo():
@@ -1868,12 +1892,15 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
+            parameters = [('E',testFolder,folderName) for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( PTX7Bible, parameters ) # have the pool do our loads
+                results = pool.map( __processPTX7Bible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX7 E{}/ Trying {}".format( j+1, someFolder ) )

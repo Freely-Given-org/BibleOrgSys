@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-09' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -767,9 +767,11 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'D' + str( j+1 )
@@ -789,9 +791,11 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )

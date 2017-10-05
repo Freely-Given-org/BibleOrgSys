@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-21' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -789,11 +789,13 @@ def analyzeBibles( Bible1, Bible2 ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
             assert len(results) == numBooks
             for j,BBB in enumerate( commonBooks ):
                 bResults[BBB] = results[j] # Saves them in the correct order
+        BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )
@@ -842,11 +844,13 @@ def compareBibles( Bible1, Bible2,
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
             assert len(results) == numBooks
             for j,BBB in enumerate( commonBooks ):
                 bResults[BBB] = results[j] # Saves them in the correct order
+        BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )

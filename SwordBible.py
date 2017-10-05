@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-14' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -591,9 +591,11 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testSwB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword E{}/ Trying {}".format( j+1, someFolder ) )

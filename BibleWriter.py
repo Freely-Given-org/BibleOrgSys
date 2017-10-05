@@ -70,10 +70,10 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-14' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = '0.93'
+ProgVersion = '0.94'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -9385,7 +9385,8 @@ class BibleWriter( InternalBible ):
             if wantODFs: ODFExportResult = self.toODF( ODFOutputFolder )
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
 
-        elif BibleOrgSysGlobals.maxProcesses > 1: # Process all the exports with different threads
+        elif BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Process all the exports with different threads
             # We move the three longest processes to the top here,
             #   so they start first to help us get finished quicker on multiCPU systems.
             self.__outputProcesses = [self.toPhotoBible if wantPhotoBible else None,
@@ -9414,6 +9415,7 @@ class BibleWriter( InternalBible ):
                 print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             # With no timeout safeguard
             #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 #results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
@@ -9448,6 +9450,7 @@ class BibleWriter( InternalBible ):
                                     result, result, result, result, result, result, result, result, result, result, result, result,
                                     result, result, result, result, result, result, result, result, result, result, result, ]
             #print( "async results2 are", results )
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
             PhotoBibleExportResult, ODFExportResult, TeXExportResult, \

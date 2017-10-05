@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-20' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
-ProgVersion = '0.59'
+ProgVersion = '0.60'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -504,16 +504,20 @@ class ESFMBible( Bible ):
             # First try to load the dictionaries
             self.loadDictionaries()
             # Now load the books
-            if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+            if BibleOrgSysGlobals.maxProcesses > 1 \
+            and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+                # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( t("ESFMBible: Loading {} ESFM books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
                         if bBook is not None: self.stashBook( bBook ) # Saves them in the correct order
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:

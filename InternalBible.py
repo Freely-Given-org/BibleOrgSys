@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-21' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.79'
+ProgVersion = '0.80'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1139,15 +1139,18 @@ class InternalBible:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
-        if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( exp("Prechecking/“discover” {} books using {} CPUs…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
                 assert len(results) == len(self.books)
                 for j,BBB in enumerate( self.books ):
                     self.discoveryResults[BBB] = results[j] # Saves them in the correct order
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for BBB in self.books: # Do individual book prechecks
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Prechecking {}…").format( BBB ) )

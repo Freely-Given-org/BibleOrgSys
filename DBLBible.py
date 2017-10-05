@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-01' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1626,9 +1626,11 @@ def demo():
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL F{}/ Trying {}".format( j+1, folderName ) )
@@ -1656,9 +1658,11 @@ def demo():
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('G'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDBL G{}/ Trying {}".format( j+1, folderName ) )

@@ -48,10 +48,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-18' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -332,46 +332,47 @@ class USFXXMLBible( Bible ):
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "USFXXMLBible.load: Didn't find any regularly named USFX files in {!r}".format( self.sourceFolder ) )
-            foundFiles = []
-            for something in os.listdir( self.sourceFolder ):
-                somepath = os.path.join( self.sourceFolder, something )
-                if os.path.isfile( somepath ):
-                    somethingUpper = something.upper()
-                    somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                    ignore = False
-                    for ending in filenameEndingsToIgnore:
-                        if somethingUpper.endswith( ending): ignore=True; break
-                    if ignore: continue
-                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                        foundFiles.append( something )
-            for thisFilename in foundFiles:
-                # Look for BBB in the ID line (which should be the first line in a USFX file)
-                isUSFX = False
-                thisPath = os.path.join( self.sourceFolder, thisFilename )
-                with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
-                    for line in possibleUSXFile:
-                        if line.startswith( '\\id ' ):
-                            USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
-                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
-                            isUSFX = True
-                        break # We only look at the first line
-                if isUSFX:
-                    UBB = USFXXMLBibleBook( self, BBB )
-                    UBB.load( self.sourceFolder, thisFilename, self.encoding )
-                    UBB.validateMarkers()
-                    print( UBB )
-                    self.books[BBB] = UBB
-                    # Make up our book name dictionaries while we're at it
-                    assumedBookNames = UBB.getAssumedBookNames()
-                    for assumedBookName in assumedBookNames:
-                        self.BBBToNameDict[BBB] = assumedBookName
-                        assumedBookNameLower = assumedBookName.lower()
-                        self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            if self.books: print( "USFXXMLBible.load: Found {} irregularly named USFX files".format( len(self.books) ) )
+            #foundFiles = []
+            #for something in os.listdir( self.sourceFolder ):
+                #somepath = os.path.join( self.sourceFolder, something )
+                #if os.path.isfile( somepath ):
+                    #somethingUpper = something.upper()
+                    #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    #ignore = False
+                    #for ending in filenameEndingsToIgnore:
+                        #if somethingUpper.endswith( ending): ignore=True; break
+                    #if ignore: continue
+                    #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                        #foundFiles.append( something )
+            #for thisFilename in foundFiles:
+                ## Look for BBB in the ID line (which should be the first line in a USFX file)
+                #isUSFX = False
+                #thisPath = os.path.join( self.sourceFolder, thisFilename )
+                #with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
+                    #for line in possibleUSXFile:
+                        #if line.startswith( '\\id ' ):
+                            #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
+                            #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
+                            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
+                            #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
+                            #isUSFX = True
+                        #break # We only look at the first line
+                #if isUSFX:
+                    #UBB = USFXXMLBibleBook( self, BBB )
+                    #UBB.load( self.sourceFolder, thisFilename, self.encoding )
+                    #UBB.validateMarkers()
+                    #print( UBB )
+                    #self.books[BBB] = UBB
+                    ## Make up our book name dictionaries while we're at it
+                    #assumedBookNames = UBB.getAssumedBookNames()
+                    #for assumedBookName in assumedBookNames:
+                        #self.BBBToNameDict[BBB] = assumedBookName
+                        #assumedBookNameLower = assumedBookName.lower()
+                        #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+            #if self.books: print( "USFXXMLBible.load: Found {} irregularly named USFX files".format( len(self.books) ) )
+
         self.doPostLoadProcessing()
     # end of USFXXMLBible.load
 

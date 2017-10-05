@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-10' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -374,10 +374,12 @@ class BCVBible( Bible ):
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( exp("Loading {} BCV books using {} CPUs…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
                     assert len(results) == len(self.givenBookList)
                     for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
@@ -621,9 +623,11 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testBCV, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nBCV D{}/ Trying {}".format( j+1, someFolder ) )

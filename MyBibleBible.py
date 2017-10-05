@@ -84,10 +84,10 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-03' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -98,6 +98,7 @@ import logging, os
 import sqlite3, re
 import multiprocessing
 from collections import OrderedDict
+from random import randrange
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
@@ -1175,6 +1176,8 @@ def createMyBibleModule( self, outputFolder, controlDict ):
         #booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MyBible format…") )
+    if BibleOrgSysGlobals.alreadyMultiprocessing:
+        logging.warning( "writeMyBibleBook() can fail with multiprocessing if output filenames happen to coincide" )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -1186,12 +1189,18 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     elif self.shortName: filename = self.shortName
     elif self.sourceFilename: filename = self.sourceFilename
     elif self.name: filename = self.name
-    else: filename = 'export'
+    elif self.sourceFilename: filename = self.sourceFilename
+    else:
+        if BibleOrgSysGlobals.alreadyMultiprocessing:
+            filename = 'export{}'.format( randrange(99999) )
+            logging.warning( "writeMyBibleBook() used random filename {!r} but could still fail with multiprocessing".format( filename ) )
+        else: filename = 'export'
+
     filename = filename.replace( ' ', '_' )
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+    if 1 or BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -1426,12 +1435,15 @@ def demo():
                 if ignore: continue
                 foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nD: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'D' + str( j+1 )
@@ -1454,12 +1466,15 @@ def demo():
                 if ignore: continue
                 foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )
@@ -1468,7 +1483,7 @@ def demo():
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
 
-    if 1: # F: test the export
+    if 1: # F: test the export of various kinds of Bibles
         testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
                     'Tests/DataFilesForTests/PTX7Test/',
                     'Tests/DataFilesForTests/DBLTest/',
@@ -1502,14 +1517,17 @@ def demo():
                     'Tests/DataFilesForTests/VPLTest1/', 'Tests/DataFilesForTests/VPLTest2/', 'Tests/DataFilesForTests/VPLTest3/',
                     'Tests/DataFilesForTests/', # Up a level
                     )
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
             parameters = [('F'+str(j+1),testFolder) for j,testFolder in enumerate(testFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( exportMyBB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, testFolder in enumerate( testFolders ):
                 indexString = 'F{}'.format( j+1 )

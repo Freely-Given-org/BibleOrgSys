@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-02' # by RJH
+LastModifiedDate = '2017-10-05' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2393,7 +2393,7 @@ class PTX8Bible( Bible ):
                     word = state = None
                     for attrib,value in element.items():
                         if attrib=='Word': word = value
-                        elif attrib=='State': state = value
+                        elif attrib=='State': state = value; assert state in 'RW' # right/wrong
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2827,15 +2827,18 @@ class PTX8Bible( Bible ):
         if not self.preloadDone: self.preload()
 
         if self.maximumPossibleFilenameTuples:
-            if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
+            if BibleOrgSysGlobals.maxProcesses > 1 \
+            and not BibleOrgSysGlobals.alreadyMultiprocessing: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( exp("Loading {} PTX8 books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
@@ -2878,6 +2881,23 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.discoverPTX8
 # end of class PTX8Bible
 
+
+
+def __processPTX8Bible( parametersTuple ): # for demo
+    """
+    Special shim function used for multiprocessing.
+    """
+    codeLetter, mainFolderName, subFolderName = parametersTuple
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 {} Trying {}".format( codeLetter, subFolderName ) )
+    PTX8_Bible = PTX8Bible( mainFolderName, subFolderName )
+    PTX8_Bible.load()
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+        BBB = 'JN1'
+        if BBB in PTX8_Bible:
+            PTX8_Bible.books[BBB].debugPrint()
+            for entryKey in PTX8_Bible.books[BBB]._CVIndex:
+                print( BBB, entryKey, PTX8_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+# end of __processPTX8Bible
 
 
 def demo():
@@ -2940,19 +2960,22 @@ def demo():
             PTX8_Bible.load()
 
 
-    if 00: # all discovered modules in the test folder
+    if 1: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
+            parameters = [('E',testFolder,folderName) for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( PTX8Bible, parameters ) # have the pool do our loads
+                results = pool.map( __processPTX8Bible, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )

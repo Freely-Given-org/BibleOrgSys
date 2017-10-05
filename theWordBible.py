@@ -5,7 +5,7 @@
 #
 # Module handling "theWord" Bible module files
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-10-04' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.51'
+ProgVersion = '0.52'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1409,9 +1409,11 @@ def demo():
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'C{}'.format( j+1 )
@@ -1433,9 +1435,11 @@ def demo():
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'D{}'.format( j+1 )
