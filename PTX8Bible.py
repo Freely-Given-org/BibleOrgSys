@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-10-07' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -318,7 +318,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
 
 def loadPTX8Languages( BibleObject ):
     """
-    Load the something.ldml file (which is an LDML file) and parse it into the dictionary PTXLanguages.
+    Load the something.ldml files (which are LDML XML files) and parse them into the dictionary PTXLanguages.
 
     LDML = Locale Data Markup Language (see http://unicode.org/reports/tr35/tr35-4.html)
     """
@@ -344,8 +344,16 @@ def loadPTX8Languages( BibleObject ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading language from {}…".format( languageFilepath ) )
 
-        thisLDMLFile = LDMLFile( BibleObject.sourceFilepath, languageFilename )
-        PTXLanguages[languageName] = thisLDMLFile.load()
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            thisLDMLFile = LDMLFile( BibleObject.sourceFilepath, languageFilename )
+            PTXLanguages[languageName] = thisLDMLFile.load()
+        else:
+            try:
+                thisLDMLFile = LDMLFile( BibleObject.sourceFilepath, languageFilename )
+                PTXLanguages[languageName] = thisLDMLFile.load()
+            except Exception as err:
+                logging.error( 'LDMLFile load of {} failed with {} {}' \
+                                    .format( languageFilename, sys.exc_info()[0], err ) )
 
         try: BibleObject.filepathsNotYetLoaded.remove( languageFilepath )
         except ValueError: logging.error( "PTX8 language file seemed unexpected: {}".format( languageFilepath ) )
@@ -597,7 +605,7 @@ class PTX8Bible( Bible ):
             self.loadPTX8CheckingStatus() # from XML (if it exists)
             self.loadPTX8CommentTags() # from XML (if they exist)
             self.loadPTX8DerivedTranslationStatus() # from XML (if it exists)
-            result = loadPTX8Languages( self ) # from INI file (if it exists)
+            result = loadPTX8Languages( self ) # from LDML file(s)
             if result: self.suppliedMetadata['PTX8']['Languages'] = result
             self.loadPTX8Lexicon() # from XML (if it exists)
             self.loadPTX8Licence() # from JSON file (if it exists)
@@ -624,6 +632,10 @@ class PTX8Bible( Bible ):
             except Exception as err: logging.error( 'loadPTX8BooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTX8ProjectUserAccess() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTX8ProjectUserAccess failed with {} {}'.format( sys.exc_info()[0], err ) )
+            try:
+                result = loadPTX8Languages( self ) # from LDML file(s)
+                if result: self.suppliedMetadata['PTX8']['Languages'] = result
+            except Exception as err: logging.error( 'loadPTX8Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTX8Lexicon() # from XML (if it exists)
             except Exception as err: logging.error( 'loadPTX8Lexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTX8SpellingStatus() # from XML (if it exists)
@@ -662,10 +674,6 @@ class PTX8Bible( Bible ):
                 result = loadPTX8Versifications( self ) # from text file (if it exists)
                 if result: self.suppliedMetadata['PTX8']['Versifications'] = result
             except Exception as err: logging.error( 'loadPTX8Versifications failed with {} {}'.format( sys.exc_info()[0], err ) )
-            try:
-                result = loadPTX8Languages( self ) # from INI file (if it exists)
-                if result: self.suppliedMetadata['PTX8']['Languages'] = result
-            except Exception as err: logging.error( 'loadPTX8Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
             try: self.loadPTX8Licence() # from JSON file (if it exists)
             except Exception as err: logging.error( 'loadPTX8Licence failed with {} {}'.format( sys.exc_info()[0], err ) )
 
@@ -1591,28 +1599,43 @@ class PTX8Bible( Bible ):
                     # Process the status attributes first
                     passageKey = passageStatus = None
                     for attrib,value in element.items():
-                        if attrib=='passageKey': passageKey = value # A semicolon separated string of Bible references
-                        elif attrib=='status': passageStatus = value
+                        if attrib=='passageKey':
+                            passageKey = value # A semicolon separated string of Bible references like "1CH 29:27;1KI 2:11;1CH 29:27"
+                        elif attrib=='status':
+                            passageStatus = value
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert passageKey
                     assert passageKey not in parallelPassageStatusDict # no duplicates allowed presumably
                     parallelPassageStatusDict[passageKey] = {}
-                    assert passageStatus in 'U'
+                    assert passageStatus in 'UF' # unfixed? fixed? uncertain? finished?
                     parallelPassageStatusDict[passageKey]['Status'] = passageStatus
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
                         #print( "  Processing {}…".format( sublocation ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
-                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                         if subelement.tag == 'Content':
-                            pass
-                            #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
-                            #assert subelement.tag not in parallelPassageStatusDict[word]
-                            #parallelPassageStatusDict[word][subelement.tag] = subelement.text
+                            #print( BibleOrgSysGlobals.elementStr( subelement ) )
+                            if passageStatus == 'U':
+                                BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                            else:
+                                assert passageStatus == 'F'
+                                assert subelement.text
+                                assert subelement.tag not in parallelPassageStatusDict[passageKey]
+                                parallelPassageStatusDict[passageKey][subelement.tag] = subelement.text
+                        elif subelement.tag == 'History':
+                            #print( BibleOrgSysGlobals.elementStr( subelement ) )
+                            if passageStatus == 'U':
+                                BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                            else:
+                                assert passageStatus == 'F'
+                                if subelement.text:
+                                    assert subelement.tag not in parallelPassageStatusDict[passageKey]
+                                    parallelPassageStatusDict[passageKey][subelement.tag] = subelement.text
                         else:
                             logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2907,7 +2930,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for testFolder in ( 'Tests/DataFilesForTests/USFMTest1/',
+        for standardTestFolder in ( 'Tests/DataFilesForTests/USFMTest1/',
                             'Tests/DataFilesForTests/USFMTest2/',
                             'Tests/DataFilesForTests/USFMTest3/',
                             'Tests/DataFilesForTests/USFMAllMarkersProject/',
@@ -2921,25 +2944,25 @@ def demo():
                             'MadeUpFolder/',
                             ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nTestfolder is: {}".format( testFolder ) )
-            result1 = PTX8BibleFileCheck( testFolder )
+                print( "\nStandard testfolder is: {}".format( standardTestFolder ) )
+            result1 = PTX8BibleFileCheck( standardTestFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA1", result1 )
-            result2 = PTX8BibleFileCheck( testFolder, autoLoad=True )
+            result2 = PTX8BibleFileCheck( standardTestFolder, autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA2", result2 )
-            result3 = PTX8BibleFileCheck( testFolder, autoLoadBooks=True )
+            result3 = PTX8BibleFileCheck( standardTestFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
-    testFolder = 'Tests/DataFilesForTests/PTX8Test2/'
-    if 00: # specify testFolder containing a single module
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
-        PTX8_Bible = PTX8Bible( testFolder )
+    specificTestFolder = '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects 2017-10-02/MBTV/'
+    if 0: # specify specificTestFolder containing a single module
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( specificTestFolder ) )
+        PTX8_Bible = PTX8Bible( specificTestFolder )
         PTX8_Bible.load()
         if BibleOrgSysGlobals.verbosityLevel > 0: print( PTX8_Bible )
 
     if 00: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 C/ Trying installed {} module".format( singleModule ) )
-        PTX8_Bible = PTX8Bible( testFolder, singleModule )
+        PTX8_Bible = PTX8Bible( specificTestFolder, singleModule )
         PTX8_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
             BBB = 'JN1'
@@ -2954,23 +2977,23 @@ def demo():
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 D{}/ Trying {}".format( j+1, testFilename ) )
-            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
-            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            PTX8_Bible = PTX8Bible( testFolder, testFilename )
+            #myTestFolder = os.path.join( specificTestFolder, testFilename+'/' )
+            #testFilepath = os.path.join( specificTestFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            PTX8_Bible = PTX8Bible( specificTestFolder, testFilename )
             PTX8_Bible.load()
 
 
     if 1: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
-        for something in os.listdir( testFolder ):
-            somepath = os.path.join( testFolder, something )
+        for something in os.listdir( specificTestFolder ):
+            somepath = os.path.join( specificTestFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [('E',testFolder,folderName) for folderName in sorted(foundFolders)]
+            parameters = [('E',specificTestFolder,folderName) for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( __processPTX8Bible, parameters ) # have the pool do our loads
@@ -2979,8 +3002,8 @@ def demo():
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )
-                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                PTX8Bible( testFolder, someFolder )
+                #myTestFolder = os.path.join( specificTestFolder, someFolder+'/' )
+                PTX8Bible( specificTestFolder, someFolder )
 
     if 1: # Test statistics discovery and creation of BDB stats page
         testFolders = (

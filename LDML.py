@@ -41,10 +41,10 @@ The module is tested on LDML files from the SIL NRSI Github repository
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-06' # by RJH
+LastModifiedDate = '2017-10-07' # by RJH
 ShortProgName = "LDML_Handler"
 ProgName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -152,6 +152,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                     number = None
                     for attrib,value in subelement.items():
+                        #print( "hereV6", attrib, value )
                         if attrib=='number': number = value
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
@@ -170,14 +171,17 @@ class LDMLFile:
                     identity[subelement.tag] = date
                 elif subelement.tag in ('language','territory'):
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
-                    lgType = None
+                    lgType = lgCode = lgName = None
                     for attrib,value in subelement.items():
+                        #print( "hereLorT6", attrib, value )
                         if attrib=='type': lgType = value
+                        elif attrib=='code': lgCode = value
+                        elif attrib=='name': lgName = value
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     assert subelement.tag not in identity
-                    identity[subelement.tag] = lgType
+                    identity[subelement.tag] = lgType, lgCode, lgName
                 elif subelement.tag == 'special':
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                     for sub2element in subelement:
@@ -198,7 +202,7 @@ class LDMLFile:
                         assert subelement.tag not in identity
                         identity[subelement.tag] = {'tag':sub2element.tag,'windowsLCID':windowsLCID,'draft':draft,'source':source}
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             return identity
         # end of loadIdentity
@@ -251,7 +255,7 @@ class LDMLFile:
                     assert subelement.tag not in characters
                     characters[subelement.tag] = subelement.text
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             return characters
         # end of loadCharacters
@@ -323,7 +327,7 @@ class LDMLFile:
                             delimiters[subelement.tag][adjusted2Tag][adjusted3Tag] \
                                     .append( (openA,close,level,paraClose,pattern,context,paraContinueType,qContinue,qType,sub3element.text) )
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             #print( '\n', element.tag, LDMLData[element.tag] )
             return delimiters
@@ -352,7 +356,7 @@ class LDMLFile:
                         assert sub2element.tag not in layout[subelement.tag]
                         layout[subelement.tag][sub2element.tag] = sub2element.text
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             return layout
         # end of loadLayout
@@ -718,7 +722,7 @@ class LDMLFile:
                         numbers[subelement.tag] = decimalFormats
 
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return numbers
         # end of loadNumbers
@@ -767,7 +771,7 @@ class LDMLFile:
                                 collations[subelement.tag][cType][sub2element.tag][sub3element.tag] = []
                             collations[subelement.tag][cType][sub2element.tag][sub3element.tag].append( sub3element.text )
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return collations
         # end of loadCollations
@@ -986,7 +990,7 @@ class LDMLFile:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             if territories:
                 assert 'territories' not in localeDisplayNames
@@ -1919,7 +1923,7 @@ class LDMLFile:
                         assert subelement.tag not in dates
                         dates[subelement.tag] = timeZoneNames
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return dates
         # end of loadDates
@@ -2000,7 +2004,7 @@ class LDMLFile:
                     #assert subelement.tag not in units
                     #units[subelement.tag] = (nID,digits,nType)
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return units
         # end of loadUnits
@@ -2027,7 +2031,7 @@ class LDMLFile:
                     assert clType not in characterLabels
                     characterLabels[clType] = subelement.text
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return characterLabels
         # end of loadCharacterLabels
@@ -2078,7 +2082,7 @@ class LDMLFile:
                     assert lpType not in listPatterns
                     listPatterns[lpType] = subelement.text
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return listPatterns
         # end of loadListPatterns
@@ -2129,7 +2133,7 @@ class LDMLFile:
                     assert ctuType not in contextTransforms
                     contextTransforms[ctuType] = subelement.text
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return contextTransforms
         # end of loadContextTransforms
@@ -2172,7 +2176,7 @@ class LDMLFile:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return metadata
         # end of loadMetadata
@@ -2200,12 +2204,12 @@ class LDMLFile:
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag.endswith( 'font' ):
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
-                            fName = None
+                            fName = fSize = None
                             for attrib,value in sub2element.items():
                                 #print( "        hereF1", attrib, value )
-                                if attrib=='name': fName = value
-                                #elif attrib=='size': erSize = value
-                                #elif attrib=='type': erType = value; assert erType in ('default','hunspell')
+                                if attrib=='name': fName = value # assert fName in ('Times New Roman','Cambria',)
+                                elif attrib=='size': fSize = value # assert fSize in ('1.4',)
+                                #elif attrib=='type': erType = value; assert erType in ('default','hunspell',)
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2213,12 +2217,12 @@ class LDMLFile:
                             assert fName not in fonts
                             fonts[fName] = sub2element.text
                         elif sub2element.tag.endswith( 'fontrole' ):
-                            erName = erSize = erType = None
+                            frName = frSize = frType = None
                             for attrib,value in sub2element.items():
                                 #print( "        hereLS5", attrib, value )
-                                if attrib=='name': erName = value
-                                elif attrib=='size': erSize = value
-                                elif attrib=='type': erType = value; assert erType in ('default','hunspell')
+                                if attrib=='name': frName = value
+                                elif attrib=='size': frSize = value
+                                elif attrib=='type': frType = value; assert frType in ('default','hunspell')
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2232,7 +2236,6 @@ class LDMLFile:
                                     fName = isGraphite = None
                                     for attrib,value in sub3element.items():
                                         #print( "        hereF5", attrib, value )
-                                        #if attrib=='draft': draft = value
                                         if attrib=='name': fName = value
                                         elif attrib=='isGraphite': isGraphite = value
                                         else:
@@ -2257,13 +2260,13 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                         elif sub2element.tag.endswith( 'kbd' ):
                             keyboard = {}
-                            erName = erSize = erType = kID = None
+                            kbdName = kbdSize = kbdType = kbdID = None
                             for attrib,value in sub2element.items():
                                 #print( "        hereKBD7", attrib, value )
-                                if attrib=='name': erName = value
-                                elif attrib=='size': erSize = value
-                                elif attrib=='type': erType = value; assert erType in ('kmp','hunspell')
-                                elif attrib=='id': kID = value
+                                if attrib=='name': kbdName = value
+                                elif attrib=='size': kbdSize = value
+                                elif attrib=='type': kbdType = value; assert kbdType in ('kmp','hunspell')
+                                elif attrib=='id': kbdID = value
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2281,13 +2284,13 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                         elif sub2element.tag.endswith( 'spell-checking' ):
                             spellChecker = {}
-                            erName = erSize = erType = kID = None
+                            scName = scSize = scType = scID = None
                             for attrib,value in sub2element.items():
-                                #print( "        hereSC8", attrib, value )
-                                if attrib=='name': erName = value
-                                elif attrib=='size': erSize = value
-                                elif attrib=='type': erType = value; assert erType in ('kmp','hunspell')
-                                elif attrib=='id': kID = value
+                                print( "        hereSC8", attrib, value )
+                                if attrib=='xname': scName = value
+                                elif attrib=='xsize': scSize = value
+                                elif attrib=='type': scType = value; assert scType in ('xkmp','hunspell')
+                                elif attrib=='xid': scID = value
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2306,18 +2309,20 @@ class LDMLFile:
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
-                        if sub2element.tag not in special[adjustedTag]:
-                            special[adjustedTag][sub2element.tag] = []
-                        special[adjustedTag][sub2element.tag].append( (erType,erName,erSize) )
+                        # Save our data
+                        pass # It's being lost!
+                        #if sub2element.tag not in special[adjustedTag]:
+                            #special[adjustedTag][sub2element.tag] = []
+                        #special[adjustedTag][sub2element.tag].append( (erType,erName,erSize) )
                 else:
-                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip(), elementLocation ) )
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return special
         # end of loadSpecial
 
 
         # Main code for LDMLFile.load()
-        if BibleOrgSysGlobals.verbosityLevel > 0:
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {}…".format( self.filepath ) )
 
         LDMLData = OrderedDict()
@@ -2472,7 +2477,7 @@ def demo():
                     print( "\n\nA: Looking for files in folder: {}".format( somepath ) )
 
                 for something2 in sorted( os.listdir( somepath ) ):
-                    if something2 in ( 'aeb_Latn.xml', 'blo_Latn.xml', 'blt_Latn.xml', 'blt_Tavt.xml', ):
+                    if something2 in ( 'blo_Latn.xml', 'blt_Latn.xml', 'blt_Tavt.xml', ):
                         print( "Skipping {}".format( something2 ) )
                         continue # bad XML
                     somepath2 = os.path.join( somepath, something2 )
