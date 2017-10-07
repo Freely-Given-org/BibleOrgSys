@@ -1395,6 +1395,34 @@ class InternalBible:
     # end of InternalBible.check
 
 
+    def doExtensiveChecks( self, givenOutputFolderName=None, ntFinished=None, otFinished=None, dcFinished=None, allFinished=None ):
+        """
+        If the output folder is specified, it is expected that it's already created.
+        Otherwise a new subfolder is created in the current folder.
+
+        The optional flags (None means 'unknown') give indications if books should actually be finished.
+
+        Returns a dictionary of result flags.
+        """
+        if 1 or BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "InternalBibleV{}.doExtensiveChecks: ".format(ProgVersion) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+
+        if givenOutputFolderName == None:
+            givenOutputFolderName = 'OutputFiles/CheckResultFiles/'
+            if not os.access( givenOutputFolderName, os.F_OK ):
+                if 1 or BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
+                os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
+        if BibleOrgSysGlobals.debugFlag: assert givenOutputFolderName and isinstance( givenOutputFolderName, str )
+        if not os.access( givenOutputFolderName, os.W_OK ): # Then our output folder is not writeable!
+            logging.critical( "BibleWriter.doExtensiveChecks: " + _("Given {!r} folder is unwritable" ).format( givenOutputFolderName ) )
+            return False
+
+        print( "Should be doing extensive checks here!" )
+        print( "Should be doing extensive checks here!" )
+        print( "Should be doing extensive checks here!" )
+    #end of InternalBible.doExtensiveChecks
+
+
     def getErrors( self, givenBookList=None ):
         """
         Returns the error dictionary.
@@ -2401,7 +2429,7 @@ def demo():
     # But we'll load a USFM Bible so we can test some other functions
     from UnknownBible import UnknownBible
     from Bible import Bible
-    testFolder = "Tests/DataFilesForTests/PTX7Test/"
+    testFolder = "Tests/DataFilesForTests/PTX8Test2/"
     uB = UnknownBible( testFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "IB Test", result )
@@ -2411,8 +2439,9 @@ def demo():
             iB.check()
             IBErrors = iB.getErrors()
             if BibleOrgSysGlobals.verbosityLevel > 2: print( IBErrors )
+        iB.doExtensiveChecks()
 
-        if 1:
+        if 0:
             searchOptions = {}
             searchOptions['bookList'] = None #['JNA','PE1']
             searchOptions['chapterList'] = None #[0]
