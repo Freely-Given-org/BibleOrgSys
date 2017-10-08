@@ -41,10 +41,10 @@ The module is tested on LDML files from the SIL NRSI Github repository
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-07' # by RJH
+LastModifiedDate = '2017-10-09' # by RJH
 ShortProgName = "LDML_Handler"
 ProgName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -182,6 +182,19 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     assert subelement.tag not in identity
                     identity[subelement.tag] = lgType, lgCode, lgName
+                elif subelement.tag == 'script':
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
+                    sName = sCode = None
+                    for attrib,value in subelement.items():
+                        if attrib=='name': sName = value; assert sName in ('Latin',)
+                        elif attrib=='code': sCode = value; assert sCode in ('Latn',)
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert subelement.tag not in identity
+                    identity[subelement.tag] = (sName,sCode)
                 elif subelement.tag == 'special':
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                     for sub2element in subelement:
@@ -206,6 +219,80 @@ class LDMLFile:
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             return identity
         # end of loadIdentity
+
+
+        def loadContacts( element, elementLocation, contacts ):
+            """
+            Returns the updated dictionary.
+            """
+            for subelement in element:
+                subelementLocation = subelement.tag + ' in ' + elementLocation
+                #if debuggingThisModule: print( "    Processing {}…".format( subelementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
+                if subelement.tag == 'contact':
+                    cName = cEmail = None
+                    for attrib,value in subelement.items():
+                        #print( "hereC1", attrib, value )
+                        if attrib=='name': cName = value
+                        elif attrib=='email': cEmail = value
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert cName not in contacts
+                    contacts[cName] = cEmail
+                else:
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            return contacts
+        # end of loadContacts
+
+
+        def loadComments( element, elementLocation, comments ):
+            """
+            Returns the updated dictionary.
+            """
+            for subelement in element:
+                subelementLocation = subelement.tag + ' in ' + elementLocation
+                #if debuggingThisModule: print( "    Processing {}…".format( subelementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
+                if subelement.tag == 'entry':
+                    cDate = cName = cComment = None
+                    for attrib,value in subelement.items():
+                        #print( "hereC2", attrib, value )
+                        if attrib=='date': cDate = value
+                        elif attrib=='name': cName = value
+                        elif attrib=='comment': cComment = value
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert cDate not in comments # Note: comment date might not be unique ???
+                    comments[cDate] = (cName,cComment)
+                else:
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            return comments
+        # end of loadComments
+
+
+        def loadStatus( element, elementLocation, status ):
+            """
+            Returns the updated dictionary.
+            """
+            sValue = None
+            for attrib,value in element.items():
+                #print( "hereSt2", attrib, value )
+                if attrib=='value': sValue = value
+                else:
+                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            assert element.tag not in status
+            status[element.tag] = sValue
+            return status
+        # end of loadStatus
 
 
         def loadCharacters( element, elementLocation, characters ):
@@ -369,6 +456,7 @@ class LDMLFile:
             currencies = {}
             percentFormats = {}
             decimalFormats = {}
+            miscPatterns = {}
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
                 #if debuggingThisModule: print( "    Processing {}…".format( subelementLocation ) )
@@ -720,6 +808,42 @@ class LDMLFile:
                         #print( "decimalFormats", decimalFormats )
                         assert subelement.tag not in numbers
                         numbers[subelement.tag] = decimalFormats
+
+                elif subelement.tag == 'miscPatterns':
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
+                    numberSystem = None
+                    for attrib,value in subelement.items():
+                        #print( "hereDF8", attrib, value )
+                        if attrib=='numberSystem': numberSystem = value # assert numberSystem in ('latn','arab','arabext','fullwide',)
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert numberSystem not in miscPatterns
+                    miscPatterns[numberSystem] = {}
+                    for sub2element in subelement:
+                        sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                        #if debuggingThisModule: print( "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                        if sub2element.tag == 'pattern':
+                            pType = None
+                            for attrib,value in sub2element.items():
+                                #if attrib=='draft': draft = value
+                                if attrib=='type': pType = value; assert pType in ('atLeast',)
+                                #elif attrib=='alt': alt = value
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            assert pType not in miscPatterns[numberSystem]
+                            miscPatterns[numberSystem][pType] = sub2element.text
+                        else:
+                            logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                    if miscPatterns:
+                        #print( "miscPatterns", miscPatterns )
+                        assert subelement.tag not in numbers
+                        numbers[subelement.tag] = miscPatterns
 
                 else:
                     logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
@@ -1998,6 +2122,91 @@ class LDMLFile:
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        elif sub2element.tag == 'compoundUnit':
+                            cuType = None
+                            for attrib,value in subelement.items():
+                                #print( "hereCU6", attrib, value )
+                                #if attrib=='long': ulLong = value
+                                #elif attrib=='digits': digits = value
+                                if attrib=='type': cuType = value; assert cuType in ('long','narrow',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            for sub3element in sub2element:
+                                sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                if sub3element.tag == 'compoundUnitPattern':
+                                    cupCount = upDraft = None
+                                    for attrib,value in sub3element.items():
+                                        if attrib=='xcount': cupCount = value
+                                        elif attrib=='xdraft': upDraft = value
+                                        else:
+                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    pass # Save text XXXXXXXXXXXXX
+                                else:
+                                    logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        elif sub2element.tag == 'coordinateUnit':
+                            cuType = None
+                            for attrib,value in subelement.items():
+                                #print( "hereCooU6", attrib, value )
+                                #if attrib=='long': ulLong = value
+                                #elif attrib=='digits': digits = value
+                                if attrib=='type': cuType = value; assert cuType in ('long','short','narrow',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            for sub3element in sub2element:
+                                sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                if sub3element.tag == 'coordinateUnitPattern':
+                                    cupType = upDraft = None
+                                    for attrib,value in sub3element.items():
+                                        #print( "hereCUP7", attrib, value )
+                                        if attrib=='type': cupType = value; assert cupType in ('east','north','west','south',)
+                                        #if attrib=='xcount': cupCount = value
+                                        #elif attrib=='xdraft': upDraft = value
+                                        else:
+                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    pass # Save text XXXXXXXXXXXXX
+                                else:
+                                    logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        else:
+                            logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                    #assert subelement.tag not in units
+                    #units[subelement.tag] = (nID,digits,nType)
+                elif subelement.tag == 'durationUnit':
+                    duType = None
+                    for attrib,value in subelement.items():
+                        #print( "hereDU7", attrib, value )
+                        if attrib=='type': duType = value; assert duType in ('hm','hms','ms',)
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    for sub2element in subelement:
+                        sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
+                        #if debuggingThisModule: print( "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                        if sub2element.tag == 'durationUnitPattern':
+                            dupType = None
+                            for attrib,value in subelement.items():
+                                #if attrib=='long': ulLong = value
+                                #elif attrib=='digits': digits = value
+                                if attrib=='type': dupType = value
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            pass # save TEXT xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2022,6 +2231,7 @@ class LDMLFile:
                 if subelement.tag == 'characterLabel':
                     clType = None
                     for attrib,value in subelement.items():
+                        #print( "hereCI7", attrib, value )
                         #if attrib=='long': ulLong = value
                         #elif attrib=='digits': digits = value
                         if attrib=='type': clType = value
@@ -2100,6 +2310,7 @@ class LDMLFile:
                 if subelement.tag == 'contextTransformUsage':
                     ctuType = None
                     for attrib,value in subelement.items():
+                        #print( "hereCI7", attrib, value )
                         #if attrib=='long': ulLong = value
                         #elif attrib=='digits': digits = value
                         if attrib=='type': ctuType = value
@@ -2338,6 +2549,9 @@ class LDMLFile:
             BibleOrgSysGlobals.checkXMLNoTail( languageTree, treeLocation )
 
             identity = OrderedDict()
+            contacts = OrderedDict()
+            comments = OrderedDict()
+            status = OrderedDict()
             characters = OrderedDict()
             delimiters = OrderedDict()
             layout = OrderedDict()
@@ -2356,7 +2570,10 @@ class LDMLFile:
             for element in languageTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #if debuggingThisModule: print( "  Processing1 {} ({})…".format( elementLocation, element.text.strip() ) )
-                BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
+                if element.tag == 'status':
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
+                else:
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                 assert element.tag not in LDMLData # Each one can only occur onces
@@ -2367,67 +2584,157 @@ class LDMLFile:
                     else:
                         identity = None
                         try: identity = loadIdentity( element, elementLocation, identity )
-                        except Exception as err: logging.error( 'loadIdentity failed with {} {}'.format( sys.exc_info()[0], err ) )
+                        except Exception as err: logging.error( 'LDML.load.loadIdentity failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if identity:
                         #print( "identity", identity )
                         LDMLData[element.tag] = identity
+                elif element.tag == 'contacts':
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        contacts = loadContacts( element, elementLocation, contacts )
+                    else:
+                        contacts = None
+                        try: contacts = loadContacts( element, elementLocation, contacts )
+                        except Exception as err: logging.error( 'LDML.load.loadContacts failed with {} {}'.format( sys.exc_info()[0], err ) )
+                    if contacts:
+                        #print( "contacts", contacts )
+                        LDMLData[element.tag] = contacts
+                elif element.tag == 'comments':
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        comments = loadComments( element, elementLocation, comments )
+                    else:
+                        comments = None
+                        try: comments = loadComments( element, elementLocation, comments )
+                        except Exception as err: logging.error( 'LDML.load.loadComments failed with {} {}'.format( sys.exc_info()[0], err ) )
+                    if comments:
+                        #print( "comments", comments )
+                        LDMLData[element.tag] = comments
+                elif element.tag == 'status':
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        status = loadStatus( element, elementLocation, status )
+                    else:
+                        status = None
+                        try: status = loadStatus( element, elementLocation, status )
+                        except Exception as err: logging.error( 'LDML.load.loadStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+                    if status:
+                        #print( "status", status )
+                        LDMLData[element.tag] = status
                 elif element.tag == 'characters':
-                    characters = loadCharacters( element, elementLocation, characters )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        characters = loadCharacters( element, elementLocation, characters )
+                    else:
+                        characters = None
+                        try: characters = loadCharacters( element, elementLocation, characters )
+                        except Exception as err: logging.error( 'LDML.load.loadCharacters failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if characters:
                         #print( "characters", characters )
                         LDMLData[element.tag] = characters
                 elif element.tag == 'delimiters':
-                    delimiters = loadDelimiters( element, elementLocation, delimiters )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        delimiters = loadDelimiters( element, elementLocation, delimiters )
+                    else:
+                        delimiters = None
+                        try: delimiters = loadDelimiters( element, elementLocation, delimiters )
+                        except Exception as err: logging.error( 'LDML.load.loadDelimiters failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if delimiters:
                         #print( "delimiters", delimiters )
                         LDMLData[element.tag] = delimiters
                 elif element.tag == 'layout':
-                    layout = loadLayout( element, elementLocation, layout )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        layout = loadLayout( element, elementLocation, layout )
+                    else:
+                        layout = None
+                        try: layout = loadLayout( element, elementLocation, layout )
+                        except Exception as err: logging.error( 'LDML.load.loadLayout failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if layout:
                         #print( "layout", layout )
                         LDMLData[element.tag] = layout
                 elif element.tag == 'numbers':
-                    numbers = loadNumbers( element, elementLocation, numbers )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        numbers = loadNumbers( element, elementLocation, numbers )
+                    else:
+                        numbers = None
+                        try: numbers = loadNumbers( element, elementLocation, numbers )
+                        except Exception as err: logging.error( 'LDML.load.loadNumbers failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if numbers:
                         #print( "numbers", numbers )
                         LDMLData[element.tag] = numbers
                 elif element.tag == 'collations':
-                    collations = loadCollations( element, elementLocation, collations )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        collations = loadCollations( element, elementLocation, collations )
+                    else:
+                        collations = None
+                        try: collations = loadCollations( element, elementLocation, collations )
+                        except Exception as err: logging.error( 'LDML.load.loadCollations failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if collations:
                         #print( "collations", collations )
                         LDMLData[element.tag] = collations
                 elif element.tag == 'localeDisplayNames':
-                    localeDisplayNames = loadLocateDisplayNames( element, elementLocation, localeDisplayNames )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        localeDisplayNames = loadLocateDisplayNames( element, elementLocation, localeDisplayNames )
+                    else:
+                        localeDisplayNames = None
+                        try: localeDisplayNames = loadLocateDisplayNames( element, elementLocation, localeDisplayNames )
+                        except Exception as err: logging.error( 'LDML.load.loadLocateDisplayNames failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if localeDisplayNames:
                         #print( "localeDisplayNames", localeDisplayNames )
                         LDMLData[element.tag] = localeDisplayNames
                 elif element.tag == 'dates':
-                    dates = loadDates( element, elementLocation, dates )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        dates = loadDates( element, elementLocation, dates )
+                    else:
+                        dates = None
+                        try: dates = loadDates( element, elementLocation, dates )
+                        except Exception as err: logging.error( 'LDML.load.loadDates failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if dates:
                         #print( "dates", dates )
                         LDMLData[element.tag] = dates
                 elif element.tag == 'units':
-                    units = loadUnits( element, elementLocation, units )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        units = loadUnits( element, elementLocation, units )
+                    else:
+                        units = None
+                        try: units = loadUnits( element, elementLocation, units )
+                        except Exception as err: logging.error( 'LDML.load.loadUnits failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if units:
                         #print( "units", units )
                         LDMLData[element.tag] = units
                 elif element.tag == 'characterLabels':
-                    characterLabels = loadCharacterLabels( element, elementLocation, characterLabels )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        characterLabels = loadCharacterLabels( element, elementLocation, characterLabels )
+                    else:
+                        characterLabels = None
+                        try: characterLabels = loadCharacterLabels( element, elementLocation, characterLabels )
+                        except Exception as err: logging.error( 'LDML.load.loadCharacterLabels failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if characterLabels:
                         #print( "characterLabels", characterLabels )
                         LDMLData[element.tag] = characterLabels
                 elif element.tag == 'listPatterns':
-                    listPatterns = loadListPatterns( element, elementLocation, listPatterns )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        listPatterns = loadListPatterns( element, elementLocation, listPatterns )
+                    else:
+                        listPatterns = None
+                        try: listPatterns = loadListPatterns( element, elementLocation, listPatterns )
+                        except Exception as err: logging.error( 'LDML.load.loadListPatterns failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if listPatterns:
                         #print( "listPatterns", listPatterns )
                         LDMLData[element.tag] = listPatterns
                 elif element.tag == 'contextTransforms':
-                    contextTransforms = loadContextTransforms( element, elementLocation, contextTransforms )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        contextTransforms = loadContextTransforms( element, elementLocation, contextTransforms )
+                    else:
+                        contextTransforms = None
+                        try: contextTransforms = loadContextTransforms( element, elementLocation, contextTransforms )
+                        except Exception as err: logging.error( 'LDML.load.loadContextTransforms failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if contextTransforms:
                         #print( "contextTransforms", contextTransforms )
                         LDMLData[element.tag] = contextTransforms
                 elif element.tag == 'metadata':
-                    metadata = loadMetadata( element, elementLocation, metadata )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        metadata = loadMetadata( element, elementLocation, metadata )
+                    else:
+                        metadata = None
+                        try: metadata = loadMetadata( element, elementLocation, metadata )
+                        except Exception as err: logging.error( 'LDML.load.loadMetadata failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if metadata:
                         #print( "metadata", metadata )
                         LDMLData[element.tag] = metadata
@@ -2437,7 +2744,7 @@ class LDMLFile:
                     else:
                         special = None
                         try: special = loadSpecial( element, elementLocation, special )
-                        except Exception as err: logging.error( 'loadSpecial failed with {} {}'.format( sys.exc_info()[0], err ) )
+                        except Exception as err: logging.error( 'LDML.load.loadSpecial failed with {} {}'.format( sys.exc_info()[0], err ) )
                     if special:
                         #print( "special", special )
                         LDMLData[element.tag] = special
