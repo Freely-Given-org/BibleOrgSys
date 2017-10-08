@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-08' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.80'
@@ -429,7 +429,7 @@ class InternalBible:
         self.__getNames()
 
         # Discover what we've got loaded so we don't have to worry about doing it later
-        #self.discover()
+        #self.discover() # Removed from here coz it's quite time consuming if we don't really need it yet
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: self.discoverProperties()
     # end of InternalBible.doPostLoadProcessing
