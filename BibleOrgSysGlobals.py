@@ -47,9 +47,9 @@ Contains functions:
     fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True )
 
     elementStr( element )
+    checkXMLNoAttributes( element, locationString, idString=None )
     checkXMLNoText( element, locationString, idString=None )
     checkXMLNoTail( element, locationString, idString=None )
-    checkXMLNoAttributes( element, locationString, idString=None )
     checkXMLNoSubelements( element, locationString, idString=None )
     checkXMLNoSubelementsWithText( element, locationString, idString=None )
     getFlattenedXML( element, locationString, idString=None, level=0 )
@@ -77,7 +77,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-21' # by RJH
+LastModifiedDate = '2017-10-16' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.74'
@@ -803,6 +803,19 @@ def elementStr( element, level=0 ):
 # end of BibleOrgSysGlobals.elementStr
 
 
+def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ):
+    """
+    Give a warning if the element contains any attributes.
+    """
+    for attrib,value in element.items():
+        warningString = "{}Unexpected {!r} XML attribute ({}) in {}" \
+                        .format( (idString+' ') if idString else '', attrib, value, locationString )
+        logging.warning( warningString )
+        if loadErrorsDict is not None: loadErrorsDict.append( warningString )
+        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
+# end of BibleOrgSysGlobals.checkXMLNoAttributes
+
+
 def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None ):
     """
     Give an error if the element text contains anything other than whitespace.
@@ -826,19 +839,6 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
 # end of BibleOrgSysGlobals.checkXMLNoTail
-
-
-def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ):
-    """
-    Give a warning if the element contains any attributes.
-    """
-    for attrib,value in element.items():
-        warningString = "{}Unexpected {!r} XML attribute ({}) in {}" \
-                        .format( (idString+' ') if idString else '', attrib, value, locationString )
-        logging.warning( warningString )
-        if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-        if strictCheckingFlag or debugFlag and haltOnXMLWarning: halt
-# end of BibleOrgSysGlobals.checkXMLNoAttributes
 
 
 def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDict=None ):
