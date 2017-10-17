@@ -3278,8 +3278,11 @@ class BibleWriter( InternalBible ):
 
     def toEasyWorshipBible( self, outputFolder=None ):
         """
-        Write the pseudo USFM out into a simple plain-text format.
-            The format varies, depending on whether or not there are paragraph markers in the text.
+        Write the pseudo USFM out into the compressed EasyWorship format.
+
+        Since we don't have a specification for the format,
+            and since we don't know the meaning of all the binary pieces of the file,
+            we can't be certain yet that this output will actually work. :-(
         """
         import zlib, struct
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible…" )
