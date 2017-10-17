@@ -32,7 +32,7 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-17' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.05'
@@ -195,7 +195,7 @@ class EasyWorshipBible( Bible ):
         # Skipped some (important?) binary here
         index += 32
         if BibleOrgSysGlobals.debugFlag: print( 'hString', repr(hString), index )
-        assert hString == 'EasyWorship Bible Text'
+        if BibleOrgSysGlobals.strictCheckingFlag: assert hString == 'EasyWorship Bible Text'
 
         #print( 'block2', hexlify( fileBytes[index:index+56] ), fileBytes[index:index+56] )
         keep['block2'] = fileBytes[index:index+56]
