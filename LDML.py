@@ -352,7 +352,7 @@ class LDMLFile:
                     for attrib,value in subelement.items():
                         #print( 'attribE2', attrib, repr(value) )
                         if attrib=='type': eType = value; assert eType in ('initial','medial','final','word-initial','word-medial','word-final')
-                        #elif attrib=='draft': eDraft = value; assert eDraft in DRAFT_VALUES
+                        elif attrib=='draft': eDraft = value; assert eDraft in DRAFT_VALUES
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -503,7 +503,7 @@ class LDMLFile:
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                        elif sub2element.tag in ('characterOrder','lineOrder'):
+                        elif sub2element.tag in ('characterOrder','lineOrder','characters','lines'):
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             pass # Save data XXXXXXXXXXXXXXXXXXX
                         else:
@@ -1139,11 +1139,12 @@ class LDMLFile:
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
-                                            pType = pCount = None
+                                            pType = pCount = pDraft = None
                                             for attrib,value in sub4element.items():
                                                 #print( "here SF-T7", attrib, value )
                                                 if attrib=='type': pType = value # assert pType in ('1000','10000')
                                                 elif attrib=='count': pCount = value; assert pCount in ('zero','one','two','other','few','many')
+                                                elif attrib=='draft': pDraft = value; assert pDraft in DRAFT_VALUES
                                                 else:
                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -1774,7 +1775,7 @@ class LDMLFile:
                                                                 #print( "hereP37", attrib, value )
                                                                 if attrib=='draft': pDraft = value; assert pDraft in DRAFT_VALUES
                                                                 elif attrib=='alt': pAlt = value; assert pAlt in ('variant',)
-                                                                elif attrib=='numbers': pNumbers = value; assert pNumbers in ('M=romanlow','hebr','hanidec')
+                                                                elif attrib=='numbers': pNumbers = value; assert pNumbers in ('M=romanlow','hebr','hanidec','d=hanidays')
                                                                 else:
                                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -3289,13 +3290,14 @@ class LDMLFile:
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'casingItem':
-                            ciType = ciOverride = None
+                            ciType = ciOverride = ciForceError = None
                             for attrib,value in sub2element.items():
                                 #print( "hereCI7", attrib, value )
                                 #if attrib=='name': erName = value
                                 #elif attrib=='size': erSize = value
                                 if attrib=='type': ciType = value # assert ciType in ('language','month_narrow','calendar_field','currencyName_count','era_abbr','era_name','era_narrow','key','keyValue')
                                 elif attrib=='override': ciOverride = value; assert ciOverride in ('true',)
+                                elif attrib=='forceError': ciForceError = value; assert ciForceError in ('true',)
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -3373,19 +3375,38 @@ class LDMLFile:
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag.endswith( 'font' ):
-                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
-                            fName = fSize = None
+                            fName = fSize = fIsGraphite = fTypes = None
                             for attrib,value in sub2element.items():
                                 #print( "        hereF1", attrib, value )
                                 if attrib=='name': fName = value # assert fName in ('Times New Roman','Cambria')
                                 elif attrib=='size': fSize = value # assert fSize in ('1.4',)
-                                #elif attrib=='type': erType = value; assert erType in ('default','hunspell')
+                                elif attrib=='isGraphite': fIsGraphite = value; assert fIsGraphite in ('true',)
+                                elif attrib=='types': fTypes = value; assert fTypes in ('default',)
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             assert fName
                             assert fName not in fonts
                             fonts[fName] = sub2element.text
+                            for sub3element in sub2element:
+                                sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                if sub3element.tag.endswith( 'url' ):
+                                    #fName = isGraphite = None
+                                    #for attrib,value in sub3element.items():
+                                        ##print( "        hereF5", attrib, value )
+                                        #if attrib=='name': fName = value
+                                        #elif attrib=='isGraphite': isGraphite = value
+                                        #else:
+                                            #logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                            fonts[fName+'_url'] = sub3element.text
+                                else:
+                                    logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                         elif sub2element.tag.endswith( 'fontrole' ):
                             frName = frSize = frType = None
                             for attrib,value in sub2element.items():
