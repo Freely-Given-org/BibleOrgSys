@@ -50,10 +50,10 @@ CLDR stands for Common Locale Data Repository.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-18' # by RJH
+LastModifiedDate = '2017-10-21' # by RJH
 ShortProgName = "LDML_Handler"
 ProgName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -140,13 +140,13 @@ class LDMLFile:
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("load()") )
 
-        urnPrefix = '{urn://www.sil.org/ldml/0.1}'
-        lenUrnPrefix = len( urnPrefix )
+        SIL_URN_Prefix = '{urn://www.sil.org/ldml/0.1}'
+        lenSILURNPrefix = len( SIL_URN_Prefix )
         def removeSILPrefix( someText ):
             """
             Remove the SIL URN which might be prefixed to the element tag.
             """
-            if someText and someText.startswith( urnPrefix ): return someText[lenUrnPrefix:]
+            if someText and someText.startswith( SIL_URN_Prefix ): return someText[lenSILURNPrefix:]
             return someText
         # end of removeSILPrefix
 
@@ -541,7 +541,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     assert subelement.tag not in numbers
                     numbers[subelement.tag]  = subelement.text
-                elif subelement.tag == 'numberingSystem':
+                elif subelement.tag == 'numberingSystem': # Only in Paratext8 files
                     BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                     nID = digits = nType = None
                     for attrib,value in subelement.items():
@@ -570,11 +570,13 @@ class LDMLFile:
                         #if debuggingThisModule: print( "      Processing {} ({})…".format( sub2elementLocation, sub2element.tag.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
-                        sAlt = sDraft = None
+                        sAlt = sDraft = sSource = sPath = None
                         for attrib,value in sub2element.items():
                             #print( "here dn2", attrib, value )
                             if attrib=='alt': sAlt = value; assert sAlt in ('variant',)
                             elif attrib=='draft': sDraft = value; assert sDraft in DRAFT_VALUES
+                            elif attrib=='source': sSource = value; assert sSource in ('locale',)
+                            elif attrib=='path': sPath = value # This is a relative path
                             else:
                                 logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -627,7 +629,7 @@ class LDMLFile:
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingCF {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingCF {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -641,6 +643,16 @@ class LDMLFile:
                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             pass # Save text XXXXX
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA39", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -660,6 +672,81 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             pass # Save text XXXXXXXXXXXXXXXXXXXXXX
+                        elif sub2element.tag == 'currencySpacing':
+                            BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            #upCount = upDraft = None
+                            #for attrib,value in sub2element.items():
+                                ##print( "here UP7", attrib, value )
+                                #if attrib=='count': upCount = value; assert upCount in ('zero','one','two','other','few','many')
+                                #elif attrib=='draft': upDraft = value; assert upDraft in DRAFT_VALUES
+                                ##elif attrib=='alt': alt = value
+                                #else:
+                                    #logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            for sub3element in sub2element:
+                                sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
+                                #if debuggingThisModule: print( "        ProcessingCS {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                if sub3element.tag in ('beforeCurrency','afterCurrency'):
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                    #draft = cfType = alt = None
+                                    #for attrib,value in sub3element.items():
+                                        #if attrib=='type': cfType = value
+                                        ##elif attrib=='alt': alt = value
+                                        #else:
+                                            #logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    for sub4element in sub3element:
+                                        sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
+                                        #if debuggingThisModule: print( "          ProcessingBfC {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
+                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
+                                        if sub4element.tag in ('currencyMatch','surroundingMatch','insertBetween'):
+                                            #pType = pCount = pDraft = None
+                                            #for attrib,value in sub4element.items():
+                                                ##print( "here CF-T7", attrib, value )
+                                                #if attrib=='type': pType = value # assert pType in ('1000','10000')
+                                                #elif attrib=='count': pCount = value; assert pCount in ('zero','one','two','other','few','many')
+                                                #elif attrib=='draft': pDraft = value; assert pDraft in DRAFT_VALUES
+                                                #else:
+                                                    #logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                            pass # Save text XXXXX
+                                        else:
+                                            logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                elif sub3element.tag == 'alias':
+                                    BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                    aPath = aSource = None
+                                    for attrib,value in sub3element.items():
+                                        #print( "here A36", attrib, value )
+                                        if attrib=='path': aPath = value # This is a relative path
+                                        elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                        else:
+                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                else:
+                                    logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                            pass # Save text XXXXXXXXXXXXXXXXXXXXXX
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A40", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -749,10 +836,10 @@ class LDMLFile:
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
                         #if debuggingThisModule: print( "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
-                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'percentFormat':
+                            BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                                 #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
@@ -782,6 +869,7 @@ class LDMLFile:
                                 assert 'symbols' not in percentFormats[cuType]
                                 percentFormats[cuType]['symbols']= symbols
                         elif sub2element.tag == 'percentFormatLength':
+                            BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                                 #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
@@ -791,7 +879,7 @@ class LDMLFile:
                                 if sub3element.tag == 'percentFormat':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -808,6 +896,18 @@ class LDMLFile:
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A35", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -853,13 +953,13 @@ class LDMLFile:
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                                 #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
-                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'decimalFormat':
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -876,9 +976,54 @@ class LDMLFile:
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                elif sub3element.tag == 'xdecimalFormatLength':
+                                    BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
+                                    for sub4element in sub3element:
+                                        sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
+                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
+                                        if sub4element.tag == 'xpattern':
+                                            pType = pCount = pDraft = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "here DF-T7", attrib, value )
+                                                if attrib=='xtype': pType = value # assert pType in ('1000','10000')
+                                                elif attrib=='xcount': pCount = value; assert pCount in ('zero','one','two','other','few','many')
+                                                elif attrib=='xdraft': pDraft = value; assert pDraft in DRAFT_VALUES
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                            pass # Save text XXXXX
+                                        else:
+                                            logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                elif sub3element.tag == 'alias':
+                                    BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                    aPath = aSource = None
+                                    for attrib,value in sub3element.items():
+                                        #print( "here A31", attrib, value )
+                                        if attrib=='path': aPath = value # This is a relative path
+                                        elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                        else:
+                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A30", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -915,6 +1060,18 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             assert pType not in miscPatterns
                             miscPatterns[pType] = sub2element.text
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A41", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -966,9 +1123,9 @@ class LDMLFile:
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
                         #if debuggingThisModule: print( "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
-                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'scientificFormatLength':
+                            BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                                 #if debuggingThisModule: print( "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
@@ -978,7 +1135,7 @@ class LDMLFile:
                                 if sub3element.tag == 'scientificFormat':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -999,6 +1156,18 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                             assert sub2element.tag not in scientificFormats
                             scientificFormats[sub2element.tag] = sub2element.text
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A34", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -1014,6 +1183,37 @@ class LDMLFile:
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             return numbers
         # end of loadNumbers
+
+
+        def loadNumberingSystems( element, elementLocation, numberingSystems ):
+            """
+            Returns the updated dictionary.
+            """
+            for subelement in element:
+                subelementLocation = subelement.tag + ' in ' + elementLocation
+                #if debuggingThisModule: print( "    Processing NumberingSystems {}…".format( subelementLocation ) )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
+                if subelement.tag == 'numberingSystem':
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
+                    nsID = nsType = nsDigits = None
+                    for attrib,value in subelement.items():
+                        #print( "hereNS1", attrib, value )
+                        if attrib=='id': nsID = value
+                        elif attrib=='type': nsType = value; assert nsType in ('numeric',)
+                        elif attrib=='digits': nsDigits = value
+                        #elif attrib=='xdraft': cDraft = value; assert cDraft in DRAFT_VALUES
+                        else:
+                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                    assert nsID
+                    assert nsID not in numberingSystems
+                    numberingSystems[nsID]  = subelement.text
+                else:
+                    logging.error( _("Unprocessed {!r} subelement ({}) in {}").format( subelement.tag, subelement.text.strip() if subelement.text else subelement.text, elementLocation ) )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            return numberingSystems
+        # end of loadNumberingSystems
 
 
         def loadCollations( element, elementLocation, collations ):
@@ -1366,7 +1566,7 @@ class LDMLFile:
                                 if sub3element.tag == 'dateTimeFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingDTF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingDTF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'intervalFormats':
@@ -1465,7 +1665,7 @@ class LDMLFile:
                                                     aiRequest = aiDraft = dfiCount = None
                                                     for attrib,value in sub5element.items():
                                                         #print( "hereAI7", attrib, value )
-                                                        if attrib=='request': aiRequest = value; assert aiRequest in ('Era','Year','Timezone','Day-Of-Week')
+                                                        if attrib=='request': aiRequest = value; assert aiRequest in ('Era','Year','Quarter','Month','Week','Timezone','Day-Of-Week','Day','Hour','Minute','Second')
                                                         elif attrib=='draft': aiDraft = value; assert aiDraft in DRAFT_VALUES
                                                         #elif attrib=='xcount': dfiCount = value # Things like one, other+
                                                         else:
@@ -1475,13 +1675,23 @@ class LDMLFile:
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element in {}").format( sub5element.tag, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA14", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'dateFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingDF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingDF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'intervalFormats':
@@ -1575,13 +1785,23 @@ class LDMLFile:
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element in {}").format( sub5element.tag, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA12", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element in {}").format( sub4element.tag, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'dayPeriods':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingDP1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingDP1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'dayPeriodContext':
@@ -1603,12 +1823,14 @@ class LDMLFile:
                                                         #if debuggingThisModule: print( "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
-                                                        dpType = dpDraft = dpAlt = None
+                                                        dpwType = dpwDraft = dpwAlt = dpwSource = dpwPath = None
                                                         for attrib,value in sub6element.items():
-                                                            #print( "here7", attrib, value )
-                                                            if attrib=='type': dpType = value
-                                                            elif attrib=='alt': dpAlt = value; assert dpAlt in ('variant',)
-                                                            elif attrib=='draft': dpDraft = value; assert dpDraft in DRAFT_VALUES
+                                                            #print( "hereDPW7", attrib, value )
+                                                            if attrib=='type': dpwType = value; assert dpwType in ('am','pm','morning1','morning2','afternoon1','afternoon2','noon','evening1','evening2','night1','night2','midnight')
+                                                            elif attrib=='alt': dpwAlt = value; assert dpwAlt in ('variant',)
+                                                            elif attrib=='draft': dpwDraft = value; assert dpwDraft in DRAFT_VALUES
+                                                            elif attrib=='source': dpwSource = value; assert dpwSource in ('locale',)
+                                                            elif attrib=='path': dpwPath = value # This is a relative path
                                                             else:
                                                                 logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -1641,13 +1863,23 @@ class LDMLFile:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                             dayPeriods[sub4element.tag] = sub4element.text
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA10", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'months':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingMn1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingMn1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'monthContext':
@@ -1687,19 +1919,40 @@ class LDMLFile:
                                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                             pass # Save text field XXXXXXXXXXXXXX
+                                                        elif sub6element.tag == 'alias':
+                                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
+                                                            aSource = aPath = aType = None
+                                                            for attrib,value in sub4element.items():
+                                                                #print( "hereA15", attrib, value )
+                                                                if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                                elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                                elif attrib=='type': aType = value; assert aType in ('format','stand-alone')
+                                                                else:
+                                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
+                                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                         else:
                                                             logging.error( _("Unprocessed {!r} sub6element ({}) in {}").format( sub6element.tag, sub6element.text.strip() if sub6element.text else sub6element.text, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA7", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'monthPatterns':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingMP4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingMP4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'monthPatternContext':
@@ -1739,6 +1992,17 @@ class LDMLFile:
                                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                             pass
+                                                        elif sub6element.tag == 'alias':
+                                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
+                                                            aSource = aPath = aType = None
+                                                            for attrib,value in sub4element.items():
+                                                                #print( "hereA16", attrib, value )
+                                                                if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                                elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                                elif attrib=='type': aType = value; assert aType in ('format','stand-alone')
+                                                                else:
+                                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
+                                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                         else:
                                                             logging.error( _("Unprocessed {!r} sub6element in {}").format( sub6element.tag, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -1746,13 +2010,23 @@ class LDMLFile:
                                                     logging.error( _("Unprocessed {!r} sub5element in {}").format( sub5element.tag, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                             dateTimeFormats[sub4element.tag] = sub4element.text
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA19", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element in {}").format( sub4element.tag, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'days':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingDays1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingDays1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'dayContext':
@@ -1791,19 +2065,40 @@ class LDMLFile:
                                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                             pass # Save text field XXXXXXXXXXXXXX
+                                                        elif sub6element.tag == 'alias':
+                                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
+                                                            aSource = aPath = aType = None
+                                                            for attrib,value in sub4element.items():
+                                                                #print( "hereA21", attrib, value )
+                                                                if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                                elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                                elif attrib=='type': aType = value; assert aType in ('format','stand-alone')
+                                                                else:
+                                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
+                                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                         else:
                                                             logging.error( _("Unprocessed {!r} sub6element ({}) in {}").format( sub6element.tag, sub6element.text.strip() if sub6element.text else sub6element.text, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA8", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'timeFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingTF1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingTF1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'timeFormatLength':
@@ -1849,13 +2144,23 @@ class LDMLFile:
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA13", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'cyclicNameSets':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingCNS1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingCNS1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'cyclicNameSet':
@@ -1906,26 +2211,58 @@ class LDMLFile:
                                                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                                     pass # Save text field XXXXXXXXXXXXXX
+                                                                elif sub7element.tag == 'alias':
+                                                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub7element, sub7elementLocation )
+                                                                    aSource = aPath = aType = None
+                                                                    for attrib,value in sub4element.items():
+                                                                        #print( "hereA17", attrib, value )
+                                                                        if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                                        elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                                        elif attrib=='type': aType = value; assert aType in ('dayParts','solarTerms','years','zodiacs')
+                                                                        else:
+                                                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub7elementLocation ) )
+                                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                                 else:
                                                                     logging.error( _("Unprocessed {!r} sub7element ({}) in {}").format( sub7element.tag, sub7element.text.strip() if sub7element.text else sub7element.text, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                                         else:
                                                             logging.error( _("Unprocessed {!r} sub6element ({}) in {}").format( sub6element.tag, sub6element.text.strip() if sub6element.text else sub6element.text, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                                elif sub5element.tag == 'alias':
+                                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
+                                                    aSource = aPath = aType = None
+                                                    for attrib,value in sub4element.items():
+                                                        #print( "hereA18", attrib, value )
+                                                        if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                        elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                        elif attrib=='type': aType = value; assert aType in ('days','months')
+                                                        else:
+                                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub5elementLocation ) )
+                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA20", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'eras':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
-                                        BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
+                                        #if debuggingThisModule: print( "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'eraAbbr':
+                                            BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                             #cnsType = None
                                             #for attrib,value in sub4element.items():
                                                 ##print( "hereEA7", attrib, value )
@@ -1953,6 +2290,7 @@ class LDMLFile:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                         elif sub4element.tag == 'eraNames':
+                                            BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                             #cnsType = None
                                             #for attrib,value in sub4element.items():
                                                 ##print( "hereEA7", attrib, value )
@@ -1976,10 +2314,21 @@ class LDMLFile:
                                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     pass # save Text XXXXXXXXXXXXXXXXXXXXXXXXXXX
+                                                elif sub5element.tag == 'alias':
+                                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
+                                                    aSource = aPath = None
+                                                    for attrib,value in sub5element.items():
+                                                        #print( "hereA11", attrib, value )
+                                                        if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                        elif attrib=='path': aPath = value # aPath is a relative path
+                                                        else:
+                                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub5elementLocation ) )
+                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                         elif sub4element.tag == 'eraNarrow':
+                                            BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                             #cnsType = None
                                             #for attrib,value in sub4element.items():
                                                 ##print( "hereEA7", attrib, value )
@@ -2003,16 +2352,36 @@ class LDMLFile:
                                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     pass # save Text XXXXXXXXXXXXXXXXXXXXXXXXXXX
+                                                elif sub5element.tag == 'alias':
+                                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
+                                                    aSource = aPath = None
+                                                    for attrib,value in sub5element.items():
+                                                        #print( "hereA12", attrib, value )
+                                                        if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                        elif attrib=='path': aPath = value # aPath is a relative path
+                                                        else:
+                                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub5elementLocation ) )
+                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA23", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                 elif sub3element.tag == 'quarters':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'quarterContext':
@@ -2051,12 +2420,33 @@ class LDMLFile:
                                                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                             pass # Save text field XXXXXXXXXXXXXX
+                                                        elif sub6element.tag == 'alias':
+                                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
+                                                            aSource = aPath = aType = None
+                                                            for attrib,value in sub4element.items():
+                                                                #print( "hereA22", attrib, value )
+                                                                if attrib=='xsource': aSource = value; assert aSource in ('locale',)
+                                                                elif attrib=='xpath': aPath = value # aPath is a relative path
+                                                                elif attrib=='type': aType = value; assert aType in ('format','stand-alone')
+                                                                else:
+                                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub6elementLocation ) )
+                                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                         else:
                                                             logging.error( _("Unprocessed {!r} sub6element ({}) in {}").format( sub6element.tag, sub6element.text.strip() if sub6element.text else sub6element.text, sub5elementLocation ) )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                                                 else:
                                                     logging.error( _("Unprocessed {!r} sub5element ({}) in {}").format( sub5element.tag, sub5element.text.strip() if sub5element.text else sub5element.text, sub4elementLocation ) )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                        elif sub4element.tag == 'alias':
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
+                                            aSource = aPath = None
+                                            for attrib,value in sub4element.items():
+                                                #print( "hereA9", attrib, value )
+                                                if attrib=='source': aSource = value; assert aSource in ('locale',)
+                                                elif attrib=='path': aPath = value # aPath is a relative path
+                                                else:
+                                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub4elementLocation ) )
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                         else:
                                             logging.error( _("Unprocessed {!r} sub4element ({}) in {}").format( sub4element.tag, sub4element.text.strip() if sub4element.text else sub4element.text, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2119,7 +2509,7 @@ class LDMLFile:
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          ProcessingRT4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          ProcessingRT4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'relativeTimePattern':
@@ -2138,7 +2528,7 @@ class LDMLFile:
                                     aPath = aSource = None
                                     for attrib,value in sub3element.items():
                                         if attrib=='path': aPath = value
-                                        elif attrib=='source': aSource = value
+                                        elif attrib=='source': aSource = value; assert aSource in ('locale',)
                                         else:
                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2210,7 +2600,7 @@ class LDMLFile:
                                         metazone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         draft = None
@@ -2235,7 +2625,7 @@ class LDMLFile:
                                         metazone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         draft = None
@@ -2276,7 +2666,7 @@ class LDMLFile:
                                         zone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag in ('generic','standard','daylight'):
@@ -2302,7 +2692,7 @@ class LDMLFile:
                                         zone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag in ('generic','standard','daylight'):
@@ -2447,6 +2837,18 @@ class LDMLFile:
                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     pass # Save text XXXXXXXXXXXXX
+                                elif sub3element.tag == 'alias':
+                                    BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                                    aPath = aSource = None
+                                    for attrib,value in sub3element.items():
+                                        #print( "here A43", attrib, value )
+                                        if attrib=='path': aPath = value # This is a relative path
+                                        elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                        else:
+                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2503,6 +2905,18 @@ class LDMLFile:
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A42", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2625,6 +3039,18 @@ class LDMLFile:
                                 #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
+                        elif sub2element.tag == 'alias':
+                            BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
+                            aPath = aSource = None
+                            for attrib,value in sub2element.items():
+                                #print( "here A44", attrib, value )
+                                if attrib=='path': aPath = value # This is a relative path
+                                elif attrib=='source': aSource = value; assert aSource in ('locale',)
+                                else:
+                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -2791,7 +3217,7 @@ class LDMLFile:
                                             vID = value
                                             if BibleOrgSysGlobals.strictCheckingFlag:
                                                 assert vID[0] == '$'
-                                                assert vID in ('$STerm','$MidLetter','$MidNum','$MidNumLet','$BA','$HH','$ID','$Hiragana','$Ideographic')
+                                                #assert vID in ('$STerm','$MidLetter','$MidNum','$MidNumLet','$BA','$CR','$HH','$ID','$Hiragana','$Ideographic','$Control','$E_Base','$E_Base_GAZ','$E_Modifier')
                                         else:
                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2824,8 +3250,8 @@ class LDMLFile:
                                         #print( "hereSRr9", attrib, value )
                                         if attrib=='id':
                                             rID = value
-                                            if BibleOrgSysGlobals.strictCheckingFlag:
-                                                assert rID in ('13.3','13.4','20.09','21.01')
+                                            #if BibleOrgSysGlobals.strictCheckingFlag:
+                                                #assert rID in ('10','13.3','13.4','20.09','21.01')
                                         else:
                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2990,7 +3416,7 @@ class LDMLFile:
                                     fonts[fName] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() ) )
+                                        #if debuggingThisModule: print( "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
@@ -3104,6 +3530,7 @@ class LDMLFile:
             delimiters = OrderedDict()
             layout = OrderedDict()
             numbers = OrderedDict()
+            numberingSystems = OrderedDict()
             collations = OrderedDict()
             localeDisplayNames = OrderedDict()
             dates = OrderedDict()
@@ -3202,6 +3629,15 @@ class LDMLFile:
                     if numbers:
                         #print( "numbers", numbers )
                         LDMLData[element.tag] = numbers
+                elif element.tag == 'numberingSystems':
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                        numberingSystems = loadNumberingSystems( element, elementLocation, numberingSystems )
+                    else:
+                        try: numberingSystems = loadNumberingSystems( element, elementLocation, numberingSystems )
+                        except Exception as err: logging.error( 'LDML.load.loadNumbers failed with {} {}'.format( sys.exc_info()[0], err ) )
+                    if numberingSystems:
+                        #print( "numberingSystems", numberingSystems )
+                        LDMLData[element.tag] = numberingSystems
                 elif element.tag == 'collations':
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                         collations = loadCollations( element, elementLocation, collations )
