@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-07' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -412,7 +412,7 @@ def loadPTX8Versifications( BibleObject ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTX8Versifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
@@ -706,7 +706,7 @@ class PTX8Bible( Bible ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTX8Autocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#': continue # Just discard comment lines
@@ -2098,7 +2098,7 @@ class PTX8Bible( Bible ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTX8ProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {}".format( projectProgressCSVFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 lastLine = line
                 #print( "  loadPTX8ProjectProgressCSV: ({}) {!r}".format( lineCount, line ) )
                 # Each line is in the format: '2PE,61,0,10,0,30'
@@ -2354,7 +2354,7 @@ class PTX8Bible( Bible ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTX8PrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#': continue # Just discard comment lines
@@ -2488,14 +2488,16 @@ class PTX8Bible( Bible ):
                     with open( styleFilepath, 'rt', encoding=encoding ) as vFile: # Automatically closes the file when done
                         for line in vFile:
                             lineCount += 1
+                            #print( lineCount, "line1", repr(line) )
                             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                                 logging.info( "loadPTX8Styles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                            #print( lineCount, "line2", repr(line) )
+                            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             if not line: continue # Just discard blank lines
                             lastLine = line
                             if line[0]=='#': continue # Just discard comment lines
-                            #print( lineCount, "line", repr(line) )
+                            #print( lineCount, "line3", repr(line) )
 
                             if len(line)<5: # '\Bold' is the shortest valid line
                                 logging.warning( "Why was PTX8 style line #{} so short? {!r}".format( lineCount, line ) )
@@ -2511,8 +2513,14 @@ class PTX8Bible( Bible ):
                                         PTXStyles[styleName][styleMarker] = currentStyle
                                         currentStyle = {}
                                     styleMarker = value
-                                elif name in ( 'Name', 'Description', 'OccursUnder', 'Rank', 'StyleType', 'Endmarker', 'SpaceBefore', 'SpaceAfter', 'LeftMargin', 'RightMargin', 'FirstLineIndent', 'TextType', 'TextProperties', 'Justification', 'FontSize', 'Bold', 'Italic', 'Smallcaps', 'Superscript', 'Underline', 'Color', 'color', ):
+                                elif name in ( 'Name', 'Description', 'OccursUnder', 'Rank', 'StyleType', 'Endmarker',
+                                                'SpaceBefore', 'SpaceAfter', 'LeftMargin', 'RightMargin',
+                                                'FirstLineIndent', 'TextType', 'TextProperties',
+                                                'Justification', 'FontSize', 'Fontsize',
+                                                'Bold', 'Italic', 'Smallcaps', 'Superscript', 'Underline',
+                                                'Color', 'color', ):
                                     if name == 'color': name = 'Color' # fix inconsistency
+                                    elif name == 'Fontsize': name = 'FontSize' # fix inconsistency
                                     if name in currentStyle: # already
                                         logging.error( "loadPTX8Styles found duplicate {!r}={!r} in {} {} at line #{}".format( name, value, styleName, styleMarker, lineCount ) )
                                     currentStyle[name] = value
@@ -3058,7 +3066,10 @@ def demo():
         # Look at various projects inside various copies of the Paratext 8 folder made over time
         searchFolderName = '../../../../../Data/Work/VirtualBox_Shared_Folder/'
         searchFolderHead = 'My Paratext 8 Projects' # often followed by a date
-        possibleProjectFolders = 'engWEB14', 'MBTV', 'MBTBT', 'MBTBC'
+        possibleProjectFolders = ( 'engWEB14',
+                    'MBTV', 'MBTBT', 'MBTBC',
+                    'OET-BV', 'OET-LV', 'OET-RV', 'OET-SV', 'OET-EV'
+                    )
 
         for something in sorted( os.listdir( searchFolderName ) ):
             somepath = os.path.join( searchFolderName, something )

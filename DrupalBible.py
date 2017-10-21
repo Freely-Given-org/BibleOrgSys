@@ -74,10 +74,10 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -249,7 +249,7 @@ class DrupalBible( Bible ):
                     elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
                         logging.info( "DrupalBible.load2: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
                         line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
 
                 #print ( 'DB file line is "' + line + '"' )

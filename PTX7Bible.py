@@ -41,10 +41,10 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.28'
+ProgVersion = '0.29'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -380,7 +380,7 @@ def loadPTX7Languages( BibleObject ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTX7Languages: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#': continue # Just discard comment lines
@@ -447,7 +447,7 @@ def loadPTXVersifications( BibleObject ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTXVersifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
@@ -1610,7 +1610,7 @@ class PTX7Bible( Bible ):
                 if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     logging.info( "loadPTXAutocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 if line[0]=='#': continue # Just discard comment lines
@@ -1672,7 +1672,7 @@ class PTX7Bible( Bible ):
                             if lineCount==1 and line[0]==chr(65279): #U+FEFF
                                 logging.info( "loadPTXStyles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             if not line: continue # Just discard blank lines
                             lastLine = line
                             if line[0]=='#': continue # Just discard comment lines

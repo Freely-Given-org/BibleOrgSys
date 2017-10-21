@@ -5,7 +5,7 @@
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,7 +35,7 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-10' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "ESFMFile"
 ProgName = "ESFM File loader"
 ProgVersion = '0.86'
@@ -144,7 +144,7 @@ class ESFMFile:
                     if lineCount==1 and line[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "ESFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( esfm_filename ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
                     #print ( 'ESFM file line is "' + line + '"' )

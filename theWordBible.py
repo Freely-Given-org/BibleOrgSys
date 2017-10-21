@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.52'
+ProgVersion = '0.53'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -295,7 +295,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
@@ -306,7 +306,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
             line = line.replace( "ʼ", "'" ) # Change back to a straight apostrophe for comparison
             lines2.append( line )
@@ -882,7 +882,7 @@ class theWordBible( Bible ):
                         if lineCount==1 and self.encoding.lower()=='utf-8' and originalLine[0]==chr(65279): #U+FEFF
                             logging.info( "      theWordBible.load: Detected Unicode Byte Order Marker (BOM)" )
                             originalLine = originalLine[1:] # Remove the Unicode Byte Order Marker (BOM)
-                        if originalLine[-1]=='\n': originalLine=originalLine[:-1] # Removing trailing newline character
+                        if originalLine and originalLine[-1]=='\n': originalLine=originalLine[:-1] # Removing trailing newline character
                         line = originalLine
                         #lastLine = line
 

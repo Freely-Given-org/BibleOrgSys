@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-20' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.20'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -188,7 +188,7 @@ def loadWordCompares( folder, filename ):
             if lineCount==1 and line[0]==chr(65279): #U+FEFF or \ufeff
                 logging.info( "loadWordCompares: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             #print ( 'SFM file line is "' + line + '"' )
             if line[0]=='#': continue # Just discard comment lines
@@ -299,6 +299,7 @@ def compareBooksPedantic( book1, book2,
         if marker1 == marker2: # ok, formats of both books match
             numMismatchedMarkers = 0
             if line1 or line2:
+                line1len, line2len = len(line1), len(line2)
                 for quoteChar in compareQuotes:
                     c1, c2 = line1.count( quoteChar ), line2.count( quoteChar )
                     if c1 != c2:
@@ -326,7 +327,11 @@ def compareBooksPedantic( book1, book2,
                         if ixl == -1: break
                         ixr = line1.find( right, ixl+2 )
                         if ixr == -1:
-                            bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, line1[max(0,ixl-4):ixl+6] )) )
+                            contextStart, contextEnd = max(0,ixl-5), ixl+7
+                            context = line1[contextStart:contextEnd]
+                            if contextStart > 0 and context[0]!=' ': context = '…' + context
+                            if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                            bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
                             hadMatchingError1 = True
                     ixl = -1
                     while True:
@@ -334,7 +339,11 @@ def compareBooksPedantic( book1, book2,
                         if ixl == -1: break
                         ixr = line2.find( right, ixl+2 )
                         if ixr == -1:
-                            bcResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, line2[max(0,ixl-4):ixl+6] )) )
+                            contextStart, contextEnd = max(0,ixl-5), ixl+7
+                            context = line2[contextStart:contextEnd]
+                            if contextStart > 0 and context[0]!=' ': context = '…' + context
+                            if contextEnd < line2len and context[-1]!=' ': context = context + '…'
+                            bcResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, context )) )
                             hadMatchingError2 = True
                     ixr = 9999
                     while True:
@@ -342,7 +351,11 @@ def compareBooksPedantic( book1, book2,
                         if ixr == -1: break
                         ixl = line1.rfind( left, 0, ixr )
                         if ixl == -1:
-                            bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, line1[max(0,ixr-5):ixr+5] )) )
+                            contextStart, contextEnd = max(0,ixr-6), ixr+6
+                            context = line1[contextStart:contextEnd]
+                            if contextStart > 0 and context[0]!=' ': context = '…' + context
+                            if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                            bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
                             hadMatchingError1 = True
                     ixr = 9999
                     while True:
@@ -350,7 +363,11 @@ def compareBooksPedantic( book1, book2,
                         if ixr == -1: break
                         ixl = line2.rfind( left, 0, ixr )
                         if ixl == -1:
-                            bcResults.append( (reference,"Missing first part of pair in Bible2: {!r} before {!r}".format( left, line2[max(0,ixr-5):ixr+5] )) )
+                            contextStart, contextEnd = max(0,ixr-6), ixr+6
+                            context = line2[contextStart:contextEnd]
+                            if contextStart > 0 and context[0]!=' ': context = '…' + context
+                            if contextEnd < line2len and context[-1]!=' ': context = context + '…'
+                            bcResults.append( (reference,"Missing first part of pair in Bible2: {!r} before {!r}".format( left, context )) )
                             hadMatchingError2 = True
                     # The above doesn't detect ( ) ) so we do it here
                     if not hadMatchingError1: # already

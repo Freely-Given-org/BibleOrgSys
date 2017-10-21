@@ -62,10 +62,10 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -252,7 +252,7 @@ class YETBible( Bible ):
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
                     #logging.info( "      YETBible.load: Detected Unicode Byte Order Marker (BOM)" )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 #print ( 'YETBible file line is "' + line + '"' )

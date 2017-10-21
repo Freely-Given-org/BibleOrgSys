@@ -77,7 +77,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-16' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.74'
@@ -531,7 +531,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
                 if printFlag and verbosityLevel > 2:
                     print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
@@ -542,7 +542,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
                 if printFlag and verbosityLevel > 2:
                     print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines2.append( line )
 
@@ -600,7 +600,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
                 if printFlag and verbosityLevel > 2:
                     print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines1.append( line )
     lineCount, lines2 = 0, []
@@ -611,7 +611,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
                 if printFlag and verbosityLevel > 2:
                     print( "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
             lines2.append( line )
 

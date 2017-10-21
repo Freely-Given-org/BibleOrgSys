@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -200,7 +200,7 @@ class OnlineBible( Bible ):
                             if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
                                 logging.info( "loadOnlineBibleMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             #if not line: continue # Just discard blank lines
                             lines.append( line )
                             lastLine = line

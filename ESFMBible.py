@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.60'
@@ -324,7 +324,7 @@ class ESFMBible( Bible ):
                 #if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
                     #logging.info( "ESFMBible.loadMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( ssfFilepath ) )
                     #line = line[1:] # Remove the Byte Order Marker (BOM)
-                #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+                #if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 #line = line.strip() # Remove leading and trailing whitespace
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
@@ -595,7 +595,7 @@ def demo():
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
                         logging.info( "ESFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
                     if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()

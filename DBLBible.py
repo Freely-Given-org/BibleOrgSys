@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.25'
@@ -1341,7 +1341,7 @@ class DBLBible( Bible ):
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                #if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
                 #if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
@@ -1422,7 +1422,7 @@ class DBLBible( Bible ):
                 #if lineCount==1 and line[0]==chr(65279): #U+FEFF
                     #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                #if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                #if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
                 #if line[0]=='#': continue # Just discard comment lines

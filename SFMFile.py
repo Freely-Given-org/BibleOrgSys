@@ -39,10 +39,10 @@ There are three kinds of SFM encoded files which can be loaded:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-27' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "SFMFile"
 ProgName = "SFM Files loader"
-ProgVersion = '0.85'
+ProgVersion = '0.86'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -130,7 +130,7 @@ class SFMLines:
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
                     #print ( 'SFM file line is "' + line + '"' )
@@ -254,7 +254,7 @@ class SFMRecords:
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
                         logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
                     #print ( 'SFM file line is "' + line + '"' )

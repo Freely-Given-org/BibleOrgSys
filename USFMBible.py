@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.74'
+ProgVersion = '0.75'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -758,7 +758,7 @@ def demo():
                         elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
                             logging.info( "USFMBible.findInfo2: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
                             line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
                     if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()

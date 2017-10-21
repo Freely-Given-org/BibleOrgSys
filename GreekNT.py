@@ -5,7 +5,7 @@
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-06' # by RJH
+LastModifiedDate = '2017-10-19' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = '0.07'
@@ -221,7 +221,7 @@ class GreekNT( Bible ):
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
                         logging.info( "GreekNT: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #if not line: continue # Just discard blank lines
                     lastLine = line
                     #print ( 'gNT file line is "' + line + '"' )
