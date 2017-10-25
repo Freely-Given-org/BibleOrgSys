@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-08' # by RJH
+LastModifiedDate = '2017-10-25' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.80'
@@ -356,6 +356,8 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("loadBookIfNecessary( {} )").format( BBB ) )
+            #print( "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
+            #print( "bnr {}".format( self.bookNeedsReloading ) )
 
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
@@ -2122,9 +2124,10 @@ class InternalBible:
         """
         #print( "InternalBible.getVerseData( {} )".format( BCVReference ) )
         result = self.getContextVerseData( BCVReference )
-        #print( "  gVD", self.name, key, verseData )
+        #print( "  gVD", self.name, BCVReference, verseData )
         if result is None:
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+                print( "InternalBible.getVerseData: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' # Why did we get nothing???
         else:
             verseData, context = result
@@ -2147,7 +2150,7 @@ class InternalBible:
 
         Uses uncommon Unicode symbols to represent various formatted styles
 
-        Raises a KeyError if the key isn't found/valid.
+        Raises a KeyError if the BCVReference isn't found/valid.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
