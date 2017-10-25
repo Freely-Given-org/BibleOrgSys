@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-02' # by RJH
+LastModifiedDate = '2017-10-23' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -802,6 +802,7 @@ class InternalBibleBook:
             fixErrors.append( lineLocationSpace + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
             logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
             self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
+            if BibleOrgSysGlobals.strictCheckingFlag: halt
 
 
         if self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
