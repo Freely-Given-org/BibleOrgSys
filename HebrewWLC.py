@@ -5,7 +5,7 @@
 #
 # Module handling HebrewWLC.xml
 #
-# Copyright (C) 2011-2016 Robert Hunt
+# Copyright (C) 2011-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,14 +28,14 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2017-10-25' # by RJH
 ShortProgName = "HebrewWLCHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.04'
+ProgVersion = '0.05'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 #import os
@@ -108,18 +108,23 @@ class HebrewWLC( OSISXMLBible ):
 
 
     def removeMorphemeBreaks( self, text=None ):
-        """ Return the text with morpheme break marks removed. """
+        """
+        Return the text with morpheme break marks removed.
+        """
         if text is None:
-            self.currentText = self.currentText.replace('=', '')
+            self.currentText = self.currentText.replace('=', '') if self.currentText else self.currentText
             return self.currentText
         # else we were passed a text string
         return text.replace('=', '')
     # end of HebrewWLC.removeMorphemeBreaks
 
     def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ):
-        """ Return the text with cantillation marks removed. """
+        """
+        Return the text with cantillation marks removed.
+        """
         if text is None:
-            self.currentText = self.removeCantillationMarks( self.currentText ) # recursive call
+            # Recursive call
+            self.currentText = self.removeCantillationMarks( self.currentText ) if self.currentText else self.currentText
             return self.currentText
         # else we were passed a text string
         h = Hebrew.Hebrew ( text )
@@ -127,9 +132,12 @@ class HebrewWLC( OSISXMLBible ):
     # end of HebrewWLC.removeCantillationMarks
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
-        """ Return the text with cantillation marks removed. """
+        """
+        Return the text with cantillation marks removed.
+        """
         if text is None:
-            self.currentText = self.removeVowelPointing( self.currentText ) # recursive call
+            # Recursive call
+            self.currentText = self.removeVowelPointing( self.currentText ) if self.currentText else self.currentText
             return self.currentText
         # else we were passed a text string
         h = Hebrew.Hebrew ( text )
@@ -148,33 +156,113 @@ def demo():
     from VerseReferences import SimpleVerseKey
 
     # Demonstrate the Hebrew WLC class
-    #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
-    testFile = "../morphhb/wlc/Dan.xml" # Hebrew Daniel
-    testReference = ('DAN', '1', '5')
-    testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew WLC class…" )
-    #print( testFile, testReference )
-    wlc = HebrewWLC( testFile )
-    wlc.load() # Load and process the XML
-    print( wlc ) # Just print a summary
-    print()
-    print( wlc.getVerseData( testKey ) )
-    print()
 
-    verseText = wlc.getVerseText( testKey )
-    wlc.currentText = verseText
-    print( "These all display left-to-right in the terminal unfortunately  :-(" )
-    print( verseText )
-    verseText = wlc.removeMorphemeBreaks()
-    print()
-    print( verseText )
-    verseText = wlc.removeCantillationMarks()
-    print()
-    print( verseText )
-    consonantalVerseText = wlc.removeVowelPointing()
-    print()
-    print( consonantalVerseText )
-    print()
+    if 1: # Test one book
+        #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
+        testFile = "../morphhb/wlc/Dan.xml" # Hebrew Daniel
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class…" )
+        #print( testFile )
+        wlc = HebrewWLC( testFile, givenAbbreviation='WLC' )
+        wlc.load() # Load and process the XML book
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( wlc ) # Just print a summary
+            print()
+
+        for testReference in ( ('DAN', '1', '5'), ('GEN', '1', '5') ):
+            testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( testKey )
+                print( "VD", wlc.getVerseData( testKey ) )
+                print()
+            verseText = wlc.getVerseText( testKey )
+            wlc.currentText = verseText
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                print( verseText )
+            verseText = wlc.removeMorphemeBreaks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            verseText = wlc.removeCantillationMarks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            consonantalVerseText = wlc.removeVowelPointing()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( consonantalVerseText )
+                print()
+
+    if 1: # Load all books and test
+        testFolder = "../morphhb/wlc/" # Hebrew
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class…" )
+        #print( testFolder )
+        wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
+        wlc.loadBooks() # Load and process the XML files
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( wlc ) # Just print a summary
+            print()
+
+        for testReference in ( ('GEN', '1', '5'), ('DAN', '1', '5') ):
+            testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( testKey )
+                print( "VD", wlc.getVerseData( testKey ) )
+                print()
+            verseText = wlc.getVerseText( testKey )
+            wlc.currentText = verseText
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                print( verseText )
+            verseText = wlc.removeMorphemeBreaks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            verseText = wlc.removeCantillationMarks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            consonantalVerseText = wlc.removeVowelPointing()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( consonantalVerseText )
+                print()
+
+    if 1: # Load books as we test
+        testFolder = "../morphhb/wlc/" # Hebrew
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class…" )
+        #print( testFolder )
+        wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
+        #wlc.load() # Load and process the XML
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( wlc ) # Just print a summary
+            print()
+
+        for testReference in ( ('GEN', '1', '5'), ('DAN', '1', '5') ):
+            testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( testKey )
+                print( "VD", wlc.getVerseData( testKey ) )
+                print()
+            verseText = wlc.getVerseText( testKey )
+            wlc.currentText = verseText
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                print( verseText )
+            verseText = wlc.removeMorphemeBreaks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            verseText = wlc.removeCantillationMarks()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( verseText )
+            consonantalVerseText = wlc.removeVowelPointing()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print()
+                print( consonantalVerseText )
+                print()
+
 # end of demo
 
 if __name__ == '__main__':
