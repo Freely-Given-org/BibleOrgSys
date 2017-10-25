@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-06-13' # by RJH
+LastModifiedDate = '2017-10-25' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.27'
@@ -1571,7 +1571,7 @@ class SwordInterface():
             #print( exp("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
             if contextVerseData is None:
                 if key.getChapter()!=0 or key.getVerse()!=0: # We're not surprised if there's no chapter or verse zero
-                    print( exp("SwordInterface.getVerseData no VD"), module.getName(), key, contextVerseData )
+                    print( exp("SwordInterface.getVerseData no VerseData"), module.getName(), key, contextVerseData )
                 contextVerseData = [], None
             else:
                 verseData, context = contextVerseData
@@ -1615,7 +1615,7 @@ class SwordInterface():
             stuff = module.getContextVerseData( key )
             #print( exp("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
             if stuff is None:
-                print( exp("SwordInterface.getVerseData no VD"), module.getName(), key, stuff )
+                print( exp("SwordInterface.getVerseData no VerseData"), module.getName(), key, stuff )
                 assert key.getChapter()==0 or key.getVerse()==0
             else:
                 verseData, context = stuff

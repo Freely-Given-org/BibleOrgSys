@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-10-25' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -583,7 +583,8 @@ class USFMBible( Bible ):
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
+            print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
