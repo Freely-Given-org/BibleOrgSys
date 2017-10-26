@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-01-22' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.16'
@@ -552,7 +552,7 @@ class DBPBible:
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
                 #print( "OSIS", OSISCode )
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( OSISCode )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
                 #print( "BBB", BBB )
                 #print( bookDict )

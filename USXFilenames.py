@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-11' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = '0.54'
@@ -275,7 +275,7 @@ class USXFilenames:
                                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
-                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         #print( "resultList", resultList )
         return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )

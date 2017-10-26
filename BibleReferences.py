@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-05-06' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -1256,8 +1256,8 @@ class BibleReferenceList( BibleReferenceBase ):
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
         OSISList = BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes()
-        #self.getBBBFromText = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
-        self.getBBBFromText = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS
+        #self.getBBBFromText = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation(s)
+        self.getBBBFromText = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )

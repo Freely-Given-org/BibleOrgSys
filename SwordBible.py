@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.35'
@@ -436,7 +436,7 @@ class SwordBible( Bible ):
                 #vkBits = verseKeyText.split()
                 #assert len(vkBits) == 2
                 #osisBBB = vkBits[0]
-                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
+                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 #if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 #vkBits = vkBits[1].split( ':' )
                 #assert len(vkBits) == 2

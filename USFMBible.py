@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-25' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -766,7 +766,7 @@ def demo():
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
                         #print( USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict

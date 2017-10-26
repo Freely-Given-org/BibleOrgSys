@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-10' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.79'
@@ -271,7 +271,7 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
-    def getBBBFromOSIS( self, osisAbbreviation, strict=False ):
+    def getBBBFromOSISAbbreviation( self, osisAbbreviation, strict=False ):
         """
         Return the reference abbreviation string for the given OSIS book code string.
 
@@ -283,7 +283,7 @@ class BibleBooksCodes:
             except KeyError: # Maybe Sword has an informal abbreviation???
                 return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
 
-    def getBBBFromUSFM( self, USFMAbbreviation, strict=False ):
+    def getBBBFromUSFMAbbreviation( self, USFMAbbreviation, strict=False ):
         """
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
@@ -291,7 +291,7 @@ class BibleBooksCodes:
         #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
         result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
-        if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
+        if strict: logging.warning( "getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
 
 
@@ -635,7 +635,7 @@ def demo():
         print( '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
-        print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSIS( osisCode ) ) )
+        print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
 
     sections = {}
     for BBB in bbc:

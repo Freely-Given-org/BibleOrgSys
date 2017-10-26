@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.36'
@@ -353,7 +353,7 @@ class USXXMLBible( Bible ):
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
-                                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
+                                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
                                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                                 #isUSX = True
                             #break # We only look at the first line

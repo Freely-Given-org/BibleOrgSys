@@ -300,7 +300,7 @@ class OSISXMLBible( Bible ):
                                 if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
                                 if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
                                 assert not foundBBB # Don't expect duplicates
-                                foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBkCode, strict=True )
+                                foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
                                 #print( "  FoundBBB = {!r}".format( foundBBB ) )
                         if foundBBB:
                             if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
@@ -2157,7 +2157,7 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
                         cmBBB = None
                         try:
-                            cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
+                            cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( bits[0] )
                         except KeyError:
                             logging.critical( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
                             loadErrors.append( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
@@ -2702,7 +2702,7 @@ class OSISXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( mainDivOsisID )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( mainDivOsisID )
             except KeyError:
                 logging.critical( _("{!r} is not a valid OSIS book identifier in mainDiv").format( mainDivOsisID ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -3046,7 +3046,7 @@ class OSISXMLBible( Bible ):
                     #print( "cm", chapterMilestone )
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
-                        newBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( OSISBookID )
+                        newBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( OSISBookID )
                     except KeyError:
                         logging.critical( _("{!r} is not a valid OSIS book identifier").format( OSISBookID ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt

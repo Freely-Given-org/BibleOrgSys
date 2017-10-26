@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.30'
@@ -353,7 +353,7 @@ class USFXXMLBible( Bible ):
                         #if line.startswith( '\\id ' ):
                             #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
-                            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
+                            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
                             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                             #isUSFX = True
                         #break # We only look at the first line
@@ -394,7 +394,7 @@ class USFXXMLBible( Bible ):
             else:
                 logging.warning( "bce3 Unprocessed {} attribute ({}) in {}".format( attrib, value, mainLocation ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bookCode )
+        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bookCode )
         mainLocation = "{} USFX {} book".format( self.name, BBB )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )

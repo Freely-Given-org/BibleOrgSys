@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.25'
@@ -1121,7 +1121,7 @@ class DBLBible( Bible ):
             if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
                 for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                     #print( "USFMBookCode", USFMBookCode )
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     bookList.append( BBB )
                     self.availableBBBs.add( BBB )
             else: print( "No books in contents (maybe has divisions?)" ) # need to add code if so
@@ -1131,7 +1131,7 @@ class DBLBible( Bible ):
                 if 'CanonicalContent' in pubDict:
                     for USFMBookCode in pubDict['CanonicalContent']:
                         #print( "USFMBookCode", USFMBookCode )
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         bookList.append( BBB )
                         self.availableBBBs.add( BBB )
                     if 'Structure' in pubDict:
@@ -1354,7 +1354,7 @@ class DBLBible( Bible ):
                 #if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     #assert line[7] == ' '
                     #USFMBookCode = line[4:7]
-                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     #C,V = line[8:].split( ':', 1 )
                     ##print( "CV", repr(C), repr(V) )
                     #if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -1366,8 +1366,8 @@ class DBLBible( Bible ):
                     #left, right = line.split( ' = ', 1 )
                     ##print( "left", repr(left), 'right', repr(right) )
                     #USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    #BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode1 )
-                    #BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode2 )
+                    #BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
+                    #BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
                     #DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
                     ##print( DBLVersification['Mappings'] )
                 #else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
@@ -1375,7 +1375,7 @@ class DBLBible( Bible ):
                     #USFMBookCode = line[:3]
                     ##if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     #try:
-                        #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                        #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         #DBLVersification['VerseCounts'][BBB] = OrderedDict()
                         #for CVBit in line[4:].split():
                             ##print( "CVBit", repr(CVBit) )
@@ -1511,7 +1511,7 @@ class DBLBible( Bible ):
             #print( "bookListKey", bookListKey )
             for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                 #print( "USFMBookCode", USFMBookCode )
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                 filename = USFMBookCode + '.usx'
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )

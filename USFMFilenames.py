@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-11' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.68'
@@ -344,7 +344,7 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert filepath not in self._fileDictionary
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self._BBBDictionary: logging.error( "{}Oops, already found {!r} in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
@@ -447,7 +447,7 @@ class USFMFilenames:
                     if USFMId is None:
                         logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', BBB, derivedFilename ) )
                         continue # so it doesn't get added
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                     if BBB != BBB:
                         logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
                         continue # so it doesn't get added
@@ -476,7 +476,7 @@ class USFMFilenames:
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of USFMFilenames.getPossibleFilenameTuplesExt

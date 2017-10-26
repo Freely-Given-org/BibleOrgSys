@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-25' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.27'
@@ -1340,7 +1340,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1453,7 +1453,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( osisBBB )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1652,12 +1652,14 @@ class SwordInterface():
                 logging.critical( "getVerseText: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
         elif SwordType == 'OurCode':
-            verseData = module.getContextVerseData( key )
-            #print( "gVT", module.getName(), key, verseData )
+            context, verseData = module.getContextVerseData( key )
+            #print('gVT for', module.getName(), 'with KEY =', key, 'got VD =', verseData )
             assert isinstance( verseData, list )
             assert 2 <= len(verseData) <= 5
             verseText = ''
             for entry in verseData:
+                print( "  Entry = {!r}".format( entry ) )
+                assert isinstance( entry, InternalBibleEntry ) # Seems to be FAILING !!!!!!!!!!!!!!!!!!!!!!!!!!
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker == 'c': pass # Ignore
                 elif marker == 'p': verseText += '¶' + cleanText

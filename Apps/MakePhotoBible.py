@@ -3,9 +3,9 @@
 #
 # MakePhotoBible.py
 #
-# App to export a PhotoBible.
+# Command-line app to export a PhotoBible.
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -23,7 +23,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A short app as part of BOS (Bible Organisational System) demos.
+A short command-line app as part of BOS (Bible Organisational System) demos.
 This app inputs any known type of Bible file(s) [set inputFolder below]
     and then exports a PhotoBible in the (default) OutputFiles folder
         (inside the folder where you installed the BOS).
@@ -70,7 +70,7 @@ inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own h
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-03-02' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "MakePhotoBible"
 ProgName = "Make PhotoBible"
 ProgVersion = '0.22'

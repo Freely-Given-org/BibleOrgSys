@@ -69,7 +69,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-07' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.37'
@@ -396,7 +396,7 @@ class SimpleVerseKey():
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             bk, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
-            self.BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bk )
+            self.BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( bk )
             if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:

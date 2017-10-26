@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-10-26' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.22'
@@ -425,7 +425,7 @@ def loadPTX8Versifications( BibleObject ):
                 if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     assert line[7] == ' '
                     USFMBookCode = line[4:7]
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     C,V = line[8:].split( ':', 1 )
                     #print( "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -438,7 +438,7 @@ def loadPTX8Versifications( BibleObject ):
                 elif line[0] == '-': # It's an excluded verse line -- similar to above
                     assert line[4] == ' '
                     USFMBookCode = line[1:4]
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     C,V = line[5:].split( ':', 1 )
                     #print( "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -450,8 +450,8 @@ def loadPTX8Versifications( BibleObject ):
                     left, right = line.split( ' = ', 1 )
                     #print( "left", repr(left), 'right', repr(right) )
                     USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode1 )
-                    BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode2 )
+                    BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
+                    BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
                     if 'Mappings' not in PTXVersifications[versificationName]:
                         PTXVersifications[versificationName]['Mappings'] = {}
                     PTXVersifications[versificationName]['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
@@ -461,7 +461,7 @@ def loadPTX8Versifications( BibleObject ):
                     USFMBookCode = line[:3]
                     #if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     try:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode )
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         if 'VerseCounts' not in PTXVersifications[versificationName]:
                             PTXVersifications[versificationName]['VerseCounts'] = {}
                         PTXVersifications[versificationName]['VerseCounts'][BBB] = OrderedDict()
@@ -778,7 +778,7 @@ class PTX8Bible( Bible ):
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     #print( bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
-                    try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( bnCode )
+                    try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bnCode )
                     except:
                         logging.warning( "loadPTX8BooksNames can't find BOS code for PTX8 {!r} book".format( bnCode ) )
                         BBB = bnCode # temporarily use their code
@@ -1162,7 +1162,7 @@ class PTX8Bible( Bible ):
                             assert subelement.tag not in tempDict
                             tempDict[subelement.tag] = subelement.text
                         elif subelement.tag == 'Book':
-                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( subelement.text )
+                            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( subelement.text )
                             bookList.append( BBB )
                         else:
                             logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
@@ -1389,7 +1389,7 @@ class PTX8Bible( Bible ):
                     ptBookCode, CV = referenceString.split( ' ', 1 )
                     C, V = CV.split( ':', 1 )
 
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( ptBookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( ptBookCode )
                     if BBB not in derivedTranslationStatusByBookDict:
                         derivedTranslationStatusByBookDict[BBB] = OrderedDict()
 
