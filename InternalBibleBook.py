@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-23' # by RJH
+LastModifiedDate = '2017-10-29' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -4203,17 +4203,19 @@ class InternalBibleBook:
 
     def writeBOSBCVFiles( self, bookFolderPath ):
         """
-        Write the internal pseudoUSFM out directly with one file per verse.
+        Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
-        introLines = verseLines = ""
+        introLines = verseLines = ''
+        doneAnyVerses = False
         CVList = []
         for CVKey in self._CVIndex:
             C, V = CVKey
-            #print( self.BBB, C, V )
+            #print( 'writeBOSBCVFiles: {} {}:{}'.format( self.BBB, C, V ) )
 
+            # Put all of the pseudoUSFM lines for the entry at CVKey into
             for entry in self._CVIndex.getEntries( CVKey ):
                 #print( entry )
                 marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
@@ -4223,20 +4225,25 @@ class InternalBibleBook:
                 content = entry.getOriginalText()
                 if content: line += '='+content
                 line += '\n'
-                if C == '0': introLines += line # collect all of the intro parts
+                if C == '0':
+                    introLines += line # collect all of the intro parts
                 else: verseLines += line
 
+            # Write file, but don't write intro until we get to the chapter 1 marker
             if C != '0':
                 if introLines:
                     with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( introLines )
-                    introLines = None # Will now cause an error if we try to do more introduction bits
-                else:
+                    introLines = None # Will now cause an error if we try to do more introduction bits -- should only be one intro
+                    CVList.append( ('0',) )
+                elif verseLines:
                     with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( verseLines )
-                    verseLines = ""
+                    verseLines = '' # Empty ready for the next verse
                     CVList.append( CVKey )
+                    doneAnyVerses = True
         if introLines: # handle left-overs for books without chapters
+            assert not doneAnyVerses
             with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( introLines )
         assert not verseLines

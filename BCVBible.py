@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-10-29' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -471,7 +471,7 @@ class BCVBibleBook( BibleBook ):
         """
         Load the BCV Bible book from a folder.
 
-        Tries to combine physical lines into logical lines,
+        Tries to standardise by combining physical lines into logical lines,
             i.e., so that all lines begin with a BCV paragraph marker.
 
         Uses the addLine function of the base class to save the lines.
@@ -523,9 +523,15 @@ class BCVBibleBook( BibleBook ):
 
         DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
         for CV in self.givenCVList:
-            C, V = CV
             lineCount = 0
-            with open( os.path.join( self.sourceFolder, self.BBB+'_C'+C+'V'+V+'.txt' ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
+            if isinstance( CV, tuple) and len(CV)==2:
+                C, V = CV
+                filename = self.BBB+'_C'+C+'V'+V+'.txt'
+            else:
+                assert CV == ('0',)
+                C = V = '0'
+                filename = self.BBB+'_C0.txt'
+            with open( os.path.join( self.sourceFolder, filename ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
