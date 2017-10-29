@@ -4209,7 +4209,6 @@ class InternalBibleBook:
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
-        doneAnyVerses = False
         CVList = []
         for CVKey in self._CVIndex:
             C, V = CVKey
@@ -4241,11 +4240,11 @@ class InternalBibleBook:
                         myFile.write( verseLines )
                     verseLines = '' # Empty ready for the next verse
                     CVList.append( CVKey )
-                    doneAnyVerses = True
         if introLines: # handle left-overs for books without chapters
-            assert not doneAnyVerses
+            assert not CVList
             with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( introLines )
+            CVList.append( ('0',) )
         assert not verseLines
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata…") )
