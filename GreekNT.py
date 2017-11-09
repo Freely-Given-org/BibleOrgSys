@@ -44,10 +44,10 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -146,7 +146,9 @@ class GreekNT( Bible ):
     ## end of __str__
 
 
-    def load( self ):
+    def loadBooks( self ):
+        """
+        """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading Greek NT from {}…".format( self.sourceFilepath ) )
         for BBB in Greek.morphgntBooks:
             self.loadBook( BBB, Greek.morphgntFilenames[BBB] )
@@ -158,7 +160,10 @@ class GreekNT( Bible ):
         #else: # most often we have all the Bible books in one file
             #self.loadFile( self.sourceFilepath )
         self.doPostLoadProcessing()
-    # end of load
+    # end of loadBooks
+
+    def load( self ):
+        self.loadBooks()
 
 
     def loadBook( self, BBB, filename, encoding='utf-8' ):
@@ -254,9 +259,15 @@ class GreekNT( Bible ):
     # end of loadBook
 
 
-    def xanalyzeWords( self ):
-        """ Go through the NT data and do some filing and sorting of the Greek words. """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
+    def analyzeWords( self ):
+        """
+        Go through the NT data and do some filing and sorting of the Greek words.
+
+        Used by the interlinearizer app.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
+
         self.wordCounts = {} # Wordcount organized by BBB
         self.wordCounts['Total'] = 0
         self.actualWordsToNormalized, self.normalizedWordsToActual, self.normalizedWordsToParsing, self.lemmasToNormalizedWords = {}, {}, {}, {}
@@ -397,7 +408,7 @@ class GreekNT( Bible ):
     # end of analyzeWords
 
 
-    #def xgetVerseData( self, reference ):
+    #def xgetVerseDataList( self, reference ):
         #""" Return the text for the verse with some adjustments. """
         #assert len(reference) == 3 # BBB,C,V
         #BBB, chapterString, verseString = reference
@@ -418,11 +429,11 @@ class GreekNT( Bible ):
             ##return myData
             #return data
         #else: print( "oops. empty verse data for", reference )
-    ## end of getVerseData
+    ## end of getVerseDataList
 
     #def xgetVerseText( self, reference ):
         #""" Return the text for the verse with some adjustments. """
-        #verseData = self.getVerseData( reference )
+        #verseData = self.getVerseDataList( reference )
         #self.originalText = ''
         #for stuff in verseData: # Stuff is: reference,parsing,words
             #if self.originalText: self.originalText += ' '
@@ -450,11 +461,11 @@ def demo():
     testReference = SimpleVerseKey('MAT', '1', '1')
     #print( testFolder, testReference )
     gNT = GreekNT( fileFolder ) # Load and process the XML
-    gNT.load()
+    gNT.loadBooks()
     #gNT.analyzeWords() # File and sort the Greek words for later use
     print( gNT ) # Just print a summary
     print()
-    print( testReference, gNT.getVerseData( testReference ) )
+    print( testReference, gNT.getVerseDataList( testReference ) )
     print()
 
     for testReference in SimpleVerseKey('MAT', '28', '1'), SimpleVerseKey('MRK','2','2'), SimpleVerseKey('REV','21','21'):

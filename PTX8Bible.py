@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-09' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.22'
@@ -496,6 +496,9 @@ class PTX8Bible( Bible ):
         """
         Create the internal Paratext Bible object.
         """
+        if debuggingThisModule:
+            print( "PTX8Bible.__init__( {!r}, {!r}, {!r} )".format( givenFolderName, givenName, encoding ) )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Paratext-8 Bible object'

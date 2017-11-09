@@ -33,15 +33,15 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For book1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For book2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
                         breakOnOne=False )
     _doCompare( parameters ) # for multiprocessing
     segmentizeLine( line, segmentEndPunctuation='.?!;' )
@@ -52,15 +52,15 @@ Includes:
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For Bible1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For Bible2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For Bible1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For Bible2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
                         breakOnOne=False )
     demo()
     main()
@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-20' # by RJH
+LastModifiedDate = '2017-11-09' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -95,40 +95,52 @@ DEFAULT_COMPARE_PUNCTUATION = '.,:;—?!–…' # Doesn't include illegal punctu
 DEFAULT_COMPARE_DIGITS = '0123456789'
 DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
 
-DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’",
+DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’", '““','””',
                                   '“ ', ' ”', '‘ ', ' ’',
                                   '""', "''", # straight quotes (doubled)
-                                   ',,', '..', '!!', '??', '::', ';;',
-                                   ' ,', ' .', ' !', ' ?', ' :', ' ;',
-                                  '<','=','>', '{','}', '+','*',
-                                  '&','%','$','#','@','~','`','|','^',
-                                  ' -','- ','--', '__', '_ _',
+                                  '««','»»', '‹‹','››', '¿¿', '¡¡',
+                                  ',,', '..', '!!', '??', '::', ';;',
+                                  ' ,', ' .', ' !', ' ?', ' :', ' ;',
+                                  '<','>', '+','*',
+                                  '&','%','$','#','@','~','`','|','^','\\',
+                                  ' -','- ','--', '__',
                                   ' _ ', # underscore
                                   ' –','– ','––', ' —','— ','——', # en-dash and em-dash
                                   '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
+                                  '&#x2011;', # non-breaking hyphen
                                   'XXX','ALT','NEW', )
-DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( "'", '/', ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
-DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '=', '{','}', '_ _', ) \
+                                                        + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR = ( "'", '/', ) \
+                                                        + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION = ( ) \
+                                                        + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_ESFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR = ( "'", ' =','_=','= ','=_' ) \
+                                                        + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
+DEFAULT_ILLEGAL_ESFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION = ( ) \
+                                                        + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON
 
-DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON = ( '  ',"''", "‘‘","’’",
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON = ( '  ',"''", "‘‘","’’", '““','””',
                                   '“ ', ' ”', '‘ ', ' ’',
                                   '""', "''", # straight quotes (doubled)
+                                  '««','»»', '‹‹','››', '¿¿', '¡¡',
                                    ',,', '..', '!!', '??', '::', ';;',
                                    ' ,', ' .', ' !', ' ?', ' :', ' ;', ' *',
                                   ' -','- ','--', '__', '_ _',
                                   ' _ ', # underscore
                                   ' –','– ','––', ' —','— ','——', # en-dash and em-dash
                                   '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
+                                  '&#x2011;', # non-breaking hyphen
                                   'f*,','f*.','f*?','f*!','f*:', # footnote at end of sentence
                                   'fe*,','fe*.','fe*?','fe*!','fe*:', # endnote at end of sentence
                                   'x*,','x*.','x*?','x*!','x*:', # cross-reference at end of sentence
                                   )
-DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
-DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
 
 DEFAULT_LEGAL_PAIRS_COMMON = ( ('“ ','“ ‘'), (' ”','’ ”'), (' ’','” ’'), ) # First field in tuple can be repeated in other tuples
-DEFAULT_LEGAL_PAIRS_1 = () + DEFAULT_LEGAL_PAIRS_COMMON
-DEFAULT_LEGAL_PAIRS_2 = () + DEFAULT_LEGAL_PAIRS_COMMON
+DEFAULT_LEGAL_PAIRS_VERNACULAR = () + DEFAULT_LEGAL_PAIRS_COMMON
+DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION = () + DEFAULT_LEGAL_PAIRS_COMMON
 
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
                     '\\\\f [^+][^ ]', # Footnote that doesn't start with +
@@ -146,9 +158,11 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
                     ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
                     '^\\([1-4][A-Z].*?\\)$', # \r reference without space e.g. 2Ki instead of 2 Ki
                     '[a-z]\\\\[^fx][a-z]? ' # character marker (not footnote or cross-reference) not preceded by space
+                    '=[^AGLOPQS]' # for ESFM tags only, but doesn't normally cause other problems
+                    '=S[^GH]' # for ESFM Strongs tags only, but doesn't normally cause other problems
                     )
-DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
-DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2 = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
+DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 
 
 def exp( messageString ):
@@ -235,19 +249,154 @@ def loadWordCompares( folder, filename ):
 
 
 
+def checkBookPedantic( bookObject,
+                        compareQuotes=DEFAULT_COMPARE_QUOTES,
+                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+                        compareDigits=DEFAULT_COMPARE_DIGITS,
+                        illegalCleanTextOnlyStrings=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCompleteLineStrings=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        legalPairs=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+                        illegalCompleteLineRegexes=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+                        breakOnOne=False ):
+    """
+    Given a Bible book object, check it carefully
+    and return results.
+
+    The returned list is sorted by C:V
+    Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
+    """
+    if BibleOrgSysGlobals.debugFlag:
+        if debuggingThisModule:
+            print( exp("checkBookPedantic( {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
+                    .format( bookObject, compareQuotes, comparePunctuation, compareDigits,
+                                        illegalCleanTextOnlyStrings, matchingPairs,
+                                        breakOnOne, bookObject.BBB ) )
+
+    bcResults = []
+
+    len1 = len(bookObject)
+
+    ix1 = 0
+    C, V = '0', '-1' # id line should be 0:0
+    while ix1<len1:
+        entry1 = bookObject._processedLines[ix1] # InternalBibleEntry objects
+        #print( 'entry', entry1 )
+        marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
+
+        if marker1 == 'c': C, V = line1.split()[0], '0'
+        elif marker1 == 'v':
+            if C == '0': C = '1' # Some one chapter books might not have a C marker
+            V = line1.split()[0]
+        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
+        #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #print( ' ', entry1.getOriginalText() )
+        #print( ' ', entry1.getAdjustedText() )
+        #print( ' ', entry1.getCleanText() )
+        originalMarker = entry1.getOriginalMarker()
+        reference = (C,V,' ' if originalMarker is None else originalMarker)
+
+        numMismatchedMarkers = 0
+        if line1:
+            line1len = len(line1)
+            for left,right in matchingPairs:
+                hadMatchingError1 = hadMatchingError2 = False
+                ixl = -1
+                while True:
+                    ixl = line1.find( left, ixl+1 )
+                    if ixl == -1: break
+                    ixr = line1.find( right, ixl+2 )
+                    if ixr == -1:
+                        contextStart, contextEnd = max(0,ixl-5), ixl+7
+                        context = line1[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                        bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
+                        hadMatchingError1 = True
+                ixl = -1
+                ixr = 9999
+                while True:
+                    ixr = line1.rfind( right, 0, ixr )
+                    if ixr == -1: break
+                    ixl = line1.rfind( left, 0, ixr )
+                    if ixl == -1:
+                        contextStart, contextEnd = max(0,ixr-6), ixr+6
+                        context = line1[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                        bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
+                        hadMatchingError1 = True
+                # The above doesn't detect ( ) ) so we do it here
+                if not hadMatchingError1: # already
+                    l1cl, l1cr = line1.count( left ), line1.count( right )
+                    if l1cl > l1cr:
+                        bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
+                    elif l1cr > l1cl:
+                        bcResults.append( (reference,"Too many {!r} in Bible".format( right )) )
+
+            entryCleanText = entry1.getCleanText() # So markers don't confuse things
+            entryFullText = entry1.getFullText() # So can check AROUND markers also
+            extras1 = entry1.getExtras()
+            if marker1 in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
+                assert not extras1
+            else:
+                if extras1 is None: extras1 = () # So it's always iterable
+                for iString in illegalCleanTextOnlyStrings:
+                    iCount = entryCleanText.count( iString )
+                    if iCount:
+                        for illegalString,legalString in legalPairs:
+                            if illegalString==iString:
+                                iCount -= entryCleanText.count( legalString )
+                        if iCount > 0:
+                            if BibleOrgSysGlobals.verbosityLevel > 2:
+                                bcResults.append( (reference,"Illegal string in Bible main text: {!r} in {!r}".format( iString, entryCleanText )) )
+                            else:
+                                bcResults.append( (reference,"Illegal string in Bible main text: {!r}".format( iString )) )
+                    for extra in extras1:
+                        #print( extra )
+                        #print( ' ', extra.getType() )
+                        #print( ' ', extra.getIndex() )
+                        #print( ' ', extra.getText() )
+                        #print( ' ', extra.getCleanText() )
+                        if iString in extra.getCleanText(): # So markers don't confuse things
+                            bcResults.append( (reference,"Illegal string in Bible note main text: {!r}".format( iString )) )
+                for iString in illegalCompleteLineStrings:
+                    iCount = entryFullText.count( iString )
+                    if iCount:
+                        for illegalString,legalString in legalPairs:
+                            if illegalString==iString:
+                                iCount -= entryFullText.count( legalString )
+                        if iCount > 0:
+                            bcResults.append( (reference,"Illegal string in Bible: {!r}".format( iString )) )
+                    for extra in extras1:
+                        if iString in extra.getText(): # with all markers
+                            bcResults.append( (reference,"Illegal string in Bible note: {!r}".format( iString )) )
+                for iRegex in illegalCompleteLineRegexes:
+                    reMatch = re.search( iRegex, entryFullText )
+                    if reMatch:
+                        bcResults.append( (reference,"Illegal {!r} regex string in Bible: {!r}".format( iRegex, reMatch.group(0) )) )
+                        break # Stop at one
+
+        ix1 += 1
+
+    return bcResults
+# end of checkBookPedantic
+
+
+
 def compareBooksPedantic( book1, book2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For book1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For book2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
                         breakOnOne=False ):
     """
     Given two Bible book objects, compare the two carefully
@@ -828,15 +977,15 @@ def compareBibles( Bible1, Bible2,
                         compareQuotes=DEFAULT_COMPARE_QUOTES,
                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
                         compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, # For Bible1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2, # For Bible2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_1, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_2, # For book2 for both clean text and complete lines
+                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For Bible1 -- case sensitive
+                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For Bible2 -- case sensitive
+                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_1, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_2, # For book2
+                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
                         breakOnOne=False ):
     """
     Runs a series of checks and count on each book of the Bible
@@ -899,8 +1048,8 @@ def demo():
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
                              'Your ','your ','yours ',' the the ', ) + DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2
-    MS_ILLEGAL_COMPLETE_LINE_STRINGS_1 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_1
-    MS_ILLEGAL_COMPLETE_LINE_STRINGS_2 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_2
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_1 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_2 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION
     MS_LEGAL_PAIRS = ( ('/',' 1/ '), ('/',' 2/ '), ('/',' 3/ '), ('/',' 4/ '), ) + DEFAULT_LEGAL_PAIRS_COMMON
 
     if os.access( testFolder1, os.R_OK ):

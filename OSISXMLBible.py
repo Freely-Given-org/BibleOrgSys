@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.58'
@@ -396,7 +396,7 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {}…").format( OSISFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}…").format( OSISFilepath ) )
         try: self.tree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )

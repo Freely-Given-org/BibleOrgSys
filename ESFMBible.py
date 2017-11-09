@@ -24,11 +24,18 @@
 
 """
 Module for defining and manipulating complete or partial ESFM Bibles.
+
+Creates a semantic dictionary with keys:
+    'Tag errors': contains a list of 4-tuples (BBB,C,V,errorWord)
+    'Missing': contains a dictionary
+    'A' 'G' 'L' 'O' 'P' 'Q' entries each containing a dictionary
+        where the key is the name (e.g., 'Jonah')
+        and the entry is a list of 4-tuples (BBB,C,V,actualWord)
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-11-08' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.60'
@@ -528,8 +535,12 @@ class ESFMBible( Bible ):
         else:
             logging.critical( _("ESFMBible: No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
-        if 'Tag errors' in self.semanticDict: print( "Tag errors:", self.semanticDict['Tag errors'] )
-        if 'Missing' in self.semanticDict: print( "Missing:", self.semanticDict['Missing'] )
+        if 'Tag errors' in self.semanticDict: print( "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
+        if 'Missing' in self.semanticDict: print( "\nESFMBible.load missing:", self.semanticDict['Missing'] )
+        #print( "\nSemantic dict: {}".format( self.semanticDict ) )
+        print( "\n\nSemantic dict:" )
+        for someKey,someEntry in self.semanticDict.items():
+            print( "\n{}: {}".format( someKey, someEntry ) )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
 

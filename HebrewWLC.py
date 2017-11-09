@@ -28,7 +28,7 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-25' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "HebrewWLCHandler"
 ProgName = "Hebrew WLC format handler"
 ProgVersion = '0.05'
@@ -79,9 +79,9 @@ class HebrewWLC( OSISXMLBible ):
     ## end of __str__
 
 
-    #def getVerseData( self, reference ):
+    #def getVerseDataList( self, reference ):
         #""" Return the text for the verse with some adjustments. """
-        #data = OSISXMLBible.getVerseData( self, reference )
+        #data = OSISXMLBible.getVerseDataList( self, reference )
         ##print( data );halt
         #if data:
             #myData = InternalBibleEntryList()
@@ -89,7 +89,7 @@ class HebrewWLC( OSISXMLBible ):
                 #print( "dL", dataLine )
                 #if dataLine.getMarker() == 'v~':
                     #cT = dataLine.getCleanText().replace('/','=')
-                    #myData.append( InternalBibleEntry( dataLine[0], dataLine[1], dataLine[2], cT, dataLine[4] ) )
+                    #myData.append( InternalBibleEntry( dataLine[0], dataLine[1], dataLine[2], cT, dataLine[4], dataLine[5] ) )
                 #else: myData.append( dataLine )
             #return myData
         #else: print( "oops. empty verse data for", reference )
@@ -172,12 +172,12 @@ def demo():
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
-                print( "VD", wlc.getVerseData( testKey ) )
+                print( "VD", wlc.getVerseDataList( testKey ) )
                 print()
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -207,12 +207,12 @@ def demo():
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
-                print( "VD", wlc.getVerseData( testKey ) )
+                print( "VD", wlc.getVerseDataList( testKey ) )
                 print()
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -238,16 +238,16 @@ def demo():
             print( wlc ) # Just print a summary
             print()
 
-        for testReference in ( ('GEN', '1', '5'), ('DAN', '1', '5') ):
+        for testReference in ( ('GEN', '1', '1'), ('DAN', '1', '5') ):
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
-                print( "VD", wlc.getVerseData( testKey ) )
+                print( "VD", wlc.getVerseDataList( testKey ) )
                 print()
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "These all display left-to-right in the terminal unfortunately  :-(" )
+                #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:

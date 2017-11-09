@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-25' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.80'
@@ -262,7 +262,7 @@ class InternalBible:
                               'getShortTOCName', 'getBooknameAbbreviation', 'stashBook', 'guessXRefBBB',
                               'getVersification', 'getAddedUnits', 'discover', '__aggregateDiscoveryResults',
                               'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
-                              'getVerseData', 'getVerseText', 'writeBOSBCVFiles' ):
+                              'getVerseDataList', 'getVerseText', 'writeBOSBCVFiles' ):
                 continue # ignore my own functions
             if myPropertyName in ( 'toBOSBCV', 'toCustomBible', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
                               'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
@@ -2115,19 +2115,19 @@ class InternalBible:
     # end of InternalBible.getContextVerseData
 
 
-    def getVerseData( self, BCVReference ):
+    def getVerseDataList( self, BCVReference ):
         """
         Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
 
         Returns None if there is no information for this book.
         Raises a KeyError if there is no CV reference.
         """
-        #print( "InternalBible.getVerseData( {} )".format( BCVReference ) )
+        #print( "InternalBible.getVerseDataList( {} )".format( BCVReference ) )
         result = self.getContextVerseData( BCVReference )
         #print( "  gVD", self.name, BCVReference, verseData )
         if result is None:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                print( "InternalBible.getVerseData: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
+                print( "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' # Why did we get nothing???
         else:
             verseData, context = result
@@ -2139,7 +2139,7 @@ class InternalBible:
                 if self.abbreviation not in ('mhl','sua',): # This version has Matt 1:1-11 combined! 57 entries
                     assert 1 <= len(verseData) <= 35 # Smallest is just a chapter number line
             return verseData
-    # end of InternalBible.getVerseData
+    # end of InternalBible.getVerseDataList
 
 
     def getVerseText( self, BCVReference, fullTextFlag=False ):

@@ -28,24 +28,24 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-05' # by RJH
+LastModifiedDate = '2017-11-08' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
 
-import BibleOrgSysGlobals
+import BibleOrgSysGlobals, USFMMarkers
 from ESFMFile import ESFMFile
 from Bible import BibleBook
 
 
-ESFM_SEMANTIC_TAGS = 'ADFGLMNOPQS'
+ESFM_SEMANTIC_TAGS = 'AGLOPQS'
 ESFM_STRONGS_TAGS = 'HG'
 
 
@@ -82,8 +82,11 @@ class ESFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "ESFM.load( {}, {} )".format( filename, folder ) )
 
-        def ESFMPreprocessing( BBB, C, V, originalText ):
+
+        def ESFMPreprocessing( BBB, C, V, marker, originalText ):
             """
             Converts ESFM tagging to pseudo-USFM codes for easier handling later on.
 
@@ -103,29 +106,42 @@ class ESFMBibleBook( BibleBook ):
             Note: This DOESN'T remove the underline/underscore characters used to join translated words
                 which were one word in the original, e.g., went_down
             """
+            if (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1) \
+            and len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
+                print( "\n\nESFMPreprocessing( {} {}:{}, {}, {!r} )".format( BBB, C, V, marker, originalText ) )
+
 
             def saveWord( BBB, C, V, word ):
                 """
                 """
-                #print( "saveWord( {}, {}:{}, {} )".format( BBB, C, V, repr(word) ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "ESFM saveWord( {}, {}:{}, {!r} )".format( BBB, C, V, word ) )
                 assert word and ' ' not in word
             # end of saveWord
 
             def saveSemanticTag( BBB, C, V, word, tag ):
                 """
+                Fills the semantic dictionary with keys:
+                    'Tag errors': contains a list of 4-tuples (BBB,C,V,errorWord)
+                    'Missing': contains a dictionary
+                    'A' 'G' 'L' 'O' 'P' 'Q' entries each containing a dictionary
+                        where the key is the name (e.g., 'Jonah')
+                        and the entry is a list of 4-tuples (BBB,C,V,actualWord)
+
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
                 #if C=='4' and V in ('11','12'):
-                #print( "saveSemanticTag( {}, {}:{}, {}, {} )".format( BBB, C, V, repr(word), repr(tag) ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "ESFM saveSemanticTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
 
                 thisDict = self.containerBibleObject.semanticDict
                 if tagMarker not in ESFM_SEMANTIC_TAGS:
-                    loadErrors.append( _("{} {}:{} unknown ESFM {} tag content {}").format( self.BBB, C, V, repr(tagMarker), repr(tagContent) ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {} tag in {}".format( BBB, C, V, repr(tagMarker), repr(tag) ) )
+                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
+                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag in {!r}".format( BBB, C, V, tagMarker, tag ) )
                     self.addPriorityError( 15, C, V, _("Unknown ESFM semantic tag") )
                     if 'Tag errors' not in thisDict: thisDict['Tag errors'] = []
                     thisDict['Tag errors'].append( (BBB,C,V,tag[1:]) )
@@ -137,17 +153,19 @@ class ESFMBibleBook( BibleBook ):
                     thisDict[tagMarker][tagContent].append( (BBB,C,V,word) )
                     #print( "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
                 else: # couldn't find it
-                    loadErrors.append( _("{} {}:{} unknown ESFM {} tag content {}").format( self.BBB, C, V, repr(tagMarker), repr(tagContent) ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {} tag content {}".format( BBB, C, V, repr(tagMarker), repr(tagContent) ) )
+                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
+                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
                     self.addPriorityError( 15, C, V, _("Unknown ESFM semantic tag") )
                     if 'Missing' not in thisDict: thisDict['Missing'] = {}
                     if tagMarker not in thisDict['Missing']: thisDict['Missing'][tagMarker] = {}
                     if tagContent not in thisDict['Missing'][tagMarker]: thisDict['Missing'][tagMarker][tagContent] = []
                     thisDict['Missing'][tagMarker][tagContent].append( (BBB,C,V) if word==tagContent else (BBB,C,V,word) )
 
-                if word==tagContent: return "\\sem {} {}\\sem*".format( tagMarker, word )
+                if word==tagContent:
+                    return "\\sem {} {}\\sem*".format( tagMarker, word )
                 return "\\sem {} {}={}\\sem*".format( tagMarker, word, tagContent )
             # end of saveSemanticTag
+
 
             def saveStrongsTag( BBB, C, V, word, tag ):
                 """
@@ -155,15 +173,16 @@ class ESFMBibleBook( BibleBook ):
                     (for better compatibility with the software chain).
                 """
                 #if C=='4' and V in ('11','12'):
-                #print( "saveStrongsTag( {}, {}:{}, {}, {} )".format( BBB, C, V, repr(word), repr(tag) ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "ESFM saveStrongsTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
                 tagMarker, tagContent = tag[2], tag[3:]
 
                 thisDict = self.containerBibleObject.StrongsDict
                 if tagMarker not in ESFM_STRONGS_TAGS:
-                    loadErrors.append( _("{} {}:{} unknown ESFM {} tag content {}").format( self.BBB, C, V, repr(tagMarker), repr(tagContent) ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {} tag in {}".format( BBB, C, V, repr(tagMarker), repr(tag) ) )
+                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
+                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag in {!r}".format( BBB, C, V, tagMarker, tag ) )
                     self.addPriorityError( 10, C, V, _("Unknown ESFM Strong's tag") )
                     if 'Tag errors' not in thisDict: thisDict['Tag errors'] = []
                     thisDict['Tag errors'].append( (BBB,C,V,tag[1:]) )
@@ -179,8 +198,8 @@ class ESFMBibleBook( BibleBook ):
                     #print( " ", tagMarker, tagContent, thisEntry )
                     #print( "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
                 else: # couldn't find it
-                    loadErrors.append( _("{} {}:{} unknown ESFM {} tag content {}").format( self.BBB, C, V, repr(tagMarker), repr(tagContent) ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {} tag content {}".format( BBB, C, V, repr(tagMarker), repr(tagContent) ) )
+                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
+                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
                     self.addPriorityError( 10, C, V, _("Unknown ESFM Strong's tag") )
                     if 'Missing' not in thisDict: thisDict['Missing'] = {}
                     if tagMarker not in thisDict['Missing']: thisDict['Missing'][tagMarker] = {}
@@ -190,132 +209,170 @@ class ESFMBibleBook( BibleBook ):
                 return "\\str {} {}={}\\str*".format( tagMarker, tagContent, word )
             # end of saveStrongsTag
 
+
             # Main code for ESFMPreprocessing
-            text = ''
-            if 1:
-            # Analyse and collect all ESFM tags and special characters, and put the results into USFM type character fields
-                bracedGroupFlag = underlineGroupFlag = hangingUnderlineFlag = startsWithUnderline = False
-                word = underlineGroup = bracedGroup = tag = ''
-                lastChar = ''
-                #textLen = len( originalText )
-                for j, originalChar in enumerate( originalText ):
-                    char = originalChar
-                    #nextChar = originalText[j+1] if j<textLen-1 else ''
+            # Analyse and collect all ESFM tags and special characters,
+            #    and put the results into USFM type character fields
+            bracedGroupFlag = underlineGroupFlag = startsWithUnderline = False
+            word = underlineGroup = bracedGroupText = tagText = ''
+            # The tag is the bit starting with =, e.g., '=PJonah'
+            hangingUnderlineCount = 0 # Count of unclosed '…_ ' sequences
+            lastChar = ''
+            #textLen = len( originalText )
+            resultText = ''
+            firstWordFlag = True
+            #print( 'ESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
+            for j, originalChar in enumerate( originalText ):
+                char = originalChar
+                #nextChar = originalText[j+1] if j<textLen-1 else ''
 
-                    #if '{'  in originalText or '_' in originalText or '=' in originalText:
-                    #if C=='4' and V=='11':
-                    #print( BBB, C, V )
-                    #print( "{}={} lc={} uGF={} hUF={} uL={} bGF={} bG={} tg={} oT={}".format( j, repr(originalChar), repr(lastChar), underlineGroupFlag, hangingUnderlineFlag, repr(underlineGroup), bracedGroupFlag, repr(bracedGroup), repr(tag), repr(originalText) ) )
+                #if '{'  in originalText or '_' in originalText or '=' in originalText:
+                #if C=='4' and V=='11':
+                #print( "  ESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
+                    #.format( j, originalChar, lastChar, underlineGroupFlag, hangingUnderlineCount, underlineGroup, bracedGroupFlag, bracedGroup, tag, originalText, resultText ) )
 
-                    if char == ' ':
-                        if lastChar == '_':
-                            hangingUnderlineFlag = True
-                            assert text[-1] == ' '
-                            text = text[:-1] # Remove the space from the underline otherwise we'll get two spaces
-                        if lastChar != '_' and (not underlineGroupFlag) and (not hangingUnderlineFlag):
-                            #if underlineGroup: print( "underlineGroup was: {}".format( repr(underlineGroup) ) )
-                            underlineGroup = ''
-                    if lastChar == ' ': startsWithUnderline =  char == '_'
+                # Handle hanging underlines, e.g., 'and_ ' or ' _then' or 'and_ they_ _were_ _not _ashamed'
+                if char == ' ':
+                    if lastChar == '_':
+                        hangingUnderlineCount += 1
+                        assert hangingUnderlineCount < 3
+                        #assert resultText[-1] == ' '
+                        #resultText = resultText[:-1] # Remove the space from the underline otherwise we'll get two spaces
+                    if lastChar != '_' and (not underlineGroupFlag) and hangingUnderlineCount!=0:
+                        #if underlineGroup: print( "underlineGroup was: {!r}".format( underlineGroup ) )
+                        underlineGroup = ''
+                #if lastChar == ' ':
+                    #startsWithUnderline =  char == '_'
+                    #if char == ' ': hangingUnderlineCount += 1
+                elif char == '_':
+                    if lastChar == ' ':
+                        hangingUnderlineCount -= 1
+                        if hangingUnderlineCount < 0:
+                            loadErrors.append( _("{} {}:{} missing first part of ESFM underline group at position {}").format( self.BBB, C, V, j ) )
+                            logging.error( "ESFM underlining error at {} in {} {}:{}".format( j, BBB, C, V ) )
+                            self.addPriorityError( 10, C, V, _("Missing first part of ESFM underline group") )
+                            hangingUnderlineCount = 0 # recover
 
-                    if bracedGroupFlag:
-                        if char == '}': bracedGroupFlag = False
-                        else: bracedGroup += char if char!=' ' else '_'
-                    if tag:
-                        if BibleOrgSysGlobals.debugFlag: assert tag[0] == '='
-                        if char in ' _=' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
+                if bracedGroupFlag:
+                    if char == '}': bracedGroupFlag = False
+                    else: bracedGroupText += '_' if char==' ' else char
+
+                # Handle formation of output string but with tagged text converted into internal SFM fields
+                #     e.g., 'And_ Elohim=G=SH430 _said=SH559:'
+                #   becomes 'And_ Elohim\sem G Elohim\sem*\str H 430=Elohim\str* _said\str H 559=said\str*:'
+                if tagText:
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert tagText[0] == '='
+                    if char in ' _=' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
+                        if underlineGroupFlag:
+                            underlineGroup += word
+                            if char == '_': underlineGroup += char
+                            else: underlineGroupFlag = False
+                        if len(tagText) > 1:
+                            if tagText[1]=='S':
+                                resultText += saveStrongsTag( BBB, C, V, underlineGroup if underlineGroup else word, tagText )
+                                underlineGroup = ''
+                                underlineGroupFlag = hangingUnderlineFlag = False
+                            else:
+                                resultText += saveSemanticTag( BBB, C, V, bracedGroupText if bracedGroupText else word, tagText )
+                            if char == '_':
+                                if not underlineGroupFlag: # it's just starting now
+                                    underlineGroup += word + char
+                                    underlineGroupFlag = True
+                                char = ' ' # to go into resultText
+                            elif char != '=': underlineGroupFlag = False
+                            if char == '=': tagText = char # Started a new consecutive tag
+                            else:
+                                if word:
+                                    saveWord( BBB, C, V, word )
+                                    firstWordFlag = False
+                                word = bracedGroupText = tagText = ''
+                                if char!='}': resultText += char
+                        else:
+                            loadErrors.append( _("{} {}:{} unexpected short ESFM tag at {}={!r} in {!r}").format( self.BBB, C, V, j, originalChar, originalText ) )
+                            logging.error( "ESFM tagging error in {} {}:{}: unexpected short tag at {}={!r} in {!r}".format( BBB, C, V, j, originalChar, originalText ) )
+                            self.addPriorityError( 21, C, V, _("Unexpected ESFM short tag") )
+                    else: # still in tag
+                        tagText += char
+                else: # not in tag
+                    if char == '=':
+                        assert not tagText
+                        tagText = char
+                    else: # still not in tag
+                        if char == '{':
+                            if (lastChar and lastChar!=' ') or tagText or bracedGroupFlag or bracedGroupText:
+                                loadErrors.append( _("{} {}:{} unexpected ESFM opening brace at {}={!r} in {!r}").format( self.BBB, C, V, j, originalChar, originalText ) )
+                                logging.error( "ESFM tagging error in {} {}:{}: unexpected opening brace at {}={!r} in {!r}".format( BBB, C, V, j, originalChar, originalText ) )
+                                self.addPriorityError( 20, C, V, _("Unexpected ESFM opening brace") )
+                            bracedGroupFlag = True
+                            char = '' # nothing to go into resultText
+                        elif char in ' _' or char in BibleOrgSysGlobals.DASH_CHARS:
                             if underlineGroupFlag:
                                 underlineGroup += word
-                                if char == '_': underlineGroup += char
-                                else: underlineGroupFlag = False
-                            if len(tag) > 1:
-                                if tag[1]=='S':
-                                    text += saveStrongsTag( BBB, C, V, underlineGroup if underlineGroup else word, tag )
-                                    underlineGroup = ''
-                                    underlineGroupFlag = hangingUnderlineFlag = False
-                                else:
-                                    text += saveSemanticTag( BBB, C, V, bracedGroup if bracedGroup else word, tag )
                                 if char == '_':
-                                    if not underlineGroupFlag: # it's just starting now
-                                        underlineGroup += word + char
-                                        underlineGroupFlag = True
-                                    char = ' ' # to go into text
-                                elif char != '=': underlineGroupFlag = False
-                                if char == '=': tag = char # Started a new consecutive tag
-                                else:
-                                    if word: saveWord( BBB, C, V, word )
-                                    word = bracedGroup = tag = ''
-                                    if char!='}': text += char
-                            else:
-                                loadErrors.append( _("{} {}:{} unexpected short ESFM tag at {}={} in {}").format( self.BBB, C, V, j, repr(originalChar), repr(originalText) ) )
-                                logging.error( "ESFM tagging error in {} {}:{}: unexpected short tag at {}={} in {}".format( BBB, C, V, j, repr(originalChar), repr(originalText) ) )
-                                self.addPriorityError( 21, C, V, _("Unexpected ESFM short tag") )
-                        else: # still in tag
-                            tag += char
-                    else: # not in tag
-                        if char == '=': tag = char
-                        else: # still not in tag
-                            if char == '{':
-                                if (lastChar and lastChar!=' ') or tag or bracedGroupFlag or bracedGroup:
-                                    loadErrors.append( _("{} {}:{} unexpected ESFM opening brace at {}={} in {}").format( self.BBB, C, V, j, repr(originalChar), repr(originalText) ) )
-                                    logging.error( "ESFM tagging error in {} {}:{}: unexpected opening brace at {}={} in {}".format( BBB, C, V, j, repr(originalChar), repr(originalText) ) )
-                                    self.addPriorityError( 20, C, V, _("Unexpected ESFM opening brace") )
-                                bracedGroupFlag = True
-                                char = '' # nothing to go into text
-                            elif char in ' _' or char in BibleOrgSysGlobals.DASH_CHARS:
-                                if underlineGroupFlag:
+                                    underlineGroup += char
+                                    #char = ' ' # to go into resultText
+                                else: underlineGroupFlag = False
+                            elif char == ' ':
+                                underlineGroupFlag = False
+                                if startsWithUnderline:
                                     underlineGroup += word
-                                    if char == '_':
-                                        underlineGroup += char
-                                        char = ' ' # to go into text
-                                    else: underlineGroupFlag = False
-                                elif char == ' ':
-                                    underlineGroupFlag = False
-                                    if startsWithUnderline:
-                                        underlineGroup += word
-                                        startsWithUnderline = False
-                                elif char == '_':
-                                    if hangingUnderlineFlag:
-                                        char = '' # nothing to go into text
-                                        hangingUnderlineFlag = False # underlineGroupFlag will be set instead below
-                                    else: # not hanging underline
-                                        underlineGroup += word + char
-                                        char = ' ' # to go into text
-                                    underlineGroupFlag = True
-                                if word: saveWord( BBB, C, V, word )
-                                word = ''
-                            elif char!='}': word += char
-                            if char!='}': text += char
-                    lastChar = originalChar
+                                    startsWithUnderline = False
+                            elif char == '_':
+                                if hangingUnderlineCount > 0:
+                                    #char = '' # nothing to go into resultText
+                                    #hangingUnderlineCount -= 1# underlineGroupFlag will be set instead below
+                                    pass
+                                else: # not hanging underline
+                                    underlineGroup += word + char
+                                    #char = ' ' # to go into resultText
+                                underlineGroupFlag = True
+                            if word:
+                                if marker == 'v' and not firstWordFlag:
+                                    saveWord( BBB, C, V, word )
+                                firstWordFlag = False
+                            word = ''
+                        elif char!='}': word += char
+                        if char!='}': resultText += char
+                lastChar = originalChar
 
-            else: # TEMP: just remove all ESFM tags and special characters
-                inTag = False
-                for char in originalText:
-                    if inTag:
-                        if char in ' _' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
-                            inTag = False
-                            text += char
-                    else: # not in tag
-                        if char == '=': inTag = True; continue
-                        text += char
-                text = text.replace('{','').replace('}','').replace('_(',' ').replace(')_',' ').replace('_',' ')
-                #if text != originalText:
-                    #print( "from: {}".format( repr(originalText) ) )
-                    #print( " got: {}".format( repr(text) ) )
+            #else: # TEMP: just remove all ESFM tags and special characters
+                #inTag = False
+                #for char in originalText:
+                    #if inTag:
+                        #if char in ' _' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
+                            #inTag = False
+                            #resultText += char
+                    #else: # not in tag
+                        #if char == '=': inTag = True; continue
+                        #resultText += char
+                #resultText = resultText.replace('{','').replace('}','').replace('_(',' ').replace(')_',' ').replace('_',' ')
 
-            #if '{'  in originalText or '_' in originalText or '=' in originalText:
-                #print( "original:", repr(originalText) )
-                #print( "returned:", repr(text), '\n' )
-            return text
+            if debuggingThisModule and resultText != originalText:
+                print( "from: {!r}".format( originalText ) )
+                print( " got: {!r}".format( resultText ) )
+                #assert originalText.count('_') == resultText.count('_') Not necessarily true
+            elif BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and debuggingThisModule) \
+            and '{'  in originalText or '}' in originalText or '=' in originalText:
+                print( "original:", repr(originalText) )
+                print( "returned:", repr(resultText) )
+
+            return resultText
         # end of ESFMBibleBook.ESFMPreprocessing
 
 
         def doaddLine( originalMarker, originalText ):
             """
-            Check for newLine markers within the line (if so, break the line) and save the information in our database.
+            Check for newLine markers within the line (if so, break the line)
+                and save the information in our database.
+
+            Also checks for matching underlines.
 
             Also convert ~ to a proper non-break space.
             """
-            #print( "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            #if (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1) \
+                #and (originalMarker not in ('c','v') or len(originalText)>5): # Don't display for "blank" lines (like '\v 10 ')
+                #print( "ESFM doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             marker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
             if marker != originalMarker:
@@ -348,11 +405,22 @@ class ESFMBibleBook( BibleBook ):
 
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
+
+            if '_' in text:
+                # Should this code be somewhere more general, e.g., in InternalBibleBook.py ???
+                leftCount, rightCount = text.count( '_ ' ), text.count( ' _' )
+                if leftCount > rightCount:
+                    loadErrors.append( _("{} {}:{} Too many '_ ' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Too many '_ ' sequences in {} line after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                elif leftCount < rightCount:
+                    loadErrors.append( _("{} {}:{} Too many ' _' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Too many ' _' sequences in {} line after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of ESFMBibleBook.doaddLine
 
 
-        # Main code for load
+        # Main code for ESFMBibleBook.load
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
@@ -377,9 +445,11 @@ class ESFMBibleBook( BibleBook ):
             elif C == '0' and marker!='intro': V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
-            text = ESFMPreprocessing( self.BBB, C, V, originalText ) # Convert ESFM encoding to pseudo-USFM
-
             # Now load the actual Bible book data
+            if marker in USFMMarkers.OFTEN_IGNORED_USFM_HEADER_MARKERS:
+                text = originalText
+            else:
+                text = ESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM
             if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text

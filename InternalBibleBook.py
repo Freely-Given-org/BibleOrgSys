@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-29' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -270,7 +270,8 @@ class InternalBibleBook:
                 assert '\n' not in text and '\r' not in text
 
         if not ( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
-            logging.critical( "InternalBibleBook.addLine marker for {} not in lists: {}={!r}".format( self.objectTypeString, marker, text ) )
+            logging.critical( "InternalBibleBook.addLine marker for {} not in USFM/BOS lists: {}={!r}" \
+                                                        .format( self.objectTypeString, marker, text ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
                 assert 0 <= ix < len(self.badMarkers)
@@ -489,7 +490,7 @@ class InternalBibleBook:
         lineLocationSpace = lineLocation + ' '
         adjText = text
         cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
-        if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
+        #if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
 
         # Remove trailing spaces
         if adjText and adjText[-1].isspace():

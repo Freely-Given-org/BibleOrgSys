@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-02' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
 ProgVersion = '0.16'
@@ -632,11 +632,12 @@ class DBPBible:
     # end of DBPBible.getOnlineData
 
 
-    def getVerseData( self, key ):
+    def getVerseDataList( self, key ):
         """
+        Equivalent to the one in InternalBible, except we may have to fetch the data (if it's not already cached).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.getVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
+            print( exp("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
 
         if str(key) in self.cache:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + exp("Retrieved from cache") )
@@ -662,8 +663,8 @@ class DBPBible:
             return resultList
         else: # This version doesn't have this book
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  getVerseData: {} not in {} {}".format( BBB, self.damRoot, self.books.keys() ) )
-    # end of DBPBible.getVerseData
+                print( "  getVerseDataList: {} not in {} {}".format( BBB, self.damRoot, self.books.keys() ) )
+    # end of DBPBible.getVerseDataList
 
 
     def getContextVerseData( self, key ):
@@ -675,7 +676,7 @@ class DBPBible:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
 
-        return self.getVerseData( key ), [] # No context
+        return self.getVerseDataList( key ), [] # No context
     # end of DBPBible.getContextVerseData
 # end of class DBPBible
 
@@ -747,12 +748,12 @@ def demo():
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
             print( verseKey )
-            print( " ", dbpBible1.getVerseData( verseKey ) )
+            print( " ", dbpBible1.getVerseDataList( verseKey ) )
          # Now test the DBPBible class caching
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
             print( verseKey, "cached" )
-            print( " ", dbpBible1.getVerseData( verseKey ) )
+            print( " ", dbpBible1.getVerseDataList( verseKey ) )
 
 
     if 1: # Test the DBPBible class with the MS
@@ -762,7 +763,7 @@ def demo():
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
             print( verseKey )
-            print( " ", dbpBible2.getVerseData( verseKey ) )
+            print( " ", dbpBible2.getVerseDataList( verseKey ) )
 # end of demo
 
 if __name__ == '__main__':

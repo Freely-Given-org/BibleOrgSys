@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-29' # by RJH
+LastModifiedDate = '2017-11-05' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.69'
@@ -437,7 +437,10 @@ class InternalBibleEntry:
     def getOriginalMarker( self ): return self.originalMarker
     def getAdjustedText( self ): return self.adjustedText # Notes are removed
     def getText( self ): return self.adjustedText # Notes are removed
-    def getCleanText( self ): return self.cleanText # Notes and formatting are removed
+    def getCleanText( self, removeESFMUnderlines=False ):
+        if removeESFMUnderlines:
+            return self.cleanText.replace('_ _',' ').replace('_ ',' ').replace(' _',' ').replace('_',' ')
+        else: return self.cleanText # Notes and formatting are removed
     def getExtras( self ): return self.extras
     def getOriginalText( self ): return self.originalText
 

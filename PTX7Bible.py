@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-09' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.29'
@@ -528,7 +528,8 @@ class PTX7Bible( Bible ):
         """
         Create the internal Paratext Bible object.
         """
-        print( "PTX7Bible.__init__( {!r}, {!r}, {!r}".format( givenFolderName, givenName, encoding ) )
+        if debuggingThisModule:
+            print( "PTX7Bible.__init__( {!r}, {!r}, {!r} )".format( givenFolderName, givenName, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -546,7 +547,7 @@ class PTX7Bible( Bible ):
                 logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFolder ) )
             self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         else: self.sourceFilepath = self.sourceFolder
-        print( "HEREPTX7", repr( self.sourceFilepath ) )
+        #print( "HEREPTX7 self.sourceFilepath:", repr( self.sourceFilepath ) )
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
             logging.error( "PTX7Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
 
