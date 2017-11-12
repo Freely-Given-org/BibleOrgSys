@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-09' # by RJH
+LastModifiedDate = '2017-11-13' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -302,7 +302,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
                 PTXSettingsDict[element.tag] = element.text
 
     try: BibleObject.filepathsNotYetLoaded.remove( settingsFilepath )
-    except ValueError: logging.error( "PTX8 settings file seemed unexpected: {}".format( settingsFilepath ) )
+    except ValueError: logging.critical( "PTX8 settings file seemed unexpected: {}".format( settingsFilepath ) )
 
     if BibleOrgSysGlobals.verbosityLevel > 2:
         print( "  " + exp("Got {} PTX8 settings entries:").format( len(PTXSettingsDict) ) )
@@ -356,7 +356,7 @@ def loadPTX8Languages( BibleObject ):
                                     .format( languageFilename, sys.exc_info()[0], err ) )
 
         try: BibleObject.filepathsNotYetLoaded.remove( languageFilepath )
-        except ValueError: logging.error( "PTX8 language file seemed unexpected: {}".format( languageFilepath ) )
+        except ValueError: logging.critical( "PTX8 language file seemed unexpected: {}".format( languageFilepath ) )
 
     if BibleOrgSysGlobals.verbosityLevel > 2:
         print( "  Loaded {} languages.".format( len(PTXLanguages) ) )
@@ -476,7 +476,7 @@ def loadPTX8Versifications( BibleObject ):
                         logging.error( "Unknown {!r} USFM book code in loadPTX8Versifications from {}".format( USFMBookCode, versificationFilepath ) )
 
         try: BibleObject.filepathsNotYetLoaded.remove( versificationFilepath )
-        except ValueError: logging.error( "PTX8 versification file seemed unexpected: {}".format( versificationFilepath ) )
+        except ValueError: logging.critical( "PTX8 versification file seemed unexpected: {}".format( versificationFilepath ) )
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} versifications.".format( len(PTXVersifications) ) )
     if debuggingThisModule: print( '\nPTXVersifications', len(PTXVersifications), PTXVersifications )
@@ -729,7 +729,7 @@ class PTX8Bible( Bible ):
                 else: logging.error( "Invalid {!r} autocorrect line in PTX8Bible.loading autocorrect".format( line ) )
 
         try: self.filepathsNotYetLoaded.remove( autocorrectFilepath )
-        except ValueError: logging.error( "PTX8 autocorrect file seemed unexpected: {}".format( autocorrectFilepath ) )
+        except ValueError: logging.critical( "PTX8 autocorrect file seemed unexpected: {}".format( autocorrectFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         if debuggingThisModule: print( '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
@@ -795,7 +795,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( bookNamesFilepath )
-        except ValueError: logging.error( "PTX8 books names file seemed unexpected: {}".format( bookNamesFilepath ) )
+        except ValueError: logging.critical( "PTX8 books names file seemed unexpected: {}".format( bookNamesFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} book names.".format( len(booksNamesDict) ) )
         if debuggingThisModule: print( "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
@@ -943,7 +943,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( lexiconFilepath )
-        except ValueError: logging.error( "PTX8 lexicon file seemed unexpected: {}".format( lexiconFilepath ) )
+        except ValueError: logging.critical( "PTX8 lexicon file seemed unexpected: {}".format( lexiconFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             totalEntries = 0
@@ -1079,7 +1079,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectUsersFilepath )
-        except ValueError: logging.error( "PTX8 project users file seemed unexpected: {}".format( projectUsersFilepath ) )
+        except ValueError: logging.critical( "PTX8 project users file seemed unexpected: {}".format( projectUsersFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         if debuggingThisModule:
@@ -1183,7 +1183,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( canonsFilepath )
-        except ValueError: logging.error( "PTX8 checking status file seemed unexpected: {}".format( canonsFilepath ) )
+        except ValueError: logging.critical( "PTX8 checking status file seemed unexpected: {}".format( canonsFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} canons.".format( len(canonsDict) ) )
         if debuggingThisModule: print( "\ncanonsDict", len(canonsDict), canonsDict )
@@ -1259,7 +1259,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( checkingStatusFilepath )
-        except ValueError: logging.error( "PTX8 checking status file seemed unexpected: {}".format( checkingStatusFilepath ) )
+        except ValueError: logging.critical( "PTX8 checking status file seemed unexpected: {}".format( checkingStatusFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  Loaded {:,} checking status books.".format( len(checkingStatusByBookDict) ) )
@@ -1332,7 +1332,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( commentTagFilepath )
-        except ValueError: logging.error( "PTX8 comment tag file seemed unexpected: {}".format( commentTagFilepath ) )
+        except ValueError: logging.critical( "PTX8 comment tag file seemed unexpected: {}".format( commentTagFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} comment tags.".format( len(commentTagDict) ) )
         if debuggingThisModule: print( "\ncommentTagDict", len(commentTagDict), commentTagDict )
@@ -1406,7 +1406,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( derivedTranslationStatusFilepath )
-        except ValueError: logging.error( "PTX8 derived translation status file seemed unexpected: {}".format( derivedTranslationStatusFilepath ) )
+        except ValueError: logging.critical( "PTX8 derived translation status file seemed unexpected: {}".format( derivedTranslationStatusFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  Loaded {:,} derived translation status books.".format( len(derivedTranslationStatusByBookDict) ) )
@@ -1443,7 +1443,7 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule: assert isinstance( jsonData, dict )
 
         try: self.filepathsNotYetLoaded.remove( licenceFilepath )
-        except ValueError: logging.error( "PTX8 license file seemed unexpected: {}".format( licenceFilepath ) )
+        except ValueError: logging.critical( "PTX8 license file seemed unexpected: {}".format( licenceFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} license elements.".format( len(jsonData) ) )
         if debuggingThisModule: print( '\nPTX8Licence', len(jsonData), jsonData )
@@ -1555,7 +1555,7 @@ class PTX8Bible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
             try: self.filepathsNotYetLoaded.remove( noteFilepath )
-            except ValueError: logging.error( "PTX8 notes file seemed unexpected: {}".format( noteFilepath ) )
+            except ValueError: logging.critical( "PTX8 notes file seemed unexpected: {}".format( noteFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} noters.".format( len(notesList) ) )
         if debuggingThisModule: print( "\nnotesList", len(notesList), notesList )
@@ -1650,7 +1650,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( parallelPassageStatusFilepath )
-        except ValueError: logging.error( "PTX8 parallel passage status file seemed unexpected: {}".format( parallelPassageStatusFilepath ) )
+        except ValueError: logging.critical( "PTX8 parallel passage status file seemed unexpected: {}".format( parallelPassageStatusFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} parallel passage status entries.".format( len(parallelPassageStatusDict) ) )
         if debuggingThisModule: print( "\nparallelPassageStatusDict", len(parallelPassageStatusDict), parallelPassageStatusDict )
@@ -1746,7 +1746,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectBiblicalTermsFilepath )
-        except ValueError: logging.error( "PTX8 project Biblical terms file seemed unexpected: {}".format( projectBiblicalTermsFilepath ) )
+        except ValueError: logging.critical( "PTX8 project Biblical terms file seemed unexpected: {}".format( projectBiblicalTermsFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project Biblical terms entries.".format( len(projectBiblicalTermsDict) ) )
         if debuggingThisModule: print( "\nprojectBiblicalTermsDict", len(projectBiblicalTermsDict), projectBiblicalTermsDict )
@@ -2070,7 +2070,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectProgressFilepath )
-        except ValueError: logging.error( "PTX8 project progress file seemed unexpected: {}".format( projectProgressFilepath ) )
+        except ValueError: logging.critical( "PTX8 project progress file seemed unexpected: {}".format( projectProgressFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} project progress entries.".format( len(projectProgressDict) ) )
         if debuggingThisModule: print( "\nprojectProgressDict", len(projectProgressDict), projectProgressDict )
@@ -2111,7 +2111,7 @@ class PTX8Bible( Bible ):
         self.suppliedMetadata['PTX8']['ProjectProgressCSV'] = lines
 
         try: self.filepathsNotYetLoaded.remove( projectProgressCSVFilepath )
-        except ValueError: logging.error( "PTX8 project progress CSV file seemed unexpected: {}".format( projectProgressCSVFilepath ) )
+        except ValueError: logging.critical( "PTX8 project progress CSV file seemed unexpected: {}".format( projectProgressCSVFilepath ) )
     # end of PTX8Bible.loadPTX8ProjectProgressCSV
 
 
@@ -2204,7 +2204,7 @@ class PTX8Bible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
             try: self.filepathsNotYetLoaded.remove( printConfigFilepath )
-            except ValueError: logging.error( "PTX8 print config file seemed unexpected: {}".format( progressFilepath ) )
+            except ValueError: logging.critical( "PTX8 print config file seemed unexpected: {}".format( progressFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         if debuggingThisModule: print( "\nprintConfigDict", len(printConfigDict), printConfigDict )
@@ -2373,7 +2373,7 @@ class PTX8Bible( Bible ):
                 else: processPrintDraftChangesLine( line, lineCount )
 
         try: self.filepathsNotYetLoaded.remove( autocorrectFilepath )
-        except ValueError: logging.error( "PTX8 print draft changes file seemed unexpected: {}".format( autocorrectFilepath ) )
+        except ValueError: logging.critical( "PTX8 print draft changes file seemed unexpected: {}".format( autocorrectFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} print draft changes elements.".format( len(PTXPrintDraftChanges) ) )
         if debuggingThisModule: print( '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
@@ -2448,7 +2448,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( spellingStatusFilepath )
-        except ValueError: logging.error( "PTX8 spelling status file seemed unexpected: {}".format( spellingStatusFilepath ) )
+        except ValueError: logging.critical( "PTX8 spelling status file seemed unexpected: {}".format( spellingStatusFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict) ) )
         if debuggingThisModule: print( "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
@@ -2538,7 +2538,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("loadPTX8Styles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )
 
             try: self.filepathsNotYetLoaded.remove( styleFilepath )
-            except ValueError: logging.error( "PTX8 style file seemed unexpected: {}".format( styleFilepath ) )
+            except ValueError: logging.critical( "PTX8 style file seemed unexpected: {}".format( styleFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} style files.".format( len(PTXStyles) ) )
         if debuggingThisModule: print( '\nPTXStyles', len(PTXStyles), PTXStyles )
@@ -2648,7 +2648,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( renderingTermsFilepath )
-        except ValueError: logging.error( "PTX8 rendering terms file seemed unexpected: {}".format( renderingTermsFilepath ) )
+        except ValueError: logging.critical( "PTX8 rendering terms file seemed unexpected: {}".format( renderingTermsFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} term renderings.".format( len(TermRenderingsDict) ) )
         if debuggingThisModule: print( "\nTermRenderingsDict", len(TermRenderingsDict), TermRenderingsDict )
@@ -2684,7 +2684,7 @@ class PTX8Bible( Bible ):
         self.suppliedMetadata['PTX8']['UniqueId'] = uniqueId
 
         try: self.filepathsNotYetLoaded.remove( uniqueIdFilepath )
-        except ValueError: logging.error( "PTX8 unique id file seemed unexpected: {}".format( uniqueIdFilepath ) )
+        except ValueError: logging.critical( "PTX8 unique id file seemed unexpected: {}".format( uniqueIdFilepath ) )
     # end of PTX8Bible.loadUniqueId
 
 
@@ -2781,7 +2781,7 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( wordAnalysesFilepath )
-        except ValueError: logging.error( "PTX8 word analyses file seemed unexpected: {}".format( wordAnalysesFilepath ) )
+        except ValueError: logging.critical( "PTX8 word analyses file seemed unexpected: {}".format( wordAnalysesFilepath ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {:,} word analysis entries.".format( len(wordAnalysesDict) ) )
         if debuggingThisModule: print( "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
@@ -2804,7 +2804,7 @@ class PTX8Bible( Bible ):
                 if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
-                logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+                logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTX8Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
@@ -2815,15 +2815,15 @@ class PTX8Bible( Bible ):
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.stashBook( UBB )
-        else: logging.info( "USFM book {} was completely blank".format( BBB ) )
+        else: logging.info( "PTX8 USFM book {} was completely blank".format( BBB ) )
         bookfilepath = os.path.join( self.sourceFolder, filename )
         try: self.filepathsNotYetLoaded.remove( bookfilepath )
-        except ValueError: logging.error( "PTX8 {} book file seemed unexpected: {}".format( BBB, bookfilepath ) )
+        except ValueError: logging.critical( "PTX8 {} book file seemed unexpected: {}".format( BBB, bookfilepath ) )
         self.bookNeedsReloading[BBB] = False
     # end of PTX8Bible.loadBook
 
 
-    def _loadBookMP( self, BBB_Filename ):
+    def _loadBookMP( self, BBB_Filename_Tuple ):
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -2831,24 +2831,30 @@ class PTX8Bible( Bible ):
         Parameter is a 2-tuple containing BBB and the filename.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( exp("loadBookMP( {} )").format( BBB_Filename ) )
+            print( exp("_loadBookMP( {} )").format( BBB_Filename_Tuple ) )
 
-        BBB, filename = BBB_Filename
-        if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
-            return self.books[BBB] # Already loaded
-        #if BBB in self.triedLoadingBook:
-            #logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
-            #return # We've already attempted to load this book
+        BBB, filename = BBB_Filename_Tuple
+        if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
+            if BBB in self.books:
+                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                return # Already loaded
+            if BBB in self.triedLoadingBook:
+                logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )
+                return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
+        if filename is None: raise FileNotFoundError( "PTX8Bible._loadBookMP: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
-        UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
+        if UBB._rawLines:
+            UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
+        else: logging.info( "PTX8 USFM book {} was completely blank".format( BBB ) )
+        self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )
         return UBB
-    # end of PTX8Bible.loadBookMP
+    # end of PTX8Bible._loadBookMP
 
 
     def loadBooks( self ):
@@ -2871,7 +2877,10 @@ class PTX8Bible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
-                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                    for bBook in results:
+                        self.stashBook( bBook ) # Saves them in the correct order
+                        try: self.filepathsNotYetLoaded.remove( bBook.sourceFilepath ) # Can't do this in _loadBookMP() because it's not atomic
+                        except ValueError: logging.critical( "PTX8 {} book file seemed unexpected: {}".format( bBook.BBB, bBook.sourceFilepath ) )
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -2963,7 +2972,7 @@ def demo():
             result3 = PTX8BibleFileCheck( standardTestFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
-    specificTestFolder = '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects 2017-10-02/MBTV/'
+    specificTestFolder = '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects 2017-11-10 with OET-CV/MBTV/'
     if 0: # specify specificTestFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( specificTestFolder ) )
         PTX8_Bible = PTX8Bible( specificTestFolder )
@@ -2992,7 +3001,6 @@ def demo():
             #testFilepath = os.path.join( specificTestFolder, testFilename+'/', testFilename+'_utf8.txt' )
             PTX8_Bible = PTX8Bible( specificTestFolder, testFilename )
             PTX8_Bible.load()
-
 
     if 1: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
@@ -3049,7 +3057,11 @@ def demo():
                     print()
 
                 # Test discovery code
-                PTX8_Bible.discover() # Quite time-consuming
+                try:
+                    if PTX8_Bible.discoveryResults is None: # (Can be already done above in strict-checking mode)
+                        PTX8_Bible.discover() # Quite time-consuming
+                except AttributeError: # no discoveryResults variable yet
+                    PTX8_Bible.discover() # Quite time-consuming
 
                 # Test BDB code for display PTX8 metadata files
                 if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -3069,9 +3081,10 @@ def demo():
         # Look at various projects inside various copies of the Paratext 8 folder made over time
         searchFolderName = '../../../../../Data/Work/VirtualBox_Shared_Folder/'
         searchFolderHead = 'My Paratext 8 Projects' # often followed by a date
-        possibleProjectFolders = ( 'engWEB14',
+        possibleProjectFolders = (
+                    'engWEB14',
                     'MBTV', 'MBTBT', 'MBTBC',
-                    'OET-BV', 'OET-LV', 'OET-RV', 'OET-SV', 'OET-EV'
+                    'OET-BV', 'OET-LV', 'OET-RV', 'OET-CV', 'OET-SV', 'OET-EV'
                     )
 
         for something in sorted( os.listdir( searchFolderName ) ):
