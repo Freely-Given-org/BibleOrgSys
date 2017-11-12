@@ -68,7 +68,7 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-09' # by RJH
+LastModifiedDate = '2017-11-10' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.23'
@@ -101,6 +101,7 @@ DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’�
                                   '««','»»', '‹‹','››', '¿¿', '¡¡',
                                   ',,', '..', '!!', '??', '::', ';;',
                                   ' ,', ' .', ' !', ' ?', ' :', ' ;',
+                                  ', ,', '. .', '! !', '? ?', ': :', '; ;',
                                   '<','>', '+','*',
                                   '&','%','$','#','@','~','`','|','^','\\',
                                   ' -','- ','--', '__',
