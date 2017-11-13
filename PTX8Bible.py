@@ -520,6 +520,7 @@ class PTX8Bible( Bible ):
 
         self.settingsFilepath = None
         self.filepathsNotYetLoaded = []
+        self.conflicts = []
 
         # Create empty containers for loading the XML metadata files
         #projectUsersDict = self.PTXStyles = self.PTXVersification = self.PTXLanguage = None
@@ -1468,13 +1469,13 @@ class PTX8Bible( Bible ):
             #logging.error( "Got more than one note file: {}".format( noteFilenames ) )
         if not noteFilenames: return
 
-        notesList = {}
+        notesDictByName, notesDictByThread = {}, {}
         #loadErrors = []
 
         for noteFilename in noteFilenames:
             noterName = noteFilename[6:-4] # Remove the Notes_ and the .xml
-            assert noterName not in notesList
-            notesList[noterName] = []
+            assert noterName not in notesDictByName
+            notesDictByName[noterName] = []
 
             noteFilepath = os.path.join( self.sourceFilepath, noteFilename )
             if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1511,7 +1512,8 @@ class PTX8Bible( Bible ):
                             else:
                                 logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                        commentDict = { 'Thread':thread, 'User':user, 'VerseRef':verseRef, 'Language':language, 'Date':date }
+                        commentDict = { 'Noter':noterName, 'Thread':thread, 'User':user,
+                                        'VerseRef':verseRef, 'Language':language, 'Date':date }
 
                         for subelement in element:
                             sublocation = subelement.tag + ' in ' + elementLocation
@@ -1544,23 +1546,56 @@ class PTX8Bible( Bible ):
                             else:
                                 logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    elif element.tag == 'ConflictType':halt
+                    #elif element.tag == 'ConflictType':halt
                     else:
                         logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     #print( "commentDict", commentDict )
-                    notesList[noterName].append( commentDict )
+                    if commentDict['ConflictType'] == 'verseText':
+                        #print( "{}/ Noter: {} @ {} @ {}".format( len(self.conflicts)+1, noterName, commentDict['VerseRef'], commentDict['Date'].split('T',1)[0] ) )
+                        #print( "  Type: {}".format( commentDict['Type'] ) )
+                        #print( "  ConflictType: {}".format( commentDict['ConflictType'] ) )
+                        #print( "  Status: {}".format( commentDict['Status'] ) )
+                        #try: print( "  ConflictResolutionAction: {}".format( commentDict['ConflictResolutionAction'] ) )
+                        #except KeyError: pass
+                        ##print( "  AcceptedChangeXml: {}".format( commentDict['AcceptedChangeXml'] ) )
+                        self.conflicts.append( commentDict )
+                    notesDictByName[noterName].append( commentDict )
+                    assert thread
+                    if thread not in notesDictByThread: notesDictByThread[thread] = []
+                    notesDictByThread[thread].append( commentDict )
             else:
                 logging.critical( _("Unrecognised PTX8 {} note/comment list tag: {}").format( noterName, self.tree.tag ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
+            #print( "\nNotes for {}: ({}) {}".format( noterName, len(notesDictByName[noterName]), notesDictByName[noterName] ) )
+
             try: self.filepathsNotYetLoaded.remove( noteFilepath )
             except ValueError: logging.critical( "PTX8 notes file seemed unexpected: {}".format( noteFilepath ) )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} noters.".format( len(notesList) ) )
-        if debuggingThisModule: print( "\nnotesList", len(notesList), notesList )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            print( "  Checking {} possible conflicts…".format( len(self.conflicts) ) )
+        for commentDict1 in self.conflicts[:]: # Work on a copy since we modify it
+            noterName = commentDict1['Noter']
+            threadNumber = commentDict1['Thread']
+            #print( "Have possible conflict thread {} by {}".format( threadNumber, noterName ) )
+            threadNotes = notesDictByThread[threadNumber]
+            #print( "  {}".format( threadNotes ) )
+            for threadNoteDict in threadNotes:
+                assert threadNoteDict['Thread'] == threadNumber
+                #print( "  {} status is {}".format( threadNoteDict['Noter'], threadNoteDict['Status'] ) )
+                if threadNoteDict['Status'] == 'deleted': # Remove from conflicts
+                    self.conflicts.remove( commentDict1 )
+                    #print( "  removed!" )
+                    break
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            print( "    Now have {} remaining conflicts".format( len(self.conflicts) ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loaded {} noters.".format( len(notesDictByName) ) )
+        if debuggingThisModule: print( "\nnotesDictByName", len(notesDictByName), notesDictByName )
         # Call this 'PTXNotes' rather than just 'Notes' which might just be a note on the particular version
-        if notesList: self.suppliedMetadata['PTX8']['PTXNotes'] = notesList
+        if notesDictByName: self.suppliedMetadata['PTX8']['PTXNotesByName'] = notesDictByName
+        if notesDictByThread: self.suppliedMetadata['PTX8']['PTXNotesByThread'] = notesDictByThread
     # end of PTX8Bible.loadPTX8Notes
 
 
@@ -2972,7 +3007,7 @@ def demo():
             result3 = PTX8BibleFileCheck( standardTestFolder, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "PTX8 TestA3", result3 )
 
-    specificTestFolder = '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects 2017-11-10 with OET-CV/MBTV/'
+    specificTestFolder = '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/MBTV/'
     if 0: # specify specificTestFolder containing a single module
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( specificTestFolder ) )
         PTX8_Bible = PTX8Bible( specificTestFolder )
