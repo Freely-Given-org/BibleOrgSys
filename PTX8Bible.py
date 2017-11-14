@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-13' # by RJH
+LastModifiedDate = '2017-11-15' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -75,7 +75,9 @@ MARKER_FILE_EXTENSIONS = ( '.LDML', '.VRS', ) # Shouldn't be included in the abo
 EXCLUDE_FILE_EXTENSIONS = ( '.SSF', '.LDS' ) # Shouldn't be included in the above filenames lists
 MARKER_THRESHOLD = 6 # How many of the above must be found (after EXCLUDEs are subtracted)
 # NOTE: Folder names must be exact case
-EXPECTED_FOLDER_NAMES = ( 'cache', 'Figures', '.hg', 'PrintDraft', 'shared', ) # but these aren't compulsory
+EXPECTED_FOLDER_NAMES = ( 'Figures', 'PrintDraft', 'Interlinear_en', 'shared', # PTX8 folders
+                         '.hg', 'cache', 'store', 'data', 'gather', '_interlinear___english', '_interlinear__en', '_print_draft', # Mercurial sub-folders
+                         ) # but these aren't compulsory
 
 
 def exp( messageString ):
@@ -566,7 +568,7 @@ class PTX8Bible( Bible ):
                 if folderName not in EXPECTED_FOLDER_NAMES:
                     unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.warning( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.warning( _("PTX8 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
