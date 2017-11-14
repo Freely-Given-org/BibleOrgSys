@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-15' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -519,7 +519,7 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX',): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( _("USFM preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing

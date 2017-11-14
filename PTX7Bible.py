@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-09' # by RJH
+LastModifiedDate = '2017-11-15' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.29'
@@ -586,7 +586,7 @@ class PTX7Bible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( exp("preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( _("PTX7 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
