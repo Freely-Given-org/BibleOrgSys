@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2017-11-16' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.80'
@@ -553,7 +553,9 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
-            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'e-Sword','MySword','MyBible', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS',
+                                         'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
+                                         'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
@@ -566,11 +568,11 @@ class InternalBible:
             nameChangeDict = {}
             nameChangeDict['File'] = {} # This is metadata submitted by the user in a separate text file
             nameChangeDict['BCV'] = {}
-            nameChangeDict['Online'] = { 'LongName':'FullName', }
-            nameChangeDict['theWord'] = { 'description':'FullName', 'short.title':'ShortName', }
-            nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns', }
-            nameChangeDict['VerseView'] = { 'Title':'FullName', }
-            nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML', }
+            nameChangeDict['Online'] = { 'LongName':'FullName' }
+            nameChangeDict['theWord'] = { 'description':'FullName', 'short.title':'ShortName' }
+            nameChangeDict['Unbound'] = { 'name':'FullName', 'filetype':'Filetype', 'copyright':'Copyright', 'abbreviation':'Abbreviation', 'language':'Language', 'note':'Note', 'columns':'Columns' }
+            nameChangeDict['VerseView'] = { 'Title':'FullName' }
+            nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML' }
             nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', } # Not sure if these two are needed here???
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
@@ -617,7 +619,7 @@ class InternalBible:
 #           Either that, or bring the DBL one into here
         elif applyMetadataType == 'SSF':
             # This is a special case (coz it's inside the PTX7 metadata)
-            wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
+            wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata['PTX7']['SSF'].items():
@@ -727,7 +729,7 @@ class InternalBible:
         elif applyMetadataType == 'MyBible':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
             #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
-            wantedDict = { 'language':'Language', 'description':'FullName', 'detailed_info':'Description', }
+            wantedDict = { 'language':'Language', 'description':'FullName', 'detailed_info':'Description' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
@@ -746,7 +748,7 @@ class InternalBible:
                     self.settingsDict[newKey] = value
             #print( self.settingsDict ); halt
 
-        elif applyMetadataType in ( 'e-Sword','MySword', ):
+        elif applyMetadataType in ( 'e-Sword-Bible', 'e-Sword-Commentary', 'MySword' ):
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
             #                           RightToLeft, Strong, Version
             wantedDict = { 'Abbreviation':'Abbreviation', 'Description':'Description', }

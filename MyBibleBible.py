@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.17'
@@ -610,7 +610,7 @@ class MyBibleBible( Bible ):
                 ##print( row )
                 #line = None
             #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
-            if line is None: logging.warning( "MyBibleBible.loadBibleBook: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( "MyBibleBible.loadBibleBook: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not line: logging.warning( "MyBibleBible.loadBibleBook: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
@@ -728,7 +728,7 @@ class MyBibleBible( Bible ):
                 ##print( row )
                 #line = None
             #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
-            if line is None: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Found missing commentary line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Have missing commentary line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not line: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Found blank commentary line at {} {}:{}".format( BBB, C, V ) )
                 else:

@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -562,7 +562,7 @@ class InternalBibleBook:
 
         #print( "QQQ MOVE OUT NOTES" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-        dummyValue = 99999
+        largeDummyValue = 99999
         ixFN = adjText.find( '\\f ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixFN == -1:
@@ -571,7 +571,7 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE footnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
-        if ixFN == -1: ixFN = dummyValue
+        if ixFN == -1: ixFN = largeDummyValue
         ixEN = adjText.find( '\\fe ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixEN == -1:
@@ -580,7 +580,7 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE endnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
-        if ixEN == -1: ixEN = dummyValue
+        if ixEN == -1: ixEN = largeDummyValue
         ixXR = adjText.find( '\\x ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixXR == -1:
@@ -589,7 +589,7 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE cross-reference marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
-        if ixXR == -1: ixXR = dummyValue
+        if ixXR == -1: ixXR = largeDummyValue
         ixFIG = adjText.find( '\\fig ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixFIG == -1:
@@ -598,7 +598,7 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE figure marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
-        if ixFIG == -1: ixFIG = dummyValue
+        if ixFIG == -1: ixFIG = largeDummyValue
         ixSTR = adjText.find( '\\str ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixSTR == -1:
@@ -607,7 +607,7 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE Strongs marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
-        if ixSTR == -1: ixSTR = dummyValue
+        if ixSTR == -1: ixSTR = largeDummyValue
         ixSEM = adjText.find( '\\sem ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixSEM == -1:
@@ -616,13 +616,13 @@ class InternalBibleBook:
                     fixErrors.append( lineLocationSpace + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
-        if ixSEM == -1: ixSEM = dummyValue
+        if ixSEM == -1: ixSEM = largeDummyValue
         ixVP = adjText.find( '\\vp ' )
         if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-        if ixVP == -1: ixVP = dummyValue
+        if ixVP == -1: ixVP = largeDummyValue
         #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
         ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
-        while ix1 < dummyValue: # We have one or the other
+        while ix1 < largeDummyValue: # We have one or the other
             if ix1 == ixFN:
                 ix2 = adjText.find( '\\f*' )
                 if ix2 == -1: ix2 = adjText.find( '\\F*' )
@@ -675,7 +675,7 @@ class InternalBibleBook:
                 fixErrors.append( lineLocationSpace + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found unmatched {} open after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
-                ix2 = 99999 # Go to the end
+                ix2 = largeDummyValue # Go to the end
             elif ix2 < ix1: # closing marker is before opening marker
                 fixErrors.append( lineLocationSpace + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found unmatched {} after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
@@ -775,25 +775,25 @@ class InternalBibleBook:
             # Get ready for the next loop
             ixFN = adjText.find( '\\f ' )
             if ixFN == -1: ixFN = adjText.find( '\\F ' )
-            if ixFN == -1: ixFN = dummyValue
+            if ixFN == -1: ixFN = largeDummyValue
             ixEN = adjText.find( '\\fe ' )
             if ixEN == -1: ixEN = adjText.find( '\\FE ' )
-            if ixEN == -1: ixEN = dummyValue
+            if ixEN == -1: ixEN = largeDummyValue
             ixXR = adjText.find( '\\x ' )
             if ixXR == -1: ixXR = adjText.find( '\\X ' )
-            if ixXR == -1: ixXR = dummyValue
+            if ixXR == -1: ixXR = largeDummyValue
             ixFIG = adjText.find( '\\fig ' )
             if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
-            if ixFIG == -1: ixFIG = dummyValue
+            if ixFIG == -1: ixFIG = largeDummyValue
             ixSTR = adjText.find( '\\str ' )
             if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
-            if ixSTR == -1: ixSTR = dummyValue
+            if ixSTR == -1: ixSTR = largeDummyValue
             ixSEM = adjText.find( '\\sem ' )
             if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
-            if ixSEM == -1: ixSEM = dummyValue
+            if ixSEM == -1: ixSEM = largeDummyValue
             ixVP = adjText.find( '\\vp ' )
             if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-            if ixVP == -1: ixVP = dummyValue
+            if ixVP == -1: ixVP = largeDummyValue
             ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
         #if extras: print( "Fix gave {!r} and {!r}".format( adjText, extras ) )
         #if len(extras)>1: print( "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )
@@ -1006,18 +1006,21 @@ class InternalBibleBook:
                     ixBS = cleanText.index( '\\' )
                     ixSP = cleanText.find( ' ', ixBS )
                     ixAS = cleanText.find( '*', ixBS )
-                    if ixSP == -1: ixSP=99999
-                    if ixAS == -1: ixAS=99999
+                    if ixSP == -1: ixSP=largeDummyValue
+                    if ixAS == -1: ixAS=largeDummyValue
                     ixEND = min( ixSP, ixAS )
-                    if ixEND != 99999: # remove the marker and the following space or asterisk
+                    if ixEND != largeDummyValue: # remove the marker and the following space or asterisk
                         #print( "Removing unknown marker {!r} from {!r}".format( cleanText[ixBS:ixEND+1], cleanText ) )
                         cleanText = cleanText[:ixBS] + cleanText[ixEND+1:]
                     else: # we didn't find a space or asterisk so it's at the end of the line
                         #print( "text: {!r}".format( text ) )
                         #print( "adjText: {!r}".format( adjText ) )
                         #print( "cleanText: {!r}".format( cleanText ) )
-                        #print( ixBS, ixSP, ixAS, ixEND )
-                        if BibleOrgSysGlobals.debugFlag: assert ixSP==99999 and ixAS==99999 and ixEND==99999
+                        #print( "len={} ixBS={} ixSP={} ixAS={} ixEND={}".format( len(cleanText), ixBS, ixSP, ixAS, ixEND ) )
+                        #print( "cleanText part: …{!r}<<HERE>>{!r}…".format( cleanText[ixBS-10:ixBS], cleanText[ixBS:ixBS+20] ) )
+                        if BibleOrgSysGlobals.debugFlag:
+                            assert ixSP==largeDummyValue and ixAS==largeDummyValue and ixEND==largeDummyValue
+                            logging.critical( "InternalBibleBook.processLines.processLineFix: truncating {} {}:{} {} line".format( self.BBB, C, V, originalMarker ) )
                         cleanText = cleanText[:ixBS].rstrip()
                         #print( "QQQ7: rstrip" ); halt
                         #print( "cleanText: {!r}".format( cleanText ) )
@@ -1638,19 +1641,20 @@ class InternalBibleBook:
                     haveWaitingC = False
 
                 # Convert v markers to milestones only
+                largeDummyValue = 99999
                 text = text.lstrip()
                 #print( "QQQ8: lstrip" )
                 ixSP = text.find( ' ' )
                 ixBS = text.find( '\\' )
-                if ixSP == -1: ixSP=99999
-                if ixBS == -1: ixBS=99999
+                if ixSP == -1: ixSP=largeDummyValue
+                if ixBS == -1: ixBS=largeDummyValue
                 ix = min( ixSP, ixBS ) # Break at the first space or backslash
                 if ix<ixSP: # It must have been the backslash first
                     #print( "processLine had an unusual case in {} {}:{}: {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
                     fixErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Unusual field (after verse number): {!r}").format( originalText ) )
                     logging.error( "InternalBibleBook.processLine: " + _("Unexpected backslash touching verse number (missing space?) after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                     self.addPriorityError( 94, C, V, _("Unexpected backslash touching verse number (missing space?) in {!r}").format( originalText ) )
-                if ix==99999: # There's neither -- not unexpected if this is a translation in progress
+                if ix==largeDummyValue: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: {!r} {!r} {} {} {}".format( self.BBB, C, V, originalMarker, originalText, ix, ixSP, ixBS ) )
                     # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                     # (and especially coz we don't know yet if this is a finished translation)

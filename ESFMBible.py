@@ -35,7 +35,7 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-08' # by RJH
+LastModifiedDate = '2017-11-19' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.60'
@@ -538,9 +538,10 @@ class ESFMBible( Bible ):
         if 'Tag errors' in self.semanticDict: print( "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
         if 'Missing' in self.semanticDict: print( "\nESFMBible.load missing:", self.semanticDict['Missing'] )
         #print( "\nSemantic dict: {}".format( self.semanticDict ) )
-        print( "\n\nSemantic dict:" )
-        for someKey,someEntry in self.semanticDict.items():
-            print( "\n{}: {}".format( someKey, someEntry ) )
+        if debuggingThisModule:
+            print( "\n\nSemantic dict:" )
+            for someKey,someEntry in self.semanticDict.items():
+                print( "\n{}: {}".format( someKey, someEntry ) )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
 
@@ -573,10 +574,11 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nESFM A{}/".format( count ) )
                 EsfmB = ESFMBible( testFolder, name, abbreviation )
                 EsfmB.load()
-                print( "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
-                print( "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
-                print( "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
-                print( "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
+                    print( "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
+                    print( "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
+                    print( "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( EsfmB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     EsfmB.check()

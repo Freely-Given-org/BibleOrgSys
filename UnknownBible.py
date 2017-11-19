@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-19' # by RJH
+LastModifiedDate = '2017-11-19' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -69,6 +69,7 @@ from YETBible import YETBibleFileCheck
 from theWordBible import theWordBibleFileCheck
 from MySwordBible import MySwordBibleFileCheck
 from ESwordBible import ESwordBibleFileCheck
+from ESwordCommentary import ESwordCommentaryFileCheck
 from MyBibleBible import MyBibleBibleFileCheck
 from PalmDBBible import PalmDBBibleFileCheck
 from OnlineBible import OnlineBibleFileCheck
@@ -165,13 +166,19 @@ class UnknownBible:
                 typesStrictlyFound.append( 'MySword:' + str(MySwordBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
 
-            # Search for e-Sword Bibles
+            # Search for e-Sword Bibles and commentaries
             ESwordBibleStrictCount = ESwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
             if ESwordBibleStrictCount:
                 totalBibleStrictCount += ESwordBibleStrictCount
                 totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'e-Sword:' + str(ESwordBibleStrictCount) )
+                typesStrictlyFound.append( 'e-Sword-Bible:' + str(ESwordBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
+            ESwordCommentaryStrictCount = ESwordCommentaryFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if ESwordCommentaryStrictCount:
+                totalBibleStrictCount += ESwordCommentaryStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
 
             # Search for MyBible Bibles
             MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -379,13 +386,19 @@ class UnknownBible:
             typesFound.append( 'MySword:' + str(MySwordBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
 
-        # Search for e-Sword Bibles
+        # Search for e-Sword Bibles and Commentaries
         ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if ESwordBibleCount:
             totalBibleCount += ESwordBibleCount
             totalBibleTypes += 1
-            typesFound.append( 'e-Sword:' + str(ESwordBibleCount) )
+            typesFound.append( 'e-Sword-Bible:' + str(ESwordBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
+        ESwordCommentaryCount = ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if ESwordCommentaryCount:
+            totalBibleCount += ESwordCommentaryCount
+            totalBibleTypes += 1
+            typesFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
 
         # Search for MyBible Bibles
         MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -628,6 +641,10 @@ class UnknownBible:
                 self.foundType = "e-Sword Bible"
                 if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif ESwordCommentaryCount == 1:
+                self.foundType = "e-Sword Commentary"
+                if autoLoad: return ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             elif MyBibleBibleCount == 1:
                 self.foundType = "MyBible Bible"
                 if autoLoad: return MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
@@ -736,7 +753,6 @@ def demo():
 
     # Now demo the class
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    '../../../../../Data/Work/Bibles/theWord modules/',
                     '../../../../../Data/Work/Bibles/Biola Unbound modules/',
                     '../../../../../Data/Work/Bibles/EasyWorship Bibles/',
                     '../../../../../Data/Work/Bibles/OpenSong Bibles/',

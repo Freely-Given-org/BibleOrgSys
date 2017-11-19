@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-05' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.94'
@@ -6789,7 +6789,7 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at xxx
         """
-        from ESwordBible import createESwordModule
+        from ESwordBible import createESwordBibleModule
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -6805,7 +6805,7 @@ class BibleWriter( InternalBible ):
                 #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         #self.__adjustControlDict( controlDict )
 
-        return createESwordModule( self, outputFolder, controlDict )
+        return createESwordBibleModule( self, outputFolder, controlDict )
     # end of BibleWriter.toESword
 
 
@@ -9328,7 +9328,7 @@ class BibleWriter( InternalBible ):
         swOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Sword_' + ('Reexport/' if self.objectTypeString=='Sword' else 'Export/' ) )
         tWOutputFolder = os.path.join( givenOutputFolderName, 'BOS_theWord_' + ('Reexport/' if self.objectTypeString=='theWord' else 'Export/' ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, 'BOS_MySword_' + ('Reexport/' if self.objectTypeString=='MySword' else 'Export/' ) )
-        ESwOutputFolder = os.path.join( givenOutputFolderName, 'BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=='e-Sword' else 'Export/' ) )
+        ESwOutputFolder = os.path.join( givenOutputFolderName, 'BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=='e-Sword-Bible' else 'Export/' ) )
         MyBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_MyBible_' + ('Reexport/' if self.objectTypeString=='MyBible' else 'Export/' ) )
         SwSOutputFolder = os.path.join( givenOutputFolderName, 'BOS_SwordSearcher_Export/' )
         DrOutputFolder = os.path.join( givenOutputFolderName, 'BOS_DrupalBible_' + ('Reexport/' if self.objectTypeString=='DrupalBible' else 'Export/' ) )

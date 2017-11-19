@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-11-16' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.53'
@@ -496,7 +496,7 @@ def resettheWordMargins( ourGlobals, setKey=None ):
 # end of resettheWordMargins
 
 
-def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleRTFLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     """
     Adjusts the formatting of the line for Bible reference BBB C:V
         and then writes it to the bookObject.
@@ -511,7 +511,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( "theWordBible.handleLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
+            print( "theWordBible.handleRTFLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
         if originalLine: assert '\n' not in originalLine and '\r' not in originalLine
     line = originalLine
 
@@ -793,7 +793,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
         #if myGlobals['haveParagraph']:
             #bookObject.addLine( 'p', '' )
             #myGlobals['haveParagraph'] = False
-# end of theWordBible.handleLine
+# end of theWordBible.handleRTFLine
 
 
 
@@ -898,7 +898,7 @@ class theWordBible( Bible ):
                                     logging.warning( 'theWordBible.load: Additional {} "Found blank verse line" messages suppressed…'.format( BBB ) )
                                 consecutiveBlankLineCount += 1
 
-                            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
+                            handleRTFLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
                             V += 1
                             if V > numV:
                                 C += 1

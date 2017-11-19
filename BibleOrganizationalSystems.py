@@ -57,7 +57,7 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-11' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.32'
@@ -490,6 +490,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     def getNumVersesList( self, BBB, allowAlternatives=False ):
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
+
+        The length of the list is the number of chapters in the book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("getNumVersesList( {} )").format( BBB ) )

@@ -65,7 +65,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-11' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.58'
@@ -686,6 +686,8 @@ class BibleVersificationSystem:
     def getNumVersesList( self, BBB ):
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
+
+        The length of the list is the number of chapters in the book.
         """
         assert len(BBB) == 3
         myList = []

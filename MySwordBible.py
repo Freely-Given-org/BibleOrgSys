@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2017-11-17' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.33'
@@ -68,7 +68,7 @@ import multiprocessing
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-from theWordBible import handleLine
+from theWordBible import handleRTFLine
 
 
 
@@ -310,7 +310,7 @@ class MySwordBible( Bible ):
                 #print( row )
                 line = None
             #print ( nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
-            if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.suppliedMetadata['MySword']:
@@ -330,7 +330,7 @@ class MySwordBible( Bible ):
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #print( "MySword.load", BBB, C, V, repr(line) )
-            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
+            handleRTFLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
                 C += 1
@@ -422,7 +422,7 @@ class MySwordBible( Bible ):
                 #print( row )
                 line = None
             #print ( nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
-            if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.suppliedMetadata['MySword']:
@@ -442,7 +442,7 @@ class MySwordBible( Bible ):
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #print( "MySword.load", BBB, C, V, repr(line) )
-            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
+            handleRTFLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
                 C += 1

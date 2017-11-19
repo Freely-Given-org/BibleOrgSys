@@ -28,14 +28,14 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-08' # by RJH
+LastModifiedDate = '2017-11-19' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.46'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
@@ -82,7 +82,7 @@ class ESFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
             print( "ESFM.load( {}, {} )".format( filename, folder ) )
 
 
@@ -106,7 +106,7 @@ class ESFMBibleBook( BibleBook ):
             Note: This DOESN'T remove the underline/underscore characters used to join translated words
                 which were one word in the original, e.g., went_down
             """
-            if (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1) \
+            if (debuggingThisModule or BibleOrgSysGlobals.debugFlag) \
             and len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
                 print( "\n\nESFMPreprocessing( {} {}:{}, {}, {!r} )".format( BBB, C, V, marker, originalText ) )
 
@@ -114,7 +114,7 @@ class ESFMBibleBook( BibleBook ):
             def saveWord( BBB, C, V, word ):
                 """
                 """
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
                     print( "ESFM saveWord( {}, {}:{}, {!r} )".format( BBB, C, V, word ) )
                 assert word and ' ' not in word
             # end of saveWord
@@ -132,7 +132,7 @@ class ESFMBibleBook( BibleBook ):
                     (for better compatibility with the software chain).
                 """
                 #if C=='4' and V in ('11','12'):
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
                     print( "ESFM saveSemanticTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
@@ -173,7 +173,7 @@ class ESFMBibleBook( BibleBook ):
                     (for better compatibility with the software chain).
                 """
                 #if C=='4' and V in ('11','12'):
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
                     print( "ESFM saveStrongsTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
@@ -352,7 +352,7 @@ class ESFMBibleBook( BibleBook ):
                 print( " got: {!r}".format( resultText ) )
                 #assert originalText.count('_') == resultText.count('_') Not necessarily true
             elif BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and debuggingThisModule) \
-            and '{'  in originalText or '}' in originalText or '=' in originalText:
+            and ('{'  in originalText or '}' in originalText or '=' in originalText):
                 print( "original:", repr(originalText) )
                 print( "returned:", repr(resultText) )
 
