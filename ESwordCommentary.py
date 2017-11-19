@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# ESwordBible.py
+# ESwordCommentary.py
 #
-# Module handling "e-Sword" Bible module files
+# Module handling "e-Sword" Bible commentary module files
 #
 # Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,10 +23,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading e-Sword Bible files.
+Module reading and loading e-Sword Bible commentary files.
 These can be downloaded from: http://www.BibleSupport.com and http://www.biblemodulesresource.com.
 
-e-Sword Bible modules use RTF internally for formatting.
+e-Sword Bible commentary modules use RTF internally for formatting.
     See http://en.wikipedia.org/wiki/Rich_Text_Format
     and http://e-sword-users.org/users/node/3969
 
@@ -49,47 +49,33 @@ e.g.,
 from gettext import gettext as _
 
 LastModifiedDate = '2017-11-20' # by RJH
-ShortProgName = "e-SwordBible"
-ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.35'
+ShortProgName = "e-SwordCommentary"
+ProgName = "e-Sword Commentary format handler"
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os, re
 import sqlite3
 import multiprocessing
+from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
+from ESwordBible import handleESwordLine
 
 
 
-FILENAME_ENDINGS_TO_ACCEPT = ('.BBLX',) # Must be UPPERCASE here
-BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBLX',) # Must be UPPERCASE here
+FILENAME_ENDINGS_TO_ACCEPT = ('.CMTI','.CMTX') # Must be UPPERCASE here
+COMMENTARY_FILENAME_ENDINGS_TO_ACCEPT = ('.CMTI','.CMTX') # Must be UPPERCASE here
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
-def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def ESwordCommentaryFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for e-Sword Bible files or folders in the folder and in the next level down.
 
@@ -99,22 +85,22 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns None, or the number of Bibles found.
 
     if autoLoad is true and exactly one e-Sword Bible is found,
-        returns the loaded ESwordBible object.
+        returns the loaded ESwordCommentary object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentaryFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("ESwordBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("ESwordCommentaryFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("ESwordBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( _("ESwordCommentaryFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " ESwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " ESwordCommentaryFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -132,7 +118,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
 
-    # See if there's an ESwordBible project here in this given folder
+    # See if there's an ESwordCommentary project here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -140,10 +126,10 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentaryFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, lastFilenameFound ) )
-            eSB = ESwordBible( givenFolderName, lastFilenameFound )
+            eSB = ESwordCommentary( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: eSB.preload()
             if autoLoadBooks: eSB.load() # Load and process the database
             return eSB
@@ -156,9 +142,9 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("ESwordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("ESwordCommentaryFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    ESwordBibleFileCheck: Looking for files in {!r}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    ESwordCommentaryFileCheck: Looking for files in {!r}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -180,391 +166,34 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentaryFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, foundProjects[0][1] ) )
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
-            eSB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
+            eSB = ESwordCommentary( foundProjects[0][0], foundProjects[0][1] )
             if autoLoad or autoLoadBooks: eSB.preload()
             if autoLoadBooks: eSB.load() # Load and process the database
             return eSB
         return numFound
-# end of ESwordBibleFileCheck
+# end of ESwordCommentaryFileCheck
 
 
 
-def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+class ESwordCommentary( Bible ):
     """
-    self here is a BibleObject
-
-    Adjusts the formatting of the RTF line for Bible reference BBB C:V
-        and then writes it to the bookObject.
-
-    C and V might be strings or integers
-
-    Try to convert display formatting to semantic formatting as much as possible
-
-    myGlobals dict contains flags.
-
-    Appends pseudo-USFM results to the supplied bookObject.
-
-    NOTE: originalLine can be None here.
-
-    NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
-    """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-        #if debuggingThisModule:
-        print( "ESwordModule.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
-        assert originalLine is None or '\r' not in originalLine
-    #print( "ESwordModule.handleRTFLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-    line = originalLine
-
-    writtenV = False
-    if V==1: appendedCFlag = False
-    if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-
-    # It seems that some commentaries can have newlines in the entries
-    line = line.replace( '\n', '#$#' ) # Replace \n with our temporary newline sequence
-
-    # Now we have to convert RTF codes to our internal codes
-    # First do special characters
-    line = line.replace( '\\ldblquote', '“' ).replace( '\\rdblquote', '”' ) \
-                .replace( '\\lquote', '‘' ).replace( '\\rquote', '’' ) \
-                .replace( '\\emdash', '—' ).replace( '\\endash', '–' )
-    # Now do Unicode characters
-    while True: # Find patterns like \\'d3
-        match = re.search( r"\\'[0-9a-f][0-9a-f]", line )
-        if not match: break
-        #print( originalLine )
-        #print( line )
-        #h1, h2 = line[match.start()+2], line[match.start()+3]
-        i = int( line[match.start()+2:match.end()], 16 ) # Convert two hex characters to decimal
-        #print( h1, h2, i, chr(i) )
-        line = line[:match.start()] + chr( i ) + line[match.end():]
-        #print( line )
-        #print( repr(line) )
-    while True: # Find patterns like \\u253?
-        match = re.search( r'\\u[1-2][0-9][0-9]\?', line )
-        if not match: break
-        #print( originalLine )
-        #print( line )
-        #h1, h2 = line[match.start()+2], line[match.start()+3]
-        i = int( line[match.start()+2:match.end()-1] ) # Convert three digits to decimal
-        #print( h1, h2, i, chr(i) )
-        line = line[:match.start()] + chr( i ) + line[match.end():]
-        #print( line )
-        #print( repr(line) )
-
-    # We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
-    # Try to guess some semantic formatting
-    #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
-    #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-
-    # Stuff to just remove -- not sure what most of this is about yet
-    while True:
-        line = line.lstrip()
-        changed = False
-        for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar',
-                '\\paperw12240', '\\paperh15840',
-                '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080',
-                '\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl',
-                '\\formshade', '\\sectd', '\\pard', '\\keepn',
-                '\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800',
-                '\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32',
-                '\\s17', '\\s1', '\\sa120','\\sb120'
-                '\\itap0', '\\nosupersub', '\\ulnone',
-                '\\cf15', '\\cf14', '\\cf10', '\\cf0', '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
-            if line.startswith( stuff ): line = line[len(stuff):]; changed = True
-            #print( "stuff", repr(stuff) )
-            #print( "line", repr(line[:20]) )
-            #if line.startswith( '\\pd' ): halt
-        if not changed: break
-    for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
-        if line.endswith( stuff ): line = line[:-len(stuff)]
-    if BibleOrgSysGlobals.debugFlag: savedLine = line
-
-    # Try to guess some semantic formatting
-    line = re.sub( r'\\b\\i\\f0 (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading
-    line = re.sub( r'\\cf10\\b\\i (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading in LEB
-    line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
-    line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-    line = re.sub( r'\\cf15\\i(.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
-    line = re.sub( r'^\\i (.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
-    line = re.sub( r'{\\cf15\\I (.+?)}', r'~^~add \1~^~add*', line )
-    line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
-    line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-
-    # Unfortunately, it's all display formatting, no semantic formatting  :-(
-    # NOTE: This doesn't handle nesting yet
-    line = re.sub( r'{\\cf10\\b\\i (.+?)\\cf0\\b0\\i0', r'~^~bdit \1~^~bdit*', line )
-    line = re.sub( r'{\\b (.+?)}', r'~^~bd \1~^~bd*', line )
-    line = re.sub( r'{\\cf15\\i (.+?)}', r'~^~it \1~^~it*', line )
-    line = re.sub( r'{\\cf10\\i (.+?)}', r'~^~it \1~^~it*', line ) # What is different about these?
-    line = re.sub( r'{\\cf2\\i (.+?)}', r'~^~it \1~^~it*', line )
-    line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
-    line = re.sub( r'{\\i(.+?)}', r'~^~it \1~^~it*', line ) # Also occurs without the space in some modules
-    line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
-
-    line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
-    line = line.replace( '\\cf15\\i ', '~^~+it ' ).replace( '\\cf14\\i0', '~^~it*' ) # Attempt to handle some nesting in LEB
-    line = line.replace( '\\i ', '~^~it ' ).replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
-
-    # Not sure what this is
-    line = re.sub( r'{\\cf2\\super (.+?)}', r'', line ) # Notes like '[2]' -- deleted for now
-    line = line.replace( '\\cf2  \\cf0', '' ) # LEB
-    line = line.replace( '\\cf0 ', '' ) # Calvin
-    line = line.replace( '\\loch\\f0', '' ).replace( '\\hich\\f0', '' ) # Calvin
-
-    line = line.replace( '\\par\\par', '\\par' )
-    #line = line.replace( '\\par', '#$#~^~p' ) # Hits \\pard wrongly
-    line = re.sub( r'\\par([^d])', r'#$#~^~p\1', line )
-    line = line.replace( '\\m ', '#$#~^~m ' )
-
-    # Handle module formatting errors -- formatting that goes across verses!
-    line = line.replace( '{\\cf2\\super [ ','[ ' ) # In one module Luke 22:42 -- weird
-    line = line.replace( '{\\cf 2 [','[' ) # In one module John 1:4 -- weird
-    line = line.replace( ']}',']' ) # In one module Luke 22:44; 23:34 -- weird
-    if myName=="Lexham English Bible": line = line.replace( '\\cf14 ','') # Not sure what this is in LEB
-
-    # Handle other left-overs
-    line = line \
-                .replace( '\\pard', '' ) \
-                .replace( '\\keepn', '' ) \
-                .replace( '\\sa120', '' ) \
-                .replace( '\\sb120', '' )
-
-    # Check what's left at the end
-    line = line.replace( '\\line', '#$#' ) # Use this for our newline marker
-    line = line.strip() # There seem to be extra spaces in many modules
-    if '\\' in line or '{' in line or '}' in line:
-        if BibleOrgSysGlobals.debugFlag:
-            logging.error( "{} original line: {!r}".format( myName, originalLine ) )
-            logging.error( "Saved line: {!r}".format( savedLine ) )
-        logging.error( "ESwordModule.load: Doesn't handle {} {}:{} formatted line yet: {!r}".format( BBB, C, V, line ) )
-        if 1: # Unhandled stuff -- not done properly yet… xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-        if 0 and BibleOrgSysGlobals.debugFlag: halt
-    line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
-
-
-    if '#$#' in line: # We need to break the original line into different USFM markers
-        #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        segments = line.split( '#$#' )
-        assert len(segments) >= 2
-        #print( " segments (split by backslash):", segments )
-        leftovers = ''
-        for segment in segments:
-            if segment and segment[0] == '\\':
-                bits = segment.split( None, 1 )
-                #print( " bits", bits )
-                marker = bits[0][1:]
-                if len(bits) == 1:
-                    #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                        bookObject.addLine( marker, '' )
-                    else:
-                        logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
-                        #halt
-                else:
-                    assert len(bits) == 2
-                    if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                        print( "line", repr(line) )
-                        print( "seg", repr(segment) )
-                        print( "segments:", segments )
-                        print( "bits", bits )
-                        print( "marker", marker )
-                        print( "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        if BibleOrgSysGlobals.debugFlag:
-                            assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
-                        bookObject.addLine( marker, bits[1] )
-                    elif not writtenV:
-                        bookObject.addLine( 'v', '{} \\{} {}'.format( V, marker, segment ) )
-                        writtenV = True
-                    else: leftovers += '\\{} {}'.format( marker, segment )
-            else: # What is segment is blank (\\NL* at end of line)???
-                if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                if not writtenV:
-                    bookObject.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
-                    writtenV = True
-                else:
-                    bookObject.addLine( 'v~', leftovers+segment )
-                leftovers = ''
-                #if myGlobals['haveParagraph']:
-                    #bookObject.addLine( 'p', '' )
-                    #myGlobals['haveParagraph'] = False
-        if leftovers:
-            if 1 or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                logging.critical( "ESwordModule.handleRTFLine: Had leftovers {!r} from {!r}".format( leftovers, originalLine ) )
-            else:
-                logging.critical( "ESwordModule.handleRTFLine: Had leftovers {!r}".format( leftovers ) )
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert not leftovers
-    else: # no newlines in the middle
-        if C in (0,'0') and V in (0,'0'):
-            bookObject.addLine( 'ip', line )
-        else:
-            if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            #print( BBB, C, V, repr(line) )
-            bookObject.addLine( 'v', '{} {}'.format( V, line ) )
-# end of ESwordModule.handleRTFLine
-
-
-def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
-    """
-    self here is a BibleObject
-
-    Adjusts the formatting of the RTF line for Bible reference BBB C:V
-        and then writes it to the bookObject.
-
-    C and V might be strings or integers
-
-    Try to convert display formatting to semantic formatting as much as possible
-
-    myGlobals dict contains flags.
-
-    Appends pseudo-USFM results to the supplied bookObject.
-
-    NOTE: originalLine can be None here.
-
-    NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
-    """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-        #if debuggingThisModule:
-            #print( "ESwordModule.handleHTMLLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
-        assert originalLine is None or '\r' not in originalLine
-    #print( "ESwordModule.handleHTMLLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-    line = originalLine
-
-    if line and line[0]=='\n': line = line[1:] # Remove leading newline
-    if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline
-    line = line.replace( '\n', '<br />' )
-
-    writtenV = False
-    if V==1: appendedCFlag = False
-    if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-
-    if '#$#' in line: # We need to break the original line into different USFM markers
-        #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        segments = line.split( '#$#' )
-        assert len(segments) >= 2
-        #print( " segments (split by backslash):", segments )
-        leftovers = ''
-        for segment in segments:
-            if segment and segment[0] == '\\':
-                bits = segment.split( None, 1 )
-                #print( " bits", bits )
-                marker = bits[0][1:]
-                if len(bits) == 1:
-                    #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                        bookObject.addLine( marker, '' )
-                    else:
-                        logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
-                        #halt
-                else:
-                    assert len(bits) == 2
-                    if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                        print( "line", repr(line) )
-                        print( "seg", repr(segment) )
-                        print( "segments:", segments )
-                        print( "bits", bits )
-                        print( "marker", marker )
-                        print( "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        if BibleOrgSysGlobals.debugFlag:
-                            assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
-                        bookObject.addLine( marker, bits[1] )
-                    elif not writtenV:
-                        bookObject.addLine( 'v', '{} \\{} {}'.format( V, marker, segment ) )
-                        writtenV = True
-                    else: leftovers += '\\{} {}'.format( marker, segment )
-            else: # What is segment is blank (\\NL* at end of line)???
-                if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                if not writtenV:
-                    bookObject.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
-                    writtenV = True
-                else:
-                    bookObject.addLine( 'v~', leftovers+segment )
-                leftovers = ''
-                #if myGlobals['haveParagraph']:
-                    #bookObject.addLine( 'p', '' )
-                    #myGlobals['haveParagraph'] = False
-        if leftovers: logging.critical( "ESwordModule.handleRTFLine: Had leftovers {!r}".format( leftovers ) )
-        if BibleOrgSysGlobals.debugFlag: assert not leftovers
-        #halt
-    else: # no newlines in the middle
-        if C in (0,'0') and V in (0,'0'):
-            bookObject.addLine( 'ip', line )
-        else:
-            if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            #print( BBB, C, V, repr(line) )
-            bookObject.addLine( 'v', '{} {}'.format( V, line ) )
-# end of ESwordModule.handleHTMLLine
-
-
-def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
-    """
-    self here is a BibleObject
-
-    Adjusts the formatting of the RTF line for Bible reference BBB C:V
-        and then writes it to the bookObject.
-
-    C and V might be strings or integers
-
-    Try to convert display formatting to semantic formatting as much as possible
-
-    myGlobals dict contains flags.
-
-    Appends pseudo-USFM results to the supplied bookObject.
-
-    NOTE: originalLine can be None here.
-
-    NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
-    """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-        if debuggingThisModule:
-            print( "ESwordModule.handleESwordLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
-        assert originalLine is None or '\r' not in originalLine
-
-    #print( "ESwordModule.handleESwordLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-    if originalLine is None: # We don't have an entry for this C:V
-        return
-
-    if '<span ' in originalLine or '<p ' in originalLine: # Seems to be HTML
-        handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals )
-        return
-    elif '\\viewkind' in originalLine or '\\uc1' in originalLine \
-    or '\\paper' in originalLine or '\\par' in originalLine: # Seems to be RTF
-        handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals )
-        return
-    else:
-        if debuggingThisModule:
-            print( "ESwordModule.handleESwordLine: What's this: {} {} {}:{} {!r}".format( myName, BBB, C, V, originalLine ) )
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # What's this???
-        bookObject.addLine( 'v', '{} {}'.format( V, originalLine ) )
-# end of ESwordModule.handleESwordLine
-
-
-
-class ESwordBible( Bible ):
-    """
-    Class for reading, validating, and converting ESwordBible files.
+    Class for reading, validating, and converting ESwordCommentary files.
     """
     def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
         """
         Constructor: just sets up the Bible object.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+            print( "ESwordCommentary.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'e-Sword Bible object'
-        self.objectTypeString = 'e-Sword-Bible'
+        self.objectNameString = 'e-Sword Commentary object'
+        self.objectTypeString = 'e-Sword-Commentary'
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, givenFilename, encoding
@@ -572,234 +201,40 @@ class ESwordBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("ESwordBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("ESwordCommentary: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         filenameBits = os.path.splitext( self.sourceFilename )
         self.name = filenameBits[0]
         self.fileExtension = filenameBits[1]
+        #print( "fileExtension", self.fileExtension )
+        self.tableNames = ('Books','Chapters','Verses') if self.fileExtension.upper()=='.CMTX' else ('BookCommentary','ChapterCommentary','VerseCommentary')
 
         #if self.fileExtension.upper().endswith('X'):
-            #logging.warning( _("ESwordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
-    # end of ESwordBible.__init__
+            #logging.warning( _("ESwordCommentary: File {!r} is encrypted").format( self.sourceFilepath ) )
+    # end of ESwordCommentary.__init__
 
 
-    #def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+    #def checkForExtraMaterial( self, cursor, BOS ):
         #"""
-        #Adjusts the formatting of the RTF line for Bible reference BBB C:V
-            #and then writes it to the bookObject.
-
-        #Try to convert display formatting to semantic formatting as much as possible
-
-        #myGlobals dict contains flags.
-
-        #Appends pseudo-USFM results to the supplied bookObject.
-
-        #NOTE: originalLine can be None here.
-
-        #NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
         #"""
-        #if BibleOrgSysGlobals.debugFlag:
-            #if 0 and debuggingThisModule:
-                #print( "ESwordBible.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
-            #assert originalLine is None or ('\n' not in originalLine and '\r' not in originalLine )
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( _("checkForExtraMaterial( …, … )") )
 
-        ##print( BBB, C, V, repr(originalLine) )
-        #line = originalLine
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
-        #writtenV = False
-        #if V==1: appendedCFlag = False
-        #if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-
-        #if line is None: # We don't have an entry for this C:V
-            #return
-
-        ## Now we have to convert RTF codes to our internal codes
-        ## First do special characters
-        #line = line.replace( '\\ldblquote', '“' ).replace( '\\rdblquote', '”' ).replace( '\\lquote', '‘' ).replace( '\\rquote', '’' )
-        #line = line.replace( '\\emdash', '—' ).replace( '\\endash', '–' )
-        ## Now do Unicode characters
-        #while True: # Find patterns like \\'d3
-            #match = re.search( r"\\'[0-9a-f][0-9a-f]", line )
-            #if not match: break
-            ##print( originalLine )
-            ##print( line )
-            ##h1, h2 = line[match.start()+2], line[match.start()+3]
-            #i = int( line[match.start()+2:match.end()], 16 ) # Convert two hex characters to decimal
-            ##print( h1, h2, i, chr(i) )
-            #line = line[:match.start()] + chr( i ) + line[match.end():]
-            ##print( line )
-            ##print( repr(line) )
-        #while True: # Find patterns like \\u253?
-            #match = re.search( r"\\u[1-2][0-9][0-9]\?", line )
-            #if not match: break
-            ##print( originalLine )
-            ##print( line )
-            ##h1, h2 = line[match.start()+2], line[match.start()+3]
-            #i = int( line[match.start()+2:match.end()-1] ) # Convert three digits to decimal
-            ##print( h1, h2, i, chr(i) )
-            #line = line[:match.start()] + chr( i ) + line[match.end():]
-            ##print( line )
-            ##print( repr(line) )
-
-        ## We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
-        ## Try to guess some semantic formatting
-        ##line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
-        ##line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-
-        ## Stuff to just remove -- not sure what most of this is about yet
-        #while True:
-            #line = line.lstrip()
-            #changed = False
-            #for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar',
-                    #'\\paperw12240', '\\paperh15840',
-                    #'\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080',
-                    #'\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl',
-                    #'\\formshade', '\\sectd',
-                    #'\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800',
-                    #'\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32', '\\s17',
-                    #'\\itap0', '\\nosupersub', '\\ulnone',
-                    #'\\cf15', '\\cf14', '\\cf10', '\\cf0', '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
-                #if line.startswith( stuff ): line = line[len(stuff):]; changed = True
-            #if not changed: break
-        #for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
-            #if line.endswith( stuff ): line = line[:-len(stuff)]
-        #if BibleOrgSysGlobals.debugFlag: savedLine = line
-
-        ## Try to guess some semantic formatting
-        #line = re.sub( r'\\b\\i\\f0 (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading
-        #line = re.sub( r'\\cf10\\b\\i (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading in LEB
-        #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
-        #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-        #line = re.sub( r'\\cf15\\i(.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
-        #line = re.sub( r'^\\i (.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
-        #line = re.sub( r'{\\cf15\\I (.+?)}', r'~^~add \1~^~add*', line )
-        #line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
-        #line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-
-        ## Unfortunately, it's all display formatting, no semantic formatting  :-(
-        ## NOTE: This doesn't handle nesting yet
-        #line = re.sub( r'{\\cf10\\b\\i (.+?)\\cf0\\b0\\i0', r'~^~bdit \1~^~bdit*', line )
-        #line = re.sub( r'{\\b (.+?)}', r'~^~bd \1~^~bd*', line )
-        #line = re.sub( r'{\\cf15\\i (.+?)}', r'~^~it \1~^~it*', line )
-        #line = re.sub( r'{\\cf10\\i (.+?)}', r'~^~it \1~^~it*', line ) # What is different about these?
-        #line = re.sub( r'{\\cf2\\i (.+?)}', r'~^~it \1~^~it*', line )
-        #line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
-        #line = re.sub( r'{\\i(.+?)}', r'~^~it \1~^~it*', line ) # Also occurs without the space in some modules
-        #line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
-
-        #line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
-        #line = line.replace( '\\cf15\\i ', '~^~+it ' ).replace( '\\cf14\\i0', '~^~it*' ) # Attempt to handle some nesting in LEB
-        #line = line.replace( '\\i ', '~^~it ' ).replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
-
-        ## Not sure what this is
-        #line = re.sub( r'{\\cf2\\super (.+?)}', r'', line ) # Notes like '[2]' -- deleted for now
-        #line = line.replace( '\\cf2  \\cf0', '' ) # LEB
-        #line = line.replace( '\\cf0 ', '' ) # Calvin
-        #line = line.replace( '\\loch\\f0', '' ).replace( '\\hich\\f0', '' ) # Calvin
-
-        #line = line.replace( '\\par\\par', '#$#~^~p' )
-        #line = line.replace( '\\par', '#$#~^~p' )
-        #line = line.replace( '\\m ', '#$#~^~m ' )
-
-        ## Handle module formatting errors -- formatting that goes across verses!
-        #line = line.replace( '{\\cf2\\super [ ','[ ' ) # In one module Luke 22:42 -- weird
-        #line = line.replace( '{\\cf 2 [','[' ) # In one module John 1:4 -- weird
-        #line = line.replace( ']}',']' ) # In one module Luke 22:44; 23:34 -- weird
-        #if myName=="Lexham English Bible": line = line.replace( '\\cf14 ','') # Not sure what this is in LEB
-
-        ## Check what's left at the end
-        #line = line.replace( '\\line', '#$#' ) # Use this for our newline marker
-        #line = line.strip() # There seem to be extra spaces in many modules
-        #if '\\' in line or '{' in line or '}' in line:
-            #if BibleOrgSysGlobals.debugFlag:
-                #logging.error( "{} original line: {!r}".format( myName, originalLine ) )
-                #logging.error( "Saved line: {!r}".format( savedLine ) )
-            #logging.error( "ESwordBible.load: Doesn't handle {} {}:{} formatted line yet: {!r}".format( BBB, C, V, line ) )
-            #if 1: # Unhandled stuff -- not done properly yet… xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                #line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            #if 0 and BibleOrgSysGlobals.debugFlag: halt
-        #line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
-
-
-        #if '#$#' in line: # We need to break the original line into different USFM markers
-            ##print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
-            #segments = line.split( '#$#' )
-            #assert len(segments) >= 2
-            ##print( " segments (split by backslash):", segments )
-            #leftovers = ''
-            #for segment in segments:
-                #if segment and segment[0] == '\\':
-                    #bits = segment.split( None, 1 )
-                    ##print( " bits", bits )
-                    #marker = bits[0][1:]
-                    #if len(bits) == 1:
-                        ##if bits[0] in ('\\p','\\b'):
-                        #if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                            #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                            #bookObject.addLine( marker, '' )
-                        #else:
-                            #logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
-                            ##halt
-                    #else:
-                        #assert len(bits) == 2
-                        #if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            #print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                            #print( "line", repr(line) )
-                            #print( "seg", repr(segment) )
-                            #print( "segments:", segments )
-                            #print( "bits", bits )
-                            #print( "marker", marker )
-                            #print( "leftovers", repr(leftovers) )
-                        #if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                            #if BibleOrgSysGlobals.debugFlag:
-                                #assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
-                            #bookObject.addLine( marker, bits[1] )
-                        #elif not writtenV:
-                            #bookObject.addLine( 'v', '{} \\{} {}'.format( V, marker, segment ) )
-                            #writtenV = True
-                        #else: leftovers += '\\{} {}'.format( marker, segment )
-                #else: # What is segment is blank (\\NL* at end of line)???
-                    #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-                    #if not writtenV:
-                        #bookObject.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
-                        #writtenV = True
-                    #else:
-                        #bookObject.addLine( 'v~', leftovers+segment )
-                    #leftovers = ''
-                    ##if myGlobals['haveParagraph']:
-                        ##bookObject.addLine( 'p', '' )
-                        ##myGlobals['haveParagraph'] = False
-            #if leftovers: logging.critical( "Had leftovers {!r}".format( leftovers ) )
-            #if BibleOrgSysGlobals.debugFlag: assert not leftovers
-            ##halt
-        #else: # no newlines in the middle
-            #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            ##print( BBB, C, V, repr(line) )
-            #bookObject.addLine( 'v', '{} {}'.format( V, line ) )
-    ## end of ESwordBible.handleRTFLine
-
-
-    def checkForExtraMaterial( self, cursor, BOS ):
-        """
-        """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("checkForExtraMaterial( …, … )") )
-
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material…").format( self.sourceFilepath ) )
-
-        cursor.execute('select * from Bible' )
-        for row in cursor:
-            assert len(row) == 4
-            BBBn, C, V, text = row # First three are integers, the last is a string
-            #print( repr(BBBn), repr(C), repr(V), repr(text) )
-            if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
-            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
-            if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
-                logging.error( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
-                    #halt
-    # end of ESwordBible.checkForExtraMaterial
+        #cursor.execute('select * from Bible' )
+        #for row in cursor:
+            #assert len(row) == 4
+            #BBBn, C, V, text = row # First three are integers, the last is a string
+            ##print( repr(BBBn), repr(C), repr(V), repr(text) )
+            #if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
+            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
+            #if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
+                #logging.error( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    #print( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
+                    ##halt
+    ## end of ESwordCommentary.checkForExtraMaterial
 
 
     def preload( self ):
@@ -807,7 +242,7 @@ class ESwordBible( Bible ):
         Load Bible details out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("preload()") )
+            print( _("ESwordCommentary.preload()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -815,8 +250,8 @@ class ESwordBible( Bible ):
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
             logging.critical( "{} doesn't appear to be a e-Sword file".format( self.sourceFilename ) )
-        elif not self.sourceFilename.upper().endswith( BIBLE_FILENAME_ENDINGS_TO_ACCEPT[0] ):
-            logging.critical( "{} doesn't appear to be a e-Sword Bible file".format( self.sourceFilename ) )
+        elif not self.sourceFilename.upper().endswith( COMMENTARY_FILENAME_ENDINGS_TO_ACCEPT[0] ):
+            logging.critical( "{} doesn't appear to be a e-Sword Commentary file".format( self.sourceFilename ) )
 
         connection = sqlite3.connect( self.sourceFilepath )
         connection.row_factory = sqlite3.Row # Enable row names
@@ -824,16 +259,16 @@ class ESwordBible( Bible ):
 
         # First get the settings
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        self.suppliedMetadata['e-Sword-Bible'] = {}
+        self.suppliedMetadata['e-Sword-Commentary'] = {}
         self.cursor.execute( 'select * from Details' )
         row = self.cursor.fetchone()
         for key in row.keys():
-            self.suppliedMetadata['e-Sword-Bible'][key] = row[key]
-        #print( self.suppliedMetadata['e-Sword-Bible'] ); halt
+            self.suppliedMetadata['e-Sword-Commentary'][key] = row[key]
+        #print( self.suppliedMetadata['e-Sword-Commentary'] ); halt
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
-        if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
-            logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['e-Sword-Bible']['encryption'] ) )
+        if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
+            logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['e-Sword-Commentary']['encryption'] ) )
 
 
         ## Just get some information from the file
@@ -850,27 +285,27 @@ class ESwordBible( Bible ):
 
         #testament = BBB = None
         #booksExpected = textLineCountExpected = 0
-        #if self.suppliedMetadata['e-Sword-Bible']['OT'] and self.suppliedMetadata['e-Sword-Bible']['NT']:
+        #if self.suppliedMetadata['e-Sword-Commentary']['OT'] and self.suppliedMetadata['e-Sword-Commentary']['NT']:
             #testament, BBB = 'BOTH', 'GEN'
             #booksExpected, textLineCountExpected = 66, 31102
-        #elif self.suppliedMetadata['e-Sword-Bible']['OT']:
+        #elif self.suppliedMetadata['e-Sword-Commentary']['OT']:
             #testament, BBB = 'OT', 'GEN'
             #booksExpected, textLineCountExpected = 39, 23145
-        #elif self.suppliedMetadata['e-Sword-Bible']['NT']:
+        #elif self.suppliedMetadata['e-Sword-Commentary']['NT']:
             #testament, BBB = 'NT', 'MAT'
             #booksExpected, textLineCountExpected = 27, 7957
-        #elif self.suppliedMetadata['e-Sword-Bible']['Abbreviation'] == 'VIN2011': # Handle encoding error
-            #logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            #loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
+        #elif self.suppliedMetadata['e-Sword-Commentary']['Abbreviation'] == 'VIN2011': # Handle encoding error
+            #logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Commentary'] ) )
+            #loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Commentary'] ) )
             #testament, BBB = 'BOTH', 'GEN'
             #booksExpected, textLineCountExpected = 66, 31102
-        #elif self.suppliedMetadata['e-Sword-Bible']['Apocrypha']: # incomplete
+        #elif self.suppliedMetadata['e-Sword-Commentary']['Apocrypha']: # incomplete
             #testament, BBB = 'AP', 'XXX'
             #booksExpected, textLineCountExpected = 99, 999999
             #halt
         #if not BBB:
-            #logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            #loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
+            #logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Commentary'] ) )
+            #loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Commentary'] ) )
             #if 0:
                 #cursor.execute( 'select * from Bible' )
                 #rows = cursor.fetchall()
@@ -893,7 +328,7 @@ class ESwordBible( Bible ):
         ##halt
 
         self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-    # end of ESwordBible.preload
+    # end of ESwordCommentary.preload
 
 
     def load( self ):
@@ -901,7 +336,7 @@ class ESwordBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("load()") )
+            print( _("load()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -909,8 +344,8 @@ class ESwordBible( Bible ):
         #fileExtensionUpper = self.fileExtension.upper()
         #if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
             #logging.critical( "{} doesn't appear to be a e-Sword file".format( self.sourceFilename ) )
-        #elif not self.sourceFilename.upper().endswith( BIBLE_FILENAME_ENDINGS_TO_ACCEPT[0] ):
-            #logging.critical( "{} doesn't appear to be a e-Sword Bible file".format( self.sourceFilename ) )
+        #elif not self.sourceFilename.upper().endswith( COMMENTARY_FILENAME_ENDINGS_TO_ACCEPT[0] ):
+            #logging.critical( "{} doesn't appear to be a e-Sword Commentary file".format( self.sourceFilename ) )
 
         #connection = sqlite3.connect( self.sourceFilepath )
         #connection.row_factory = sqlite3.Row # Enable row names
@@ -918,164 +353,122 @@ class ESwordBible( Bible ):
 
         ## First get the settings
         #if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        #self.suppliedMetadata['e-Sword-Bible'] = {}
+        #self.suppliedMetadata['e-Sword-Commentary'] = {}
         #cursor.execute( 'select * from Details' )
         #row = cursor.fetchone()
         #for key in row.keys():
-            #self.suppliedMetadata['e-Sword-Bible'][key] = row[key]
-        ##print( self.suppliedMetadata['e-Sword-Bible'] ); halt
+            #self.suppliedMetadata['e-Sword-Commentary'][key] = row[key]
+        ##print( self.suppliedMetadata['e-Sword-Commentary'] ); halt
         ##if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         ##if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
-        #if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
-            #logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['e-Sword-Bible']['encryption'] ) )
+        #if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
+            #logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['e-Sword-Commentary']['encryption'] ) )
 
 
-        # Just get some information from the file
-# NOTE: Isn't this a highly inefficient way to find the number of rows in the database???
-        self.cursor.execute( 'select * from Bible' )
-        rows = self.cursor.fetchall()
-        numRows = len(rows)
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
-        BBBn1 = rows[0][0]
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
-        del rows
-        BBB1 = None
-        if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
-
-
-        testament = BBB = None
-        booksExpected = textLineCountExpected = 0
-        if self.suppliedMetadata['e-Sword-Bible']['OT'] and self.suppliedMetadata['e-Sword-Bible']['NT']:
-            testament, BBB = 'BOTH', 'GEN'
-            booksExpected, textLineCountExpected = 66, 31102
-        elif self.suppliedMetadata['e-Sword-Bible']['OT']:
-            testament, BBB = 'OT', 'GEN'
-            booksExpected, textLineCountExpected = 39, 23145
-        elif self.suppliedMetadata['e-Sword-Bible']['NT']:
-            testament, BBB = 'NT', 'MAT'
-            booksExpected, textLineCountExpected = 27, 7957
-        elif self.suppliedMetadata['e-Sword-Bible']['Abbreviation'] == 'VIN2011': # Handle encoding error
-            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            testament, BBB = 'BOTH', 'GEN'
-            booksExpected, textLineCountExpected = 66, 31102
-        elif self.suppliedMetadata['e-Sword-Bible']['Apocrypha']: # incomplete
-            testament, BBB = 'AP', 'XXX'
-            booksExpected, textLineCountExpected = 99, 999999
-            halt
-        if not BBB:
-            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.suppliedMetadata['e-Sword-Bible'] ) )
-            #if 0:
-                #self.cursor.execute( 'select * from Bible' )
-                #rows = self.cursor.fetchall()
-                #print( "rows", len(rows) )
-                #for row in rows:
-                    #assert len(row) == 4
-                    #BBBn, C, V, text = row # First three are integers, the last is a string
-                    #print( BBBn, C, V, repr(text) )
-                    #if C==2: break
-                #del rows # Takes a lot of memory
+        # Get the data out of the sqlite database
+        # NOTE: There may or may not be data in the book and chapter tables
+        # Start with the book table
+        self.cursor.execute( 'select * from {}'.format( self.tableNames[0] ) )
+        bookRows = self.cursor.fetchall()
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
-        if BBB1 != BBB:
-            logging.critical( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
-            loadErrors.append( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
-            if not BBB: BBB = BBB1
-        if numRows != textLineCountExpected:
-            logging.critical( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
-            loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
-        #halt
+            print( '{} book rows found'.format( len(bookRows) ) )
+        BBBn1 = BBB1 = None
+        BBBList = []
+        if bookRows:
+            BBBn1 = bookRows[0][0]
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+                print( '  First book number is {}'.format( BBBn1 ) )
+            if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
-        #BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+            bookCommentary = OrderedDict()
+            for bkNum,line in bookRows:
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+                BBBList.append( BBB )
+                #print( "Bk={} BBB={} Line: {!r}…".format( bkNum, BBB, line[:120] ) )
+                bookCommentary[BBB] = line
+        del bookRows
 
-        # Create the first book
-        thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = 'e-Sword Bible Book object'
-        thisBook.objectTypeString = 'e-Sword-Bible'
+        # Now the chapter table
+        BBBChList = []
+        chapterCommentary = {}
+        self.cursor.execute( 'select * from {}'.format( self.tableNames[1] ) )
+        chapterRows = self.cursor.fetchall()
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+            print( '{} chapter rows found'.format( len(chapterRows) ) )
+        for bkNum,chNum,line in chapterRows:
+            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            if BBBn1 is None:
+                BBBn1, BBB1 = bkNum, BBB
+            if BBB not in BBBList:
+                BBBList.append( BBB )
+            BBBChList.append( (BBB,chNum) )
+            #print( "BBB={} Ch={} Line: {!r}…".format( BBB, chNum, line[:120] ) )
+            if BBB not in chapterCommentary: chapterCommentary[BBB] = OrderedDict()
+            chapterCommentary[BBB][chNum] = line
+        del chapterRows
 
-        verseList = self.BOS.getNumVersesList( BBB )
-        numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
-        C = V = 1
+        # Now the verse table (we always expect data here)
+        verseCommentary = {}
+        self.cursor.execute( 'select * from {}'.format( self.tableNames[2] ) )
+        verseRows = self.cursor.fetchall()
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+            print( '{} verse rows found'.format( len(verseRows) ) )
+        for bkNum,chBegin,chEnd,vBegin,vEnd,line in verseRows:
+            #print( bkNum,chBegin,chEnd,vBegin,vEnd )
+            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            if BBBn1 is None:
+                BBBn1, BBB1 = bkNum, BBB
+            if BBB not in BBBList:
+                BBBList.append( BBB )
+            #assert (BBB,chBegin) in BBBChList # Not always true
+            #assert chEnd == chBegin # Not true in John Darby's Synopsis of the New Testament
+            #if vEnd == vBegin:
+                #print( "{} {}:{} Line: {!r}…".format( BBB, chBegin, vBegin, line[:120] ) )
+            #else: print( "{} {}:{}-{} Line: {!r}…".format( BBB, chBegin, vBegin, vEnd, line[:120] ) )
+            if BBB not in verseCommentary: verseCommentary[BBB] = OrderedDict()
+            if chBegin not in verseCommentary[BBB]: verseCommentary[BBB][chBegin] = OrderedDict()
+            verseCommentary[BBB][chBegin][vBegin] = (chBegin,chEnd,vBegin,vEnd,line)
+        del verseRows
 
-        bookCount = 0
+        # Create and process the books
+        if BibleOrgSysGlobals.verbosityLevel>1: print( "Processing {} books…".format( len(BBBList) ) )
         ourGlobals = {}
-        continued = ourGlobals['haveParagraph'] = False
-        haveLines = False
-        while True:
-            self.cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
+        for bookCount,BBB in enumerate( BBBList ):
+            if BibleOrgSysGlobals.verbosityLevel>2: print( "  Processing {}…".format( BBB ) )
+            thisBook = BibleBook( self, BBB )
+            thisBook.objectNameString = 'e-Sword Commentary Book object'
+            thisBook.objectTypeString = 'e-Sword-Commentary'
+
+            verseList = self.BOS.getNumVersesList( BBB )
+
             try:
-                row = self.cursor.fetchone()
-                line = row[0]
-            except TypeError: # This reference is missing (row is None)
-                #print( "something wrong at", BBB, C, V )
-                #if BibleOrgSysGlobals.debugFlag: halt
-                #print( row )
-                line = None
-            #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
-            if line is None: logging.warning( "ESwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
-            else: # line is not None
-                if not isinstance( line, str ):
-                    if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
-                        logging.critical( "ESwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
-                        break
-                    else:
-                        logging.critical( "ESwordBible.load: Probably encrypted module: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['e-Sword-Bible'] ) )
-                        break
-                elif not line: logging.warning( "ESwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
-                else:
-                    haveLines = True
+                if BBB in bookCommentary:
+                    handleESwordLine( self, self.name, BBB, '0', '0', bookCommentary[BBB], thisBook, ourGlobals )
+            except UnboundLocalError: pass # no bookCommentary
+            numC = len(verseList)
+            for C in range( 1, numC+1 ):
+                if BBB in chapterCommentary and C in chapterCommentary[BBB]:
+                    handleESwordLine( self, self.name, BBB, C, '0', chapterCommentary[BBB][C], thisBook, ourGlobals )
+                numV = verseList[C-1]
+                for V in range( 1, numV+1 ):
+                    if BBB in verseCommentary and C in verseCommentary[BBB] \
+                    and V in verseCommentary[BBB][C]:
+                        chBegin,chEnd,vBegin,vEnd,line = verseCommentary[BBB][C][V]
+                        #assert chEnd == chBegin # Not guaranteed (obviously)
+                        assert vBegin == V
+                        VV = vBegin if (vEnd==vBegin or chEnd!=chBegin) else '{}-{}'.format( vBegin, vEnd )
+                        handleESwordLine( self, self.name, BBB, C, VV, line, thisBook, ourGlobals )
 
-                    # Some modules end lines with \r\n or have it in the middle!
-                    #   (We just ignore these for now)
-                    if '\r' in line or '\n' in line:
-                        if BibleOrgSysGlobals.debugFlag:
-                            logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
-                        #print( repr(line) )
-                    while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
-                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' ) # Replace CR/LFs in the middle
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  e-Sword saving", BBB, bookCount+1 )
+            self.stashBook( thisBook )
 
-            #print( "e-Sword.load", BBB, C, V, repr(line) )
-            handleESwordLine( self, self.name, BBB, C, V, line, thisBook, ourGlobals )
-            V += 1
-            if V > numV:
-                C += 1
-                if C > numC: # Save this book now
-                    if haveLines:
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  e-Sword saving", BBB, bookCount+1 )
-                        self.stashBook( thisBook )
-                    #else: print( "Not saving", BBB )
-                    bookCount += 1 # Not the number saved but the number we attempted to process
-                    if bookCount >= booksExpected: break
-                    BBB = self.BOS.getNextBookCode( BBB )
-                    # Create the next book
-                    thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = 'e-Sword Bible Book object'
-                    thisBook.objectTypeString = 'e-Sword-Bible'
-                    haveLines = False
-
-                    verseList = self.BOS.getNumVersesList( BBB )
-                    numC, numV = len(verseList), verseList[0]
-                    nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
-                    C = V = 1
-                    #thisBook.addLine( 'c', str(C) )
-                else: # next chapter only
-                    #thisBook.addLine( 'c', str(C) )
-                    numV = verseList[C-1]
-                    V = 1
-
-            if ourGlobals['haveParagraph']:
-                thisBook.addLine( 'p', '' )
-                ourGlobals['haveParagraph'] = False
-
-        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            self.checkForExtraMaterial( self.cursor, self.BOS )
+        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+            #self.checkForExtraMaterial( self.cursor, self.BOS )
         self.cursor.close()
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
-        self.applySuppliedMetadata( 'e-Sword-Bible' ) # Copy some to self.settingsDict
+        self.applySuppliedMetadata( 'e-Sword-Commentary' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
-    # end of ESwordBible.load
+    # end of ESwordCommentary.load
 
 
     def loadBook( self, BBB ):
@@ -1083,13 +476,13 @@ class ESwordBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBook( {} )").format( BBB ) )
+            print( _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading e-SwordBible {} for {}".format( BBB, self.name ) )
+            logging.warning( "We had already tried loading e-Sword-Commentary {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
@@ -1098,75 +491,121 @@ class ESwordBible( Bible ):
 
         # Create the book
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = 'e-Sword Bible Book object'
-        thisBook.objectTypeString = 'e-Sword-Bible'
+        thisBook.objectNameString = 'e-Sword Bible Commentary object'
+        thisBook.objectTypeString = 'e-Sword-Commentary'
 
         verseList = self.BOS.getNumVersesList( BBB )
-        numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
-        C = V = 1
 
         ourGlobals = {}
-        continued = ourGlobals['haveParagraph'] = False
+        #continued = ourGlobals['haveParagraph'] = False
         haveLines = False
-        while True:
-            self.cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
+        displayedEncryptError = False
+
+        C = V = '0'
+        self.cursor.execute('select Comments from {} where Book=?'.format( self.tableNames[0] ), (nBBB,) )
+        try:
+            row = self.cursor.fetchone()
+            assert len(row) == 1
+            line = row[0]
+        except TypeError: # This reference is missing (row is None)
+            #logging.info( "ESwordCommentary.load: No book commentary for {}".format( BBB ) )
+            line = None
+        #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
+        if line is None:
+            logging.warning( "ESwordCommentary.load: Have missing commentary book line at {} {}:{}".format( BBB, C, V ) )
+        else: # line is not None
+            if not isinstance( line, str ):
+                if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
+                    logging.critical( "ESwordCommentary.load: Unable to decrypt commentary book line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                    displayedEncryptError = True
+                else:
+                    logging.critical( "ESwordCommentary.load: Probably encrypted module: Unable to decode commentary book line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['e-Sword-Commentary'] ) )
+                    displayedEncryptError = True
+            elif not line:
+                logging.warning( "ESwordCommentary.load: Found blank commentary book line at {} {}:{}".format( BBB, C, V ) )
+            else:
+                handleESwordLine( self, self.name, BBB, '0', '0', line, thisBook, ourGlobals )
+                haveLines = True
+
+        numC = len(verseList)
+        for C in range( 1, numC+1 ):
+            self.cursor.execute('select Comments from {} where Book=? and Chapter=?'.format( self.tableNames[1] ), (nBBB,C) )
             try:
                 row = self.cursor.fetchone()
+                assert len(row) == 1
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
-                #print( "something wrong at", BBB, C, V )
-                #if BibleOrgSysGlobals.debugFlag: halt
-                #print( row )
+                #logging.info( "ESwordCommentary.load: No chapter commentary for {} {}".format( BBB, C ) )
                 line = None
             #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
-            if line is None: logging.warning( "ESwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None:
+                logging.warning( "ESwordCommentary.load: Have missing commentary chapter line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
-                    if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
-                        logging.critical( "ESwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                    if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
+                        if not displayedEncryptError:
+                            logging.critical( "ESwordCommentary.load: Unable to decrypt commentary chapter line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                            displayedEncryptError = True
                         break
                     else:
-                        logging.critical( "ESwordBible.load: Probably encrypted module: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['e-Sword-Bible'] ) )
+                        if not displayedEncryptError:
+                            logging.critical( "ESwordCommentary.load: Probably encrypted module: Unable to decode commentary chapter line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['e-Sword-Commentary'] ) )
+                            displayedEncryptError = True
                         break
-                elif not line: logging.warning( "ESwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                elif not line:
+                    logging.warning( "ESwordCommentary.load: Found blank commentary chapter line at {} {}:{}".format( BBB, C, V ) )
                 else:
+                    handleESwordLine( self, self.name, BBB, C, '0', line, thisBook, ourGlobals )
                     haveLines = True
 
-                    # Some modules end lines with \r\n or have it in the middle!
-                    #   (We just ignore these for now)
-                    if '\r' in line or '\n' in line:
-                        if BibleOrgSysGlobals.debugFlag:
-                            logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
-                        #print( repr(line) )
-                    while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
-                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' ) # Replace CR/LFs in the middle
+            numV = verseList[C-1]
+            for V in range( 1, numV+1 ):
+                self.cursor.execute('select * from {} where Book=? and ChapterBegin=? and VerseBegin=?'.format( self.tableNames[2] ), (nBBB,C,V) )
+                try:
+                    row = self.cursor.fetchone()
+                    bkNum,chBegin,chEnd,vBegin,vEnd,line = row
+                except TypeError: # This reference is missing (row is None)
+                    #logging.info( "ESwordCommentary.load: No verse commentary for {} {}".format( BBB, C, V ) )
+                    line = None
+                #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
+                if line is None:
+                    logging.warning( "ESwordCommentary.load: Have missing commentary verse line at {} {}:{}".format( BBB, C, V ) )
+                else: # line is not None
+                    if not isinstance( line, str ):
+                        if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
+                            if not displayedEncryptError:
+                                logging.critical( "ESwordCommentary.load: Unable to decrypt commentary verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                                displayedEncryptError = True
+                            break
+                        else:
+                            if not displayedEncryptError:
+                                logging.critical( "ESwordCommentary.load: Probably encrypted module: Unable to decode commentary verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['e-Sword-Commentary'] ) )
+                                displayedEncryptError = True
+                            break
+                    elif not line:
+                        logging.warning( "ESwordCommentary.load: Found blank commentary verse line at {} {}:{}".format( BBB, C, V ) )
+                    else:
+                        # NOTE: vEnd and chEnd are not handled that same here as in .load() above XXXXXXXXXXXXXXX
+                        handleESwordLine( self, self.name, BBB, C, V, line, thisBook, ourGlobals )
+                        haveLines = True
+                #if BBB in verseCommentary and C in verseCommentary[BBB] \
+                #and V in verseCommentary[BBB][C]:
+                    #chBegin,chEnd,vBegin,vEnd,line = verseCommentary[BBB][C][V]
+                    #assert chEnd == chBegin
+                    #assert vBegin == V
+                    #VV = vBegin if vEnd == vBegin else '{}-{}'.format( vBegin, vEnd )
+                    #self.handleLine( self.name, BBB, C, VV, line, thisBook, ourGlobals )
 
-            #print( "e-Sword.load", BBB, C, V, repr(line) )
-            handleESwordLine( self, self.name, BBB, C, V, line, thisBook, ourGlobals )
-            V += 1
-            if V > numV:
-                C += 1
-                if C <= numC: # next chapter only
-                    #thisBook.addLine( 'c', str(C) )
-                    numV = verseList[C-1]
-                    V = 1
-                else: # Save this book now
-                    if haveLines:
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  ESwordBible saving", BBB )
-                        self.stashBook( thisBook )
-                    #else: print( "Not saving", BBB )
-                    break
-
-            if ourGlobals['haveParagraph']:
-                thisBook.addLine( 'p', '' )
-                ourGlobals['haveParagraph'] = False
-    # end of ESwordBible.loadBook
-# end of ESwordBible class
+        if haveLines:
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  ESwordCommentary saving", BBB )
+            self.stashBook( thisBook )
+    # end of ESwordCommentary.loadBook
+# end of ESwordCommentary class
 
 
 
-def createESwordBibleModule( self, outputFolder, controlDict ):
+def createESwordCommentaryModule( self, outputFolder, controlDict ):
     """
     Create a SQLite3 database module for the Windows program e-Sword.
 
@@ -1176,6 +615,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
     from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+
     def adjustLine( BBB, C, V, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
@@ -1464,11 +904,13 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     # end of toESword.composeVerseLine
 
 
-    def writeESwordBibleBook( sqlObject, BBB, ourGlobals ):
+    def writeESwordCommentaryBook( sqlObject, BBB, ourGlobals ):
         """
         Writes a book to the e-Sword sqlObject file.
         """
-        #print( "toESword.writeESwordBibleBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
+        print( "toESword.writeESwordCommentaryBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
+        halt # Not written yet
+
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
         #print( bkData._processedLines )
@@ -1534,12 +976,13 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
                 (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
             lineCount += 1
-    # end of toESword.writeESwordBibleBook
+    # end of toESword.writeESwordCommentaryBook
 
 
     # Set-up their Bible reference system
     BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
+    halt # Not written yet
 
     # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)
     if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
@@ -1621,8 +1064,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT)' )
     conn.commit() # save (commit) the changes
     BBB, lineCount = startBBB, 0
-    while True: # Write each Bible book in the KJV order
-        writeESwordBibleBook( cursor, BBB, mySettings )
+    while True: # Write each Bible commentary book in the KJV order
+        writeESwordCommentaryBook( cursor, BBB, mySettings )
         conn.commit() # save (commit) the changes
         handledBooks.append( BBB )
         if BBB == endBBB: break
@@ -1654,7 +1097,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
         print( "  BibleWriter.toESword finished successfully." )
     return True
-# end of createESwordBibleModule
+# end of createESwordCommentaryModule
 
 
 
@@ -1668,11 +1111,11 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
     #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class {}…").format( indexString) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( eSwBfolder, eSwBfilename ) )
-    eSwB = ESwordBible( eSwBfolder, eSwBfilename )
+    eSwB = ESwordCommentary( eSwBfolder, eSwBfilename )
     eSwB.preload()
     #eSwB.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "testeSwB1:", eSwB ) # Just print a summary
-    #print( eSwB.suppliedMetadata['e-Sword-Bible'] )
+    #print( eSwB.suppliedMetadata['e-Sword-Commentary'] )
     if eSwB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: eSwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -1713,49 +1156,57 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
-        result1 = ESwordBibleFileCheck( testFolder )
+        result1 = ESwordCommentaryFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
-        result2 = ESwordBibleFileCheck( testFolder, autoLoad=True )
+        result2 = ESwordCommentaryFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
-        result3 = ESwordBibleFileCheck( testFolder, autoLoadBooks=True )
+        result3 = ESwordCommentaryFileCheck( testFolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
+
+
+    if 1: # individual module
+        testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
+        filename = 'comentario_exegetico_al_texto_griego_nt_samuel_perez_millos.cmti'
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSwC B/ Trying {}".format( filename ) )
+        testeSwB( 'B', testFolder, filename )
 
 
     if 1: # individual modules in the same test folder
         testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
         names = ('King James Bible Pure Cambridge Edition','KJ3.JayPGreen','Wycliffe_New_Testament(1385)',)
         for j, name in enumerate( names):
-            indexString = 'B' + str( j+1 )
-            fullname = name + '.bblx'
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
-            testeSwB( indexString, testFolder, fullname )
-            #halt
-
-
-    if 1: # individual modules in the test folder
-        testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/'
-        names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
-        for j, name in enumerate( names):
             indexString = 'C' + str( j+1 )
-            fullname = name + '.bblx'
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
-            testeSwB( indexString, testFolder, fullname )
-            #halt
-
-
-    if 1: # individual modules in the output folder
-        testFolder = 'OutputFiles/BOS_e-SwordExport'
-        names = ("Matigsalug",)
-        for j, name in enumerate( names):
-            indexString = 'D' + str( j+1 )
-            fullname = name + '.bblx'
-            pathname = os.path.join( testFolder, fullname )
-            if os.path.exists( pathname ):
+            fullname = name + '.cmtx'
+            if os.path.exists( os.path.join( testFolder, fullname ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
                 testeSwB( indexString, testFolder, fullname )
+            else:
+                logging.error( "{} File '{}' doesn't exist in folder '{}'".format( indexString, fullname, testFolder ) )
 
 
-    #if 1: # all discovered modules in the test folder
+    if 1: # individual modules in the same test folder
+        testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/Commentaries/'
+        names = ('darby(2)','clarke(2)','Darby-John-Synopsis-of-the-New-Testament',)
+        for j, name in enumerate( names):
+            indexString = 'D' + str( j+1 )
+            fullname = name + '.cmtx'
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
+            testeSwB( indexString, testFolder, fullname )
+
+
+    #if 0: # individual modules in the output folder
+        #testFolder = 'OutputFiles/BOS_e-SwordExport'
+        #names = ("Matigsalug",)
+        #for j, name in enumerate( names):
+            #indexString = 'E' + str( j+1 )
+            #fullname = name + '.cmtx'
+            #pathname = os.path.join( testFolder, fullname )
+            #if os.path.exists( pathname ):
+                #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
+                #testeSwB( indexString, testFolder, fullname )
+
+
+    #if 0: # all discovered modules in the test folder
         #testFolder = 'Tests/DataFilesForTests/e-SwordRoundtripTestFiles/'
         #foundFolders, foundFiles = [], []
         #for something in os.listdir( testFolder ):
@@ -1782,17 +1233,17 @@ def demo():
                 ##break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
-        testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/' # Put your test folder here
+        testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/Commentaries/' # Put your test folder here
 
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ) and somepath.endswith('.bblx'): foundFiles.append( something )
+            elif os.path.isfile( somepath ) and somepath.endswith('.cmtx'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            parameters = [('F'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            parameters = [('G'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testeSwB, parameters ) # have the pool do our loads
@@ -1800,7 +1251,7 @@ def demo():
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                indexString = 'F' + str( j+1 )
+                indexString = 'G' + str( j+1 )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( indexString, testFolder, someFile )
@@ -1822,4 +1273,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of ESwordBible.py
+# end of ESwordCommentary.py
