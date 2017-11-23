@@ -1691,6 +1691,8 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
             except KeyError:
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
 
+        eSwB.discover() # Just to test this
+
         if 0:# Now export the Bible and compare the round trip
             eSwB.toESword()
             #doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

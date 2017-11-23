@@ -51,7 +51,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-11-20' # by RJH
 ShortProgName = "e-SwordCommentary"
 ProgName = "e-Sword Commentary format handler"
-ProgVersion = '0.04'
+ProgVersion = '0.05'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1101,50 +1101,52 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
 
 
 
-def testeSwB( indexString, eSwBfolder, eSwBfilename ):
+def testeSwC( indexString, eSwCfolder, eSwCfilename ):
     """
-    Crudely demonstrate the e-Sword Bible class
+    Crudely demonstrate the e-Sword Bible commentary class
     """
     import VerseReferences
     #testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/' # Must be the same as below
 
-    #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
+    #TUBfolder = os.path.join( eSwCfolder, eSwCfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class {}…").format( indexString) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( eSwBfolder, eSwBfilename ) )
-    eSwB = ESwordCommentary( eSwBfolder, eSwBfilename )
-    eSwB.preload()
-    #eSwB.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "testeSwB1:", eSwB ) # Just print a summary
-    #print( eSwB.suppliedMetadata['e-Sword-Commentary'] )
-    if eSwB is not None:
-        if BibleOrgSysGlobals.strictCheckingFlag: eSwB.check()
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( eSwCfolder, eSwCfilename ) )
+    eSwC = ESwordCommentary( eSwCfolder, eSwCfilename )
+    eSwC.preload()
+    #eSwC.load() # Load and process the file
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "testeSwC1:", eSwC ) # Just print a summary
+    #print( eSwC.suppliedMetadata['e-Sword-Commentary'] )
+    if eSwC is not None:
+        if BibleOrgSysGlobals.strictCheckingFlag: eSwC.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                             ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
             (t, b, c, v) = reference
-            if t=='OT' and len(eSwB)==27: continue # Don't bother with OT references if it's only a NT
-            if t=='NT' and len(eSwB)==39: continue # Don't bother with NT references if it's only a OT
-            if t=='DC' and len(eSwB)<=66: continue # Don't bother with DC references if it's too small
+            if t=='OT' and len(eSwC)==27: continue # Don't bother with OT references if it's only a NT
+            if t=='NT' and len(eSwC)==39: continue # Don't bother with NT references if it's only a OT
+            if t=='DC' and len(eSwC)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
             try:
-                shortText, verseText = svk.getShortText(), eSwB.getVerseText( svk )
+                shortText, verseText = svk.getShortText(), eSwC.getVerseText( svk )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
             except KeyError:
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
 
+        eSwC.discover() # Just to test this
+
         if 0:# Now export the Bible and compare the round trip
-            eSwB.toESword()
-            #doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            eSwC.toESword()
+            #doaResults = eSwC.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files…" )
-                result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
+                result = BibleOrgSysGlobals.fileCompare( eSwCfilename, eSwCfilename, eSwCfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
                     if not result: halt
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "testeSwB2:", eSwB ) # Just print a summary
-# end of testeSwB
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "testeSwC2:", eSwC ) # Just print a summary
+# end of testeSwC
 
 
 def demo():
@@ -1168,7 +1170,7 @@ def demo():
         testFolder = 'Tests/DataFilesForTests/e-SwordTest/'
         filename = 'comentario_exegetico_al_texto_griego_nt_samuel_perez_millos.cmti'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSwC B/ Trying {}".format( filename ) )
-        testeSwB( 'B', testFolder, filename )
+        testeSwC( 'B', testFolder, filename )
 
 
     if 1: # individual modules in the same test folder
@@ -1179,7 +1181,7 @@ def demo():
             fullname = name + '.cmtx'
             if os.path.exists( os.path.join( testFolder, fullname ) ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
-                testeSwB( indexString, testFolder, fullname )
+                testeSwC( indexString, testFolder, fullname )
             else:
                 logging.error( "{} File '{}' doesn't exist in folder '{}'".format( indexString, fullname, testFolder ) )
 
@@ -1191,7 +1193,7 @@ def demo():
             indexString = 'D' + str( j+1 )
             fullname = name + '.cmtx'
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
-            testeSwB( indexString, testFolder, fullname )
+            testeSwC( indexString, testFolder, fullname )
 
 
     #if 0: # individual modules in the output folder
@@ -1203,7 +1205,7 @@ def demo():
             #pathname = os.path.join( testFolder, fullname )
             #if os.path.exists( pathname ):
                 #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, fullname ) )
-                #testeSwB( indexString, testFolder, fullname )
+                #testeSwC( indexString, testFolder, fullname )
 
 
     #if 0: # all discovered modules in the test folder
@@ -1221,7 +1223,7 @@ def demo():
             #parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             #BibleOrgSysGlobals.alreadyMultiprocessing = True
             #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                #results = pool.map( testeSwB, parameters ) # have the pool do our loads
+                #results = pool.map( testeSwC, parameters ) # have the pool do our loads
                 #assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             #BibleOrgSysGlobals.alreadyMultiprocessing = False
         #else: # Just single threaded
@@ -1229,7 +1231,7 @@ def demo():
                 #indexString = 'E' + str( j+1 )
                 #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, someFile ) )
                 ##myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                #testeSwB( indexString, testFolder, someFile )
+                #testeSwC( indexString, testFolder, someFile )
                 ##break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
@@ -1246,7 +1248,7 @@ def demo():
             parameters = [('G'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.starmap( testeSwB, parameters ) # have the pool do our loads
+                results = pool.starmap( testeSwC, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
@@ -1254,7 +1256,7 @@ def demo():
                 indexString = 'G' + str( j+1 )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testeSwB( indexString, testFolder, someFile )
+                testeSwC( indexString, testFolder, someFile )
                 #break # only do the first one…temp
 # end of demo
 
