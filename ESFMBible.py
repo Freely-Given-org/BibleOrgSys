@@ -35,7 +35,7 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-19' # by RJH
+LastModifiedDate = '2017-11-23' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.60'
@@ -561,14 +561,23 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, abbreviation, testFolder in ( # name, abbreviation, folder
-                    ("Open English Translation—Literal Version", "OET-LV", "../../../../../Data/Work/Matigsalug/Bible/OET-LV/",),
-                    #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                    #("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
-                    #("ESFM Test 2", "OET-RV", "Tests/DataFilesForTests/ESFMTest2/"),
-                    #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
-                    #("USFM Error Project", "UEP", "Tests/DataFilesForTests/USFMErrorProject/"),
-                    #("BOS Exported Files", "Exported", "Tests/BOS_USFM_Export/"),
-                    ):
+            # Not actual ESFM
+                #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
+                ("USFM Error Project", "UEP", "Tests/DataFilesForTests/USFMErrorProject/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM_Export/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM_Reexport/"),
+            # Actual ESFM Bibles
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
+                ("ESFM Test 2", "OET-RV", "Tests/DataFilesForTests/ESFMTest2/"),
+                ("Open English Translation—Literal Version", "OET-LV", '../../../../../Data/Work/Matigsalug/Bible/OET-LV/',),
+                ("Open English Translation—Base Version", "OET-BV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV',),
+                ("Open English Translation—Literal Version", "OET-LV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV',),
+                ("Open English Translation—Readers' Version", "OET-RV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV',),
+                ("Open English Translation—Colloquial Version", "OET-CV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV',),
+                ("Open English Translation—Study Version", "OET-SV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV',),
+                ("Open English Translation—Extended Version", "OET-EV", '../../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV',),
+                ):
             count += 1
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nESFM A{}/".format( count ) )
