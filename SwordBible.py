@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-11-24' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -270,7 +270,7 @@ class SwordBible( Bible ):
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Sword Bible object'
-        self.objectTypeString = 'Sword'
+        self.objectTypeString = 'CrosswireSword' if SwordType=='CrosswireLibrary' else 'Sword'
 
         # Now we can set our object variables
         self.sourceFolder, self.moduleName, self.encoding = sourceFolder, moduleName, encoding

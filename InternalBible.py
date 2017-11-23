@@ -1144,7 +1144,7 @@ class InternalBible:
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
-        if 'e-Sword' not in self.objectTypeString \
+        if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary') \
         and BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:

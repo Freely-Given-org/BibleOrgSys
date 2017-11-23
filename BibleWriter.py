@@ -70,7 +70,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-17' # by RJH
+LastModifiedDate = '2017-11-24' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.94'
@@ -9325,7 +9325,7 @@ class BibleWriter( InternalBible ):
         zefOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Zefania_' + ('Reexport/' if self.objectTypeString=='Zefania' else 'Export/' ) )
         hagOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Haggai_' + ('Reexport/' if self.objectTypeString=='Haggia' else 'Export/' ) )
         OSOutputFolder = os.path.join( givenOutputFolderName, 'BOS_OpenSong_' + ('Reexport/' if self.objectTypeString=='OpenSong' else 'Export/' ) )
-        swOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Sword_' + ('Reexport/' if self.objectTypeString=='Sword' else 'Export/' ) )
+        swOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Sword_' + ('Reexport/' if self.objectTypeString in ('Sword','CrosswireSword') else 'Export/' ) )
         tWOutputFolder = os.path.join( givenOutputFolderName, 'BOS_theWord_' + ('Reexport/' if self.objectTypeString=='theWord' else 'Export/' ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, 'BOS_MySword_' + ('Reexport/' if self.objectTypeString=='MySword' else 'Export/' ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, 'BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=='e-Sword-Bible' else 'Export/' ) )
