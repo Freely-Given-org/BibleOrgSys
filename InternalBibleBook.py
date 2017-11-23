@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-17' # by RJH
+LastModifiedDate = '2017-11-24' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -711,7 +711,8 @@ class InternalBibleBook:
                         print( "processLineFix: {} {}:{} What went wrong here: {!r} from \\{} {!r} (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
                         print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                     note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix …
-                if len(note)<6:
+                minNoteLength = 2 if thisOne=='Strongs-number' else 6 # Strongs numbers can be quite short, e.g., H3, G314
+                if len(note)<minNoteLength:
                     fixErrors.append( lineLocationSpace + _("{} seems too short in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                     logging.warning( _("processLineFix: {} seems to short after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 43, C, V, _("{} seems too short").format( thisOne.title() ) )
