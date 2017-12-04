@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-15' # by RJH
+LastModifiedDate = '2017-12-04' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.21'
@@ -372,7 +372,7 @@ class BCVBible( Bible ):
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( exp("Loading {} BCV books using {} CPUs…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    print( exp("Loading {} BCV books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes

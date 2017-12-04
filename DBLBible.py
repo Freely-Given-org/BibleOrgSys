@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-12-04' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.25'
@@ -1622,7 +1622,7 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Loading {} DBL modules using {} CPUs…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                print( _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
@@ -1654,7 +1654,7 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Loading {} DBL modules using {} CPUs…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                print( _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('G'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]

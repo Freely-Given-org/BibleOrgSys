@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-15' # by RJH
+LastModifiedDate = '2017-12-04' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -642,7 +642,7 @@ class USFMBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( _("Loading {} {} books using {} CPUs…").format( len(self.maximumPossibleFilenameTuples), 'USFM', BibleOrgSysGlobals.maxProcesses ) )
+                    print( _("Loading {} {} books using {} processes…").format( len(self.maximumPossibleFilenameTuples), 'USFM', BibleOrgSysGlobals.maxProcesses ) )
                     print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes

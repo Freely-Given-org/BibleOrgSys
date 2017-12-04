@@ -68,7 +68,7 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-10' # by RJH
+LastModifiedDate = '2017-12-04' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.23'
@@ -954,7 +954,7 @@ def analyzeBibles( Bible1, Bible2 ):
     if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running segmentizeBooks on both Bibles…") )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+            print( exp("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1009,7 +1009,7 @@ def compareBibles( Bible1, Bible2,
     bResults = OrderedDict()
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( exp("Comparing {} books using {} CPUs…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+            print( exp("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes

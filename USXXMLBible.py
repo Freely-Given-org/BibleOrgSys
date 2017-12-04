@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-12-04' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.36'
@@ -310,7 +310,7 @@ class USXXMLBible( Bible ):
                 parameters.append( BBB )
             #print( "parameters", parameters )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Loading {} {} books using {} CPUs…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
+                print( _("Loading {} {} books using {} processes…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
                 print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
