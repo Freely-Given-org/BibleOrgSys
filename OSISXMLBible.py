@@ -36,10 +36,10 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.58'
+ProgVersion = '0.59'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -269,7 +269,7 @@ class OSISXMLBible( Bible ):
 
 
         self.title = self.version = self.date = self.source = None
-        self.tree = self.header = self.frontMatter = self.divs = self.divTypesString = None
+        self.XMLTree = self.header = self.frontMatter = self.divs = self.divTypesString = None
         #self.bkData, self.USFMBooks = OrderedDict(), OrderedDict()
         self.lang = self.language = None
 
@@ -315,6 +315,7 @@ class OSISXMLBible( Bible ):
             if debuggingThisModule: print( "OSISXMLBible possibleFilenames: {}".format( self.possibleFilenames ) )
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
+        self.workNames, self.workPrefixes = [], {}
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['OSIS'] = {}
         self.loadErrors = []
@@ -397,21 +398,21 @@ class OSISXMLBible( Bible ):
         Also, extracts some useful elements from the header element.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}…").format( OSISFilepath ) )
-        try: self.tree = ElementTree().parse( OSISFilepath )
+        try: self.XMLTree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
             loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
-        if self.tree.tag == OSISXMLBible.treeTag:
+        if self.XMLTree.tag == OSISXMLBible.treeTag:
             location = 'OSIS file'
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h', loadErrors )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location, '4f6h', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location, '1wk8', loadErrors )
             # Process the attributes first
             self.schemaLocation = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib.endswith("schemaLocation"):
                     self.schemaLocation = value
                 else:
@@ -420,9 +421,9 @@ class OSISXMLBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
             # Find the submain (osisText) container
-            if len(self.tree)==1 and (self.tree[0].tag == OSISXMLBible.textTag or (not BibleOrgSysGlobals.strictCheckingFlag and self.tree[0].tag == 'osisText')):
+            if len(self.XMLTree)==1 and (self.XMLTree[0].tag == OSISXMLBible.textTag or (not BibleOrgSysGlobals.strictCheckingFlag and self.XMLTree[0].tag == 'osisText')):
                 sublocation = "osisText in " + location
-                textElement = self.tree[0]
+                textElement = self.XMLTree[0]
                 BibleOrgSysGlobals.checkXMLNoText( textElement, sublocation, '3b5g', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( textElement, sublocation, '7h9k', loadErrors )
                 # Process the attributes first
@@ -505,16 +506,16 @@ class OSISXMLBible( Bible ):
                         loadErrors.append( "Expected to find {!r} but got {!r}".format( OSISXMLBible.divTag, element.tag ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             else:
-                logging.error( "Expected to find {!r} but got {!r}".format( OSISXMLBible.textTag, self.tree[0].tag ) )
-                loadErrors.append( "Expected to find {!r} but got {!r}".format( OSISXMLBible.textTag, self.tree[0].tag ) )
+                logging.error( "Expected to find {!r} but got {!r}".format( OSISXMLBible.textTag, self.XMLTree[0].tag ) )
+                loadErrors.append( "Expected to find {!r} but got {!r}".format( OSISXMLBible.textTag, self.XMLTree[0].tag ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.error( "Expected to load {!r} but got {!r}".format( OSISXMLBible.treeTag, self.tree.tag ) )
-            loadErrors.append( "Expected to load {!r} but got {!r}".format( OSISXMLBible.treeTag, self.tree.tag ) )
+            logging.error( "Expected to load {!r} but got {!r}".format( OSISXMLBible.treeTag, self.XMLTree.tag ) )
+            loadErrors.append( "Expected to load {!r} but got {!r}".format( OSISXMLBible.treeTag, self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        if self.tree.tail is not None and self.tree.tail.strip():
-            logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
-            loadErrors.append( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip():
+            logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+            loadErrors.append( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
     # end of OSISXMLBible.loadFile
 
@@ -590,14 +591,18 @@ class OSISXMLBible( Bible ):
         """
         Handle a 'w' element and submit a string (which may include embedded Strongs' numbers).
         """
+        #print( "validateWord( {}, {}, {}, … )".format( element, location, verseMilestone ) )
+
         sublocation = "validateWord: w of " + location
         word = clean( element.text, loadErrors, sublocation, verseMilestone )
         if word: self.thisBook.appendToLastLine( word )
         # Process the attributes
         lemma = morph = wType = src = gloss = None
         for attrib,value in element.items():
-            if attrib=='lemma': lemma = value
-            elif attrib=='morph': morph = value
+            if attrib=='lemma':
+                lemma = self.workPrefixes['w/@lemma']+':'+value if 'w/@lemma' in self.workPrefixes else value
+            elif attrib=='morph':
+                morph = self.workPrefixes['w/@morph']+':'+value if 'w/@morph' in self.workPrefixes else value
             elif attrib=='type': wType = value
             elif attrib=='src': src = value
             elif attrib=='gloss': gloss = value
@@ -606,7 +611,8 @@ class OSISXMLBible( Bible ):
                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (2h6k)".format( attrib, value, sublocation, verseMilestone ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         if wType and BibleOrgSysGlobals.debugFlag: assert wType.startswith( 'x-split-' ) # Followed by a number 1-10 or more
-        if lemma and lemma.startswith('strong:'):
+        if lemma \
+        and ( lemma.startswith('strong:') or lemma.startswith('Strong:') ):
             if len(lemma)>7:
                 lemma = lemma[7:]
                 if lemma:
@@ -713,25 +719,26 @@ class OSISXMLBible( Bible ):
 
         if element.text: self.thisBook.appendToLastLine( element.text )
         for subelement in element:
-            if subelement.tag == OSISXMLBible.OSISNameSpace+'w': # cross-references
+            if subelement.tag == OSISXMLBible.OSISNameSpace+'w': # cross-references ???
                 sublocation = "validateRDG: w of rdg of " + locationDescription
-                #print( "  Have", sublocation, "6n83" )
-                rdgW = subelement.text
-                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 's2vb', loadErrors )
-                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '5b3f', loadErrors )
-                # Process the attributes
-                lemma = morph = n = None
-                for attrib,value in subelement.items():
-                    #print( "Attribute RDG1 {}={!r}".format( attrib, value ) )
-                    if attrib=='lemma': lemma = value # e.g., 'l/5649'
-                    elif attrib=='morph': morph = value # e.g., 'HC/Ncfdc'
-                    elif attrib=='n': n = value # e.g., '0.0'
-                    else:
-                        logging.warning( "6b8m Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                        loadErrors.append( "Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {} (6b8m)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                self.thisBook.appendToLastLine( rdgW )
-            elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg': # cross-references
+                self.validateWord( subelement, sublocation, verseMilestone, loadErrors )
+                ##print( "  Have", sublocation, "6n83" )
+                #rdgW = subelement.text
+                #BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 's2vb', loadErrors )
+                #BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '5b3f', loadErrors )
+                ## Process the attributes
+                #lemma = morph = n = None
+                #for attrib,value in subelement.items():
+                    ##print( "Attribute RDG1 {}={!r}".format( attrib, value ) )
+                    #if attrib=='lemma': lemma = value # e.g., 'l/5649'
+                    #elif attrib=='morph': morph = value # e.g., 'HC/Ncfdc'
+                    #elif attrib=='n': n = value # e.g., '0.0'
+                    #else:
+                        #logging.warning( "6b8m Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                        #loadErrors.append( "Unprocessed {!r} attribute ({}) in {} sub2-element of {} at {} (6b8m)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                #self.thisBook.appendToLastLine( rdgW )
+            elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg': # cross-references ???
                 sublocation = "validateRDG: seg of rdg of " + locationDescription
                 self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'hi':
@@ -1518,7 +1525,6 @@ class OSISXMLBible( Bible ):
         BibleOrgSysGlobals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
         BibleOrgSysGlobals.checkXMLNoTail( header, headerlocation, '0k6l', loadErrors )
 
-        numWorks = 0
         for element in header:
             if element.tag == OSISXMLBible.OSISNameSpace+'revisionDesc':
                 location = "revisionDesc of " + headerlocation
@@ -1563,16 +1569,17 @@ class OSISXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoAttributes( header, location, '2s3d', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( header, location, '1d4f', loadErrors )
                 # Process the attributes first
-                osisWork = lang = None
+                osisWorkName = lang = None
                 for attrib,value in element.items():
                     if attrib=='osisWork':
-                        osisWork = value
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Have a {!r} work".format( osisWork ) )
+                        osisWorkName = value
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Have a {!r} work".format( osisWorkName ) )
                     elif attrib==OSISXMLBible.XMLNameSpace+"lang": lang = value
                     else:
                         logging.warning( "2k5s Unprocessed {} attribute ({}) in work element".format( attrib, value ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in work element (2k5s)".format( attrib, value ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                assert osisWorkName
                 # Now process the subelements
                 for subelement in element:
                     if len(subelement):
@@ -1827,7 +1834,7 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 #if element.find('date') is not None: self.date = element.find('date').text
                 #if element.find('title') is not None: self.title = element.find('title').text
-                numWorks += 1
+                self.workNames.append( osisWorkName )
             elif element.tag == OSISXMLBible.OSISNameSpace+'workPrefix':
                 location = "workPrefix of " + headerlocation
                 BibleOrgSysGlobals.checkXMLNoText( header, location, 'f5h8', loadErrors )
@@ -1836,12 +1843,20 @@ class OSISXMLBible( Bible ):
                 # Process the attributes first
                 workPrefixPath = workPrefixWork = None
                 for attrib,value in element.items():
-                    if attrib=='path': workPrefixPath = value
-                    elif attrib=='osisWork': workPrefixWork = value
+                    if attrib=='path':
+                        workPrefixPath = value
+                        assert workPrefixPath.startswith( '//' )
+                        assert '/@' in workPrefixPath
+                        workPrefixPath = workPrefixPath[2:] # Remove two leading slashes
+                        assert workPrefixPath in ( 'w/@lemma', 'w/@morph' ) # All we've discovered so far
+                    elif attrib=='osisWork':
+                        workPrefixWork = value
+                        assert workPrefixWork in self.workNames
                     else:
                         logging.warning( "7yh4 Unprocessed {} attribute ({}) in workPrefix element".format( attrib, value ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in workPrefix element (7yh4)".format( attrib, value ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                assert workPrefixPath and workPrefixWork
                 # Now process the subelements
                 for subelement in element:
                     if subelement.tag == OSISXMLBible.OSISNameSpace+'revisionDesc':
@@ -1859,6 +1874,8 @@ class OSISXMLBible( Bible ):
                         logging.error( "8h4g Unprocessed {!r} sub-element ({}) in workPrefix element".format( subelement.tag, subelement.text ) )
                         loadErrors.append( "Unprocessed {!r} sub-element ({}) in workPrefix element (8h4g)".format( subelement.tag, subelement.text ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                # NOTE: These subelements are not currently saved
+                self.workPrefixes[workPrefixPath] = workPrefixWork
             else:
                 logging.error( "Expected to load {!r} but got {!r}".format( OSISXMLBible.OSISNameSpace+'work', element.tag ) )
                 loadErrors.append( "Expected to load {!r} but got {!r}".format( OSISXMLBible.OSISNameSpace+'work', element.tag ) )
@@ -1867,7 +1884,7 @@ class OSISXMLBible( Bible ):
                 logging.error( "Unexpected {!r} tail data after {} element in header element".format( element.tail, element.tag ) )
                 loadErrors.append( "Unexpected {!r} tail data after {} element in header element".format( element.tail, element.tag ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        if not numWorks:
+        if not self.workNames:
             logging.warning( "OSIS header doesn't specify any work records." )
             loadErrors.append( "OSIS header doesn't specify any work records." )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -3160,38 +3177,39 @@ class OSISXMLBible( Bible ):
                                 for sub2element in subelement:
                                     if sub2element.tag == OSISXMLBible.OSISNameSpace+'w':
                                         sub2location = "w of " + sublocation
-                                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '2k3c', loadErrors )
-                                        word = sub2element.text
-                                        if BibleOrgSysGlobals.debugFlag: assert word # That should be the actual word
-                                        # Process the attributes
-                                        lemma = morph = n = None
-                                        for attrib,value in sub2element.items():
-                                            #print( "Attribute w1 {}={!r}".format( attrib, value ) )
-                                            if attrib=='lemma': lemma = value # e.g., '7679'
-                                            elif attrib=='morph': morph = value
-                                            elif attrib=='n': n = value # e.g. '1.1'
-                                            else:
-                                                logging.warning( "2h54 Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub2location, verseMilestone ) )
-                                                loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (2h54)".format( attrib, value, sub2location, verseMilestone ) )
-                                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                                        #print( "wlm", word, lemma, morph )
-                                        self.thisBook.appendToLastLine( "{} [{}]".format( word,lemma) )
-                                        # Now process the subelements
-                                        segText = segTail = segType = None
-                                        for sub3element in sub2element:
-                                            if sub3element.tag == OSISXMLBible.OSISNameSpace+'seg':
-                                                sub3location = "seg of " + sub2location
-                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
-                                                segText, segTail = sub3element.text, sub3element.tail # XXXxxxxxxxxxxxxxx unused …
-                                                # Process the attributes
-                                                segType = None
-                                                for attrib,value in sub3element.items():
-                                                    if attrib=='type': segType = value
-                                                    else:
-                                                        logging.warning( "963k Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub3location, verseMilestone ) )
-                                                        loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (963k)".format( attrib, value, sub3location, verseMilestone ) )
-                                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                                        #print( "segTTT", segText, segTail, segType )
+                                        self.validateWord( sub2element, sub2location, verseMilestone, loadErrors )
+                                        #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '2k3c', loadErrors )
+                                        #word = sub2element.text
+                                        #if BibleOrgSysGlobals.debugFlag: assert word # That should be the actual word
+                                        ## Process the attributes
+                                        #lemma = morph = n = None
+                                        #for attrib,value in sub2element.items():
+                                            ##print( "Attribute w1 {}={!r}".format( attrib, value ) )
+                                            #if attrib=='lemma': lemma = value # e.g., '7679'
+                                            #elif attrib=='morph': morph = value
+                                            #elif attrib=='n': n = value # e.g. '1.1'
+                                            #else:
+                                                #logging.warning( "2h54 Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub2location, verseMilestone ) )
+                                                #loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (2h54)".format( attrib, value, sub2location, verseMilestone ) )
+                                                #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                        ##print( "wlm", word, lemma, morph )
+                                        #self.thisBook.appendToLastLine( "{} [{}]".format( word,lemma) )
+                                        ## Now process the subelements
+                                        #segText = segTail = segType = None
+                                        #for sub3element in sub2element:
+                                            #if sub3element.tag == OSISXMLBible.OSISNameSpace+'seg':
+                                                #sub3location = "seg of " + sub2location
+                                                #BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
+                                                #segText, segTail = sub3element.text, sub3element.tail # XXXxxxxxxxxxxxxxx unused …
+                                                ## Process the attributes
+                                                #segType = None
+                                                #for attrib,value in sub3element.items():
+                                                    #if attrib=='type': segType = value
+                                                    #else:
+                                                        #logging.warning( "963k Unprocessed {!r} attribute ({}) in {} at {}".format( attrib, value, sub3location, verseMilestone ) )
+                                                        #loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (963k)".format( attrib, value, sub3location, verseMilestone ) )
+                                                        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                        ##print( "segTTT", segText, segTail, segType )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+'seg':
                                         sub2location = "seg of " + sublocation
                                         self.validateSEG( sub2element, sub2location, verseMilestone, loadErrors )
@@ -3354,6 +3372,7 @@ def demo():
             'Tests/DataFilesForTests/OSISTest2/', # Full KJV from Crosswire
             '../../../../../Data/Work/Bibles/Original languages/SBLGNT/sblgnt.osis/SBLGNT.osis.xml',
             "../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
+            "../morphhb/wlc/1Sam.xml",
             "../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             "../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
             "../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
@@ -3375,13 +3394,16 @@ def demo():
 
             if 1: # Test verse lookup
                 import VerseReferences
-                for referenceTuple in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'),
+                for referenceTuple in (
+                                    ('OT','GEN','1','1'), ('OT','GEN','1','3'),
                                     ('OT','RUT','1','1'), ('OT','RUT','3','3'),
+                                    ('OT','SA1','1','1'),
                                     ('OT','PSA','3','0'), ('OT','PSA','3','1'),
                                     ('OT','DAN','1','21'),
                                     ('NT','MAT','3','5'), ('NT','JAM','1','6'),
                                     ('NT','JDE','1','4'), ('NT','REV','22','21'),
-                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',),
+                                    ):
                     (t, b, c, v) = referenceTuple
                     if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
                     if t=='NT' and len(oB)==39: continue # Don't bother with NT references if it's only a OT
