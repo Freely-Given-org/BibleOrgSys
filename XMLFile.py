@@ -27,7 +27,7 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "XMLFile"
 ProgName = "XML file handler"
 ProgVersion = "0.04"
@@ -68,7 +68,7 @@ class XMLFile():
                 self.schemaURL = self.schema
 
         self.validatedByLoading = self.validatedWithLint = None
-        self.tree = None # Will hold the XML data
+        self.XMLTree = None # Will hold the XML data
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
@@ -115,8 +115,8 @@ class XMLFile():
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         try:
-            self.tree = ElementTree().parse( self.sourceFilepath )
-            assert len( self.tree ) # Fail here if we didn't load anything at all
+            self.XMLTree = ElementTree().parse( self.sourceFilepath )
+            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:

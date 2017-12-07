@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.37'
@@ -202,7 +202,7 @@ class OpenSongXMLBible( Bible ):
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
-        self.tree = None # Will hold the XML data
+        self.XMLTree = None # Will hold the XML data
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
@@ -223,17 +223,17 @@ class OpenSongXMLBible( Bible ):
         Load a single source XML file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
-        self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( self.sourceFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
-        if self.tree.tag == OpenSongXMLBible.treeTag:
+        if self.XMLTree.tag == OpenSongXMLBible.treeTag:
             location = "XML file"
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location, '1wk8' )
 
             name = shortName = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=="n":
                     name = value
                 elif attrib=="sn":
@@ -241,7 +241,7 @@ class OpenSongXMLBible( Bible ):
                 else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
 
             # Find the submain (book) containers
-            for element in self.tree:
+            for element in self.XMLTree:
                 if element.tag == OpenSongXMLBible.bookTag:
                     sublocation = "book in " + location
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
@@ -252,7 +252,7 @@ class OpenSongXMLBible( Bible ):
                 elif element.tag == 'NT':
                     pass
                 else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( OpenSongXMLBible.treeTag, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( OpenSongXMLBible.treeTag, self.XMLTree.tag ) )
         self.doPostLoadProcessing()
     # end of OpenSongXMLBible.load
 

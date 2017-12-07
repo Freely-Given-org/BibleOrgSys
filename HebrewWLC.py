@@ -28,10 +28,10 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "HebrewWLCHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.05'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -156,6 +156,7 @@ def demo():
     from VerseReferences import SimpleVerseKey
 
     # Demonstrate the Hebrew WLC class
+    standardTestReferences = ('GEN', '1', '1'), ('SA1','1','1'), ('DAN', '1', '5')
 
     if 1: # Test one book
         #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
@@ -168,7 +169,7 @@ def demo():
             print( wlc ) # Just print a summary
             print()
 
-        for testReference in ( ('DAN', '1', '5'), ('GEN', '1', '5') ):
+        for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
@@ -203,7 +204,7 @@ def demo():
             print( wlc ) # Just print a summary
             print()
 
-        for testReference in ( ('GEN', '1', '5'), ('DAN', '1', '5') ):
+        for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
@@ -238,7 +239,7 @@ def demo():
             print( wlc ) # Just print a summary
             print()
 
-        for testReference in ( ('GEN', '1', '1'), ('DAN', '1', '5') ):
+        for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )

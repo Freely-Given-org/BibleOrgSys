@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.30'
@@ -278,22 +278,22 @@ class USFXXMLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
 
-        try: self.tree = ElementTree().parse( self.sourceFilepath )
+        try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError:
             errorString = sys.exc_info()[1]
             logging.critical( "USFXXMLBible.load: failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
-        prefix = self.tree.tag[:-4] if self.tree.tag[0]=='{' and self.tree.tag[-5]=='}' else ''
-        if self.tree.tag == prefix + 'usfx':
+        prefix = self.XMLTree.tag[:-4] if self.XMLTree.tag[0]=='{' and self.XMLTree.tag[-5]=='}' else ''
+        if self.XMLTree.tag == prefix + 'usfx':
             location = 'USFX file'
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location, '1wk8' )
             # Process the attributes first
             self.schemaLocation = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 #print( "attrib", repr(attrib), repr(value) )
                 if attrib.endswith("SchemaLocation"):
                     self.schemaLocation = value
@@ -301,7 +301,7 @@ class USFXXMLBible( Bible ):
                     logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             BBB = C = V = None
-            for element in self.tree:
+            for element in self.XMLTree:
                 #print( "element", repr(element.tag) )
                 sublocation = element.tag + " " + location
                 if element.tag == 'languageCode':
@@ -398,8 +398,8 @@ class USFXXMLBible( Bible ):
         mainLocation = "{} USFX {} book".format( self.name, BBB )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )
-        BibleOrgSysGlobals.checkXMLNoText( self.tree, mainLocation, '4f6h' )
-        BibleOrgSysGlobals.checkXMLNoTail( self.tree, mainLocation, '1wk8' )
+        BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, mainLocation, '4f6h' )
+        BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, mainLocation, '1wk8' )
 
         # Now create our actual book
         self.thisBook = BibleBook( self, BBB )

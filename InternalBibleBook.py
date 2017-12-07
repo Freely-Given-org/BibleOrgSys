@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-24' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -60,7 +60,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 BCV_VERSION = '1.0'
 
 debuggingThisModule = False
-MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
+MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL = 3
+MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
 
 
 import os, logging
@@ -167,6 +168,11 @@ class InternalBibleBook:
         self.badMarkers, self.badMarkerCounts = [], []
         self.versificationList = self.omittedVersesList = self.combinedVersesList = self.reorderedVersesList = None
         self.pntsCount = 0
+
+        self.maxNoncriticalErrorsPerBook = MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE \
+                        if BibleOrgSysGlobals.debugFlag or debuggingThisModule \
+                            or BibleOrgSysGlobals.verbosityLevel>2 \
+                        else MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL
     # end of InternalBibleBook.__init__
 
 
@@ -296,7 +302,7 @@ class InternalBibleBook:
                 if self.pntsCount != -1:
                     self.pntsCount += 1
                     stripLogger = logging.warning if debuggingThisModule else logging.info
-                    if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                    if self.pntsCount <= self.maxNoncriticalErrorsPerBook:
                         stripLogger( "InternalBibleBook.addLine: Possibly needed to strip {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
                     else: # we've reached our limit
                         stripLogger( _('Additional "Possibly needed to strip" messages for {} {} suppressed…').format( self.objectTypeString, self.BBB ) )
@@ -498,7 +504,7 @@ class InternalBibleBook:
             fixErrors.append( lineLocationSpace + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
             if rtsCount != -1:
                 rtsCount += 1
-                if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                if rtsCount <= self.maxNoncriticalErrorsPerBook:
                     logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, text ) )
                 else: # we've reached our limit
                     logging.warning( _('processLineFix: Additional "Removed trailing space" messages suppressed…') )
@@ -1458,7 +1464,7 @@ class InternalBibleBook:
                 if self.objectTypeString in ('USFM','USX',):
                     if sahtCount != -1:
                         sahtCount += 1
-                        if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                        if sahtCount <= self.maxNoncriticalErrorsPerBook:
                             logging.error( _("doAppendEntry: Marker {!r} at {} should always have text").format( originalMarker, self.__makeErrorRef(C,V) ) )
                         else: # we've reached our limit
                             logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {}…').format( self.workName ) )
@@ -1667,7 +1673,7 @@ class InternalBibleBook:
                         #else:
                         if nfvnCount != -1:
                             nfvnCount += 1
-                            if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                            if nfvnCount <= self.maxNoncriticalErrorsPerBook:
                                 logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
                                 logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed for {}…').format( self.workName ) )
@@ -1707,7 +1713,7 @@ class InternalBibleBook:
                     if not strippedVerseText:
                         if owfvnCount != -1:
                             owfvnCount += 1
-                            if owfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                            if owfvnCount <= self.maxNoncriticalErrorsPerBook:
                                 logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
                                 logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed for {}…').format( self.workName ) )
@@ -1851,7 +1857,7 @@ class InternalBibleBook:
         # Get rid of data that we don't need
         #if not BibleOrgSysGlobals.debugFlag:
         del self._rawLines # if short of memory
-        try: del self.tree # for xml Bible types (some Bible books caused a segfault when pickled with this data)
+        try: del self.XMLTree # for xml Bible types (some Bible books caused a segfault when pickled with this data)
         except AttributeError: pass # we didn't have an xml tree to delete
 
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
@@ -2796,7 +2802,7 @@ class InternalBibleBook:
                 #if self.objectTypeString in ('USFM','USX',):
                     #if sahtCount != -1:
                         #sahtCount += 1
-                        #if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                        #if sahtCount <= self.maxNoncriticalErrorsPerBook:
                             #logging.warning( _("doCheckSFMs: Marker {!r} at {} {}:{} should always have text").format( originalMarker, self.BBB, C, V ) )
                         #else: # we've reached our limit
                             #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed…') )

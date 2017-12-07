@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-21' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.17'
@@ -229,7 +229,7 @@ class VerseViewXMLBible( Bible ):
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
-        self.tree = self.header = None # Will hold the XML data
+        self.XMLTree = self.header = None # Will hold the XML data
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
@@ -250,22 +250,22 @@ class VerseViewXMLBible( Bible ):
         Load a single source XML file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
-        self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( self.sourceFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['VerseView'] = {}
 
         # Find the main (bible) container
-        if self.tree.tag == VerseViewXMLBible.treeTag:
+        if self.XMLTree.tag == VerseViewXMLBible.treeTag:
             location = "VerseView XML file"
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, location, 'js24' )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, location, 'js24' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location, '1wk8' )
 
             # Find the submain (various info and then book) containers
             bookNumber = 0
-            for element in self.tree:
+            for element in self.XMLTree:
                 if element.tag == VerseViewXMLBible.filenameTag:
                     sublocation = "filename in " + location
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jk86' )
@@ -309,7 +309,7 @@ class VerseViewXMLBible( Bible ):
                     bookNumber += 1
                     self.__validateAndExtractBook( element, bookNumber )
                 else: logging.error( "xk15 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( VerseViewXMLBible.treeTag, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( VerseViewXMLBible.treeTag, self.XMLTree.tag ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             # These are all compulsory so they should all exist

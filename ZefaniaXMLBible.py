@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-21' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
 ProgVersion = '0.35'
@@ -259,7 +259,7 @@ class ZefaniaXMLBible( Bible ):
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
-        self.tree = self.header = None # Will hold the XML data
+        self.XMLTree = self.header = None # Will hold the XML data
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
@@ -280,17 +280,17 @@ class ZefaniaXMLBible( Bible ):
         Load a single source XML file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
-        self.tree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( self.sourceFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
-        if self.tree.tag == ZefaniaXMLBible.treeTag:
+        if self.XMLTree.tag == ZefaniaXMLBible.treeTag:
             location = "Zefania XML file"
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location, '1wk8' )
 
             schema = name = status = BibleType = revision = version = lgid = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib == ZefaniaXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
                 elif attrib == "biblename":
@@ -311,26 +311,26 @@ class ZefaniaXMLBible( Bible ):
             if revision: self.revision = revision
             if version: self.version = version
 
-            if self.tree[0].tag == 'INFORMATION':
-                self.header = self.tree[0]
-                self.tree.remove( self.header )
+            if self.XMLTree[0].tag == 'INFORMATION':
+                self.header = self.XMLTree[0]
+                self.XMLTree.remove( self.header )
                 self.__validateAndExtractHeader()
             else: # Handle information records at the END of the file
-                ix = len(self.tree) - 1
-                if self.tree[ix].tag == 'INFORMATION':
-                    self.header = self.tree[ix]
-                    self.tree.remove( self.header )
+                ix = len(self.XMLTree) - 1
+                if self.XMLTree[ix].tag == 'INFORMATION':
+                    self.header = self.XMLTree[ix]
+                    self.XMLTree.remove( self.header )
                     self.__validateAndExtractHeader()
 
             # Find the submain (book) containers
-            for element in self.tree:
+            for element in self.XMLTree:
                 if element.tag == ZefaniaXMLBible.bookTag:
                     sublocation = "book in " + location
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( ZefaniaXMLBible.treeTag, self.XMLTree.tag ) )
         self.doPostLoadProcessing()
     # end of ZefaniaXMLBible.load
 

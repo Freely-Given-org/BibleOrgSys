@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.24'
@@ -752,21 +752,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading books names data from {}…".format( bookNamesFilepath ) )
-        self.tree = ElementTree().parse( bookNamesFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( bookNamesFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         booksNamesDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='BookNames':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag=='BookNames':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual book data
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 if element.tag == 'book':
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
@@ -794,7 +794,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 bookname settings tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 bookname settings tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( bookNamesFilepath )
@@ -818,8 +818,8 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading project lexicon data from {}…".format( lexiconFilepath ) )
-        self.tree = ElementTree().parse( lexiconFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( lexiconFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
         #loadErrors = []
@@ -901,14 +901,14 @@ class PTX8Bible( Bible ):
 
 
         # Find the main container
-        if self.tree.tag == 'Lexicon':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'Lexicon':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
 
@@ -942,7 +942,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 lexicon tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 lexicon tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( lexiconFilepath )
@@ -969,21 +969,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading project user data from {}…".format( projectUsersFilepath ) )
-        self.tree = ElementTree().parse( projectUsersFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( projectUsersFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         projectUsersDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='ProjectUserAccess':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag=='ProjectUserAccess':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Process the attributes first
             peerSharingFlag = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=='PeerSharing': peerSharingFlag = getFlagFromAttribute( attrib, value )
                 else:
                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
@@ -991,7 +991,7 @@ class PTX8Bible( Bible ):
             projectUsersDict['PeerSharingFlag'] = peerSharingFlag
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -1078,7 +1078,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 project users settings tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 project users settings tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectUsersFilepath )
@@ -1107,28 +1107,28 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading canons data from {}…".format( canonsFilepath ) )
-        self.tree = ElementTree().parse( canonsFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( canonsFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         canonsDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag == 'Canons':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation, 'CA01' )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation, 'CA02' )
+        if self.XMLTree.tag == 'Canons':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation, 'CA01' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation, 'CA02' )
 
             # Process the attributes first
             nextId = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=='NextId': nextId = value
                 else:
                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
 
@@ -1182,7 +1182,7 @@ class PTX8Bible( Bible ):
                 assert Id not in canonsDict
                 canonsDict[Id] = tempDict
         else:
-            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( canonsFilepath )
@@ -1208,21 +1208,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading checking status data from {}…".format( checkingStatusFilepath ) )
-        self.tree = ElementTree().parse( checkingStatusFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( checkingStatusFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         checkingStatusByBookDict, checkingStatusByCheckDict = OrderedDict(), OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag == 'CheckingStatuses':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'CheckingStatuses':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
@@ -1258,7 +1258,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( checkingStatusFilepath )
@@ -1293,18 +1293,18 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
 
-        self.tree = ElementTree().parse( commentTagFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( commentTagFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if self.tree.tag == 'TagList':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'TagList':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1331,7 +1331,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 comment tag list tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 comment tag list tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( commentTagFilepath )
@@ -1358,21 +1358,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading derived translation status data from {}…".format( derivedTranslationStatusFilepath ) )
-        self.tree = ElementTree().parse( derivedTranslationStatusFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( derivedTranslationStatusFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         derivedTranslationStatusByBookDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag == 'DerivedTranslationVerseList':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'DerivedTranslationVerseList':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1405,7 +1405,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 derived translation tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 derived translation tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( derivedTranslationStatusFilepath )
@@ -1483,19 +1483,19 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 print( "PTX8Bible.loading notes from {}…".format( noteFilepath ) )
 
-            self.tree = ElementTree().parse( noteFilepath )
-            if not len( self.tree ):
+            self.XMLTree = ElementTree().parse( noteFilepath )
+            if not len( self.XMLTree ):
                 logging.info( "Notes for {} seems empty.".format( noterName ) )
 
             # Find the main container
-            if self.tree.tag == 'CommentList':
-                treeLocation = "PTX8 notes file ({}) for {}".format( self.tree.tag, noterName )
-                BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-                BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-                BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+            if self.XMLTree.tag == 'CommentList':
+                treeLocation = "PTX8 notes file ({}) for {}".format( self.XMLTree.tag, noterName )
+                BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
                 # Now process the actual entries
-                for element in self.tree:
+                for element in self.XMLTree:
                     elementLocation = element.tag + ' in ' + treeLocation
                     #print( "Processing {}…".format( elementLocation ) )
                     BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -1567,7 +1567,7 @@ class PTX8Bible( Bible ):
                     if thread not in notesDictByThread: notesDictByThread[thread] = []
                     notesDictByThread[thread].append( commentDict )
             else:
-                logging.critical( _("Unrecognised PTX8 {} note/comment list tag: {}").format( noterName, self.tree.tag ) )
+                logging.critical( _("Unrecognised PTX8 {} note/comment list tag: {}").format( noterName, self.XMLTree.tag ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
             #print( "\nNotes for {}: ({}) {}".format( noterName, len(notesDictByName[noterName]), notesDictByName[noterName] ) )
@@ -1613,21 +1613,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading parallel passage status data from {}…".format( parallelPassageStatusFilepath ) )
-        self.tree = ElementTree().parse( parallelPassageStatusFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( parallelPassageStatusFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         parallelPassageStatusDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag == 'PassageStatus':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'PassageStatus':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
 
@@ -1683,7 +1683,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 parallel passage status tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 parallel passage status tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( parallelPassageStatusFilepath )
@@ -1711,18 +1711,18 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
 
-        self.tree = ElementTree().parse( projectBiblicalTermsFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( projectBiblicalTermsFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if self.tree.tag=='BiblicalTermsList':
-            treeLocation = "PTX8 {} in project Biblical terms".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag=='BiblicalTermsList':
+            treeLocation = "PTX8 {} in project Biblical terms".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1779,7 +1779,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element '{}' in {}").format( element.tag, element.text, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 {} project Biblical terms tag: {}").format( versionName, self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 {} project Biblical terms tag: {}").format( versionName, self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectBiblicalTermsFilepath )
@@ -1809,18 +1809,18 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
 
-        self.tree = ElementTree().parse( projectProgressFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( projectProgressFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if self.tree.tag=='ProgressInfo':
-            treeLocation = "PTX8 {} in Project Progress".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag=='ProgressInfo':
+            treeLocation = "PTX8 {} in Project Progress".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -2103,7 +2103,7 @@ class PTX8Bible( Bible ):
                 #print( "bookStatusDict", bookStatusDict )
                 #projectProgressDict.append( bookStatusDict )
         else:
-            logging.critical( _("Unrecognised PTX8 {} project progress tag: {}").format( versionName, self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 {} project progress tag: {}").format( versionName, self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectProgressFilepath )
@@ -2182,18 +2182,18 @@ class PTX8Bible( Bible ):
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 print( "PTX8Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
-            self.tree = ElementTree().parse( printConfigFilepath )
-            assert len( self.tree ) # Fail here if we didn't load anything at all
+            self.XMLTree = ElementTree().parse( printConfigFilepath )
+            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
             # Find the main container
-            if self.tree.tag == 'PrintDraftConfiguration':
-                treeLocation = "PTX8 {} file for {}".format( self.tree.tag, printConfigType )
-                BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-                BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-                BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+            if self.XMLTree.tag == 'PrintDraftConfiguration':
+                treeLocation = "PTX8 {} file for {}".format( self.XMLTree.tag, printConfigType )
+                BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+                BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
                 # Now process the actual entries
-                for element in self.tree:
+                for element in self.XMLTree:
                     elementLocation = element.tag + ' in ' + treeLocation
                     #print( "Processing {}…".format( elementLocation ) )
 
@@ -2237,7 +2237,7 @@ class PTX8Bible( Bible ):
                     #print( "bookStatusDict", bookStatusDict )
                     #printConfigDict[printConfigType].append( bookStatusDict )
             else:
-                logging.critical( _("Unrecognised PTX8 {} print configuration tag: {}").format( printConfigType, self.tree.tag ) )
+                logging.critical( _("Unrecognised PTX8 {} print configuration tag: {}").format( printConfigType, self.XMLTree.tag ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
             try: self.filepathsNotYetLoaded.remove( printConfigFilepath )
@@ -2430,21 +2430,21 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
-        self.tree = ElementTree().parse( spellingStatusFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( spellingStatusFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         spellingStatusDict = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag == 'SpellingStatus':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'SpellingStatus':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -2481,7 +2481,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 spelling status tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 spelling status tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( spellingStatusFilepath )
@@ -2598,18 +2598,18 @@ class PTX8Bible( Bible ):
 
         TermRenderingsDict = OrderedDict()
 
-        self.tree = ElementTree().parse( renderingTermsFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( renderingTermsFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if self.tree.tag == 'TermRenderingsList':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'TermRenderingsList':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -2681,7 +2681,7 @@ class PTX8Bible( Bible ):
                 TermRenderingsDict[Id] = termRenderingEntryDict
                 #print( "termRenderingEntryDict", termRenderingEntryDict ); halt
         else:
-            logging.critical( _("Unrecognised PTX8 {} term renderings tag: {}").format( versionName, self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 {} term renderings tag: {}").format( versionName, self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( renderingTermsFilepath )
@@ -2737,8 +2737,8 @@ class PTX8Bible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "PTX8Bible.loading word analysis data from {}…".format( wordAnalysesFilepath ) )
-        self.tree = ElementTree().parse( wordAnalysesFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( wordAnalysesFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         wordAnalysesDict = OrderedDict()
         #loadErrors = []
@@ -2772,14 +2772,14 @@ class PTX8Bible( Bible ):
 
 
         # Find the main container
-        if self.tree.tag == 'WordAnalyses':
-            treeLocation = "PTX8 {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        if self.XMLTree.tag == 'WordAnalyses':
+            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Now process the actual entries
-            for element in self.tree:
+            for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
                 #print( "Processing {}…".format( elementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
@@ -2814,7 +2814,7 @@ class PTX8Bible( Bible ):
                     logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 word analysis tag: {}").format( self.tree.tag ) )
+            logging.critical( _("Unrecognised PTX8 word analysis tag: {}").format( self.XMLTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( wordAnalysesFilepath )

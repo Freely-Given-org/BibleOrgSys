@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.36'
@@ -60,7 +60,7 @@ class BibleBooksNamesConverter:
         self.__filenameBase = "BibleBooksNames"
 
         # These fields are used for parsing the XML
-        self.treeTag = "BibleBooksNames"
+        self.XMLTreeTag = "BibleBooksNames"
         self.headerTag = "header"
         self.mainElementTags = ( "BibleDivisionNames", "BibleBooknameLeaders", "BibleBookNames" )
 
@@ -98,7 +98,7 @@ class BibleBooksNamesConverter:
                     assert self.__XMLSystems[booksNamesSystemCode]['tree'] # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.__XMLSystems[booksNamesSystemCode]['tree'].tag  == self.treeTag:
+                    if self.__XMLSystems[booksNamesSystemCode]['tree'].tag  == self.XMLTreeTag:
                         header = self.__XMLSystems[booksNamesSystemCode]['tree'][0]
                         if header.tag == self.headerTag:
                             self.__XMLSystems[booksNamesSystemCode]["header"] = header
@@ -124,7 +124,7 @@ class BibleBooksNamesConverter:
                         else:
                             logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]['tree'].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.XMLTreeTag, self.__XMLSystems[booksNamesSystemCode]['tree'].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[booksNamesSystemCode]['tree']:
                         bookCount += 1
@@ -443,8 +443,8 @@ class BibleBooksNamesConverter:
             #if self.title: myFile.write( "# {}\n".format( self.title ) )
             #if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
             #if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
-            #myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self.namesTree), self.treeTag ) )
-            myFile.write( "#   {} {} loaded from the original XML files.\n#\n\n".format( len(self.__XMLSystems), self.treeTag ) )
+            #myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self.namesTree), self.XMLTreeTag ) )
+            myFile.write( "#   {} {} loaded from the original XML files.\n#\n\n".format( len(self.__XMLSystems), self.XMLTreeTag ) )
             myFile.write( "from collections import OrderedDict\n\n" )
             myFile.write( "\ndivisionNamesList = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
             for systemName in self.__BookNamesSystemsDict:
@@ -497,7 +497,7 @@ class BibleBooksNamesConverter:
             #if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
             #if self.ProgVersion: myFile.write( "#  Version: {}\n".format( self.ProgVersion ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
-            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.XMLtree), self.treeTag ) )
+            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.XMLtree), self.XMLTreeTag ) )
             json.dump( self.__BookNamesSystemsDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of {}".format(os.path.basename(filepath) )
     # end of exportDataToJSON
@@ -547,7 +547,7 @@ class BibleBooksNamesConverter:
             if self.title: myFile.write( "// {}\n".format( self.title ) )
             if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
-            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self.namesTree), self.treeTag ) )
+            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self.namesTree), self.XMLTreeTag ) )
             myFile.write( "#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
             exportPythonDict( myFile, IDDict, "IDDict", "{int id; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "id (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, USFMAbbreviation, USFMNumberString, nameEnglish (comment only)" )
             myFile.write( "#endif // {}\n".format( ifdefName ) )

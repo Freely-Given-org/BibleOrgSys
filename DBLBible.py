@@ -35,7 +35,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.25'
@@ -309,21 +309,21 @@ class DBLBible( Bible ):
 
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading license data from {}…".format( licenseFilepath ) )
-        self.tree = ElementTree().parse( licenseFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( licenseFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         DBLLicense = OrderedDict()
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='license':
-            location = "DBL {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+        if self.XMLTree.tag=='license':
+            location = "DBL {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location )
 
             # Process the metadata attributes first
             licenseID = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=='id': licenseID = value
                 else:
                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
@@ -331,7 +331,7 @@ class DBLBible( Bible ):
             DBLLicense['Id'] = licenseID
 
             # Now process the actual metadata
-            for element in self.tree:
+            for element in self.XMLTree:
                 sublocation = element.tag + ' ' + location
                 #print( "\nProcessing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -374,8 +374,8 @@ class DBLBible( Bible ):
 
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
-        self.tree = ElementTree().parse( mdFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( mdFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         def getContents( element, location ):
             """
@@ -464,14 +464,14 @@ class DBLBible( Bible ):
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='DBLMetadata':
-            location = "DBL Metadata ({}) file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+        if self.XMLTree.tag=='DBLMetadata':
+            location = "DBL Metadata ({}) file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location )
 
             # Process the metadata attributes first
             mdType = mdTypeVersion = mdVersion = mdID = mdRevision = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=='type': mdType = value
                 elif attrib=='typeVersion': mdTypeVersion = value
                 elif attrib=='version': mdVersion = value
@@ -488,7 +488,7 @@ class DBLBible( Bible ):
                 assert mdRevision in ( '1','2','3','4','5','6','7','8', )
 
             # Now process the actual metadata
-            for element in self.tree:
+            for element in self.XMLTree:
                 #print( "\nMetadata Top", self.suppliedMetadata['DBL'].keys() )
                 sublocation = element.tag + ' ' + location
                 #print( "\nProcessing {}…".format( sublocation ) )
@@ -1227,8 +1227,8 @@ class DBLBible( Bible ):
 
         styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "DBLBible.loading styles from {}…".format( styleFilepath ) )
-        self.tree = ElementTree().parse( styleFilepath )
-        assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( styleFilepath )
+        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         def getStyle( element, location ):
             """
@@ -1284,14 +1284,14 @@ class DBLBible( Bible ):
         #loadErrors = []
 
         # Find the main container
-        if self.tree.tag=='stylesheet':
-            location = "DBL {} file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoAttributes( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
+        if self.XMLTree.tag=='stylesheet':
+            location = "DBL {} file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, location )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, location )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, location )
 
             # Now process the actual properties and styles
-            for element in self.tree:
+            for element in self.XMLTree:
                 sublocation = element.tag + ' ' + location
                 #print( "\nProcessing {}…".format( sublocation ) )
                 if element.tag == 'property':

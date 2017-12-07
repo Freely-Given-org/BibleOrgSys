@@ -34,7 +34,7 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
 ProgVersion = '0.17'
@@ -103,7 +103,7 @@ class GreekStrongsFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("GreekStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.StrongsEntries = None
+        self.XMLTree = self.header = self.StrongsEntries = None
     # end of GreekStrongsFileConverter.__init__
 
 
@@ -131,25 +131,25 @@ class GreekStrongsFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        try: self.tree = ElementTree().parse( XMLFilepath )
+        try: self.XMLTree = ElementTree().parse( XMLFilepath )
         except FileNotFoundError:
             logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
             raise ParseError
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
-        if self.tree.tag == GreekStrongsFileConverter.treeTag:
-            for segment in self.tree:
+        if self.XMLTree.tag == GreekStrongsFileConverter.treeTag:
+            for segment in self.XMLTree:
                 #print( segment.tag )
                 if segment.tag == "prologue":
                     pass
                 elif segment.tag == "entries":
                     self.validateEntries( segment )
                 else: logging.error( "ks24 Unprocessed {!r} element ({}) in entry".format( segment.tag, segment.text ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( GreekStrongsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "vs42 Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( GreekStrongsFileConverter.treeTag, self.XMLTree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "vs42 Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
     # end of GreekStrongsFileConverter.loadAndValidate
 
 
@@ -322,10 +322,10 @@ class GreekStrongsFileConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.tree if you prefer.)
+        (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len( self.tree )
+            assert len( self.XMLTree )
             assert self.StrongsEntries
         return self.StrongsEntries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of GreekStrongsFileConverter.importDataToPython

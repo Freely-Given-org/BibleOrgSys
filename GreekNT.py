@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = '0.08'
@@ -98,7 +98,7 @@ class GreekNT( Bible ):
         self.sourceFilepath, self.givenName, self.encoding  = sourceFilepath, givenName, encoding
 
         self.title = self.version = self.date = None
-        self.tree = self.header = self.frontMatter = self.divs = self.divTypesString = None
+        self.XMLTree = self.header = self.frontMatter = self.divs = self.divTypesString = None
         #self.bkData, self.USFMBooks = OrderedDict(), OrderedDict()
         self.lang = self.language = None
 

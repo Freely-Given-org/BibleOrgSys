@@ -5,7 +5,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2016 Robert Hunt
+# Copyright (C) 2011-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = '0.18'
@@ -95,7 +95,7 @@ class AugmentedStrongsIndexFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("AugmentedStrongsIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.entries1 = self.entries2 = None
+        self.XMLTree = self.header = self.entries1 = self.entries2 = None
     # end of AugmentedStrongsIndexFileConverter.__init__
 
 
@@ -125,21 +125,21 @@ class AugmentedStrongsIndexFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
-        try: self.tree = ElementTree().parse( XMLFilepath )
+        try: self.XMLTree = ElementTree().parse( XMLFilepath )
         except FileNotFoundError:
             logging.critical( t("HebrewStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
             raise ParseError
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         self.entries1, self.entries2 = {}, {}
-        if self.tree.tag == AugmentedStrongsIndexFileConverter.treeTag:
-            for entry in self.tree:
+        if self.XMLTree.tag == AugmentedStrongsIndexFileConverter.treeTag:
+            for entry in self.XMLTree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( AugmentedStrongsIndexFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( AugmentedStrongsIndexFileConverter.treeTag, self.XMLTree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
     # end of AugmentedStrongsIndexFileConverter.loadAndValidate
 
 
@@ -169,10 +169,10 @@ class AugmentedStrongsIndexFileConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.tree if you prefer.)
+        (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len( self.tree )
+            assert len( self.XMLTree )
             assert self.entries1 and self.entries2
         return self.entries1, self.entries2 # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of AugmentedStrongsIndexFileConverter.importDataToPython
@@ -218,7 +218,7 @@ class LexicalIndexFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("LexicalIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.entries = None
+        self.XMLTree = self.header = self.entries = None
     # end of LexicalIndexFileConverter.__init__
 
 
@@ -248,15 +248,15 @@ class LexicalIndexFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
-        self.tree = ElementTree().parse( XMLFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( XMLFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         self.entries = {}
-        if self.tree.tag == LexicalIndexFileConverter.treeTag:
-            for part in self.tree:
+        if self.XMLTree.tag == LexicalIndexFileConverter.treeTag:
+            for part in self.XMLTree:
                 self.validatePart( part )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( LexicalIndexFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( LexicalIndexFileConverter.treeTag, self.XMLTree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
     # end of LexicalIndexFileConverter.loadAndValidate
 
 
@@ -361,10 +361,10 @@ class LexicalIndexFileConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.tree if you prefer.)
+        (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len( self.tree )
+            assert len( self.XMLTree )
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of LexicalIndexFileConverter.importDataToPython
@@ -416,7 +416,7 @@ class HebrewStrongsFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.entries = None
+        self.XMLTree = self.header = self.entries = None
     # end of HebrewStrongsFileConverter.__init__
 
 
@@ -444,15 +444,15 @@ class HebrewStrongsFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
-        self.tree = ElementTree().parse( XMLFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( XMLFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         self.entries = {}
-        if self.tree.tag == HebrewStrongsFileConverter.treeTag:
-            for entry in self.tree:
+        if self.XMLTree.tag == HebrewStrongsFileConverter.treeTag:
+            for entry in self.XMLTree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( HebrewStrongsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( HebrewStrongsFileConverter.treeTag, self.XMLTree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
     # end of HebrewStrongsFileConverter.loadAndValidate
 
 
@@ -542,10 +542,10 @@ class HebrewStrongsFileConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.tree if you prefer.)
+        (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len( self.tree )
+            assert len( self.XMLTree )
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of HebrewStrongsFileConverter.importDataToPython
@@ -594,7 +594,7 @@ class BrownDriverBriggsFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BrownDriverBriggsFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.entries = None
+        self.XMLTree = self.header = self.entries = None
     # end of BrownDriverBriggsFileConverter.__init__
 
 
@@ -624,15 +624,15 @@ class BrownDriverBriggsFileConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
-        self.tree = ElementTree().parse( XMLFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.tree ) # Fail here if we didn't load anything at all
+        self.XMLTree = ElementTree().parse( XMLFilepath )
+        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         self.entries = {}
-        if self.tree.tag == BrownDriverBriggsFileConverter.treeTag:
-            for entry in self.tree:
+        if self.XMLTree.tag == BrownDriverBriggsFileConverter.treeTag:
+            for entry in self.XMLTree:
                 self.validatePart( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( BrownDriverBriggsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( BrownDriverBriggsFileConverter.treeTag, self.XMLTree.tag ) )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
     # end of BrownDriverBriggsFileConverter.loadAndValidate
 
 
@@ -734,10 +734,10 @@ class BrownDriverBriggsFileConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.tree if you prefer.)
+        (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
         if BibleOrgSysGlobals.debugFlag:
-            assert len( self.tree )
+            assert len( self.XMLTree )
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of BrownDriverBriggsFileConverter.importDataToPython

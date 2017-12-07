@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-02' # by RJH
+LastModifiedDate = '2017-12-07' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.23'
@@ -437,25 +437,25 @@ class USXXMLBibleBook( BibleBook ):
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
-        try: self.tree = ElementTree().parse( self.sourceFilepath )
+        try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
             self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            assert len( self.tree ) # Fail here if we didn't load anything at all
+            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
         if 'tree' in dir(self) \
-        and ( self.tree.tag=='usx' or self.tree.tag=='usfm' ): # Not sure why both are allowable
-            treeLocation = "USX ({}) file".format( self.tree.tag )
-            BibleOrgSysGlobals.checkXMLNoText( self.tree, treeLocation )
-            BibleOrgSysGlobals.checkXMLNoTail( self.tree, treeLocation )
+        and ( self.XMLTree.tag=='usx' or self.XMLTree.tag=='usfm' ): # Not sure why both are allowable
+            treeLocation = "USX ({}) file".format( self.XMLTree.tag )
+            BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
+            BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
             # Process the attributes first
             self.schemaLocation = ''
             version = None
-            for attrib,value in self.tree.items():
+            for attrib,value in self.XMLTree.items():
                 if attrib=='version': version = value
                 else:
                     logging.warning( _("DG84 Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
@@ -465,7 +465,7 @@ class USXXMLBibleBook( BibleBook ):
                 if debuggingThisModule: halt
 
             # Now process the data
-            for element in self.tree:
+            for element in self.XMLTree:
                 location = element.tag + " " + treeLocation
                 if element.tag == 'book': # milestone (not a container)
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
