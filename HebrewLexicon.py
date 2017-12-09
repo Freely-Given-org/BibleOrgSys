@@ -37,7 +37,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 

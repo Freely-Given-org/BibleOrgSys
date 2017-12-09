@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.36'
@@ -281,7 +281,7 @@ class BibleBooksNamesConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Expanding input abbreviations…") )
         for systemName in self.__BookNamesSystemsDict:
@@ -324,7 +324,7 @@ class BibleBooksNamesConverter:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
-                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
                             logging.error( _("Unrecognized {!r} book abbreviation in BibleDivisionNames in {!r} booksNames system").format( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
                             logging.error( _("Duplicate {!r} entry in includesBook field for {!r} division in {!r} booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -341,7 +341,7 @@ class BibleBooksNamesConverter:
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
-                    if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
+                    if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( referenceAbbreviation ):
                         logging.error( _("Unrecognized {!r} book abbreviation in BibleBookNames in {!r} booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text

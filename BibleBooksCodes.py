@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.79'
@@ -138,7 +138,7 @@ class BibleBooksCodes:
             yield BBB
 
 
-    def isValidReferenceAbbreviation( self, BBB ):
+    def isValidBBB( self, BBB ):
         """ Returns True or False. """
         return BBB in self.__DataDicts["referenceAbbreviationDict"]
 
@@ -178,7 +178,7 @@ class BibleBooksCodes:
         if not myList: return [] # Return an empty list if that's what they gave
         for something in myList: # Something can be a BBB string or a tuple
             BBB = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
-            assert self.isValidReferenceAbbreviation( BBB ) # Check the supplied list
+            assert self.isValidBBB( BBB ) # Check the supplied list
         resultList = []
         for BBB1 in self.__DataDicts["sequenceList"]:
             for something in myList:

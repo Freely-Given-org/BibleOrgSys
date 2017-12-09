@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-04-28' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
 ProgVersion = "0.25"
@@ -243,7 +243,7 @@ class BibleOrganizationalSystemsConverter:
                 if element.find('includesBooks') is not None:
                     bookList = element.find('includesBooks').text.split()
                     for BBB in bookList:
-                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
                             logging.critical( _("Unrecognized {!r} Bible book code found in 'includesBooks' in record with ID {!r} (record {})").format( BBB, ID, j) )
                         if bookList.count( BBB ) > 1:
                             logging.error( _("Multiple {!r} Bible book codes found in 'includesBooks' in record with ID {!r} (record {})").format( BBB, ID, j) )
@@ -290,7 +290,7 @@ class BibleOrganizationalSystemsConverter:
                         if name=='includesBooks': # special handling
                             bits['includesBooks'] = nameData.text.split()
                             for BBB in bits['includesBooks']:
-                                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
                                     logging.error( _("Unrecognized {!r} Bible book code found in 'includesBooks' in {} {}").format( BBB, referenceAbbreviation, myType) )
                         else: bits[name] = nameData.text # normal handling
 

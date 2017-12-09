@@ -5,7 +5,7 @@
 #
 # Module handling BibleBookOrderSystems
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
 ProgVersion = '0.89'
@@ -189,7 +189,7 @@ class BibleBookOrderSystems:
         assert self.__DataLists
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
+            if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''

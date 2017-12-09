@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleBookOrderSystemsConverter"
 ProgName = "Bible Book Order Systems converter"
 ProgVersion = '0.84'
@@ -269,7 +269,7 @@ class BibleBookOrdersConverter:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( bookRA ):
                     logging.error( _("Unrecognized {!r} book abbreviation in {!r} book order system").format( bookRA, bookOrderSystemCode ) )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:

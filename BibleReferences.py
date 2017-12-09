@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.33'
@@ -1446,7 +1446,7 @@ class BibleAnchorReference:
         self.suffixString = '' if suffixString is None else suffixString
         self.homeTuple = (self.BBB,self.chapterString,self.verseString,self.suffixString,)
 
-        assert BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB )
+        assert BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB )
         self.isSingleChapterBook = BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.allowedVerseSuffixes = ( 'a', 'b', 'c', 'd', 'e', )
         self.allowedCVSeparators = ( ':', '.', )

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.80'
@@ -2066,7 +2066,7 @@ class InternalBible:
             assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             #print( "getNumChapters", self, self.books[BBB].getNumChapters() )
@@ -2084,7 +2084,7 @@ class InternalBible:
             print( exp("getNumVerses( {}, {!r} )").format( BBB, C ) )
             assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             if isinstance( C, int ): # Just double-check the parameter

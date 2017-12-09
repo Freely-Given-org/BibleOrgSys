@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-29' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.39'
@@ -354,7 +354,7 @@ class BibleBooksNamesSystems:
         """
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
                     logging.error( _("Invalid {!r} in booklist requested for {} books names system").format( BBB, systemName ) )
 
         if systemName in self.__DataDicts:

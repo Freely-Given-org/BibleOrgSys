@@ -65,7 +65,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-17' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
 ProgVersion = '0.58'
@@ -644,7 +644,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else return None
@@ -657,7 +657,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else return None
@@ -674,7 +674,7 @@ class BibleVersificationSystem:
             print( "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
             assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
             C = str( C )

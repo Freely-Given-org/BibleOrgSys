@@ -5,7 +5,7 @@
 #
 # Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,7 +31,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-07-29' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleVersificationSystemsConverter"
 ProgName = "Bible Versification Systems converter"
 ProgVersion = '0.51'
@@ -273,7 +273,7 @@ class BibleVersificationSystemsConverter:
             for bookElement in self.__XMLSystems[versificationSystemCode]['tree']:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #print( BBB )
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
                     logging.error( _("Unrecognized {!r} book abbreviation in {!r} versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
 
