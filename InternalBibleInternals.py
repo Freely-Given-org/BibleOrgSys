@@ -71,10 +71,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-05' # by RJH
+LastModifiedDate = '2017-12-09' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.69'
+ProgVersion = '0.70'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -179,7 +179,12 @@ BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX'
 
 class InternalBibleExtra:
     """
-    This class represents an entry in the _processedLines list.
+    This class represents an entry in the InternalBibleExtraList.
+
+    Each object/entry represents a note or cross-reference or other inserted object
+        not normally printed in-line in the mainstream verse text.
+
+
     """
 
     def __init__( self, myType, index, noteText, cleanNoteText, location ):
@@ -324,13 +329,33 @@ class InternalBibleExtraList:
         assert isinstance( newExtraList, InternalBibleExtraList )
         self.data.extend( newExtraList )
     # end of InternalBibleExtraList.extend
+
+    def checkForIndex( self, stringIndex ):
+        """
+        See if there's an extra at this point in the source string
+
+        If more than one, returns a list.
+        If only one, return the extra
+        If none, return None.
+        """
+        resultList = []
+        for extra in self.data:
+            if extra.getIndex() == stringIndex: resultList.append( extra )
+        #print( "checkForIndex( {} ) resultList = {}".format( stringIndex, resultList ) )
+        if resultList:
+            if len(resultList) == 1: return resultList[0]
+            return resultList
+        return None
 # end of class InternalBibleExtraList
 
 
 
 class InternalBibleEntry:
     """
-    This class represents an entry in the _processedLines list.
+    This class represents an entry in the InternalBibleEntryList (_processedLines).
+
+    Each entry holds the original and adjusted markers (e.g., \s will be adjusted to \s1)
+        plus the cleanText with notes, etc. removed and stored in the "extras" list.
     """
 
     def __init__( self, marker, originalMarker, adjustedText, cleanText, extras, originalText ):
