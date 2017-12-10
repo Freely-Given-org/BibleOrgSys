@@ -46,11 +46,14 @@ The module is tested on LDML files from the SIL NRSI Github repository
     at https://github.com/silnrsi/sldr
 
 CLDR stands for Common Locale Data Repository.
+
+NOTE: This preliminary module currently parses a range of XML files
+        but does not yet store the parsed data in many cases.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-21' # by RJH
+LastModifiedDate = '2017-12-11' # by RJH
 ShortProgName = "LDML_Handler"
 ProgName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
 ProgVersion = '0.12'
@@ -585,7 +588,7 @@ class LDMLFile:
                     if symbols:
                         #print( "symbols", symbols, subelement.tag )
                         #assert subelement.tag not in numbers # losing data here XXXXXXXXXXXXXXXXXXXXXXX
-                        if subelement.tag in numbers: logging.critical( "Losing data here for {} numbers field".format( subelement.tag ) )
+                        if subelement.tag in numbers: logging.critical( "Losing data here for {!r} numbers field".format( subelement.tag ) )
                         numbers[subelement.tag] = symbols
                 elif subelement.tag == 'currencyFormats':
                     currencyFormats = {}
@@ -753,7 +756,7 @@ class LDMLFile:
                     if currencyFormats:
                         #print( "currencyFormats", currencyFormats )
                         #assert subelement.tag not in numbers # losing data here XXXXXXXXXXXXXXXXXXXXXXX
-                        if subelement.tag in numbers: logging.critical( "Losing data here for {} currencyFormats field".format( subelement.tag ) )
+                        if subelement.tag in numbers: logging.critical( "Losing data here for {!r} currencyFormats field".format( subelement.tag ) )
                         numbers[subelement.tag] = currencyFormats
                 elif subelement.tag == 'currencies':
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
@@ -773,7 +776,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert cuType not in currencies # XXXXXXXXXXXXXX losing some info here
-                            if cuType in currencies: logging.critical( "Losing data here for {} currencies field".format( cuType ) )
+                            if cuType in currencies: logging.critical( "Losing data here for {!r} currencies field".format( cuType ) )
                             currencies[cuType] = {}
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
@@ -1233,7 +1236,7 @@ class LDMLFile:
                 elif subelement.tag == 'collation':
                     BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                     #assert subelement.tag not in collations # XXXXXXXXXXXXXX losing some info here
-                    if subelement.tag in collations: logging.critical( "Losing data here for {} collations field".format( subelement.tag ) )
+                    if subelement.tag in collations: logging.critical( "Losing data here for {!r} collations field".format( subelement.tag ) )
                     collations[subelement.tag] = {}
                     cType = cReferences = cDraft = cAlt = None
                     for attrib,value in subelement.items():
@@ -1306,7 +1309,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert lType not in languages # XXXXXXXXXXXXXX losing some info here
-                            if lType in languages: logging.critical( "Losing data here for {} languages field".format( lType ) )
+                            if lType in languages: logging.critical( "Losing data here for {!r} languages field".format( lType ) )
                             languages[lType] = (lType,sub2element.text,lDraft)
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -1331,7 +1334,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert tType not in territories # Losing info here XXXXXXXXXXXXXXXXXXXXXXX
-                            if tType in territories: logging.critical( "Losing data here for {} territories field".format( tType ) )
+                            if tType in territories: logging.critical( "Losing data here for {!r} territories field".format( tType ) )
                             territories[tType] = (tType,sub2element.text,tDraft,tAlt)
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -1381,7 +1384,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert kType not in types # losing data here XXXXXXXXXXXXXXXXXXXXXXX
-                            if kType in types: logging.critical( "Losing data here for {} types field".format( kType ) )
+                            if kType in types: logging.critical( "Losing data here for {!r} types field".format( kType ) )
                             types[kType] = {'type':kType,'key':tKey,'value':sub2element.text}
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -1406,7 +1409,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert sType not in scripts # XXXXXXXXXXXxx losing some info here
-                            if sType in scripts: logging.critical( "Losing data here for {} scripts field".format( sType ) )
+                            if sType in scripts: logging.critical( "Losing data here for {!r} scripts field".format( sType ) )
                             scripts[sType] = {'type':sType,'value':sub2element.text}
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -1431,7 +1434,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             #assert vType not in variants # XXXXXXXXXXXxx losing some info here
-                            if vType in variants: logging.critical( "Losing data here for {} variants field".format( vType ) )
+                            if vType in variants: logging.critical( "Losing data here for {!r} variants field".format( vType ) )
                             variants[vType] = {'type':vType,'value':sub2element.text}
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -2558,7 +2561,7 @@ class LDMLFile:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                             #assert fType not in fields # losing data here XXXXXXXXXXXXXXXXXXXXXXX
-                            if fType in fields: logging.critical( "Losing data here for {} fields field".format( fType ) )
+                            if fType in fields: logging.critical( "Losing data here for {!r} fields field".format( fType ) )
                             fields[fType] = (fType,sub2element.text,draft,alt)
                         else:
                             logging.error( _("Unprocessed {!r} sub2element ({}) in {}").format( sub2element.tag, sub2element.text.strip() if sub2element.text else sub2element.text, subelementLocation ) )
@@ -2723,7 +2726,7 @@ class LDMLFile:
                                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub3elementLocation ) )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     #assert sub3element.tag not in zone # losing data here XXXXXXXXXXXXXXXXXXXXXXX
-                                    if sub3element.tag in zone: logging.critical( "Losing data here for {} zone field".format( sub3element.tag ) )
+                                    if sub3element.tag in zone: logging.critical( "Losing data here for {!r} zone field".format( sub3element.tag ) )
                                     zone[sub3element.tag] = sub3element.text
                                 else:
                                     logging.error( _("Unprocessed {!r} sub3element ({}) in {}").format( sub3element.tag, sub3element.text.strip() if sub3element.text else sub3element.text, sub2elementLocation ) )
