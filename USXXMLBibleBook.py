@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-13' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.23'
@@ -104,7 +104,7 @@ class USXXMLBibleBook( BibleBook ):
             Has no return value -- updates the data fields directly.
             """
             nonlocal V
-            #print( "loadVerseNumberField( {}, {} @ {} {}:{} )".format( verseNumberElement.tag, verseNumberLocation, self.BBB, C, V ) )
+            #print( "USXXMLBibleBook.loadVerseNumberField( {}, {} @ {} {}:{} )".format( verseNumberElement.tag, verseNumberLocation, self.BBB, C, V ) )
             assert verseNumberElement.tag == 'verse'
 
             BibleOrgSysGlobals.checkXMLNoText( verseNumberElement, verseNumberLocation )
@@ -132,7 +132,7 @@ class USXXMLBibleBook( BibleBook ):
                 if vText:
                     #print( repr(vText) )
                     self.appendToLastLine( vText )
-        # end of loadVerseNumberField
+        # end of load.loadVerseNumberField
 
 
         def loadCharField( charElement, charLocation ):
@@ -215,7 +215,7 @@ class USXXMLBibleBook( BibleBook ):
             if debuggingThisModule: print( "USX.loadCharField: {} {}:{} {} {!r}".format( self.BBB, C, V, charStyle, charLine ) )
             assert '\n' not in charLine
             return charLine
-        # end of loadCharField
+        # end of load.loadCharField
 
 
         def loadNoteField( noteElement, noteLocation ):
@@ -294,7 +294,7 @@ class USXXMLBibleBook( BibleBook ):
             #print( "  loadNoteField returning noteField: {!r}".format( noteField ) )
             assert '\n' not in noteField
             return noteField
-        # end of loadNoteField
+        # end of load.loadNoteField
 
 
         def loadParagraph( paragraphXML, paragraphlocation ):
@@ -306,6 +306,7 @@ class USXXMLBibleBook( BibleBook ):
             Uses (and updates) C,V information from the containing function.
             """
             nonlocal C, V
+            #print( "USXXMLBibleBook.loadParagraph( {} {} )".format( paragraphXML, paragraphlocation ) )
 
             # Process the attributes first
             paragraphStyle = None
@@ -426,7 +427,7 @@ class USXXMLBibleBook( BibleBook ):
                     self.addPriorityError( 1, C, V, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._rawLines[x] )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
-        # end of loadParagraph
+        # end of load.loadParagraph
 
 
         # Main code for load()
@@ -446,7 +447,7 @@ class USXXMLBibleBook( BibleBook ):
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
         # Find the main container
-        if 'tree' in dir(self) \
+        if 'XMLTree' in dir(self) \
         and ( self.XMLTree.tag=='usx' or self.XMLTree.tag=='usfm' ): # Not sure why both are allowable
             treeLocation = "USX ({}) file".format( self.XMLTree.tag )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
@@ -718,24 +719,29 @@ def demo():
                         for i in range(0, max( UxL, UL ) ):
                             if i<UxL and i<UL:
                                 if UxBB._processedLines[i] != UBB._processedLines[i]:
-                                    print( "\n{} line {} not equal: {}({}) from {}({})".format( BBB, i, UxBB._processedLines[i].getCleanText(), UxBB._processedLines[i].getMarker(), UBB._processedLines[i].getCleanText(), UBB._processedLines[i].getMarker() ) )
-                                    if 1:
+                                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                                        print( "\n{} line {} not equal: {}({}) from {}({})".format( BBB, i, UxBB._processedLines[i].getCleanText(), UxBB._processedLines[i].getMarker(), UBB._processedLines[i].getCleanText(), UBB._processedLines[i].getMarker() ) )
+                                    if 1 and BibleOrgSysGlobals.verbosityLevel > 0:
                                         print( "usx ", repr(UxBB._processedLines[i]) )
                                         print( "usx ", i, len(UxBB._processedLines[i]), UxBB._processedLines[i].getMarker(), UxBB._processedLines[i].getOriginalText() )
                                         print( "usfm", repr(UBB._processedLines[i]) )
                                         print( "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i].getMarker() )
                                     if UxBB._processedLines[i].getAdjustedText() != UBB._processedLines[i].getAdjustedText():
-                                        print( "   UsxBB[adj]: {!r}".format( getShortVersion( UxBB._processedLines[i].getAdjustedText() ) ) )
-                                        print( "   UsfBB[adj]: {!r}".format( getShortVersion( UBB._processedLines[i].getAdjustedText() ) ) )
+                                        if BibleOrgSysGlobals.verbosityLevel > 0:
+                                            print( "   UsxBB[adj]: {!r}".format( getShortVersion( UxBB._processedLines[i].getAdjustedText() ) ) )
+                                            print( "   UsfBB[adj]: {!r}".format( getShortVersion( UBB._processedLines[i].getAdjustedText() ) ) )
                                     if (UxBB._processedLines[i].getCleanText() or UBB._processedLines[i].getCleanText()) and UxBB._processedLines[i].getCleanText()!=UBB._processedLines[i].getCleanText():
-                                        print( "   UdsBB[clT]: {!r}".format( getShortVersion( UxBB._processedLines[i].getCleanText() ) ) )
-                                        print( "   UsfBB[clT]: {!r}".format( getShortVersion( UBB._processedLines[i].getCleanText() ) ) )
+                                        if BibleOrgSysGlobals.verbosityLevel > 0:
+                                            print( "   UdsBB[clT]: {!r}".format( getShortVersion( UxBB._processedLines[i].getCleanText() ) ) )
+                                            print( "   UsfBB[clT]: {!r}".format( getShortVersion( UBB._processedLines[i].getCleanText() ) ) )
                                     mismatchCount += 1
                             else: # one has more lines
-                                print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 0:
+                                    print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
                                 mismatchCount += 1
                                 break
-                            if mismatchCount > 5: print( "…" ); break
+                            if mismatchCount > 5 and BibleOrgSysGlobals.verbosityLevel > 0:
+                                print( "…" ); break
                         if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2:
                             print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
