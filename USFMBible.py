@@ -683,8 +683,10 @@ def demo():
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
                             "Tests/DataFilesForTests/USFMErrorProject/",
                             "Tests/DataFilesForTests/PTX7Test/",
-                            "OutputFiles/BOS_USFM_Export/",
-                            "OutputFiles/BOS_USFM_Reexport/",
+                            "OutputFiles/BOS_USFM2_Export/",
+                            "OutputFiles/BOS_USFM2_Reexport/",
+                            "OutputFiles/BOS_USFM3_Export/",
+                            "OutputFiles/BOS_USFM3_Reexport/",
                             "MadeUpFolder/",
                             ) ):
             print( "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )

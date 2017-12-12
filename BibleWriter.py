@@ -9574,7 +9574,7 @@ class BibleWriter( InternalBible ):
                 #assert len(results) == len(self.__outputFolders)
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
-                    #USFMExportResult, ESFMExportResult, textExportResult, \
+                    #USFM2ExportResult, ESFMExportResult, textExportResult, \
                     #markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
                     #USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
@@ -9781,7 +9781,7 @@ class BibleWriter( InternalBible ):
             noneCount  = finishString.count( 'None' )
 
             #if pickleResult and listOutputResult and BCVExportResult \
-            #and pseudoUSFMExportResult and USFMExportResult and ESFMExportResult and textExportResult \
+            #and pseudoUSFMExportResult and USFM2ExportResult and ESFMExportResult and textExportResult \
             #and VPLExportResult and markdownExportResult and D43ExportResult and htmlExportResult \
             #and CBExportResult and EWBExportResult \
             #and USXExportResult and USFXExportResult and OSISExportResult \
@@ -9853,7 +9853,7 @@ def demo():
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
-                    outputFolder = 'OutputFiles/BOS_USFM_Reexport/'
+                    outputFolder = 'OutputFiles/BOS_USFM2_Reexport/'
                     fN = USFMFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived

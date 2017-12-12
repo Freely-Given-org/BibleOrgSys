@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.29'
@@ -1842,8 +1842,10 @@ def demo():
                             "Tests/DataFilesForTests/PTX8Test1/",
                             "Tests/DataFilesForTests/PTX8Test2/",
                             "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                            "OutputFiles/BOS_USFM_Export/",
-                            "OutputFiles/BOS_USFM_Reexport/",
+                            "OutputFiles/BOS_USFM2_Export/",
+                            "OutputFiles/BOS_USFM2_Reexport/",
+                            "OutputFiles/BOS_USFM3_Export/",
+                            "OutputFiles/BOS_USFM3_Reexport/",
                             "MadeUpFolder/",
                             ):
             if BibleOrgSysGlobals.verbosityLevel > 0:

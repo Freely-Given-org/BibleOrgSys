@@ -35,7 +35,7 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.60'
@@ -564,8 +564,10 @@ def demo():
             # Not actual ESFM
                 #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
                 ("USFM Error Project", "UEP", "Tests/DataFilesForTests/USFMErrorProject/"),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM_Export/"),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM_Reexport/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM2_Export/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM2_Reexport/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Export/"),
+                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Reexport/"),
             # Actual ESFM Bibles
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 ("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
