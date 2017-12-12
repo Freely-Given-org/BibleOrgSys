@@ -77,10 +77,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2017-12-13' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.74'
+ProgVersion = '0.75'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -109,8 +109,6 @@ DEFAULT_LOG_FOLDER = 'Logs/' # Relative path
 DEFAULT_CACHE_FOLDER = 'ObjectCache/' # Relative path
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
-
-STANDARD_BACKUP_EXTENSIONS = ( '', '.bak', '.bak2', '.bak3','.bak4' )
 
 
 # Some language independant punctuation help
@@ -401,13 +399,11 @@ def backupAnyExistingFile( filenameOrFilepath, numBackups=1, extension='bak' ):
     if debugFlag and debuggingThisModule:
         print( "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
         assert not filenameOrFilepath.lower().endswith( '.bak' )
-        assert 1 <= numBackups <= 4
 
-    backupExtensions = STANDARD_BACKUP_EXTENSIONS if extension=='bak' \
-                        else ( '', '.'+extension, '.'+extension+'2', '.'+extension+'3','.'+extension+'4' )
-    for n in range( numBackups, 0, -1 ):
-        source = filenameOrFilepath + backupExtensions[n-1]
-        destination = filenameOrFilepath + backupExtensions[n]
+    if extension[0] != '.': extension = '.' + extension
+    for n in range( numBackups, 0, -1 ): # e.g., 4,3,2,1
+        source = filenameOrFilepath + ('' if n==1 else (extension + ('' if n<3 else str(n-1))))
+        destination = filenameOrFilepath + extension + ('' if n==1 else str(n))
         if os.access( source, os.F_OK ):
             if n==1 and debugFlag:
                 logging.info( "backupAnyExistingFile: {!r} already exists -- renaming it first!".format( source ) )

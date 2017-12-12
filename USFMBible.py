@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2017-12-13' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -456,7 +456,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
         if optionsDict['doBackups']:
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "Making backup copy of {} file: {}…".format( BBB, filepath ) )
-            BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=4 )
+            BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=5 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1:
