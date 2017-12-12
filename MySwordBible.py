@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-17' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -363,6 +363,7 @@ class MySwordBible( Bible ):
                 ourGlobals['haveParagraph'] = False
 
         self.cursor.close()
+        del self.cursor
         self.applySuppliedMetadata( 'MySword' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of MySwordBible.load

@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -484,8 +484,8 @@ class USFMBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'USFM Bible object'
-        self.objectTypeString = 'USFM'
+        self.objectNameString = 'USFM2 Bible object'
+        self.objectTypeString = 'USFM2'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
@@ -713,7 +713,8 @@ def demo():
                                         ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest3/"),
                                         ("WEB+", 'utf-8', "Tests/DataFilesForTests/USFMAllMarkersProject/"),
                                         ("UEP", 'utf-8', "Tests/DataFilesForTests/USFMErrorProject/"),
-                                        ("Exported", 'utf-8', "Tests/BOS_USFM_Export/"),
+                                        ("Exported2", 'utf-8', "OutputFiles/BOS_USFM2_Export/"),
+                                        ("Exported3", 'utf-8', "OutputFiles/BOS_USFM3_Export/"),
                                         ) ):
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( j+1 ) )

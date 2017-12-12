@@ -87,7 +87,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -496,6 +496,7 @@ class MyBibleBible( Bible ):
                 print( "   {} is not present in this Bible".format( BBB ) )
 
         self.cursor.close()
+        del self.cursor
         self.applySuppliedMetadata( 'MyBible' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of MyBibleBible.loadBooks
@@ -1345,6 +1346,9 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
             except KeyError:
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( '  testMyBB', reference, "not found!!!" )
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: raise
+
+        #MyBB.loadBooks()
+        MyBB.doAllExports()
 
         if 0: # Now export the Bible and compare the round trip
             MyBB.toMyBible()

@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-02-05' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.47'
@@ -75,8 +75,8 @@ class USFMBibleBook( BibleBook ):
         Create the USFM Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
-        self.objectNameString = 'USFM Bible Book object'
-        self.objectTypeString = 'USFM'
+        self.objectNameString = 'USFM2 Bible Book object'
+        self.objectTypeString = 'USFM2'
 
         global sortedNLMarkers
         if sortedNLMarkers is None:

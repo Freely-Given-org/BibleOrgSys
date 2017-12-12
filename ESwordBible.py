@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-20' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1072,6 +1072,7 @@ class ESwordBible( Bible ):
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
             self.checkForExtraMaterial( self.cursor, self.BOS )
         self.cursor.close()
+        del self.cursor
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         self.applySuppliedMetadata( 'e-Sword-Bible' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()

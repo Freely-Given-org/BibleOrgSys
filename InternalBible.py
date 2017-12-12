@@ -32,7 +32,7 @@ InternalBible is the base class containing self.books which contains the Bible t
         and understanding of divisions (e.g., Old Testament) and things like that.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (e.g., 'USFM' or 'USX')
+    self.objectTypeString (e.g., 'USFM2' or 'USX')
     self.objectNameString (with a description of the type of Bible object, e.g., 'USFM Bible object')
 
 It also needs to provide a "load" routine that sets any of the relevant fields:
@@ -59,7 +59,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.80'
+ProgVersion = '0.81'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 

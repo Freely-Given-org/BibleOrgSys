@@ -26,7 +26,7 @@
 Module for defining and manipulating Bible books in our internal USFM-based 'lines' format.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (with 'OSIS', 'USFM', 'USX' or 'XML', etc.)
+    self.objectTypeString (with 'OSIS', 'USFM2', 'USX' or 'XML', etc.)
     self.objectNameString (with a description of the type of BibleBook object)
 It also needs to provide a 'load' routine that sets one or more of:
     self.sourceFolder
@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-12' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -514,7 +514,7 @@ class InternalBibleBook:
             #print( "QQQ1: rstrip ok" )
             #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
-        if self.objectTypeString in ('USFM','USX',):
+        if self.objectTypeString in ('USFM2','USFM3','USX',):
             if originalMarker not in ('id','ide','h','rem',):
                 # Fix up quote marks
                 if '<' in adjText or '>' in adjText:
@@ -1461,7 +1461,7 @@ class InternalBibleBook:
             if not adjText and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
                 #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
-                if self.objectTypeString in ('USFM','USX',):
+                if self.objectTypeString in ('USFM2','USFM3','USX',):
                     if sahtCount != -1:
                         sahtCount += 1
                         if sahtCount <= self.maxNoncriticalErrorsPerBook:
@@ -1667,7 +1667,7 @@ class InternalBibleBook:
                     # (and especially coz we don't know yet if this is a finished translation)
                     #fixErrors.append( lineLocationSpace + _("Nothing after verse number: {!r}").format( originalText ) )
                     #priority = 92
-                    if self.objectTypeString in ('USFM','USX',):
+                    if self.objectTypeString in ('USFM2','USFM3','USX',):
                         #if nfvnCount == -1:
                             #priority = 12
                         #else:
@@ -1730,7 +1730,7 @@ class InternalBibleBook:
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
 
-            if self.objectTypeString == 'USFM':
+            if self.objectTypeString in ('USFM2','USFM3'):
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
@@ -3135,7 +3135,7 @@ class InternalBibleBook:
 
         # Check the relative ordering of newline markers
         #print( "modifiedMarkerList", modifiedMarkerList, self.BBB )
-        if self.objectTypeString in ('USFM','USX'):
+        if self.objectTypeString in ('USFM2','USFM3','USX'):
             if 'Book ID' not in functionalCounts or functionalCounts['Book ID']==0:
                 newlineMarkerErrors.append( _("{} Missing 'id' USFM field in file").format( self.BBB ) )
                 self.addPriorityError( 100, '', '', _("No id line in file") )
