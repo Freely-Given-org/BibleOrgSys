@@ -32,14 +32,16 @@ This is a quickly updated version of an early module,
     and it's both ugly and fragile  :-(
 
 Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
+
+NOTE: We could use multiprocessing in loadBooks()
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-13' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.59'
+ProgVersion = '0.60'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -107,8 +109,10 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
+    # OSIS is tricky coz a whole Bible can be in one file (normally), or in lots of separate (book) files
+    #   and we don't want to think that 66 book files are 66 different OSIS Bibles
     if BibleOrgSysGlobals.verbosityLevel > 3: print( " OSISXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
-    foundFolders, foundFiles = [], []
+    foundFolders, foundFiles, foundBookFiles = [], [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
@@ -123,7 +127,12 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-    #print( 'ff', foundFiles )
+                for osisBkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes():
+                    # osisBkCodes are all UPPERCASE
+                    #print( 'obc', osisBkCode, upperFilename )
+                    if osisBkCode in somethingUpper:
+                        foundBookFiles.append( something ); break
+    #print( 'ff', foundFiles, foundBookFiles )
 
     # See if there's an OSIS project here in this folder
     numFound = 0
@@ -141,10 +150,13 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
+    if numFound>1 and numFound==len(foundBookFiles): # Assume they are all book files
+        lastFilenameFound = None
+        numFound = 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            ub = OSISXMLBible( givenFolderName, lastFilenameFound )
+            ub = OSISXMLBible( givenFolderName, lastFilenameFound ) # lastFilenameFound can be None
             if autoLoadBooks: ub.loadBooks() # Load and process the file(s)
             return ub
         return numFound
@@ -156,7 +168,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    OSISXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
-        foundSubfolders, foundSubfiles = [], []
+        foundSubfolders, foundSubfiles, foundSubBookFiles = [], [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
             if os.path.isdir( somepath ): foundSubfolders.append( something )
@@ -169,7 +181,12 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 if ignore: continue
                 if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                     foundSubfiles.append( something )
-        #print( 'fsf', foundSubfiles )
+                    for osisBkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes():
+                        # osisBkCodes are all UPPERCASE
+                        #print( 'obc', osisBkCode, upperFilename )
+                        if osisBkCode in somethingUpper:
+                            foundSubBookFiles.append( something ); break
+        #print( 'fsf', foundSubfiles, foundSubBookFiles )
 
         # See if there's an OSIS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -185,6 +202,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
             numFound += 1
+    if numFound>1 and numFound==len(foundSubBookFiles): # Assume they are all book files
+        lastFilenameFound = None
+        numFound = 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -325,6 +345,8 @@ class OSISXMLBible( Bible ):
     def loadBooks( self ):
         """
         Loads the OSIS XML file or files.
+
+        NOTE: We could use multiprocessing here
         """
         if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             for filename in self.possibleFilenames:
@@ -397,7 +419,9 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}…").format( OSISFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( _("  OSISXMLBible loading {}…").format( OSISFilepath ) )
+
         try: self.XMLTree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
@@ -3366,27 +3390,55 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        for standardTestFolder in (
+                        'Tests/DataFilesForTests/OSISTest1/',
+                        'Tests/DataFilesForTests/OSISTest2/',
+                        '../morphhb/wlc/',
+                        'Tests/DataFilesForTests/USFMTest3/',
+                        'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                        'Tests/DataFilesForTests/USFMErrorProject/',
+                        'Tests/DataFilesForTests/PTX7Test/',
+                        'Tests/DataFilesForTests/PTX8Test1/',
+                        'Tests/DataFilesForTests/PTX8Test2/',
+                        '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
+                        'OutputFiles/BOS_USFM2_Export/',
+                        'OutputFiles/BOS_USFM2_Reexport/',
+                        'OutputFiles/BOS_USFM3_Export/',
+                        'OutputFiles/BOS_USFM3_Reexport/',
+                        'MadeUpFolder/',
+                        ):
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nStandard testfolder is: {}".format( standardTestFolder ) )
+            result1 = OSISXMLBibleFileCheck( standardTestFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "OSIS TestA1", result1 )
+            result2 = OSISXMLBibleFileCheck( standardTestFolder, autoLoad=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "OSIS TestA2", result2 )
+            result3 = OSISXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "OSIS TestA3", result3 )
+
+
     if 1: # Test OSISXMLBible object
         testFilepaths = (
             'Tests/DataFilesForTests/OSISTest1/', # Matigsalug test sample
             'Tests/DataFilesForTests/OSISTest2/', # Full KJV from Crosswire
             '../../../../../Data/Work/Bibles/Original languages/SBLGNT/sblgnt.osis/SBLGNT.osis.xml',
-            "../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
-            "../morphhb/wlc/1Sam.xml",
-            "../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
-            "../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
-            "../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
-            "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
-               "../../MatigsalugOSIS/OSIS-Output/MBTMRK.xml", "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
-               "../../MatigsalugOSIS/OSIS-Output/MBT2PE.xml", # Single book
-            "../../MatigsalugOSIS/OSIS-Output", # Entire folder of single books
+            '../morphhb/wlc/Ruth.xml', '../morphhb/wlc/Dan.xml', '../morphhb/wlc/', # Hebrew Ruth, Daniel, Bible
+            '../morphhb/wlc/1Sam.xml',
+            '../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml', # Entire Bible in one file 4.4MB
+            '../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml',
+            '../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml', # Single books
+            '../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml', # Single books
+               '../../MatigsalugOSIS/OSIS-Output/MBTMRK.xml', '../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml', # Single books
+               '../../MatigsalugOSIS/OSIS-Output/MBT2PE.xml', # Single book
+            '../../MatigsalugOSIS/OSIS-Output', # Entire folder of single books
             )
         justOne = ( testFilepaths[0], )
 
         # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths ): # Choose testFilepaths or justOne
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class…".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nB/ OSIS {}/ Demonstrating the OSIS Bible class…".format( j+1 ) )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()

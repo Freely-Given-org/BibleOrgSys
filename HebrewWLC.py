@@ -28,7 +28,7 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2017-12-13' # by RJH
 ShortProgName = "HebrewWLCHandler"
 ProgName = "Hebrew WLC format handler"
 ProgVersion = '0.06'
@@ -160,7 +160,7 @@ def demo():
 
     if 1: # Test one book
         #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
-        testFile = "../morphhb/wlc/Dan.xml" # Hebrew Daniel
+        testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class…" )
         #print( testFile )
         wlc = HebrewWLC( testFile, givenAbbreviation='WLC' )
@@ -195,7 +195,7 @@ def demo():
                 print()
 
     if 1: # Load all books and test
-        testFolder = "../morphhb/wlc/" # Hebrew
+        testFolder = '../morphhb/wlc/' # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
         wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
@@ -230,7 +230,7 @@ def demo():
                 print()
 
     if 1: # Load books as we test
-        testFolder = "../morphhb/wlc/" # Hebrew
+        testFolder = '../morphhb/wlc/' # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
         wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
