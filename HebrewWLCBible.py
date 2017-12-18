@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# HebrewWLC.py
+# HebrewWLCBible.py
 #
-# Module handling HebrewWLC.xml
+# Module handling HebrewWLCBible.xml
 #
 # Copyright (C) 2011-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -28,10 +28,10 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-13' # by RJH
-ShortProgName = "HebrewWLCHandler"
+LastModifiedDate = '2017-12-14' # by RJH
+ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -46,7 +46,7 @@ from OSISXMLBible import OSISXMLBible
 
 
 
-class HebrewWLC( OSISXMLBible ):
+class HebrewWLCBible( OSISXMLBible ):
     """
     Class for handling a Hebrew WLC object (which may contain one or more Bible books)
 
@@ -116,7 +116,7 @@ class HebrewWLC( OSISXMLBible ):
             return self.currentText
         # else we were passed a text string
         return text.replace('=', '')
-    # end of HebrewWLC.removeMorphemeBreaks
+    # end of HebrewWLCBible.removeMorphemeBreaks
 
     def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ):
         """
@@ -129,7 +129,7 @@ class HebrewWLC( OSISXMLBible ):
         # else we were passed a text string
         h = Hebrew.Hebrew ( text )
         return h.removeCantillationMarks( None, removeMetegOrSiluq )
-    # end of HebrewWLC.removeCantillationMarks
+    # end of HebrewWLCBible.removeCantillationMarks
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
         """
@@ -142,8 +142,8 @@ class HebrewWLC( OSISXMLBible ):
         # else we were passed a text string
         h = Hebrew.Hebrew ( text )
         return h.removeVowelPointing( None, removeMetegOrSiluq )
-    # end of HebrewWLC.removeVowelPointing
-# end of HebrewWLC class
+    # end of HebrewWLCBible.removeVowelPointing
+# end of HebrewWLCBible class
 
 
 
@@ -163,7 +163,7 @@ def demo():
         testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class…" )
         #print( testFile )
-        wlc = HebrewWLC( testFile, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFile, givenAbbreviation='WLC' )
         wlc.load() # Load and process the XML book
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -198,7 +198,7 @@ def demo():
         testFolder = '../morphhb/wlc/' # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
-        wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
         wlc.loadBooks() # Load and process the XML files
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -233,7 +233,7 @@ def demo():
         testFolder = '../morphhb/wlc/' # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
-        wlc = HebrewWLC( testFolder, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
         #wlc.load() # Load and process the XML
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -274,4 +274,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of HebrewWLC.py
+# end of HebrewWLCBible.py

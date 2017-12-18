@@ -71,7 +71,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2017-12-17' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -644,8 +644,6 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
-
-        return # Temp ..................... not written yet
 
         ignoredMarkers = set()
 

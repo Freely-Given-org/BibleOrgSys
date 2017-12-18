@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-24' # by RJH
+LastModifiedDate = '2017-12-17' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.36'
@@ -510,11 +510,11 @@ def testSwB( SwFolderPath, SwModuleName=None ):
                         ('NT','MAT','1','1'), ('NT','MAT','3','5'), ('NT','MAT','3','8'),
                         ('NT','JDE','1','4'), ('NT','REV','22','21'),
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-        (t, b, c, v) = reference
-        if t=='OT' and len(SwBible)==27: continue # Don't bother with OT references if it's only a NT
-        if t=='NT' and len(SwBible)==39: continue # Don't bother with NT references if it's only a OT
-        if t=='DC' and len(SwBible)<=66: continue # Don't bother with DC references if it's too small
-        svk = VerseReferences.SimpleVerseKey( b, c, v )
+        (T, BBB, C, V) = reference
+        if T=='OT' and len(SwBible)==27: continue # Don't bother with OT references if it's only a NT
+        if T=='NT' and len(SwBible)==39: continue # Don't bother with NT references if it's only a OT
+        if T=='DC' and len(SwBible)<=66: continue # Don't bother with DC references if it's too small
+        svk = VerseReferences.SimpleVerseKey( BBB, C, V )
         #print( svk, SwBible.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:

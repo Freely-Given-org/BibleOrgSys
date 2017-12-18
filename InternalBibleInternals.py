@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2017-12-18' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.70'
@@ -142,8 +142,8 @@ BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
 # "EXTRA" here means footnote type fields that are not part of the main line of text.
-BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
-BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'vp', )
+BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'ww', 'vp', )
+BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
 """
     fn  footnote
     en  endnote
@@ -184,10 +184,11 @@ class InternalBibleExtra:
     Each object/entry represents a note or cross-reference or other inserted object
         not normally printed in-line in the mainstream verse text.
 
-
+    Each object/entry contains an index back to the adjusted text
+        (and hence that index must be adjusted if the text string is edited).
     """
 
-    def __init__( self, myType, index, noteText, cleanNoteText, location ):
+    def __init__( self, myType, indexToAdjText, noteText, cleanNoteText, location ):
         """
         Accept the parameters and double-check them if requested.
 
@@ -195,10 +196,10 @@ class InternalBibleExtra:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             if debuggingThisModule:
-                print( "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, index, noteText, cleanNoteText, location ) )
+                print( "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, indexToAdjText, noteText, cleanNoteText, location ) )
             assert myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES # Mustn't be blank
             assert '\\' not in myType and ' ' not in myType and '*' not in myType
-            assert isinstance( index, int ) and index >= 0
+            assert isinstance( indexToAdjText, int ) and indexToAdjText >= 0
             assert noteText and isinstance( noteText, str ) # Mustn't be blank
             assert '\n' not in noteText and '\r' not in noteText
             for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
@@ -207,7 +208,7 @@ class InternalBibleExtra:
             assert isinstance( cleanNoteText, str )
             if debuggingThisModule: assert cleanNoteText # Mustn't be blank
             assert '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText
-        self.myType, self.index, self.noteText, self.cleanNoteText = myType, index, noteText, cleanNoteText
+        self.myType, self.index, self.noteText, self.cleanNoteText = myType, indexToAdjText, noteText, cleanNoteText
     # end of InternalBibleExtra.__init__
 
 
@@ -462,7 +463,7 @@ class InternalBibleEntry:
     def getOriginalMarker( self ): return self.originalMarker
     def getAdjustedText( self ): return self.adjustedText # Notes are removed
     def getText( self ): return self.adjustedText # Notes are removed
-    def getCleanText( self, removeESFMUnderlines=False ):
+    def getCleanText( self, removeESFMUnderlines=False ): # Notes and character formats are removed
         if removeESFMUnderlines:
             return self.cleanText.replace('_ _',' ').replace('_ ',' ').replace(' _',' ').replace('_',' ')
         else: return self.cleanText # Notes and formatting are removed
@@ -492,12 +493,14 @@ class InternalBibleEntry:
                 elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
                 elif extraType == 'str': USFM, lenUSFM = 'str', 3
                 elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
+                elif extraType == 'ww': USFM, lenUSFM = 'ww', 2
                 elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
-                elif BibleOrgSysGlobals.debugFlag: halt
+                elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
                 if USFM:
                     result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
                 #print( "getFullText:  now {!r}".format( result ) )
                 offset += len(extraText ) + 2*lenUSFM + 4
+            result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
 
         #if result != self.adjustedText:
             #if len(self.extras) > 1:

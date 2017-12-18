@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2017-12-18' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -484,7 +484,7 @@ class InternalBibleBook:
                 extraText: the text of the note
                 cleanExtraText: extraText without character formatting as well
 
-        NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
+        NOTE: You must NOT strip adjText any more AFTER calling this (or the note insert indices will be incorrect!
         """
         global rtsCount
         if BibleOrgSysGlobals.debugFlag:
@@ -514,6 +514,7 @@ class InternalBibleBook:
             #print( "QQQ1: rstrip ok" )
             #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
+        #print( 'oTS', self.objectTypeString )
         if self.objectTypeString in ('USFM2','USFM3','USX',):
             if originalMarker not in ('id','ide','h','rem',):
                 # Fix up quote marks
@@ -562,13 +563,50 @@ class InternalBibleBook:
                 self.addPriorityError( 11, C, V, _("Contains straight-quote(s)") )
                 adjText = adjText.replace( '"', '&quot;' )
 
+        largeDummyValue = 99999
+
+        # Adjust \w fields to remove attributes into a separate \ww field
+        #   (This then makes the \w field into a regular "formatting field"
+        #       since the contents of it need to be included in the regular text.
+        if '|' in adjText: # Mostly won't happen
+            #print( "\nW adjText @ {} {}:{} = {}".format( self.BBB, C, V, adjText ) )
+            ixW = adjText.find( '\\w ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag:
+                if ixW == -1:
+                    ixW = adjText.find( '\\W ' )
+                    if ixW != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE word marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE word marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Word marker is UPPERCASE") )
+            if ixW == -1: ixW = largeDummyValue
+            while ixW < largeDummyValue: # We have one or the other
+                #print( "  ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
+                ixWend = adjText.find( '\\w*', ixW+3 )
+                if ixWend == -1: ixWend = adjText.find( '\\W*', ixW+3 )
+                if ixWend == -1: ixWend = largeDummyValue
+                ixPipe = adjText.find( '|', ixW+3 )
+                if ixPipe == -1: break # No pipe -- just a plain \w word\w* field
+                #print( "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
+                if ixPipe < ixWend: # There is a pipe inside this particular \w field
+                    # Convert attributes into a \ww note field (that will then be removed below)
+                    adjText = adjText[:ixPipe] + '\\w*\\ww ' + adjText[ixPipe:ixWend+2] + 'w' + adjText[ixWend+2:]
+                    #print( "  now adjText = {}".format( adjText ) )
+                ixW = adjText.find( '\\w ', ixWend+4 )
+                if not BibleOrgSysGlobals.strictCheckingFlag:
+                    if ixW == -1:
+                        ixW = adjText.find( '\\W ', ixWend+4 )
+                        if ixW != -1:
+                            fixErrors.append( lineLocationSpace + _("Found UPPERCASE word marker in \\{}: {}").format( originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found UPPERCASE word marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                            self.addPriorityError( 9, C, V, _("Word marker is UPPERCASE") )
+                if ixW == -1: ixW = largeDummyValue
 
         # Move all footnotes and cross-references, etc. from the main text out to extras
+        #  (This includes our \ww fields which contain the atttributes from \w fields)
         extras = InternalBibleExtraList() # Prepare for extras
 
         #print( "QQQ MOVE OUT NOTES" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-        largeDummyValue = 99999
         ixFN = adjText.find( '\\f ' )
         if not BibleOrgSysGlobals.strictCheckingFlag:
             if ixFN == -1:
@@ -623,11 +661,14 @@ class InternalBibleBook:
                     logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
         if ixSEM == -1: ixSEM = largeDummyValue
+        ixWW = adjText.find( '\\ww ' )
+        if ixWW == -1: ixWW = adjText.find( '\\WW ' )
+        if ixWW == -1: ixWW = largeDummyValue
         ixVP = adjText.find( '\\vp ' )
         if ixVP == -1: ixVP = adjText.find( '\\VP ' )
         if ixVP == -1: ixVP = largeDummyValue
         #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
-        ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
+        ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixWW, ixVP )
         while ix1 < largeDummyValue: # We have one or the other
             if ix1 == ixFN:
                 ix2 = adjText.find( '\\f*' )
@@ -667,6 +708,11 @@ class InternalBibleBook:
                 if ix2 == -1: ix2 = adjText.find( '\\SEM*' )
                 #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
+            elif ix1 == ixWW:
+                ix2 = adjText.find( '\\ww*' )
+                if ix2 == -1: ix2 = adjText.find( '\\WW*' )
+                #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'ww', 2, 'Word attributes', 'ww'
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                     fixErrors.append( lineLocationSpace + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
@@ -755,7 +801,12 @@ class InternalBibleBook:
 
             # Now prepare a cleaned version
             adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
-            cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+            cleanedNote = note \
+                            .replace( '&amp;', '&' ) \
+                            .replace( '&#39;', "'" ) \
+                            .replace( '&lt;',  '<' ) \
+                            .replace( '&gt;',  '>' ) \
+                            .replace( '&quot;', '"' ) # Undo any replacements above
             for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                 cleanedNote = cleanedNote.replace( sign, '' )
             for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
@@ -798,10 +849,13 @@ class InternalBibleBook:
             ixSEM = adjText.find( '\\sem ' )
             if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
             if ixSEM == -1: ixSEM = largeDummyValue
+            ixWW = adjText.find( '\\ww ' )
+            if ixWW == -1: ixWW = adjText.find( '\\WW ' )
+            if ixWW == -1: ixWW = largeDummyValue
             ixVP = adjText.find( '\\vp ' )
             if ixVP == -1: ixVP = adjText.find( '\\VP ' )
             if ixVP == -1: ixVP = largeDummyValue
-            ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
+            ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixWW, ixVP )
         #if extras: print( "Fix gave {!r} and {!r}".format( adjText, extras ) )
         #if len(extras)>1: print( "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )
 
@@ -972,24 +1026,29 @@ class InternalBibleBook:
             #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
         # Now remove all character formatting from the cleanText string (to make it suitable for indexing and search routines
-        #   This includes markers like \em, \bd, \wj, etc.
+        #   This includes markers like \em, \bd, \wj, etc. as well as \w with any attributes already removed
         #if "Cook" in adjText:
             #print( "\nhere", self.objectTypeString )
             #print( "adjT", repr(adjText) )
         if self.objectTypeString == 'SwordBibleModule': # remove character formatting
-            cleanText = adjText
-            cleanText = cleanText.replace( '<title type="chapter">', '' ).replace( '</title>', '' )
-            cleanText = cleanText.replace( '<transChange type="added">', '' ).replace( '</transChange>', '' )
-            #cleanText = cleanText.replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
-            #cleanText = cleanText.replace( '<milestone marker="Â¶" type="x-p"/>', '' )
-            #cleanText = cleanText.replace( '<milestone type="x-extra-p"/>', '' )
-            cleanText = cleanText.replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
+            cleanText = adjText \
+                .replace( '<title type="chapter">', '' ).replace( '</title>', '' ) \
+                .replace( '<transChange type="added">', '' ).replace( '</transChange>', '' ) \
+                .replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
+                # .replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
+                # .replace( '<milestone marker="Â¶" type="x-p"/>', '' )
+                # .replace( '<milestone type="x-extra-p"/>', '' )
             if '<' in cleanText or '>' in cleanText:
                 print( "\nFrom:", C, V, text )
                 print( " Still have angle brackets left in:", cleanText )
         else: # not Sword
             #print( BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList() )
-            cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+            cleanText = adjText \
+                            .replace( '&amp;', '&' ) \
+                            .replace( '&#39;', "'" ) \
+                            .replace( '&lt;',  '<' ) \
+                            .replace( '&gt;',  '>' ) \
+                            .replace( '&quot;', '"' ) # Undo any replacements above
             if '\\' in cleanText: # we will first remove known USFM character formatting markers
                 for possibleCharacterMarker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList():
                     tryMarkers = []

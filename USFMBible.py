@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-13' # by RJH
+LastModifiedDate = '2017-12-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -677,7 +677,8 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for j,testFolder in enumerate( ("Tests/DataFilesForTests/USFMTest1/",
+        for j,testFolder in enumerate( (
+                            "Tests/DataFilesForTests/USFMTest1/",
                             "Tests/DataFilesForTests/USFMTest2/",
                             "Tests/DataFilesForTests/USFMTest3/",
                             "Tests/DataFilesForTests/USFMAllMarkersProject/",
@@ -710,14 +711,14 @@ def demo():
 
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
-                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest1/"),
-                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest2/"),
-                                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest3/"),
-                                        ("WEB+", 'utf-8', "Tests/DataFilesForTests/USFMAllMarkersProject/"),
-                                        ("UEP", 'utf-8', "Tests/DataFilesForTests/USFMErrorProject/"),
-                                        ("Exported2", 'utf-8', "OutputFiles/BOS_USFM2_Export/"),
-                                        ("Exported3", 'utf-8', "OutputFiles/BOS_USFM3_Export/"),
-                                        ) ):
+                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest1/"),
+                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest2/"),
+                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest3/"),
+                        ("WEB+", 'utf-8', "Tests/DataFilesForTests/USFMAllMarkersProject/"),
+                        ("UEP", 'utf-8', "Tests/DataFilesForTests/USFMErrorProject/"),
+                        ("Exported2", 'utf-8', "OutputFiles/BOS_USFM2_Export/"),
+                        ("Exported3", 'utf-8', "OutputFiles/BOS_USFM3_Export/"),
+                        ) ):
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( j+1 ) )
                 UsfmB = USFMBible( testFolder, name, encoding=encoding )
@@ -739,6 +740,31 @@ def demo():
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
+                if 1:
+                    from VerseReferences import SimpleVerseKey
+                    from InternalBibleInternals import InternalBibleEntry
+                    for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
+                        svk = SimpleVerseKey( BBB, C, V )
+                        shortText = svk.getShortText()
+                        verseDataList = UsfmB.getVerseDataList( svk )
+                        if BibleOrgSysGlobals.verbosityLevel > 0:
+                            print( "\n{}\n{}".format( shortText, verseDataList ) )
+                        if verseDataList is None: continue
+                        for verseDataEntry in verseDataList:
+                            # This loop is used for several types of data
+                            assert isinstance( verseDataEntry, InternalBibleEntry )
+                            marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                            adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                            fullText = verseDataEntry.getFullText()
+                            if BibleOrgSysGlobals.verbosityLevel > 0:
+                                print( "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                                        " extras={}".format( extras ) if extras else '' ) )
+                                if adjustedText and adjustedText!=cleanText:
+                                    print( ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                                if fullText and fullText!=cleanText:
+                                    print( ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                                if originalText and originalText!=cleanText:
+                                    print( ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
             elif BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
