@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-18' # by RJH
+LastModifiedDate = '2017-12-19' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -70,9 +70,12 @@ import unicodedata
 
 import BibleOrgSysGlobals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_PRINTABLE_MARKERS, BOS_ADDED_NESTING_MARKERS, \
-    BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, \
-    InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
+from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
+    BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
+    InternalBibleEntryList, InternalBibleEntry, \
+    InternalBibleIndex, \
+    InternalBibleExtra, InternalBibleExtraList, \
+    parseWordAttributes, parseFigureAttributes
 from BibleReferences import BibleAnchorReference
 
 
@@ -589,7 +592,8 @@ class InternalBibleBook:
                 #print( "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
                 if ixPipe < ixWend: # There is a pipe inside this particular \w field
                     # Convert attributes into a \ww note field (that will then be removed below)
-                    adjText = adjText[:ixPipe] + '\\w*\\ww ' + adjText[ixPipe:ixWend+2] + 'w' + adjText[ixWend+2:]
+                    word = adjText[ixW+3:ixPipe] # We also copy the word into the \ww field
+                    adjText = adjText[:ixPipe] + '\\w*\\ww ' + word + adjText[ixPipe:ixWend+2] + 'w' + adjText[ixWend+2:]
                     #print( "  now adjText = {}".format( adjText ) )
                 ixW = adjText.find( '\\w ', ixWend+4 )
                 if not BibleOrgSysGlobals.strictCheckingFlag:
@@ -698,6 +702,8 @@ class InternalBibleBook:
                 if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
                 #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
+                parseFigureAttributes( 'workname', self.BBB, C, V,
+                                      adjText[ixFIG+5:ix2].replace( '&quot;', '"' ), fixErrors )
             elif ix1 == ixSTR:
                 ix2 = adjText.find( '\\str*' )
                 if ix2 == -1: ix2 = adjText.find( '\\STR*' )
@@ -713,6 +719,8 @@ class InternalBibleBook:
                 if ix2 == -1: ix2 = adjText.find( '\\WW*' )
                 #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'ww', 2, 'Word attributes', 'ww'
+                parseWordAttributes( 'workname', self.BBB, C, V,
+                                    adjText[ixWW+4:ix2].replace( '&quot;', '"' ), fixErrors )
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                     fixErrors.append( lineLocationSpace + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )

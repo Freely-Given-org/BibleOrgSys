@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-18' # by RJH
+LastModifiedDate = '2017-12-19' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -690,7 +690,8 @@ def demo():
                             "OutputFiles/BOS_USFM3_Reexport/",
                             "MadeUpFolder/",
                             ) ):
-            print( "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )
             result1 = USFMBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM TestAa", result1 )
             result2 = USFMBibleFileCheck( testFolder, autoLoad=True )

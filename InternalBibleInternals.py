@@ -48,7 +48,7 @@ Module for defining and manipulating internal Bible objects including:
 Some notes about internal formats:
     The BibleOrgSys internal format is based on
         ESFM (see http://Freely-Given.org/Software/BibleDropBox/ESFMBibles.html )
-        which is turn is based on USFM (currently USFM 2.4).
+        which is turn is based on USFM 3 (see https://ubsicap.github.io/usfm/index.html).
     Each Bible book (including front and back matter) is stored in
         a separate InternalBibleBook object.
     Each "new line" type field is considered a separate line in
@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-18' # by RJH
+LastModifiedDate = '2017-12-19' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.70'
@@ -174,6 +174,172 @@ BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX'
         #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
     #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 ## end of exp
+
+
+
+def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=None ):
+    """
+    Take the attributes of a USFM3 \w field (the attributes include the first pipe/vertical-bar symbol)
+        and analyze them.
+
+    Returns a dictionary of attributes.
+    """
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        print( "parseWordAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, wordAttributeString, errorList ) )
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        assert isinstance( workName, str )
+        assert isinstance( BBB, str )
+        assert isinstance( wordAttributeString, str )
+        assert wordAttributeString.count( '|' ) == 1
+        assert errorList is None or isinstance( errorList, list )
+
+    word, attributeString = wordAttributeString.split( '|', 1 )
+    resultDict = { 'word':word }
+    if '=' not in attributeString: # Assume it's a single (unnamed) lemma
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            assert '"' not in attributeString and "'" not in attributeString
+        resultDict['lemma'] = attributeString
+        #print( "Returning1: {}".format( resultDict ) )
+        return resultDict
+
+    # Else most likely have named attributes
+    # Use a state machine rather than regular expressions coz better for giving human-readable error messages
+    state = 0
+    name = value = quote = ''
+    for j, char in enumerate( attributeString ):
+        #print( "{} char={!r} state={} name={!r} value={!r} quote={!r}".format( j, char, state, name, value, quote ) )
+        if state == 0: # Ready to get attribute name
+            if not char.isspace():
+                if name:
+                    assert value
+                    resultDict[name] = value
+                name = char
+                value = quote = ''
+                state = 1
+        elif state == 1: # Getting attribute name
+            if char.isalpha() or char in '-':
+                name += char
+            elif char == '=':
+                #print( "name", name )
+                assert name in ('lemma','strong') or name.startswith( 'x-' )
+                state = 2
+            else: halt
+        elif state == 2: # Ready to get attribute value
+            if char=='"':
+                quote = char
+                state = 3
+            else:
+                value += char
+                state = 3
+        elif state == 3: # Getting attribute value -- stop at matching quote or space
+            if char == quote \
+            or ( quote=='' and char.isspace() ):
+                assert name
+                assert value
+                resultDict[name] = value
+                name = value = quote = ''
+                state = 0
+            else:
+                value += char
+    if state == 3:
+        assert name
+        assert value
+        resultDict[name] = value
+        state = 0
+    assert state == 0
+    #print( "Returning2: {}".format( resultDict ) )
+    return resultDict
+# end of parseWordAttributes
+
+
+
+# 2 and 3 below refer to USFM 2 and USFM3 standards
+names3 = ( 'alt', 'src', 'size', 'loc', 'copy', 'ref' )
+betterNames3 = ( 'altDescription', 'sourceFilename', 'size', 'location', 'copyright', 'reference' )
+names2 = ( betterNames3[0], betterNames3[1], betterNames3[2], betterNames3[3], betterNames3[4], 'caption', betterNames3[5] )
+
+def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList=None ):
+    """
+    Take the contents of a USFM2 or USFM3 \fig field and analyze them.
+
+    In USFM2, the up-to-seven attributes are separated by vertical bars,
+        i.e., \fig DESC|FILE|SIZE|LOC|COPY|CAP|REF\fig*
+
+    In USFM3, the caption text comes first, then other parameters after a vertical bar,
+        i.e., \fig caption text|src="filename" size="size" ref="reference"\fig*
+        e.g., \fig At once they left their nets.|src="avnt016.jpg" size="span" ref="1.18"\fig*
+        and, \fig Took her by the hand, and the fever left her.|src="avnt017.tif" size="col" ref="1.31"\fig*
+
+    Returns a dictionary of attributes.
+    """
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        print( "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        assert isinstance( workName, str )
+        assert isinstance( BBB, str )
+        assert isinstance( figureAttributeString, str )
+        #assert figureAttributeString[0] == '|'
+        assert errorList is None or isinstance( errorList, list )
+
+    if figureAttributeString.count('|')==1 and '=' in figureAttributeString:
+        # We'll assume USFM3
+        caption, attributeString = figureAttributeString.split( '|', 1 )
+        resultDict = { 'USFM':3, 'caption':caption }
+        # Must have named attributes (src,size,ref are compulsory; alt,loc,copy are optional)
+        # Use a state machine rather than regular expressions coz better for giving human-readable error messages
+        state = 0
+        name = value = quote = ''
+        for j, char in enumerate( attributeString ):
+            #print( "{} char={!r} state={} name={!r} value={!r} quote={!r}".format( j, char, state, name, value, quote ) )
+            if state == 0: # Ready to get attribute name
+                if not char.isspace():
+                    if name:
+                        assert value
+                        resultDict[name] = value
+                    name = char
+                    value = quote = ''
+                    state = 1
+            elif state == 1: # Getting attribute name
+                if char.isalpha():
+                    name += char
+                elif char == '=':
+                    assert name in names3
+                    name = betterNames3[names3.index( name )] # Convert to better names
+                    state = 2
+            elif state == 2: # Ready to get attribute value
+                if char=='"':
+                    quote = char
+                    state = 3
+                else:
+                    value += char
+                    state = 3
+            elif state == 3: # Getting attribute value -- stop at matching quote or space
+                if char == quote \
+                or ( quote==' ' and char.isspace() ):
+                    assert name
+                    assert value
+                    resultDict[name] = value
+                    name = value = quote = ''
+                    state = 0
+                else:
+                    value += char
+        if state == 3:
+            assert name
+            assert value
+            resultDict[name] = value
+            state = 0
+        assert state == 0
+
+    else: # we'll assume USFM2
+        resultDict = {'USFM':2}
+        bits = figureAttributeString.split( '|' )
+        assert len(bits) <= len(names2)
+        for j, bit in enumerate( bits ):
+            resultDict[names2[j]] = bit
+
+    #print( "Returning: {}".format( resultDict ) )
+    return resultDict
+# end of parseFigureAttributes
 
 
 
