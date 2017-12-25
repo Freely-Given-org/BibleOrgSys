@@ -28,21 +28,19 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-14' # by RJH
+LastModifiedDate = '2017-12-24' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-#import os
-
 import BibleOrgSysGlobals, Hebrew
 from OSISXMLBible import OSISXMLBible
-#from InternalBibleBook import InternalBibleEntry, InternalBibleEntryList
+from InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 
 
 
@@ -107,6 +105,64 @@ class HebrewWLCBible( OSISXMLBible ):
         #else: print( "oops. empty verse text for", reference )
 
 
+    def getVerseDictList( self, verseDataEntry, ref ):
+        """
+        Given a verseDataEntry (an InternalBibleEntry)
+        Return the text as a list of dictionaries.
+        """
+        #print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+        assert isinstance( verseDataEntry, InternalBibleEntry )
+        marker, originalMarker = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker()
+        adjText = verseDataEntry.getAdjustedText()
+        lineExtras = verseDataEntry.getExtras()
+
+        BBB,C,V = ref.getBCV()
+
+        #print( "adjText", repr(adjText) )
+        resultList = []
+        ix = 0
+        punctuation = ''
+        for j,token in enumerate( adjText.split() ):
+            #print( "token", repr(token) )
+            ix += len(token)
+            #if token == '\\w': # ignore these
+                #assert something is None
+            if token != '\\w': # ignore these:
+                if token.endswith( '\\w*' ): token = token[:-3]
+                elif '\\w*' in token: # e.g., 'הָ/אָֽרֶץ\\w*׃'
+                    token, punctuation = token.split( '\\w*', 1 )
+                    #print( "t,p", repr(token), repr(punctuation) )
+                    ix -= len( punctuation )
+                #print( "token", repr(token) )
+                something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
+                wwDict = None
+                if isinstance( something, InternalBibleExtra ):
+                    #print( "extra", something )
+                    if something.getType() == 'ww':
+                        wwField = something.getText()
+                        wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
+                        if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
+                            wwDict['morph'] = wwDict['morph'][5:]
+                        #print( "wwDict", wwDict )
+                    else:
+                        logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
+                elif isinstance( something, list ):
+                    logging.critical( "Doesn't handle list of extras yet" )
+                resultList.append( wwDict if wwDict else {'word':token} )
+                if punctuation:
+                    ix -= len( punctuation )
+                    something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
+                    #print( "have punctuation", repr(punctuation), something )
+                    resultList.append( {'word':punctuation} )
+                    punctuation = ''
+            #print( "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
+            ix += 1 # for space between words
+
+        #print( "getVerseDictList returning: {}".format( resultList ) )
+        return resultList
+    # end of HebrewWLCBible.getVerseDictList
+
+
     def removeMorphemeBreaks( self, text=None ):
         """
         Return the text with morpheme break marks removed.
@@ -122,13 +178,16 @@ class HebrewWLCBible( OSISXMLBible ):
         """
         Return the text with cantillation marks removed.
         """
+        #print( "removeCantillationMarks( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+
         if text is None:
             # Recursive call
-            self.currentText = self.removeCantillationMarks( self.currentText ) if self.currentText else self.currentText
+            self.currentText = self.removeCantillationMarks( self.currentText, removeMetegOrSiluq ) if self.currentText else self.currentText
             return self.currentText
+
         # else we were passed a text string
-        h = Hebrew.Hebrew ( text )
-        return h.removeCantillationMarks( None, removeMetegOrSiluq )
+        h = Hebrew.Hebrew( text )
+        return h.removeCantillationMarks( removeMetegOrSiluq=removeMetegOrSiluq )
     # end of HebrewWLCBible.removeCantillationMarks
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
@@ -140,7 +199,7 @@ class HebrewWLCBible( OSISXMLBible ):
             self.currentText = self.removeVowelPointing( self.currentText ) if self.currentText else self.currentText
             return self.currentText
         # else we were passed a text string
-        h = Hebrew.Hebrew ( text )
+        h = Hebrew.Hebrew( text )
         return h.removeVowelPointing( None, removeMetegOrSiluq )
     # end of HebrewWLCBible.removeVowelPointing
 # end of HebrewWLCBible class
