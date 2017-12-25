@@ -5,7 +5,7 @@
 #
 # Module handling Bible (including Paratext) stylesheets
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-08-26' # by RJH
+LastModifiedDate = '2017-12-24' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -74,6 +74,7 @@ def exp( messageString ):
 INDENT_SIZE = 12
 
 DEFAULT_FONTNAME = 'helvetica'
+DEFAULT_HEBREW_FONTNAME = 'Ezra' # 'Ezra SIL' seems to fail later when used in a text box
 
 VERSENUMBER_FONTSIZE = 6
 CURRENT_VERSE_FONTSIZE = 12
@@ -151,6 +152,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'lightYellow', },
 
 # The following paragraph level fields can contain text, or can influence the next v~/p~ text
+# These are for formatted view
     'p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
     '*p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
     'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
@@ -174,7 +176,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
     '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
 
-# Lists
+# Lists (for formatted view)
     'li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     '*li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
     'li2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
@@ -186,7 +188,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 
 
 # These are the styles for unformatted mode that are different from above
-# Headings
+# Headings (for unformatted view)
     'mt1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold', },
     'mt2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold2', },
     'mt3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold3', },
@@ -201,12 +203,12 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'ms4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
     'cl#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
 
-# Other
+# Other (for unformatted view)
     'r#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
     'mr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
     'sr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
 
-# Paragraph level fields can contain text, or can influence the next v~ text
+# Paragraph level fields can contain text, or can influence the next v~ text (for unformatted view)
     'p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
     '*p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
     'q1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
@@ -230,6 +232,16 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 
 # Lines without markers (continuation lines)
     '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
+
+# Hebrew interlinear fields
+    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE ), },
+    'HebStrong': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'HebMorph': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'HebGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
+    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
+    'HebStrongSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
+    'HebMorphSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
+    'HebGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
     }
 
 
@@ -295,7 +307,9 @@ class BibleStylesheet():
         """
         from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("validate"), USFMMarker, styleData )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( exp("validate"), USFMMarker, styleData )
+            if USFMMarker.startswith( 'Heb' ): continue
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
