@@ -5,7 +5,7 @@
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2016 Robert Hunt
+# Copyright (C) 2011-2017 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,11 +28,12 @@ Module handling Hebrew language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-06-07' # by RJH
+LastModifiedDate = '2017-12-24' # by RJH
 ShortProgName = "Hebrew"
 ProgName = "Hebrew language handler"
-ProgVersion = "0.05"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.06'
+ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -197,18 +198,24 @@ class Hebrew():
 
 
     def printUnicodeData( self, text=None ):
+        """
+        """
+        #print( "unicodedata", unicodedata.unidata_version )
+
         if text is None: text = self.currentText
-        print( "unicodedata", unicodedata.unidata_version )
-        def printUnicodeInfo( text, description ):
-            print( "{}:".format( description ) )
-            for j,char in enumerate(text):
-                print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
-                    .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
+
+        #def printUnicodeInfo( text, description ):
+            #print( "{}:".format( description ) )
+        for j,char in enumerate(text):
+            print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+                .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of Hebrew.printUnicodeData
 
 
     def verifyConsonantsOnly( self, text=None ):
-        """ Check that we only have consonants left """
+        """
+        Check that we only have consonants left
+        """
         if text is None: text = self.currentText
         haveError = False
         textLength = len( text )
@@ -227,6 +234,10 @@ class Hebrew():
 
 
     def removeAllMetegOrSiluq( self, text=None ):
+        """
+        """
+        #print( "removeAllMetegOrSiluq( {!r} )".format( text ) )
+
         if text is None: # Use our own text
             self.currentText = self.removeAllMetegOrSiluq( self.currentText ) # recursive call
             return self.currentText
@@ -237,7 +248,11 @@ class Hebrew():
 
 
     def _removeMetegOrSiluq( self, text, asVowel ):
-        """ It's actually often impossible to tell automatically which purpose this Unicode mark has. """
+        """
+        It's actually often impossible to tell automatically which purpose this Unicode mark has.
+        """
+        #print( "_removeMetegOrSiluq( {!r}, {} )".format( text, asVowel ) )
+
         while text:
             textLength = len( text )
             madeChanges = False
@@ -247,28 +262,39 @@ class Hebrew():
                 nextMark = text[j+1] if j<textLength-1 else ''
                 if previousMark in ( patah, segol ) or nextMark in (): # Assume it's a vowel point meteg
                     if asVowel:
-                        print( "Deleting (vowel point) meteg after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "Deleting (vowel point) meteg after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
-                    else: print( "Ignoring (vowel point) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                    else:
+                        if BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "Ignoring (vowel point) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                 else: # it doesn't appear to be a vowel point meteg
                     if not asVowel:
-                        print( "Deleting (cantillation mark) siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "Deleting (cantillation mark) siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
-                    else: print( "Ignoring (cantillation mark) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                    else:
+                        if BibleOrgSysGlobals.verbosityLevel > 2:
+                            print( "Ignoring (cantillation mark) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
             if not madeChanges: break # Check for another meteg if we made any changes
         return text
     # end of Hebrew._removeMetegOrSiluq
 
 
     def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ):
-        """ Return the text with cantillation marks removed. """
+        """
+        Return the text with cantillation marks removed.
+        """
+        #print( "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+
         if text is None: # Use our own text
-            self.currentText = self.removeCantillationMarks( self.currentText ) # recursive call
+            self.currentText = self.removeCantillationMarks( self.currentText, removeMetegOrSiluq ) # recursive call
             return self.currentText
+
         # else we were given some text to process
         if removeMetegOrSiluq: text = self._removeMetegOrSiluq( text, asVowel=False )
         for cantillationMark in cantillationMarks: text = text.replace(cantillationMark, '')
@@ -277,7 +303,11 @@ class Hebrew():
 
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
-        """ Return the text with cantillation marks removed. """
+        """
+        Return the text with cantillation marks removed.
+        """
+        #print( "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+
         if text is None: # Use our own text
             self.currentText = self.removeVowelPointing( self.currentText ) # recursive call
             return self.currentText
@@ -289,7 +319,11 @@ class Hebrew():
 
 
     def removeOtherMarks( self, text=None ):
-        """ Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed. """
+        """
+        Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed.
+        """
+        #print( "removeOtherMarks( {!r} )".format( text ) )
+
         if text is None: # Use our own text
             self.currentText = self.removeOtherMarks( self.currentText ) # recursive call
             return self.currentText
