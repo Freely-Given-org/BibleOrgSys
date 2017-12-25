@@ -704,6 +704,7 @@ class InternalBibleBook:
                 noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
                 parseFigureAttributes( 'workname', self.BBB, C, V,
                                       adjText[ixFIG+5:ix2].replace( '&quot;', '"' ), fixErrors )
+                # (returned dictionary above is just ignored here)
             elif ix1 == ixSTR:
                 ix2 = adjText.find( '\\str*' )
                 if ix2 == -1: ix2 = adjText.find( '\\STR*' )
@@ -721,6 +722,7 @@ class InternalBibleBook:
                 noteSFM, lenSFM, thisOne, this1 = 'ww', 2, 'Word attributes', 'ww'
                 parseWordAttributes( 'workname', self.BBB, C, V,
                                     adjText[ixWW+4:ix2].replace( '&quot;', '"' ), fixErrors )
+                # (returned dictionary above is just ignored here)
             elif ix1 == ixVP:
                 if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                     fixErrors.append( lineLocationSpace + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
