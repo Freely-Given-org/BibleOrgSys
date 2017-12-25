@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-19' # by RJH
+LastModifiedDate = '2017-12-22' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.70'
@@ -183,6 +183,8 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
         and analyze them.
 
     Returns a dictionary of attributes.
+
+    NOTE: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "parseWordAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, wordAttributeString, errorList ) )
@@ -222,6 +224,7 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
             elif char == '=':
                 #print( "name", name )
                 assert name in ('lemma','strong') or name.startswith( 'x-' )
+                if name.startswith( 'x-' ): name = name[2:] # Remove x- prefix for convenience
                 state = 2
             else: halt
         elif state == 2: # Ready to get attribute value
@@ -253,10 +256,11 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
 
 
 
-# 2 and 3 below refer to USFM 2 and USFM3 standards
-names3 = ( 'alt', 'src', 'size', 'loc', 'copy', 'ref' )
-betterNames3 = ( 'altDescription', 'sourceFilename', 'size', 'location', 'copyright', 'reference' )
-names2 = ( betterNames3[0], betterNames3[1], betterNames3[2], betterNames3[3], betterNames3[4], 'caption', betterNames3[5] )
+# 2 and 3 below refer to USFM2 and USFM3 standards for \fig entries
+figureAttributeNames3 = ( 'alt', 'src', 'size', 'loc', 'copy', 'ref' )
+betterAttributeNames3 = ( 'altDescription', 'sourceFilename', 'relativeSize', 'locationOrRange', 'copyrightOrRightsHolder', 'referenceCV' )
+# The names for USFM2 are determined by position
+figureAttributeNames2 = ( betterAttributeNames3[0], betterAttributeNames3[1], betterAttributeNames3[2], betterAttributeNames3[3], betterAttributeNames3[4], 'caption', betterAttributeNames3[5] )
 
 def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList=None ):
     """
@@ -271,6 +275,8 @@ def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList
         and, \fig Took her by the hand, and the fever left her.|src="avnt017.tif" size="col" ref="1.31"\fig*
 
     Returns a dictionary of attributes.
+
+    NOTE: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
@@ -303,8 +309,8 @@ def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList
                 if char.isalpha():
                     name += char
                 elif char == '=':
-                    assert name in names3
-                    name = betterNames3[names3.index( name )] # Convert to better names
+                    assert name in figureAttributeNames3
+                    name = betterAttributeNames3[figureAttributeNames3.index( name )] # Convert to better names
                     state = 2
             elif state == 2: # Ready to get attribute value
                 if char=='"':
@@ -333,9 +339,9 @@ def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList
     else: # we'll assume USFM2
         resultDict = {'USFM':2}
         bits = figureAttributeString.split( '|' )
-        assert len(bits) <= len(names2)
+        assert len(bits) <= len(figureAttributeNames2)
         for j, bit in enumerate( bits ):
-            resultDict[names2[j]] = bit
+            resultDict[figureAttributeNames2[j]] = bit
 
     #print( "Returning: {}".format( resultDict ) )
     return resultDict
