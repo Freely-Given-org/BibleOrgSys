@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-22' # by RJH
+LastModifiedDate = '2017-12-27' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.61'
@@ -556,7 +556,7 @@ class OSISXMLBible( Bible ):
     # end of validateDivineName
 
 
-    def validateSEG( self, element, locationDescription, verseMilestone, loadErrors ):
+    def validateAndLoadSEG( self, element, locationDescription, verseMilestone, loadErrors ):
         """
         Also handles the tail.
 
@@ -564,8 +564,8 @@ class OSISXMLBible( Bible ):
             <hi type="bold"><hi type="italic">buk</hi></hi> tainoraun ämän
         Nesting doesn't currently work here.
         """
-        #print( "validateSEG( {}, {}, {} )".format( BibleOrgSysGlobals.elementStr(element), locationDescription, verseMilestone ) )
-        location = 'validateSEG: ' + locationDescription
+        #print( "validateAndLoadSEG( {}, {}, {} )".format( BibleOrgSysGlobals.elementStr(element), locationDescription, verseMilestone ) )
+        location = 'validateAndLoadSEG: ' + locationDescription
         SegText = element.text
 
         # Process the attributes
@@ -608,7 +608,7 @@ class OSISXMLBible( Bible ):
         if markerOpen: self.thisBook.appendToLastLine( '\\{}*'.format( marker ) )
         segTail = clean( element.tail, loadErrors, location, verseMilestone )
         if segTail: self.thisBook.appendToLastLine( segTail )
-    # end of validateSEG
+    # end of validateAndLoadSEG
 
 
     def validateAndLoadWord( self, element, location, verseMilestone, loadErrors ):
@@ -621,7 +621,7 @@ class OSISXMLBible( Bible ):
         word = clean( element.text, loadErrors, sublocation, verseMilestone )
         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             #assert word -- might be false, e.g., in <w lemma="strong:H03069"><divineName>God</divineName></w>
-        self.thisBook.appendToLastLine( '\w ' + (word if word else '' ) )
+        self.thisBook.appendToLastLine( '\\w ' + (word if word else '' ) )
 
         # Process the sub-elements (formatted parts of the word) first
         assert len(element) <= 1
@@ -629,7 +629,7 @@ class OSISXMLBible( Bible ):
             if subelement.tag == OSISXMLBible.OSISNameSpace+'divineName':
                 self.validateDivineName( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg':
-                self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
+                self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors )
             else:
                 logging.error( "8k3s Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
                 loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (8k3s)".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
@@ -687,7 +687,7 @@ class OSISXMLBible( Bible ):
                 attributeString += '{}="{}"'.format( attributeName, attributeValue )
             #print( "attributeString", attributeString )
             self.thisBook.appendToLastLine( attributeString )
-        self.thisBook.appendToLastLine( '\w*')
+        self.thisBook.appendToLastLine( '\\w*')
 
         trailingPunctuation = clean( element.tail, loadErrors, sublocation, verseMilestone )
         if trailingPunctuation: self.thisBook.appendToLastLine( trailingPunctuation )
@@ -791,7 +791,7 @@ class OSISXMLBible( Bible ):
                 #self.thisBook.appendToLastLine( rdgW )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg': # cross-references ???
                 sublocation = "validateRDG: seg of rdg of " + locationDescription
-                self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
+                self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'hi':
                 sublocation = "validateRDG: hi of rdg of " + locationDescription
                 self.validateHighlight( subelement, sublocation, verseMilestone, loadErrors )
@@ -1051,7 +1051,7 @@ class OSISXMLBible( Bible ):
                         self.thisBook.appendToLastLine( '\\tl {}\\tl*'.format( clean(subreferenceText) ) )
                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+'seg':
                         sub2location = "validateCrossReferenceOrFootnote: seg of reference of " + locationDescription
-                        self.validateSEG( sub2element, sub2location, verseMilestone, loadErrors )
+                        self.validateAndLoadSEG( sub2element, sub2location, verseMilestone, loadErrors )
                     else:
                         logging.error( "7h45 Unprocessed {!r} sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {} at {} (7h45)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
@@ -1145,7 +1145,7 @@ class OSISXMLBible( Bible ):
                 self.validateProperName( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg': # cross-references
                 sublocation = "validateCrossReferenceOrFootnote: seg of " + locationDescription
-                self.validateSEG( subelement, sublocation, verseMilestone, loadErrors ) # Also handles the tail
+                self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors ) # Also handles the tail
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'note':
                 sublocation = "validateCrossReferenceOrFootnote: note of " + locationDescription
                 noteText = subelement.text
@@ -1227,7 +1227,7 @@ class OSISXMLBible( Bible ):
                 self.validateCrossReferenceOrFootnote( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg':
                 sublocation = "validateTransChange: seg of transChange of " + location
-                self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
+                self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors )
             else:
                 logging.error( "dfv3 Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
                 loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (dfv3)".format( subelement.tag, subelement.text, sublocation, verseMilestone ) )
@@ -1576,7 +1576,7 @@ class OSISXMLBible( Bible ):
                 verseMilestone = self.validateVerseElement( subelement, verseMilestone, chapterMilestone, sublocation, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg':
                 sublocation = "validateTitle: verse of " + locationDescription
-                self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
+                self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors )
             else:
                 logging.error( "jkd7 Unprocessed {!r} subelement ({}) in {} at {}".format( subelement.tag, subelement.text, locationDescription, verseMilestone ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {} at {} (jkd7)".format( subelement.tag, subelement.text, locationDescription, verseMilestone ) )
@@ -2716,7 +2716,7 @@ class OSISXMLBible( Bible ):
                     self.validateProperName( subelement, sublocation, verseMilestone, loadErrors )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg':
                     sublocation = "validateParagraph: seg of " + locationDescription
-                    self.validateSEG( subelement, sublocation, verseMilestone, loadErrors )
+                    self.validateAndLoadSEG( subelement, sublocation, verseMilestone, loadErrors )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+'transChange':
                     sublocation = "validateParagraph: transChange of " + locationDescription
                     self.validateTransChange( subelement, sublocation, verseMilestone, loadErrors )
@@ -3284,7 +3284,7 @@ class OSISXMLBible( Bible ):
                                         ##print( "segTTT", segText, segTail, segType )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+'seg':
                                         sub2location = "seg of " + sublocation
-                                        self.validateSEG( sub2element, sub2location, verseMilestone, loadErrors )
+                                        self.validateAndLoadSEG( sub2element, sub2location, verseMilestone, loadErrors )
                                         #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '9s8v', loadErrors )
                                         #BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '93dr', loadErrors )
                                         #seg = sub2element.text
