@@ -28,20 +28,30 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-24' # by RJH
+LastModifiedDate = '2017-12-27' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
+import logging, pickle
+
 import BibleOrgSysGlobals, Hebrew
 from OSISXMLBible import OSISXMLBible
 from InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 
+
+DEFAULT_WLC_FILEPATH = '../morphhb/wlc/'
+DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
+DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.txt'
+DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlossesReversed.txt'
+
+ORIGINAL_MORPHEME_BREAK_CHAR = '/'
+OUR_MORPHEME_BREAK_CHAR = '='
 
 
 class HebrewWLCBible( OSISXMLBible ):
@@ -52,10 +62,14 @@ class HebrewWLCBible( OSISXMLBible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    #def __init__( self, XMLFilepath ):
-    #    """ Create an empty object. """
-    #    OSISXMLBible.__init__( self, XMLFilepath )
-    ## end of __init__
+    def __init__( self, XMLFilepath, givenAbbreviation=None ):
+       """
+       Create an empty object.
+       """
+       OSISXMLBible.__init__( self, XMLFilepath, givenAbbreviation=givenAbbreviation )
+
+       self.glossingDict = None
+    # end of __init__
 
 
     #def __str__( self ):
@@ -202,6 +216,188 @@ class HebrewWLCBible( OSISXMLBible ):
         h = Hebrew.Hebrew( text )
         return h.removeVowelPointing( None, removeMetegOrSiluq )
     # end of HebrewWLCBible.removeVowelPointing
+
+
+    def loadGlossingDict( self, glossingDictFilepath=None ):
+        """
+        """
+        self.glossingDictFilepath = glossingDictFilepath
+        if glossingDictFilepath is None:
+            self.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
+
+        # Read our glossing glossing data from the pickle file
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Loading Hebrew glossing dictionary from '{}'…".format( glossingDictFilepath ) )
+        with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
+            self.glossingDict = pickle.load( pickleFile )
+            # It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
+            #   Hebrew keys have morphological breaks separated by =
+            #   2-tuple entries consist of a gloss,
+            #      (with gloss alternatives separated by /)
+            #   followed by a list of currently known/parsed references
+            #print( "glossingDict:", self.glossingDict )
+        self.loadedGlossEntryCount = len( self.glossingDict )
+        self.haveGlossingDictChanges = False
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "  {} Hebrew glossing gloss entries read.".format( self.loadedGlossEntryCount ) )
+
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            for word,(gloss,referencesList) in self.glossingDict.copy().items(): # Use a copy because we can modify it
+                #print( repr(word), repr(gloss), referencesList )
+                assert isinstance( word, str )
+                assert isinstance( gloss, str )
+                assert isinstance( referencesList, list )
+                if ' ' in word or '/' in word:
+                    logging.critical( "Removing invalid Hebrew (normalized) word: {!r}".format( word ) )
+                    del self.glossingDict[word]
+                    self.haveGlossingDictChanges = True
+                if ' ' in gloss:
+                    logging.critical( "Removing {!r} word with invalid gloss: {!r}".format( word, gloss ) )
+                    del self.glossingDict[word]
+                    self.haveGlossingDictChanges = True
+                for reference in referencesList:
+                    assert isinstance( reference, tuple )
+                    assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
+                    for part in reference:
+                        assert isinstance( part, str ) # We don't use INTs for references
+    # end of HebrewWLCBible.loadGlossingDict
+
+
+    def saveAnyChangedGlosses( self ):
+        """
+        Save the glossing dictionary to a pickle file.
+        """
+        if debuggingThisModule: print( "saveAnyChangedGlosses()" )
+
+        if self.haveGlossingDictChanges:
+            BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, 4 )
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Saving Hebrew glossing dictionary ({}->{} entries) to '{}'…".format( self.loadedGlossEntryCount, len(self.glossingDict), self.glossingDictFilepath ) )
+            with open( self.glossingDictFilepath, 'wb' ) as pickleFile:
+                pickle.dump( self.glossingDict, pickleFile )
+
+            #expResponse = input( "Export changed dictionary? [No] " )
+            #if expResponse.upper() in ( 'Y', 'YES' ):
+                #self.exportGlossingDictionary()
+    # end of saveAnyChangedGlosses
+
+
+    def importGlossingDictionary( self, glossingDictImportFilepath=None, overrideFlag=False ):
+        """
+        Import the glossing dictionary from (an exported or handcrafted) text file.
+
+        NOTE: Usually we use the much faster loadGlossingDict (load pickle) function above.
+        """
+        import ast
+        #print( "importGlossingDictionary()" )
+        if glossingDictImportFilepath is None: glossingDictImportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
+
+        if self.haveGlossingDictChanges:
+            print( _("Import disallowed because you already have glossing changes!") )
+        elif self.glossingDict and not overrideFlag:
+            print( _("Import disallowed because you have already loaded the glossing dictionary") )
+        else:
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Importing glossing dictionary from '{}'…".format( glossingDictImportFilepath ) )
+            lineCount = 0
+            newDict = {}
+            with open( glossingDictImportFilepath, 'r' ) as importFile:
+                for line in importFile:
+                    lineCount += 1
+                    if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                        logging.info( "Glossingizer: Detected UTF-16 Byte Order Marker in {}".format( glossingDictImportFilepath ) )
+                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                    if not line: continue # Just discard blank lines
+                    bits = line.split( '  ' )
+                    #print( "bits", bits )
+                    if len(bits) == 3:
+                        referencesText, gloss, word = bits
+                        if not referencesText or not gloss or not word:
+                            print( "  Empty field error" )
+                        elif ' ' in gloss \
+                        or gloss.count(OUR_MORPHEME_BREAK_CHAR)!=word.count(OUR_MORPHEME_BREAK_CHAR):
+                            print( "  Bad gloss field error: {!r} for {!r}".format( gloss, word ) )
+                        referencesList = ast.literal_eval( referencesText )
+                        #print( "references", repr(referencesText), repr(referencesList) )
+                        assert isinstance( referencesList, list )
+                        newDict[word] = referencesList, gloss
+                    else:
+                        print( "  Ignored '{}' line at {} ({} bits)".format( line, lineCount, len(bits) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loaded {} entries.".format( len(newDict) ) )
+            if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
+                if len(newDict) != self.loadedGlossEntryCount: print( "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
+                self.glossingDict = newDict # Replace the dictionary with the upgraded one
+    # end of importGlossingDictionary
+
+
+    def exportGlossingDictionary( self, glossingDictExportFilepath=None ):
+        """
+        Import the glossing dictionary from (an exported or handcrafted) text file.
+        """
+        #print( "exportGlossingDictionary()" )
+        if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
+
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Exporting glossing dictionary ({} entries) to '{}'…".format( self.loadedGlossEntryCount, glossingDictExportFilepath ) )
+
+        BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
+        with open( glossingDictExportFilepath, 'w' ) as exportFile:
+            for word,(gloss,referencesList) in self.glossingDict.items():
+                #assert ' ' not in word
+                #assert '/' not in word
+                #assert ' ' not in gloss
+                exportFile.write( "{}  {}  {}\n".format( referencesList, gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+
+        if self.glossingDict:
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Exporting reverse glossing dictionary ({} entries) to '{}'…".format( self.loadedGlossEntryCount, DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+            BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
+            with open( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 'w' ) as exportFile:
+                for word,(gloss,referencesList) in self.glossingDict.items():
+                    #print( repr(word), repr(gloss) )
+                    #assert ' ' not in word
+                    #assert '/' not in word
+                    #assert ' ' not in gloss
+                    exportFile.write( "{}  {}\n".format( gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+    # end of exportGlossingDictionary
+
+
+    def setNewGloss( self, normalizedHebrewWord, gloss, ref ):
+        """
+        Check a new gloss and add it to the glossing dictionary.
+        """
+        print( "setNewGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, gloss, ref ) )
+        assert isinstance( normalizedHebrewWord, str )
+        assert ' ' not in normalizedHebrewWord
+        assert '/' not in normalizedHebrewWord # Should already be converted to =
+        assert normalizedHebrewWord not in self.glossingDict
+        assert isinstance( gloss, str )
+        assert ' ' not in gloss
+        assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
+
+        self.glossingDict[normalizedHebrewWord] = (gloss,[ref])
+        self.haveGlossingDictChanges = True
+    # end of HebrewWLCBible.setNewGloss
+
+
+    def addNewRef( self, normalizedHebrewWord, ref ):
+        """
+        Check a new ref to the glossing dictionary if it's not already there.
+        """
+        print( "addNewRef( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        assert isinstance( normalizedHebrewWord, str )
+        assert ' ' not in normalizedHebrewWord
+        assert '/' not in normalizedHebrewWord # Should already be converted to =
+        assert normalizedHebrewWord not in self.glossingDict
+        assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
+
+        (gloss,referencesList) = self.glossDict[normalizedHebrewWord]
+        if ref not in referencesList:
+            referencesList.append( ref )
+            self.glossDict[normalizedHebrewWord] = (gloss,referencesList)
+            self.haveGlossingDictChanges = True
+    # end of HebrewWLCBible.addNewRef
 # end of HebrewWLCBible class
 
 
@@ -254,7 +450,7 @@ def demo():
                 print()
 
     if 1: # Load all books and test
-        testFolder = '../morphhb/wlc/' # Hebrew
+        testFolder = DEFAULT_WLC_FILEPATH # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
         wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
@@ -289,7 +485,7 @@ def demo():
                 print()
 
     if 1: # Load books as we test
-        testFolder = '../morphhb/wlc/' # Hebrew
+        testFolder = DEFAULT_WLC_FILEPATH # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class…" )
         #print( testFolder )
         wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
@@ -323,6 +519,14 @@ def demo():
                 print( consonantalVerseText )
                 print()
 
+    if 1: # Test some of the glossing functions
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nD/ Demonstrating the Hebrew WLC glossing functions…" )
+        wlc = HebrewWLCBible( DEFAULT_WLC_FILEPATH, givenAbbreviation='WLC' )
+        wlc.loadGlossingDict()
+        wlc.exportGlossingDictionary()
+        wlc.saveAnyChangedGlosses()
+        wlc.importGlossingDictionary()
+        wlc.importGlossingDictionary( overrideFlag=True )
 # end of demo
 
 if __name__ == '__main__':
