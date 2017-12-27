@@ -28,10 +28,10 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-27' # by RJH
+LastModifiedDate = '2017-12-28' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -62,10 +62,12 @@ class HebrewWLCBible( OSISXMLBible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, XMLFilepath, givenAbbreviation=None ):
+    def __init__( self, XMLFilepath=None, givenAbbreviation=None ):
        """
        Create an empty object.
        """
+       if not XMLFilepath: XMLFilepath = DEFAULT_WLC_FILEPATH
+       if not givenAbbreviation: givenAbbreviation = 'WLC'
        OSISXMLBible.__init__( self, XMLFilepath, givenAbbreviation=givenAbbreviation )
 
        self.glossingDict = None
@@ -127,6 +129,24 @@ class HebrewWLCBible( OSISXMLBible ):
         if debuggingThisModule: print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
         assert isinstance( verseDataEntry, InternalBibleEntry )
 
+        def handleExtra( thisExtra ):
+            """
+            Checks an extra to see if it's a ww extra (word attributes).
+
+            If so, ipdates global dict wwDict with word attributes.
+            """
+            if debuggingThisModule: print( "handleExtra", thisExtra )
+            if thisExtra.getType() == 'ww':
+                wwField = thisExtra.getText()
+                wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
+                if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
+                    wwDict['morph'] = wwDict['morph'][5:]
+                if debuggingThisModule: print( "wwDict", wwDict )
+            else:
+                logging.warning( "WLC ignoring {} extra {} at {} for {}".format( thisExtra.getType(), thisExtra.getText(), ref, token ) )
+        # end of getVerseDictList handleExtra
+
+        # Start of getVerseDictList main code
         marker, originalMarker = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker()
         adjText = verseDataEntry.getAdjustedText()
         lineExtras = verseDataEntry.getExtras()
@@ -160,17 +180,28 @@ class HebrewWLCBible( OSISXMLBible ):
                 something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
                 wwDict = None
                 if isinstance( something, InternalBibleExtra ):
-                    if debuggingThisModule: print( "extra", something )
-                    if something.getType() == 'ww':
-                        wwField = something.getText()
-                        wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
-                        if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
-                            wwDict['morph'] = wwDict['morph'][5:]
-                        if debuggingThisModule: print( "wwDict", wwDict )
-                    else:
-                        logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
+                    handleExtra( something )
+                    #if debuggingThisModule: print( "extra", something )
+                    #if something.getType() == 'ww':
+                        #wwField = something.getText()
+                        #wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
+                        #if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
+                            #wwDict['morph'] = wwDict['morph'][5:]
+                        #if debuggingThisModule: print( "wwDict", wwDict )
+                    #else:
+                        #logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
                 elif isinstance( something, list ):
-                    logging.critical( "Doesn't handle list of extras yet" )
+                    #logging.critical( "Doesn't handle list of extras yet" )
+                    #print( "something", something )
+                    #print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+                    for something2 in something:
+                        #print( "something2", something2 )
+                        if isinstance( something2, InternalBibleExtra ):
+                            handleExtra( something2 )
+                        else: halt # Programming error -- what's this???
+                elif something is not None:
+                    print( "HERE", something )
+                    halt # Programming error -- what's this???
                 resultList.append( wwDict if wwDict else {'word':token} )
                 if punctuation:
                     ix += len( punctuation )
@@ -379,7 +410,8 @@ class HebrewWLCBible( OSISXMLBible ):
         """
         Check a new gloss and add it to the glossing dictionary.
         """
-        print( "setNewGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, gloss, ref ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "setNewGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, gloss, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
@@ -397,17 +429,19 @@ class HebrewWLCBible( OSISXMLBible ):
         """
         Check a new ref to the glossing dictionary if it's not already there.
         """
-        print( "addNewGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "addNewGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
-        assert normalizedHebrewWord not in self.glossingDict
+        assert normalizedHebrewWord in self.glossingDict
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
 
-        (gloss,referencesList) = self.glossDict[normalizedHebrewWord]
+        (gloss,referencesList) = self.glossingDict[normalizedHebrewWord]
+        assert ref not in referencesList
         if ref not in referencesList:
             referencesList.append( ref )
-            self.glossDict[normalizedHebrewWord] = (gloss,referencesList)
+            self.glossingDict[normalizedHebrewWord] = (gloss,referencesList)
             self.haveGlossingDictChanges = True
     # end of HebrewWLCBible.addNewGlossingReference
 
@@ -417,7 +451,53 @@ class HebrewWLCBible( OSISXMLBible ):
         Go through the entire WLC and check for words that we already have a gloss for
             and update the reference fields.
         """
-        print( "updateGlossingReferences()…" )
+        from VerseReferences import SimpleVerseKey
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Updating references for WLC glosses…" )
+
+        self.loadBooks()
+        #self.loadBook( 'GEN' )
+        numRefsAdded = 0
+        for BBB,bookObject in self.books.items(): # These don't seem to be in order!
+            # The following few lines show a way to iterate through all verses
+            #   (assuming all chapters are full of verses -- not sure how it handles bridged verses)
+            C = V = 1
+            #print( BBB )
+            while True:
+                currentVerseKey = SimpleVerseKey( BBB, C, V )
+                try: verseDataList, context = self.getContextVerseData( currentVerseKey )
+                except KeyError:
+                    C, V = C+1, 1
+                    currentVerseKey = SimpleVerseKey( BBB, C, V )
+                    try: verseDataList, context = self.getContextVerseData( currentVerseKey )
+                    except KeyError: break # start next book
+                #print( "context", context )
+                #print( "verseDataList", verseDataList )
+                for verseDataEntry in verseDataList:
+                    #print( "verseDataEntry", verseDataEntry )
+                    assert isinstance( verseDataEntry, InternalBibleEntry )
+                    marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                    adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                    if marker in ('v~','p~'):
+                        verseDictList = self.getVerseDictList( verseDataEntry, currentVerseKey )
+                        #print( currentVerseKey.getShortText(), "verseDictList", verseDictList )
+                        for j,verseDict in enumerate( verseDictList ): # each verseDict represents one word or token
+                            fullRefTuple = (BBB,str(C),str(V),str(j+1))
+                            #print( fullRefTuple, verseDict )
+                            word = verseDict['word']
+                            normalizedHebrewWord =  self.removeCantillationMarks( word, removeMetegOrSiluq=True ) \
+                                        .replace( ORIGINAL_MORPHEME_BREAK_CHAR, OUR_MORPHEME_BREAK_CHAR )
+                            #print( '  ', len(word), repr(word), len(normalizedHebrewWord), repr(normalizedHebrewWord) )
+                            gloss,referencesList = self.glossingDict[normalizedHebrewWord] \
+                                                    if normalizedHebrewWord in self.glossingDict else ('',[])
+                            #if gloss: print( fullRefTuple, repr(gloss) )
+                            if gloss and gloss not in '־׃ספ-' and fullRefTuple not in referencesList:
+                                #print( "  Adding {}".format( fullRefTuple ) )
+                                self.addNewGlossingReference( normalizedHebrewWord, fullRefTuple )
+                                numRefsAdded += 1
+                V = V + 1
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "  {} new references added ({} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
     # end of HebrewWLCBible.updateGlossingReferences
 # end of HebrewWLCBible class
 
@@ -437,7 +517,7 @@ def demo():
     if 1: # Test one book
         #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
         testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class…" )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class for DAN…" )
         #print( testFile )
         wlc = HebrewWLCBible( testFile, givenAbbreviation='WLC' )
         wlc.load() # Load and process the XML book
@@ -472,7 +552,7 @@ def demo():
 
     if 1: # Load all books and test
         testFolder = DEFAULT_WLC_FILEPATH # Hebrew
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class…" )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class (whole Bible)…" )
         #print( testFolder )
         wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
         wlc.loadBooks() # Load and process the XML files
@@ -507,9 +587,9 @@ def demo():
 
     if 1: # Load books as we test
         testFolder = DEFAULT_WLC_FILEPATH # Hebrew
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class…" )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class (load on the go)…" )
         #print( testFolder )
-        wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFolder )
         #wlc.load() # Load and process the XML
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -549,6 +629,9 @@ def demo():
         wlc.importGlossingDictionary()
         wlc.importGlossingDictionary( overrideFlag=True )
 
+    if 1: # Test some of the glossing functions
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE/ Adding new references to glossing dict…" )
+        wlc = HebrewWLCBible()
         wlc.loadGlossingDict()
         wlc.updateGlossingReferences()
         wlc.saveAnyChangedGlosses()
