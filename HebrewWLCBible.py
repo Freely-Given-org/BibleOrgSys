@@ -31,7 +31,7 @@ from gettext import gettext as _
 LastModifiedDate = '2017-12-27' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -124,55 +124,65 @@ class HebrewWLCBible( OSISXMLBible ):
         Given a verseDataEntry (an InternalBibleEntry)
         Return the text as a list of dictionaries.
         """
-        #print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+        if debuggingThisModule: print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
         assert isinstance( verseDataEntry, InternalBibleEntry )
+
         marker, originalMarker = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker()
         adjText = verseDataEntry.getAdjustedText()
         lineExtras = verseDataEntry.getExtras()
+        if debuggingThisModule:
+            for extra in lineExtras:
+                print( " {}".format( extra ) )
+                ix = extra.getIndex()
+                print( "   {}".format( adjText[0 if ix<6 else ix-6:ix+1] ) )
 
         BBB,C,V = ref.getBCV()
 
-        #print( "adjText", repr(adjText) )
+        if debuggingThisModule: print( "adjText", repr(adjText) )
         resultList = []
-        ix = 0
+        ix = ixAdd = 0
         punctuation = ''
         for j,token in enumerate( adjText.split() ):
-            #print( "token", repr(token) )
+            if debuggingThisModule: print( "token", j, repr(token) )
             ix += len(token)
-            #if token == '\\w': # ignore these
-                #assert something is None
             if token != '\\w': # ignore these:
                 if token.endswith( '\\w*' ): token = token[:-3]
-                elif '\\w*' in token: # e.g., 'הָ/אָֽרֶץ\\w*׃'
+                elif token.endswith( '\\w' ):
+                    token = token[:-2] # e.g., 'עַל\\w*־\\w'
+                    ixAdd = 2
+                    ix -= 2
+                if '\\w*' in token: # e.g., 'הָ/אָֽרֶץ\\w*׃'
                     token, punctuation = token.split( '\\w*', 1 )
-                    #print( "t,p", repr(token), repr(punctuation) )
+                    if debuggingThisModule: print( "t,p", repr(token), repr(punctuation) )
+                    #ixAdd += len( punctuation )
                     ix -= len( punctuation )
-                #print( "token", repr(token) )
+                if debuggingThisModule: print( ix, "token", repr(token) )
                 something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
                 wwDict = None
                 if isinstance( something, InternalBibleExtra ):
-                    #print( "extra", something )
+                    if debuggingThisModule: print( "extra", something )
                     if something.getType() == 'ww':
                         wwField = something.getText()
                         wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
                         if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
                             wwDict['morph'] = wwDict['morph'][5:]
-                        #print( "wwDict", wwDict )
+                        if debuggingThisModule: print( "wwDict", wwDict )
                     else:
                         logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
                 elif isinstance( something, list ):
                     logging.critical( "Doesn't handle list of extras yet" )
                 resultList.append( wwDict if wwDict else {'word':token} )
                 if punctuation:
-                    ix -= len( punctuation )
+                    ix += len( punctuation )
                     something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
-                    #print( "have punctuation", repr(punctuation), something )
+                    if debuggingThisModule: print( "have punctuation", repr(punctuation), something )
                     resultList.append( {'word':punctuation} )
                     punctuation = ''
-            #print( "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
-            ix += 1 # for space between words
+            #if debuggingThisModule: print( "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
+            ix += ixAdd + 1 # for space between words
+            ixAdd = 0
 
-        #print( "getVerseDictList returning: {}".format( resultList ) )
+        if debuggingThisModule: print( "getVerseDictList returning: {}".format( resultList ) )
         return resultList
     # end of HebrewWLCBible.getVerseDictList
 
@@ -227,7 +237,7 @@ class HebrewWLCBible( OSISXMLBible ):
 
         # Read our glossing glossing data from the pickle file
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Loading Hebrew glossing dictionary from '{}'…".format( glossingDictFilepath ) )
+            print( "Loading Hebrew glossing dictionary from '{}'…".format( self.glossingDictFilepath ) )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
             self.glossingDict = pickle.load( pickleFile )
             # It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
@@ -241,7 +251,7 @@ class HebrewWLCBible( OSISXMLBible ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "  {} Hebrew glossing gloss entries read.".format( self.loadedGlossEntryCount ) )
 
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             for word,(gloss,referencesList) in self.glossingDict.copy().items(): # Use a copy because we can modify it
                 #print( repr(word), repr(gloss), referencesList )
                 assert isinstance( word, str )
@@ -260,6 +270,7 @@ class HebrewWLCBible( OSISXMLBible ):
                     assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
                     for part in reference:
                         assert isinstance( part, str ) # We don't use INTs for references
+                    assert referencesList.count( reference ) == 1 # Don't allow multiples
     # end of HebrewWLCBible.loadGlossingDict
 
 
@@ -279,6 +290,7 @@ class HebrewWLCBible( OSISXMLBible ):
             #expResponse = input( "Export changed dictionary? [No] " )
             #if expResponse.upper() in ( 'Y', 'YES' ):
                 #self.exportGlossingDictionary()
+            self.exportGlossingDictionary()
     # end of saveAnyChangedGlosses
 
 
@@ -381,11 +393,11 @@ class HebrewWLCBible( OSISXMLBible ):
     # end of HebrewWLCBible.setNewGloss
 
 
-    def addNewRef( self, normalizedHebrewWord, ref ):
+    def addNewGlossingReference( self, normalizedHebrewWord, ref ):
         """
         Check a new ref to the glossing dictionary if it's not already there.
         """
-        print( "addNewRef( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        print( "addNewGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
@@ -397,7 +409,16 @@ class HebrewWLCBible( OSISXMLBible ):
             referencesList.append( ref )
             self.glossDict[normalizedHebrewWord] = (gloss,referencesList)
             self.haveGlossingDictChanges = True
-    # end of HebrewWLCBible.addNewRef
+    # end of HebrewWLCBible.addNewGlossingReference
+
+
+    def updateGlossingReferences( self ):
+        """
+        Go through the entire WLC and check for words that we already have a gloss for
+            and update the reference fields.
+        """
+        print( "updateGlossingReferences()…" )
+    # end of HebrewWLCBible.updateGlossingReferences
 # end of HebrewWLCBible class
 
 
@@ -527,6 +548,10 @@ def demo():
         wlc.saveAnyChangedGlosses()
         wlc.importGlossingDictionary()
         wlc.importGlossingDictionary( overrideFlag=True )
+
+        wlc.loadGlossingDict()
+        wlc.updateGlossingReferences()
+        wlc.saveAnyChangedGlosses()
 # end of demo
 
 if __name__ == '__main__':
