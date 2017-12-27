@@ -71,7 +71,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-22' # by RJH
+LastModifiedDate = '2017-12-27' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.70'
@@ -394,7 +394,7 @@ class InternalBibleExtra:
         """
         Just display a very abbreviated form of the entry.
         """
-        return "InternalBibleExtra object: {} = {}".format( self.myType, repr(self.noteText) )
+        return "InternalBibleExtra object: {} @ {} = {}".format( self.myType, self.index, repr(self.noteText) )
     # end of InternalBibleExtra.__str__
 
 
