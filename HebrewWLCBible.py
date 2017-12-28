@@ -133,15 +133,18 @@ class HebrewWLCBible( OSISXMLBible ):
             """
             Checks an extra to see if it's a ww extra (word attributes).
 
-            If so, ipdates global dict wwDict with word attributes.
+            If so, returns wwDict with word attributes.
+            Otherwise, returns None.
             """
             if debuggingThisModule: print( "handleExtra", thisExtra )
+
             if thisExtra.getType() == 'ww':
                 wwField = thisExtra.getText()
                 wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
                 if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
                     wwDict['morph'] = wwDict['morph'][5:]
                 if debuggingThisModule: print( "wwDict", wwDict )
+                return wwDict
             else:
                 logging.warning( "WLC ignoring {} extra {} at {} for {}".format( thisExtra.getType(), thisExtra.getText(), ref, token ) )
         # end of getVerseDictList handleExtra
@@ -180,7 +183,7 @@ class HebrewWLCBible( OSISXMLBible ):
                 something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
                 wwDict = None
                 if isinstance( something, InternalBibleExtra ):
-                    handleExtra( something )
+                    wwDict = handleExtra( something )
                     #if debuggingThisModule: print( "extra", something )
                     #if something.getType() == 'ww':
                         #wwField = something.getText()
@@ -197,7 +200,8 @@ class HebrewWLCBible( OSISXMLBible ):
                     for something2 in something:
                         #print( "something2", something2 )
                         if isinstance( something2, InternalBibleExtra ):
-                            handleExtra( something2 )
+                            result = handleExtra( something2 )
+                            if result: wwDict = result
                         else: halt # Programming error -- what's this???
                 elif something is not None:
                     print( "HERE", something )
@@ -267,7 +271,7 @@ class HebrewWLCBible( OSISXMLBible ):
             self.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
 
         # Read our glossing glossing data from the pickle file
-        if BibleOrgSysGlobals.verbosityLevel > 1:
+        if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
             print( "Loading Hebrew glossing dictionary from '{}'…".format( self.glossingDictFilepath ) )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
             self.glossingDict = pickle.load( pickleFile )
@@ -279,7 +283,7 @@ class HebrewWLCBible( OSISXMLBible ):
             #print( "glossingDict:", self.glossingDict )
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
-        if BibleOrgSysGlobals.verbosityLevel > 1:
+        if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
             print( "  {} Hebrew glossing gloss entries read.".format( self.loadedGlossEntryCount ) )
 
         if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
@@ -305,23 +309,22 @@ class HebrewWLCBible( OSISXMLBible ):
     # end of HebrewWLCBible.loadGlossingDict
 
 
-    def saveAnyChangedGlosses( self ):
+    def saveAnyChangedGlosses( self, exportAlso=False ):
         """
         Save the glossing dictionary to a pickle file.
         """
         if debuggingThisModule: print( "saveAnyChangedGlosses()" )
 
         if self.haveGlossingDictChanges:
-            BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, 4 )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Saving Hebrew glossing dictionary ({}->{} entries) to '{}'…".format( self.loadedGlossEntryCount, len(self.glossingDict), self.glossingDictFilepath ) )
+            BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, 9 )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
+                print( "  Saving Hebrew glossing dictionary ({}->{} entries) to '{}'…".format( self.loadedGlossEntryCount, len(self.glossingDict), self.glossingDictFilepath ) )
+            elif BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "  Saving Hebrew glossing dictionary ({}->{} entries)…".format( self.loadedGlossEntryCount, len(self.glossingDict) ) )
             with open( self.glossingDictFilepath, 'wb' ) as pickleFile:
                 pickle.dump( self.glossingDict, pickleFile )
 
-            #expResponse = input( "Export changed dictionary? [No] " )
-            #if expResponse.upper() in ( 'Y', 'YES' ):
-                #self.exportGlossingDictionary()
-            self.exportGlossingDictionary()
+            if exportAlso: self.exportGlossingDictionary()
     # end of saveAnyChangedGlosses
 
 
@@ -376,33 +379,41 @@ class HebrewWLCBible( OSISXMLBible ):
 
     def exportGlossingDictionary( self, glossingDictExportFilepath=None ):
         """
-        Import the glossing dictionary from (an exported or handcrafted) text file.
+        Export the glossing dictionary to a text file
+            plus a reversed text file (without the references).
+
+        Also does a few checks while exporting.
+            (These can be fixed and then the file can be imported.)
         """
         #print( "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
-
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Exporting glossing dictionary ({} entries) to '{}'…".format( self.loadedGlossEntryCount, glossingDictExportFilepath ) )
+            print( "Exporting glossing dictionary ({} entries) to '{}'…".format( len(self.glossingDict), glossingDictExportFilepath ) )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
-        with open( glossingDictExportFilepath, 'w' ) as exportFile:
+        with open( glossingDictExportFilepath, 'wt' ) as exportFile:
             for word,(gloss,referencesList) in self.glossingDict.items():
-                #assert ' ' not in word
-                #assert '/' not in word
-                #assert ' ' not in gloss
+                if ' ' in word or '/' in word:
+                    logging.error( "Word {!r} has illegal characters".format( word ) )
+                if ' ' in gloss:
+                    logging.error( "Gloss {!r} for {!r} has illegal characters".format( gloss, word ) )
+                if word.count('=') != gloss.count('='):
+                    logging.error( "Gloss {!r} and word {!r} has different numbers of morphemes".format( gloss, word ) )
+                if not referencesList:
+                    logging.error( "Gloss {!r} for {!r} has no references".format( gloss, word ) )
                 exportFile.write( "{}  {}  {}\n".format( referencesList, gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
 
         if self.glossingDict:
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Exporting reverse glossing dictionary ({} entries) to '{}'…".format( self.loadedGlossEntryCount, DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+                print( "Exporting reverse glossing dictionary ({} entries) to '{}'…".format( len(self.glossingDict), DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
             BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
-            with open( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 'w' ) as exportFile:
+            doneGlosses = []
+            with open( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
                 for word,(gloss,referencesList) in self.glossingDict.items():
-                    #print( repr(word), repr(gloss) )
-                    #assert ' ' not in word
-                    #assert '/' not in word
-                    #assert ' ' not in gloss
+                    if gloss in doneGlosses:
+                        logging.warning( "Gloss {!r} has already appeared: currently for word {!r}".format( gloss, word ) )
                     exportFile.write( "{}  {}\n".format( gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+                    doneGlosses.append( gloss )
     # end of exportGlossingDictionary
 
 
@@ -410,7 +421,7 @@ class HebrewWLCBible( OSISXMLBible ):
         """
         Check a new gloss and add it to the glossing dictionary.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "setNewGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, gloss, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
@@ -452,8 +463,7 @@ class HebrewWLCBible( OSISXMLBible ):
             and update the reference fields.
         """
         from VerseReferences import SimpleVerseKey
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Updating references for WLC glosses…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Updating references for WLC glosses…" )
 
         self.loadBooks()
         #self.loadBook( 'GEN' )
@@ -517,7 +527,7 @@ def demo():
     if 1: # Test one book
         #testFile = "../morphhb/wlc/Ruth.xml" # Hebrew Ruth
         testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class for DAN…" )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class (one book only)…" )
         #print( testFile )
         wlc = HebrewWLCBible( testFile, givenAbbreviation='WLC' )
         wlc.load() # Load and process the XML book
@@ -634,7 +644,7 @@ def demo():
         wlc = HebrewWLCBible()
         wlc.loadGlossingDict()
         wlc.updateGlossingReferences()
-        wlc.saveAnyChangedGlosses()
+        wlc.saveAnyChangedGlosses( exportAlso = True )
 # end of demo
 
 if __name__ == '__main__':
