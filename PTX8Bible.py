@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2017-12-28' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.24'
@@ -264,8 +264,9 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
         print( exp("Loading Paratext project settings data from {!r} ({})").format( sourceFolder, encoding ) )
+
     #if encoding is None: encoding = 'utf-8'
-    BibleObject.sourceFolder = sourceFolder
+    BibleObject.sourceFolder = BibleObject.sourceFilepath = sourceFolder
     settingsFilepath = os.path.join( BibleObject.sourceFolder, 'Settings.xml' )
     #print( "settingsFilepath", settingsFilepath )
     BibleObject.settingsFilepath = settingsFilepath
@@ -519,6 +520,8 @@ class PTX8Bible( Bible ):
         else: self.sourceFilepath = self.sourceFolder
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
             logging.error( "PTX8Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
+        #print( "self.sourceFolder", self.sourceFolder )
+        #print( "self.sourceFilepath", self.sourceFilepath )
 
         self.settingsFilepath = None
         self.filepathsNotYetLoaded = []
@@ -544,6 +547,8 @@ class PTX8Bible( Bible ):
         def recurseFolder( folderPath, level=1 ):
             """
             """
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( ('  '*level) + "recurseFolder( {}, {} )".format( folderPath, level ) )
             for something in os.listdir( folderPath ):
                 somethingUPPER = something.upper()
                 somepath = os.path.join( folderPath, something )
@@ -555,8 +560,9 @@ class PTX8Bible( Bible ):
                     foundFolders.append( something )
                     recurseFolder( somepath, level+1 ) # recursive call
                 else: logging.error( exp("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
-        # end of recurseFolder
+        # end of preload recurseFolder
 
+        # Main code for preload
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         recurseFolder( self.sourceFolder )
