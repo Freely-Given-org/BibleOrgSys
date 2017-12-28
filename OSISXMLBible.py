@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-27' # by RJH
+LastModifiedDate = '2017-12-28' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.61'
@@ -348,6 +348,9 @@ class OSISXMLBible( Bible ):
 
         NOTE: We could use multiprocessing here
         """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
+            print( "OSISXMLBible.loadBooks()" )
+
         if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             for filename in self.possibleFilenames:
                 pathname = os.path.join( self.sourceFolder, filename )
@@ -419,7 +422,7 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
             print( _("  OSISXMLBible loading {}…").format( OSISFilepath ) )
 
         try: self.XMLTree = ElementTree().parse( OSISFilepath )
