@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,7 +33,9 @@ This is intended to be a virtual class, i.e., to be extended further
     by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
 
 Contains functions:
-    toPickle( self, outputFolder=None )
+    toPickleObject( self, outputFolder=None )
+    toPickledBible( self, outputFolder=None )
+    toJSONBible( self, outputFolder=None )
     makeLists( outputFolder=None )
     toBOSBCV( self, outputFolder=None ) -- one file per verse using our internal Bible format
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
@@ -71,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-17' # by RJH
+LastModifiedDate = '2018-01-05' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -87,7 +89,7 @@ OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
 import sys, os, shutil, logging
 from datetime import datetime
 from collections import OrderedDict
-import re, json
+import re, json, pickle
 import zipfile, tarfile
 import subprocess, multiprocessing
 
@@ -131,6 +133,26 @@ def setDefaultControlFolder( newFolderName ):
 
 
 ALL_CHAR_MARKERS = None
+# The following are used by both toHTML5 and toCustomBible
+ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
+                    'ipq':'introductionQuoteParagraph', 'ipr':'introductionRightAlignedParagraph',
+                    'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph',
+                    'imq':'introductionFlushLeftQuoteParagraph',
+                    'iq1':'introductionPoetryParagraph1','iq2':'introductionPoetryParagraph2','iq3':'introductionPoetryParagraph3','iq4':'introductionPoetryParagraph4',
+                    'iex':'introductionExplanation', }
+pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
+                    'pmo':'embeddedOpeningParagraph', 'pm':'embeddedParagraph', 'pmc':'embeddedClosingParagraph',
+                    'pmr':'embeddedRefrainParagraph',
+                    'pi1':'indentedProseParagraph1','pi2':'indentedProseParagraph2','pi3':'indentedProseParagraph3','pi4':'indentedProseParagraph4',
+                    'mi':'indentedFlushLeftParagraph', 'cls':'closureParagraph',
+                    'pc':'centeredProseParagraph', 'pr':'rightAlignedProseParagraph',
+                    'ph1':'hangingProseParagraph1','ph2':'hangingProseParagraph2','ph3':'hangingProseParagraph3','ph4':'hangingProseParagraph4',
+
+                    'q1':'poetryParagraph1','q2':'poetryParagraph2','q3':'poetryParagraph3','q4':'poetryParagraph4',
+                    'qr':'rightAlignedPoetryParagraph', 'qc':'centeredPoetryParagraph',
+                    'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4', }
+
+
 
 
 class BibleWriter( InternalBible ):
@@ -154,21 +176,19 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.__init_
 
 
-    def toPickle( self, outputFolder=None ):
+    def toPickleObject( self, outputFolder=None ):
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
-        if BibleOrgSysGlobals.debugFlag: print( "toPickle( {}, {} )".format( self.abbreviation, outputFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickle…" )
+        if BibleOrgSysGlobals.debugFlag: print( "toPickleObject( {}, {} )".format( self.abbreviation, outputFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickleObject…" )
         if not outputFolder: outputFolder = 'OutputFiles/BOS_Bible_Object_Pickle/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         result = self.pickle( folder=outputFolder )
 
         if result: # now create a zipped version
-            filename = self.abbreviation if self.abbreviation else self.name
-            if filename is None:
-                filename = self.objectTypeString
+            filename = self.getAName( abbrevFirst=True )
             if BibleOrgSysGlobals.debugFlag: assert filename
             filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
             filepath = os.path.join( outputFolder, filename )
@@ -178,12 +198,139 @@ class BibleWriter( InternalBible ):
             zf.close()
 
             if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-                print( "  BibleWriter.toPickle finished successfully." )
+                print( "  BibleWriter.toPickleObject finished successfully." )
             return True
         else:
-            print( "  BibleWriter.toPickle failed." )
+            print( "  BibleWriter.toPickleObject failed." )
             return False
-    # end of BibleWriter.toPickle
+    # end of BibleWriter.toPickleObject
+
+
+
+    def toPickledBible( self, outputFolder=None, aboutText=None, sourceURL=None, licenceText=None, dataLevel=None, zipOnly=False ):
+        """
+        Saves the Python book objects as pickle files
+            then the Bible object (less books)
+            and a version info file
+            plus a zipped version of everthing for downloading.
+
+        dataLevel:  1 = absolute minimal data saved (default)
+                    2 = small amount saved
+                    3 = all saved except BOS object
+
+        Note: This can add up to a couple of GB if discovery data and everything else is included!
+
+        We don't include all fields -- these files are intended to be read-only only,
+            i.e., not a full editable version.
+        """
+        from PickledBible import createPickledBible
+
+        if BibleOrgSysGlobals.debugFlag:
+            print( "toPickledBible( {}, {}, {}, {}, {}, {} )".format( outputFolder, aboutText, sourceURL, licenceText, dataLevel, zipOnly ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickledBible" )
+
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_PickledBible_Export/'
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        return createPickledBible( self, outputFolder, aboutText, sourceURL, licenceText, dataLevel, zipOnly )
+    # end of BibleWriter.toPickledBible
+
+
+
+    def toJSONBible( self, outputFolder=None, sourceURL=None, licenceString=None ):
+        """
+        Saves the Python book objects as json files
+            then the Bible object (less books)
+            and a version info file
+            plus a zipped version of everthing for downloading.
+
+        Note: This can add up to a couple of GB if discovery data is included!
+        """
+        from JSONBible import BOOK_FILENAME, INFO_FILENAME, VERSION_FILENAME, ZIPPED_FILENAME
+        if BibleOrgSysGlobals.debugFlag: print( "toJSONBible( {}, {}, {} )".format( outputFolder, sourceURL, licenceString ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toJSONBible" )
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_JSONBible_Export/'
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        if sourceURL is None: sourceURL = "Source: (unknown)"
+        if licenceString is None: licenceString = "Licence: (unknown)"
+
+        createdFilenames = []
+
+        # First save the individual books
+        for BBB,bookObject in self.books.items():
+            filename = BOOK_FILENAME.format( BBB )
+            createdFilenames.append( filename )
+            filepath = os.path.join( outputFolder, filename )
+            with open( filepath, 'wb' ) as jsonOutputFile:
+                try:
+                    json.dump( bookObject, jsonOutputFile, ensure_ascii=False )
+                except TypeError as err:
+                    logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBook: {0} {1}".format( sys.exc_info()[0], err ) )
+                    logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json book into {}".format( filename ) )
+                    return False
+
+        # Now json the main object attributes (less the books)
+        filepath = os.path.join( outputFolder, INFO_FILENAME )
+        createdFilenames.append( INFO_FILENAME )
+        with open( filepath, 'wb' ) as jsonOutputFile:
+            try:
+                for attributeName in dir( self ):
+                    #print( "here1: attributeName =", repr(attributeName) )
+                    attributeValue = self.__getattribute__( attributeName )
+                    #print( "here2", repr(attributeValue) )
+                    attributeType = type( attributeValue )
+                    #print( "here3: attributeType =", repr(attributeType) )
+                    typeAsString = str(attributeType)
+                    #print( "here4: typeAsString =", repr(typeAsString) )
+                    #print( 'attrib', attributeName, typeAsString )
+                    if '__' not in attributeName and 'method' not in typeAsString:
+                        if attributeName=='books':
+                            #print( '  Skipping books' )
+                            pass
+                        else:
+                            #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '...' )
+                            json.dump( attributeName, jsonOutputFile, ensure_ascii=False )
+                            json.dump( attributeValue, jsonOutputFile, ensure_ascii=False )
+            except TypeError as err:
+                logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBible: {0} {1}".format( sys.exc_info()[0], err ) )
+                logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json Bible into {}".format( filename ) )
+                return False
+
+        # Now json the version object
+        from InternalBible import ProgNameVersionDate as IBProgVersion
+        from InternalBibleBook import ProgNameVersionDate as IBBProgVersion
+        from InternalBibleInternals import ProgNameVersionDate as IBIProgVersion
+        filepath = os.path.join( outputFolder, VERSION_FILENAME )
+        createdFilenames.append( VERSION_FILENAME )
+        with open( filepath, 'wb' ) as jsonOutputFile:
+            for something in ( ProgNameVersionDate, datetime.now().isoformat(' '),
+                              IBProgVersion, IBBProgVersion, IBIProgVersion,
+                              self.getAName(), self.getBookList(),
+                              sourceURL, licenceString ):
+                try:
+                    #print( "Pickling", repr(something) )
+                    json.dump( something, jsonOutputFile, ensure_ascii=False )
+                except TypeError as err:
+                    logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBible: {0} {1}".format( sys.exc_info()[0], err ) )
+                    logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json Bible into {}".format( filename ) )
+                    return False
+
+        # Now create a zipped version of the entire folder
+        zipFilename = self.getAName( abbrevFirst=True )
+        if BibleOrgSysGlobals.debugFlag: assert zipFilename
+        zipFilename = BibleOrgSysGlobals.makeSafeFilename( zipFilename+'.json.zip' )
+        zipFilepath = os.path.join( outputFolder, zipFilename )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} JSON files…".format( len(createdFilenames) ) )
+        zf = zipfile.ZipFile( zipFilepath, 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in createdFilenames:
+            zf.write( os.path.join( outputFolder, filename ), filename )
+        zf.close()
+
+        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+            print( "  BibleWriter.toJSONBible finished successfully." )
+        return True
+    # end of BibleWriter.toJSONBible
 
 
 
@@ -1836,26 +1983,6 @@ class BibleWriter( InternalBible ):
 
 
 
-    # The following are used by both toHTML5 and toCustomBible
-    ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
-                       'ipq':'introductionQuoteParagraph', 'ipr':'introductionRightAlignedParagraph',
-                       'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph',
-                       'imq':'introductionFlushLeftQuoteParagraph',
-                       'iq1':'introductionPoetryParagraph1','iq2':'introductionPoetryParagraph2','iq3':'introductionPoetryParagraph3','iq4':'introductionPoetryParagraph4',
-                       'iex':'introductionExplanation', }
-    pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
-                       'pmo':'embeddedOpeningParagraph', 'pm':'embeddedParagraph', 'pmc':'embeddedClosingParagraph',
-                       'pmr':'embeddedRefrainParagraph',
-                       'pi1':'indentedProseParagraph1','pi2':'indentedProseParagraph2','pi3':'indentedProseParagraph3','pi4':'indentedProseParagraph4',
-                       'mi':'indentedFlushLeftParagraph', 'cls':'closureParagraph',
-                       'pc':'centeredProseParagraph', 'pr':'rightAlignedProseParagraph',
-                       'ph1':'hangingProseParagraph1','ph2':'hangingProseParagraph2','ph3':'hangingProseParagraph3','ph4':'hangingProseParagraph4',
-
-                       'q1':'poetryParagraph1','q2':'poetryParagraph2','q3':'poetryParagraph3','q4':'poetryParagraph4',
-                       'qr':'rightAlignedPoetryParagraph', 'qc':'centeredPoetryParagraph',
-                       'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4', }
-
-
     def __formatHTMLVerseText( BBB, C, V, givenText, extras, ourGlobals ):
         """
         Format character codes within the text into HTML
@@ -2450,7 +2577,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenSection:
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text or extras:
-                        writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class',BibleWriter.ipHTMLClassDict[marker]), noTextCheck=haveExtraFormatting )
+                        writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class',ipHTMLClassDict[marker]), noTextCheck=haveExtraFormatting )
                         #writerObject.writeLineText( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), noTextCheck=True )
                 elif marker == 'iot':
                     if haveOpenParagraph:
@@ -2547,7 +2674,7 @@ class BibleWriter( InternalBible ):
                             if lx in haveOpenList and haveOpenList[lx]: writerObject.writeLineClose( 'p' ); del haveOpenList[lx]
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpen( 'p', ('class',BibleWriter.pqHTMLClassDict[marker]) ); haveOpenParagraph = True
+                    writerObject.writeLineOpen( 'p', ('class',pqHTMLClassDict[marker]) ); haveOpenParagraph = True
                     if text and BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
                     if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
@@ -2797,7 +2924,7 @@ class BibleWriter( InternalBible ):
             with open( compressionDictFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
-                json.dump( CBCompressions, jsonFile, indent=jsonIndent )
+                json.dump( CBCompressions, jsonFile, ensure_ascii=False, indent=jsonIndent )
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "    {} compression entries written.".format( len(CBCompressions) ) )
         # end of writeCompressions
@@ -2853,7 +2980,7 @@ class BibleWriter( InternalBible ):
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}…").format( headerFilepath ) )
             with open( headerFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( headerDict, jsonFile, indent=jsonIndent )
+                json.dump( headerDict, jsonFile, ensure_ascii=False, indent=jsonIndent )
         # end of writeCBHeader
 
 
@@ -2896,7 +3023,7 @@ class BibleWriter( InternalBible ):
             #print( divisionData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
             with open( divisionNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( divisionData, jsonFile, indent=jsonIndent )
+                json.dump( divisionData, jsonFile, ensure_ascii=False, indent=jsonIndent )
 
             # Make a list of book data including names and abbreviations and write them to a JSON file
             bkData = []
@@ -2921,7 +3048,7 @@ class BibleWriter( InternalBible ):
             #print( bkData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
             with open( bookNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( bkData, jsonFile, indent=jsonIndent )
+                json.dump( bkData, jsonFile, ensure_ascii=False, indent=jsonIndent )
         # end of writeCBBookNames
 
 
@@ -2936,7 +3063,7 @@ class BibleWriter( InternalBible ):
                 filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
-                    json.dump( cData, jsonFile, indent=jsonIndent )
+                    json.dump( cData, jsonFile, ensure_ascii=False, indent=jsonIndent )
             # end of writeCBChapter
 
             outputData, chapterOutputData = [], []
@@ -2969,7 +3096,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
             with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( outputData, jsonFile, indent=jsonIndent )
+                json.dump( outputData, jsonFile, ensure_ascii=False, indent=jsonIndent )
         # end of writeCBBookAsJSON
 
 
@@ -3096,7 +3223,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     #if not text and not extras: print( "{} at {} {}:{} has nothing!".format( marker, BBB, C, V ) );halt
                     if text or extras:
-                        thisHTML += '<p class="{}">{}</p>'.format( BibleWriter.ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'iot':
                     if pOpen:
                         logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
@@ -3260,7 +3387,7 @@ class BibleWriter( InternalBible ):
                             fileOffset += bytesWritten
                         thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if BibleOrgSysGlobals.debugFlag: assert not text
-                    thisHTML += '<p class="{}">'.format( BibleWriter.pqHTMLClassDict[marker] )
+                    thisHTML += '<p class="{}">'.format( pqHTMLClassDict[marker] )
                     pOpen = True
                 elif marker in ('v~','p~',):
                     #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert vOpen
@@ -3376,7 +3503,7 @@ class BibleWriter( InternalBible ):
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( newHTMLIndex, jsonFile, indent=jsonIndent )
+                json.dump( newHTMLIndex, jsonFile, ensure_ascii=False, indent=jsonIndent )
             writeCompressions()
 
         if ignoredMarkers:
@@ -9449,6 +9576,7 @@ class BibleWriter( InternalBible ):
 
         # Define our various output folders
         pickleOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Bible_Object_Pickle/' )
+        pickledBibleOutputFolder = os.path.join( givenOutputFolderName, 'BOS_PickledBible_Export/' )
         listOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Lists/' )
         BCVOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BCV_Export/' )
         pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, 'BOS_PseudoUSFM_Export/' )
@@ -9492,9 +9620,9 @@ class BibleWriter( InternalBible ):
         # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
         #       because the BRL object has a recursive pointer to self and the pickle fails
-        if BibleOrgSysGlobals.debugFlag: pickleResult = self.toPickle( pickleOutputFolder ) # halts if fails
+        if BibleOrgSysGlobals.debugFlag: pickleResult = self.toPickleObject( pickleOutputFolder ) # halts if fails
         else:
-            try: pickleResult = self.toPickle( pickleOutputFolder )
+            try: pickleResult = self.toPickleObject( pickleOutputFolder )
             except (IOError,TypeError):
                 pickleResult = False
                 print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( pickleOutputFolder ) )
@@ -9502,6 +9630,7 @@ class BibleWriter( InternalBible ):
         if 'discoveryResults' not in dir(self): self.discover()
 
         if BibleOrgSysGlobals.debugFlag: # no try/except calls so it halts on errors rather than continuing
+            pickledBibleOutputResult = self.toPickledBible( pickledBibleOutputFolder )
             listOutputResult = self.makeLists( listOutputFolder )
             BCVExportResult = self.toBOSBCV( BCVOutputFolder )
             pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
@@ -9541,7 +9670,8 @@ class BibleWriter( InternalBible ):
             self.__outputProcesses = [self.toPhotoBible if wantPhotoBible else None,
                                     self.toODF if wantODFs else None,
                                     self.toTeX if wantPDFs else None,
-                                    self.makeLists, self.toBOSBCV, self.toPseudoUSFM,
+                                    self.toPickledBible, self.makeLists,
+                                    self.toBOSBCV, self.toPseudoUSFM,
                                     self.toUSFM2, self.toUSFM3, self.toESFM, self.toText, self.toVPL,
                                     self.toMarkdown, self.toDoor43, self.toHTML5,
                                     self.toCustomBible, self.toEasyWorshipBible,
@@ -9550,7 +9680,8 @@ class BibleWriter( InternalBible ):
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword, self.toMyBible,
                                     self.toSwordSearcher, self.toDrupalBible, ]
             self.__outputFolders = [photoOutputFolder, ODFOutputFolder, TeXOutputFolder,
-                                    listOutputFolder, BCVOutputFolder, pseudoUSFMOutputFolder,
+                                    pickledBibleOutputFolder, listOutputFolder,
+                                    BCVOutputFolder, pseudoUSFMOutputFolder,
                                     USFM2OutputFolder, USFM3OutputFolder, ESFMOutputFolder,
                                     textOutputFolder, VPLOutputFolder,
                                     markdownOutputFolder, D43OutputFolder,
@@ -9603,7 +9734,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
             PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
-                listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
+                pickledBibleOutputResult, listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                 USFM2ExportResult, USFM3ExportResult, ESFMExportResult, textExportResult, VPLExportResult, \
                 markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
                 USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
@@ -9611,6 +9742,11 @@ class BibleWriter( InternalBible ):
                     = results
 
         else: # Just single threaded and not debugging
+            try: pickledBibleOutputResult = self.toPickledBible( pickledBibleOutputFolder )
+            except Exception as err:
+                pickledBibleOutputResult = False
+                print("BibleWriter.doAllExports.toPickledBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toPickledBible: Oops, failed!" )
             try: listOutputResult = self.makeLists( listOutputFolder )
             except Exception as err:
                 listOutputResult = False
@@ -9823,22 +9959,22 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/',),
-                #('CustomTest', 'Custom', '../',),
-                #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/',),
-                #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/',),
-                #('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/',),
-                #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/',),
-                #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/',),
-                #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/',),
+                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/',),
+                ('CustomTest', 'Custom', '../',),
+                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/',),
+                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/',),
+                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/',),
+                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/',),
+                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/',),
+                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/',),
                 ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
-                #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
-                #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/',),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/',),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/',),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/',),
-                #('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/',),
+                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
+                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/',),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/',),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/',),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/',),
+                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/',),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9847,7 +9983,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toCustomBible(); halt
+                #UB.toPickledBible(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -9856,16 +9992,16 @@ def demo():
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files…" )
-                    for j, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                        #print( j, BBB, filename1 )
+                    for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
+                        #print( jj, BBB, filename1 )
                         UUU, nn = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
-                        #print( j, BBB, filename1, UUU )
+                        #print( jj, BBB, filename1, UUU )
                         filename2 = None
                         for fn in folderContents2:
                             if nn in fn and UUU in fn: filename2 = fn; break
                         if filename1 in folderContents1 and filename2 in folderContents2:
                             if BibleOrgSysGlobals.verbosityLevel > 2:
-                                print( "\nAbout to compare {}: {} {} with {}…".format( j+1, BBB, filename1, filename2 ) )
+                                print( "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
                             result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolder )
                             if result and BibleOrgSysGlobals.verbosityLevel > 2: print( "  Matched." )
                             #print( "  result", result )
@@ -9898,9 +10034,9 @@ def demo():
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolder ) # Derived
                     if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files…" )
-                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
+                    for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
-                            #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                            #print( "\n{}: {} {}".format( jj+1, BBB, filename ) )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolder )
                             if BibleOrgSysGlobals.debugFlag:
                                 if not result: halt
