@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,7 +40,7 @@ Contains functions:
     backupAnyExistingFile( filenameOrFilepath, numBackups=1 )
     peekIntoFile( filenameOrFilepath, folderName=None, numLines=1 )
 
-    totalSize( o, handlers={} )
+    totalSize( obj, handlers={} )
 
     fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 )
     fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 )
@@ -77,7 +77,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-13' # by RJH
+LastModifiedDate = '2018-01-04' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.75'
@@ -451,8 +451,9 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
 #
 # For debugging, etc.
 
-def totalSize( o, handlers={} ):
-    """ Returns the approximate memory footprint an object and all of its contents.
+def totalSize( obj, handlers={} ):
+    """
+    Returns the approximate memory footprint an object and all of its contents.
 
     Automatically finds the contents of the following builtin containers and
     their subclasses:  tuple, list, deque, dict, set and frozenset.
@@ -476,21 +477,21 @@ def totalSize( o, handlers={} ):
     seen = set()                      # track which object id's have already been seen
     default_size = getsizeof(0)       # estimate sizeof object without __sizeof__
 
-    def sizeof(o):
-        if id(o) in seen:       # do not double count the same object
+    def sizeof(obj):
+        if id(obj) in seen:       # do not double count the same object
             return 0
-        seen.add(id(o))
-        s = getsizeof(o, default_size)
+        seen.add(id(obj))
+        s = getsizeof(obj, default_size)
 
-        if verbosityLevel > 3: print( s, type(o), repr(o) )
+        if verbosityLevel > 3: print( s, type(obj), repr(obj) )
 
         for typ, handler in all_handlers.items():
-            if isinstance(o, typ):
-                s += sum(map(sizeof, handler(o)))
+            if isinstance(obj, typ):
+                s += sum(map(sizeof, handler(obj)))
                 break
         return s
 
-    return sizeof(o)
+    return sizeof(obj)
 # end of BibleOrgSysGlobals.totalSize
 
 
