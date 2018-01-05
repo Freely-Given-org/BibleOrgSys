@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-19' # by RJH
+LastModifiedDate = '2018-01-03' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.31'
+ProgVersion = '0.32'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,6 +72,7 @@ from ESwordBible import ESwordBibleFileCheck
 from ESwordCommentary import ESwordCommentaryFileCheck
 from MyBibleBible import MyBibleBibleFileCheck
 from PalmDBBible import PalmDBBibleFileCheck
+from PickledBible import PickledBibleFileCheck
 from OnlineBible import OnlineBibleFileCheck
 from EasyWorshipBible import EasyWorshipBibleFileCheck
 from SwordBible import SwordBibleFileCheck
@@ -149,6 +150,14 @@ class UnknownBible:
             if BibleOrgSysGlobals.debugFlag: print( "UnknownBible.recheckStrict( {} )".format( folderName ) )
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
+
+            # Search for pickled Bibles
+            PickledBibleStrictCount = PickledBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+            if PickledBibleStrictCount:
+                totalBibleStrictCount += PickledBibleStrictCount
+                totalBibleStrictTypes += 1
+                typesStrictlyFound.append( 'Pickled:' + str(PickledBibleStrictCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "PickledBible.recheckStrict: PickledBibleStrictCount", PickledBibleStrictCount )
 
             # Search for theWord Bibles
             theWordBibleStrictCount = theWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -369,6 +378,14 @@ class UnknownBible:
         # Main code
         # We first do a normal (non-strict) check (unless strict was requested by the caller)
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
+
+        # Search for pickled Bibles
+        PickledBibleCount = PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PickledBibleCount:
+            totalBibleCount += PickledBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Pickled:' + str(PickledBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "PickledBible.search: PickledBibleCount", PickledBibleCount )
 
         # Search for theWord Bibles
         theWordBibleCount = theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -629,7 +646,11 @@ class UnknownBible:
 
         if autoLoadAlways or totalBibleCount == 1:
             # Put the binary formats first here because they can be detected more reliably
-            if theWordBibleCount == 1:
+            if PickledBibleCount == 1:
+                self.foundType = "pickled Bible"
+                if autoLoad: return PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif theWordBibleCount == 1:
                 self.foundType = "theWord Bible"
                 if autoLoad: return theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
@@ -761,6 +782,7 @@ def demo():
                     '../../../../../Data/Work/Bibles/MyBible modules/',
                     '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
                     '../../../../AutoProcesses/Processed/',
+                    'Tests/DataFilesForTests/PickledBibleTest1/',
                     'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
                     'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
                     'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
