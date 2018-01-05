@@ -5,7 +5,7 @@
 #
 # Module handling HebrewWLCBible.xml
 #
-# Copyright (C) 2011-2017 Robert Hunt
+# Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling WLCHebrew.xml to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-28' # by RJH
+LastModifiedDate = '2018-01-05' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -62,13 +62,12 @@ class HebrewWLCBible( OSISXMLBible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, XMLFilepath=None, givenAbbreviation=None ):
+    def __init__( self, XMLFilepath=None ):
        """
        Create an empty object.
        """
        if not XMLFilepath: XMLFilepath = DEFAULT_WLC_FILEPATH
-       if not givenAbbreviation: givenAbbreviation = 'WLC'
-       OSISXMLBible.__init__( self, XMLFilepath, givenAbbreviation=givenAbbreviation )
+       OSISXMLBible.__init__( self, XMLFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
 
        self.glossingDict = None
     # end of __init__
@@ -529,7 +528,7 @@ def demo():
         testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class (one book only)…" )
         #print( testFile )
-        wlc = HebrewWLCBible( testFile, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFile )
         wlc.load() # Load and process the XML book
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -564,7 +563,7 @@ def demo():
         testFolder = DEFAULT_WLC_FILEPATH # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class (whole Bible)…" )
         #print( testFolder )
-        wlc = HebrewWLCBible( testFolder, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( testFolder )
         wlc.loadBooks() # Load and process the XML files
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -632,7 +631,7 @@ def demo():
 
     if 1: # Test some of the glossing functions
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nD/ Demonstrating the Hebrew WLC glossing functions…" )
-        wlc = HebrewWLCBible( DEFAULT_WLC_FILEPATH, givenAbbreviation='WLC' )
+        wlc = HebrewWLCBible( DEFAULT_WLC_FILEPATH )
         wlc.loadGlossingDict()
         wlc.exportGlossingDictionary()
         wlc.saveAnyChangedGlosses()
