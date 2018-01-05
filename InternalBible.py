@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2018-01-04' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -266,12 +266,12 @@ class InternalBible:
                 continue # ignore my own functions
             if myPropertyName in ( 'toBOSBCV', 'toCustomBible', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
                               'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
-                              'toOpenSongXML', 'toPhotoBible', 'toPickle', 'toPseudoUSFM', 'toSwordModule',
+                              'toOpenSongXML', 'toPhotoBible', 'toPickleObject', 'toPseudoUSFM', 'toSwordModule',
                               'toSwordSearcher', 'toTeX', 'toText', 'toUSFM', 'toUSFXXML', 'toUSXXML',
                               'toZefaniaXML', 'totheWord', 'doAllExports', 'doExportHelper',
                               '_BibleWriter__adjustControlDict', '_BibleWriter__formatHTMLVerseText',
                               '_BibleWriter__setupWriter', '_writeSwordLocale',
-                              'ipHTMLClassDict', 'pqHTMLClassDict', 'doneSetupGeneric', ):
+                              'doneSetupGeneric', ):
                 continue # ignore BibleWriter functions
 
             myProperty = getattr( self, myPropertyName )
@@ -348,6 +348,7 @@ class InternalBible:
         if self.abbreviation: return self.abbreviation
         if self.sourceFilename: return self.sourceFilename
         if self.sourceFolder: return os.path.basename( self.sourceFolder[:-1] if self.sourceFolder[-1] in ('\\','/') else self.sourceFolder )
+        return self.objectTypeString
     # end of InternalBible.getAName
 
 
@@ -933,7 +934,8 @@ class InternalBible:
         Attempt to return a book reference code given a book reference code (e.g., 'PRO'),
                 a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
-            Return None if unsuccessful."""
+            Return None if unsuccessful.
+        """
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
         result = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( referenceString )
         if result is not None: return result # It's already a valid BBB

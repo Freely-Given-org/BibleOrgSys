@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-19' # by RJH
+LastModifiedDate = '2018-01-03' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -678,17 +678,17 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j,testFolder in enumerate( (
-                            "Tests/DataFilesForTests/USFMTest1/",
-                            "Tests/DataFilesForTests/USFMTest2/",
-                            "Tests/DataFilesForTests/USFMTest3/",
-                            "Tests/DataFilesForTests/USFMAllMarkersProject/",
-                            "Tests/DataFilesForTests/USFMErrorProject/",
-                            "Tests/DataFilesForTests/PTX7Test/",
-                            "OutputFiles/BOS_USFM2_Export/",
-                            "OutputFiles/BOS_USFM2_Reexport/",
-                            "OutputFiles/BOS_USFM3_Export/",
-                            "OutputFiles/BOS_USFM3_Reexport/",
-                            "MadeUpFolder/",
+                            'Tests/DataFilesForTests/USFMTest1/',
+                            'Tests/DataFilesForTests/USFMTest2/',
+                            'Tests/DataFilesForTests/USFMTest3/',
+                            'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                            'Tests/DataFilesForTests/USFMErrorProject/',
+                            'Tests/DataFilesForTests/PTX7Test/',
+                            'OutputFiles/BOS_USFM2_Export/',
+                            'OutputFiles/BOS_USFM2_Reexport/',
+                            'OutputFiles/BOS_USFM3_Export/',
+                            'OutputFiles/BOS_USFM3_Reexport/',
+                            'MadeUpFolder/',
                             ) ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )
@@ -712,13 +712,13 @@ def demo():
 
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
-                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest1/"),
-                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest2/"),
-                        ("Matigsalug", 'utf-8', "Tests/DataFilesForTests/USFMTest3/"),
-                        ("WEB+", 'utf-8', "Tests/DataFilesForTests/USFMAllMarkersProject/"),
-                        ("UEP", 'utf-8', "Tests/DataFilesForTests/USFMErrorProject/"),
-                        ("Exported2", 'utf-8', "OutputFiles/BOS_USFM2_Export/"),
-                        ("Exported3", 'utf-8', "OutputFiles/BOS_USFM3_Export/"),
+                        ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest1/'),
+                        ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest2/'),
+                        ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest3/'),
+                        ("WEB+", 'utf-8', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                        ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
+                        ("Exported2", 'utf-8', 'OutputFiles/BOS_USFM2_Export/'),
+                        ("Exported3", 'utf-8', 'OutputFiles/BOS_USFM3_Export/'),
                         ) ):
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM B{}/".format( j+1 ) )
