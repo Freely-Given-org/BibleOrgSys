@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 8) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-28' # by RJH
+LastModifiedDate = '2018-01-03' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.24'
@@ -2703,6 +2703,12 @@ class PTX8Bible( Bible ):
     def loadUniqueId( self ):
         """
         Load the unique.id file (if it exists) and parse it into the dictionary self.suppliedMetadata.
+
+        unique.id is just a file that Paratext uses to forcibly add a revision to the project history.
+            Paratext writes a random string in there to force the file to change in Mercurial
+            so that a commit can be created even if nothing else in the project has changed
+            (e.g. when using Project > Mark Point in Project History).
+            It has no other use.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("loadUniqueId()") )
