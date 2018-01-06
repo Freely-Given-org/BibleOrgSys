@@ -30,17 +30,17 @@ NOTE: Unfortunately it seems that loading a pickled object is 3-4 times slower
     Also, the pickled files seem 10x larger than the originals.
     Ah, but we don't need all those fields!
 
-    PickledBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False )
+    PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadBooks=False )
     createPickledBible( self, outputFolder=None, sourceURL=None, licenceText=None, dataLevel=1 )
     class PickledBible( Bible )
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-05' # by RJH
+LastModifiedDate = '2018-01-06' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.03'
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -64,9 +64,10 @@ BOOK_FILENAME = '{}.pickle' # Each book is stored in a separate BBB.pickle file
 
 
 
-def PickledBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Pickle Bible files or folders in the folder and in the next level down.
+    Or if given a zip filename, check that.
 
     Returns False if an error is found.
 
@@ -76,14 +77,26 @@ def PickledBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one Pickle Bible is found,
         returns the loaded PickledBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "PickledBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    if BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "PickledBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
-    # Check that the given folder is readable
-    if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("PickledBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+    # Check that the given path is readable
+    if not os.access( givenPathname, os.R_OK ):
+        logging.critical( _("PickledBibleFileCheck: Given {!r} path is unreadable").format( givenPathname ) )
         return False
+
+    if givenPathname.endswith( ZIPPED_FILENAME_END ): # it's a zipped pickled Bible
+        if autoLoad or autoLoadBooks:
+            pB = PickledBible( givenPathname )
+            if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
+            if autoLoadBooks: pB.loadBooks() # Load and process the book files
+            return pB
+        else: return 1
+
+    # Must have been given a folder
+    givenFolderName = givenPathname
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("PickledBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
@@ -106,10 +119,10 @@ def PickledBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("PickledBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            uB = PickledBible( givenFolderName )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
-            if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            return uB
+            pB = PickledBible( givenFolderName )
+            if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
+            if autoLoadBooks: pB.loadBooks() # Load and process the book files
+            return pB
         return numFound
 
     # Look one level down
@@ -135,16 +148,16 @@ def PickledBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("PickledBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            uB = PickledBible( foundProjects[0] )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
-            if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            return uB
+            pB = PickledBible( foundProjects[0] )
+            if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
+            if autoLoadBooks: pB.loadBooks() # Load and process the book files
+            return pB
         return numFound
 # end of PickledBibleFileCheck
 
 
 
-def createPickledBible( BibleObject, outputFolder=None, aboutText=None, sourceURL=None, licenceText=None, dataLevel=None, zipOnly=False ):
+def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataLevel=None, zipOnly=False ):
     """
     Saves the Python book objects as pickle files
         then the Bible object (less books)
@@ -162,7 +175,7 @@ def createPickledBible( BibleObject, outputFolder=None, aboutText=None, sourceUR
     """
     from datetime import datetime
 
-    if BibleOrgSysGlobals.debugFlag: print( "createPickledBible( {}, {}, {}, {}, {}, {} )".format( outputFolder, aboutText, sourceURL, licenceText, dataLevel, zipOnly ) )
+    if BibleOrgSysGlobals.debugFlag: print( "createPickledBible( {}, {}, {}, {} )".format( outputFolder, metadataDict, dataLevel, zipOnly ) )
     #if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running createPickledBible" )
     #if not outputFolder: outputFolder = 'OutputFiles/BOS_PickledBible_Export/'
     #if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -170,6 +183,7 @@ def createPickledBible( BibleObject, outputFolder=None, aboutText=None, sourceUR
     #if aboutText is None: aboutText = "(unknown)"
     #if sourceURL is None: sourceURL = "(unknown)"
     #if licenceText is None: licenceText = "(unknown)"
+    if metadataDict is None: metadataDict = {}
     if dataLevel is None: dataLevel = 1 # Save just enough attributes to display the module
 
     createdFilenames = [] # Keep track so we know what to zip (and possibly to delete again later)
@@ -262,7 +276,7 @@ def createPickledBible( BibleObject, outputFolder=None, aboutText=None, sourceUR
         for something in ( ProgNameVersionDate, dataLevel, datetime.now().isoformat(' '),
                             IBProgVersion, IBBProgVersion, IBIProgVersion,
                             BibleObject.getAName(), BibleObject.getBookList(),
-                            aboutText, sourceURL, licenceText ):
+                            metadataDict ):
             #print( "String size", something, BibleOrgSysGlobals.totalSize( something ) )
             try:
                 #print( "Pickling", repr(something) )
@@ -327,9 +341,7 @@ class PickledBible( Bible ):
             myDict['IBIProgVersion'] = pickle.load( fileObject )
             myDict['workName'] = pickle.load( fileObject )
             myDict['bookList'] = pickle.load( fileObject )
-            myDict['aboutText'] = pickle.load( fileObject )
-            myDict['sourceURL'] = pickle.load( fileObject )
-            myDict['licenceText'] = pickle.load( fileObject )
+            myDict.update( pickle.load( fileObject ) ) # metadataDict
             if debuggingThisModule: print( "myDict", myDict )
             return myDict
         # end of PickledBible.__init_ loadVersionStuff
@@ -377,12 +389,16 @@ class PickledBible( Bible ):
         if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
         if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
         result += ('\n' if result else '') + ' '*indent + _("Packaged: {}").format( self.pickleVersionData['WrittenDateTime'].split( ' ', 1)[0] )
-        if self.pickleVersionData['aboutText']:
-            result += ('\n' if result else '') + ' '*indent + _("About: {}").format( self.pickleVersionData['aboutText'] )
-        if self.pickleVersionData['sourceURL']:
-            result += ('\n' if result else '') + ' '*indent + _("Source URL: {}").format( self.pickleVersionData['sourceURL'] )
-        if self.pickleVersionData['licenceText']:
-            result += ('\n' if result else '') + ' '*indent + _("Licence: {}").format( self.pickleVersionData['licenceText'] )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            for something,sometext in self.pickleVersionData.items():
+                result += ('\n' if result else '') + ' '*indent + _("{}: {}").format( something, sometext )
+        else:
+            if 'aboutText' in self.pickleVersionData and self.pickleVersionData['aboutText']:
+                result += ('\n' if result else '') + ' '*indent + _("About: {}").format( self.pickleVersionData['aboutText'] )
+            if 'sourceURL' in self.pickleVersionData and self.pickleVersionData['sourceURL']:
+                result += ('\n' if result else '') + ' '*indent + _("Source URL: {}").format( self.pickleVersionData['sourceURL'] )
+            if 'licenceText' in self.pickleVersionData and self.pickleVersionData['licenceText']:
+                result += ('\n' if result else '') + ' '*indent + _("Licence: {}").format( self.pickleVersionData['licenceText'] )
         if BibleOrgSysGlobals.verbosityLevel > 1:
             for fieldName in set1:
                 fieldContents = self.getSetting( fieldName )
@@ -625,6 +641,29 @@ def demo():
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
+    if 1: # demo the file checking code with zip files
+        resourcesFolder = 'Resources/'
+        for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
+            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
+            result1 = PickledBibleFileCheck( testFilepath )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Pickle Bible TestBa", result1 )
+            result2 = PickledBibleFileCheck( testFilepath, autoLoad=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Pickle Bible TestBb", result2 )
+            result3 = PickledBibleFileCheck( testFilepath, autoLoadBooks=True )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Pickle Bible TestBc", result3 )
+            if isinstance( result3, Bible ):
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result3.check()
+                    #print( result3.books['GEN']._processedLines[0:40] )
+                    pBibleErrors = result3.getErrors()
+                    # print( UBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    result3.pickle()
+                    ##result3.toDrupalBible()
+                    result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
                         ("Test1", 'utf-8', 'Tests/DataFilesForTests/PickledBibleTest1/'),
@@ -634,7 +673,7 @@ def demo():
                         ("Exported2", 'utf-8', 'OutputFiles/BOS_PickledBible_Reexport/'),
                         ) ):
             if os.access( testFolder, os.R_OK ):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nPickle Bible B{}/".format( j+1 ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nPickle Bible C{}/".format( j+1 ) )
                 pBible = PickledBible( testFolder )
                 pBible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -684,10 +723,10 @@ def demo():
 
 
     if 1: # Load a zipped version
-        pBible = PickledBible( 'OutputFiles/BOS_PickledBible_Export/MBTV.pickle.zip' )
-        print( "C1a:", pBible )
+        pBible = PickledBible( 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END )
+        print( "D1a:", pBible )
         pBible.load()
-        print( "C1b:", pBible )
+        print( "D1b:", pBible )
         assert pBible.pickleIsZipped # That's what we were supposedly testing
 #end of demo
 

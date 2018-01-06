@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-05' # by RJH
+LastModifiedDate = '2018-01-06' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -207,7 +207,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPickledBible( self, outputFolder=None, aboutText=None, sourceURL=None, licenceText=None, dataLevel=None, zipOnly=False ):
+    def toPickledBible( self, outputFolder=None, metadataDict=None, dataLevel=None, zipOnly=False ):
         """
         Saves the Python book objects as pickle files
             then the Bible object (less books)
@@ -226,13 +226,13 @@ class BibleWriter( InternalBible ):
         from PickledBible import createPickledBible
 
         if BibleOrgSysGlobals.debugFlag:
-            print( "toPickledBible( {}, {}, {}, {}, {}, {} )".format( outputFolder, aboutText, sourceURL, licenceText, dataLevel, zipOnly ) )
+            print( "toPickledBible( {}, {}, {}, {} )".format( outputFolder, metadataDict, dataLevel, zipOnly ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickledBible" )
 
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PickledBible_Export/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        return createPickledBible( self, outputFolder, aboutText, sourceURL, licenceText, dataLevel, zipOnly )
+        return createPickledBible( self, outputFolder, metadataDict, dataLevel, zipOnly )
     # end of BibleWriter.toPickledBible
 
 

@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-03' # by RJH
+LastModifiedDate = '2018-01-06' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.32'
@@ -88,16 +88,16 @@ class UnknownBible:
     Class for handling an entire Bible.
     """
 
-    def __init__( self, givenFolderName ):
+    def __init__( self, givenPathname ):
         """
         Constructor: creates an empty Bible object.
         """
-        if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
-        self.givenFolderName = givenFolderName
+        if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, str )
+        self.givenFolderName = givenPathname # NOTE: givenPathname can actually be zip file for PickledBible
 
         # Check that the given folder is readable
-        if not os.access( givenFolderName, os.R_OK ):
-            logging.critical( _("UnknownBible: Given {!r} folder is unreadable").format( self.givenFolderName ) )
+        if not os.access( givenPathname, os.R_OK ):
+            logging.critical( _("UnknownBible: Given {!r} Pathname is unreadable").format( givenPathname ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             self.folderReadable = False
         else: self.folderReadable = True
@@ -151,7 +151,7 @@ class UnknownBible:
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
-            # Search for pickled Bibles
+            # Search for pickled Bibles -- can be given a folder, or a zip file name
             PickledBibleStrictCount = PickledBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
             if PickledBibleStrictCount:
                 totalBibleStrictCount += PickledBibleStrictCount
@@ -159,217 +159,226 @@ class UnknownBible:
                 typesStrictlyFound.append( 'Pickled:' + str(PickledBibleStrictCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "PickledBible.recheckStrict: PickledBibleStrictCount", PickledBibleStrictCount )
 
-            # Search for theWord Bibles
-            theWordBibleStrictCount = theWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if theWordBibleStrictCount:
-                totalBibleStrictCount += theWordBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'theWord:' + str(theWordBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
+            if os.path.isdir( self.givenFolderName ):
+                # Search for theWord Bibles
+                theWordBibleStrictCount = theWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if theWordBibleStrictCount:
+                    totalBibleStrictCount += theWordBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'theWord:' + str(theWordBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
 
-            # Search for MySword Bibles
-            MySwordBibleStrictCount = MySwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if MySwordBibleStrictCount:
-                totalBibleStrictCount += MySwordBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'MySword:' + str(MySwordBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
+                # Search for MySword Bibles
+                MySwordBibleStrictCount = MySwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if MySwordBibleStrictCount:
+                    totalBibleStrictCount += MySwordBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'MySword:' + str(MySwordBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
 
-            # Search for e-Sword Bibles and commentaries
-            ESwordBibleStrictCount = ESwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if ESwordBibleStrictCount:
-                totalBibleStrictCount += ESwordBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'e-Sword-Bible:' + str(ESwordBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
-            ESwordCommentaryStrictCount = ESwordCommentaryFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if ESwordCommentaryStrictCount:
-                totalBibleStrictCount += ESwordCommentaryStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
+                # Search for e-Sword Bibles and commentaries
+                ESwordBibleStrictCount = ESwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if ESwordBibleStrictCount:
+                    totalBibleStrictCount += ESwordBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'e-Sword-Bible:' + str(ESwordBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
+                ESwordCommentaryStrictCount = ESwordCommentaryFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if ESwordCommentaryStrictCount:
+                    totalBibleStrictCount += ESwordCommentaryStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
 
-            # Search for MyBible Bibles
-            MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if MyBibleBibleStrictCount:
-                totalBibleStrictCount += MyBibleBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'MyBible:' + str(MyBibleBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
+                # Search for MyBible Bibles
+                MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if MyBibleBibleStrictCount:
+                    totalBibleStrictCount += MyBibleBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'MyBible:' + str(MyBibleBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
 
-            # Search for PalmDB Bibles
-            PDBBibleStrictCount = PalmDBBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if PDBBibleStrictCount:
-                totalBibleStrictCount += PDBBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'PalmDB:' + str(PDBBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
+                # Search for PalmDB Bibles
+                PDBBibleStrictCount = PalmDBBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if PDBBibleStrictCount:
+                    totalBibleStrictCount += PDBBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'PalmDB:' + str(PDBBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
 
-            # Search for Online Bibles
-            OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if OnlineBibleStrictCount:
-                totalBibleStrictCount += OnlineBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Online:' + str(OnlineBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OnlineBibleStrictCount", OnlineBibleStrictCount )
+                # Search for Online Bibles
+                OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if OnlineBibleStrictCount:
+                    totalBibleStrictCount += OnlineBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Online:' + str(OnlineBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OnlineBibleStrictCount", OnlineBibleStrictCount )
 
-            # Search for EasyWorship Bibles
-            EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if EasyWorshipBibleStrictCount:
-                totalBibleStrictCount += EasyWorshipBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'EasyWorship:' + str(EasyWorshipBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
+                # Search for EasyWorship Bibles
+                EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if EasyWorshipBibleStrictCount:
+                    totalBibleStrictCount += EasyWorshipBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'EasyWorship:' + str(EasyWorshipBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
 
-            # Search for Sword Bibles
-            SwordBibleStrictCount = SwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if SwordBibleStrictCount:
-                totalBibleStrictCount += SwordBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Sword:' + str(SwordBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: SwordBibleStrictCount", SwordBibleStrictCount )
+                # Search for Sword Bibles
+                SwordBibleStrictCount = SwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if SwordBibleStrictCount:
+                    totalBibleStrictCount += SwordBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Sword:' + str(SwordBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: SwordBibleStrictCount", SwordBibleStrictCount )
 
-            # Search for Unbound Bibles
-            UnboundBibleStrictCount = UnboundBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if UnboundBibleStrictCount:
-                totalBibleStrictCount += UnboundBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Unbound:' + str(UnboundBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: UnboundBibleStrictCount", UnboundBibleStrictCount )
+                # Search for Unbound Bibles
+                UnboundBibleStrictCount = UnboundBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if UnboundBibleStrictCount:
+                    totalBibleStrictCount += UnboundBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Unbound:' + str(UnboundBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: UnboundBibleStrictCount", UnboundBibleStrictCount )
 
-            # Search for Drupal Bibles
-            DrupalBibleStrictCount = DrupalBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if DrupalBibleStrictCount:
-                totalBibleStrictCount += DrupalBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Drupal:' + str(DrupalBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: DrupalBibleStrictCount", DrupalBibleStrictCount )
+                # Search for Drupal Bibles
+                DrupalBibleStrictCount = DrupalBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if DrupalBibleStrictCount:
+                    totalBibleStrictCount += DrupalBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Drupal:' + str(DrupalBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: DrupalBibleStrictCount", DrupalBibleStrictCount )
 
-            # Search for YET Bibles
-            YETBibleStrictCount = YETBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if YETBibleStrictCount:
-                totalBibleStrictCount += YETBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'YET:' + str(YETBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: YETBibleStrictCount", YETBibleStrictCount )
+                # Search for YET Bibles
+                YETBibleStrictCount = YETBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if YETBibleStrictCount:
+                    totalBibleStrictCount += YETBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'YET:' + str(YETBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: YETBibleStrictCount", YETBibleStrictCount )
 
-            # Search for ESFM Bibles -- put BEFORE USFM
-            ESFMBibleStrictCount = ESFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if ESFMBibleStrictCount:
-                totalBibleStrictCount += ESFMBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'ESFM:' + str(ESFMBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
+                # Search for ESFM Bibles -- put BEFORE USFM
+                ESFMBibleStrictCount = ESFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if ESFMBibleStrictCount:
+                    totalBibleStrictCount += ESFMBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'ESFM:' + str(ESFMBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
 
-            # Search for Paratext (PTX) Bibles -- put BEFORE USFM
-            PTX8BibleStrictCount = PTX8BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if PTX8BibleStrictCount:
-                totalBibleStrictCount += PTX8BibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'PTX8:' + str(PTX8BibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
-            PTX7BibleStrictCount = PTX7BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if PTX7BibleStrictCount:
-                totalBibleStrictCount += PTX7BibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
+                # Search for Paratext (PTX) Bibles -- put BEFORE USFM
+                PTX8BibleStrictCount = PTX8BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if PTX8BibleStrictCount:
+                    totalBibleStrictCount += PTX8BibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'PTX8:' + str(PTX8BibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
+                PTX7BibleStrictCount = PTX7BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if PTX7BibleStrictCount:
+                    totalBibleStrictCount += PTX7BibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
 
-            # Search for USFM Bibles
-            USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if USFMBibleStrictCount:
-                totalBibleStrictCount += USFMBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'USFM:' + str(USFMBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USFMBibleStrictCount", USFMBibleStrictCount )
+                # Search for USFM Bibles
+                USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if USFMBibleStrictCount:
+                    totalBibleStrictCount += USFMBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'USFM:' + str(USFMBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USFMBibleStrictCount", USFMBibleStrictCount )
 
-            # Search for DBL Bibles -- put BEFORE USX
-            DBLBibleStrictCount = DBLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if DBLBibleStrictCount:
-                totalBibleStrictCount += DBLBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'DBL:' + str(DBLBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: DBLBibleStrictCount", DBLBibleStrictCount )
+                # Search for DBL Bibles -- put BEFORE USX
+                DBLBibleStrictCount = DBLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if DBLBibleStrictCount:
+                    totalBibleStrictCount += DBLBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'DBL:' + str(DBLBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: DBLBibleStrictCount", DBLBibleStrictCount )
 
-            # Search for USX XML Bibles
-            USXBibleStrictCount = USXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if USXBibleStrictCount:
-                totalBibleStrictCount += USXBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'USX:' + str(USXBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USXBibleStrictCount", USXBibleStrictCount )
+                # Search for USX XML Bibles
+                USXBibleStrictCount = USXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if USXBibleStrictCount:
+                    totalBibleStrictCount += USXBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'USX:' + str(USXBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USXBibleStrictCount", USXBibleStrictCount )
 
-            # Search for USFX XML Bibles
-            USFXBibleStrictCount = USFXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if USFXBibleStrictCount:
-                totalBibleStrictCount += USFXBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'USFX:' + str(USFXBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USFXBibleStrictCount", USFXBibleStrictCount )
+                # Search for USFX XML Bibles
+                USFXBibleStrictCount = USFXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if USFXBibleStrictCount:
+                    totalBibleStrictCount += USFXBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'USFX:' + str(USFXBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USFXBibleStrictCount", USFXBibleStrictCount )
 
-            # Search for OSIS XML Bibles
-            OSISBibleStrictCount = OSISXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if OSISBibleStrictCount:
-                totalBibleStrictCount += OSISBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'OSIS:' + str(OSISBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OSISBibleStrictCount", OSISBibleStrictCount )
+                # Search for OSIS XML Bibles
+                OSISBibleStrictCount = OSISXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if OSISBibleStrictCount:
+                    totalBibleStrictCount += OSISBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'OSIS:' + str(OSISBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OSISBibleStrictCount", OSISBibleStrictCount )
 
-            # Search for OpenSong XML Bibles
-            OpenSongBibleStrictCount = OpenSongXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if OpenSongBibleStrictCount:
-                totalBibleStrictCount += OpenSongBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'OpenSong:' + str(OpenSongBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OpenSongBibleStrictCount", OpenSongBibleStrictCount )
+                # Search for OpenSong XML Bibles
+                OpenSongBibleStrictCount = OpenSongXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if OpenSongBibleStrictCount:
+                    totalBibleStrictCount += OpenSongBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'OpenSong:' + str(OpenSongBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OpenSongBibleStrictCount", OpenSongBibleStrictCount )
 
-            # Search for Zefania XML Bibles
-            ZefaniaBibleStrictCount = ZefaniaXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if ZefaniaBibleStrictCount:
-                totalBibleStrictCount += ZefaniaBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Zefania:' + str(ZefaniaBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: ZefaniaBibleStrictCount", ZefaniaBibleStrictCount )
+                # Search for Zefania XML Bibles
+                ZefaniaBibleStrictCount = ZefaniaXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if ZefaniaBibleStrictCount:
+                    totalBibleStrictCount += ZefaniaBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Zefania:' + str(ZefaniaBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: ZefaniaBibleStrictCount", ZefaniaBibleStrictCount )
 
-            # Search for Haggai XML Bibles
-            HaggaiBibleStrictCount = HaggaiXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if HaggaiBibleStrictCount:
-                totalBibleStrictCount += HaggaiBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Haggai:' + str(HaggaiBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: HaggaiBibleStrictCount", HaggaiBibleStrictCount )
+                # Search for Haggai XML Bibles
+                HaggaiBibleStrictCount = HaggaiXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if HaggaiBibleStrictCount:
+                    totalBibleStrictCount += HaggaiBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Haggai:' + str(HaggaiBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: HaggaiBibleStrictCount", HaggaiBibleStrictCount )
 
-            # Search for VerseView XML Bibles
-            VerseViewBibleStrictCount = VerseViewXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if VerseViewBibleStrictCount:
-                totalBibleStrictCount += VerseViewBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'VerseView:' + str(VerseViewBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: VerseViewBibleStrictCount", VerseViewBibleStrictCount )
+                # Search for VerseView XML Bibles
+                VerseViewBibleStrictCount = VerseViewXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if VerseViewBibleStrictCount:
+                    totalBibleStrictCount += VerseViewBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'VerseView:' + str(VerseViewBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: VerseViewBibleStrictCount", VerseViewBibleStrictCount )
 
-            # Search for CSV text Bibles
-            CSVBibleStrictCount = CSVBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if CSVBibleStrictCount:
-                totalBibleStrictCount += CSVBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'CSV:' + str(CSVBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
+                # Search for CSV text Bibles
+                CSVBibleStrictCount = CSVBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if CSVBibleStrictCount:
+                    totalBibleStrictCount += CSVBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'CSV:' + str(CSVBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
 
-            # Search for Forge for SwordSearcher VPL text Bibles
-            F4SSBibleStrictCount = ForgeForSwordSearcherBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if F4SSBibleStrictCount:
-                totalBibleStrictCount += F4SSBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Forge:' + str(F4SSBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
+                # Search for Forge for SwordSearcher VPL text Bibles
+                F4SSBibleStrictCount = ForgeForSwordSearcherBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if F4SSBibleStrictCount:
+                    totalBibleStrictCount += F4SSBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'Forge:' + str(F4SSBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
 
-            # Search for VPL text Bibles
-            VPLBibleStrictCount = VPLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if VPLBibleStrictCount:
-                totalBibleStrictCount += VPLBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'VPL:' + str(VPLBibleStrictCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
+                # Search for VPL text Bibles
+                VPLBibleStrictCount = VPLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if VPLBibleStrictCount:
+                    totalBibleStrictCount += VPLBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'VPL:' + str(VPLBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
+            else:
+                theWordBibleStrictCount = MySwordBibleStrictCount = ESwordBibleStrictCount = ESwordCommentaryStrictCount = 0
+                MyBibleBibleStrictCount = PDBBibleStrictCount = OnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
+                SwordBibleStrictCount = UnboundBibleStrictCount = DrupalBibleStrictCount = YETBibleStrictCount = 0
+                ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFMBibleStrictCount = 0
+                DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
+                OpenSongBibleStrictCount = ZefaniaBibleStrictCount = HaggaiBibleStrictCount = VerseViewBibleStrictCount = 0
+                CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
 
             return totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
         # end of recheckStrict
@@ -379,7 +388,7 @@ class UnknownBible:
         # We first do a normal (non-strict) check (unless strict was requested by the caller)
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
-        # Search for pickled Bibles
+        # Search for pickled Bibles -- can be given a folder, or a zip file name
         PickledBibleCount = PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if PickledBibleCount:
             totalBibleCount += PickledBibleCount
@@ -387,218 +396,226 @@ class UnknownBible:
             typesFound.append( 'Pickled:' + str(PickledBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "PickledBible.search: PickledBibleCount", PickledBibleCount )
 
-        # Search for theWord Bibles
-        theWordBibleCount = theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if theWordBibleCount:
-            totalBibleCount += theWordBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'theWord:' + str(theWordBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.search: theWordBibleCount", theWordBibleCount )
+        if os.path.isdir( self.givenFolderName ):
+            # Search for theWord Bibles
+            theWordBibleCount = theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if theWordBibleCount:
+                totalBibleCount += theWordBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'theWord:' + str(theWordBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBible.search: theWordBibleCount", theWordBibleCount )
 
-        # Search for MySword Bibles
-        MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if MySwordBibleCount:
-            totalBibleCount += MySwordBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'MySword:' + str(MySwordBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
+            # Search for MySword Bibles
+            MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if MySwordBibleCount:
+                totalBibleCount += MySwordBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'MySword:' + str(MySwordBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
 
-        # Search for e-Sword Bibles and Commentaries
-        ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if ESwordBibleCount:
-            totalBibleCount += ESwordBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'e-Sword-Bible:' + str(ESwordBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
-        ESwordCommentaryCount = ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if ESwordCommentaryCount:
-            totalBibleCount += ESwordCommentaryCount
-            totalBibleTypes += 1
-            typesFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
+            # Search for e-Sword Bibles and Commentaries
+            ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if ESwordBibleCount:
+                totalBibleCount += ESwordBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'e-Sword-Bible:' + str(ESwordBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
+            ESwordCommentaryCount = ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if ESwordCommentaryCount:
+                totalBibleCount += ESwordCommentaryCount
+                totalBibleTypes += 1
+                typesFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
 
-        # Search for MyBible Bibles
-        MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if MyBibleBibleCount:
-            totalBibleCount += MyBibleBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'MyBible:' + str(MyBibleBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
+            # Search for MyBible Bibles
+            MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if MyBibleBibleCount:
+                totalBibleCount += MyBibleBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'MyBible:' + str(MyBibleBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
 
-        # Search for PalmDB Bibles
-        PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PDBBibleCount:
-            totalBibleCount += PDBBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+            # Search for PalmDB Bibles
+            PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if PDBBibleCount:
+                totalBibleCount += PDBBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
 
-        # Search for Online Bibles
-        OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if OnlineBibleCount:
-            totalBibleCount += OnlineBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Online:' + str(OnlineBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OnlineBibleCount", OnlineBibleCount )
+            # Search for Online Bibles
+            OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if OnlineBibleCount:
+                totalBibleCount += OnlineBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Online:' + str(OnlineBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OnlineBibleCount", OnlineBibleCount )
 
-        # Search for EasyWorship Bibles
-        EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if EasyWorshipBibleCount:
-            totalBibleCount += EasyWorshipBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'EasyWorship:' + str(EasyWorshipBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
+            # Search for EasyWorship Bibles
+            EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if EasyWorshipBibleCount:
+                totalBibleCount += EasyWorshipBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'EasyWorship:' + str(EasyWorshipBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
 
-        # Search for Sword Bibles
-        SwordBibleCount = SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if SwordBibleCount:
-            totalBibleCount += SwordBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Sword:' + str(SwordBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: SwordBibleCount", SwordBibleCount )
+            # Search for Sword Bibles
+            SwordBibleCount = SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if SwordBibleCount:
+                totalBibleCount += SwordBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Sword:' + str(SwordBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: SwordBibleCount", SwordBibleCount )
 
-        # Search for Unbound Bibles
-        UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if UnboundBibleCount:
-            totalBibleCount += UnboundBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Unbound:' + str(UnboundBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
+            # Search for Unbound Bibles
+            UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if UnboundBibleCount:
+                totalBibleCount += UnboundBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Unbound:' + str(UnboundBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
 
-        # Search for Drupal Bibles
-        DrupalBibleCount = DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if DrupalBibleCount:
-            totalBibleCount += DrupalBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Drupal:' + str(DrupalBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
+            # Search for Drupal Bibles
+            DrupalBibleCount = DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if DrupalBibleCount:
+                totalBibleCount += DrupalBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Drupal:' + str(DrupalBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
 
-        # Search for YET Bibles
-        YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if YETBibleCount:
-            totalBibleCount += YETBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'YET:' + str(YETBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
+            # Search for YET Bibles
+            YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if YETBibleCount:
+                totalBibleCount += YETBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'YET:' + str(YETBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
 
-        # Search for ESFM Bibles -- put BEFORE USFM
-        ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if ESFMBibleCount:
-            totalBibleCount += ESFMBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
+            # Search for ESFM Bibles -- put BEFORE USFM
+            ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if ESFMBibleCount:
+                totalBibleCount += ESFMBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
 
-        # Search for Paratext (PTX) Bibles -- put BEFORE USFM
-        PTX8BibleCount = PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PTX8BibleCount:
-            totalBibleCount += PTX8BibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'PTX8:' + str(PTX8BibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
-        PTX7BibleCount = PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PTX7BibleCount:
-            totalBibleCount += PTX7BibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
+            # Search for Paratext (PTX) Bibles -- put BEFORE USFM
+            PTX8BibleCount = PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if PTX8BibleCount:
+                totalBibleCount += PTX8BibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'PTX8:' + str(PTX8BibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
+            PTX7BibleCount = PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if PTX7BibleCount:
+                totalBibleCount += PTX7BibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
 
-        # Search for USFM Bibles
-        USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if USFMBibleCount:
-            totalBibleCount += USFMBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'USFM:' + str(USFMBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFMBibleCount", USFMBibleCount )
+            # Search for USFM Bibles
+            USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if USFMBibleCount:
+                totalBibleCount += USFMBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'USFM:' + str(USFMBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFMBibleCount", USFMBibleCount )
 
-        # Search for DBL Bibles -- put BEFORE USX
-        DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if DBLBibleCount:
-            totalBibleCount += DBLBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'DBL:' + str(DBLBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: DBLBibleCount", DBLBibleCount )
+            # Search for DBL Bibles -- put BEFORE USX
+            DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if DBLBibleCount:
+                totalBibleCount += DBLBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'DBL:' + str(DBLBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: DBLBibleCount", DBLBibleCount )
 
-        # Search for USX XML Bibles
-        USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if USXBibleCount:
-            totalBibleCount += USXBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'USX:' + str(USXBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USXBibleCount", USXBibleCount )
+            # Search for USX XML Bibles
+            USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if USXBibleCount:
+                totalBibleCount += USXBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'USX:' + str(USXBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USXBibleCount", USXBibleCount )
 
-        # Search for USFX XML Bibles
-        USFXBibleCount = USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if USFXBibleCount:
-            totalBibleCount += USFXBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'USFX:' + str(USFXBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFXBibleCount", USFXBibleCount )
+            # Search for USFX XML Bibles
+            USFXBibleCount = USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if USFXBibleCount:
+                totalBibleCount += USFXBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'USFX:' + str(USFXBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFXBibleCount", USFXBibleCount )
 
-        # Search for OSIS XML Bibles
-        OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if OSISBibleCount:
-            totalBibleCount += OSISBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'OSIS:' + str(OSISBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OSISBibleCount", OSISBibleCount )
+            # Search for OSIS XML Bibles
+            OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if OSISBibleCount:
+                totalBibleCount += OSISBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'OSIS:' + str(OSISBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OSISBibleCount", OSISBibleCount )
 
-        # Search for OpenSong XML Bibles
-        OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if OpenSongBibleCount:
-            totalBibleCount += OpenSongBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'OpenSong:' + str(OpenSongBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
+            # Search for OpenSong XML Bibles
+            OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if OpenSongBibleCount:
+                totalBibleCount += OpenSongBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'OpenSong:' + str(OpenSongBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
 
-        # Search for Zefania XML Bibles
-        ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if ZefaniaBibleCount:
-            totalBibleCount += ZefaniaBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Zefania:' + str(ZefaniaBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
+            # Search for Zefania XML Bibles
+            ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if ZefaniaBibleCount:
+                totalBibleCount += ZefaniaBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Zefania:' + str(ZefaniaBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
 
-        # Search for Haggai XML Bibles
-        HaggaiBibleCount = HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if HaggaiBibleCount:
-            totalBibleCount += HaggaiBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
+            # Search for Haggai XML Bibles
+            HaggaiBibleCount = HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if HaggaiBibleCount:
+                totalBibleCount += HaggaiBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
-        # Search for VerseView XML Bibles
-        VerseViewBibleCount = VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if VerseViewBibleCount:
-            totalBibleCount += VerseViewBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'VerseView:' + str(VerseViewBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
+            # Search for VerseView XML Bibles
+            VerseViewBibleCount = VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if VerseViewBibleCount:
+                totalBibleCount += VerseViewBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'VerseView:' + str(VerseViewBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
 
-        # Search for CSV text Bibles
-        CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if CSVBibleCount:
-            totalBibleCount += CSVBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'CSV:' + str(CSVBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: CSVBibleCount", CSVBibleCount )
+            # Search for CSV text Bibles
+            CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if CSVBibleCount:
+                totalBibleCount += CSVBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'CSV:' + str(CSVBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: CSVBibleCount", CSVBibleCount )
 
-        # Search for Forge for SwordSearcher text Bibles
-        F4SSBibleCount = ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if F4SSBibleCount:
-            totalBibleCount += F4SSBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Forge:' + str(F4SSBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
+            # Search for Forge for SwordSearcher text Bibles
+            F4SSBibleCount = ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if F4SSBibleCount:
+                totalBibleCount += F4SSBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'Forge:' + str(F4SSBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
 
-        # Search for VPL text Bibles
-        VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if VPLBibleCount:
-            totalBibleCount += VPLBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'VPL:' + str(VPLBibleCount) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
-
+            # Search for VPL text Bibles
+            VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if VPLBibleCount:
+                totalBibleCount += VPLBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'VPL:' + str(VPLBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
+        else:
+            theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
+            MyBibleBibleCount = PDBBibleCount = OnlineBibleCount = EasyWorshipBibleCount = 0
+            SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
+            ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFMBibleCount = 0
+            DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
+            OpenSongBibleCount = ZefaniaBibleCount = HaggaiBibleCount = VerseViewBibleCount = 0
+            CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
 
         assert len(typesFound) == totalBibleTypes
         if totalBibleCount == 0:
