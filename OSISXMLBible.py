@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-05' # by RJH
+LastModifiedDate = '2018-01-08' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.62'
@@ -426,7 +426,7 @@ class OSISXMLBible( Bible ):
             self.errorDictionary['Load Errors'].extend( self.loadErrors )
             #if BibleOrgSysGlobals.debugFlag: print( "loadErrors", len(loadErrors), loadErrors ); halt
         self.applySuppliedMetadata( 'OSIS' ) # Copy some to self.settingsDict
-        self.doPostLoadProcessing()
+        #self.doPostLoadProcessing() # Should only be done after loading ALL books
     # end of OSISXMLBible.loadBook
 
 

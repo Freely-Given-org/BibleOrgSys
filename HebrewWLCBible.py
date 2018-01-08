@@ -3,7 +3,7 @@
 #
 # HebrewWLCBible.py
 #
-# Module handling HebrewWLCBible.xml
+# Module handling Open Scriptures Hebrew WLC.
 #
 # Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,15 +23,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling WLCHebrew.xml to produce C and Python data tables.
+Module handling the Hebrew WLC OSIS files from Open Scriptures.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-05' # by RJH
+LastModifiedDate = '2018-01-08' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -41,11 +41,13 @@ debuggingThisModule = False
 import logging, pickle
 
 import BibleOrgSysGlobals, Hebrew
-from OSISXMLBible import OSISXMLBible
 from InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
+from OSISXMLBible import OSISXMLBible
+from PickledBible import PickledBible, ZIPPED_FILENAME_END
 
+DEFAULT_OSIS_WLC_FILEPATH = '../morphhb/wlc/'
+DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = 'Resources/WLC' + ZIPPED_FILENAME_END
 
-DEFAULT_WLC_FILEPATH = '../morphhb/wlc/'
 DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
 DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.txt'
 DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlossesReversed.txt'
@@ -54,7 +56,7 @@ ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
 
 
-class HebrewWLCBible( OSISXMLBible ):
+class HebrewWLCBibleAddon():
     """
     Class for handling a Hebrew WLC object (which may contain one or more Bible books)
 
@@ -62,62 +64,14 @@ class HebrewWLCBible( OSISXMLBible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, XMLFilepath=None ):
-       """
-       Create an empty object.
-       """
-       if not XMLFilepath: XMLFilepath = DEFAULT_WLC_FILEPATH
-       OSISXMLBible.__init__( self, XMLFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
+    def __init__( self ):
+        """
+        Create an empty object.
+        """
+        if debuggingThisModule: print( "HebrewWLCBibleAddon.__init__()" )
 
-       self.glossingDict = None
-    # end of __init__
-
-
-    #def __str__( self ):
-        #"""
-        #This method returns the string representation of a Bible book code.
-
-        #@return: the name of a Bible object formatted as a string
-        #@rtype: string
-        #"""
-        #result = "Hebrew WLC object"
-        ##if self.title: result += ('\n' if result else '') + self.title
-        ##if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        ##if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        #if len(self.books)==1:
-            #for BBB in self.books: break # Just get the first one
-            #result += ('\n' if result else '') + "  " + _("Contains one book: {}").format( BBB )
-        #else: result += ('\n' if result else '') + "  " + _("Number of books = {}").format( len(self.books) )
-        #return result
-    ## end of __str__
-
-
-    #def getVerseDataList( self, reference ):
-        #""" Return the text for the verse with some adjustments. """
-        #data = OSISXMLBible.getVerseDataList( self, reference )
-        ##print( data );halt
-        #if data:
-            #myData = InternalBibleEntryList()
-            #for dataLine in data:
-                #print( "dL", dataLine )
-                #if dataLine.getMarker() == 'v~':
-                    #cT = dataLine.getCleanText().replace('/','=')
-                    #myData.append( InternalBibleEntry( dataLine[0], dataLine[1], dataLine[2], cT, dataLine[4], dataLine[5] ) )
-                #else: myData.append( dataLine )
-            #return myData
-        #else: print( "oops. empty verse data for", reference )
-
-
-    #def xgetVerseText( self, reference ):
-        #""" Return the text for the verse with some adjustments. """
-        #self.originalText = OSISXMLBible.getVerseText( self, reference )
-        #if self.originalText is None: self.originalText = ''
-        #if self.originalText: self.originalText = self.originalText.replace(' '+'־'+' ','־') # Remove spaces around the maqqef
-        #if self.originalText: self.originalText = self.originalText.replace('/','=') # We use = for morpheme break character not /
-        #self.currentText = self.originalText
-        ##print( self.currentText ); halt
-        #if self.originalText: return self.originalText
-        #else: print( "oops. empty verse text for", reference )
+        self.glossingDict = None
+    # end of HebrewWLCBibleAddon.__init__
 
 
     def getVerseDictList( self, verseDataEntry, ref ):
@@ -218,7 +172,7 @@ class HebrewWLCBible( OSISXMLBible ):
 
         if debuggingThisModule: print( "getVerseDictList returning: {}".format( resultList ) )
         return resultList
-    # end of HebrewWLCBible.getVerseDictList
+    # end of HebrewWLCBibleAddon.getVerseDictList
 
 
     def removeMorphemeBreaks( self, text=None ):
@@ -230,7 +184,7 @@ class HebrewWLCBible( OSISXMLBible ):
             return self.currentText
         # else we were passed a text string
         return text.replace('=', '')
-    # end of HebrewWLCBible.removeMorphemeBreaks
+    # end of HebrewWLCBibleAddon.removeMorphemeBreaks
 
     def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ):
         """
@@ -246,7 +200,7 @@ class HebrewWLCBible( OSISXMLBible ):
         # else we were passed a text string
         h = Hebrew.Hebrew( text )
         return h.removeCantillationMarks( removeMetegOrSiluq=removeMetegOrSiluq )
-    # end of HebrewWLCBible.removeCantillationMarks
+    # end of HebrewWLCBibleAddon.removeCantillationMarks
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
         """
@@ -259,7 +213,7 @@ class HebrewWLCBible( OSISXMLBible ):
         # else we were passed a text string
         h = Hebrew.Hebrew( text )
         return h.removeVowelPointing( None, removeMetegOrSiluq )
-    # end of HebrewWLCBible.removeVowelPointing
+    # end of HebrewWLCBibleAddon.removeVowelPointing
 
 
     def loadGlossingDict( self, glossingDictFilepath=None ):
@@ -269,7 +223,7 @@ class HebrewWLCBible( OSISXMLBible ):
         if glossingDictFilepath is None:
             self.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
 
-        # Read our glossing glossing data from the pickle file
+        # Read our glossing data from the pickle file
         if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
             print( "Loading Hebrew glossing dictionary from '{}'…".format( self.glossingDictFilepath ) )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
@@ -283,9 +237,10 @@ class HebrewWLCBible( OSISXMLBible ):
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            print( "  {} Hebrew glossing gloss entries read.".format( self.loadedGlossEntryCount ) )
+            print( "  {} Hebrew gloss entries read.".format( self.loadedGlossEntryCount ) )
 
-        if 1 or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            print( "Checking {} loaded Hebrew gloss entries for consistency…".format( self.loadedGlossEntryCount ) )
             for word,(gloss,referencesList) in self.glossingDict.copy().items(): # Use a copy because we can modify it
                 #print( repr(word), repr(gloss), referencesList )
                 assert isinstance( word, str )
@@ -305,7 +260,8 @@ class HebrewWLCBible( OSISXMLBible ):
                     for part in reference:
                         assert isinstance( part, str ) # We don't use INTs for references
                     assert referencesList.count( reference ) == 1 # Don't allow multiples
-    # end of HebrewWLCBible.loadGlossingDict
+            print( "  Finished checking Hebrew glosses" )
+    # end of HebrewWLCBibleAddon.loadGlossingDict
 
 
     def saveAnyChangedGlosses( self, exportAlso=False ):
@@ -324,7 +280,7 @@ class HebrewWLCBible( OSISXMLBible ):
                 pickle.dump( self.glossingDict, pickleFile )
 
             if exportAlso: self.exportGlossingDictionary()
-    # end of saveAnyChangedGlosses
+    # end of HebrewWLCBibleAddon.saveAnyChangedGlosses
 
 
     def importGlossingDictionary( self, glossingDictImportFilepath=None, overrideFlag=False ):
@@ -373,7 +329,7 @@ class HebrewWLCBible( OSISXMLBible ):
             if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
                 if len(newDict) != self.loadedGlossEntryCount: print( "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
                 self.glossingDict = newDict # Replace the dictionary with the upgraded one
-    # end of importGlossingDictionary
+    # end of HebrewWLCBibleAddon.importGlossingDictionary
 
 
     def exportGlossingDictionary( self, glossingDictExportFilepath=None ):
@@ -413,7 +369,7 @@ class HebrewWLCBible( OSISXMLBible ):
                         logging.warning( "Gloss {!r} has already appeared: currently for word {!r}".format( gloss, word ) )
                     exportFile.write( "{}  {}\n".format( gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
                     doneGlosses.append( gloss )
-    # end of exportGlossingDictionary
+    # end of HebrewWLCBibleAddon.exportGlossingDictionary
 
 
     def setNewGloss( self, normalizedHebrewWord, gloss, ref ):
@@ -432,7 +388,7 @@ class HebrewWLCBible( OSISXMLBible ):
 
         self.glossingDict[normalizedHebrewWord] = (gloss,[ref])
         self.haveGlossingDictChanges = True
-    # end of HebrewWLCBible.setNewGloss
+    # end of HebrewWLCBibleAddon.setNewGloss
 
 
     def addNewGlossingReference( self, normalizedHebrewWord, ref ):
@@ -453,7 +409,7 @@ class HebrewWLCBible( OSISXMLBible ):
             referencesList.append( ref )
             self.glossingDict[normalizedHebrewWord] = (gloss,referencesList)
             self.haveGlossingDictChanges = True
-    # end of HebrewWLCBible.addNewGlossingReference
+    # end of HebrewWLCBibleAddon.addNewGlossingReference
 
 
     def updateGlossingReferences( self ):
@@ -507,8 +463,46 @@ class HebrewWLCBible( OSISXMLBible ):
                 V = V + 1
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "  {} new references added ({} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
-    # end of HebrewWLCBible.updateGlossingReferences
-# end of HebrewWLCBible class
+    # end of HebrewWLCBibleAddon.updateGlossingReferences
+# end of HebrewWLCBibleAddon class
+
+
+
+class OSISHebrewWLCBible( OSISXMLBible, HebrewWLCBibleAddon ):
+    """
+    Class for handling a Hebrew WLC (OSIS XML) object (which may contain one or more Bible books)
+    """
+    def __init__( self, OSISXMLFilepath=None ):
+        """
+        Create an empty object.
+        """
+        if debuggingThisModule: print( "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFilepath ) )
+
+        if not OSISXMLFilepath: OSISXMLFilepath = DEFAULT_OSIS_WLC_FILEPATH
+        OSISXMLBible.__init__( self, OSISXMLFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
+        HebrewWLCBibleAddon.__init__( self )
+    # end of OSISHebrewWLCBible.__init__
+# end of OSISHebrewWLCBible class
+
+
+
+class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
+    """
+    Class for handling a pickled Hebrew WLC object (which may contain one or more Bible books)
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+    """
+    def __init__( self, zippedPickleFilepath=None ):
+        """
+        Create an empty object.
+        """
+        if debuggingThisModule: print( "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
+
+        if not zippedPickleFilepath: zippedPickleFilepath = DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH
+        PickledBible.__init__( self, zippedPickleFilepath )
+        HebrewWLCBibleAddon.__init__( self )
+        # end of PickledHebrewWLCBible.__init__
+# end of PickledHebrewWLCBible class
 
 
 
@@ -528,7 +522,7 @@ def demo():
         testFile = '../morphhb/wlc/Dan.xml' # Hebrew Daniel
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class (one book only)…" )
         #print( testFile )
-        wlc = HebrewWLCBible( testFile )
+        wlc = OSISHebrewWLCBible( testFile )
         wlc.load() # Load and process the XML book
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -560,10 +554,10 @@ def demo():
                 print()
 
     if 1: # Load all books and test
-        testFolder = DEFAULT_WLC_FILEPATH # Hebrew
+        testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class (whole Bible)…" )
         #print( testFolder )
-        wlc = HebrewWLCBible( testFolder )
+        wlc = OSISHebrewWLCBible( testFolder )
         wlc.loadBooks() # Load and process the XML files
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -595,10 +589,10 @@ def demo():
                 print()
 
     if 1: # Load books as we test
-        testFolder = DEFAULT_WLC_FILEPATH # Hebrew
+        testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class (load on the go)…" )
         #print( testFolder )
-        wlc = HebrewWLCBible( testFolder )
+        wlc = OSISHebrewWLCBible( testFolder )
         #wlc.load() # Load and process the XML
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( wlc ) # Just print a summary
@@ -631,7 +625,7 @@ def demo():
 
     if 1: # Test some of the glossing functions
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nD/ Demonstrating the Hebrew WLC glossing functions…" )
-        wlc = HebrewWLCBible( DEFAULT_WLC_FILEPATH )
+        wlc = OSISHebrewWLCBible( DEFAULT_OSIS_WLC_FILEPATH )
         wlc.loadGlossingDict()
         wlc.exportGlossingDictionary()
         wlc.saveAnyChangedGlosses()
@@ -640,7 +634,23 @@ def demo():
 
     if 1: # Test some of the glossing functions
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE/ Adding new references to glossing dict…" )
-        wlc = HebrewWLCBible()
+        wlc = OSISHebrewWLCBible()
+        wlc.loadGlossingDict()
+        wlc.updateGlossingReferences()
+        wlc.saveAnyChangedGlosses( exportAlso = True )
+
+    if 1: # Test some of the glossing functions
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
+        wlc = PickledHebrewWLCBible( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH )
+        wlc.loadGlossingDict()
+        wlc.exportGlossingDictionary()
+        wlc.saveAnyChangedGlosses()
+        wlc.importGlossingDictionary()
+        wlc.importGlossingDictionary( overrideFlag=True )
+
+    if 1: # Test some of the glossing functions
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nG/ Adding new references to glossing dict…" )
+        wlc = PickledHebrewWLCBible()
         wlc.loadGlossingDict()
         wlc.updateGlossingReferences()
         wlc.saveAnyChangedGlosses( exportAlso = True )

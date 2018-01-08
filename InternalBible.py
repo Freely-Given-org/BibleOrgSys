@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-04' # by RJH
+LastModifiedDate = '2018-01-08' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -146,6 +146,8 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.__str__()" )
+
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'License', ) # Ones to print at verbosityLevel > 2
         set3 = set1 + set2 + ( 'Name', 'Abbreviation' ) # Ones not to print at verbosityLevel > 3
@@ -424,8 +426,11 @@ class InternalBible:
         """
         This method should be called once all books are loaded to do critical book-keeping.
 
-        Doesn't do a "discover" yet, in case it's not really required yet, coz discover() is quite time-consuming.
+        Doesn't do a "discover" yet, in case it's not really required yet,
+            coz discover() is quite time-consuming.
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.doPostLoadProcessing()" )
+
         self.loadedAllBooks = True
 
         # Try to improve our names (may also be called from loadMetadataTextFile)

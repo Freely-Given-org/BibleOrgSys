@@ -25,22 +25,32 @@
 """
 Module for defining and manipulating complete or partial Bibles with a pickled object for each book.
 
-NOTE: Unfortunately it seems that loading a pickled object is 3-4 times slower
+NOTE: Unfortunately it seems that loading a very large pickled object
+        including all the linked objects is 3-4 times slower
         than processing the original USFM files from scratch.
     Also, the pickled files seem 10x larger than the originals.
-    Ah, but we don't need all those fields!
+    Ah, but we don't need all those fields, so we added a dataLevel control!
 
     PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadBooks=False )
-    createPickledBible( self, outputFolder=None, sourceURL=None, licenceText=None, dataLevel=1 )
+    createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataLevel=None, zipOnly=False )
+    getZippedPickledBibleDetails( zipFilepath )
+    getZippedPickledBiblesDetails( zipFolderpath, extended=False )
     class PickledBible( Bible )
+        __init__( self, sourceFileOrFolder )
+        __str__( self )
+        preload( self )
+            _loadBookEssentials( self, BBB )
+        loadBook( self, BBB )
+            _loadBookMP( self, BBB )
+        loadBooks( self )
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-06' # by RJH
+LastModifiedDate = '2018-01-09' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.04'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -49,10 +59,12 @@ debuggingThisModule = False
 
 import os, logging, pickle, zipfile
 import multiprocessing
+from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible
 from InternalBibleBook import InternalBibleBook
+from InternalBibleInternals import InternalBibleIndex, InternalBibleEntryList
 
 
 
@@ -93,7 +105,7 @@ def PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, auto
             if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
             if autoLoadBooks: pB.loadBooks() # Load and process the book files
             return pB
-        else: return 1
+        return 1 # Number of Bibles found
 
     # Must have been given a folder
     givenFolderName = givenPathname
@@ -183,7 +195,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     #if aboutText is None: aboutText = "(unknown)"
     #if sourceURL is None: sourceURL = "(unknown)"
     #if licenceText is None: licenceText = "(unknown)"
-    if metadataDict is None: metadataDict = {}
+    if metadataDict is None: metadataDict = OrderedDict()
     if dataLevel is None: dataLevel = 1 # Save just enough attributes to display the module
 
     createdFilenames = [] # Keep track so we know what to zip (and possibly to delete again later)
@@ -300,9 +312,120 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        print( "  BibleWriter.createPickledBible finished successfully." )
+        print( "  PickledBible.createPickledBible finished successfully." )
     return True
-# end of BibleWriter.createPickledBible
+# end of PickledBible.createPickledBible
+
+
+
+def _loadObjectAttributes( pickleFileObject, BibleObject ):
+    """
+    Load the saved attributes for the BibleObject.
+
+    Returns the number of attributes loaded.
+    """
+    #print( "_loadObjectAttributes( {}, {} )".format( pickleFileObject, BibleObject ) )
+    loadedCount = 0
+    while True: # Load name/value pairs for Bible attributes
+        try: attributeName = pickle.load( pickleFileObject )
+        except EOFError: break
+        assert isinstance( attributeName, str ) # Leave these asserts enabled for security
+        assert '__' not in attributeName # Leave these asserts enabled for security
+        attributeValue = pickle.load( pickleFileObject )
+        #print( "Attribute {}={!r}".format( attributeName, attributeValue ) )
+        assert attributeValue is None \
+            or isinstance( attributeValue, (str,bool,InternalBibleIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+        if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
+        elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
+        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
+        setattr( BibleObject, attributeName, attributeValue )
+        loadedCount += 1
+    return loadedCount
+# end of PickledBible._loadObjectAttributes
+
+def _getObjectAttributesDict( pickleFileObject, selected=None ):
+    """
+    Load the saved attributes for the BibleObject into a dictionary.
+
+    A list of attribute names to be selected can also be included.
+
+    Returns the dictionary.
+    """
+    #print( "_getObjectAttributesDict( {}, {} )".format( pickleFileObject, selected ) )
+    resultDict = OrderedDict()
+    while True: # Load name/value pairs for Bible attributes
+        try: attributeName = pickle.load( pickleFileObject )
+        except EOFError: break
+        assert isinstance( attributeName, str ) # Leave these asserts enabled for security
+        assert '__' not in attributeName # Leave these asserts enabled for security
+        attributeValue = pickle.load( pickleFileObject )
+        #print( "Attribute {}={}".format( attributeName, attributeValue ) )
+        assert attributeValue is None \
+            or isinstance( attributeValue, (str,bool,InternalBibleIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+        if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
+        elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
+        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
+        if not selected or (attributeName in selected):
+            if debuggingThisModule: print( "Adding {}={}".format( attributeName, attributeValue ) )
+            resultDict[attributeName] = attributeValue
+    return resultDict
+# end of PickledBible._getObjectAttributesDict
+
+
+
+def getZippedPickledBibleDetails( zipFilepath, extended=False ):
+    """
+    Given the filepath to a zipped pickled Bible module,
+        return a dictionary containing some details about the pickled module.
+
+    If extended, also includes the BibleObject attributes
+    """
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        assert zipFilepath.endswith( ZIPPED_FILENAME_END )
+
+    pB = PickledBible( zipFilepath )
+    if extended:
+        with zipfile.ZipFile( zipFilepath ) as thisZip:
+            with thisZip.open( INFO_FILENAME ) as pickleInputFile:
+                if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+                    BibleAttributeDict = _getObjectAttributesDict( pickleInputFile )
+                    for attributeName in BibleAttributeDict:
+                        assert attributeName not in pB.pickleVersionData # This would get overwritten
+                    pB.pickleVersionData.update( BibleAttributeDict )
+                else:
+                    pB.pickleVersionData.update( _getObjectAttributesDict( pickleInputFile ) )
+    return pB.pickleVersionData
+# end of getZippedPickledBibleDetails
+
+def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
+    """
+    Given the filepath to a zipped pickled Bible module,
+        return a dictionary containing some details about the pickled module.
+    """
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( _("getZippedPickledBiblesDetails( {}, {} )").format( zipFolderpath, extended ) )
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        assert os.path.isdir( zipFolderpath )
+
+    resultList = []
+    for something in os.listdir( zipFolderpath ):
+        somepath = os.path.join( zipFolderpath, something )
+        if os.path.isfile( somepath ):
+            if something.endswith( ZIPPED_FILENAME_END ):
+                detailDict = getZippedPickledBibleDetails( somepath, extended )
+                assert 'zipFilename' not in detailDict
+                detailDict['zipFilename'] = something
+                #assert 'zipFilepath' not in detailDict
+                #detailDict['zipFilepath'] = somepath
+                resultList.append( detailDict )
+            elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+                logging.warning( "Unexpected {} file in {}".format( something, zipFolderpath ) )
+        elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+            logging.warning( "Unexpected {} folder in {}".format( something, zipFolderpath ) )
+    return resultList
+# end of getZippedPickledBiblesDetails
 
 
 
@@ -324,24 +447,32 @@ class PickledBible( Bible ):
         self.objectTypeString = 'PickledBible'
 
         # Now we can set our object variables
-        self.pickleVersionData = {}
+        self.pickleVersionData = OrderedDict()
 
-        def loadVersionStuff( fileObject ):
+        def loadVersionStuff( pickleFileObject ):
             """
             This function loads all the fields from the version file.
 
             NOTE: This refers to the pickle/software/object versions, not the Bible text version.
             """
-            myDict = {}
-            myDict['WriterVersionDate'] = pickle.load( fileObject )
-            myDict['DataLevel'] = pickle.load( fileObject )
-            myDict['WrittenDateTime'] = pickle.load( fileObject )
-            myDict['IBProgVersion'] = pickle.load( fileObject )
-            myDict['IBBProgVersion'] = pickle.load( fileObject )
-            myDict['IBIProgVersion'] = pickle.load( fileObject )
-            myDict['workName'] = pickle.load( fileObject )
-            myDict['bookList'] = pickle.load( fileObject )
-            myDict.update( pickle.load( fileObject ) ) # metadataDict
+            myDict = OrderedDict()
+            myDict['WriterVersionDate'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['WriterVersionDate'], str ) # Security check
+            myDict['DataLevel'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['DataLevel'], int ) # Security check
+            myDict['WrittenDateTime'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['WrittenDateTime'], str ) # Security check
+            myDict['IBProgVersion'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['IBProgVersion'], str ) # Security check
+            myDict['IBBProgVersion'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['IBBProgVersion'], str ) # Security check
+            myDict['IBIProgVersion'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['IBIProgVersion'], str ) # Security check
+            myDict['workName'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['workName'], str ) # Security check
+            myDict['bookList'] = pickle.load( pickleFileObject )
+            assert isinstance( myDict['bookList'], list ) # Security check
+            myDict.update( pickle.load( pickleFileObject ) ) # metadataDict
             if debuggingThisModule: print( "myDict", myDict )
             return myDict
         # end of PickledBible.__init_ loadVersionStuff
@@ -379,6 +510,8 @@ class PickledBible( Bible ):
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "PickledBible.__str__()" )
+
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'License', ) # Ones to print at verbosityLevel > 2
         set3 = set1 + set2 + ( 'Name', 'Abbreviation' ) # Ones not to print at verbosityLevel > 3
@@ -424,26 +557,7 @@ class PickledBible( Bible ):
         result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
                                         .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<5 else '' )
         return result
-    # end of InternalBible.__str__
-
-
-    def loadObjectAttributes( fileObject, BibleObject ):
-        """
-        Load the saved attributes for the BibleObject.
-        """
-        #print( "loadObjectAttributes( {}, {} )".format( fileObject, BibleObject ) )
-        loadedCount = 0
-        while True: # Load name/value pairs for Bible attributes
-            try: attributeName = pickle.load( fileObject )
-            except EOFError: break
-            attributeValue = pickle.load( fileObject )
-            if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
-            elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
-            #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
-            setattr( BibleObject, attributeName, attributeValue )
-            loadedCount += 1
-        return loadedCount
-    # end of PickledBible.loadObjectAttributes
+    # end of PickledBible.__str__
 
 
     def preload( self ):
@@ -459,14 +573,14 @@ class PickledBible( Bible ):
         if self.pickleIsZipped:
             with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
                 with thisZip.open( INFO_FILENAME ) as pickleInputFile:
-                    loadedCount = PickledBible.loadObjectAttributes( pickleInputFile, self )
+                    loadedCount = _loadObjectAttributes( pickleInputFile, self )
         else: # it's not zipped
             filepath = os.path.join( self.pickleSourceFolder, INFO_FILENAME )
             if os.path.exists( filepath ):
                 if BibleOrgSysGlobals.verbosityLevel > 2:
                     print( _("Loading Bible info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
-                    loadedCount = PickledBible.loadObjectAttributes( pickleInputFile, self )
+                    loadedCount = _loadObjectAttributes( pickleInputFile, self )
             else: logging.critical( _("PickledBible: unable to find {!r}").format( INFO_FILENAME ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
@@ -509,10 +623,10 @@ class PickledBible( Bible ):
         if self.pickleIsZipped:
             with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
                 with thisZip.open( BOOK_FILENAME.format( BBB ) ) as pickleInputFile:
-                    loadedCount = PickledBible.loadObjectAttributes( pickleInputFile, bookObject )
+                    loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )
         else: # not zipped
             with open( os.path.join( self.pickleSourceFolder, BOOK_FILENAME.format( BBB ) ), 'rb' ) as pickleInputFile:
-                loadedCount = PickledBible.loadObjectAttributes( pickleInputFile, bookObject )
+                loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( _("  Loaded {} {} attributes").format( loadedCount, BBB ) )
 
@@ -641,8 +755,9 @@ def demo():
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
+    resourcesFolder = 'Resources/'
+    testResourcesFolder = 'OutputFiles/BOS_Test_Resources/'
     if 1: # demo the file checking code with zip files
-        resourcesFolder = 'Resources/'
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
             if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -724,10 +839,47 @@ def demo():
 
     if 1: # Load a zipped version
         pBible = PickledBible( 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END )
-        print( "D1a:", pBible )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
         pBible.load()
-        print( "D1b:", pBible )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "D2:", pBible )
         assert pBible.pickleIsZipped # That's what we were supposedly testing
+
+
+    if 1: # demo the file checking code with zip files
+        j = 1
+        for folder in (resourcesFolder, testResourcesFolder ):
+            for something in os.listdir( folder ):
+                somepath = os.path.join( folder, something )
+                abbrev = something.split('.',1)[0]
+                pBible = PickledBible( somepath )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}a: {}".format( j, abbrev ), pBible )
+                pBible.load()
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}b: {}".format( j, abbrev ), pBible )
+                assert pBible.pickleIsZipped # That's what we were supposedly testing
+                j += 1
+
+
+    if 1: # Test other functions
+        for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
+            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nPickle Bible F{} testFilepath is: {}".format( j+1, testFilepath ) )
+                print( "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
+        pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "\nG: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nG: getZippedPickledBiblesDetails()", len(pbdDictList) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nG1: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
+        pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "\nH: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nH: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nH1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
+            #for a,v in pbdExtendedDictList[0].items(): print( "  {}={}".format( a, v ) )
 #end of demo
 
 if __name__ == '__main__':
