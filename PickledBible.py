@@ -380,7 +380,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
 
     If extended, also includes the BibleObject attributes
     """
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+    if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert zipFilepath.endswith( ZIPPED_FILENAME_END )
