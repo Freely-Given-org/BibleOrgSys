@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-19' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -77,10 +77,6 @@ from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_
     InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
 from BibleReferences import BibleAnchorReference
-
-
-
-nfvnCount = owfvnCount = rtsCount = sahtCount = 0
 
 
 
@@ -170,7 +166,7 @@ class InternalBibleBook:
 
         self.badMarkers, self.badMarkerCounts = [], []
         self.versificationList = self.omittedVersesList = self.combinedVersesList = self.reorderedVersesList = None
-        self.pntsCount = 0
+        self.pntsCount = self.nfvnCount = self.owfvnCount = self.rtsCount = self.sahtCount = self.fwmifCount = self.fswncCount = 0
 
         self.maxNoncriticalErrorsPerBook = MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE \
                         if BibleOrgSysGlobals.debugFlag or debuggingThisModule \
@@ -199,7 +195,7 @@ class InternalBibleBook:
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self._processedFlag: result += '\n' + str( self._processedLines )
-            if self._indexedFlag: result += '\n' + str( self.self._CVIndex )
+            if self._indexedFlag: result += '\n' + str( self._CVIndex )
         return result
     # end of InternalBibleBook.__str__
 
@@ -308,7 +304,7 @@ class InternalBibleBook:
                     if self.pntsCount <= self.maxNoncriticalErrorsPerBook:
                         stripLogger( "InternalBibleBook.addLine: Possibly needed to strip {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
                     else: # we've reached our limit
-                        stripLogger( _('Additional "Possibly needed to strip" messages for {} {} suppressed…').format( self.objectTypeString, self.BBB ) )
+                        stripLogger( _('Additional "Possibly needed to strip" messages suppressed for {} {}').format( self.workName, self.BBB ) )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
@@ -489,7 +485,6 @@ class InternalBibleBook:
 
         NOTE: You must NOT strip adjText any more AFTER calling this (or the note insert indices will be incorrect!
         """
-        global rtsCount
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
                 print( "InternalBibleBook.processLineFix( {}:{}, {}, {!r} ) for {} ({})".format( C,V, originalMarker, text, self.BBB, self.objectTypeString ) )
@@ -505,13 +500,13 @@ class InternalBibleBook:
         if adjText and adjText[-1].isspace():
             #print( 10, self.BBB, C, V, _("Trailing space at end of line") )
             fixErrors.append( lineLocationSpace + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
-            if rtsCount != -1:
-                rtsCount += 1
-                if rtsCount <= self.maxNoncriticalErrorsPerBook:
+            if self.rtsCount != -1:
+                self.rtsCount += 1
+                if self.rtsCount <= self.maxNoncriticalErrorsPerBook:
                     logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, text ) )
                 else: # we've reached our limit
-                    logging.warning( _('processLineFix: Additional "Removed trailing space" messages suppressed…') )
-                    rtsCount = -1 # So we don't do this again (for this book)
+                    logging.warning( _('processLineFix: Additional "Removed trailing space" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                    self.rtsCount = -1 # So we don't do this again (for this book)
             self.addPriorityError( 10, C, V, _("Trailing space at end of line") )
             adjText = adjText.rstrip()
             #print( "QQQ1: rstrip ok" )
@@ -792,8 +787,14 @@ class InternalBibleBook:
                     self.addPriorityError( 76, C, V, _("{} should have space after caller").format( thisOne.title() ) )
                     note = note[0] + ' ' + note[1:] # Add in the space
                 if note.startswith( '- ' ):
+                    if self.fswncCount != -1:
+                        self.fswncCount += 1
+                        if self.fswncCount <= self.maxNoncriticalErrorsPerBook:
+                            logging.error( _("processLineFix: Found {} specified with no caller at {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
+                        else: # we've reached our limit
+                            logging.error( _('processLineFix: Additional "Found specified with no caller" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            self.fswncCount = -1 # So we don't do this again (for this book)
                     fixErrors.append( lineLocationSpace + _("Found {} specified with no caller in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found {} specified with no caller at {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
                     self.addPriorityError( 8, C, V, _("{} should not have specified no caller").format( thisOne.title() ) )
                     note = '+ ' + note[2:] # Replace - (no caller) with + (automatic caller)
                 try: caller,rest = note.split( None, 1 ) # Split off the caller and get the rest
@@ -801,8 +802,14 @@ class InternalBibleBook:
                     caller, rest = note.strip(), ''
                 #print( "\ncaller {!r}, rest {!r}".format( caller, rest ) )
                 if not rest.startswith( '\\' ):
+                    if self.fwmifCount != -1:
+                        self.fwmifCount += 1
+                        if self.fwmifCount <= self.maxNoncriticalErrorsPerBook:
+                            logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                        else: # we've reached our limit
+                            logging.error( _('processLineFix: Additional "Found without marked internal fields" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            self.fwmifCount = -1 # So we don't do this again (for this book)
                     fixErrors.append( lineLocationSpace + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                     self.addPriorityError( 84, C, V, _("{} should have an internal field marked").format( thisOne.title() ) )
                     # Add the expected fields (could be the wrong ones, but saves lots of problems later, especially if exporting)
                     if thisOne == 'cross-reference': add = 'xt'
@@ -1502,7 +1509,7 @@ class InternalBibleBook:
             """
             Append the entry to self._processedLines
             """
-            nonlocal sahtCount
+            #nonlocal self.sahtCount
 
             if adjMarker=='b' and text:
                 fixErrors.append( _("{} {}:{} Paragraph marker {!r} should not contain text").format( self.BBB, C, V, originalMarker ) )
@@ -1531,13 +1538,13 @@ class InternalBibleBook:
                 #print( "processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
                 #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
                 if self.objectTypeString in ('USFM2','USFM3','USX',):
-                    if sahtCount != -1:
-                        sahtCount += 1
-                        if sahtCount <= self.maxNoncriticalErrorsPerBook:
+                    if self.sahtCount != -1:
+                        self.sahtCount += 1
+                        if self.sahtCount <= self.maxNoncriticalErrorsPerBook:
                             logging.error( _("doAppendEntry: Marker {!r} at {} should always have text").format( originalMarker, self.__makeErrorRef(C,V) ) )
                         else: # we've reached our limit
-                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {}…').format( self.workName ) )
-                            sahtCount = -1 # So we don't do this again (for this book)
+                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            self.sahtCount = -1 # So we don't do this again (for this book)
                 #self.addPriorityError( 96, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
                     self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
@@ -1556,7 +1563,6 @@ class InternalBibleBook:
                     and then save the line.
             """
             nonlocal C, V, haveWaitingC
-            nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
                     print( "processLine: {} {}:{} {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
@@ -1737,16 +1743,16 @@ class InternalBibleBook:
                     #fixErrors.append( lineLocationSpace + _("Nothing after verse number: {!r}").format( originalText ) )
                     #priority = 92
                     if self.objectTypeString in ('USFM2','USFM3','USX',):
-                        #if nfvnCount == -1:
+                        #if self.nfvnCount == -1:
                             #priority = 12
                         #else:
-                        if nfvnCount != -1:
-                            nfvnCount += 1
-                            if nfvnCount <= self.maxNoncriticalErrorsPerBook:
+                        if self.nfvnCount != -1:
+                            self.nfvnCount += 1
+                            if self.nfvnCount <= self.maxNoncriticalErrorsPerBook:
                                 logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed for {}…').format( self.workName ) )
-                                nfvnCount = -1 # So we don't do this again (for this book)
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                                self.nfvnCount = -1 # So we don't do this again (for this book)
                                 #priority = 12
                     #self.addPriorityError( priority, C, V, _("Nothing following verse number in {!r}").format( originalText ) )
                     verseNumberBit = text
@@ -1780,13 +1786,13 @@ class InternalBibleBook:
                     strippedVerseText = verseNumberRest.lstrip()
                     #print( "QQQ9: lstrip" )
                     if not strippedVerseText:
-                        if owfvnCount != -1:
-                            owfvnCount += 1
-                            if owfvnCount <= self.maxNoncriticalErrorsPerBook:
+                        if self.owfvnCount != -1:
+                            self.owfvnCount += 1
+                            if self.owfvnCount <= self.maxNoncriticalErrorsPerBook:
                                 logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} in \\{}: {!r}").format( self.__makeErrorRef(C,V), originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed for {}…').format( self.workName ) )
-                                owfvnCount = -1 # So we don't do this again (for this book)
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                                self.owfvnCount = -1 # So we don't do this again (for this book)
                         # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                         # (and especially coz we don't know yet if this is a finished translation)
                         #self.addPriorityError( 91, C, V, _("Only whitespace following verse number in {!r}").format( originalText ) )
@@ -1910,7 +1916,6 @@ class InternalBibleBook:
 
         # This is the main processLines code
         if self.objectTypeString == 'OSIS': self.reorderRawLines()
-        nfvnCount = owfvnCount = rtsCount = sahtCount = 0
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         C, V = '0', '-1' # So id line starts at 0:0
@@ -1919,6 +1924,7 @@ class InternalBibleBook:
             #print( "\nQQQ" )
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
+        del self.pntsCount, self.nfvnCount, self.owfvnCount, self.rtsCount, self.sahtCount, self.fwmifCount, self.fswncCount
 
         # Go through the lines and add nesting markers like 'intro', 'chapter', etc.
         self.addNestingMarkers()
@@ -2869,13 +2875,13 @@ class InternalBibleBook:
             # Check for markers that shouldn't be empty
             if markerEmpty and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
                 #if self.objectTypeString in ('USFM','USX',):
-                    #if sahtCount != -1:
-                        #sahtCount += 1
-                        #if sahtCount <= self.maxNoncriticalErrorsPerBook:
+                    #if self.sahtCount != -1:
+                        #self.sahtCount += 1
+                        #if self.sahtCount <= self.maxNoncriticalErrorsPerBook:
                             #logging.warning( _("doCheckSFMs: Marker {!r} at {} {}:{} should always have text").format( originalMarker, self.BBB, C, V ) )
                         #else: # we've reached our limit
-                            #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed…') )
-                            #sahtCount = -1 # So we don't do this again (for this book)
+                            #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            #self.sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( emptyFieldPriority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if emptyFieldPriority >= HIGH_EMPTY_FIELD_PRIORITY:
                     newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} has no content").format( marker ) )
