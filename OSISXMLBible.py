@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-08' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.62'
@@ -330,8 +330,10 @@ class OSISXMLBible( Bible ):
                             self.availableBBBs.add( foundBBB )
                             self.possibleFilenameDict[foundBBB] = filename
             # Now try to sort the booknames in self.possibleFilenames to a better order
-            #print( "Was", self.possibleFilenames )
-            assert len(BBBList) == len(self.possibleFilenames)
+            #print( "Was", len(self.possibleFilenames), self.possibleFilenames )
+            #print( "  have", len(BBBList), BBBList )
+            assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
+                    or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
             newCorrectlyOrderedList = []
             for BBB in BibleOrgSysGlobals.BibleBooksCodes: # ordered by reference number
                 #print( BBB )

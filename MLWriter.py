@@ -5,7 +5,7 @@
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,10 +37,10 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "MLWriter"
 ProgName = "ML Writer"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -260,7 +260,7 @@ class MLWriter:
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
         else: logging.error( "MLWriter: Unknown {!r} lineEndings flag".format( lineEndings ) )
-        if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}…").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: print( 'MLWriter: '+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:

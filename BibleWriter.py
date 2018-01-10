@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-06' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -584,7 +584,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
@@ -597,7 +597,7 @@ class BibleWriter( InternalBible ):
             indent = 3
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
             C, V = '0', '-1' # So id line starts at 0:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -751,7 +751,7 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM2: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for USFM
                 myFile.write( USFM )
 
@@ -890,7 +890,7 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM3: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for USFM
                 myFile.write( USFM )
 
@@ -940,7 +940,7 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toESFM: ' + _("Writing {!r}…").format( filepath ) )
             indentLevel, indentSize =  0, 2
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
@@ -1092,7 +1092,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toText: ' + _("Writing {!r}…").format( filepath ) )
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
@@ -1187,7 +1187,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "BOS-BibleWriter-{}.txt".format( bookName )
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
@@ -1593,7 +1593,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.md".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toMarkdown: ' + _("Writing {!r}…").format( filepath ) )
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
@@ -3598,7 +3598,8 @@ class BibleWriter( InternalBible ):
                 elif marker == 'v~':
                     try:
                         if int(V) <= int(lastVWritten):
-                            print( 'toEasyWorshipBible: Skipping {}:{} after {} with {}'.format( C, V, lastVWritten, text ) )
+                            # TODO: Not sure what level the following should be? info/warning/error/critical ????
+                            logging.warning( 'toEasyWorshipBible: Skipping {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
                             continue
                     except ValueError: pass # had a verse bridge
                     textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} {}'.format( C, V, text )
@@ -3639,7 +3640,7 @@ class BibleWriter( InternalBible ):
 
         filename = "{}.ewb".format( self.abbreviation )
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toEasyWorshipBible: ' + _("Writing {!r}…").format( filepath ) )
         bookAddress = startingBookAddress = 0x3a21 + len(encodedNameBytes)
         vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
         with open( filepath, 'wb' ) as myFile:
@@ -7201,7 +7202,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to SwordSearcher format…") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toSwordSearcher: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
@@ -7383,7 +7384,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to DrupalBible format…") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toDrupalBible: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
@@ -9391,14 +9392,14 @@ class BibleWriter( InternalBible ):
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( allFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toTeX: ' + _("Writing {!r}…").format( allFilepath ) )
         with open( allFilepath, 'wt', encoding='utf-8' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toTeX: ' + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )

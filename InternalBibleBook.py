@@ -4292,7 +4292,7 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r} as BCV…").format( self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''

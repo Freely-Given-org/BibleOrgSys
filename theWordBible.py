@@ -5,7 +5,7 @@
 #
 # Module handling "theWord" Bible module files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-16' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.53'
+ProgVersion = '0.54'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1254,7 +1254,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     else: filename = 'export'
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}…").format( filepath ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
     with open( filepath, 'wt', encoding='utf-8' ) as myFile:
         try: myFile.write('\ufeff') # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
