@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-19' # by RJH
+LastModifiedDate = '2018-01-10' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
-ProgVersion = '0.46'
+ProgVersion = '0.47'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -133,7 +133,7 @@ class ESFMBibleBook( BibleBook ):
                 """
                 #if C=='4' and V in ('11','12'):
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-                    print( "ESFM saveSemanticTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
+                    print( "ESFM saveSemanticTag( {} {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
@@ -272,8 +272,11 @@ class ESFMBibleBook( BibleBook ):
                                 resultText += saveStrongsTag( BBB, C, V, underlineGroup if underlineGroup else word, tagText )
                                 underlineGroup = ''
                                 underlineGroupFlag = hangingUnderlineFlag = False
-                            else:
+                            elif bracedGroupText or word:
                                 resultText += saveSemanticTag( BBB, C, V, bracedGroupText if bracedGroupText else word, tagText )
+                            else: # WEB Luke 16:7 contains a footnote: \f + \ft 100 cors = about 2,110 liters or 600 bushels.\f*
+                                logging.critical( "Something funny with special symbol {!r} at {} {}:{}".format( char, BBB, C, V ) )
+                                if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
                             if char == '_':
                                 if not underlineGroupFlag: # it's just starting now
                                     underlineGroup += word + char
