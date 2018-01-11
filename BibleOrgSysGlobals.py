@@ -77,7 +77,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-04' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.75'
@@ -621,7 +621,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Now compare the actual lines
     diffCount = 0
-    C, V = '0', '-1' # So id line starts at 0:0
+    C, V = '0', '-1' # So first/id line starts at 0:0
     for k in range( 0, min( len1, len2 ) ):
         originalLine1, originalLine2 = lines1[k], lines2[k]
         adjustedLine1, adjustedLine2 = originalLine1, originalLine2

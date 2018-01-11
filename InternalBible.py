@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-08' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -2296,7 +2296,7 @@ class InternalBible:
                 #print( exp("  findText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
-                C, V = '0', '-1' # So id line starts at 0:0
+                C, V = '0', '-1' # So first/id line starts at 0:0
                 marker = None
                 for lineEntry in bookObject:
                     if marker in BibleOrgSysGlobals.USFMParagraphMarkers:

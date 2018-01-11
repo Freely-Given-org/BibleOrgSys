@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-10' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.47'
@@ -414,10 +414,10 @@ class ESFMBibleBook( BibleBook ):
                 leftCount, rightCount = text.count( '_ ' ), text.count( ' _' )
                 if leftCount > rightCount:
                     loadErrors.append( _("{} {}:{} Too many '_ ' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Too many '_ ' sequences in {} line after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    logging.warning( _("Too many '_ ' sequences in {} line after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 elif leftCount < rightCount:
                     loadErrors.append( _("{} {}:{} Too many ' _' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Too many ' _' sequences in {} line after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    logging.warning( _("Too many ' _' sequences in {} line after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
 
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of ESFMBibleBook.doaddLine
@@ -434,7 +434,7 @@ class ESFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath )
 
         # Do some important cleaning up before we save the data
-        C, V = '0', '-1' # So id line starts at 0:0
+        C, V = '0', '-1' # So first/id line starts at 0:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
@@ -459,8 +459,8 @@ class ESFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
@@ -471,8 +471,8 @@ class ESFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
@@ -482,8 +482,8 @@ class ESFMBibleBook( BibleBook ):
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker (ESFM doesn't allow custom markers)
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
+                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.BBB, C, V, marker ) )
                     logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )

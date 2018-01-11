@@ -5,7 +5,7 @@
 #
 # Module handling USFX XML Bibles
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.30'
@@ -406,7 +406,7 @@ class USFXXMLBible( Bible ):
         self.thisBook.objectNameString = 'USFX XML Bible Book object'
         self.thisBook.objectTypeString = 'USFX'
 
-        C, V = '0', '-1' # So id line starts at 0:0
+        C, V = '0', '-1' # So first/id line starts at 0:0
         for element in bookElement:
             #print( "element", repr(element.tag) )
             location = "{} of {} {}:{}".format( element.tag, mainLocation, BBB, C, V )

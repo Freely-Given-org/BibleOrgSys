@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.47'
+ProgVersion = '0.48'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -141,7 +141,7 @@ class USFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
-        C, V = '0', '-1' # So id line starts at 0:0
+        C, V = '0', '-1' # So first/id line starts at 0:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
@@ -177,8 +177,8 @@ class USFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
@@ -189,8 +189,8 @@ class USFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
@@ -201,9 +201,9 @@ class USFMBibleBook( BibleBook ):
             else: # the line begins with an unknown marker
                 if marker and marker[0] == 'z': # it's a custom marker
                     if text:
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {}") \
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {!r}") \
                                             .format( self.BBB, C, V, marker, text ) )
-                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line with text: {}") \
+                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line with text: {!r}") \
                                             .format( marker, self.BBB, C, V, text ) )
                     else: # no text
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line (with no text") \
@@ -213,9 +213,9 @@ class USFMBibleBook( BibleBook ):
                     self.addPriorityError( 80, C, V, _("Found \\{} unknown custom marker on new line in file").format( marker ) )
                 else: # it's an unknown marker
                     if text:
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}") \
+                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}") \
                                             .format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}") \
+                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {!r}") \
                                             .format( marker, self.BBB, C, V, text ) )
                     else: # no text
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text") \

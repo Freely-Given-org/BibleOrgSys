@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -71,10 +71,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-27' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.70'
+ProgVersion = '0.71'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1050,7 +1050,7 @@ class InternalBibleIndex:
                     indexEntryLineCount += 1
                 elif marker == 'v':
                     assert strC != '0' # Should be in a chapter by now
-                    print( "Why do we have a verse number in a {} {} book without chapters?".format( self.name, self.BBB ) )
+                    logging.warning( "makeIndex: Why do we have a verse number in a {} {} book without chapters?".format( self.name, self.BBB ) )
                     if debuggingThisModule:
                         print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
                             entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
