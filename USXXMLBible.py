@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-01-12' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.37'
+ProgVersion = '0.38'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -149,7 +149,7 @@ class USXXMLBible( Bible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
         """
         Create the internal USX Bible object.
         """
@@ -158,14 +158,14 @@ class USXXMLBible( Bible ):
         self.objectNameString = 'USX XML Bible object'
         self.objectTypeString = 'USX'
 
-        self.givenFolderName, self.givenName, self.encoding = givenFolderName, givenName, encoding # Remember our parameters
+        self.givenFolderName, self.givenName, self.abbreviation, self.encoding = givenFolderName, givenName, givenAbbreviation, encoding # Remember our parameters
         self.sourceFolder = self.givenFolderName
 
         # Now we can set our object variables
         self.name = self.givenName
         if not self.name: self.name = os.path.basename( self.givenFolderName )
         if not self.name: self.name = os.path.basename( self.givenFolderName[:-1] ) # Remove the final slash
-        if not self.name: self.name = "USX Bible"
+        if not self.name: self.name = 'USX Bible'
     # end of USXXMLBible.__init_
 
 
