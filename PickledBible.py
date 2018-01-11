@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-09' # by RJH
+LastModifiedDate = '2018-01-12' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -192,15 +192,15 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     #if not outputFolder: outputFolder = 'OutputFiles/BOS_PickledBible_Export/'
     #if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-    #if aboutText is None: aboutText = "(unknown)"
-    #if sourceURL is None: sourceURL = "(unknown)"
-    #if licenceText is None: licenceText = "(unknown)"
     if metadataDict is None: metadataDict = OrderedDict()
     if dataLevel is None: dataLevel = 1 # Save just enough attributes to display the module
 
-    createdFilenames = [] # Keep track so we know what to zip (and possibly to delete again later)
+    if BibleOrgSysGlobals.debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        assert BibleObject.abbreviation
+        assert BibleObject.books
 
     # First pickle the individual books
+    createdFilenames = [] # Keep track so we know what to zip (and possibly to delete again later)
     for BBB,bookObject in BibleObject.books.items():
         filename = BOOK_FILENAME.format( BBB )
         createdFilenames.append( filename )
@@ -378,7 +378,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
 
-    If extended, also includes the BibleObject attributes
+    If extended, also includes the BibleObject attributes.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
@@ -396,6 +396,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
                     pB.pickleVersionData.update( BibleAttributeDict )
                 else:
                     pB.pickleVersionData.update( _getObjectAttributesDict( pickleInputFile ) )
+    #print( "getZippedPickledBibleDetails returning", pB.pickleVersionData ); halt
     return pB.pickleVersionData
 # end of getZippedPickledBibleDetails
 
@@ -403,6 +404,8 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
     """
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
+
+    Guarantees a non-empty 'abbreviation' entry in each dictionary.
     """
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBiblesDetails( {}, {} )").format( zipFolderpath, extended ) )
@@ -410,15 +413,19 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
         assert os.path.isdir( zipFolderpath )
 
     resultList = []
-    for something in os.listdir( zipFolderpath ):
+    for something in sorted( os.listdir( zipFolderpath ) ):
+        #print( "getZippedPickledBiblesDetails something", something )
         somepath = os.path.join( zipFolderpath, something )
         if os.path.isfile( somepath ):
             if something.endswith( ZIPPED_FILENAME_END ):
                 detailDict = getZippedPickledBibleDetails( somepath, extended )
                 assert 'zipFilename' not in detailDict
                 detailDict['zipFilename'] = something
-                #assert 'zipFilepath' not in detailDict
-                #detailDict['zipFilepath'] = somepath
+                assert 'zipFolderpath' not in detailDict
+                detailDict['zipFolderpath'] = zipFolderpath
+                #print( something, detailDict )
+                assert 'abbreviation' in detailDict
+                assert detailDict['abbreviation']
                 resultList.append( detailDict )
             elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
                 logging.warning( "Unexpected {} file in {}".format( something, zipFolderpath ) )
