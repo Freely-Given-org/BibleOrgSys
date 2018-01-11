@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2017 Robert Hunt
+# Copyright (C) 2012-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-13' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -69,11 +69,11 @@ class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, name, BBB ):
+    def __init__( self, containerBibleObject, BBB ):
         """
         Create the USX Bible book object.
         """
-        BibleBook.__init__( self, name, BBB ) # Initialise the base class
+        BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = 'USX XML Bible Book object'
         self.objectTypeString = 'USX'
 
@@ -91,7 +91,7 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
 
-        C, V = '0', '-1' # So id line starts at 0:0
+        C, V = '0', '-1' # So first/id line starts at 0:0
         loadErrors = []
 
 
@@ -226,7 +226,7 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            #print( "loadNoteField( {}, {} @ {} {}:{} )".format( noteElement.tag, noteLocation, self.BBB, C, V ) )
+            #print( "loadNoteField( {}, {} @ {} {} {}:{} )".format( noteElement.tag, noteLocation, self.workName, self.BBB, C, V ) )
             #print( "  {}".format( BibleOrgSysGlobals.elementStr( noteElement ) ) )
             assert noteElement.tag == 'note'
 
@@ -242,6 +242,10 @@ class USXXMLBibleBook( BibleBook ):
                     logging.error( _("CY38 Unprocessed {} attribute ({}) in {}").format( attrib, value, noteLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             #if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
+            if BibleOrgSysGlobals.strictCheckingFlag: assert noteStyle and noteCaller # both compulsory
+            if not noteCaller:
+                logging.error( "Missing {} note caller in {} {} {}:{}".format( noteStyle, self.workName, self.BBB, C, V ) )
+                noteCaller = '+'
             assert noteStyle and noteCaller # both compulsory
             noteField = '\\{} {} '.format( noteStyle, noteCaller )
             if noteElement.text:
@@ -277,10 +281,9 @@ class USXXMLBibleBook( BibleBook ):
                 assert '\n' not in noteField
             noteField += '\\{}*'.format( noteStyle )
 
-            if noteElement.text: # no note text!
-                if len(noteElement) == 0: # no subelements either
-                    logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, noteLocation ) )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            if not noteElement.text and len(noteElement) == 0: # no subelements either
+                logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, noteLocation ) )
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             assert '\n' not in noteField
 
             # Now process the left-overs (tail)
@@ -431,7 +434,7 @@ class USXXMLBibleBook( BibleBook ):
 
 
         # Main code for load()
-        lastMarker = None
+        #lastMarker = None
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}…").format( filename, folder ) )
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
@@ -512,51 +515,60 @@ class USXXMLBibleBook( BibleBook ):
                 elif element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location ) # Not in a paragraph!
                 elif element.tag == 'para':
+                    if C == '0': V = str( int(V) + 1 ) # first/id line will be 0:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
-                        #if lastMarker: self.addLine( lastMarker, lastText )
-                        #lastMarker, lastText = USFMMarker, text
                         loadParagraph( element, location )
                     elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:
-                            print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
+                            print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {!r}").format( self.BBB, C, V, USFMMarker, text ) )
                             #halt # Not checked yet
                         if text:
-                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
-                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, C, V, text ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {!r}").format( self.BBB, C, V, USFMMarker, text ) )
+                            logging.critical( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {!r}").format( USFMMarker, self.BBB, C, V, text ) )
                         else: # no text
                             loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM Marker at beginning of line (with no text)").format( self.BBB, C, V, USFMMarker ) )
-                            logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
+                            logging.critical( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
                         self.addPriorityError( 97, C, V, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
-                        lastText =  '\\' + USFMMarker + ' ' + text
+                        #lastText =  '\\' + USFMMarker + ' ' + text
                         #print( "{} {} {} Now have {}:{!r}".format( self.BBB, C, V, lastMarker, lastText ) )
                     else: # the line begins with an unknown USFM Marker
                         try: status = element.attrib['status']
                         except KeyError: status = None
                         text = element.text
                         if text:
-                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {}").format( self.BBB, C, V, USFMMarker, text ) )
-                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.BBB, C, V, text ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {!r}").format( self.BBB, C, V, USFMMarker, text ) )
+                            logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {!r}").format( USFMMarker, self.BBB, C, V, text ) )
                         else: # no text
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
                             logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
                         self.addPriorityError( 100, C, V, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
+                        fixed = False
                         if status == 'unknown': # USX exporter already knew it was a bad marker
                             pass # Just drop it completely
                         else:
+                            if debuggingThisModule:
+                                print( "USX unknown marker={!r} text={!r} status={} @ {} {} {}:{}".format( USFMMarker, text, status, self.workName, self.BBB, C, V ) )
                             for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                                 if USFMMarker.startswith( tryMarker ): # Let's try changing it
-                                    if lastMarker: self.addLine( lastMarker, lastText )
-                                    lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
+                                    #print( "  tryMarker={!r}".format( tryMarker ) )
                                     loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, C, V, USFMMarker, tryMarker, text ) )
                                     logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
+                                    paragraphText = element.text if element.text and element.text.strip() else ''
+                                    if version is None: paragraphText = element.rstrip() # Don't need to strip extra spaces in v2
+                                    #print( "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
+                                    self.addLine( tryMarker, paragraphText )
+                                    fixed = True
                                     break
-                        # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+                        if not fixed: # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+                            loadErrors.append( _("{} {}:{} Ignoring '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
+                            logging.critical( _("Ignoring '\\{}' unknown USFM Marker after {} {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.workName, self.BBB, C, V ) )
                 elif element.tag == 'table':
+                    if C == '0': V = str( int(V) + 1 ) # first/id line will be 0:0
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'TT33' )
                     BibleOrgSysGlobals.checkXMLNoText( element, location, 'TT42' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, 'TT88' )
@@ -577,52 +589,60 @@ class USXXMLBibleBook( BibleBook ):
                         tableCode = ''
                         for sub2element in subelement:
                             sub2location = sub2element.tag + " in " + sublocation
-                            #print( "  here2", sub2location )
+                            #print( "  hereT {} {} {}:{} {}".format( self.workName, self.BBB, C, V, sub2location ) )
+                            #print( "  {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
+                            #print( "  tC = {}".format( tableCode ) )
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'TY45' )
-                            assert sub2element.tag == 'cell'
-                            # Process the attribute
-                            cellStyle = alignMode = None
-                            for attrib,value in sub2element.items():
-                                if attrib=='style': cellStyle = value
-                                elif attrib=='align': alignMode = value
-                                else:
-                                    logging.error( _("LP16 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                            #print( "cS", cellStyle, "aM", alignMode )
-                            if BibleOrgSysGlobals.strictCheckingFlag:
-                                assert cellStyle in ('th1','th2','th3','th4', 'thr1','thr2','thr3','thr4', 'tc1','tc2','tc3','tc4', 'tcr1','tcr2','tcr3','tcr4')
-                                assert alignMode in (None, 'start', 'end')
-                            tableCode += '\\{} {}'.format( cellStyle,
-                                            sub2element.text if not BibleOrgSysGlobals.isBlank(sub2element.text) else '' )
-                            assert '\n' not in tableCode
-                            for sub3element in sub2element:
-                                sub3location = sub3element.tag + " in " + sub2location
-                                #print( "    here3", sub3location )
-                                BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
-                                if sub3element.tag == 'note':
-                                    #print( "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
-                                    processedNoteField = loadNoteField( sub3element, sub3location )
-                                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
-                                    tableCode += processedNoteField
-                                    #for sub4element in sub3element:
-                                        #sub4location = sub4element.tag + " in " + sub3location
-                                        ##print( "    here4", sub4location )
-                                        #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
-                                        #if sub4element.tag == 'char':
-                                            #tableCode += loadCharField( sub4element, sub4location )
-                                        #else:
-                                            #logging.error( _("KA28 Unprocessed {} sub4element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub4location ) )
-                                            #self.addPriorityError( 1, C, V, _("Unprocessed {} sub4element").format( sub4element.tag ) )
-                                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                                    #if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
-                                        #tableCode += sub3element.tail
-                                elif sub3element.tag == 'verse':
-                                    loadVerseNumberField( sub3element, sub3location )
-                                else:
-                                    logging.error( _("KA29 Unprocessed {} sub3element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub3location ) )
-                                    self.addPriorityError( 1, C, V, _("Unprocessed {} sub3element").format( sub3element.tag ) )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                            if sub2element.tag == 'cell':
+                                # Process the cell attributes
+                                cellStyle = alignMode = None
+                                for attrib,value in sub2element.items():
+                                    if attrib=='style': cellStyle = value
+                                    elif attrib=='align': alignMode = value
+                                    else:
+                                        logging.error( _("LP16 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                #print( "cS", cellStyle, "aM", alignMode )
+                                if BibleOrgSysGlobals.strictCheckingFlag:
+                                    assert cellStyle in ('th1','th2','th3','th4', 'thr1','thr2','thr3','thr4', 'tc1','tc2','tc3','tc4', 'tcr1','tcr2','tcr3','tcr4')
+                                    assert alignMode in (None, 'start', 'end')
+                                tableCode += '\\{} {}'.format( cellStyle,
+                                                sub2element.text if not BibleOrgSysGlobals.isBlank(sub2element.text) else '' )
                                 assert '\n' not in tableCode
+                                for sub3element in sub2element:
+                                    sub3location = sub3element.tag + " in " + sub2location
+                                    #print( "    here3", sub3location )
+                                    BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
+                                    if sub3element.tag == 'note':
+                                        #print( "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
+                                        processedNoteField = loadNoteField( sub3element, sub3location )
+                                        if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
+                                        tableCode += processedNoteField
+                                        #for sub4element in sub3element:
+                                            #sub4location = sub4element.tag + " in " + sub3location
+                                            ##print( "    here4", sub4location )
+                                            #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
+                                            #if sub4element.tag == 'char':
+                                                #tableCode += loadCharField( sub4element, sub4location )
+                                            #else:
+                                                #logging.error( _("KA28 Unprocessed {} sub4element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub4location ) )
+                                                #self.addPriorityError( 1, C, V, _("Unprocessed {} sub4element").format( sub4element.tag ) )
+                                                #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                        #if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
+                                            #tableCode += sub3element.tail
+                                    elif sub3element.tag == 'verse': # Have a verse number inside a table
+                                        loadVerseNumberField( sub3element, sub3location )
+                                    else:
+                                        logging.error( _("KA29 Unprocessed {} sub3element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub3location ) )
+                                        self.addPriorityError( 1, C, V, _("Unprocessed {} sub3element").format( sub3element.tag ) )
+                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                                    assert '\n' not in tableCode
+                            elif sub2element.tag == 'verse':
+                                loadVerseNumberField( sub2element, sub2location )
+                            else:
+                                logging.error( _("VA81 Unprocessed {} sub2element after {} {}:{} in {}").format( sub2element.tag, self.BBB, C, V, sub2location ) )
+                                self.addPriorityError( 1, C, V, _("Unprocessed {} sub2element").format( sub3element.tag ) )
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         assert '\n' not in tableCode
                         #print( "tableCode: {}".format( tableCode ) )
                         self.addLine( 'tr', tableCode )
