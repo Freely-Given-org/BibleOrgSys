@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2017 Robert Hunt
+# Copyright (C) 2012-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.36'
+ProgVersion = '0.37'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -47,22 +47,6 @@ from USXFilenames import USXFilenames
 from PTX7Bible import loadPTX7ProjectData
 from USXXMLBibleBook import USXXMLBibleBook
 from Bible import Bible
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 
@@ -190,7 +174,7 @@ class USXXMLBible( Bible ):
         Tries to determine USX filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("preload() from {}").format( self.sourceFolder ) )
+            print( "USXXMLBible preload() from {}".format( self.sourceFolder ) )
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
@@ -211,7 +195,7 @@ class USXXMLBible( Bible ):
         #print( "GHJGHR", self.possibleFilenameDict ); halt
 
         self.preloadDone = True
-    # end of USFMBible.preload
+    # end of USXXMLBible.preload
 
 
     def loadBook( self, BBB, filename=None ):
@@ -429,6 +413,24 @@ def demo():
         #if BibleOrgSysGlobals.commandLineArguments.export:
         #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
         #       pass
+
+    if 1:
+        USXSourceFolder = '../../../../../SSD/Documents/USXResources/' # You can put your own folder here
+        for j, something in enumerate( sorted( os.listdir( USXSourceFolder ) ) ):
+            if something == '.git': assert j==0; continue
+            #if something != 'TND': continue # Test this one only!!!
+            #print( "something", something )
+            somepath = os.path.join( USXSourceFolder, something )
+            if os.path.isfile( somepath ):
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    print( "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
+            elif os.path.isdir( somepath ):
+                abbreviation = something
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
+                loadedBible = USXXMLBible( somepath, givenName=abbreviation+' Bible' )
+                loadedBible.loadBooks() # Load and process the USX XML books
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( loadedBible ) # Just print a summary
+# end of demo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
