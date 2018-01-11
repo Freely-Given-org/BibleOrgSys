@@ -32,10 +32,10 @@ TODO: Check if we really need this class at all???
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-03' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -122,6 +122,9 @@ class BibleBook ( InternalBibleBook ):
         """
         Constructor: creates an empty Bible book.
         """
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            assert isinstance( containerBibleObject, Bible )
+
         InternalBibleBook.__init__( self, containerBibleObject, BBB )
 
         # Define our added data stores
