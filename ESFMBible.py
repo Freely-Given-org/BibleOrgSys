@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,10 +35,10 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2018-01-11' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
-ProgVersion = '0.60'
+ProgVersion = '0.61'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -535,8 +535,11 @@ class ESFMBible( Bible ):
         else:
             logging.critical( _("ESFMBible: No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
-        if 'Tag errors' in self.semanticDict: print( "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
-        if 'Missing' in self.semanticDict: print( "\nESFMBible.load missing:", self.semanticDict['Missing'] )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            if 'Tag errors' in self.semanticDict:
+                print( "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
+            if 'Missing' in self.semanticDict:
+                print( "\nESFMBible.load missing:", self.semanticDict['Missing'] )
         #print( "\nSemantic dict: {}".format( self.semanticDict ) )
         if debuggingThisModule:
             print( "\n\nSemantic dict:" )
