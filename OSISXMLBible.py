@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-10' # by RJH
+LastModifiedDate = '2018-01-13' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.62'
@@ -322,7 +322,16 @@ class OSISXMLBible( Bible ):
                                 if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
                                 assert not foundBBB # Don't expect duplicates
                                 foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
-                                #print( "  FoundBBB = {!r}".format( foundBBB ) )
+                                #print( "  FoundBBB1 = {!r}".format( foundBBB ) )
+                        if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
+                            for bkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+                                # returned bkCodes are all UPPERCASE
+                                #print( 'bc', bkCode, upperFilename )
+                                if bkCode in upperFilename:
+                                    #print( "OSISXMLBible.__init__ found {!r} in {!r}".format( bkCode, upperFilename ) )
+                                    assert not foundBBB # Don't expect duplicates
+                                    foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
+                                    #print( "  FoundBBB2 = {!r}".format( foundBBB ) )
                         if foundBBB:
                             if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
                             assert isinstance( foundBBB, str )
