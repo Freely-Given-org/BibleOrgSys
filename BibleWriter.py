@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-01-12' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -518,10 +518,14 @@ class BibleWriter( InternalBible ):
                         #countWords( extraType, cleanExtraText, "notes" )
 
         # Now sort the lists and write them each twice (sorted by word and sorted by count)
-        printWordCounts( "All_wordcounts", self.discoveryResults['ALL']['allWordCounts'] )
-        printWordCounts( "Main_text_wordcounts", self.discoveryResults['ALL']['mainTextWordCounts'] )
-        printWordCounts( "All_wordcounts_case_insensitive", self.discoveryResults['ALL']['allCaseInsensitiveWordCounts'] )
-        printWordCounts( "Main_text_wordcounts_case_insensitive", self.discoveryResults['ALL']['mainTextCaseInsensitiveWordCounts'] )
+        try: printWordCounts( "All_wordcounts", self.discoveryResults['ALL']['allWordCounts'] )
+        except KeyError: pass # Why is there no 'allWordCounts' field ???
+        try: printWordCounts( "Main_text_wordcounts", self.discoveryResults['ALL']['mainTextWordCounts'] )
+        except KeyError: pass # Why is there no 'mainTextWordCounts' field ???
+        try: printWordCounts( "All_wordcounts_case_insensitive", self.discoveryResults['ALL']['allCaseInsensitiveWordCounts'] )
+        except KeyError: pass # Why is there no 'allCaseInsensitiveWordCounts' field ???
+        try: printWordCounts( "Main_text_wordcounts_case_insensitive", self.discoveryResults['ALL']['mainTextCaseInsensitiveWordCounts'] )
+        except KeyError: pass # Why is there no 'mainTextCaseInsensitiveWordCounts' field ???
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.makeLists finished successfully." )
@@ -1043,9 +1047,8 @@ class BibleWriter( InternalBible ):
                     if pseudoMarker in BOS_NESTING_MARKERS:
                         indentLevel += 1
                         #print( pseudoMarker, indentLevel )
-
-        if indentLevel !=  0:
-            logging.error( "toESFM: Ended with wrong indent level of {}".format( indentLevel ) );  halt
+            if indentLevel !=  0:
+                logging.error( "toESFM: Ended with wrong indent level of {} for {}".format( indentLevel, BBB ) );  halt
 
         if ignoredMarkers:
             logging.info( "toESFM: Ignored markers were {}".format( ignoredMarkers ) )
@@ -2203,7 +2206,8 @@ class BibleWriter( InternalBible ):
 
             adjText = text
             offset = 0
-            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+            for extra in extras: # do any footnotes and cross-references
+                extraType, extraIndex, extraText, cleanExtraText = extra
                 #print( "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                 adjIndex = extraIndex - offset
                 lenT = len( adjText )
@@ -6123,6 +6127,8 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/OpenSong_XML
             but more fields can be discovered by looking at downloaded files.
         """
+        from OpenSongXMLBible import createOpenSongXML
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toOpenSongXML…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -6136,133 +6142,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
-
-        def writeOpenSongBook( writerObject, BBB, bkData ):
-            """Writes a book to the OpenSong XML writerObject."""
-            #print( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
-            OSISAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
-            if not OSISAbbrev:
-                logging.warning( "toOpenSong: Can't write {} OpenSong book because no OSIS code available".format( BBB ) )
-                unhandledBooks.append( BBB )
-                return
-            writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
-            haveOpenChapter, startedFlag, gotVP, accumulator = False, False, None, ""
-            C, V = '0', '-1' # So first/id line starts at 0:0
-            for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
-                #print( marker, repr(text) )
-                #if text: assert text[0] != ' '
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
-                if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
-                    V = str( int(V) + 1 )
-
-                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
-                    ignoredMarkers.add( marker )
-                elif marker == 'c':
-                    if accumulator:
-                        writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
-                        accumulator = ''
-                    if haveOpenChapter:
-                        writerObject.writeLineClose ( 'c' )
-                    C, V = text, '0'
-                    writerObject.writeLineOpen ( 'c', ('n',text) )
-                    haveOpenChapter = True
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
-                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
-                    gotVP = text # Just remember it for now
-                elif marker == 'v':
-                    V = text
-                    if gotVP: # this is the verse number to be published
-                        text = gotVP
-                        gotVP = None
-                    startedFlag = True
-                    if accumulator:
-                        writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
-                        accumulator = ''
-                    #print( "Text {!r}".format( text ) )
-                    if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
-                    verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
-
-                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
-                    ignoredMarkers.add( marker )
-                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
-                    ignoredMarkers.add( marker )
-                elif marker in ('b', 'nb', 'ib', ):
-                    if BibleOrgSysGlobals.debugFlag: assert not text and not extras
-                    ignoredMarkers.add( marker )
-                elif marker in ('v~', 'p~',):
-                    if BibleOrgSysGlobals.debugFlag: assert text or extras
-                    if not text: # this is an empty (untranslated) verse
-                        text = '- - -' # but we'll put in a filler
-                    if startedFlag: accumulator += (' ' if accumulator else '') + BibleOrgSysGlobals.makeSafeXML( text )
-                else:
-                    if text:
-                        logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
-                        #if BibleOrgSysGlobals.debugFlag: halt
-                    if extras:
-                        logging.warning( "toOpenSong: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
-                        #if BibleOrgSysGlobals.debugFlag: halt
-                    unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
-                    logging.critical( "toOpenSong: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-            if accumulator:
-                writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
-            if haveOpenChapter:
-                writerObject.writeLineClose ( 'c' )
-            writerObject.writeLineClose( 'b' )
-        # end of toOpenSongXML.writeOpenSongBook
-
-        # Set-up our Bible reference system
-        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == 'GENERIC':
-            BOS = self.genericBOS
-            BRL = self.genericBRL
-        else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
-            BRL = BibleReferenceList( BOS, BibleObject=None )
-
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OpenSong format…") )
-        try: osOFn = controlDict['OpenSongOutputFilename']
-        except KeyError: osOFn = 'Bible.osong'
-        filename = BibleOrgSysGlobals.makeSafeFilename( osOFn )
-        xw = MLWriter( filename, outputFolder )
-        xw.setHumanReadable()
-        xw.start()
-        xw.writeLineOpen( 'Bible' )
-        for BBB,bookData in self.books.items():
-            writeOpenSongBook( xw, BBB, bookData )
-        xw.writeLineClose( 'Bible' )
-        xw.close()
-
-        if ignoredMarkers:
-            logging.info( "toOpenSongXML: Ignored markers were {}".format( ignoredMarkers ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toOpenSongXML markers were {}").format( ignoredMarkers ) )
-        if unhandledMarkers:
-            logging.warning( "toOpenSongXML: Unhandled markers were {}".format( unhandledMarkers ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toOpenSong markers were {}").format( unhandledMarkers ) )
-        if unhandledBooks:
-            logging.warning( "toOpenSongXML: Unhandled books were {}".format( unhandledBooks ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toOpenSongXML books were {}").format( unhandledBooks ) )
-
-        # Now create a zipped version
-        filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} OpenSong file…".format( filename ) )
-        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
-        zf.write( filepath, filename )
-        zf.close()
-
-        if validationSchema: return xw.validate( validationSchema )
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toOpenSongXML finished successfully." )
-        return True
+        return createOpenSongXML( self, outputFolder, controlDict, validationSchema )
     # end of BibleWriter.toOpenSongXML
 
 
@@ -9630,7 +9510,8 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in dir(self): self.discover()
 
-        if BibleOrgSysGlobals.debugFlag: # no try/except calls so it halts on errors rather than continuing
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+            # no try/except calls so it halts on errors rather than continuing
             pickledBibleOutputResult = self.toPickledBible( pickledBibleOutputFolder )
             listOutputResult = self.makeLists( listOutputFolder )
             BCVExportResult = self.toBOSBCV( BCVOutputFolder )
