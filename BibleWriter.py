@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-12' # by RJH
+LastModifiedDate = '2018-01-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -3123,9 +3123,10 @@ class BibleWriter( InternalBible ):
                 """
                 nonlocal numCBSections
                 #print( "  toCustomBible.handleCBSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
+                assert BCV
                 assert sectionHTML
-                sectionBBB, sectionC, sectionV = BCV
 
+                sectionBBB, sectionC, sectionV = BCV
                 numCBSections += 1
                 #if BBB == 'GLS': print( BBB, sectionHTML ); halt
                 if '\\' in sectionHTML: # shouldn't happen
@@ -3175,12 +3176,12 @@ class BibleWriter( InternalBible ):
             overallChapterLabel = None
             sOpen = sJustOpened = pOpen = vOpen = False
             listOpen = {}
+            sectionBCV = (BBB,'0','0')
             for dataLine in bookData:
                 thisHTML = ''
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
                 #print( " toCB: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
-                #try: print( "  BCV", BCV )
-                #except UnboundLocalError: print( "  BCV undefined" )
+                #print( "   sectionBCV", sectionBCV )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
@@ -3195,7 +3196,9 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     tClass = 'mainTitle' if marker in ('mt1','mt2','mt3','mt4',) else 'introductionMainTitle'
                     thisHTML += '<h1 class="{}{}">{}</h1>'.format( tClass, marker[2], text )
                 elif marker in ('is1','is2','is3','is4',):
@@ -3208,13 +3211,15 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     thisHTML += '<h2 class="introductionSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex', ):
                     for lx in ('4','3','2','1'): # Close any open lists
@@ -3224,7 +3229,9 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     #if not text and not extras: print( "{} at {} {}:{} has nothing!".format( marker, BBB, C, V ) );halt
                     if text or extras:
                         thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
@@ -3234,7 +3241,9 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     thisHTML += '<h3 class="outlineTitle">{}</h3>'.format( text )
                 elif marker in ('io1','io2','io3','io4',):
                     if pOpen:
@@ -3242,7 +3251,9 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     if text or extras:
                         thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'ib':
@@ -3277,12 +3288,14 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
-                        thisHTML += '<section class="chapterSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="chapterSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     elif C=='1': # Must be the end of the introduction -- so close that section
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
@@ -3311,9 +3324,11 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is a replacement verse number for publishing
                         text = gotVP
                         gotVP = None
-                    if sJustOpened: BCV=(BBB,C,V)
+                    if sJustOpened: sectionBCV = (BBB,C,V)
                     thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
                     if V == '1': # Different treatment for verse 1
+                        if not sectionBCV:
+                            sectionBCV = (BBB,C,V) # Normally a section heading would have caused sectionBCV to be set
                         thisHTML += '<span class="verseOnePrespace"> </span>'
                         thisHTML += '<span class="verseOneNumber">{}</span>'.format( text )
                         thisHTML += '<span class="verseOnePostspace">&nbsp;</span>'
@@ -3331,9 +3346,9 @@ class BibleWriter( InternalBible ):
                     if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
-                        bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
+                        bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
                         sectionHTML = ''
-                        indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                        indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                         currentIndex.append( indexEntry )
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
@@ -3346,12 +3361,14 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
-                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="regularSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     if text or extras:
                         thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
@@ -3360,7 +3377,9 @@ class BibleWriter( InternalBible ):
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
                         logging.warning( "toCustomBible: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
-                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="regularSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     if marker == 'r': rClass = 'sectionCrossReference'
                     elif marker == 'sr': rClass = 'sectionReferenceRange'
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
@@ -3384,12 +3403,15 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
-                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                            sectionBCV = (BBB,C,V)
+                        thisHTML += '<section class="regularSection">'
+                        sOpen = sJustOpened = True
+                        sectionBCV = (BBB,C,V)
                     if BibleOrgSysGlobals.debugFlag: assert not text
                     thisHTML += '<p class="{}">'.format( pqHTMLClassDict[marker] )
                     pOpen = True
@@ -3448,8 +3470,8 @@ class BibleWriter( InternalBible ):
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
             if sectionHTML:
-                bytesWritten = handleCBSection( BCV, sectionHTML, htmlFile )
-                indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                 currentIndex.append( indexEntry )
 
             htmlFile.close()
@@ -3615,7 +3637,9 @@ class BibleWriter( InternalBible ):
                     #else:
                     lastVWritten = V
                 elif marker == 'p~':
-                    assert textBuffer
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
+                                          #     \c 1 \v 1 \p These events happened...
                     textBuffer += ' {}'.format( text ) # continuation of the same verse
                 else:
                     ignoredMarkers.add( marker )
