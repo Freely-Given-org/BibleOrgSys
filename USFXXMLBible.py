@@ -48,7 +48,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-01-12' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
 ProgVersion = '0.30'
@@ -764,8 +764,9 @@ class USFXXMLBible( Bible ):
                 for sub2element in subelement:
                     sub2location = sub2element.tag + " of " + sublocation
                     tag, text = sub2element.tag, clean(sub2element.text)
-                    print( "  loadTable: tag={!r}, text={!r} at {}".format( tag, text, sub2location ) )
-                    print( "    sub2element is {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
+                    if debuggingThisModule:
+                        print( "  loadTable: tag={!r}, text={!r} at {}".format( tag, text, sub2location ) )
+                        print( "    sub2element is {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
                     if tag not in ('th', 'thr', 'tc', 'tcr',):
                         logging.warning( _("loadTable: unexpected {!r} inside 'tr' in table at {}").format( tag, sublocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
