@@ -47,7 +47,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-12' # by RJH
+LastModifiedDate = '2018-01-13' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
 ProgVersion = '0.07'
@@ -378,7 +378,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
 
-    If extended, also includes the BibleObject attributes.
+    If extended, also includes the original BibleObject attributes that were saved.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
@@ -405,7 +405,7 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
 
-    Guarantees a non-empty 'abbreviation' entry in each dictionary.
+    Guarantees a non-empty 'abbreviation' entry in each dictionary if the extended flag is set.
     """
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBiblesDetails( {}, {} )").format( zipFolderpath, extended ) )
@@ -424,8 +424,9 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
                 assert 'zipFolderpath' not in detailDict
                 detailDict['zipFolderpath'] = zipFolderpath
                 #print( something, detailDict )
-                assert 'abbreviation' in detailDict
-                assert detailDict['abbreviation']
+                if extended:
+                    assert 'abbreviation' in detailDict
+                    assert detailDict['abbreviation']
                 resultList.append( detailDict )
             elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
                 logging.warning( "Unexpected {} file in {}".format( something, zipFolderpath ) )
@@ -845,21 +846,23 @@ def demo():
 
 
     if 1: # Load a zipped version
-        pBible = PickledBible( 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END )
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
-        pBible.load()
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "D2:", pBible )
-        assert pBible.pickleIsZipped # That's what we were supposedly testing
+        pFilepath = 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END
+        if os.path.exists( pFilepath ):
+            pBible = PickledBible( pFilepath )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
+            pBible.load()
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "D2:", pBible )
+            assert pBible.pickleIsZipped # That's what we were supposedly testing
 
 
     if 1: # demo the file checking code with zip files
         j = 1
         for folder in (resourcesFolder, testResourcesFolder ):
-            for something in os.listdir( folder ):
+            for something in sorted( os.listdir( folder ) ):
                 somepath = os.path.join( folder, something )
                 abbrev = something.split('.',1)[0]
                 pBible = PickledBible( somepath )
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}a: {}".format( j, abbrev ), pBible )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE{}a: {}".format( j, abbrev ), pBible )
                 pBible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}b: {}".format( j, abbrev ), pBible )
                 assert pBible.pickleIsZipped # That's what we were supposedly testing
