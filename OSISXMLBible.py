@@ -1595,8 +1595,8 @@ class OSISXMLBible( Bible ):
                     # Assume it's an acrostic heading (but we don't use the foreignN field)
                     self.thisBook.addLine( 'qa', foreignText )
                 else:
-                    logging.error( "Unused {!r} foreign field at {}".format( fText, sublocation+" at "+verseMilestone ) )
-                    loadErrors.append( "Unused {!r} foreign field at {}".format( fText, sublocation+" at "+verseMilestone ) )
+                    logging.error( "Unused {!r} foreign field at {}".format( foreignText, sublocation+" at "+verseMilestone ) )
+                    loadErrors.append( "Unused {!r} foreign field at {}".format( foreignText, sublocation+" at "+verseMilestone ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'reference':
                 sublocation = "validateTitle: reference of " + locationDescription
