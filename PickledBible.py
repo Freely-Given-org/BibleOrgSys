@@ -853,6 +853,8 @@ def demo():
             pBible.load()
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nSorry, test file {!r} is not readable on this computer.".format( pFilepath ) )
 
 
     if 1: # demo the file checking code with zip files
