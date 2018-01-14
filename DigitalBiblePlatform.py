@@ -5,7 +5,7 @@
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,10 +64,10 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2018-01-14' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = '0.16'
+ProgVersion = '0.17'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -116,10 +116,10 @@ def getSecurityKey():
     """
     for keyPath in KEY_SEARCH_PATHS:
         if os.path.exists( keyPath ): # in our current folder
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("getSecurityKey: found key file in {}").format( repr(keyPath) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("getSecurityKey: found key file in {!r}").format( keyPath ) )
             with open( keyPath, "rt" ) as keyFile:
                 return keyFile.read() # Our personal key
-    raise FileNotFoundError( exp("Cannot find key file {}").format( repr(KEY_FILENAME) ) )
+    raise FileNotFoundError( exp("Cannot find key file {!r}").format( KEY_FILENAME ) )
 # end of getSecurityKey
 
 
@@ -625,7 +625,7 @@ class DBPBible:
         #print( "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
         except urllib.error.URLError:
-            if BibleOrgSysGlobals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {} {}".format( repr(fieldREST), repr(additionalParameters) ) )
+            if BibleOrgSysGlobals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
             return None
         responseSTR = responseJSON.read().decode('utf-8')
         return json.loads( responseSTR )
