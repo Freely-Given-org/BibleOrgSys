@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-13' # by RJH
+LastModifiedDate = '2018-01-14' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -490,9 +490,12 @@ class PickledBible( Bible ):
             self.pickleFilepath = sourceFileOrFolder
             self.pickleSourceFolder = os.path.dirname( sourceFileOrFolder )
             self.pickleIsZipped = True
-            with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
-                with thisZip.open( VERSION_FILENAME ) as pickleInputFile:
-                    self.pickleVersionData = loadVersionStuff( pickleInputFile )
+            try:
+                with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
+                    with thisZip.open( VERSION_FILENAME ) as pickleInputFile:
+                        self.pickleVersionData = loadVersionStuff( pickleInputFile )
+            except zipfile.BadZipFile:
+                logging.critical( "PickledBible: "+_("Not a valid zipFile at {}").format( self.pickleFilepath ) )
         else: # assume it's a folder
             self.pickleSourceFolder = sourceFileOrFolder
             self.pickleIsZipped = False
@@ -502,7 +505,7 @@ class PickledBible( Bible ):
                     print( _("Loading pickle version info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     self.pickleVersionData = loadVersionStuff( pickleInputFile )
-            else: logging.critical( _("PickledBible: unable to find {!r}").format( VERSION_FILENAME ) )
+            else: logging.critical( "PickledBible: "+_("Unable to find {!r}").format( VERSION_FILENAME ) )
 
         if debuggingThisModule: print( "pickleVersionData", self.pickleVersionData )
     # end of PickledBible.__init_
