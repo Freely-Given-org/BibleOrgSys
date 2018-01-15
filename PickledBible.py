@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-14' # by RJH
+LastModifiedDate = '2018-01-15' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -589,13 +589,13 @@ class PickledBible( Bible ):
             filepath = os.path.join( self.pickleSourceFolder, INFO_FILENAME )
             if os.path.exists( filepath ):
                 if BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( _("Loading Bible info from pickle file {}…").format( filepath ) )
+                    print( _("Loading PickledBible info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     loadedCount = _loadObjectAttributes( pickleInputFile, self )
             else: logging.critical( _("PickledBible: unable to find {!r}").format( INFO_FILENAME ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("  Loaded {} Bible attributes").format( loadedCount ) )
+            print( _("  Loaded {} PickledBible attributes").format( loadedCount ) )
 
         for BBB in self.pickleVersionData['bookList']:
             if BBB in self.triedLoadingBook:
@@ -639,7 +639,7 @@ class PickledBible( Bible ):
             with open( os.path.join( self.pickleSourceFolder, BOOK_FILENAME.format( BBB ) ), 'rb' ) as pickleInputFile:
                 loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("  Loaded {} {} attributes").format( loadedCount, BBB ) )
+            print( _("  Loaded {} {} PickledBible book attributes").format( loadedCount, BBB ) )
 
         self.bookNeedsReloading[BBB] = False
         return bookObject
