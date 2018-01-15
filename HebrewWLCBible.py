@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-08' # by RJH
+LastModifiedDate = '2018-01-15' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.13'
+ProgVersion = '0.14'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -50,7 +50,7 @@ DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = 'Resources/WLC' + ZIPPED_FILENAME_END
 
 DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
 DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.txt'
-DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlossesReversed.txt'
+DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGenericGlossesReversed.txt'
 
 ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
@@ -216,6 +216,58 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.removeVowelPointing
 
 
+    def _checkLoadedDict( self ):
+        """
+        """
+        #print( "_checkLoadedDict()" )
+        assert self.glossingDict
+
+        print( "Checking {} loaded Hebrew gloss entries for consistency…".format( self.loadedGlossEntryCount ) )
+        for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.copy().items(): # Use a copy because we can modify it
+            #print( repr(word), repr(genericGloss), genericReferencesList )
+            assert isinstance( word, str ) and word
+            assert isinstance( genericGloss, str ) and genericGloss
+            assert isinstance( genericReferencesList, list )
+            if ' ' in word or ORIGINAL_MORPHEME_BREAK_CHAR in word:
+                logging.critical( _("Removing invalid Hebrew (normalized) word: {!r}").format( word ) )
+                del self.glossingDict[word]
+                self.haveGlossingDictChanges = True
+                continue
+            if ' ' in genericGloss:
+                logging.critical( _("Removing {!r} word with invalid generic gloss: {!r}").format( word, genericGloss ) )
+                del self.glossingDict[word]
+                self.haveGlossingDictChanges = True
+                continue
+            if genericReferencesList:
+                for reference in genericReferencesList:
+                    assert isinstance( reference, tuple )
+                    assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
+                    for part in reference:
+                        assert isinstance( part, str ) # We don't use INTs for references
+                    assert genericReferencesList.count( reference ) == 1 # Don't allow multiples
+            else: # the genericReferencesList is empty!
+                logging.critical( _("Removing {!r} = {!r} entry with no references").format( word, genericGloss ) )
+                del self.glossingDict[word]
+                self.haveGlossingDictChanges = True
+                continue
+            #self.glossingDict[word] = (genericGloss,genericReferencesList,{})
+            #self.haveGlossingDictChanges = True; continue
+            for reference,specificGloss in specificReferencesDict.items():
+                assert isinstance( reference, tuple )
+                assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
+                for part in reference:
+                    assert isinstance( part, str ) # We don't use INTs for references
+                assert reference in genericReferencesList
+                assert isinstance( specificGloss, str ) and specificGloss
+                assert ' ' not in specificGloss
+                assert ORIGINAL_MORPHEME_BREAK_CHAR not in specificGloss
+                assert OUR_MORPHEME_BREAK_CHAR not in specificGloss
+                assert specificGloss != genericGloss # Just leave it blank if they're the same
+        print( "  "+_("Finished checking Hebrew glosses") )
+    # end of HebrewWLCBibleAddon._checkLoadedDict
+
+
+
     def loadGlossingDict( self, glossingDictFilepath=None ):
         """
         """
@@ -225,42 +277,23 @@ class HebrewWLCBibleAddon():
 
         # Read our glossing data from the pickle file
         if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            print( "Loading Hebrew glossing dictionary from '{}'…".format( self.glossingDictFilepath ) )
+            print( _("Loading Hebrew glossing dictionary from '{}'…").format( self.glossingDictFilepath ) )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
             self.glossingDict = pickle.load( pickleFile )
             # It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
             #   Hebrew keys have morphological breaks separated by =
-            #   2-tuple entries consist of a gloss,
-            #      (with gloss alternatives separated by /)
+            #   2-tuple entries consist of a generic gloss,
+            #      (with generic gloss alternatives separated by /)
             #   followed by a list of currently known/parsed references
             #print( "glossingDict:", self.glossingDict )
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            print( "  {} Hebrew gloss entries read.".format( self.loadedGlossEntryCount ) )
+            print( "  "+_("{} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
-            print( "Checking {} loaded Hebrew gloss entries for consistency…".format( self.loadedGlossEntryCount ) )
-            for word,(gloss,referencesList) in self.glossingDict.copy().items(): # Use a copy because we can modify it
-                #print( repr(word), repr(gloss), referencesList )
-                assert isinstance( word, str )
-                assert isinstance( gloss, str )
-                assert isinstance( referencesList, list )
-                if ' ' in word or '/' in word:
-                    logging.critical( "Removing invalid Hebrew (normalized) word: {!r}".format( word ) )
-                    del self.glossingDict[word]
-                    self.haveGlossingDictChanges = True
-                if ' ' in gloss:
-                    logging.critical( "Removing {!r} word with invalid gloss: {!r}".format( word, gloss ) )
-                    del self.glossingDict[word]
-                    self.haveGlossingDictChanges = True
-                for reference in referencesList:
-                    assert isinstance( reference, tuple )
-                    assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
-                    for part in reference:
-                        assert isinstance( part, str ) # We don't use INTs for references
-                    assert referencesList.count( reference ) == 1 # Don't allow multiples
-            print( "  Finished checking Hebrew glosses" )
+            self._checkLoadedDict()
+            if self.haveGlossingDictChanges: self.saveAnyChangedGlosses( exportAlso=True )
     # end of HebrewWLCBibleAddon.loadGlossingDict
 
 
@@ -306,29 +339,34 @@ class HebrewWLCBibleAddon():
                 for line in importFile:
                     lineCount += 1
                     if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                        logging.info( "Glossingizer: Detected UTF-16 Byte Order Marker in {}".format( glossingDictImportFilepath ) )
+                        logging.info( "importGlossingDictionary: Detected UTF-16 Byte Order Marker in {}".format( glossingDictImportFilepath ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     bits = line.split( '  ' )
                     #print( "bits", bits )
-                    if len(bits) == 3:
-                        referencesText, gloss, word = bits
-                        if not referencesText or not gloss or not word:
+                    if len(bits) == 4:
+                        referencesText, specificReferencesDictText, genericGloss, word = bits
+                        if not referencesText or not specificReferencesDictText or not genericGloss or not word:
                             print( "  Empty field error" )
-                        elif ' ' in gloss \
-                        or gloss.count(OUR_MORPHEME_BREAK_CHAR)!=word.count(OUR_MORPHEME_BREAK_CHAR):
-                            print( "  Bad gloss field error: {!r} for {!r}".format( gloss, word ) )
-                        referencesList = ast.literal_eval( referencesText )
-                        #print( "references", repr(referencesText), repr(referencesList) )
-                        assert isinstance( referencesList, list )
-                        newDict[word] = referencesList, gloss
+                        elif ' ' in genericGloss \
+                        or genericGloss.count(OUR_MORPHEME_BREAK_CHAR)!=word.count(OUR_MORPHEME_BREAK_CHAR):
+                            print( "  Bad generic gloss field error: {!r} for {!r}".format( genericGloss, word ) )
+                        genericReferencesList = ast.literal_eval( referencesText )
+                        #print( "references", repr(referencesText), repr(genericReferencesList) )
+                        assert isinstance( genericReferencesList, list )
+                        specificReferencesDict = ast.literal_eval( specificReferencesDictText )
+                        #print( "references", repr(referencesText), repr(genericReferencesList) )
+                        assert isinstance( specificReferencesDict, dict )
+                        newDict[word] = (genericGloss,genericReferencesList,specificReferencesDict)
                     else:
                         print( "  Ignored '{}' line at {} ({} bits)".format( line, lineCount, len(bits) ) )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loaded {} entries.".format( len(newDict) ) )
             if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
                 if len(newDict) != self.loadedGlossEntryCount: print( "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
                 self.glossingDict = newDict # Replace the dictionary with the upgraded one
+                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+                    self._checkLoadedDict()
     # end of HebrewWLCBibleAddon.importGlossingDictionary
 
 
@@ -343,82 +381,106 @@ class HebrewWLCBibleAddon():
         #print( "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Exporting glossing dictionary ({} entries) to '{}'…".format( len(self.glossingDict), glossingDictExportFilepath ) )
+            print( _("Exporting glossing dictionary ({} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
         with open( glossingDictExportFilepath, 'wt' ) as exportFile:
-            for word,(gloss,referencesList) in self.glossingDict.items():
+            for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.items():
                 if ' ' in word or '/' in word:
-                    logging.error( "Word {!r} has illegal characters".format( word ) )
-                if ' ' in gloss:
-                    logging.error( "Gloss {!r} for {!r} has illegal characters".format( gloss, word ) )
-                if word.count('=') != gloss.count('='):
-                    logging.error( "Gloss {!r} and word {!r} has different numbers of morphemes".format( gloss, word ) )
-                if not referencesList:
-                    logging.error( "Gloss {!r} for {!r} has no references".format( gloss, word ) )
-                exportFile.write( "{}  {}  {}\n".format( referencesList, gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+                    logging.error( _("Word {!r} has illegal characters").format( word ) )
+                if ' ' in genericGloss:
+                    logging.error( _("Generic gloss {!r} for {!r} has illegal characters").format( genericGloss, word ) )
+                if word.count('=') != genericGloss.count('='):
+                    logging.error( _("Generic gloss {!r} and word {!r} has different numbers of morphemes").format( genericGloss, word ) )
+                if not genericReferencesList:
+                    logging.error( _("Generic gloss {!r} for {!r} has no references").format( genericGloss, word ) )
+                exportFile.write( '{}  {}  {}  {}\n'.format( genericReferencesList, specificReferencesDict, genericGloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
 
         if self.glossingDict:
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Exporting reverse glossing dictionary ({} entries) to '{}'…".format( len(self.glossingDict), DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
-            BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
+                print( _("Exporting reverse glossing dictionary ({} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+            BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
             doneGlosses = []
-            with open( DEFAULT_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
-                for word,(gloss,referencesList) in self.glossingDict.items():
-                    if gloss in doneGlosses:
-                        logging.warning( "Gloss {!r} has already appeared: currently for word {!r}".format( gloss, word ) )
-                    exportFile.write( "{}  {}\n".format( gloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
-                    doneGlosses.append( gloss )
+            with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
+                for word,(genericGloss,genericReferencesList,specificReferencesDict) in sorted( self.glossingDict.items(), key=lambda theTuple: theTuple[1][0].lower() ):
+                    if genericGloss in doneGlosses:
+                        logging.warning( _("Generic gloss {!r} has already appeared: currently for word {!r}").format( genericGloss, word ) )
+                    exportFile.write( '{}  {}\n'.format( genericGloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+                    doneGlosses.append( genericGloss )
     # end of HebrewWLCBibleAddon.exportGlossingDictionary
 
 
-    def setNewGloss( self, normalizedHebrewWord, gloss, ref ):
+    def setNewGenericGloss( self, normalizedHebrewWord, genericGloss, ref ):
         """
         Check a new gloss and add it to the glossing dictionary.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "setNewGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, gloss, ref ) )
-        assert isinstance( normalizedHebrewWord, str )
+            print( "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
+        assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
-        assert '/' not in normalizedHebrewWord # Should already be converted to =
+        assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
         assert normalizedHebrewWord not in self.glossingDict
-        assert isinstance( gloss, str )
-        assert ' ' not in gloss
+        assert isinstance( genericGloss, str ) and genericGloss
+        assert ' ' not in genericGloss
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
 
-        self.glossingDict[normalizedHebrewWord] = (gloss,[ref])
+        self.glossingDict[normalizedHebrewWord] = (genericGloss,[ref],{})
         self.haveGlossingDictChanges = True
-    # end of HebrewWLCBibleAddon.setNewGloss
+    # end of HebrewWLCBibleAddon.setNewGenericGloss
 
 
-    def addNewGlossingReference( self, normalizedHebrewWord, ref ):
+    def setNewSpecificGloss( self, normalizedHebrewWord, specificGloss, ref ):
         """
-        Check a new ref to the glossing dictionary if it's not already there.
+        Check a new gloss and add it to the glossing dictionary.
+
+        There must already be an entry for this Hebrew word (with a generic gloss).
         """
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "addNewGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+            print( "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
+        assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
+        assert ' ' not in normalizedHebrewWord
+        assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
+        genericGloss,genericReferencesList,specificReferencesDict = self.glossingDict[normalizedHebrewWord]
+        assert isinstance( genericGloss, str ) and genericGloss
+        assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
+        assert ref in genericReferencesList
+        assert ref not in specificReferencesDict
+        assert isinstance( specificGloss, str )
+        assert ' ' not in specificGloss
+        specificReferencesDict[ref] = specificGloss
+        self.glossingDict[normalizedHebrewWord] = (genericGloss,genericReferencesList,specificReferencesDict)
+        self.haveGlossingDictChanges = True
+    # end of HebrewWLCBibleAddon.setNewSpecificGloss
+
+
+    def addNewGenericGlossingReference( self, normalizedHebrewWord, ref ):
+        """
+        Add a new ref to the glossing dictionary if it's not already there.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
         assert normalizedHebrewWord in self.glossingDict
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
 
-        (gloss,referencesList) = self.glossingDict[normalizedHebrewWord]
-        assert ref not in referencesList
-        if ref not in referencesList:
-            referencesList.append( ref )
-            self.glossingDict[normalizedHebrewWord] = (gloss,referencesList)
+        (genericGloss,genericReferencesList) = self.glossingDict[normalizedHebrewWord]
+        assert ref not in genericReferencesList
+        if ref not in genericReferencesList:
+            genericReferencesList.append( ref )
+            self.glossingDict[normalizedHebrewWord] = (genericGloss,genericReferencesList)
             self.haveGlossingDictChanges = True
-    # end of HebrewWLCBibleAddon.addNewGlossingReference
+    # end of HebrewWLCBibleAddon.addNewGenericGlossingReference
 
 
-    def updateGlossingReferences( self ):
+    def updateGenericGlossingReferences( self ):
         """
         Go through the entire WLC and check for words that we already have a gloss for
             and update the reference fields.
         """
         from VerseReferences import SimpleVerseKey
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Updating references for WLC glosses…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Updating references for WLC generic glosses…") )
 
         self.loadBooks()
         #self.loadBook( 'GEN' )
@@ -453,17 +515,17 @@ class HebrewWLCBibleAddon():
                             normalizedHebrewWord =  self.removeCantillationMarks( word, removeMetegOrSiluq=True ) \
                                         .replace( ORIGINAL_MORPHEME_BREAK_CHAR, OUR_MORPHEME_BREAK_CHAR )
                             #print( '  ', len(word), repr(word), len(normalizedHebrewWord), repr(normalizedHebrewWord) )
-                            gloss,referencesList = self.glossingDict[normalizedHebrewWord] \
-                                                    if normalizedHebrewWord in self.glossingDict else ('',[])
-                            #if gloss: print( fullRefTuple, repr(gloss) )
-                            if gloss and gloss not in '־׃ספ-' and fullRefTuple not in referencesList:
+                            genericGloss,genericReferencesList,specificReferencesDict = self.glossingDict[normalizedHebrewWord] \
+                                                    if normalizedHebrewWord in self.glossingDict else ('',[],{})
+                            #if genericGloss: print( fullRefTuple, repr(genericGloss) )
+                            if genericGloss and genericGloss not in '־׃ספ-' and fullRefTuple not in genericReferencesList:
                                 #print( "  Adding {}".format( fullRefTuple ) )
-                                self.addNewGlossingReference( normalizedHebrewWord, fullRefTuple )
+                                self.addNewGenericGlossingReference( normalizedHebrewWord, fullRefTuple )
                                 numRefsAdded += 1
                 V = V + 1
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "  {} new references added ({} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
-    # end of HebrewWLCBibleAddon.updateGlossingReferences
+    # end of HebrewWLCBibleAddon.updateGenericGlossingReferences
 # end of HebrewWLCBibleAddon class
 
 
@@ -636,7 +698,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE/ Adding new references to glossing dict…" )
         wlc = OSISHebrewWLCBible()
         wlc.loadGlossingDict()
-        wlc.updateGlossingReferences()
+        wlc.updateGenericGlossingReferences()
         wlc.saveAnyChangedGlosses( exportAlso = True )
 
     if 1: # Test some of the glossing functions
@@ -652,7 +714,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nG/ Adding new references to glossing dict…" )
         wlc = PickledHebrewWLCBible()
         wlc.loadGlossingDict()
-        wlc.updateGlossingReferences()
+        wlc.updateGenericGlossingReferences()
         wlc.saveAnyChangedGlosses( exportAlso = True )
 # end of demo
 

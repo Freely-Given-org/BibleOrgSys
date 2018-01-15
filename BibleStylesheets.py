@@ -5,7 +5,7 @@
 #
 # Module handling Bible (including Paratext) stylesheets
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-24' # by RJH
+LastModifiedDate = '2018-01-15' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -234,14 +234,16 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
 
 # Hebrew interlinear fields
-    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE ), },
+    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 1 ), },
     'HebStrong': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
     'HebMorph': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'HebGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
+    'HebGenericGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE - 1 ), },
+    'HebSpecificGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 1 ), },
+    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE + 1 ), 'background':'yellow', },
     'HebStrongSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
     'HebMorphSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
-    'HebGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
+    'HebGenericGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE - 1 ), 'background':'yellow', },
+    'HebSpecificGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 1 ), 'background':'yellow', },
     }
 
 
