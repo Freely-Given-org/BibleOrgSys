@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -82,10 +82,10 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2018-01-17' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1860,11 +1860,14 @@ class BibleAnchorReference:
     def matchesAnchorString( self, anchorString, location=None ):
         """
         Compares the given footnote or cross-reference anchor string, and sees if it matches where we are in the text.
-            Returns True or False.
+
+        Returns True or False.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
-        assert anchorString
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+            assert anchorString
+        elif not anchorString: return False
 
         adjAnchorString = anchorString.strip()
         if adjAnchorString[-2:]==' a': adjAnchorString = adjAnchorString[:-2] # Remove any trailing subnote letter
