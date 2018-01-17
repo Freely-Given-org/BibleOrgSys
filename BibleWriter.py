@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-13' # by RJH
+LastModifiedDate = '2018-01-17' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -652,7 +652,7 @@ class BibleWriter( InternalBible ):
         includeEmptyVersesFlag = True
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = 'OutputFiles/BOS_USFM2_' + ('Reexport/' if self.objectTypeString=='USFM2' else 'Export/')
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_USFM2_' + ('Reexport/' if self.objectTypeStringin ('USFM2','PTX7') else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -9485,7 +9485,7 @@ class BibleWriter( InternalBible ):
         listOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Lists/' )
         BCVOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BCV_Export/' )
         pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, 'BOS_PseudoUSFM_Export/' )
-        USFM2OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USFM2_' + ('Reexport/' if self.objectTypeString=='USFM2' else 'Export/' ) )
+        USFM2OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USFM2_' + ('Reexport/' if self.objectTypeString in ('USFM2','PTX7') else 'Export/' ) )
         USFM3OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USFM3_' + ('Reexport/' if self.objectTypeString=='USFM3' else 'Export/' ) )
         ESFMOutputFolder = os.path.join( givenOutputFolderName, 'BOS_ESFM_' + ('Reexport/' if self.objectTypeString=='ESFM' else 'Export/' ) )
         textOutputFolder = os.path.join( givenOutputFolderName, 'BOS_PlainText_' + ('Reexport/' if self.objectTypeString=='Text' else 'Export/' ) )
