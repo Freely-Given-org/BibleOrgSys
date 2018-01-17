@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-01-17' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -1417,8 +1417,8 @@ class InternalBible:
 
         Returns a dictionary of result flags.
         """
-        if 1 or BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "InternalBibleV{}.doExtensiveChecks: ".format(ProgVersion) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "InternalBible-V{}.doExtensiveChecks: ".format(ProgVersion) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = 'OutputFiles/CheckResultFiles/'
