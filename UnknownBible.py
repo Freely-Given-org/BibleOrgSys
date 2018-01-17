@@ -38,7 +38,7 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-06' # by RJH
+LastModifiedDate = '2018-01-17' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
 ProgVersion = '0.32'
@@ -384,7 +384,7 @@ class UnknownBible:
         # end of recheckStrict
 
 
-        # Main code
+        # Main code for UnknownBible.search()
         # We first do a normal (non-strict) check (unless strict was requested by the caller)
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
@@ -659,122 +659,142 @@ class UnknownBible:
                 haveSingle = False
                 for entry in typesFound:
                     if entry.endswith( ':1' ): haveSingle = True; break
-                if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0: print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+                if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+
+        #if 1 or debuggingThisModule:
+            #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+                #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, OnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
+            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM={}' \
+                #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
+            #print( '  CSV={} F4SS={} VPL={}' \
+                #.format( CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
+            #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+                #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
+        #if 0 and debuggingThisModule:
+            #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+                #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, OnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
+            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM={}' \
+                #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
+            #print( '  CSV={} F4SS={} VPL={}' \
+                #.format( CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
+            #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+                #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
 
         if autoLoadAlways or totalBibleCount == 1:
             # Put the binary formats first here because they can be detected more reliably
             if PickledBibleCount == 1:
-                self.foundType = "pickled Bible"
+                self.foundType = 'pickled Bible'
                 if autoLoad: return PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif theWordBibleCount == 1:
-                self.foundType = "theWord Bible"
+                self.foundType = 'theWord Bible'
                 if autoLoad: return theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif MySwordBibleCount == 1:
-                self.foundType = "MySword Bible"
+                self.foundType = 'MySword Bible'
                 if autoLoad: return MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif ESwordBibleCount == 1:
-                self.foundType = "e-Sword Bible"
+                self.foundType = 'e-Sword Bible'
                 if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif ESwordCommentaryCount == 1:
-                self.foundType = "e-Sword Commentary"
+                self.foundType = 'e-Sword Commentary'
                 if autoLoad: return ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif MyBibleBibleCount == 1:
-                self.foundType = "MyBible Bible"
+                self.foundType = 'MyBible Bible'
                 if autoLoad: return MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif PDBBibleCount == 1:
-                self.foundType = "PalmDB Bible"
+                self.foundType = 'PalmDB Bible'
                 if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif OnlineBibleCount == 1:
-                self.foundType = "Online Bible"
+                self.foundType = 'Online Bible'
                 if autoLoad: return OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif EasyWorshipBibleCount == 1:
-                self.foundType = "EasyWorship Bible"
+                self.foundType = 'EasyWorship Bible'
                 if autoLoad: return EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif SwordBibleCount == 1:
-                self.foundType = "Sword Bible"
+                self.foundType = 'Sword Bible'
                 if autoLoad: return SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             # And now plain text formats
             elif UnboundBibleCount == 1:
-                self.foundType = "Unbound Bible"
+                self.foundType = 'Unbound Bible'
                 if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif DrupalBibleCount == 1:
-                self.foundType = "Drupal Bible"
+                self.foundType = 'Drupal Bible'
                 if autoLoad: return DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif YETBibleCount == 1:
-                self.foundType = "YET Bible"
+                self.foundType = 'YET Bible'
                 if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif ESFMBibleCount == 1: # Must be ahead of USFM
-                self.foundType = "ESFM Bible"
+                self.foundType = 'ESFM Bible'
                 if autoLoad: return ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif PTX8BibleCount == 1: # Must be ahead of USFM
-                self.foundType = "PTX8 Bible"
+                self.foundType = 'PTX8 Bible'
                 if autoLoad: return PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif PTX7BibleCount == 1: # Must be ahead of USFM
-                self.foundType = "PTX7 Bible"
+                self.foundType = 'PTX7 Bible'
                 if autoLoad: return PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFMBibleCount == 1:
-                self.foundType = "USFM Bible"
+                self.foundType = 'USFM Bible'
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif DBLBibleCount == 1: # Must be ahead of USX
-                self.foundType = "DBL Bible"
+                self.foundType = 'DBL Bible'
                 if autoLoad: return DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif CSVBibleCount == 1:
-                self.foundType = "CSV Bible"
+                self.foundType = 'CSV Bible'
                 if autoLoad: return CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif F4SSBibleCount == 1:
-                self.foundType = "Forge Bible"
+                self.foundType = 'Forge Bible'
                 if autoLoad: return ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif VPLBibleCount == 1:
-                self.foundType = "VPL Bible"
+                self.foundType = 'VPL Bible'
                 if autoLoad: return VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             # And now XML text formats
             elif USXBibleCount == 1:
-                self.foundType = "USX XML Bible"
+                self.foundType = 'USX XML Bible'
                 if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFXBibleCount == 1:
-                self.foundType = "USFX XML Bible"
+                self.foundType = 'USFX XML Bible'
                 if autoLoad: return USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif OSISBibleCount == 1:
-                self.foundType = "OSIS XML Bible"
+                self.foundType = 'OSIS XML Bible'
                 if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif OpenSongBibleCount == 1:
-                self.foundType = "OpenSong XML Bible"
+                self.foundType = 'OpenSong XML Bible'
                 if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif ZefaniaBibleCount == 1:
-                self.foundType = "Zefania XML Bible"
+                self.foundType = 'Zefania XML Bible'
                 if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif HaggaiBibleCount == 1:
-                self.foundType = "Haggai XML Bible"
+                self.foundType = 'Haggai XML Bible'
                 if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif VerseViewBibleCount == 1:
-                self.foundType = "VerseView XML Bible"
+                self.foundType = 'VerseView XML Bible'
                 if autoLoad: return VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
         return self.foundType
@@ -790,6 +810,48 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
+    if 0: # Just test one folder
+        testFolder = 'Put your folder here'
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result1 = uB.search( autoLoad=False )
+        result2 = uB.search( autoLoadBooks=True ) if result1 else None
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  A1 result1 is: {}".format( result1 ) )
+            print( "  A1 result2 is: {}".format( result2 ) )
+        if result1 == 'Many types found':
+            uB = UnknownBible( testFolder )
+            result3 = uB.search( autoLoadAlways=False )
+            result4 = uB.search( autoLoadAlways=True ) if result3 else None
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "  A1 result3 is: {}".format( result3 ) )
+                print( "  A1 result4 is: {}".format( result4 ) )
+
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result1 = uB.search( strictCheck=True, autoLoad=False )
+        result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  A2 result1 is: {}".format( result1 ) )
+            print( "  A2 result2 is: {}".format( result2 ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+        if result1 == 'Many types found':
+            uB = UnknownBible( testFolder )
+            result3 = uB.search( strictCheck=True, autoLoadAlways=False )
+            result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "  A2 result3 is: {}".format( result3 ) )
+                print( "  A2 result4 is: {}".format( result4 ) )
+            if result3 == 'Many types found':
+                uB = UnknownBible( testFolder )
+                result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
+                result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( "  A2 result5 is: {}".format( result5 ) )
+                    print( "  A2 result6 is: {}".format( result6 ) )
+
+
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
                     '../../../../../Data/Work/Bibles/Biola Unbound modules/',
                     '../../../../../Data/Work/Bibles/EasyWorship Bibles/',
@@ -826,7 +888,7 @@ def demo():
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
@@ -835,7 +897,7 @@ def demo():
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -843,7 +905,7 @@ def demo():
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -851,7 +913,7 @@ def demo():
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -859,7 +921,7 @@ def demo():
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible E{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible F{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
@@ -867,7 +929,7 @@ def demo():
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible F{}/ Processing {}…".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible G{}/ Processing {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
