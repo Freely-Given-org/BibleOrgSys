@@ -35,7 +35,7 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.61'
@@ -102,9 +102,11 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if autoLoad is true and exactly one ESFM Bible is found,
         returns the loaded ESFMBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
-    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False)
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        assert givenFolderName and isinstance( givenFolderName, str )
+        assert autoLoad in (True,False,) and autoLoadBooks in (True,False)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -112,6 +114,11 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("ESFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        return False
+
+    # Check that there's a USFM Bible here first
+    from USFMBible import USFMBibleFileCheck
+    if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
         return False
 
     # Find all the files and folders in this folder
@@ -158,7 +165,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if filenameTuples:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got ESFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
         numFound += 1
     if numFound:
@@ -218,7 +225,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if filenameTuples:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got ESFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
             foundProjects.append( tryFolderName )
             numFound += 1
@@ -242,6 +249,9 @@ class ESFMBible( Bible ):
         """
         Create the internal ESFM Bible object.
         """
+        if debuggingThisModule:
+            print( "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'ESFM Bible object'
@@ -258,7 +268,7 @@ class ESFMBible( Bible ):
     def preload( self ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
