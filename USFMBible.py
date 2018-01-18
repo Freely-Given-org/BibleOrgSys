@@ -111,11 +111,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( exp("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
-        if debuggingThisModule: print ("  returningA1", False )
+        if debuggingThisModule: print ("  USFM returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( exp("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
-        if debuggingThisModule: print ("  returningA2", False )
+        if debuggingThisModule: print ("  USFM returningA2", False )
         return False
 
     # Find all the files and folders in this folder
@@ -150,13 +150,13 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
     if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
         print( "  Found {} USFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
             if not discountSSF:
                 # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
@@ -167,9 +167,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  returningB1", uB )
+            if debuggingThisModule: print ("  USFM returningB1", uB )
             return uB
-        if debuggingThisModule: print ("  returningB2", numFound )
+        if debuggingThisModule: print ("  USFM returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -209,7 +209,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
             print( "  Found {} USFM files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
@@ -217,7 +217,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if filenameTuples:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
                 if not discountSSF:
                     # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
@@ -229,11 +229,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  returningC1", uB )
+            if debuggingThisModule: print ("  USFM returningC1", uB )
             return uB
-        if debuggingThisModule: print ("  returningC2", numFound )
+        if debuggingThisModule: print ("  USFM returningC2", numFound )
         return numFound
-    if debuggingThisModule: print ("  returningN", None )
+    if debuggingThisModule: print ("  USFM returningN", None )
 # end of USFMBibleFileCheck
 
 
