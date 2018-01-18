@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-17' # by RJH
+LastModifiedDate = '2018-01-19' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -9615,7 +9615,7 @@ class BibleWriter( InternalBible ):
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
                         #= results
             # With safety timeout -- more complex
-            timeoutSeconds = 1200 # 20 minutes
+            timeoutSeconds = max( 100, 20*len(self.books) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
             asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
             #print( "async results1 are", asyncResultObject )
