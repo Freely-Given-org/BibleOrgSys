@@ -5,7 +5,7 @@
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -86,7 +86,7 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
 ProgVersion = '0.28'
@@ -162,7 +162,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -205,7 +205,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename

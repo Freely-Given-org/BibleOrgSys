@@ -5,7 +5,7 @@
 #
 # Module handling YET Bible files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "YETBible"
 ProgName = "YET Bible format handler"
 ProgVersion = '0.10'
@@ -130,7 +130,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -167,7 +167,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename

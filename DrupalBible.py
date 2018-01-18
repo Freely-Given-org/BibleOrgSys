@@ -5,7 +5,7 @@
 #
 # Module handling DrupalBible Bible files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -74,7 +74,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "DrupalBible"
 ProgName = "DrupalBible Bible format handler"
 ProgVersion = '0.13'
@@ -142,7 +142,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -180,7 +180,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 #print( "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )

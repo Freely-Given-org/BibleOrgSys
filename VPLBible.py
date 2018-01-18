@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2017 Robert Hunt
+# Copyright (C) 2014-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.37'
@@ -186,7 +186,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     if BibleOrgSysGlobals.debugFlag:
                         print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                 else:
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -249,7 +249,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                     else:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -338,7 +338,7 @@ class VPLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
                     else:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBible.load: (unexpected) first line was {!r} in {}".format( line, self.sourceFilepath ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "VPLBible.load: (unexpected) first line was {!r} in {}".format( line, self.sourceFilepath ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                     #print( 'vplType', vplType )

@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2017 Robert Hunt
+# Copyright (C) 2014-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
 ProgVersion = '0.32'
@@ -115,7 +115,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,'):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -158,7 +158,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )

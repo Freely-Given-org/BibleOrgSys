@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012-2017 Robert Hunt
+# Copyright (C) 2012-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = '0.54'
@@ -239,7 +239,7 @@ class USXFilenames:
                     if not firstLines or len(firstLines)<3: continue
                     if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                     and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                         continue # so it doesn't get added
                 resultList.append( (BBB, possibleFilename,) )
@@ -272,7 +272,7 @@ class USXFilenames:
                             if not firstLines or len(firstLines)<3: continue
                             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 3: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )

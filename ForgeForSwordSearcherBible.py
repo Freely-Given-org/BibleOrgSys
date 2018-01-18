@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.37'
@@ -154,7 +154,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
                     if BibleOrgSysGlobals.debugFlag:
                         print( "ForgeForSwordSearcherBibleFileCheck First line got {!r} match from {!r}".format( match.group(0), firstLine ) )
                 else:
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -205,7 +205,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck=True, auto
                         if BibleOrgSysGlobals.debugFlag:
                             print( "ForgeForSwordSearcherBibleFileCheck First line got type {!r} match from {!r}".format( match.group(0), firstLine ) )
                     else:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -283,7 +283,7 @@ class ForgeForSwordSearcherBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type {!r} match from {!r}".format( match.group(0), line ) )
                     else:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ForgeForSwordSearcherBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "ForgeForSwordSearcherBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
 

@@ -5,7 +5,7 @@
 #
 # Module handling VerseView XML Bibles
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -59,7 +59,7 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "VerseViewBible"
 ProgName = "VerseView XML Bible format handler"
 ProgVersion = '0.17'
@@ -137,7 +137,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
             if not firstLines or len(firstLines)<3: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "VVB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if '<bible>' not in firstLines[1]: continue
             if '<fname>' not in firstLines[2]: continue
@@ -180,7 +180,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
                 if not firstLines or len(firstLines)<3: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "VVB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "VVB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if '<bible>' not in firstLines[1]: continue
                 if '<fname>' not in firstLines[2]: continue
