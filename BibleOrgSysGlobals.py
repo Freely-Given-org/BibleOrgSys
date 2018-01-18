@@ -77,7 +77,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-14' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.75'
@@ -96,6 +96,7 @@ from argparse import ArgumentParser
 # Global variables
 #=================
 
+DOWNLOADED_RESOURCES_FOLDER = '../BibleOrgSys/DownloadedResources/'
 # TODO: Should be https as soon as supported by the site
 DISTRIBUTABLE_RESOURCES_URL = 'http://Freely-Given.org/Software/BibleOrganisationalSystem/DistributableResources/'
 
