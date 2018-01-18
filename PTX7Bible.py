@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 7) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,7 +31,7 @@ On typical Windows installations, Paratext 7 projects are in folders inside
     'C:\My Paratext Projects' and contain the project settings information
     in a .SSF (XML) file in the above folder (not in the project folder).
 
-The Paratext 7 Bible (PTX7Bible) object contains USFMBibleBooks.
+The Paratext 7 Bible (PTX7Bible) object contains USFM 2 BibleBooks.
 
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.29'
@@ -100,9 +100,9 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if autoLoad is true and exactly one Paratext Bible bundle is found,
         returns the loaded PTX7Bible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2:
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( "PTX7BibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert strictCheck in (True,False,)
         assert autoLoad in (True,False,)
@@ -118,7 +118,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     # Check that there's a USFM Bible here first
     from USFMBible import USFMBibleFileCheck
-    if not USFMBibleFileCheck( givenFolderName, strictCheck ): # no autoloads
+    if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
         return False
 
     # Find all the files and folders in this folder
@@ -521,7 +521,7 @@ class PTX7Bible( Bible ):
     """
     Class to load and manipulate Paratext Bible bundles.
 
-    The PTX7Bible object contains USFMBibleBooks.
+    The PTX7Bible object contains USFM 2 BibleBooks.
         (i.e., there's not PTX7BibleBook object types.)
     """
     def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
@@ -564,7 +564,7 @@ class PTX7Bible( Bible ):
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
             assert self.sourceFolder
 

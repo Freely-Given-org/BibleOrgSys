@@ -31,7 +31,7 @@ On typical Windows installations, Paratext 8 projects are in folders inside
     'C:\My Paratext 8 Projects' and contain the project settings information
     in a Settings.xml file inside that project folder.
 
-The Paratext 8 Bible (PTX8Bible) object contains USFMBibleBooks.
+The Paratext 8 Bible (PTX8Bible) object contains USFM 2 or 3 BibleBooks.
 
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-03' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.24'
@@ -130,9 +130,9 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if autoLoad is true and exactly one Paratext Bible bundle is found,
         returns the loaded PTX8Bible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2:
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( "PTX8BibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert strictCheck in (True,False,)
         assert autoLoad in (True,False,)
@@ -148,7 +148,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     # Check that there's a USFM Bible here first
     from USFMBible import USFMBibleFileCheck
-    if not USFMBibleFileCheck( givenFolderName, strictCheck ): # no autoloads
+    if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=True ): # no autoloads
         return False
 
     # Find all the files and folders in this folder
@@ -492,7 +492,7 @@ class PTX8Bible( Bible ):
     """
     Class to load and manipulate Paratext Bible bundles.
 
-    The PTX8Bible object contains USFMBibleBooks.
+    The PTX8Bible object contains USFM 2 or 3 BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
     def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
@@ -538,7 +538,7 @@ class PTX8Bible( Bible ):
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( exp("preload() from {}").format( self.sourceFolder ) )
             assert self.sourceFolder
 

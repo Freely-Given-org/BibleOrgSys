@@ -24,11 +24,14 @@
 
 """
 Module for defining and manipulating complete or partial USFM Bibles.
+
+NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
+    Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-03' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -85,7 +88,7 @@ def exp( messageString ):
 ## end of removeUnwantedTupleExtensions
 
 
-def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False, discountSSF=True ):
     """
     Given a folder, search for USFM Bible files or folders in the folder and in the next level down.
 
@@ -96,17 +99,23 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     if autoLoad is true and exactly one USFM Bible is found,
         returns the loaded USFMBible object.
+
+    if discountSSF is set, finding a SSF file prevents a True result.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
-    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "USFMBibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        assert givenFolderName and isinstance( givenFolderName, str )
+        assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( exp("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        if debuggingThisModule: print ("  returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( exp("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        if debuggingThisModule: print ("  returningA2", False )
         return False
 
     # Find all the files and folders in this folder
@@ -149,14 +158,18 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if SSFs:
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
-        numFound += 1
+            if not discountSSF:
+                # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
+                numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
+            if debuggingThisModule: print ("  returningB1", uB )
             return uB
+        if debuggingThisModule: print ("  returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -206,16 +219,21 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if SSFs:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
-            foundProjects.append( tryFolderName )
-            numFound += 1
+                if not discountSSF:
+                    # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
+                    foundProjects.append( tryFolderName )
+                    numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
-            if autoLoad or autoLoadBooks: uB.preload() # Load the SSF file
+            if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
+            if debuggingThisModule: print ("  returningC1", uB )
             return uB
+        if debuggingThisModule: print ("  returningC2", numFound )
         return numFound
+    if debuggingThisModule: print ("  returningN", None )
 # end of USFMBibleFileCheck
 
 
@@ -227,7 +245,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
         (We add default options for any missing ones as well as updating the 'findHistoryList'.)
     Then go through and replace.
 
-    "self" in this case is either a USFMBible or a PTXBible object.
+    "self" in this case is either a USFMBible or a PTX 7 or 8 Bible object.
 
     The confirmCallback function must be a function that takes
         6 parameters: ref, contextBefore, ourFindText, contextAfter, willBeText, haveUndosFlag
@@ -482,6 +500,9 @@ class USFMBible( Bible ):
 
         Note that sourceFolder can be None if we don't know that yet.
         """
+        if debuggingThisModule:
+            print( "USFMBible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'USFM2 Bible object'
@@ -489,14 +510,11 @@ class USFMBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
-
-        self.ssfFilepath = None
     # end of USFMBible.__init_
 
 
     def preload( self ):
         """
-        Loads the SSF file if it can be found.
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
@@ -529,29 +547,21 @@ class USFMBible( Bible ):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
-        if self.ssfFilepath is None: # it might have been loaded first
-            # Attempt to load the SSF file
-            #self.suppliedMetadata, self.settingsDict = {}, {}
-            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            #print( "ssfFilepathList", ssfFilepathList )
-            if len(ssfFilepathList) > 1:
-                logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
-            if len(ssfFilepathList) >= 1: # Seems we found the right one
-                from PTX7Bible import loadPTX7ProjectData
-                PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
-                if PTXSettingsDict:
-                    if self.suppliedMetadata is None: self.suppliedMetadata = {}
-                    if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
-                    self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
-                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
-
-        #self.name = self.givenName
-        #if self.name is None:
-            #for field in ('FullName','Name',):
-                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        #if not self.name: self.name = os.path.basename( self.sourceFolder )
-        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        #if not self.name: self.name = "USFM Bible"
+        #if self.ssfFilepath is None: # it might have been loaded first
+            ## Attempt to load the SSF file
+            ##self.suppliedMetadata, self.settingsDict = {}, {}
+            #ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+            ##print( "ssfFilepathList", ssfFilepathList )
+            #if len(ssfFilepathList) > 1:
+                #logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+            #if len(ssfFilepathList) >= 1: # Seems we found the right one
+                #from PTX7Bible import loadPTX7ProjectData
+                #PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
+                #if PTXSettingsDict:
+                    #if self.suppliedMetadata is None: self.suppliedMetadata = {}
+                    #if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+                    #self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
+                    #self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
         # Find the filenames of all our books
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
