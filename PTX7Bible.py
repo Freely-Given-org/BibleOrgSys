@@ -111,14 +111,17 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("PTX7BibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        if debuggingThisModule: print ("  PTX7 returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("PTX7BibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        if debuggingThisModule: print ("  PTX7 returningA2", False )
         return False
 
     # Check that there's a USFM Bible here first
     from USFMBible import USFMBibleFileCheck
     if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
+        if debuggingThisModule: print ("  PTX7 returningA3", False )
         return False
 
     # Find all the files and folders in this folder
@@ -142,7 +145,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         for extension in EXCLUDE_FILE_EXTENSIONS:
             if filenameUpper.endswith( extension ): numFilesFound -= 2; break
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+        print( "PTX7 numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
     #for folderName in foundFolders:
         #if folderName.upper().startswith('USX_'): numFoldersFound += 1
     if numFilesFound >= MARKER_THRESHOLD: numFound += 1
@@ -164,7 +167,9 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
+            if debuggingThisModule: print ("  PTX7 returningB1", dB )
             return dB
+        if debuggingThisModule: print ("  PTX7 returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -184,7 +189,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
         # See if the compulsory files are here in this given folder
         numFilesFound = numFoldersFound = 0
-        for filename in foundFiles:
+        for filename in foundSubfiles:
             filenameUpper = filename.upper()
             if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
             elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
@@ -193,7 +198,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             for extension in EXCLUDE_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound -= 2; break
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+            print( "PTX7 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
             #if folderName.upper().startswith('USX_'): numFoldersFound += 1
         if numFilesFound >= MARKER_THRESHOLD:
@@ -218,8 +223,11 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
+            if debuggingThisModule: print ("  PTX7 returningC1", dB )
             return dB
+        if debuggingThisModule: print ("  PTX7 returningC2", numFound )
         return numFound
+    if debuggingThisModule: print ("  PTX7 returningN", None )
 # end of PTX7BibleFileCheck
 
 

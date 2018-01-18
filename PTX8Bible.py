@@ -172,7 +172,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         for extension in EXCLUDE_FILE_EXTENSIONS:
             if filenameUpper.endswith( extension ): numFilesFound -= 2; break
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+        print( "PTX8 numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
     #for folderName in foundFolders:
         #if folderName.upper().startswith('USX_'): numFoldersFound += 1
     if numFilesFound >= MARKER_THRESHOLD: numFound += 1
@@ -214,7 +214,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
         # See if the compulsory files are here in this given folder
         numFilesFound = numFoldersFound = 0
-        for filename in foundFiles:
+        for filename in foundSubfiles:
             filenameUpper = filename.upper()
             if filenameUpper in MARKER_FILENAMES: numFilesFound += 1
             elif filenameUpper in EXCLUDE_FILENAMES: numFilesFound -= 2
@@ -223,7 +223,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             for extension in EXCLUDE_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound -= 2; break
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+            print( "PTX8 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
             #if folderName.upper().startswith('USX_'): numFoldersFound += 1
         if numFilesFound >= MARKER_THRESHOLD:
