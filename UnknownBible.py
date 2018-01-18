@@ -137,6 +137,9 @@ class UnknownBible:
         or
             a loaded Bible
         """
+        if debuggingThisModule:
+            print( "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
+
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
 
@@ -144,10 +147,12 @@ class UnknownBible:
             """
             If we didn't check with the strict flag the first time,
                 try it again with the strict mode set.
+            OR maybe vice versa!
 
             Returns the three counters.
             """
-            if BibleOrgSysGlobals.debugFlag: print( "UnknownBible.recheckStrict( {} )".format( folderName ) )
+            if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                print( "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
@@ -608,7 +613,7 @@ class UnknownBible:
                 totalBibleTypes += 1
                 typesFound.append( 'VPL:' + str(VPLBibleCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
-        else:
+        else: # we weren't given a folder to look in
             theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
             MyBibleBibleCount = PDBBibleCount = OnlineBibleCount = EasyWorshipBibleCount = 0
             SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
@@ -623,6 +628,7 @@ class UnknownBible:
             self.foundType = 'None found'
             if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
                 # We did a strict check the first time, but strict checking wasn't specified on the command line
+                #   so let's try again without the strict check
                 if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                     print( "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
@@ -811,7 +817,7 @@ def demo():
 
     # Now demo the class
     if 0: # Just test one folder
-        testFolder = 'Put your folder here'
+        testFolder = 'Put your folder here/'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
