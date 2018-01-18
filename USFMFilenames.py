@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2018-01-18' # by RJH
 ShortProgName = "USFMFilenames"
 ProgName = "USFM Bible filenames handler"
 ProgVersion = '0.68'
@@ -255,7 +255,7 @@ class USFMFilenames:
         if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
         if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
         if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
-        if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: {}").format( self.fileList )
+        if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: ({}) {}").format( len(self.fileList), self.fileList )
         return result
     # end of __str___
 
