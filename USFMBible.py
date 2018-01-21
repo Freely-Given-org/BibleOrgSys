@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-01-21' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.75'
@@ -161,6 +161,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if not discountSSF:
                 # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
                 numFound += 1
+        else: numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -223,6 +224,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                     # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
                     foundProjects.append( tryFolderName )
                     numFound += 1
+                else: numFound += 1
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -718,7 +720,7 @@ def demo():
                     result3.pickle()
                     ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-
+        halt
 
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
