@@ -259,7 +259,8 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
     # Try to guess some semantic formatting
     #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
     #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-    if myName=='FBV': line = re.sub( r'\\cf6\\super (.+?)\\cf1\\nosupersub ', r'~^~ord \1~^~ord*', line ) # For Free Bible -- ordinal gives superscript
+    line = re.sub( r'\\cf6\\super (.+?)\\cf1\\nosupersub ', r'~^~ord \1~^~ord*', line ) # For Free Bible -- ordinal gives superscript
+    line = re.sub( r'\\cf6\\super (.+?)\\cf0\\i0\\b0\\ulnone\\nosupersub', r'~^~ord \1~^~ord*', line ) # For Free Bible at end of line -- ordinal gives superscript
 
     # Stuff to just remove -- not sure what most of this RTF stuff is about yet
     while True:
