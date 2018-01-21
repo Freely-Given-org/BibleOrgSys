@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-10' # by RJH
+LastModifiedDate = '2018-01-21' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.37'
+ProgVersion = '0.38'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -260,20 +260,22 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
     #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
     #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
-    # Stuff to just remove -- not sure what most of this is about yet
+    # Stuff to just remove -- not sure what most of this RTF stuff is about yet
     while True:
         line = line.lstrip()
         changed = False
         for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar',
                 '\\paperw12240', '\\paperh15840',
-                '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080',
+                '\\fi-360','\\li360',
+                '\\tx360','\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320','\\tx5040','\\tx5760','\\tx6480','\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080',
                 '\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl',
                 '\\formshade', '\\sectd', '\\pard', '\\keepn',
                 '\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800',
                 '\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32',
                 '\\s17', '\\s1', '\\sa120','\\sb120'
                 '\\itap0', '\\nosupersub', '\\ulnone',
-                '\\cf15', '\\cf14', '\\cf10', '\\cf0', '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
+                '\\cf15','\\cf14','\\cf10', '\\cf1','\\cf0',
+                '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
             if line.startswith( stuff ): line = line[len(stuff):]; changed = True
             #print( "stuff", repr(stuff) )
             #print( "line", repr(line[:20]) )
@@ -1791,7 +1793,7 @@ def demo():
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ) and somepath.endswith('.bblx'): foundFiles.append( something )
+            elif os.path.isfile( somepath ) and somepath.upper().endswith('.BBLX'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
