@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-19' # by RJH
+LastModifiedDate = '2018-01-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -677,7 +677,7 @@ class BibleWriter( InternalBible ):
             USFM = ''
             # Prepend any important missing (header/title) fields
             if pseudoESFMData.contains( 'id', 1 ) is None:
-                USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                USFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoESFMData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -695,7 +695,7 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(value) )
                 #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                    #USFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
@@ -816,7 +816,7 @@ class BibleWriter( InternalBible ):
             USFM = ''
             # Prepend any important missing (header/title) fields
             if pseudoESFMData.contains( 'id', 1 ) is None:
-                USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                USFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoESFMData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -834,7 +834,7 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(value) )
                 #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                    #USFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
@@ -9615,7 +9615,11 @@ class BibleWriter( InternalBible ):
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
                         #= results
             # With safety timeout -- more complex
-            timeoutSeconds = max( 100, 20*len(self.books) ) # (was 1200s=20m but failed for projects with > 66 books)
+            timeoutFactor = 5 # Seconds per book
+            if wantPhotoBible: timeoutFactor += 10
+            if wantODFs: timeoutFactor += 10
+            if wantPDFs: timeoutFactor += 10
+            timeoutSeconds = max( 60, timeoutFactor*len(self.books) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
             asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
             #print( "async results1 are", asyncResultObject )
