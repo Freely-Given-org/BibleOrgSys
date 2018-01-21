@@ -259,8 +259,8 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
     # Try to guess some semantic formatting
     #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
     #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
-    line = re.sub( r'\\cf6\\super (.+?)\\cf1\\nosupersub ', r'~^~ord \1~^~ord*', line ) # For Free Bible -- ordinal gives superscript
-    line = re.sub( r'\\cf6\\super (.+?)\\cf0\\i0\\b0\\ulnone\\nosupersub', r'~^~ord \1~^~ord*', line ) # For Free Bible at end of line -- ordinal gives superscript
+    line = re.sub( r'\\cf6\\super (.{1,5})\\cf1\\nosupersub[ —”]', r'~^~ord \1~^~ord*', line ) # For Free Bible -- ordinal gives superscript
+    line = re.sub( r'\\cf6\\super (.{1,5})\\cf0\\i0\\b0\\ulnone\\nosupersub', r'~^~ord \1~^~ord*', line ) # For Free Bible at end of line -- ordinal gives superscript
 
     # Stuff to just remove -- not sure what most of this RTF stuff is about yet
     while True:
@@ -1790,6 +1790,7 @@ def demo():
 
     if 1: # all discovered modules in the test folder
         testFolder = '../../../../../Data/Work/Bibles/e-Sword modules/' # Put your test folder here
+        testFolder = '/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/TSI.2018-01-05_02.44_0.68925400_1515073463/YourSourceFiles/Unzipped/'
 
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
