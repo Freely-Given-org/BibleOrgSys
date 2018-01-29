@@ -30,9 +30,9 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 from gettext import gettext as _
 
 LastModifiedDate = '2018-01-29' # by RJH
-ShortProgName = "FreeBibleConvert"
-ProgName = "FreeBible Convert to USFM2"
-ProgVersion = '0.05'
+ShortProgName = "FreeBibleConverter"
+ProgName = "FreeBible Converter"
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -45,7 +45,16 @@ from datetime import datetime
 # BibleOrgSys imports
 if __name__ == '__main__': sys.path.append( '../BibleOrgSys/' )
 import BibleOrgSysGlobals
-from NoisyReplaceFunctions import noisyFind, noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
+from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
+                                    noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
+
+
+idLine = "Free Bible Version New Testament Version 2.1.1"
+#inputFilepath = '/home/robert/FBVNT2.1.1.LOExport.txt'
+#inputFilepath = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
+inputFilepath = '../../../../../Data/Work/Bibles/English translations/Free Bible/FBVNT2.1.1.txt'
+# Subfolder USFM/ gets added to outputFolderpath for writing the individual USFM files
+outputFolderpath = 'OutputFiles/FreeBibleConversion/'
 
 
 def splitAndWriteBooks( entireBibleText, folderpath ):
@@ -61,35 +70,48 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         # print( "  Got book id", repr(bookID) )
         assert bookID in BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
-        
+
         # Last chance to fix things up (e.g., by bookID)
         if splitText[-1] != '\n': splitText += '\n' # Ensure that we have a final newline character in each file
         # if bookID == 'FRT':
-        
+
         filepath = os.path.join( folderpath, 'FBV_{}.usfm'.format( bookID ) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "Writing {}...".format( filepath ) )
+            print( "Writing {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
             bookFile.write( splitText )
-        if BibleOrgSysGlobals.verbosityLevel > 3: 
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
         writtenCount += 1
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( "{} books written to {}".format( writtenCount, folderpath ) )
-# end of splitAndWriteBooks
+# end of FreeBibleConvert.splitAndWriteBooks
+
+
+def demo():
+    """
+    Demo program to handle command line parameters and run a few functions.
+    """
+    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+
+    sampleText = "This is a lot of nonsense"
+    sampleText = noisyReplaceAll( sampleText, ' lot ', ' great, pig pile ' )
+    sampleText = noisyRegExReplaceAll( sampleText, ' p(\S)', ' b\\1' ) # pig to big hopefully
+    noisyFind( sampleText, 'bile', logging.critical )
+
+    if BibleOrgSysGlobals.verbosityLevel>0: print( sampleText )
+# end of FreeBibleConvert.main
 
 
 def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    idLine = "Free Bible Version New Testament Version 2.1.1"
     if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
 
-    filepath = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "Loading {}...".format( filepath ) )
-    with open( filepath, 'rt', encoding='utf-8' ) as textFile:
+        print( "Loading {}…".format( inputFilepath ) )
+    with open( inputFilepath, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "  Loaded {:,} characters ({:,} lines)".format( len(originalText), originalText.count('\n') ) )
@@ -97,32 +119,36 @@ def main():
     # Preparation by inserting some lines at the beginning
     entireText = '\\id FRT -- {}\n'.format( idLine )
     entireText += '\\rem Converted by {!r}\n'.format( ProgNameVersionDate )
-    entireText += '\\rem Converted from \'{}\'\n'.format( filepath )
+    entireText += '\\rem Converted from \'{}\'\n'.format( inputFilepath )
     entireText += '\\rem Converted {}\n'.format( datetime.now() )
     entireText += originalText
-    
+
     # More preparation
     entireText = noisyReplaceAll( entireText, '\n\r', '\n' ) # Makes it easier later
     entireText = noisyReplaceAll( entireText, '\r\n', '\n' ) # Makes it easier later
     entireText = noisyReplaceAll( entireText, '﻿', '' ) # Remove zero-width space or whatever it is
+    entireText = noisyReplaceAll( entireText, '  ', ' ', loop=True ) # Consolidate spaces
     entireText = noisyReplaceAll( entireText, '<div style="text-align:center;"></div>', '' ) # Remove blank lines at beginning
     entireText = entireText.replace( "<div style=\"text-align:center;\">'''Free Bible Version '''</div>", '\\mt1 Free Bible Version', 1 )
     entireText = entireText.replace( "<div style=\"text-align:center;\">'''New Testament'''</div>", '\\mt2 New Testament', 1 )
     entireText = noisyReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;"><sup>', '<sup>' )
-    
+
     # Fix specific mistakes and inconsistencies/irregularities
     entireText = noisyReplaceAll( entireText, '“</sup>', '</sup>“' )
     entireText = noisyReplaceAll( entireText, '<sup> <ref ', '<ref ' )
     entireText = noisyReplaceAll( entireText, '"><sup> ', '"> ' )
     entireText = noisyReplaceAll( entireText, '</sup></ref>', '</ref>' )
     entireText = noisyReplaceAll( entireText, '<sup> </sup>', ' ' )
+    entireText = noisyDeleteAll( entireText, '<sup></sup>' )
+    entireText = noisyRegExReplaceAll( entireText, "<ref name=\"ftn(\\d{1,3})\">'' ", "’<ref name=\"ftn\\1\"> " )
+    entireText = noisyReplaceAll( entireText, "''</ref>", "</ref>" )
     entireText = noisyRegExReplaceAll( entireText, '<span style="color:#0000ff;"><u>(\\S)</u></span>', '\\1' ) # Often surrounding a comma
     entireText = noisyRegExReplaceAll( entireText, '<span style="color:#0000ff;">(\\S)</span>', '\\1' ) # Often surrounding a comma
     entireText = noisyRegExReplaceAll( entireText, '<span style="color:#800080;">( )</span>', '\\1' ) # Don't need a regex for this one
     entireText = noisyRegExReplaceAll( entireText, '<nowiki>(.+?)</nowiki>', '\\1' )
 
     # Book divisions
-    entireText = noisyRegExReplaceAll( entireText, 
+    entireText = noisyRegExReplaceAll( entireText,
         "<div style=\"text-align:center;\">'''Free Bible Version(.+?)'''</div>",
         '\n\\\\id \\1 -- Free BibleVersion\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1' )
     entireText = noisyRegExReplaceAll( entireText,
@@ -130,49 +156,52 @@ def main():
         '\n\\\\id \\1 -- {}\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1'.format( idLine ) )
 
     entireText = noisyRegExReplaceAll( entireText, '<div style="text-align:center;">(.+?)</div>', '\\\\pc \\1' ) # Centred paragraphs
-    
+
     # Chapters, verses, and footnotes
-    entireText = noisyRegExReplaceAll( entireText, "\\n\\n'''(\\d{1,3})'''", '\\n\\\\c \\1\\n\\\\p' ) # Could be wrong if some chapters don't start a new paragraph
+    entireText = noisyRegExReplaceAll( entireText, "\\n\\n'''(\\d{1,3}) ?'''", '\\n\\\\c \\1\\n\\\\p' ) # Could be wrong if some chapters don't start a new paragraph
     entireText = noisyRegExReplaceAll( entireText, '<sup> ?(\\d{1,3}) ?</sup>', '\\n\\\\v \\1 ' )
     entireText = noisyRegExReplaceAll( entireText, '<ref name="ftn(\\d{1,4})"> ?', '\\\\f + \\\\fXXX ' )
-    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}:\\d{1,3}\\.) ', '\\\\fr \\1 \\\\ft ' )
-    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}\\.) ', '\\\\fr \\1 \\\\ft ' ) # For single chapter books
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}:\\d{1,3}\\.) ?', '\\\\fr \\1 \\\\ft ' )
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}\\.) ?', '\\\\fr \\1 \\\\ft ' ) # For single chapter books
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}:\\d{1,3}) ?', '\\\\fr \\1. \\\\ft ' ) # without the final period
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (\\d{1,3}) ?', '\\\\fr \\1. \\\\ft ' ) # For single chapter books
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (.+?\\.) ?', '\\\\fr \\1 \\\\ft ' ) # Other forms, e.g., 2:3a-5.
+    entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX ([^\\.]+?) ?', '\\\\fr \\1. \\\\ft ' ) # Other forms, e.g., 2:3a-5.
     entireText = noisyReplaceAll( entireText, '</ref>', '\\f*' )
     entireText = noisyReplaceAll( entireText, '\n\n\\f*', '\\f*' )
     entireText = noisyReplaceAll( entireText, '\n\\f*', '\\f*' )
-    
+
     # Some extra paragraphs
     entireText = noisyReplaceAll( entireText, '\n\n\\v ', '\n\\p\n\\v ' )
-    entireText = noisyRegExReplaceAll( entireText, '\n([^\s\\\\<])', '\n\\\\p \\1' )
-    
-    # Stuff at start of file
-    
-    # Stuff at end of file
-    entireText = noisyReplaceAll( entireText, 
-        '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.\n',
-        '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.\n\\id BAK -- {}\n\\h Back matter\n\\toc1 Back matter\n'.format( idLine ) )
-    entireText = noisyRegExReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;">(.+?)</div>', '\\\\pm \\1' )
-    entireText = noisyRegExReplaceAll( entireText, '\n<u>(.+?)</u>\n', '\n\\\\s1 \\1' )
-    entireText = noisyReplaceAll( entireText, '<references/>', '' )
-    
-    # Check
-    noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
-    noisyFind( entireText, "'''", logging.critical )
-    noisyFind( entireText, 'fXXX', logging.critical )
+    entireText = noisyRegExReplaceAll( entireText, '\n([^\n\\\\<])', '\n\\\\p \\1' )
 
-    # Clean-up
+    # Some character stuff
     entireText = noisyReplaceAll( entireText, '<u>', '\\em ')
     entireText = noisyReplaceAll( entireText, '</u>', '\\em*')
+    entireText = noisyRegExReplaceAll( entireText, "([ “])''", "\\1‘" ) # Single opening quote
+    entireText = noisyRegExReplaceAll( entireText, "''([ \\.,”—])", "’\\1" ) # Single closing quote
+
+    # Stuff at end of file
+    entireText = noisyReplaceAll( entireText,
+        '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.\n',
+        '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.'
+        '\n\\id BAK -- {}\n\\h Back matter\n\\toc1 Back matter\n'.format( idLine ) )
+    entireText = noisyRegExReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;">(.+?)</div>', '\\\\m \\1' )
+    entireText = noisyRegExReplaceAll( entireText, '\n<u>(.+?)</u>\n', '\n\\\\s1 \\1' )
+    entireText = noisyReplaceAll( entireText, '<references/>', '' )
+
+    # Check
+    noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
+
+    # Clean-up left-overs
     entireText = noisyDeleteAll( entireText, '</div>' )
-    entireText = noisyDeleteAll( entireText, '<sup></sup>' )
     entireText = noisyDeleteAll( entireText, '<sup>' )
     entireText = noisyDeleteAll( entireText, '</sup>' )
-    while '  ' in entireText:
-        entireText = noisyReplaceAll( entireText, '  ', ' ' )
-    while '\n\n' in entireText:
-        entireText = noisyReplaceAll( entireText, '\n\n', '\n' )
-    while ' \n' in entireText:
-        entireText = noisyReplaceAll( entireText, ' \n', '\n' )
+
+    # Clean-up duplicates
+    entireText = noisyReplaceAll( entireText, '  ', ' ', loop=True )
+    entireText = noisyReplaceAll( entireText, '\n\n', '\n', loop=True )
+    entireText = noisyReplaceAll( entireText, ' \n', '\n', loop=True )
 
     # Adjust book IDs, etc
     for name,bookID in ( ('Matthew','MAT'), ('Mark','MRK'), ('Luke','LUK'), ('John','JHN'), ('Acts','ACT'),
@@ -187,18 +216,25 @@ def main():
     entireText = noisyReplaceAll( entireText, '\\h First ', '\\h 1 ')
     entireText = noisyReplaceAll( entireText, '\\h Second ', '\\h 2 ')
     entireText = noisyReplaceAll( entireText, '\\h Third ', '\\h 3 ')
-    
+
+    # Check again
+    noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
+    noisyFind( entireText, "'''", logging.critical )
+    noisyFind( entireText, "''", logging.critical )
+    noisyFind( entireText, 'fXXX', logging.critical )
+    noisyRegExFind( entireText, '\n[^\\\\]', logging.critical ) # Line that doesn't begin with backslash
+
     # Write the temp output (for debugging)
-    outputFolderpath = '/Users/Robert/Desktop/FBVNT/'
-    if 1: # Write out entire file for checking
+    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        # Write out entire file for checking
         if not os.path.exists( outputFolderpath):
             os.makedirs( outputFolderpath )
         filepath = os.path.join( outputFolderpath, 'FBV.NT.usfm' )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Writing temp file {}...".format( filepath ) )
+            print( "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
-            
+
     # Write out the USFM files
     USFMFolderpath = os.path.join( outputFolderpath, 'USFM/' )
     if not os.path.exists( USFMFolderpath):
