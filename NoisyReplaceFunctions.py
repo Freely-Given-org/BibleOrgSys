@@ -53,8 +53,8 @@ def noisyFind( text, this, reporterFunction=None ):
         count = text.count( this )
         if count:
             reporterFunction( "Found {:,} occurrences of {!r}".format( count, this ) )
-        else:
-            reporterFunction( "No occurrences of {!r} found".format( this ) )
+        elif debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "No occurrences of {!r} found".format( this ) )
 # end of noisyFind
 
 
@@ -66,12 +66,12 @@ def noisyRegExFind( text, this, reporterFunction=None ):
         count = len( re.findall( this, text ) )
         if count:
             reporterFunction( "Found {:,} occurrences of regex {!r}".format( count, this ) )
-        else:
-            reporterFunction( "No occurrences of {!r} regex found".format( this ) )
+        elif debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "No occurrences of {!r} regex found".format( this ) )
 # end of noisyRegExFind
 
 
-def noisyReplaceAll( text, this, that ):
+def noisyReplaceAll( text, this, that, loop=False ):
     """
     """
     count = text.count( this )
@@ -79,10 +79,15 @@ def noisyReplaceAll( text, this, that ):
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "No occurrences of {!r} found to replace".format( this ) )
         return text
+
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "Replacing {:,} occurrences of {!r} with {!r}".format( count, this, that ) )
-    newText = text.replace( this, that )
-    
+    if loop:
+        newText = text
+        while this in newText:
+            newText = newText.replace( this, that )
+    else: newText = text.replace( this, that )
+
     count2 = newText.count( this )
     if count2 and BibleOrgSysGlobals.verbosityLevel > 0:
         print( "  NOTE: {:,} occurrences of {!r} still remaining!".format( count2, this ) )
@@ -101,10 +106,10 @@ def noisyDeleteAll( text, this ):
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "Deleting {:,} occurrences of {!r}".format( count, this ) )
     newText = text.replace( this, '' )
-    
+
     count2 = newText.count( this )
-    if count2 and BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "  NOTE: {:,} occurrences of {!r} still remaining!".format( count2, this ) )
+    if count2: # and BibleOrgSysGlobals.verbosityLevel > 0:
+        logging.critical( "  NOTE: {:,} occurrences of {!r} still remaining!".format( count2, this ) )
     return newText
 # end of noisyDeleteAll
 
@@ -123,8 +128,8 @@ def noisyRegExReplaceAll( text, this, that ):
         print( "  Replaced {:,} occurrences of regex {!r} with {!r}".format( count2, this, that ) )
 
     count3 = len( re.findall( regex, newText ) )
-    if count3 and BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "  NOTE: {:,} occurrences of regex {!r} still remaining!".format( count3, this ) )
+    if count3: # and BibleOrgSysGlobals.verbosityLevel > 0:
+        logging.critical( "  NOTE: {:,} occurrences of regex {!r} still remaining!".format( count3, this ) )
     return newText
 # end of noisyRegExReplaceAll
 
