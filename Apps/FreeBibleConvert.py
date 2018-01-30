@@ -29,10 +29,10 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-29' # by RJH
+LastModifiedDate = '2018-01-30' # by RJH
 ShortProgName = "FreeBibleConverter"
 ProgName = "FreeBible Converter"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -49,16 +49,25 @@ from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
 
 
-idLine = "Free Bible Version New Testament Version 2.1.1"
-#inputFilepath = '/home/robert/FBVNT2.1.1.LOExport.txt'
-#inputFilepath = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
-inputFilepath = '../../../../../Data/Work/Bibles/English translations/Free Bible/FBVNT2.1.1.txt'
-# Subfolder USFM/ gets added to outputFolderpath for writing the individual USFM files
-outputFolderpath = 'OutputFiles/FreeBibleConversion/'
+ID_LINE = "Free Bible Version New Testament Version 2.1.1"
+
+#INPUT_FILEPATH = '/home/robert/FBVNT2.1.1.LOExport.txt'
+#INPUT_FILEPATH = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
+INPUT_FILEPATH = '../../../../../Data/Work/Bibles/English translations/Free Bible/FBVNT2.1.1.txt'
+
+# Subfolder USFM/ gets added to OUTPUT_FOLDERPATH for writing the individual USFM files
+OUTPUT_FOLDERPATH = 'OutputFiles/FreeBibleConversion/'
+#OUTPUT_FOLDERPATH = '../../../../../Data/Work/Bibles/English translations/Free Bible/'
 
 
 def splitAndWriteBooks( entireBibleText, folderpath ):
     """
+    Given a text string containing the entire Bible document,
+        split it by \id lines and write out the individual files
+        into the given folder.
+
+    Also can be customized to do specific formatting corrections
+        for specific books if necessary.
     """
     writtenCount = 0
     splitOnString = '\\id '
@@ -105,21 +114,22 @@ def demo():
 
 def main():
     """
-    Main program to handle command line parameters and then run what they want.
+    Main program to handle command line parameters
+        and then convert the FBV text file.
     """
     if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "Loading {}…".format( inputFilepath ) )
-    with open( inputFilepath, 'rt', encoding='utf-8' ) as textFile:
+        print( "Loading {}…".format( INPUT_FILEPATH ) )
+    with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "  Loaded {:,} characters ({:,} lines)".format( len(originalText), originalText.count('\n') ) )
 
     # Preparation by inserting some lines at the beginning
-    entireText = '\\id FRT -- {}\n'.format( idLine )
+    entireText = '\\id FRT -- {}\n'.format( ID_LINE )
     entireText += '\\rem Converted by {!r}\n'.format( ProgNameVersionDate )
-    entireText += '\\rem Converted from \'{}\'\n'.format( inputFilepath )
+    entireText += '\\rem Converted from \'{}\'\n'.format( INPUT_FILEPATH )
     entireText += '\\rem Converted {}\n'.format( datetime.now() )
     entireText += originalText
 
@@ -153,7 +163,7 @@ def main():
         '\n\\\\id \\1 -- Free BibleVersion\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1' )
     entireText = noisyRegExReplaceAll( entireText,
         "\n<div style=\"text-align:center;\">'''Free Bible Version'''</div>\n\n?<div style=\"text-align:center;\">'''(.+?)'''</div>",
-        '\n\\\\id \\1 -- {}\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1'.format( idLine ) )
+        '\n\\\\id \\1 -- {}\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1'.format( ID_LINE ) )
 
     entireText = noisyRegExReplaceAll( entireText, '<div style="text-align:center;">(.+?)</div>', '\\\\pc \\1' ) # Centred paragraphs
 
@@ -168,24 +178,25 @@ def main():
     entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX (.+?\\.) ?', '\\\\fr \\1 \\\\ft ' ) # Other forms, e.g., 2:3a-5.
     entireText = noisyRegExReplaceAll( entireText, '\\\\fXXX ([^\\.]+?) ?', '\\\\fr \\1. \\\\ft ' ) # Other forms, e.g., 2:3a-5.
     entireText = noisyReplaceAll( entireText, '</ref>', '\\f*' )
-    entireText = noisyReplaceAll( entireText, '\n\n\\f*', '\\f*' )
-    entireText = noisyReplaceAll( entireText, '\n\\f*', '\\f*' )
+    entireText = noisyReplaceAll( entireText, '\n\\f*', '\\f*', loop=True )
+    entireText = noisyReplaceAll( entireText, ' \\f*', '\\f*', loop=True )
 
     # Some extra paragraphs
     entireText = noisyReplaceAll( entireText, '\n\n\\v ', '\n\\p\n\\v ' )
     entireText = noisyRegExReplaceAll( entireText, '\n([^\n\\\\<])', '\n\\\\p \\1' )
 
     # Some character stuff
+    entireText = noisyRegExReplaceAll( entireText, '\n<u>(.+?)</u>\n', '\n\\\\s \\1\n' ) # in BAK part
     entireText = noisyReplaceAll( entireText, '<u>', '\\em ')
     entireText = noisyReplaceAll( entireText, '</u>', '\\em*')
     entireText = noisyRegExReplaceAll( entireText, "([ “])''", "\\1‘" ) # Single opening quote
     entireText = noisyRegExReplaceAll( entireText, "''([ \\.,”—])", "’\\1" ) # Single closing quote
-
+    entireText = noisyReplaceAll( entireText, '“into Moses"', '“into Moses”' )
     # Stuff at end of file
     entireText = noisyReplaceAll( entireText,
         '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.\n',
         '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.'
-        '\n\\id BAK -- {}\n\\h Back matter\n\\toc1 Back matter\n'.format( idLine ) )
+        '\n\\id BAK -- {}\n\\h Back matter\n\\toc1 Back matter\n'.format( ID_LINE ) )
     entireText = noisyRegExReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;">(.+?)</div>', '\\\\m \\1' )
     entireText = noisyRegExReplaceAll( entireText, '\n<u>(.+?)</u>\n', '\n\\\\s1 \\1' )
     entireText = noisyReplaceAll( entireText, '<references/>', '' )
@@ -206,7 +217,7 @@ def main():
     # Adjust book IDs, etc
     for name,bookID in ( ('Matthew','MAT'), ('Mark','MRK'), ('Luke','LUK'), ('John','JHN'), ('Acts','ACT'),
                         ('Romans','ROM'), ('First Corinthians','1CO'), ('Second Corinthians','2CO'),
-                        ('Galatians','GAL'), ('Ephesians','MAT'), ('Philippians','PHP'), ('Colossians','COL'),
+                        ('Galatians','GAL'), ('Ephesians','EPH'), ('Philippians','PHP'), ('Colossians','COL'),
                         ('First Thessalonians','1TH'), ('Second Thessalonians','2TH'), ('First Timothy','1TI'), ('Second Timothy','2TI'),
                         ('Titus','TIT'), ('Philemon','PHM'), ('Hebrews','HEB'), ('James','JAS'),
                         ('First Peter','1PE'), ('Second Peter','2PE'),
@@ -227,16 +238,16 @@ def main():
     # Write the temp output (for debugging)
     if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
         # Write out entire file for checking
-        if not os.path.exists( outputFolderpath):
-            os.makedirs( outputFolderpath )
-        filepath = os.path.join( outputFolderpath, 'FBV.NT.usfm' )
+        if not os.path.exists( OUTPUT_FOLDERPATH):
+            os.makedirs( OUTPUT_FOLDERPATH )
+        filepath = os.path.join( OUTPUT_FOLDERPATH, 'FBV.NT.usfm' )
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 
     # Write out the USFM files
-    USFMFolderpath = os.path.join( outputFolderpath, 'USFM/' )
+    USFMFolderpath = os.path.join( OUTPUT_FOLDERPATH, 'USFM/' )
     if not os.path.exists( USFMFolderpath):
         os.makedirs( USFMFolderpath )
     splitAndWriteBooks( entireText, USFMFolderpath )
