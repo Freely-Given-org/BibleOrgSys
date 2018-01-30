@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-01-30' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -495,19 +495,19 @@ class PTX8Bible( Bible ):
     The PTX8Bible object contains USFM 2 or 3 BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
-    def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
         """
         Create the internal Paratext Bible object.
         """
         if debuggingThisModule:
-            print( "PTX8Bible.__init__( {!r}, {!r}, {!r} )".format( givenFolderName, givenName, encoding ) )
+            print( "PTX8Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( givenFolderName, givenName, givenAbbreviation, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Paratext-8 Bible object'
         self.objectTypeString = 'PTX8'
 
-        self.sourceFolder, self.givenName, self.encoding = givenFolderName, givenName, encoding # Remember our parameters
+        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = givenFolderName, givenName, givenAbbreviation, encoding # Remember our parameters
 
         # Now we can set our object variables
         self.name = self.givenName
