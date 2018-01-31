@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-21' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -7337,7 +7337,7 @@ class BibleWriter( InternalBible ):
             ImageMagick convert is unable to handle complex scripts.  :(
         """
         import unicodedata
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible… {}".format( datetime.now().strftime('%H.%M.%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7887,7 +7887,7 @@ class BibleWriter( InternalBible ):
             zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toPhotoBible finished successfully." )
+            print( "  BibleWriter.toPhotoBible finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
         return True
     # end of BibleWriter.toPhotoBible
 
@@ -7902,7 +7902,7 @@ class BibleWriter( InternalBible ):
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H.%M.%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9117,7 +9117,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toODF finished successfully." )
+            print( "  BibleWriter.toODF finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
         return True
     # end of BibleWriter.toODF
 
@@ -9128,7 +9128,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX… {}".format( datetime.now().strftime('%H.%M.%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9428,7 +9428,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toTeX finished successfully." )
+            print( "  BibleWriter.toTeX finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
         return True
     # end of BibleWriter.toTeX
 
@@ -9463,9 +9463,9 @@ class BibleWriter( InternalBible ):
 
         Returns a dictionary of result flags.
         """
-        allWord = "all" if wantPhotoBible and wantODFs and wantPDFs else "most"
+        allWord = _("all") if wantPhotoBible and wantODFs and wantPDFs else _("most")
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats…").format( self.name, self.objectTypeString, allWord ) )
+            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H.%M.%S') ) )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
@@ -9615,11 +9615,13 @@ class BibleWriter( InternalBible ):
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
                         #= results
             # With safety timeout -- more complex
-            timeoutFactor = 5 # Seconds per book
-            if wantPhotoBible: timeoutFactor += 10
-            if wantODFs: timeoutFactor += 10
-            if wantPDFs: timeoutFactor += 10
-            timeoutSeconds = max( 60, timeoutFactor*len(self.books) ) # (was 1200s=20m but failed for projects with > 66 books)
+            # timeoutFactors are average seconds per book
+            timeoutFactor = 5 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
+            if wantPhotoBible: timeoutFactor += 27 # 30 minutes for 68 books (Feb2018)
+            if wantODFs: timeoutFactor += 40 # Almost a minute for longer books
+            if wantPDFs: timeoutFactor += 6 # seems about 2 minutes for 68 books
+            processorFactor = 1 # Make bigger for a slower CPU, or can make smaller for a fast one
+            timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
             asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
             #print( "async results1 are", asyncResultObject )
@@ -9809,7 +9811,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 1:
             finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM2={} USFM3={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
                             "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
-                            "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
+                            "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={} {}" \
                 .format( pickleResult, listOutputResult, BCVExportResult,
                     pseudoUSFMExportResult, USFM2ExportResult, USFM3ExportResult, ESFMExportResult,
                     textExportResult, VPLExportResult,
@@ -9819,7 +9821,8 @@ class BibleWriter( InternalBible ):
                     ZefExportResult, HagExportResult, OSExportResult,
                     swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
                     SwSExportResult, DrExportResult,
-                    PhotoBibleExportResult, ODFExportResult, TeXExportResult )
+                    PhotoBibleExportResult, ODFExportResult, TeXExportResult,
+                    datetime.now().strftime('%H.%M.%S') )
             trueCount  = finishString.count( 'True' )
             falseCount = finishString.count( 'False' )
             noneCount  = finishString.count( 'None' )
@@ -9862,7 +9865,7 @@ def demo():
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = 'Dummy test Bible Writer object'
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( BW ); print()
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( BW )
 
 
     if 1: # Test reading and writing a USFM Bible
@@ -9888,13 +9891,14 @@ def demo():
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #UB.toPickledBible(); halt
-                myFlag = BibleOrgSysGlobals.verbosityLevel > 3
+                myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
                     outputFolder = 'OutputFiles/BOS_USFM2_Reexport/'
@@ -9932,10 +9936,11 @@ def demo():
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/', UB )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
