@@ -47,7 +47,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-15' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
 ProgVersion = '0.09'
@@ -718,7 +718,7 @@ class PickledBible( Bible ):
                         #print( _("  PickledBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     self.loadBook( BBB ) # also saves it
         else:
-            logging.critical( _("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "PickledBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of PickledBible.loadBooks

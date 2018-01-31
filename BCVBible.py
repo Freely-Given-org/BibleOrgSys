@@ -5,7 +5,7 @@
 #
 # Module handling Bibles where each verse is stored in a separate file.
 #
-# Copyright (C) 2014-2017 Robert Hunt
+# Copyright (C) 2014-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.21'
@@ -387,7 +387,7 @@ class BCVBible( Bible ):
                         #print( _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
-            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "BCVBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of BCVBible.load

@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-17' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -488,11 +488,14 @@ class InternalBible:
         # end of loadMetadataTextFile.saveMetadataField
 
         # Main code for loadMetadataTextFile()
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        elif 'File' in self.suppliedMetadata:
+            logging.critical( "loadMetadataTextFile: Already have 'File' metadata loaded—will be overridden!" )
+
         # Loads the metadata into self.suppliedMetadata
         logging.info( "Loading supplied project metadata…" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata…" )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['File'] = {}
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt', encoding='utf-8' ) as mdFile:

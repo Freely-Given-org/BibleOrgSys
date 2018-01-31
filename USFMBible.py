@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-24' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.76'
@@ -672,7 +672,7 @@ class USFMBible( Bible ):
                     #loadedBook = self.loadBook( BBB, filename ) # also saves it
                     self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "USFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of USFMBible.loadBooks

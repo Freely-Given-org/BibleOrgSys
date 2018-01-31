@@ -6,7 +6,7 @@
 # Module handling Digital Bible Library (DBL) compilations of USX XML Bible books
 #                                               along with XML and other metadata
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,10 +35,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1206,13 +1206,13 @@ class DBLBible( Bible ):
         for oldKey,value in flattenedMetadata.items():
             newKey = nameChangeDict[oldKey] if oldKey in nameChangeDict else oldKey
             if newKey in self.settingsDict: # We have a duplicate
-                logging.warning("About to replace {}={} from metadata file".format( repr(newKey), repr(self.settingsDict[newKey]) ) )
+                logging.warning("About to replace {!r}={!r} from metadata file".format( newKey, self.settingsDict[newKey] ) )
             else: # Also check for "duplicates" with a different case
                 ucNewKey = newKey.upper()
                 for key in self.settingsDict:
                     ucKey = key.upper()
                     if ucKey == ucNewKey:
-                        logging.warning("About to copy {} from metadata file even though already have {}".format( repr(newKey), repr(key) ) )
+                        logging.warning("About to copy {!r} from metadata file even though already have {!r}".format( newKey, key ) )
                         break
             self.settingsDict[newKey] = value
     # end of InternalBible.applySuppliedMetadata

@@ -41,10 +41,10 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-30' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2939,7 +2939,7 @@ class PTX8Bible( Bible ):
                     #if BBB not in self.books:
                     self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "PTX8Bible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of PTX8Bible.loadBooks
@@ -3118,8 +3118,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     print( "Creating test settings page for {}…".format( testName ) )
                 import sys; sys.path.append( '../../../../../../home/autoprocesses/Scripts/' )
-                from ProcessUploadFunctions import doGlobalTemplateFixes
-                from ProcessTemplates import webPageTemplate
+                from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                 readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
                 from ProcessLoadedBible import makeSettingsPage
                 outputFolderPath = 'OutputFiles/BDBSettingsPages/'

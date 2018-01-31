@@ -35,7 +35,7 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "ESFMBible"
 ProgName = "ESFM Bible handler"
 ProgVersion = '0.61'
@@ -543,7 +543,7 @@ class ESFMBible( Bible ):
                     if BBB not in self.dontLoadBook:
                         loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( _("ESFMBible: No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "ESFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             if 'Tag errors' in self.semanticDict:

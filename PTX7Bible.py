@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-30' # by RJH
+LastModifiedDate = '2018-02-01' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.30'
@@ -1806,7 +1806,7 @@ class PTX7Bible( Bible ):
                     #if BBB not in self.books and not self.bookNeedsReloading[BBB]:
                     self.loadBook( BBB, filename ) # also saves it in our Bible object
         else:
-            logging.critical( exp("No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( "PTX7Bible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of PTX7Bible.loadBooks
