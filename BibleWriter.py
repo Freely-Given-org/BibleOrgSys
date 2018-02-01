@@ -8841,7 +8841,7 @@ class BibleWriter( InternalBible ):
                 elif textSegment: # No character formatting here
                     #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
                     documentText.insertString( textCursor, textSegment, 0 )
-            # end of handleTextSubsegment
+            # end of insertFormattedODFText.handleTextSubsegment
 
             def handleTextSegment( textSegment ):
                 """
@@ -8859,7 +8859,7 @@ class BibleWriter( InternalBible ):
                     handleTextSubsegment( textSegment[lx:] )
                 else: # no manual line breaks
                     handleTextSubsegment( textSegment )
-            # end of handleTextSegment
+            # end of insertFormattedODFText.handleTextSegment
 
             # insertFormattedODFText main code
             if extras:
@@ -8889,9 +8889,9 @@ class BibleWriter( InternalBible ):
         # end of toODF.insertFormattedODFText
 
 
+        # Main code (continued) for toODF()
         # First determine our format
         #verseByVerse = True
-
 
         # Create and save the ODF files
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
@@ -8961,9 +8961,12 @@ class BibleWriter( InternalBible ):
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker == 'c':
-                    if C == '0' and runningHeaderField: runningHeaderField.setPropertyValue( "Content", headerField )
+                    if C == '0' and runningHeaderField:
+                        runningHeaderField.setPropertyValue( "Content", headerField )
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
+                        document.storeAsURL( 'file://{}'.format( filepath ), () ) # Save a preliminary copy of the file
+
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
                             documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                             textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
@@ -9082,7 +9085,7 @@ class BibleWriter( InternalBible ):
                 lastMarker = marker
 
             # Save the created document
-            document.storeAsURL( "file://{}".format( filepath ), () )
+            document.storeAsURL( 'file://{}'.format( filepath ), () )
             document.dispose() # Close the document (even though it might be a headless server anyway)
 
         if weStartedLibreOffice and not BibleOrgSysGlobals.debugFlag: # Now kill our LibreOffice server
