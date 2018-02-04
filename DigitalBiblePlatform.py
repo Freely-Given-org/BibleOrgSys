@@ -64,10 +64,10 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-14' # by RJH
+LastModifiedDate = '2018-02-05' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -83,7 +83,7 @@ import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey
 
 
-URL_BASE = "http://dbt.io/"
+URL_BASE = 'http://dbt.io/'
 DPB_VERSION = '2'
 KEY_FILENAME = "DBPKey.txt"
 KEY_SEARCH_PATHS = ( KEY_FILENAME, os.path.join( "../BibleOrgSys/DataFiles", KEY_FILENAME ) )
@@ -117,7 +117,7 @@ def getSecurityKey():
     for keyPath in KEY_SEARCH_PATHS:
         if os.path.exists( keyPath ): # in our current folder
             if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("getSecurityKey: found key file in {!r}").format( keyPath ) )
-            with open( keyPath, "rt" ) as keyFile:
+            with open( keyPath, 'rt' ) as keyFile:
                 return keyFile.read() # Our personal key
     raise FileNotFoundError( exp("Cannot find key file {!r}").format( KEY_FILENAME ) )
 # end of getSecurityKey
@@ -141,7 +141,7 @@ class DBPBibles:
         self.URLFixedData = "?v={}&key={}".format( DPB_VERSION, self.key )
 
         # See if the site is online by making a small call to get the API version
-        self.URLTest = "api/apiversion"
+        self.URLTest = 'api/apiversion'
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
         if result and 'Version' in result: self.onlineVersion = result['Version']
@@ -214,7 +214,7 @@ class DBPBibles:
             print( exp("Downloading list of available versions from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
-            self.versionList = self.getOnlineData( "library/version" ) # Get an alphabetically ordered list of dictionaries -- one for each version
+            self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
             if BibleOrgSysGlobals.debugFlag: print( "  versionList", len(self.versionList) )#, self.versionList )
         return self.versionList
     # end of DBPBibles.fetchAllVersions
@@ -279,7 +279,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Downloading list of available volumes from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
-            self.volumeList = self.getOnlineData( "library/volume" ) # Get an alphabetically ordered list of dictionaries -- one for each volume
+            self.volumeList = self.getOnlineData( 'library/volume' ) # Get an alphabetically ordered list of dictionaries -- one for each volume
             if BibleOrgSysGlobals.debugFlag: print( "  volumeList", len(self.volumeList) )#, self.volumeList )
         return self.volumeList
     # end of DBPBibles.fetchAllVolumes
@@ -451,14 +451,28 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        requestString = '{}{}{}{}'.format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #print( "Request string is", repr(requestString) )
-        try: responseJSON = urllib.request.urlopen( requestString )
-        except urllib.error.URLError: return None
-        #print( "responseJSON", responseJSON.read() )
-        responseSTR = responseJSON.read().decode('utf-8')
-        #print( "responseSTR", repr(responseSTR) )
-        return json.loads( responseSTR )
+        try: HTTPResponseObject = urllib.request.urlopen( requestString )
+        except urllib.error.URLError as err:
+            #errorClass, exceptionInstance, traceback = sys.exc_info()
+            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            logging.error( "DBL URLError '{}' from {}".format( err, requestString ) )
+            return None
+        #print( "HTTPResponseObject", HTTPResponseObject )
+        contentType = HTTPResponseObject.info().get( 'content-type' )
+        #print( "contentType", contentType )
+        if contentType == 'application/json':
+            responseJSON = HTTPResponseObject.read()
+            #print( "responseJSON", len(responseJSON), responseJSON )
+            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
+            #print( "responseJSONencoding", responseJSONencoding )
+            responseSTR = responseJSON.decode( responseJSONencoding )
+            #print( "responseSTR", len(responseSTR), repr(responseSTR) )
+            return json.loads( responseSTR )
+        else:
+            print( "contentType", contentType )
+            halt # Haven't had this contentType before
     # end of DBPBibles.getOnlineData
 
 
@@ -522,10 +536,10 @@ class DBPBible:
         #InternalBible.__init__( self, givenFolderName, givenName, encoding )
 
         self.key = getSecurityKey() # Our personal key
-        self.URLFixedData = "?v={}&key={}".format( DPB_VERSION, self.key )
+        self.URLFixedData = '?v={}&key={}'.format( DPB_VERSION, self.key )
 
         # See if the site is online by making a small call to get the API version
-        self.URLTest = "api/apiversion"
+        self.URLTest = 'api/apiversion'
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
         if result:
@@ -646,7 +660,7 @@ class DBPBible:
         BBB = key.getBBB()
         if BBB in self.books:
             info = self.books[BBB]
-            rawData = self.getOnlineData( "text/verse", "dam_id={}&book_id={}&chapter_id={}&verse_start={}".format( info['dam_id']+'2ET', info['book_id'], key.getChapterNumber(), key.getVerseNumber() ) )
+            rawData = self.getOnlineData( 'text/verse', 'dam_id={}&book_id={}&chapter_id={}&verse_start={}'.format( info['dam_id']+'2ET', info['book_id'], key.getChapterNumber(), key.getVerseNumber() ) )
             resultList = []
             if isinstance( rawData, list ) and len(rawData)==1:
                 rawDataDict = rawData[0]
