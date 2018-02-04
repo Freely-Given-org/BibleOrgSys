@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-02' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -9620,9 +9620,9 @@ class BibleWriter( InternalBible ):
             # With safety timeout -- more complex
             # timeoutFactors are average seconds per book
             timeoutFactor = 5 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
-            if wantPhotoBible: timeoutFactor += 27 # 30 minutes for 68 books (Feb2018)
-            if wantODFs: timeoutFactor += 40 # Almost a minute for longer books
-            if wantPDFs: timeoutFactor += 6 # seems about 2 minutes for 68 books
+            if wantPhotoBible: timeoutFactor = max( timeoutFactor, 27 ) # 30 minutes for 68 books (Feb2018)
+            if wantODFs: timeoutFactor = max( timeoutFactor, 40 ) # Almost a minute for longer books
+            if wantPDFs: timeoutFactor = max( timeoutFactor, 6 ) # seems about 2 minutes for 68 books
             processorFactor = 1 # Make bigger for a slower CPU, or can make smaller for a fast one
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
