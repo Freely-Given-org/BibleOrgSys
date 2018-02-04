@@ -24,7 +24,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for defining and manipulating complete or partial DBL Bible bundles.
+Module for defining and manipulating complete or partial DBL Bible bundles
+    saved in folders on the local filesystem.
+    (See a separate module for online access of the DBL.)
 
 See http://digitalbiblelibrary.org and http://digitalbiblelibrary.org/info/inside
 as well as http://www.everytribeeverynation.org/library.
@@ -35,7 +37,7 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-05' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
 ProgVersion = '0.26'
