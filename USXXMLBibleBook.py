@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-05' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -283,7 +283,7 @@ class USXXMLBibleBook( BibleBook ):
 
             if not noteElement.text and len(noteElement) == 0: # no subelements either
                 logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, noteLocation ) )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning and debuggingThisModule: halt
             assert '\n' not in noteField
 
             # Now process the left-overs (tail)
@@ -612,8 +612,8 @@ class USXXMLBibleBook( BibleBook ):
                                 for sub3element in sub2element:
                                     sub3location = sub3element.tag + " in " + sub2location
                                     #print( "    here3", sub3location )
-                                    BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
                                     if sub3element.tag == 'note':
+                                        BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
                                         #print( "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
                                         processedNoteField = loadNoteField( sub3element, sub3location )
                                         if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
@@ -631,7 +631,11 @@ class USXXMLBibleBook( BibleBook ):
                                         #if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
                                             #tableCode += sub3element.tail
                                     elif sub3element.tag == 'verse': # Have a verse number inside a table
+                                        BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
                                         loadVerseNumberField( sub3element, sub3location )
+                                    elif sub3element.tag == 'char': # Have formatting inside a table
+                                        charLine = loadCharField( sub3element, sub3location )
+                                        self.appendToLastLine( charLine )
                                     else:
                                         logging.error( _("KA29 Unprocessed {} sub3element after {} {}:{} in {}").format( sub3element.tag, self.BBB, C, V, sub3location ) )
                                         self.addPriorityError( 1, C, V, _("Unprocessed {} sub3element").format( sub3element.tag ) )
