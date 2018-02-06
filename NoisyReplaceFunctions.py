@@ -24,11 +24,17 @@
 
 """
 Functions for replace and regex replace which explain what they did.
+
+    noisyFind( text, this, reporterFunction=None )
+    noisyRegExFind( text, this, reporterFunction=None )
+    noisyReplaceAll( text, this, that, loop=False )
+    noisyDeleteAll( text, this )
+    noisyRegExReplaceAll( text, this, that )
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-30' # by RJH
+LastModifiedDate = '2018-02-07' # by RJH
 ShortProgName = "NoisyReplaceFunctions"
 ProgName = "Noisy Replace Functions"
 ProgVersion = '0.05'
