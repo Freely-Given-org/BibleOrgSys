@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-02' # by RJH
+LastModifiedDate = '2018-02-07' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -100,6 +100,7 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
 from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
+from NoisyReplaceFunctions import noisyRegExReplaceAll
 from MLWriter import MLWriter
 
 
@@ -645,14 +646,16 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the USFM2 files.
 
-        NOTE: We use Windows \r\n line endings for writing USFM files.
+        NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM2…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
         includeEmptyVersesFlag = True
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = 'OutputFiles/BOS_USFM2_' + ('Reexport/' if self.objectTypeStringin ('USFM2','PTX7') else 'Export/')
+        if not outputFolder:
+            outputFolder = 'OutputFiles/BOS_USFM2_' + ('Reexport/' if self.objectTypeString in ('USFM2','PTX7')
+                                                else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -674,90 +677,94 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag: assert BBB in ('FRT','GLS',)
                     numC = numV = 0
 
-            USFM = ''
+            bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if pseudoESFMData.contains( 'id', 1 ) is None:
-                USFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoESFMData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
-                        if h: USFM += '\n\\h {}'.format( h )
+                        if h: bookUSFM += '\n\\h {}'.format( h )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
                 if pseudoESFMData.contains( 'mt1', 12 ) is None:
                     try:
                         mt = self.suppliedMetadata['File'][BBB+'LongName']
-                        if mt: USFM += '\n\\mt1 {}'.format( mt )
+                        if mt: bookUSFM += '\n\\mt1 {}'.format( mt )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM2 output…" ) )
             for processedBibleEntry in pseudoESFMData:
-                pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                #print( BBB, pseudoMarker, repr(value) )
-                #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #USFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
+                #print( BBB, pseudoMarker, repr(fullText) )
+                #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
+                    #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
-                #value = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
+                #fullText = cleanText # (temp)
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                            USFM += '\n\\v {}'.format( vNum )
+                            bookUSFM += '\n\\v {}'.format( vNum )
                     vBridgeStartInt = vBridgeEndInt = None
 
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    #if BibleOrgSysGlobals.debugFlag: assert value
+                    #if BibleOrgSysGlobals.debugFlag: assert fullText
                     if pseudoMarker=='v' and removeVerseBridges:
-                        vString = value
+                        vString = fullText
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                             ix = vString.find( bridgeChar )
                             if ix != -1:
-                                value = vString[:ix] # Remove verse bridges
+                                fullText = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
-                                #print( BBB, repr(value), repr(vEnd) )
-                                try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
+                                #print( BBB, repr(fullText), repr(vEnd) )
+                                try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
                                     print( "toUSFM2: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                 #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
-                    if value and value[-1]!=' ': value += ' ' # Append a space since it didn't have one
+                    if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
                 elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
-                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        bookUSFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
 
                 if pseudoMarker[-1] == '~':
-                    #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
+                    #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
                     if BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
-                    USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
+                    bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
-                    adjValue = value
+                    adjValue = fullText
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
                     if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
-                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
-                        if USFM[-1] != ' ':
-                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM2: Added space to {!r} before {!r}".format( USFM[-2], pseudoMarker ) )
+                        #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
+                        if bookUSFM[-1] != ' ':
+                            bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM2: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += ' ' # These go on the same line just separated by spaces and don't get closed
-                    elif USFM: USFM += '\n' # paragraph markers go on a new line
-                    if not value: USFM += '\\{}'.format( pseudoMarker )
-                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #print( pseudoMarker, USFM[-200:] )
+                    elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
+                    elif bookUSFM: bookUSFM += '\n' # paragraph markers go on a new line
+                    if not fullText: bookUSFM += '\\{}'.format( pseudoMarker )
+                    else: bookUSFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, bookUSFM[-200:] )
 
-            # Write the USFM output
-            #print( "\nUSFM", USFM[:3000] )
+            # Adjust the bookUSFM output
+            bookUSFM = noisyRegExReplaceAll( bookUSFM, '\\\\str .+?\\\str\\*', '' )
+            assert '\\str' not in bookUSFM
+
+            # Write the bookUSFM output
+            #print( "\nUSFM", bookUSFM[:3000] )
             filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM2: ' + _("Writing {!r}…").format( filepath ) )
-            with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for USFM
-                myFile.write( USFM )
+            with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
+                myFile.write( bookUSFM )
 
         if ignoredMarkers:
             logging.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
@@ -784,7 +791,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the USFM3 files.
 
-        NOTE: We use Windows \r\n line endings for writing USFM files.
+        NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM3…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
@@ -813,90 +820,90 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag: assert BBB in ('FRT','GLS',)
                     numC = numV = 0
 
-            USFM = ''
+            bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if pseudoESFMData.contains( 'id', 1 ) is None:
-                USFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoESFMData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
-                        if h: USFM += '\n\\h {}'.format( h )
+                        if h: bookUSFM += '\n\\h {}'.format( h )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
                 if pseudoESFMData.contains( 'mt1', 12 ) is None:
                     try:
                         mt = self.suppliedMetadata['File'][BBB+'LongName']
-                        if mt: USFM += '\n\\mt1 {}'.format( mt )
+                        if mt: bookUSFM += '\n\\mt1 {}'.format( mt )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM3 output…" ) )
             for processedBibleEntry in pseudoESFMData:
-                pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                #print( BBB, pseudoMarker, repr(value) )
-                #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #USFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
+                #print( BBB, pseudoMarker, repr(fullText) )
+                #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
+                    #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
-                #value = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
+                #fullText = cleanText # (temp)
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                            USFM += '\n\\v {}'.format( vNum )
+                            bookUSFM += '\n\\v {}'.format( vNum )
                     vBridgeStartInt = vBridgeEndInt = None
 
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    #if BibleOrgSysGlobals.debugFlag: assert value
+                    #if BibleOrgSysGlobals.debugFlag: assert fullText
                     if pseudoMarker=='v' and removeVerseBridges:
-                        vString = value
+                        vString = fullText
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                             ix = vString.find( bridgeChar )
                             if ix != -1:
-                                value = vString[:ix] # Remove verse bridges
+                                fullText = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
-                                #print( BBB, repr(value), repr(vEnd) )
-                                try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
+                                #print( BBB, repr(fullText), repr(vEnd) )
+                                try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
                                     print( "toUSFM3: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                 #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
-                    if value and value[-1]!=' ': value += ' ' # Append a space since it didn't have one
+                    if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
                 elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
-                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        bookUSFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
 
                 if pseudoMarker[-1] == '~':
-                    #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
+                    #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
                     if BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
-                    USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
+                    bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
-                    adjValue = value
+                    adjValue = fullText
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
                     if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
-                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
-                        if USFM[-1] != ' ':
-                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM3: Added space to {!r} before {!r}".format( USFM[-2], pseudoMarker ) )
+                        #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
+                        if bookUSFM[-1] != ' ':
+                            bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM3: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += ' ' # These go on the same line just separated by spaces and don't get closed
-                    elif USFM: USFM += '\n' # paragraph markers go on a new line
-                    if not value: USFM += '\\{}'.format( pseudoMarker )
-                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #print( pseudoMarker, USFM[-200:] )
+                    elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
+                    elif bookUSFM: bookUSFM += '\n' # paragraph markers go on a new line
+                    if not fullText: bookUSFM += '\\{}'.format( pseudoMarker )
+                    else: bookUSFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, bookUSFM[-200:] )
 
-            # Write the USFM output
-            #print( "\nUSFM", USFM[:3000] )
+            # Write the bookUSFM output
+            #print( "\nUSFM", bookUSFM[:3000] )
             filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM3: ' + _("Writing {!r}…").format( filepath ) )
-            with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for USFM
-                myFile.write( USFM )
+            with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
+                myFile.write( bookUSFM )
 
         if ignoredMarkers:
             logging.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
@@ -9875,22 +9882,22 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/',),
-                ('CustomTest', 'Custom', '../',),
-                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/',),
-                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/',),
-                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/',),
-                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/',),
-                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/',),
-                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/',),
-                ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/',),
-                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/',),
-                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/',),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/',),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/',),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/',),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/',),
-                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/',),
+                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                ('CustomTest', 'Custom', '../'),
+                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
+                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
+                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
+                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
+                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
+                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9900,7 +9907,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toPickledBible(); halt
+                #UB.USFM2(); halt
                 myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -9930,16 +9937,80 @@ def demo():
             else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
+    if 0: # Test reading and writing any Bible
+        from UnknownBible import UnknownBible
+        from Bible import Bible
+        testData = ( # name, abbreviation, folder for USFM files
+                #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                #('CustomTest', 'Custom', '../'),
+                #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
+                #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
+                #('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
+                #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                #('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
+                #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
+                #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                #('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
+                ) # You can put your USFM test folder here
+
+        for j, (name, abbrev, testFolder) in enumerate( testData ):
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )
+            if os.access( testFolder, os.R_OK ):
+                UnkB = UnknownBible( testFolder )
+                result = UnkB.search( autoLoadAlways=True, autoLoadBooks=True )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "Bible loaded", result )
+                if isinstance( result, Bible ):
+                    thisBible = result
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', thisBible )
+                    if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
+                    thisBible.toUSFM2(); thisBible.toUSFM3(); halt
+                    myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
+                    doaResults = thisBible.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
+                    if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
+                        outputFolder = 'OutputFiles/BOS_USFM2_Reexport/'
+                        fN = USFMFilenames( testFolder )
+                        folderContents1 = os.listdir( testFolder ) # Originals
+                        folderContents2 = os.listdir( outputFolder ) # Derived
+                        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files…" )
+                        for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
+                            #print( jj, BBB, filename1 )
+                            UUU, nn = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                            #print( jj, BBB, filename1, UUU )
+                            filename2 = None
+                            for fn in folderContents2:
+                                if nn in fn and UUU in fn: filename2 = fn; break
+                            if filename1 in folderContents1 and filename2 in folderContents2:
+                                if BibleOrgSysGlobals.verbosityLevel > 2:
+                                    print( "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
+                                result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolder )
+                                if result and BibleOrgSysGlobals.verbosityLevel > 2: print( "  Matched." )
+                                #print( "  result", result )
+                                #if BibleOrgSysGlobals.debugFlag:
+                                    #if not result: halt
+                            else:
+                                if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
+                                if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
+                else:
+                    logging.critical( "Unable to load {} Bible from {!r}—aborting".format( abbrev, testFolder ) )
+            else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+
+
     if 0: # Test reading and writing a USX Bible
         from USXXMLBible import USXXMLBible
         from USXFilenames import USXFilenames
         testData = (
-                #('Matigsalug', '../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/',),
-                ('MatigsalugUSX', '../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/',),
+                #('Matigsalug', '../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),
+                ('MatigsalugUSX', '../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
@@ -9966,27 +10037,27 @@ def demo():
         from theWordBible import theWordFileCompare
         mainFolder = 'Tests/DataFilesForTests/theWordRoundtripTestFiles/'
         testData = (
-                ('aai', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aai 2013-05-13/',),
-                ('acc', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/',),
-                ('acf', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/acfDBL 2013-02-03/',),
-                ('acr-n', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/acrNDBL 2013-03-08/',),
-                ('acr-t', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/accTDBL 2013-03-08/',),
-                ('agr', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/agrDBL 2013-03-08/',),
-                ('agu', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aguDBL 2013-03-08/',),
-                ('ame', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/ameDBL 2013-02-13/',),
-                ('amr', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/amrDBL 2013-02-13/',),
-                ('apn', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apnDBL 2013-02-13/',),
-                ('apu', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apuDBL 2013-02-14/',),
-                ('apy', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apyDBL 2013-02-15/',),
-                ('arn', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/arnDBL 2013-03-08/',),
-                ('auc', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aucDBL 2013-02-26/',),
+                ('aai', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aai 2013-05-13/'),
+                ('acc', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/'),
+                ('acf', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/acfDBL 2013-02-03/'),
+                ('acr-n', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/acrNDBL 2013-03-08/'),
+                ('acr-t', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/accTDBL 2013-03-08/'),
+                ('agr', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/agrDBL 2013-03-08/'),
+                ('agu', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aguDBL 2013-03-08/'),
+                ('ame', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/ameDBL 2013-02-13/'),
+                ('amr', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/amrDBL 2013-02-13/'),
+                ('apn', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apnDBL 2013-02-13/'),
+                ('apu', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apuDBL 2013-02-14/'),
+                ('apy', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/apyDBL 2013-02-15/'),
+                ('arn', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/arnDBL 2013-03-08/'),
+                ('auc', 'Tests/DataFilesForTests/theWordRoundtripTestFiles/aucDBL 2013-02-26/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/', UB )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter D'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
