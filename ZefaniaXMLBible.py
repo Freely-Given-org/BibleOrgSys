@@ -64,10 +64,10 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-08' # by RJH
 ShortProgName = "ZefaniaBible"
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -164,7 +164,9 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
             and not firstLines[1].startswith( '<!--Nice Viewer' ) \
             and not firstLines[1].startswith( '<!--Builded with' ) \
             and not firstLines[1].startswith( '<!--For Programmers' ) \
+            and not firstLines[1].startswith( '<!--Visit the' ) \
             and not firstLines[1].startswith( '<!--http://zefania' ):
+                if BibleOrgSysGlobals.debugFlag: print( "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -211,7 +213,9 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
                 and not firstLines[1].startswith( '<!--Nice Viewer' ) \
                 and not firstLines[1].startswith( '<!--Builded with' ) \
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
+                and not firstLines[1].startswith( '<!--Visit the' ) \
                 and not firstLines[1].startswith( '<!--http://zefania' ):
+                    if BibleOrgSysGlobals.debugFlag: print( "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
                     continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
