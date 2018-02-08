@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-07' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -9739,22 +9739,22 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
-                #('CustomTest', 'Custom', '../'),
-                #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
-                #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
-                #('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
-                #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
-                #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
-                #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                ('CustomTest', 'Custom', '../'),
+                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
+                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
+                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
+                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
                 ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
-                #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
-                #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
-                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
-                #('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
+                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
+                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
+                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9764,7 +9764,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                UB.toEasyWorshipBible(); halt
+                #UB.toEasyWorshipBible(); halt
                 myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -9814,7 +9814,7 @@ def demo():
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
                 #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
                 #('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
-                ) # You can put your USFM test folder here
+                ) # You can put your test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )

@@ -28,6 +28,8 @@ Module reading and loading EasyWorship Bible undocumented binary files.
 Filenames usually end with .ewb and contain some header info
     including a table of book abbreviations with numbers of chapters and verses
     followed by compressed blobs of basic book data (no headings, footnotes, etc.)
+
+Seems that some non-UTF8 versions can't be read yet. :(
 """
 
 from gettext import gettext as _
