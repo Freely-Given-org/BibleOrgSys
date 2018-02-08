@@ -32,23 +32,29 @@ Filenames usually end with .ewb and contain some header info
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.05'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
-import logging, os, struct
+import logging, os.path
+import struct, zlib
 from binascii import hexlify
 import multiprocessing
+from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
+
+
+
+FILENAME_ENDING = '.EWB' # Must be UPPERCASE
 
 
 
@@ -87,7 +93,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
-            if somethingUpper.endswith( '.EWB' ):
+            if somethingUpper.endswith( FILENAME_ENDING ):
                 foundFiles.append( something )
                 numFound += 1
     #if foundFileCount >= len(compulsoryFiles):
@@ -117,7 +123,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             if os.path.isdir( somepath ): foundSubfolders.append( something )
             elif os.path.isfile( somepath ):
                 somethingUpper = something.upper()
-                if somethingUpper.endswith( '.EWB' ):
+                if somethingUpper.endswith( FILENAME_ENDING ):
                     foundProjects.append( (tryFolderName,something) )
                     numFound += 1
         #if foundFileCount >= len(compulsoryFiles):
@@ -134,8 +140,205 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
 # end of EasyWorshipBibleFileCheck
 
 
-BOS = None
 
+def createEasyWorshipBible( BibleObject, outputFolder=None ):
+    """
+    Write the pseudo USFM out into the compressed EasyWorship format.
+
+    Since we don't have a specification for the format,
+        and since we don't know the meaning of all the binary pieces of the file,
+        we can't be certain yet that this output will actually work. :-(
+    """
+    from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+    import zipfile
+
+    # It seems 7-9 give the correct two header bytes
+    ZLIB_COMPRESSION_LEVEL = 9 #  -1=default(=6), 0=none, 1=fastest...9=highest compression level
+
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running createEasyWorshipBible…" )
+    if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
+
+    if not BibleObject.doneSetupGeneric: BibleObject.__setupWriter()
+    if not outputFolder: outputFolder = 'OutputFiles/BOS_EasyWorshipBible_Export/'
+    if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+    # Set-up their Bible reference system
+    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+
+    ignoredMarkers = set()
+
+    # Before we write the file, let's compress all our books
+    # Books are written as C:V verseText with double-spaced lines
+    compressedDictionary = {}
+    for BBB,bookObject in BibleObject.books.items():
+        if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF','XXG',): continue # Ignore these books
+        pseudoESFMData = bookObject._processedLines
+
+        textBuffer = ''
+        vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
+        for entry in pseudoESFMData:
+            marker, text = entry.getMarker(), entry.getCleanText()
+            #print( BBB, marker, text )
+            if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+            elif marker == 'c':
+                C = int( text ) # Just so we get an error if we have something different
+                V = lastVWritten = '0'
+            elif marker == 'v':
+                #V = text.replace( '–', '-' ).replace( '—', '-' ) # Replace endash, emdash with hyphen
+                V = text
+                for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                    ix = V.find( bridgeChar )
+                    if ix != -1:
+                        print( "Preparing for verse bridge in {} at {} {}:{}".format( BibleObject.abbreviation, BBB, C, V ) )
+                        vStart = V[:ix] # Remove verse bridges
+                        vEnd = V[ix+1:]
+                        #print( BBB, repr(vStart), repr(vEnd) )
+                        try: vBridgeStartInt, vBridgeEndInt = int( vStart ), int( vEnd )
+                        except ValueError:
+                            print( "createEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
+                            vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
+                        #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                        V = vStart
+                        break
+            elif marker == 'v~':
+                try:
+                    if int(V) <= int(lastVWritten):
+                        # TODO: Not sure what level the following should be? info/warning/error/critical ????
+                        logging.warning( 'createEasyWorshipBible: Skipping {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
+                        continue
+                except ValueError: pass # had a verse bridge
+                if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
+                    print( "Handling verse bridge in {} at {} {}:{}-{}".format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
+                    textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} (-{}) {}'.format( C, vBridgeStartInt, vBridgeEndInt, text )
+                    for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
+                        textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
+                    lastVWritten = str( vBridgeEndInt )
+                    vBridgeStartInt = vBridgeEndInt = None
+                else:
+                    textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} {}'.format( C, V, text )
+                    lastVWritten = V
+            elif marker == 'p~':
+                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
+                                        #     \c 1 \v 1 \p These events happened...
+                textBuffer += ' {}'.format( text ) # continuation of the same verse
+            else:
+                ignoredMarkers.add( marker )
+        #print( BBB, textBuffer )
+        textBuffer = textBuffer \
+                        .replace( '“', '"' ).replace( '”', '"' ) \
+                        .replace( "‘", "'" ).replace( "’", "'" ) \
+                        .replace( '–', '--' ).replace( '—', '--' )
+        bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
+        #print( BBB, hexlify(bookBytes[:20]), bookBytes )
+        assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
+        appendage = b'QK\x03\x04' + struct.pack( '<I', len(textBuffer) ) + b'\x08\x00'
+        #print( "appendage", len(appendage), hexlify(appendage), appendage )
+        assert len(appendage) == 10
+        compressedDictionary[BBB] = bookBytes + appendage
+
+    # Work out the "compressed" (osfuscated) module name
+    #name = BibleObject.getAName()
+    ##print( 'sn', repr(BibleObject.shortName) )
+    #if len(name)>18:
+        #if BibleObject.shortName: name = shortName
+        #elif name.endswith( ' Version' ): name = name[:-8]
+    #name = name.replace( ' ', '' )
+    #if not name.startswith( 'ezFree' ): name = 'ezFree' + name
+    name = 'ezFree' + ( BibleObject.abbreviation if BibleObject.abbreviation else 'UNK' )
+    if len(name)>16: name = name[:16] # Shorten
+    encodedNameBytes = zlib.compress( name.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
+    if BibleOrgSysGlobals.debugFlag:
+        print( 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
+    assert encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda # Zlib compression header
+    assert len(encodedNameBytes) <= 26
+
+    filename = '{}{}'.format( BibleObject.abbreviation, FILENAME_ENDING ).lower()
+    filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( '  createEasyWorshipBible: ' + _("Writing {!r}…").format( filepath ) )
+    bookAddress = startingBookAddress = 14872 + len(name) + 18 + 4 # Name is something like ezFreeXXX
+    vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
+    with open( filepath, 'wb' ) as myFile:
+        assert myFile.tell() == 0
+        # Write the header info to binary file
+        myFile.write( b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' )
+        assert myFile.tell() == 32
+        nameBytes = ( BibleObject.getAName() ).encode( 'utf8' )
+        myFile.write( nameBytes + b'\x00' * (56 - len(nameBytes)) )
+        assert myFile.tell() == 88 # 32 + 56
+
+        # Write the numChapters,numVerses info along with the file position and length
+        for BBB in BOS.getBookList():
+            bookName = BibleObject.getAssumedBookName( BBB )
+            #if not bookName:
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                #bookName = 'Unknown'
+            bookNameBytes = bookName.encode( 'utf8' )
+            myFile.write( bookNameBytes + b'\x00' * (51 - len(bookNameBytes)) )
+
+            numVersesList = BOS.getNumVersesList( BBB )
+            numChapters = len( numVersesList )
+            myFile.write( struct.pack( 'B', numChapters ) )
+            for verseCount in numVersesList: myFile.write( struct.pack( 'B', verseCount ) )
+            myFile.write( b'\x00' * (157 - numChapters - 1) )
+
+            try: bookBytes = compressedDictionary[BBB] # if it exists
+            except KeyError: bookBytes = b''
+            myFile.write( struct.pack( '<Q', bookAddress ) )
+            #myFile.write( b'\x00' * 4 )
+            myFile.write( struct.pack( '<Q', len(bookBytes) ) )
+            #myFile.write( b'\x00' * 4 )
+            bookAddress += len(bookBytes)
+        assert myFile.tell() == 14872 # 32 + 56 + 224*66
+
+        # Write the "compressed" (osfuscated) module name
+        myFile.write( struct.pack( '<I', len(name) + 18 ) )
+        assert myFile.tell() == 14876 # 32 + 56 + 224*66 + 4
+        myFile.write( encodedNameBytes )
+
+        appendage = b'QK\x03\x04' + struct.pack( 'B', len(name) ) + b'\x00'
+        #print( "appendage", len(appendage), hexlify(appendage), appendage )
+        assert len(appendage) == 6
+        myFile.write( appendage )
+        remainderCount = 18 + len(name) - len(encodedNameBytes) - 4 - len(appendage)
+        #print( "remainderCount", remainderCount )
+        assert remainderCount == 0
+        #myFile.write( b'\x00' * remainderCount )
+        myFile.write( b'\x00\x00\x08\x00' ) # Not sure what this means
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+            #print( "At", myFile.tell(), 'want', startingBookAddress )
+        assert myFile.tell() == startingBookAddress
+
+        # Write the book info to the binary files
+        for BBB in BOS.getBookList():
+            if BBB in compressedDictionary:
+                myFile.write( compressedDictionary[BBB] ) # Write zlib output
+            elif BibleOrgSysGlobals.verbosityLevel > 2:
+                print( '  Book {} is not available for EasyWorship export'.format( BBB ) )
+
+        # Write the end of file stuff
+        myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
+
+    if ignoredMarkers:
+        logging.info( "createEasyWorshipBible: Ignored markers were {}".format( ignoredMarkers ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "  " + _("WARNING: Ignored createEasyWorshipBible markers were {}").format( ignoredMarkers ) )
+
+    # Now create a zipped version
+    filepath = os.path.join( outputFolder, filename )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} EWB file…".format( filename ) )
+    zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+    zf.write( filepath, filename )
+    zf.close()
+
+    if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+        print( "  BibleWriter.createEasyWorshipBible finished successfully." )
+    return True
+# end of createEasyWorshipBible
+
+
+
+BOS = None
 
 class EasyWorshipBible( Bible ):
     """
@@ -145,11 +348,9 @@ class EasyWorshipBible( Bible ):
         NT has  7,957 verses = 1F15 in 27 = 1B books
         Total  31,102 verses = 797E in 66 = 42 books
     """
-    def __init__( self, sourceFolder, sourceFilename, encoding=None ):
+    def __init__( self, sourceFolder, sourceFilename ):
         """
         Constructor: just sets up the Bible object.
-
-        encoding is irrelevant because it's a binary format.
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -157,7 +358,7 @@ class EasyWorshipBible( Bible ):
         self.objectTypeString = 'EWB'
 
         # Now we can set our object variables
-        self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, sourceFilename, encoding
+        self.sourceFolder, self.sourceFilename = sourceFolder, sourceFilename
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
 
         # Do a preliminary check on the readability of our file
@@ -167,121 +368,222 @@ class EasyWorshipBible( Bible ):
         global BOS
         if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
-        self.abbreviation = self.sourceFilename[:-4] # Remove file extension
+        assert FILENAME_ENDING in self.sourceFilename.upper()
+        self.abbreviation = os.path.splitext( self.sourceFilename)[0] # Remove file extension
+        #print( self.sourceFilename, self.abbreviation )
     # end of EasyWorshipBible.__init__
 
 
     def load( self ):
         """
-        Load the compressed data file and import book elements.
+        Load the compressed data file and import book objects.
         """
-        import zlib
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading {}…").format( self.sourceFilepath ) )
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             fileBytes = myFile.read()
-        if BibleOrgSysGlobals.debugFlag: print( "  {:,} bytes read".format( len(fileBytes) ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+            print( "  {:,} bytes read".format( len(fileBytes) ) )
 
-        keep = {}
+        keep = OrderedDict()
         index = 0
-        #print( 'block1', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
-        keep['block1'] = fileBytes[index:index+32]
+
+        # Block 1 is 32-bytes long and always the same for EW2009 Bibles
+        #if debuggingThisModule: print( 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
+        keep['introBlock'] = (index,fileBytes[index:index+32])
         hString = ''
         for j in range( 0, 32 ):
             char8 = fileBytes[index+j]
             #print( char8, repr(char8) )
             if char8 < 0x20: break
             hString += chr( char8 )
-        if BibleOrgSysGlobals.debugFlag: print( 'block1b', hexlify( fileBytes[index+j:index+32] ) )
-        # Skipped some (important?) binary here
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: print( 'hString', repr(hString), index )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            assert hString == 'EasyWorship Bible Text'
+        introBlockb = fileBytes[index+j:index+32]
+        #if BibleOrgSysGlobals.debugFlag: print( 'introBlockb', hexlify( introBlockb ), introBlockb )
+        assert introBlockb == b'\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' # b'1a023c000000e0000000'
+        # Skipped some (important?) binary here??? but it's the same for every module
         index += 32
-        if BibleOrgSysGlobals.debugFlag: print( 'hString', repr(hString), index )
-        if BibleOrgSysGlobals.strictCheckingFlag: assert hString == 'EasyWorship Bible Text'
 
-        #print( 'block2', hexlify( fileBytes[index:index+56] ), fileBytes[index:index+56] )
-        keep['block2'] = fileBytes[index:index+56]
+        # Block 2 is 56-bytes long
+        moduleNameBlock = fileBytes[index:index+56]
+        keep['moduleNameBlock'] = (index,moduleNameBlock)
+        #if debuggingThisModule: print( 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
         nString = ''
         for j in range( 0, 32 ):
             char8 = fileBytes[index+j]
             #print( char8, repr(char8) )
             if char8 < 0x20: break
             nString += chr( char8 )
-        # Skipped some zeroes here
-        index += 56
-        if BibleOrgSysGlobals.debugFlag: print( 'nString', repr(nString), index )
+        #if BibleOrgSysGlobals.debugFlag or debuggingThisModule: print( 'nString', repr(nString), index )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
         self.name = nString
+        #assert self.name # Not there for amp and gkm
+        moduleNameBlockb = fileBytes[index+j:index+56]
+        #if BibleOrgSysGlobals.debugFlag: print( 'moduleNameBlockb', len(moduleNameBlockb), hexlify( moduleNameBlockb ), moduleNameBlockb )
+        #assert moduleNameBlockb.endswith( b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00' ) # b'000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000'
+        for ix in range( index+j, index+56 ): # Mostly zeroes remaining
+            if ix == 84: # What does this mean???
+                value = fileBytes[ix]
+                assert value in (0,1,2,3,4,5) # bbe=0, alb=1, esv2=2, esv=3, asv=4 nasb=5 Revision number???
+                keep['byte84'] = (index,value)
+            else: assert fileBytes[ix] == 0
+        index += 56
 
+        # Get the optional booknames and the raw data for each book into a list
         rawBooks = []
-        for b in range( 1, 66+1 ):
-            bookAbbrev = ''
+        for bookNumber in range( 1, 66+1 ):
+            bookInfoBlock = fileBytes[index:index+51]
+            blockName = 'bookInfoBlock-{}'.format( bookNumber )
+            keep[blockName] = (index,bookInfoBlock)
+            #if debuggingThisModule: print( blockName, hexlify( bookInfoBlock ), bookInfoBlock )
+            bookName = ''
             for j in range( 0, 32 ):
                 char8 = fileBytes[index+j]
                 #print( char8, repr(char8) )
-                if char8 < 0x20: break
-                bookAbbrev += chr( char8 )
-            # Skipped some zeroes here
+                if char8 < 0x20: break # bookName seems quite optional -- maybe the English ones are assumed if empty???
+                bookName += chr( char8 )
+            assert fileBytes[index+j:index+51] == b'\x00' * (51-j) # Skipped some zeroes here
             index += 51
-            if bookAbbrev and bookAbbrev[-1] == '.': bookAbbrev = bookAbbrev[:-1] # Remove final period
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( 'bookAbbrev', repr(bookAbbrev) )
+            if bookName and bookName[-1] == '.': bookName = bookName[:-1] # Remove final period
+            #if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                #print( 'bookName', repr(bookName) )
             numChapters = fileBytes[index]
             numVerses = []
             for j in range( 0, numChapters ):
                 numVerses.append( fileBytes[index+j+1] )
-            # Skipped some zeroes here
+            #print( "here1", 157-j-2, hexlify(fileBytes[index+j+2:index+157]), fileBytes[index+j+2:index+157] )
+            if self.abbreviation != 'fn1938': # Why does this fail???
+                assert fileBytes[index+j+2:index+157] == b'\x00' * (157-j-2) # Skipped some zeroes here
             index += 157
-            if BibleOrgSysGlobals.debugFlag:
-                print( ' ', numChapters, numVerses )
+            #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                #print( ' {!r} numChapters={} verses={}'.format( bookName, numChapters, numVerses ) )
             bookStart, = struct.unpack( "<I", fileBytes[index:index+4] )
-            # Skipped some zeroes here
+            assert fileBytes[index+4:index+8] == b'\x00' * 4 # Skipped some zeroes here
             index += 8
-            if BibleOrgSysGlobals.debugFlag:
-                print( '  bookStart', bookStart )
+            #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                #print( '    bookStart is at {:,}'.format( bookStart ) )
             bookLength, = struct.unpack( "<I", fileBytes[index:index+4] )
-            # Skipped some zeroes here
+            assert fileBytes[index+4:index+8] == b'\x00' * 4 # Skipped some zeroes here
             index += 8
-            if BibleOrgSysGlobals.debugFlag:
-                print( '  bookLength', bookLength, bookStart+bookLength )
-            bookBytes = fileBytes[bookStart:bookStart+bookLength]
-            assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
-            rawBooks.append( (bookAbbrev, numChapters, numVerses, bookStart, bookLength, bookBytes) )
+            #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                #print( '    {} bookLength is {:,} which goes to {:,}'.format( bookNumber, bookLength, bookStart+bookLength ) )
+            bookBytes = fileBytes[bookStart:bookStart+bookLength] # Looking ahead into the file
+            rawBooks.append( (bookName, numChapters, numVerses, bookStart, bookLength, bookBytes) )
+            if bookLength == 0: # e.g., gkm Philippians (book number 50)
+                logging.critical( "Booknumber {} is empty in {}".format( bookNumber, self.abbreviation ) )
+            else:
+                #if debuggingThisModule:
+                    #print( "cHeader1 for {}: {}={} {}={}".format( self.abbreviation, bookBytes[0], hexlify(bookBytes[0:1]), bookBytes[1], hexlify(bookBytes[1:2]) ) )
+                assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header (for compression levels 7-9)
+        assert index == 14872 # 32 + 56 + 224*66
 
-        if BibleOrgSysGlobals.debugFlag: print( 'unknown block3', index, hexlify( fileBytes[index:index+30] ) )
-        keep['block3'] = fileBytes[index:index+30]
+        workNameBlock = fileBytes[index:index+30] # 30 here is just a maximum, not fixed
+        keep['workNameBlock'] = (index,workNameBlock) # This block starts with a length, then a work name, e.g., ezFreeASV
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+            #print( 'workNameBlock', index, hexlify(workNameBlock), workNameBlock )
         length3, = struct.unpack( "<I", fileBytes[index:index+4] )
+        #print( "length3", length3 ) # Seems to include the compressed string plus six more bytes
+        keep['length3'] = (index,length3)
         if length3:
-            block3 = fileBytes[index+4:index+4+length3-4]
-            byteResult = zlib.decompress( block3 )
+            bookInfoBlock = fileBytes[index+4:index+4+length3-4-6]
+            if debuggingThisModule:
+                print( "cHeader2 for {}: {}={} {}={}".format( self.abbreviation, bookInfoBlock[0], hexlify(bookInfoBlock[0:1]), bookInfoBlock[1], hexlify(bookInfoBlock[1:2]) ) )
+            assert bookInfoBlock[0]==0x78 and bookInfoBlock[1]==0xda # Zlib compression header (for compression levels 7-9)
+            byteResult = zlib.decompress( bookInfoBlock )
+            #rewriteResult1 = zlib.compress( byteResult, 9 )
+            #byteResult1 = zlib.decompress( rewriteResult1 )
+            #compressor = zlib.compressobj(level=9, method=zlib.DEFLATED, wbits=15, memLevel=8, strategy=zlib.Z_DEFAULT_STRATEGY )
+            #rewriteResult2 = compressor.compress( byteResult )
+            #rewriteResult2 += compressor.flush()
+            #byteResult2 = zlib.decompress( rewriteResult2 )
+            #print( "rewrite1 {} {} {}\n         {} {} {}\n         {} {} {}\n      to {} {}\n      to {} {}\n      to {} {}" \
+                        #.format( len(bookInfoBlock), hexlify(bookInfoBlock), bookInfoBlock,
+                                 #len(rewriteResult1), hexlify(rewriteResult1), rewriteResult1,
+                                 #len(rewriteResult2), hexlify(rewriteResult2), rewriteResult2,
+                                 #len(byteResult), byteResult,
+                                 #len(byteResult1), byteResult1,
+                                 #len(byteResult2), byteResult2 ) )
             textResult = byteResult.decode( 'utf8' )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "Got", len(textResult), textResult, 'from', length3 )
-            keep['block3n'] = textResult
-            if self.name: print( 'Overwriting module name {!r} with {!r}'.format( self.name, textResult ) )
-            self.name = textResult
+                print( "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
+            assert textResult.startswith('ezFree') or textResult.startswith('ezPaid')
+            keep['workName'] = (index+4,textResult)
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "EasyWorshipBible.load: " + _("Setting module work name to {!r}").format( textResult ) )
+            if self.name: self.workName = textResult
+            else: # Should rarely happen
+                self.name = self.workName = textResult
+            workNameAppendage = fileBytes[index+4+length3-6-4:index+4+length3-4]
+            #print( "workNameAppendage", len(workNameAppendage), hexlify(workNameAppendage), workNameAppendage )
+            keep['workNameAppendage'] = (index+4+length3-6-4,workNameAppendage)
+            assert workNameAppendage[:4] == b'QK\x03\x04'
+            uncompressedNameLength, = struct.unpack( "<B", workNameAppendage[4:5] )
+            assert workNameAppendage[5:] == b'\x00'
+            assert len(textResult) == uncompressedNameLength
+        keep['length3'] = (index,length3)
         index += length3
-        if BibleOrgSysGlobals.debugFlag: print( 'end of contents', index, hexlify( fileBytes[index:index+60] ) )
-        keep['block4'] = rawBooks[0][3]
+        #print( self.abbreviation, len(textResult), repr(textResult), 'length3', length3, len(textResult)+18 )
+        assert length3 == len(textResult) + 18
 
-        block5 = fileBytes[index:rawBooks[0][3]]
-        keep['block5'] = block5
-        index += len( block5 )
-        #if self.abbreviation in ( 'TB', ): # Why don't the others work
-        assert index == rawBooks[0][3] # Should now be at the start of the first book (already fetched above)
+        bookDataStartIndex = rawBooks[0][3]
+        #print( "bookDataStartIndex", bookDataStartIndex )
 
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+            #print( 'After known contents @ {:,}'.format( index ), hexlify( fileBytes[index:index+60] ), fileBytes[index:index+60] )
+
+        block0080 = fileBytes[index:bookDataStartIndex]
+        #print( "block0080", index, len(block0080), hexlify(block0080), block0080 )
+        keep['block0080'] = (index,block0080)
+        assert block0080 == b'\x00\x00\x08\x00' # b'00000800'
+        index += len( block0080 )
+        keep['bookDataStartIndex'] = (index,bookDataStartIndex)
+        assert index == bookDataStartIndex # Should now be at the start of the first book (already fetched above)
+
+        # Look at extra stuff right at the end of the file
         assert len(rawBooks) == 66
-        # Look at extra stuff at end
-        endBytes = fileBytes[bookStart+bookLength:]
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( 'endBytes', len(endBytes), hexlify(endBytes), endBytes )
+        index = bookStart + bookLength # of the last book
+        endBytes = fileBytes[index:]
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( 'endBytes', len(endBytes), hexlify(endBytes), endBytes )
         assert len(endBytes) == 16
-        keep['block9'] = endBytes
-        # Skipped some binary and some text here
-        del fileBytes
+        keep['endBytes'] = (index,endBytes)
+        assert endBytes == b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' # b'183a000000000000657a774269626c65'
+        del fileBytes # Not needed any more
 
         # Now we have to decode the book text (compressed about 4x with zlib)
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "EWB loading books for {}…".format( self.abbreviation ) )
         for j, BBB in enumerate( BOS.getBookList() ):
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  Decoding {}…'.format( BBB ) )
             bookAbbrev, numChapters, numVerses, bookStart, bookLength, bookBytes = rawBooks[j]
+            if bookLength == 0:
+                assert not bookBytes
+                logging.critical( "   Skipped empty {}".format( BBB ) )
+                continue
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  Decoding {}…'.format( BBB ) )
+            bookBytes, bookExtra = bookBytes[:-10], bookBytes[-10:]
+            assert len(bookExtra) == 10
+            keep['bookExtra-{}'.format(j+1)] = (-10,bookExtra)
+            assert bookExtra[:4] == b'QK\x03\x04'
+            uncompressedBookLength, = struct.unpack( "<I", bookExtra[4:8] )
+            assert bookExtra[8:] == b'\x08\x00'
             byteResult = zlib.decompress( bookBytes )
-            textResult = byteResult.decode( 'utf8' )
+            assert len(byteResult) == uncompressedBookLength
+            try: textResult = byteResult.decode( 'utf8' )
+            except UnicodeDecodeError:
+                logging.critical( "Unable to decode {} {} bookText -- maybe it's not utf-8???".format( self.abbreviation, BBB ) )
+                continue
+            if debuggingThisModule:
+                rewriteResult1 = zlib.compress( byteResult, 9 )
+                byteResult1 = zlib.decompress( rewriteResult1 )
+                if rewriteResult1 != bookBytes:
+                    print( "\nbookBytes", len(bookBytes), hexlify(bookBytes) )
+                    print( "\nrewriteResult1", len(rewriteResult1), hexlify(rewriteResult1) )
+                    halt
+                if byteResult1 != byteResult:
+                    print( len(byteResult), hexlify(byteResult) )
+                    print( len(byteResult1), hexlify(byteResult1) )
+                    halt
             if '\t' in textResult:
                 logging.warning( "Replacing tab characters in {} = {}".format( BBB, bookAbbrev ) )
                 textResult = textResult.replace( '\t', ' ' )
@@ -296,8 +598,8 @@ class EasyWorshipBible( Bible ):
             C, V = '0', '-1' # So first/id line starts at 0:0
             for line in textResult.split( '\r\n' ):
                 if not line: continue # skip blank lines
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( 'Processing {} {} line: {!r}'.format( self.abbreviation, BBB, line ) )
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    #print( 'Processing {} {} line: {!r}'.format( self.abbreviation, BBB, line ) )
                 assert line[0].isdigit()
                 assert ':' in line[:4]
                 CV,verseText = line.split( ' ', 1 )
@@ -305,25 +607,28 @@ class EasyWorshipBible( Bible ):
                 #print( newC, V, repr(verseText) )
                 if newC != C:
                     if self.abbreviation=='hcsb' and BBB in ('SA2',): # Handle a bad bug -- chapter 24 has verses out of order
-                        print( "Skipping error for out-of-order chapters in {}!".format( BBB ) )
+                        logging.critical( "Skipping error for out-of-order chapters in {}!".format( BBB ) )
                     else: assert int(newC) > int(C)
                     C, V = newC, '0'
                     thisBook.addLine( 'c', C )
                 if self.abbreviation=='TB' and BBB=='JOL': # Handle a bug -- chapter 3 repeats
                     if int(newV) < int(V): break
+                elif self.abbreviation=='drv' and BBB in ('GEN','EXO','NUM',): # Handle a bug -- Gen 18:1&12, Exo 28:42&43 out of order
+                    logging.critical( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 elif self.abbreviation=='rsv' and BBB in ('EXO','HAG',): # Handle a bug -- chapter 22 has verses out of order
-                    print( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
+                    logging.critical( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 elif self.abbreviation=='gnt' and BBB in ('ISA','ZEC','MRK',): # Handle a bug -- chapter 38 has verses out of order
-                    print( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
+                    logging.critical( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 elif self.abbreviation=='hcsb' and BBB in ('SA2',): # Handle a bug -- chapter 24 has verses out of order
-                    print( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
+                    logging.critical( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 elif self.abbreviation=='msg' and BBB in ('NUM','JDG','SA2','CH2','EZE','ACT',): # Handle a bug -- chapter 24 has verses out of order
-                    print( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
+                    logging.critical( "Skipping error for out-of-order verses in {} {}".format( self.abbreviation, BBB ) )
                 else:
                     try: assert int(newV) > int(V)
                     except ValueError:
-                        if BibleOrgSysGlobals.debugFlag:
-                            print( "Something's not an integer around {} {}:{} {}".format( BBB, C, V, verseText ) )
+                        logging.critical( "Something's not an integer around {} {} {}:{} {}".format( self.abbreviation, BBB, C, V, verseText ) )
+                    except AssertionError:
+                        logging.critical( "Something's out of order around {} {} {}:{} {}".format( self.abbreviation, BBB, C, V, verseText ) )
                 V = newV
                 thisBook.addLine( 'v', V + ' ' + verseText )
 
@@ -360,6 +665,7 @@ def testEWB( TEWBfilename ):
         ewb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
+                        ('OT','ZEC','2','6'),('OT','ZEC','2','7'), # Bridged in MBTV and GNT
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
         (t, b, c, v) = reference
@@ -408,35 +714,80 @@ def demo():
         #result5 = EasyWorshipBibleFileCheck( testSubfolder, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( "EasyWorship TestB3", result5 )
 
-
     if 0: # specified module
-        singleModule = 'MBTV.ewb'
+        singleModule = 'mbtv.ewb'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nEasyWorship C/ Trying {}".format( singleModule ) )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testEWB( singleModule )
 
     if 1: # specified modules
-        keepDict = {}
-        good = ( 'amp.ewb','darby.ewb', 'esv.ewb','esv.ewb_0','esv.ewb_2',
-                'gnt.ewb','kjv.ewb','maori.ewb',
-                'MBTV.ewb', 'msg.ewb','nasb.ewb','niv.ewb','nkjv.ewb','TB.ewb','ylt.ewb',)
+        allModulesKeepDict = OrderedDict()
+        one = ( 'asv.ewb', )
+        good = ( 'alb.ewb','amp.ewb','asv.ewb','bbe.ewb','cei.ewb','darby.ewb',
+                'dn1933.ewb','dnb1930.ewb','drv.ewb',
+                'esv.ewb','esv.ewb_0','esv.ewb_2',
+                'fn1938.ewb', 'hcv.ewb','kar.ewb','kjv.ewb',
+                'lsg.ewb','luth1545.ewb', 'maori.ewb', 'mbtv.ewb',
+                'nasb.ewb','niv.ewb','nkjv.ewb', 'sv1917.ewb', 'TB.ewb',
+                'vul.ewb', 'wb.ewb', 'ylt.ewb' )
         nonEnglish = (  )
-        bad = ( 'aa.ewb','hcsb.ewb','rsv.ewb' )
-        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
+        bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
+        allModules = good + bad
+        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nEasyWorship D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            keepDict[testFilename] = testEWB( testFilename )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            for part in ('block1','block2','block3','block3n','block4','block5','block9'):
+            allModulesKeepDict[testFilename] = testEWB( testFilename )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(allModulesKeepDict)>1:
+            print( "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
+            # Print the various binary blocks together by block number
+            #print( allModulesKeepDict['alb.ewb'].keys() )
+            #for blockName in ('introBlock','moduleNameBlock','byte84','workNameBlock','workName','bookDataStartIndex','block0080','endBytes'):
+            for blockName in allModulesKeepDict['alb.ewb'].keys():
                 print()
-                for fn,stuff in sorted( keepDict.items() ):
-                    if part in stuff:
-                        if part == 'block3': print( part, len(stuff[part]), stuff[part][0], hexlify(stuff[part]), fn, )
-                        elif part == 'block3n': print( part, len(stuff[part]), stuff[part], fn )
-                        elif part == 'block4': print( part, stuff[part], fn )
-                        else: print( part, len(stuff[part]), hexlify(stuff[part]), stuff[part], fn, )
+                for moduleFilename,stuff in allModulesKeepDict.items():
+                    if blockName in stuff:
+                        index,result = stuff[blockName]
+                        if blockName == 'introBlock': # Nice and consistent (32-bytes)
+                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert index == 0
+                            assert result == b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00'
+                        elif blockName == 'moduleNameBlock':
+                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'byte84': # revision number or something ???
+                            print( blockName, index, result, moduleFilename, )
+                        #elif blockName in ('bookInfoBlock-1','bookInfoBlock-66'):
+                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'workNameBlock':
+                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'length3':
+                            #print( blockName, index, result, moduleFilename, )
+                            #print( result )
+                            assert 26 <= result <= 32
+                        elif blockName == 'workName':
+                            #print( blockName, index, len(result), result, moduleFilename )
+                            assert index == 14876
+                        elif blockName == 'workNameAppendage': # Nice and consistent (4-bytes)
+                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert len(result) == 6
+                            assert result[:4] == b'QK\x03\x04'
+                            assert result[4] < 16 # Length of uncompressed work name
+                            assert result[5:] == b'\x00'
+                        elif blockName == 'block0080': # Nice and consistent (4-bytes)
+                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert result == b'\x00\x00\x08\x00'
+                        elif blockName == 'bookDataStartIndex':
+                            #print( blockName, index, result, moduleFilename, )
+                            assert 14902 <= result <= 14908
+                        elif blockName == 'endBytes': # Nice and consistent (16-bytes)
+                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert result == b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' # b'183a000000000000657a774269626c65'
+                        elif not blockName.startswith( 'bookInfoBlock-' ) \
+                        and not blockName.startswith( 'bookExtra-' ):
+                            # Shouldn't get here
+                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            if debuggingThisModule: halt
 
 
     if 0: # all discovered modules in the test folder

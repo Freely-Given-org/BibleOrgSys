@@ -3584,7 +3584,8 @@ class BibleWriter( InternalBible ):
             and since we don't know the meaning of all the binary pieces of the file,
             we can't be certain yet that this output will actually work. :-(
         """
-        import zlib, struct
+        from EasyWorshipBible import createEasyWorshipBible
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toEasyWorshipBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -3592,155 +3593,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = 'OutputFiles/BOS_EasyWorshipBible_Export/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-
-        ignoredMarkers = set()
-
-        # Before we write the file, let's compress all our books
-        compressedDictionary = {}
-        for BBB,bookObject in self.books.items():
-            if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF','XXG',): continue # Ignore these books
-            pseudoESFMData = bookObject._processedLines
-
-            textBuffer = ''
-            #vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            for entry in pseudoESFMData:
-                marker, text = entry.getMarker(), entry.getCleanText()
-                #print( BBB, marker, text )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
-                elif marker == 'c':
-                    C = text
-                    V = lastVWritten = '0'
-                elif marker == 'v':
-                    V = text.replace( '–', '-' ).replace( '—', '-' ) # Replace endash, emdash with hyphen
-                    # This format seems to handle bridges ok
-                    #for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                        #ix = V.find( bridgeChar )
-                        #if ix != -1:
-                            #value = V[:ix] # Remove verse bridges
-                            #vEnd = V[ix+1:]
-                            ##print( BBB, repr(value), repr(vEnd) )
-                            #try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
-                            #except ValueError:
-                                #print( "toEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
-                                #vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                            ##print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
-                            #V = value
-                            #break
-                elif marker == 'v~':
-                    try:
-                        if int(V) <= int(lastVWritten):
-                            # TODO: Not sure what level the following should be? info/warning/error/critical ????
-                            logging.warning( 'toEasyWorshipBible: Skipping {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
-                            continue
-                    except ValueError: pass # had a verse bridge
-                    textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} {}'.format( C, V, text )
-                    #if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
-                        #for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                            #textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
-                        #lastVWritten = str( vBridgeEndInt )
-                        #vBridgeStartInt = vBridgeEndInt = None
-                    #else:
-                    lastVWritten = V
-                elif marker == 'p~':
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
-                                          #     \c 1 \v 1 \p These events happened...
-                    textBuffer += ' {}'.format( text ) # continuation of the same verse
-                else:
-                    ignoredMarkers.add( marker )
-            #print( BBB, textBuffer )
-            bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), 9 ) # Highest compression level
-            #from binascii import hexlify
-            #print( BBB, hexlify(bookBytes[:20]), bookBytes )
-            assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
-            compressedDictionary[BBB] = bookBytes
-
-        # Get the "compressed" (osfuscated) module name
-        #name = self.getAName()
-        ##print( 'sn', repr(self.shortName) )
-        #if len(name)>18:
-            #if self.shortName: name = shortName
-            #elif name.endswith( ' Version' ): name = name[:-8]
-        #name = name.replace( ' ', '' )
-        #if not name.startswith( 'ezFree' ): name = 'ezFree' + name
-        name = 'ezFree' + ( self.abbreviation if self.abbreviation else 'UNK' )
-        if len(name)>16: name = name[:16] # Shorten
-        encodedNameBytes = zlib.compress( name.encode( 'utf8' ), 9 ) # Highest compression level
-        if BibleOrgSysGlobals.debugFlag:
-            print( 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
-        assert encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda # Zlib compression header
-        assert len(encodedNameBytes) <= 26
-
-        filename = "{}.ewb".format( self.abbreviation )
-        filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toEasyWorshipBible: ' + _("Writing {!r}…").format( filepath ) )
-        bookAddress = startingBookAddress = 0x3a21 + len(encodedNameBytes)
-        vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-        with open( filepath, 'wb' ) as myFile:
-            # Write the header info to binary file
-            myFile.write( b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' )
-            nameBytes = ( self.name if self.name else 'Unknown' ).encode( 'utf8' )
-            myFile.write( nameBytes + b'\x00' * (56 - len(nameBytes)) )
-
-            # Write the numChapters,numVerses info along with the file position and length
-            for BBB in BOS.getBookList():
-                bookAbbrev = self.getBooknameAbbreviation( BBB )
-                if bookAbbrev: bookAbbrev += '.'
-                else:
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    bookAbbrev = 'Unknown.'
-                bookAbbrevBytes = bookAbbrev.encode( 'utf8' )
-                myFile.write( bookAbbrevBytes + b'\x00' * (51 - len(bookAbbrevBytes)) )
-
-                numVersesList = BOS.getNumVersesList( BBB )
-                numChapters = len( numVersesList )
-                myFile.write( struct.pack( 'B', numChapters ) )
-                for verseCount in numVersesList: myFile.write( struct.pack( 'B', verseCount ) )
-                myFile.write( b'\x00' * (157 - numChapters - 1) )
-
-                try: bookBytes = compressedDictionary[BBB] # if it exists
-                except KeyError: bookBytes = b''
-                myFile.write( struct.pack( '<Q', bookAddress ) )
-                #myFile.write( b'\x00' * 4 )
-                myFile.write( struct.pack( '<Q', len(bookBytes) ) )
-                #myFile.write( b'\x00' * 4 )
-                bookAddress += len(bookBytes)
-
-            # Write the "compressed" (osfuscated) module name
-            myFile.write( struct.pack( '<I', len(encodedNameBytes) + 5 ) )
-            myFile.write( encodedNameBytes )
-            #myFile.write( b'\x00' * (30 - len(encodedNameBytes) - 4) )
-            myFile.write( b'\x00\x00\x00\x08\x00' ) # Not sure what this means
-            if BibleOrgSysGlobals.debugFlag: print( "At", myFile.tell(), 'want', startingBookAddress )
-            assert myFile.tell() == startingBookAddress
-
-            # Write the book info to the binary files
-            for BBB in BOS.getBookList():
-                if BBB in compressedDictionary:
-                    myFile.write( compressedDictionary[BBB] ) # Write zlib output
-                elif BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( '  Book {} is not available for EasyWorship export'.format( BBB ) )
-
-            # Write the end of file stuff
-            myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
-
-        if ignoredMarkers:
-            logging.info( "toEasyWorshipBible: Ignored markers were {}".format( ignoredMarkers ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toEasyWorshipBible markers were {}").format( ignoredMarkers ) )
-
-        # Now create a zipped version
-        filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} EWB file…".format( filename ) )
-        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
-        zf.write( filepath, filename )
-        zf.close()
-
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toEasyWorshipBible finished successfully." )
-        return True
+        return createEasyWorshipBible( self, outputFolder )
     # end of BibleWriter.toEasyWorshipBible
 
 
@@ -6913,6 +6766,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
         from theWordBible import createTheWordModule
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:totheWord…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -6941,6 +6795,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
         from MySwordBible import createMySwordModule
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMySword…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -6969,6 +6824,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at xxx
         """
         from ESwordBible import createESwordBibleModule
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toESword…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -6998,6 +6854,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://mybible.zone/creat-eng.php
         """
         from MyBibleBible import createMyBibleModule
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toMyBible…" )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -9882,22 +9739,22 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
-                ('CustomTest', 'Custom', '../'),
-                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
-                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
-                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
-                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
-                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
-                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                #('CustomTest', 'Custom', '../'),
+                #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
+                #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
+                #('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                #('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                #('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
+                #('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
                 ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
-                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
-                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
-                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
+                #('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
+                #('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
+                #('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                #('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9907,7 +9764,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.USFM2(); halt
+                UB.toEasyWorshipBible(); halt
                 myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
