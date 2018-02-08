@@ -34,10 +34,10 @@ Functions for replace and regex replace which explain what they did.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-07' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "NoisyReplaceFunctions"
 ProgName = "Noisy Replace Functions"
-ProgVersion = '0.05'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -82,7 +82,7 @@ def noisyReplaceAll( text, this, that, loop=False ):
     """
     count = text.count( this )
     if count == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "No occurrences of {!r} found to replace".format( this ) )
         return text
 
@@ -106,7 +106,7 @@ def noisyDeleteAll( text, this ):
     """
     count = text.count( this )
     if count == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "No occurrences of {!r} found to delete".format( this ) )
         return text
     if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -126,6 +126,10 @@ def noisyRegExReplaceAll( text, this, that ):
     regex = re.compile( this )
 
     count1 = len( re.findall( regex, text ) )
+    if count1 == 0:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "No occurrences of regex {!r} found to delete".format( this ) )
+        return text
     if BibleOrgSysGlobals.verbosityLevel > 1:
         print( "Replacing {:,} occurrence{} of regex {!r} with {!r}".format( count1, '' if count1==1 else 's', this, that ) )
 
