@@ -38,10 +38,10 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-10' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.62'
+ProgVersion = '0.63'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -328,8 +328,9 @@ class OSISXMLBible( Bible ):
                                 # returned bkCodes are all UPPERCASE
                                 #print( 'bc', bkCode, upperFilename )
                                 if bkCode in upperFilename:
-                                    #print( "OSISXMLBible.__init__ found {!r} in {!r}".format( bkCode, upperFilename ) )
-                                    assert not foundBBB # Don't expect duplicates
+                                    #print( 'OSISXMLBible.__init__ ' + _("found {!r} in {!r}").format( bkCode, upperFilename ) )
+                                    if foundBBB: # already -- don't expect doubles
+                                        logging.warning( 'OSISXMLBible.__init__: ' + _("Found a second possible book abbreviation for {} in {}").format( foundBBB, filename ) )
                                     foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
                                     #print( "  FoundBBB2 = {!r}".format( foundBBB ) )
                         if foundBBB:
@@ -354,7 +355,7 @@ class OSISXMLBible( Bible ):
         else: # it's presumably a file name
             self.sourceFolder = os.path.dirname( self.sourceFilepath )
             if not os.access( self.sourceFilepath, os.R_OK ):
-                logging.critical( "OSISXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+                logging.critical( 'OSISXMLBible: ' + _("File {!r} is unreadable").format( self.sourceFilepath ) )
                 return # No use continuing
             if debuggingThisModule: print( "OSISXMLBible possibleFilenames: {}".format( self.possibleFilenames ) )
 
