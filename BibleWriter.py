@@ -100,7 +100,7 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
 from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from NoisyReplaceFunctions import noisyRegExReplaceAll
+from NoisyReplaceFunctions import noisyRegExDeleteAll
 from MLWriter import MLWriter
 
 
@@ -168,7 +168,7 @@ class BibleWriter( InternalBible ):
         #    """
         InternalBible.__init__( self  ) # Initialise the base class
         self.doneSetupGeneric = False
-        #self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
+        #self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-80' )
         #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # self isn't actualised yet!!!
 
         global ALL_CHAR_MARKERS
@@ -345,7 +345,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert not self.doneSetupGeneric
         #if 'discoveryResults' not in dir(self): self.discover()
         if not self.doneSetupGeneric:
-            self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
+            self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-80' )
             self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
                 # because unfortunately it causes a recursive linking of objects
             self.doneSetupGeneric = True
@@ -608,8 +608,10 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 for entry in pseudoESFMData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
+                    #print( repr(marker), repr(cleanText), repr(adjText) )
                     if marker in USFM_PRECHAPTER_MARKERS:
-                        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            assert C=='0' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
                     if marker == 'c': C, V = adjText, '0'
                     elif marker == 'v': V = adjText
@@ -674,7 +676,8 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    if BibleOrgSysGlobals.debugFlag: assert BBB in ('FRT','GLS',)
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0
 
             bookUSFM = ''
@@ -754,8 +757,12 @@ class BibleWriter( InternalBible ):
                 #print( pseudoMarker, bookUSFM[-200:] )
 
             # Adjust the bookUSFM output
-            bookUSFM = noisyRegExReplaceAll( bookUSFM, '\\\\str .+?\\\str\\*', '' )
-            assert '\\str' not in bookUSFM
+            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                assert '\\str' not in bookUSFM
+                assert '&quot;' not in bookUSFM
+                assert '&amp;' not in bookUSFM
+                assert '&lt;' not in bookUSFM and '&gt;' not in bookUSFM
 
             # Write the bookUSFM output
             #print( "\nUSFM", bookUSFM[:3000] )
@@ -817,7 +824,8 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    if BibleOrgSysGlobals.debugFlag: assert BBB in ('FRT','GLS',)
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0
 
             bookUSFM = ''
@@ -895,6 +903,14 @@ class BibleWriter( InternalBible ):
                     if not fullText: bookUSFM += '\\{}'.format( pseudoMarker )
                     else: bookUSFM += '\\{} {}'.format( pseudoMarker,adjValue )
                 #print( pseudoMarker, bookUSFM[-200:] )
+
+            # Adjust the bookUSFM output
+            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                assert '\\str' not in bookUSFM
+                assert '&quot;' not in bookUSFM
+                assert '&amp;' not in bookUSFM
+                assert '&lt;' not in bookUSFM and '&gt;' not in bookUSFM
 
             # Write the bookUSFM output
             #print( "\nUSFM", bookUSFM[:3000] )
@@ -1614,7 +1630,8 @@ class BibleWriter( InternalBible ):
                 for entry in pseudoESFMData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                     if marker in USFM_PRECHAPTER_MARKERS:
-                        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            assert C=='0' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
 
                     if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -1853,7 +1870,8 @@ class BibleWriter( InternalBible ):
                 #print( "toDoor43:writeD43Book", BBB, bookRef, bookName, marker, adjText, extras )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',
@@ -2562,7 +2580,8 @@ class BibleWriter( InternalBible ):
                 #print( "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 # Markers usually only found in the introduction
@@ -3191,7 +3210,8 @@ class BibleWriter( InternalBible ):
                 #print( "   sectionBCV", sectionBCV )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 # Markers usually only found in the introduction
@@ -3912,7 +3932,8 @@ class BibleWriter( InternalBible ):
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
@@ -4362,7 +4383,8 @@ class BibleWriter( InternalBible ):
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
@@ -5027,7 +5049,8 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #print( "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
 
@@ -5683,7 +5706,8 @@ class BibleWriter( InternalBible ):
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -5878,7 +5902,8 @@ class BibleWriter( InternalBible ):
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -6472,7 +6497,8 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
@@ -6926,7 +6952,8 @@ class BibleWriter( InternalBible ):
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -7096,7 +7123,8 @@ class BibleWriter( InternalBible ):
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -7628,7 +7656,8 @@ class BibleWriter( InternalBible ):
                 #print( BBB, C, V, marker, repr(cleanText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -8819,7 +8848,8 @@ class BibleWriter( InternalBible ):
                 if self.abbreviation=='MBTV' and BBB=='MAT' and C=='23': break  #  Don't know why this currently crashes
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='0' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -9182,7 +9212,8 @@ class BibleWriter( InternalBible ):
                         marker, text = entry.getMarker(), entry.getFullText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                         if marker in USFM_PRECHAPTER_MARKERS:
-                            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert C == '0'
+                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                                assert C=='0' or marker=='rem' or marker.startswith('mte')
                             V = str( int(V) + 1 )
 
                         if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -9764,9 +9795,10 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toEasyWorshipBible(); halt
+                #UB.toUSFM2(); halt
                 myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
-                doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
+                doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag ) \
+                                if UB.books else []
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
                     outputFolder = 'OutputFiles/BOS_USFM2_Reexport/'
                     fN = USFMFilenames( testFolder )
