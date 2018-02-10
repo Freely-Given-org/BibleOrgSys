@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-17' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.34'
@@ -111,7 +111,7 @@ class BibleReferenceBase:
     def __init__( self, BOSObject, BibleObject ): # The BibleObject passed by the superclass may be None
         """
         Initialize the object with necessary sub-systems.
-            A Bible organization system, e.g., BibleOrganizationalSystem( "RSV" )
+            A Bible organization system, e.g., BibleOrganizationalSystem( 'RSV' )
                 gives various things including:
                     a book order (useful for determining ranges that cross books)
                     a punctuation system
@@ -646,7 +646,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
     def __init__( self, BOSObject, BibleObject=None ):
         """ Initialize the object with necessary sub-systems.
-                A Bible organization system, e.g., BibleOrganizationalSystem( "RSV" )
+                A Bible organization system, e.g., BibleOrganizationalSystem( 'RSV' )
                     gives various things including:
                         a book order (useful for determining ranges that cross books)
                         a punctuation system
@@ -1907,7 +1907,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    ourBOS = BibleOrganizationalSystem( "RSV" )
+    ourBOS = BibleOrganizationalSystem( 'RSV' )
     printProcessingMessages = True
 
     if 1: # test BibleSingleReference

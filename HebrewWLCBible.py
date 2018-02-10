@@ -28,16 +28,17 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-15' # by RJH
+LastModifiedDate = '2018-02-10' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.14'
+ProgVersion = '0.15'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
+import os.path
 import logging, pickle
 
 import BibleOrgSysGlobals, Hebrew
@@ -46,7 +47,7 @@ from OSISXMLBible import OSISXMLBible
 from PickledBible import PickledBible, ZIPPED_FILENAME_END
 
 DEFAULT_OSIS_WLC_FILEPATH = '../morphhb/wlc/'
-DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = 'Resources/WLC' + ZIPPED_FILENAME_END
+DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER + 'WLC' + ZIPPED_FILENAME_END
 
 DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
 DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.txt'
@@ -483,7 +484,6 @@ class HebrewWLCBibleAddon():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Updating references for WLC generic glosses…") )
 
         self.loadBooks()
-        #self.loadBook( 'GEN' )
         numRefsAdded = 0
         for BBB,bookObject in self.books.items(): # These don't seem to be in order!
             # The following few lines show a way to iterate through all verses
@@ -561,6 +561,9 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
         if debuggingThisModule: print( "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
 
         if not zippedPickleFilepath: zippedPickleFilepath = DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH
+        if not os.path.exists( zippedPickleFilepath ):
+            logging.critical( "PickledHebrewWLCBible: filepath doesn't exist: {}".format( zippedPickleFilepath ) )
+            return
         PickledBible.__init__( self, zippedPickleFilepath )
         HebrewWLCBibleAddon.__init__( self )
         # end of PickledHebrewWLCBible.__init__
@@ -703,19 +706,25 @@ def demo():
 
     if 1: # Test some of the glossing functions
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
-        wlc = PickledHebrewWLCBible( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH )
-        wlc.loadGlossingDict()
-        wlc.exportGlossingDictionary()
-        wlc.saveAnyChangedGlosses()
-        wlc.importGlossingDictionary()
-        wlc.importGlossingDictionary( overrideFlag=True )
+        if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
+            logging.critical( "HebrewWLCBible.demoF: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+        else:
+            wlc = PickledHebrewWLCBible( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH )
+            wlc.loadGlossingDict()
+            wlc.exportGlossingDictionary()
+            wlc.saveAnyChangedGlosses()
+            wlc.importGlossingDictionary()
+            wlc.importGlossingDictionary( overrideFlag=True )
 
     if 1: # Test some of the glossing functions
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nG/ Adding new references to glossing dict…" )
-        wlc = PickledHebrewWLCBible()
-        wlc.loadGlossingDict()
-        wlc.updateGenericGlossingReferences()
-        wlc.saveAnyChangedGlosses( exportAlso = True )
+        if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
+            logging.critical( "HebrewWLCBible.demoG: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+        else:
+            wlc = PickledHebrewWLCBible()
+            wlc.loadGlossingDict()
+            wlc.updateGenericGlossingReferences()
+            wlc.saveAnyChangedGlosses( exportAlso = True )
 # end of demo
 
 if __name__ == '__main__':

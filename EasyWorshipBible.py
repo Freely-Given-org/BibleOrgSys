@@ -37,7 +37,7 @@ from gettext import gettext as _
 LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -191,7 +191,9 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                     ix = V.find( bridgeChar )
                     if ix != -1:
-                        print( "Preparing for verse bridge in {} at {} {}:{}".format( BibleObject.abbreviation, BBB, C, V ) )
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+                            print( "Preparing for verse bridge in {} at {} {}:{}" \
+                                        .format( BibleObject.abbreviation, BBB, C, V ) )
                         vStart = V[:ix] # Remove verse bridges
                         vEnd = V[ix+1:]
                         #print( BBB, repr(vStart), repr(vEnd) )
@@ -210,7 +212,9 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                         continue
                 except ValueError: pass # had a verse bridge
                 if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
-                    print( "Handling verse bridge in {} at {} {}:{}-{}".format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
+                        print( "Handling verse bridge in {} at {} {}:{}-{}" \
+                                    .format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
                     textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} (-{}) {}'.format( C, vBridgeStartInt, vBridgeEndInt, text )
                     for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
                         textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
@@ -272,10 +276,8 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         # Write the numChapters,numVerses info along with the file position and length
         for BBB in BOS.getBookList():
             bookName = BibleObject.getAssumedBookName( BBB )
-            #if not bookName:
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                #bookName = 'Unknown'
-            bookNameBytes = bookName.encode( 'utf8' )
+            if bookName: bookNameBytes = bookName.encode( 'utf8' )
+            else: bookNameBytes = b'' # Not compulsory -- will default to English
             myFile.write( bookNameBytes + b'\x00' * (51 - len(bookNameBytes)) )
 
             numVersesList = BOS.getNumVersesList( BBB )

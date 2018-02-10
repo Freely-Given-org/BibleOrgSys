@@ -5,7 +5,7 @@
 #
 # Module handling Sword modules directly
 #
-# Copyright (C) 2012-2017 Robert Hunt
+# Copyright (C) 2012-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.48'
@@ -839,20 +839,20 @@ class SwordModule():
         # The offsets are stored by BBB, then by chapter (starting with 0) and then you add the verse number less 1
 
         # Setup filled containers for the object
-        if versificationString == 'KJV': BOS = 'GENERIC-KJV-81'
-        elif versificationString == 'KJVA': BOS = 'GENERIC-KJV-81'
-        elif versificationString == 'NRSV': BOS = 'GENERIC-NRSV-81'
-        elif versificationString == 'MT': BOS = 'GENERIC-Original-81'
-        elif versificationString == 'Vulg': BOS = 'GENERIC-Vulgate-81'
-        elif versificationString == 'Synodal': BOS = 'GENERIC-Synodal-81'
-        elif versificationString == 'SynodalProt': BOS = 'GENERIC-Synodal-81'
-        elif versificationString == 'Catholic': BOS = 'GENERIC-Catholic-81'
-        elif versificationString == 'Catholic2': BOS = 'GENERIC-CatholicEsther16-81'
-        elif versificationString == 'German': BOS = 'GENERIC-German-81'
-        elif versificationString == 'Leningrad': BOS = 'GENERIC-Leningrad-81'
+        if versificationString == 'KJV': BOS = 'GENERIC-KJV-80'
+        elif versificationString == 'KJVA': BOS = 'GENERIC-KJV-80'
+        elif versificationString == 'NRSV': BOS = 'GENERIC-NRSV-80'
+        elif versificationString == 'MT': BOS = 'GENERIC-Original-80'
+        elif versificationString == 'Vulg': BOS = 'GENERIC-Vulgate-80'
+        elif versificationString == 'Synodal': BOS = 'GENERIC-Synodal-80'
+        elif versificationString == 'SynodalProt': BOS = 'GENERIC-Synodal-80'
+        elif versificationString == 'Catholic': BOS = 'GENERIC-Catholic-80'
+        elif versificationString == 'Catholic2': BOS = 'GENERIC-CatholicEsther16-80'
+        elif versificationString == 'German': BOS = 'GENERIC-German-80'
+        elif versificationString == 'Leningrad': BOS = 'GENERIC-Leningrad-80'
         elif versificationString == 'LXX': BOS = 'LXX'
         else:
-            logging.critical( "Unknown {!r} versification scheme for {}".format( versificationString, self.SwordModuleConfiguration.abbreviation ) )
+            logging.critical( _("Unknown {!r} versification scheme for {}").format( versificationString, self.SwordModuleConfiguration.abbreviation ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         self.BibleOrgSystem = BibleOrganizationalSystem( BOS )
 

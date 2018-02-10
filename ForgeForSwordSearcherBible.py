@@ -52,7 +52,7 @@ Formatting includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "ForgeForSwordSearcherBible"
 ProgName = "Forge for SwordSearcher Bible format handler"
 ProgVersion = '0.37'
@@ -258,7 +258,7 @@ class ForgeForSwordSearcherBible( Bible ):
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-        if BOS81 is None: BOS81 = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
+        if BOS81 is None: BOS81 = BibleOrganizationalSystem( 'GENERIC-KJV-80-ENG' )
         if BOSx is None: BOSx = BibleOrganizationalSystem( 'GENERIC-ENG' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}

@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -550,16 +550,16 @@ class InternalBibleBook:
                             logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:{!r}".format( self.BBB, C, V, originalMarker, adjText ) )
 
             # Do XML/HTML common character replacements
-            adjText = adjText.replace( '&', '&amp;' )
+            #adjText = adjText.replace( '&', '&amp;' )
             #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
             if '<' in adjText or '>' in adjText:
                 logging.error( "processLineFix: {} still has angle-brackets in {}:{!r}".format( self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 12, C, V, _("Contains angle-bracket(s)") )
-                adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
+                #adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
             if '"' in adjText:
                 logging.warning( "processLineFix: {} straight-quotes in {}:{!r}".format( self.__makeErrorRef(C,V), originalMarker, adjText ) )
                 self.addPriorityError( 11, C, V, _("Contains straight-quote(s)") )
-                adjText = adjText.replace( '"', '&quot;' )
+                #adjText = adjText.replace( '"', '&quot;' )
 
         largeDummyValue = 99999
 

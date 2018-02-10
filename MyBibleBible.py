@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-10' # by RJH
+LastModifiedDate = '2018-02-09' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.19'
@@ -412,7 +412,7 @@ class MyBibleBible( Bible ):
         or self.getSetting('LanguageName') in ('Russian',) \
         or self.getSetting('ISOLanguageCode') in ('rus',) \
         or self.getSetting('language_iso639-2b') in ('rus',):
-            self.BOS = BibleOrganizationalSystem( 'GENERIC-81-RUS' )
+            self.BOS = BibleOrganizationalSystem( 'GENERIC-80-RUS' )
         else: self.BOS = BibleOrganizationalSystem( 'GENERIC-ENG' ) # All possible books
 
         # Now get the book info -- try the books_all table first to see if it exists
@@ -1161,7 +1161,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-81-ENG' )
+    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-80-ENG' )
     extension = '.SQLite3'
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 

@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-10' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -766,8 +766,7 @@ def demo():
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
-    resourcesFolder = 'Resources/'
-    testResourcesFolder = 'OutputFiles/BOS_Test_Resources/'
+    resourcesFolder = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER
     if 1: # demo the file checking code with zip files
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
@@ -860,6 +859,7 @@ def demo():
             print( "\nSorry, test file {!r} is not readable on this computer.".format( pFilepath ) )
 
 
+    testResourcesFolder = 'OutputFiles/BOS_Test_Resources/'
     if 1: # demo the file checking code with zip files
         j = 1
         for folder in (resourcesFolder, testResourcesFolder ):
