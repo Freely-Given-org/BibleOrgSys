@@ -47,7 +47,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-10' # by RJH
+LastModifiedDate = '2018-02-11' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
 ProgVersion = '0.10'
@@ -524,7 +524,7 @@ class PickledBible( Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "PickledBible.__str__()" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
-        set2 = ( 'Status', 'Font', 'Copyright', 'License', ) # Ones to print at verbosityLevel > 2
+        set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
         set3 = set1 + set2 + ( 'Name', 'Abbreviation' ) # Ones not to print at verbosityLevel > 3
 
         result = self.objectNameString
@@ -551,7 +551,7 @@ class PickledBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2:
             if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Original source folder: {}").format( self.sourceFolder )
             elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Original source: {}").format( self.sourceFilepath )
-            for fieldName in ( 'Status', 'Font', 'Copyright', 'License', ):
+            for fieldName in ( 'Status', 'Font', 'Copyright', 'Licence', ):
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )

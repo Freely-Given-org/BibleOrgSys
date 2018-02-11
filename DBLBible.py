@@ -37,10 +37,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-05' # by RJH
+LastModifiedDate = '2018-02-11' # by RJH
 ShortProgName = "DigitalBibleLibrary"
 ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1273,7 +1273,7 @@ class DBLBible( Bible ):
             else: print( "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
         #print( "\nflattenedMetadata", flattenedMetadata )
 
-        nameChangeDict = {} # not done yet
+        nameChangeDict = {'License':'Licence'}
         for oldKey,value in flattenedMetadata.items():
             newKey = nameChangeDict[oldKey] if oldKey in nameChangeDict else oldKey
             if newKey in self.settingsDict: # We have a duplicate

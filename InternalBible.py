@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-11' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -149,7 +149,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.__str__()" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
-        set2 = ( 'Status', 'Font', 'Copyright', 'License', ) # Ones to print at verbosityLevel > 2
+        set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
         set3 = set1 + set2 + ( 'Name', 'Abbreviation' ) # Ones not to print at verbosityLevel > 3
 
         result = self.objectNameString
@@ -165,7 +165,7 @@ class InternalBible:
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            for fieldName in ( 'Status', 'Font', 'Copyright', 'License', ):
+            for fieldName in ( 'Status', 'Font', 'Copyright', 'Licence', ):
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
