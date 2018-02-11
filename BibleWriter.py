@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-02-11' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -9514,11 +9514,11 @@ class BibleWriter( InternalBible ):
                         #= results
             # With safety timeout -- more complex
             # timeoutFactors are average seconds per book
-            timeoutFactor = 5 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
-            if wantPhotoBible: timeoutFactor = max( timeoutFactor, 27 ) # 30 minutes for 68 books (Feb2018)
-            if wantODFs: timeoutFactor = max( timeoutFactor, 40 ) # Almost a minute for longer books
-            if wantPDFs: timeoutFactor = max( timeoutFactor, 6 ) # seems about 2 minutes for 68 books
-            processorFactor = 1 # Make bigger for a slower CPU, or can make smaller for a fast one
+            timeoutFactor = 6 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
+            if wantPhotoBible: timeoutFactor = max( timeoutFactor, 30 ) # 30 minutes for 68 books (Feb2018)
+            if wantODFs: timeoutFactor = max( timeoutFactor, 60 ) # Almost a minute for longer books with LO v5.4 on my system
+            if wantPDFs: timeoutFactor = max( timeoutFactor, 10 ) # seems about 2 minutes for 68 books
+            processorFactor = 1.0 # Make bigger for a slower CPU, or can make smaller for a fast one
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
             asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
