@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-17' # by RJH
+LastModifiedDate = '2018-02-12' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.49'
+ProgVersion = '0.50'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -227,9 +227,19 @@ class USFMBibleBook( BibleBook ):
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker: doaddLine( lastMarker, lastText )
-                            lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                            loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
-                            logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                            if marker=='s5' and self.containerBibleObject is not None \
+                            and self.containerBibleObject.abbreviation in ('UDB','ULB','UEB') and not text:
+                                # They use empty s5 fields as some kind of division markers
+                                lastMarker, lastText = 's', '---'
+                            else:
+                                # Move the extra appendage to the marker into the actual text
+                                lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
+                            if text:
+                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
+                                logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                            else:
+                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of otherwise empty line").format( self.BBB, C, V, marker, tryMarker ) )
+                                logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of otherwise empty line").format( marker, tryMarker, self.BBB, C, V ) )
                             break
                     # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
