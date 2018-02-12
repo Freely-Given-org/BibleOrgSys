@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-11' # by RJH
+LastModifiedDate = '2018-02-12' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -8787,6 +8787,7 @@ class BibleWriter( InternalBible ):
         #verseByVerse = True
 
         # Create and save the ODF files
+        createCount = 0
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Creating ODF file for {}…".format( BBB ) )
             pseudoESFMData = bookObject._processedLines
@@ -8981,6 +8982,7 @@ class BibleWriter( InternalBible ):
             # Save the created document
             document.storeAsURL( 'file://{}'.format( filepath ), () )
             document.dispose() # Close the document (even though it might be a headless server anyway)
+            createCount += 1
 
         if weStartedLibreOffice and not BibleOrgSysGlobals.debugFlag: # Now kill our LibreOffice server
             import signal
@@ -9014,7 +9016,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toODF finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
+            print( "  BibleWriter.toODF finished successfully ({} files) at {}".format( createCount, datetime.now().strftime('%H.%M.%S') ) )
         return True
     # end of BibleWriter.toODF
 
