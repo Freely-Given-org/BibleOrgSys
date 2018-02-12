@@ -227,9 +227,8 @@ class USFMBibleBook( BibleBook ):
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker: doaddLine( lastMarker, lastText )
-                            if marker=='s5' and self.containerBibleObject is not None \
-                            and self.containerBibleObject.abbreviation in ('UDB','ULB','UEB') and not text:
-                                # They use empty s5 fields as some kind of division markers
+                            if marker=='s5' and not text:
+                                # Door43 projects use empty s5 fields as some kind of division markers
                                 lastMarker, lastText = 's', '---'
                             else:
                                 # Move the extra appendage to the marker into the actual text
