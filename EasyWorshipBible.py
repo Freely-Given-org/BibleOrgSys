@@ -34,10 +34,10 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -194,30 +194,36 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
                             print( "Preparing for verse bridge in {} at {} {}:{}" \
                                         .format( BibleObject.abbreviation, BBB, C, V ) )
-                        vStart = V[:ix] # Remove verse bridges
-                        vEnd = V[ix+1:]
+                        # Remove verse bridges
+                        vStart = V[:ix].replace( 'a', '' ).replace( 'b', '' ).replace( 'c', '' )
+                        vEnd = V[ix+1:].replace( 'a', '' ).replace( 'b', '' ).replace( 'c', '' )
                         #print( BBB, repr(vStart), repr(vEnd) )
                         try: vBridgeStartInt, vBridgeEndInt = int( vStart ), int( vEnd )
                         except ValueError:
                             print( "createEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
                             vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                         #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                        VBridgedText = V
                         V = vStart
                         break
             elif marker == 'v~':
                 try:
                     if int(V) <= int(lastVWritten):
                         # TODO: Not sure what level the following should be? info/warning/error/critical ????
-                        logging.warning( 'createEasyWorshipBible: Skipping {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
-                        continue
+                        logging.warning( 'createEasyWorshipBible: Maybe duplicating {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
+                        #continue
                 except ValueError: pass # had a verse bridge
                 if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
                         print( "Handling verse bridge in {} at {} {}:{}-{}" \
                                     .format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
-                    textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} (-{}) {}'.format( C, vBridgeStartInt, vBridgeEndInt, text )
-                    for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                        textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
+                    if 1: # new code -- copies the bridged text to all verses
+                        for vNum in range( vBridgeStartInt, vBridgeEndInt+1 ): # Fill in missing verse numbers
+                            textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} ({}) {}'.format( C, vNum, VBridgedText, text )
+                    else: # old code
+                        textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} ({}) {}'.format( C, vBridgeStartInt, vBridgeEndInt, text )
+                        for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
+                            textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
                     lastVWritten = str( vBridgeEndInt )
                     vBridgeStartInt = vBridgeEndInt = None
                 else:
@@ -275,7 +281,12 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
 
         # Write the numChapters,numVerses info along with the file position and length
         for BBB in BOS.getBookList():
-            bookName = BibleObject.getAssumedBookName( BBB )
+            #print( "EW here", BBB )
+            #bookName = BibleObject.getAssumedBookName( BBB )
+            try: bookName = BibleObject.books[BBB].shortTOCName
+            except KeyError: bookName = None
+            #print( len(bookName) if bookName else '', bookName )
+            assert bookName is None or len(bookName) <= 51
             if bookName: bookNameBytes = bookName.encode( 'utf8' )
             else: bookNameBytes = b'' # Not compulsory -- will default to English
             myFile.write( bookNameBytes + b'\x00' * (51 - len(bookNameBytes)) )
