@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-11' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.81'
@@ -827,7 +827,11 @@ class InternalBible:
 
 
     def getAssumedBookName( self, BBB ):
-        """Gets the book name for the given book reference code."""
+        """
+        Gets the assumed book name for the given book reference code.
+
+        The assumedBookName defaults to the long book name from \toc1 field.
+        """
         if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName

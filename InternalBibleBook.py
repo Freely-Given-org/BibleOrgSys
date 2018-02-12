@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.96'
@@ -2100,6 +2100,7 @@ class InternalBibleBook:
                 self.chapterLabel
 
         Returns a list with the best guess for the bookname first.
+        The assumedBookName defaults to the long book name from \toc1 field.
         """
         #print( "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:

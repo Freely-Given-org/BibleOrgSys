@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 xmlLanguage = en
 LanguageName = __PROJECT_NAME__
-osisIDWork = __PROJECT_NAME__
+osisIDWork = __PROJECT_ABBREVIATION__
 osisWork = __PROJECT_NAME__
 
 # Allowed values are BCV (book/chapter/verse) or BSP (book/section/paragraph)
