@@ -104,20 +104,6 @@ from NoisyReplaceFunctions import noisyRegExDeleteAll
 from MLWriter import MLWriter
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
 
 defaultControlFolder = 'ControlFiles/' # Relative to the current working directory
 def setDefaultControlFolder( newFolderName ):
@@ -9106,6 +9092,8 @@ class BibleWriter( InternalBible ):
             Given some text containing possible character formatting,
                 convert it to TeX styles.
             """
+            nonlocal unhandledMarkers
+
             text = givenText
 
             if '\\fig ' in text: # handle figures
@@ -9138,6 +9126,7 @@ class BibleWriter( InternalBible ):
                                 .replace( endCharMarker, '}' )
                     else:
                         logging.warning( "toTeX: Don't know how to encode {!r} marker".format( charMarker ) )
+                        unhandledMarkers.add( charMarker )
                         text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
 
             if '\\' in text: # Catch any left-overs
