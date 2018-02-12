@@ -9507,7 +9507,7 @@ class BibleWriter( InternalBible ):
             # timeoutFactors are average seconds per book
             timeoutFactor = 6 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
             if wantPhotoBible: timeoutFactor = max( timeoutFactor, 30 ) # 30 minutes for 68 books (Feb2018)
-            if wantODFs: timeoutFactor = max( timeoutFactor, 60 ) # Almost a minute for longer books with LO v5.4 on my system
+            if wantODFs: timeoutFactor = max( timeoutFactor, 80 ) # Almost a minute for longer books with LO v5.4 on my system
             if wantPDFs: timeoutFactor = max( timeoutFactor, 10 ) # seems about 2 minutes for 68 books
             processorFactor = 1.0 # Make bigger for a slower CPU, or can make smaller for a fast one
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
