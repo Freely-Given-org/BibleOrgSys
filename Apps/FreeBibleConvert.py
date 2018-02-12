@@ -29,10 +29,10 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-30' # by RJH
+LastModifiedDate = '2018-02-12' # by RJH
 ShortProgName = "FreeBibleConverter"
 ProgName = "FreeBible Converter"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -144,6 +144,7 @@ def main():
     entireText = noisyReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;"><sup>', '<sup>' )
 
     # Fix specific mistakes and inconsistencies/irregularities
+    entireText = noisyReplaceAll( entireText, '<ref name="ftn720"> Referring to Sarah', '<ref name="ftn720"> 4:23. Referring to Sarah' ) # GAL
     entireText = noisyReplaceAll( entireText, '“</sup>', '</sup>“' )
     entireText = noisyReplaceAll( entireText, '<sup> <ref ', '<ref ' )
     entireText = noisyReplaceAll( entireText, '"><sup> ', '"> ' )
@@ -202,7 +203,7 @@ def main():
     entireText = noisyReplaceAll( entireText, '<references/>', '' )
 
     # Check
-    noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
+    noisyFind( entireText, '<', logging.error ); noisyFind( entireText, '>', logging.error )
 
     # Clean-up left-overs
     entireText = noisyDeleteAll( entireText, '</div>' )
@@ -215,6 +216,7 @@ def main():
     entireText = noisyReplaceAll( entireText, ' \n', '\n', loop=True )
 
     # Adjust book IDs, etc
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Adjusting book names and IDs…" )
     for name,bookID in ( ('Matthew','MAT'), ('Mark','MRK'), ('Luke','LUK'), ('John','JHN'), ('Acts','ACT'),
                         ('Romans','ROM'), ('First Corinthians','1CO'), ('Second Corinthians','2CO'),
                         ('Galatians','GAL'), ('Ephesians','EPH'), ('Philippians','PHP'), ('Colossians','COL'),
@@ -229,10 +231,13 @@ def main():
     entireText = noisyReplaceAll( entireText, '\\h Third ', '\\h 3 ')
 
     # Check again
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "Final checks before writing files…" )
     noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
     noisyFind( entireText, "'''", logging.critical )
     noisyFind( entireText, "''", logging.critical )
     noisyFind( entireText, 'fXXX', logging.critical )
+    noisyFind( entireText, '\\ft[ ]?\\f*', logging.critical )
+    noisyFind( entireText, ' \\f*', logging.error )
     noisyRegExFind( entireText, '\n[^\\\\]', logging.critical ) # Line that doesn't begin with backslash
 
     # Write the temp output (for debugging)
