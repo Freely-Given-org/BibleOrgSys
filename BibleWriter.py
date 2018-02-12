@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-12' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.95'
@@ -92,6 +92,7 @@ from collections import OrderedDict
 import re, json, pickle
 import zipfile, tarfile
 import subprocess, multiprocessing
+import signal
 
 import BibleOrgSysGlobals, ControlFiles
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
@@ -139,6 +140,24 @@ pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
                     'qr':'rightAlignedPoetryParagraph', 'qc':'centeredPoetryParagraph',
                     'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4', }
 
+
+
+def killLibreOfficeServiceManager():
+    """
+    Don't work in Windows.
+    """
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "Killing LibreOffice ServiceManager…" )
+    p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
+    out, err = p.communicate()
+    for lineBytes in out.splitlines():
+        line = bytes.decode( lineBytes )
+        #print( "line", repr(line) )
+        if 'libreoffice' in line and "ServiceManager" in line:
+            pid = int( line.split(None, 1)[0] )
+            #print( "pid", pid )
+            if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "  Killing {!r}".format( line ) )
+            os.kill( pid, signal.SIGKILL )
+# end of killLibreOfficeServiceManager
 
 
 
@@ -345,7 +364,9 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert isinstance( existingControlDict, dict )
         if not existingControlDict: logging.warning( exp("adjustControlDict: The control dictionary is empty!") )
         for entry in existingControlDict:
-            existingControlDict[entry] = existingControlDict[entry].replace( '__PROJECT_NAME__', self.projectName )
+            existingControlDict[entry] = existingControlDict[entry] \
+                .replace( '__PROJECT_NAME__', self.projectName ) \
+                .replace( '__PROJECT_ABBREVIATION__', self.getAName( abbrevFirst=True ) )
                 #.replace( '__PROJECT_NAME__', BibleOrgSysGlobals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
             #print( entry, repr(existingControlDict[entry]) )
     # end of BibleWriter.__adjustControlDict
@@ -4662,7 +4683,9 @@ class BibleWriter( InternalBible ):
                     #SwLocFile.write( '{}={}\n'.format(BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB).upper(), BibleOrgSysGlobals.BibleBooksCodes.getSwordAbbreviation(BBB) ) ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         def writeHeader( writerObject ):
-            """Writes the OSIS header to the OSIS XML writerObject."""
+            """
+            Writes the OSIS header to the OSIS XML writerObject.
+            """
             writerObject.writeLineOpen( 'header' )
             try: ow = controlDict['osisWork']
             except KeyError: ow = 'Bible'
@@ -7215,7 +7238,7 @@ class BibleWriter( InternalBible ):
             ImageMagick convert is unable to handle complex scripts.  :(
         """
         import unicodedata
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible… {}".format( datetime.now().strftime('%H.%M.%S') ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible… {}".format( datetime.now().strftime('%H:%M:%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7766,22 +7789,25 @@ class BibleWriter( InternalBible ):
             zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toPhotoBible finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
+            print( "  BibleWriter.toPhotoBible finished successfully at {}".format( datetime.now().strftime('%H:%M:%S') ) )
         return True
     # end of BibleWriter.toPhotoBible
-
 
 
     def toODF( self, outputFolder=None ):
         """
         Write the internal Bible format out into Open Document Format (ODF)
             suitable for opening in LibreOffice or OpenOffice.
+
+        This function hasn't been tested in Windows
+            and probably won't work.
         """
         import uno
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H.%M.%S') ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H:%M:%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7789,6 +7815,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         os.chmod( outputFolder, 0o777 ) # Allow all users to write to this folder (ServiceManager might run as a different user)
 
+        weStartedLibreOffice = False
+        DEFAULT_OPENOFFICE_PORT = 2002
         startWithTemplate = True # Start with template (all styles already built) or just a blank document (much slower)
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
@@ -7798,9 +7826,23 @@ class BibleWriter( InternalBible ):
         #ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
         #ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
 
-        weStartedLibreOffice = False
-        DEFAULT_OPENOFFICE_PORT = 2002
-        if 0: # Seems to work better is this is started manually (as a special user) and left running
+        def isServiceManagerRunning():
+            """
+            Checks to see if the LibreOffice ServiceManager is in the list of running tasks
+            """
+            for pid in os.listdir('/proc'):
+                try:
+                    procInfoBytes = open(os.path.join('/proc', pid, 'cmdline'), 'rb').read()
+                    if b'StarOffice.ServiceManager' in procInfoBytes: return True
+                except IOError: # proc has already terminated
+                    continue
+            return False
+        # end of isServiceManagerRunning
+
+        def startLibreOfficeServiceManager():
+            """
+            """
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "Starting LibreOffice ServiceManager…" )
             # Start LibreOffice
             #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
             #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
@@ -7821,6 +7863,12 @@ class BibleWriter( InternalBible ):
                 #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
                 #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
             sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
+        # end of startLibreOfficeServiceManager
+
+        if isServiceManagerRunning(): killLibreOfficeServiceManager() # Seems safer to always do this
+        assert not isServiceManagerRunning()
+        startLibreOfficeServiceManager()
+        weStartedLibreOffice = True
 
         # Set-up LibreOffice
         localContext = uno.getComponentContext()
@@ -8530,7 +8578,7 @@ class BibleWriter( InternalBible ):
         # end of toODF.setupStyles
 
 
-        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, textCursor, defaultCharacterStyleName ):
+        def insertFormattedODFText( BBB, C, V, givenText, extras, document, textCursor, defaultCharacterStyleName ):
             """
             Format character codes within the text into ODF
             """
@@ -8563,7 +8611,7 @@ class BibleWriter( InternalBible ):
                 # end of insertFormattedODFText.liveCV
 
 
-            def processNote( noteType, rawFootnoteContents, documentText, textCursor ):
+            def processNote( noteType, rawFootnoteContents, document, textCursor ):
                 """
                 Inserts the footnote or endnote into the ODF document.
 
@@ -8575,7 +8623,7 @@ class BibleWriter( InternalBible ):
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
                 #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                 note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
-                documentText.insertTextContent( textCursor, note, False )
+                document.Text.insertTextContent( textCursor, note, False )
                 noteCursor = note.Text.createTextCursor()
                 noteCursor.setPropertyValue( "ParaStyleName", "Bible Footnote" if noteType=='fn' else "Bible Endnote" )
 
@@ -8608,7 +8656,7 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processNote
 
 
-            def processCrossReference( rawXRef, documentText, textCursor ):
+            def processCrossReference( rawXRef, document, textCursor ):
                 """
                 Inserts the cross-reference into the ODF document as a footnote.
 
@@ -8620,7 +8668,7 @@ class BibleWriter( InternalBible ):
                 #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "…", markerList ) )
 
                 xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
-                documentText.insertTextContent( textCursor, xrefNote, False )
+                document.Text.insertTextContent( textCursor, xrefNote, False )
                 noteCursor = xrefNote.Text.createTextCursor()
                 noteCursor.setPropertyValue( "ParaStyleName", "Verse Cross Reference" )
 
@@ -8651,7 +8699,7 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processCrossReference
 
 
-            def processFigure( extraText, documentText, textCursor ):
+            def processFigure( extraText, document, textCursor ):
                 """
                 Inserts the figure into the ODF document.
 
@@ -8689,27 +8737,27 @@ class BibleWriter( InternalBible ):
                         if marker in charODFStyleDict and nextSignificantChar in (' ','+'): # it's an opening marker
                             #print( "  BibleWriter.toODF: 3dc1", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
-                            documentText.insertString( textCursor, txt, 0 )
+                            document.Text.insertString( textCursor, txt, 0 )
                         elif marker == 'k' and nextSignificantChar in (' ','+'):
                             #print( "  BibleWriter.toODF: 3dc2", BBB, C, V, repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
-                            documentText.insertString( textCursor, txt, 0 )
+                            document.Text.insertString( textCursor, txt, 0 )
                         elif marker in charODFStyleDict and nextSignificantChar=='-': # it's a closing nesting marker
                             assertcontext
                             #print( "  BibleWriter.toODF: 3dc3", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[context[0]] )
-                            documentText.insertString( textCursor, txt, 0 )
+                            document.Text.insertString( textCursor, txt, 0 )
                         elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
                             # Normal text
                             #print( "  BibleWriter.toODF: 3dc4", BBB, C, V, defaultCharacterStyleName, repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
-                            documentText.insertString( textCursor, txt, 0 )
+                            document.Text.insertString( textCursor, txt, 0 )
                         elif marker in ('ca','va',) and nextSignificantChar in (' ','+'): # it's an opening marker
                             csn = 'Alternative Chapter Number' if marker=='ca' else 'Alternative Verse Number'
                             try: textCursor.setPropertyValue( "CharStyleName", csn )
                             except IllegalArgumentException:
                                 logging.critical( "toODF: {!r} character style doesn't seem to exist".format( csn ) )
-                            documentText.insertString( textCursor, '('+txt+')', 0 )
+                            document.Text.insertString( textCursor, '('+txt+')', 0 )
                         elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
                             assert not txt
                             logging.warning( "toODF: ignored blank {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
@@ -8719,7 +8767,7 @@ class BibleWriter( InternalBible ):
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 elif textSegment: # No character formatting here
                     #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
-                    documentText.insertString( textCursor, textSegment, 0 )
+                    document.Text.insertString( textCursor, textSegment, 0 )
             # end of insertFormattedODFText.handleTextSubsegment
 
             def handleTextSegment( textSegment ):
@@ -8732,7 +8780,7 @@ class BibleWriter( InternalBible ):
                     ix = textSegment.find( '//' )
                     while ix != -1:
                         handleTextSubsegment( textSegment[sx:ix] )
-                        documentText.insertControlCharacter( textCursor, ODF_LINE_BREAK, False )
+                        document.Text.insertControlCharacter( textCursor, ODF_LINE_BREAK, False )
                         lx = ix + 2
                         ix = textSegment.find( '//', lx )
                     handleTextSubsegment( textSegment[lx:] )
@@ -8752,9 +8800,9 @@ class BibleWriter( InternalBible ):
                     for extra in extras: # find any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
                         handleTextSegment( givenText[lastIndex:extraIndex] )
-                        if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
-                        elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
-                        elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
+                        if extraType in ('fn','en',): processNote( extraType, extraText, document, textCursor )
+                        elif extraType == 'xr': processCrossReference( extraText, document, textCursor )
+                        elif extraType == 'fig': processFigure( extraText, document, textCursor )
                         elif extraType == 'str': pass # don't know how to encode this yet
                         elif extraType == 'sem': pass # don't know how to encode this yet
                         elif extraType == 'vp': pass # it's already been converted to a newline field
@@ -8768,25 +8816,24 @@ class BibleWriter( InternalBible ):
         # end of toODF.insertFormattedODFText
 
 
-        # Main code (continued) for toODF()
-        # First determine our format
-        #verseByVerse = True
-
-        # Create and save the ODF files
-        createCount = 0
-        for j, (BBB,bookObject) in enumerate( self.books.items() ):
+        def createODFBook( bookNum, BBB, bookObject ):
+            """
+            Returns a True/False result
+            """
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Creating ODF file for {}…".format( BBB ) )
+            elif BibleOrgSysGlobals.verbosityLevel > 1: # Very basic progress bar
+                print( "{}-{}…".format( BBB, datetime.now().strftime('%H:%M') ), end='', flush=True )
             pseudoESFMData = bookObject._processedLines
 
             # Create the blank document
-            filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
+            filename = "{:02}-{}_BOS-BibleWriter.odt".format( bookNum, BBB )
             filepath = os.path.join( os.getcwd(), outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating {!r}…").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             try: documentText = document.Text
             except AttributeError: # no Text? = no blank/outline ODF text available
                 logging.critical( "toODF: Cannot access blank ODF document for {}".format( BBB ) )
-                continue # can't do anything here
+                return False # can't do anything here
             initialTextCursor = documentText.createTextCursor()
             textCursor = initialTextCursor
 
@@ -8804,7 +8851,7 @@ class BibleWriter( InternalBible ):
             else: logging.critical( "toODF: Don't know how to set up running header user text field programmatically yet" )
 
             firstEverParagraphFlag = True
-            def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
+            def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, document, textCursor, defaultCharacterStyleName ):
                 """
                 Given some text and the paragraph stylename (and the default character stylename)
                     start a new paragraph and insert the text.
@@ -8812,16 +8859,17 @@ class BibleWriter( InternalBible ):
                 nonlocal firstEverParagraphFlag
                 #print( "toODF.insertODFParagraph( {} {}:{}, {}, {} …)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
-                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
+                    document.Text.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
                 except IllegalArgumentException:
                     logging.critical( "toODF: {!r} paragraph style doesn't seem to exist".format( paragraphStyleName ) )
                 if adjText or extras:
-                    insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
+                    insertFormattedODFText( BBB, C, V, text, extras, document, textCursor, defaultCharacterStyleName )
                 firstEverParagraphFlag = False
             # end of insertODFParagraph
 
 
+            # Main code for createODFBook
             try: headerField = bookObject.longTOCName
             except AttributeError: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
@@ -8830,9 +8878,7 @@ class BibleWriter( InternalBible ):
             C, V = '0', '-1' # So first/id line starts at 0:0
             for entry in pseudoESFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
-                #print( "toODF:", j, BBB, C, V, marker, repr(adjText) )
-############################################################################## XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if self.abbreviation=='MBTV' and BBB=='MAT' and C=='23': break  #  Don't know why this currently crashes
+                #print( "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -8908,43 +8954,43 @@ class BibleWriter( InternalBible ):
 
                 elif marker in titleODFStyleDict:
                     styleName = titleODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     styleName = "Major Section Heading {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                     inTextParagraph = False
                 elif marker in ipODFStyleDict:
                     styleName = ipODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
                     if adjText or extras: #OEB has blank s fields
                         styleName = "Introduction " if marker[0]=='i' else ""
                         styleName += "Section Heading {}".format( marker[-1] )
-                        insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                        insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                     inTextParagraph = False
                 elif marker in ('r','sr','mr',):
                     if marker == 'r': styleName = 'Section CrossReference'
                     elif marker == 'sr': styleName = 'Section Reference Range'
                     elif marker == 'mr': styleName = 'Major Section Reference Range'
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                     inTextParagraph = False
                 elif marker in miscODFStyleDict: # things like d, sp, cl that have text
                     styleName = miscODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                     inTextParagraph = False
                 elif marker in pqODFStyleDict: # things like p, q1 that don't have text
                     startingNewParagraphFlag = True
                     styleName = pqODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                     inTextParagraph = True
                 elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += "List Item {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, "Default Style" )
                 elif marker in ('v~','p~',):
                     if BibleOrgSysGlobals.debugFlag: assert inTextParagraph
                     if adjText or extras:
-                        insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
+                        insertFormattedODFText( BBB, C, V, adjText, extras, document, textCursor, "Default Style" )
                     startingNewParagraphFlag = False
                 elif marker in ( 'b', 'ib', ):
                     if BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
@@ -8968,20 +9014,48 @@ class BibleWriter( InternalBible ):
             # Save the created document
             document.storeAsURL( 'file://{}'.format( filepath ), () )
             document.dispose() # Close the document (even though it might be a headless server anyway)
-            createCount += 1
+            if debuggingThisModule: print( "Finished {}".format( BBB ) )
+            return True
+        # end of toODF.createODFBook
+
+
+        # Main code (continued) for toODF()
+        # Create and save the ODF files
+        createCount = 0
+        for j, (BBB,bookObject) in enumerate( self.books.items() ):
+            #if createODFBook( j, BBB, bookObject ):
+                #createCount += 1
+            if BibleOrgSysGlobals.alreadyMultiprocessing or 'win' in sys.platform: # SIGALRM doesn't work
+                try:
+                    if createODFBook( j, BBB, bookObject ):
+                        createCount += 1
+                except Exception as err:
+                    print("BibleWriter.doAllExports.toODF {} Unexpected error:".format( BBB ), sys.exc_info()[0], err)
+                    killLibreOfficeServiceManager()
+                    logging.error( "BibleWriter.doAllExports.toODF: Oops, {} failed!".format( BBB ) )
+                    break
+            else: # *nix system hopefully
+                timeoutSeconds = max( 20, len(bookObject._processedLines)//40 ) # But depends on footnotes, etc. as well
+                #print( "Timeout for {} is {}".format( BBB, timeoutSeconds ) )
+                class ODFTimeoutException( Exception ): pass
+                def TimeoutHandler( signum, frame ):
+                    logging.critical( _("createODFBook( {} ) went too long!").format( BBB ) )
+                    raise ODFTimeoutException( "ODF writer timed out on {}".format( BBB ) )
+
+                signal.signal( signal.SIGALRM, TimeoutHandler )
+                signal.alarm( timeoutSeconds )
+                try:
+                    if createODFBook( j, BBB, bookObject ):
+                        createCount += 1
+                    signal.alarm( 0 ) # Disable timeout
+                except ODFTimeoutException as err:
+                    print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                    logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                    killLibreOfficeServiceManager() # Shut down the locked-up  process
+                    break # No real point in continuing with locked-up system
 
         if weStartedLibreOffice and not BibleOrgSysGlobals.debugFlag: # Now kill our LibreOffice server
-            import signal
-            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
-            out, err = p.communicate()
-            for lineBytes in out.splitlines():
-                line = bytes.decode( lineBytes )
-                #print( "line", repr(line) )
-                if 'libreoffice' in line and "ServiceManager" in line:
-                    pid = int( line.split(None, 1)[0] )
-                    #print( "pid", pid )
-                    if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "Killing {!r}".format( line ) )
-                    os.kill( pid, signal.SIGKILL )
+            killLibreOfficeServiceManager()
 
         if ignoredMarkers:
             logging.info( "toODF: Ignored markers were {}".format( ignoredMarkers ) )
@@ -8993,17 +9067,21 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toODF markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ODF files…" )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if not filename.endswith( '.zip' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
+        if createCount > 0:
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping ODF files…" )
+            zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            for filename in os.listdir( outputFolder ):
+                if not filename.endswith( '.zip' ):
+                    filepath = os.path.join( outputFolder, filename )
+                    zf.write( filepath, filename ) # Save in the archive without the path
+            zf.close()
 
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toODF finished successfully ({} files) at {}".format( createCount, datetime.now().strftime('%H.%M.%S') ) )
-        return True
+            if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+                print( "  BibleWriter.toODF finished successfully ({} files) at {}".format( createCount, datetime.now().strftime('%H:%M:%S') ) )
+            return True
+        # else
+        logging.critical( "BibleWriter.toODF produced no files!" )
+        return False
     # end of BibleWriter.toODF
 
 
@@ -9013,7 +9091,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX… {}".format( datetime.now().strftime('%H.%M.%S') ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toTeX… {}".format( datetime.now().strftime('%H:%M:%S') ) )
         if BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9317,7 +9395,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toTeX finished successfully at {}".format( datetime.now().strftime('%H.%M.%S') ) )
+            print( "  BibleWriter.toTeX finished successfully at {}".format( datetime.now().strftime('%H:%M:%S') ) )
         return True
     # end of BibleWriter.toTeX
 
@@ -9354,7 +9432,7 @@ class BibleWriter( InternalBible ):
         """
         allWord = _("all") if wantPhotoBible and wantODFs and wantPDFs else _("most")
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H.%M.%S') ) )
+            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M:%S') ) )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
@@ -9463,7 +9541,7 @@ class BibleWriter( InternalBible ):
             # We move the three longest processes to the top here,
             #   so they start first to help us get finished quicker on multiCPU systems.
             self.__outputProcesses = [self.toPhotoBible if wantPhotoBible else None,
-                                    self.toODF if wantODFs else None,
+                                    #self.toODF if wantODFs else None,
                                     self.toTeX if wantPDFs else None,
                                     self.toPickledBible, self.makeLists,
                                     self.toBOSBCV, self.toPseudoUSFM,
@@ -9474,7 +9552,8 @@ class BibleWriter( InternalBible ):
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword, self.toMyBible,
                                     self.toSwordSearcher, self.toDrupalBible, ]
-            self.__outputFolders = [photoOutputFolder, ODFOutputFolder, TeXOutputFolder,
+            self.__outputFolders = [photoOutputFolder, #ODFOutputFolder,
+                                    TeXOutputFolder,
                                     pickledBibleOutputFolder, listOutputFolder,
                                     BCVOutputFolder, pseudoUSFMOutputFolder,
                                     USFM2OutputFolder, USFM3OutputFolder, ESFMOutputFolder,
@@ -9507,7 +9586,7 @@ class BibleWriter( InternalBible ):
             # timeoutFactors are average seconds per book
             timeoutFactor = 6 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
             if wantPhotoBible: timeoutFactor = max( timeoutFactor, 30 ) # 30 minutes for 68 books (Feb2018)
-            if wantODFs: timeoutFactor = max( timeoutFactor, 80 ) # Almost a minute for longer books with LO v5.4 on my system
+            #if wantODFs: timeoutFactor = max( timeoutFactor, 100 ) # Over a minute for longer books with LO v5.4 on my system
             if wantPDFs: timeoutFactor = max( timeoutFactor, 10 ) # seems about 2 minutes for 68 books
             processorFactor = 1.0 # Make bigger for a slower CPU, or can make smaller for a fast one
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
@@ -9526,7 +9605,7 @@ class BibleWriter( InternalBible ):
                 #results = asyncResultObject.get() # Should work now
                 result = timeoutSeconds # Will count as True yet be different
                 results = [result if wantPhotoBible else None, # Just have to assume everything worked
-                                    result if wantODFs else None,
+                                    #result if wantODFs else None,
                                     result if wantPDFs else None,
                                     result, result, result, result, result, result, result, result, result, result, result, result,
                                     result, result, result, result, result, result, result, result, result, result, result, ]
@@ -9534,13 +9613,37 @@ class BibleWriter( InternalBible ):
             BibleOrgSysGlobals.alreadyMultiprocessing = False
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
-            PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
-                pickledBibleOutputResult, listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
-                USFM2ExportResult, USFM3ExportResult, ESFMExportResult, textExportResult, VPLExportResult, \
-                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
-                USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
-                swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
-                    = results
+            ( PhotoBibleExportResult, #ODFExportResult,
+                TeXExportResult,
+                pickledBibleOutputResult, listOutputResult, BCVExportResult, pseudoUSFMExportResult,
+                USFM2ExportResult, USFM3ExportResult, ESFMExportResult, textExportResult, VPLExportResult,
+                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult,
+                USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult,
+                swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult,
+                DrExportResult ) = results
+            if wantODFs: # Do this one separately (coz it's so much longer, plus often locks up)
+                # Timeout is now done per book inside the toODF function
+                #if BibleOrgSysGlobals.alreadyMultiprocessing or 'win' in sys.platform: # SIGALRM doesn't work
+                try: ODFExportResult = self.toODF( ODFOutputFolder )
+                except Exception as err:
+                    ODFExportResult = False
+                    print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    killLibreOfficeServiceManager()
+                    logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
+                #else: # *nix system hopefully
+                    #timeoutSeconds = int(60*len(self.books)*processorFactor) # (was 1200s=20m but failed for projects with > 66 books)
+                    #def TimeoutHandler( signum, frame ):
+                        #logging.critical( _("A task went too long!") )
+                        #raise Exception( "Timed out" )
+
+                    #signal.signal( signal.SIGALRM, TimeoutHandler )
+                    #signal.alarm( timeoutSeconds )
+                    #try: ODFExportResult = self.toODF( ODFOutputFolder )
+                    #except Exception as err:
+                        #ODFExportResult = False
+                        #print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                        #killLibreOfficeServiceManager()
+                        #logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
 
         else: # Just single threaded and not debugging
             try: pickledBibleOutputResult = self.toPickledBible( pickledBibleOutputFolder )
@@ -9689,6 +9792,7 @@ class BibleWriter( InternalBible ):
                 except Exception as err:
                     ODFExportResult = False
                     print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    killLibreOfficeServiceManager()
                     logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPDFs: # Do TeX export last because it's slowest
                 try: TeXExportResult = self.toTeX( TeXOutputFolder )
@@ -9711,7 +9815,7 @@ class BibleWriter( InternalBible ):
                     swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
                     SwSExportResult, DrExportResult,
                     PhotoBibleExportResult, ODFExportResult, TeXExportResult,
-                    datetime.now().strftime('%H.%M.%S') )
+                    datetime.now().strftime('%H:%M:%S') )
             trueCount  = finishString.count( 'True' )
             falseCount = finishString.count( 'False' )
             noneCount  = finishString.count( 'None' )
@@ -9786,7 +9890,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toUSFM2(); halt
+                #UB.toEasyWorshipBible(); halt
                 myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag ) \
                                 if UB.books else []
