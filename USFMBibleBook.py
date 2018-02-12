@@ -103,7 +103,7 @@ class USFMBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #print( "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            #print( "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
@@ -285,7 +285,7 @@ def demo():
 
     import USFMFilenames
 
-    if 1: # Test individual files
+    if 1: # Test individual files -- choose one of these or add your own
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
@@ -294,7 +294,7 @@ def demo():
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
@@ -304,7 +304,7 @@ def demo():
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':
