@@ -37,7 +37,7 @@ from gettext import gettext as _
 LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.09'
+ProgVersion = '0.10'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -281,7 +281,6 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
 
         # Write the numChapters,numVerses info along with the file position and length
         for BBB in BOS.getBookList():
-            #print( "EW here", BBB )
             #bookName = BibleObject.getAssumedBookName( BBB )
             try: bookName = BibleObject.books[BBB].shortTOCName
             except KeyError: bookName = None
@@ -298,11 +297,16 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
             myFile.write( b'\x00' * (157 - numChapters - 1) )
 
             try: bookBytes = compressedDictionary[BBB] # if it exists
-            except KeyError: bookBytes = b''
+            except KeyError: # Fill in missing books
+                missingString = "1:1 Book not available\r\n\r\n"
+                bookBytes = zlib.compress( missingString.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
+                assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
+                appendage = b'QK\x03\x04' + struct.pack( '<I', len(missingString) ) + b'\x08\x00'
+                assert len(appendage) == 10
+                bookBytes += appendage
+                compressedDictionary[BBB] = bookBytes
             myFile.write( struct.pack( '<Q', bookAddress ) )
-            #myFile.write( b'\x00' * 4 )
             myFile.write( struct.pack( '<Q', len(bookBytes) ) )
-            #myFile.write( b'\x00' * 4 )
             bookAddress += len(bookBytes)
         assert myFile.tell() == 14872 # 32 + 56 + 224*66
 
