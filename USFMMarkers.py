@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2016 Robert Hunt
+# Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,10 +36,10 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-08-06' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
-ProgVersion = '0.69'
+ProgVersion = '0.70'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -54,20 +54,20 @@ import BibleOrgSysGlobals
 
 
 # STATIC USFM TABLES
-OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl¤', )
+OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl¤' )
 # NOTE: the following sets include unnumbered markers, e.g., q, as well as q1
 USFM_TITLE_MARKERS = ( 'mt','mt1','mt2','mt3','mt4', 'mte','mte1','mte2','mte3','mte4',
-                      'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4', )
+                      'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4' )
 USFM_INTRODUCTION_MARKERS = ( 'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4',
                             'is','is1','is2','is3','is4',
                            'ip','ipi', 'im','imi', 'ipq','imq','ipr', 'iq','iq1','iq2','iq3','iq4',
                            'iot', 'io','io1','io2','io3','io4', 'ili','ili1','ili2','ili3','ili4',
-                           'iex','iqt',) # Doesn't include ie
-USFM_SECTION_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
+                           'iex','iqt' ) # Doesn't include ie
+USFM_SECTION_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', 'qa' )
 USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
                             'pi','pi1','pi2','pi3','pi4', 'ph','ph1','ph2','ph3','ph4',
                             'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
-                            'li','li1','li2','li3','li4', ) # (37) Doesn't include nb and qa -- WHY NOT???
+                            'li','li1','li2','li3','li4' ) # (37) Doesn't include nb and qa -- WHY NOT???
                                                             #   but does include q, qm, li, pi, and ph
 
 USFM_PRECHAPTER_MARKERS = OFTEN_IGNORED_USFM_HEADER_MARKERS + USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS + ('ie',)

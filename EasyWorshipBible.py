@@ -37,7 +37,7 @@ from gettext import gettext as _
 LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -192,7 +192,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                     ix = V.find( bridgeChar )
                     if ix != -1:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                            print( "Preparing for verse bridge in {} at {} {}:{}" \
+                            print( "createEasyWorshipBible: preparing for verse bridge in {} at {} {}:{}" \
                                         .format( BibleObject.abbreviation, BBB, C, V ) )
                         # Remove verse bridges
                         vStart = V[:ix].replace( 'a', '' ).replace( 'b', '' ).replace( 'c', '' )
@@ -215,7 +215,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 except ValueError: pass # had a verse bridge
                 if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                        print( "Handling verse bridge in {} at {} {}:{}-{}" \
+                        print( "createEasyWorshipBible: handling verse bridge in {} at {} {}:{}-{}" \
                                     .format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
                     if 1: # new code -- copies the bridged text to all verses
                         for vNum in range( vBridgeStartInt, vBridgeEndInt+1 ): # Fill in missing verse numbers

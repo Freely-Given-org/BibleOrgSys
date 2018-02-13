@@ -441,7 +441,7 @@ class InternalBibleBook:
                             print( "leftovers", repr(leftovers) )
                             #if marker[-1] == '*': marker = marker[:-1]
                             assert marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
-                                            's1','s2','s3','s4', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', ) \
+                                            's1','s2','s3','s4', 'qa', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', ) \
                                 or marker in ( 'f','x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) # These ones are character markers which can start a new line
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             self.addLine( marker, bits[1] )
@@ -1191,10 +1191,10 @@ class InternalBibleBook:
 
 
         # Main code for addNestingMarkers
-        ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
-        ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
-        ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
-        ourMainListMarkers = ( 'li','li1','li2','li3','li4', )
+        ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', 'qa' )
+        ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4' )
+        ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4' )
+        ourMainListMarkers = ( 'li','li1','li2','li3','li4' )
         haveIntro = 0 # Count them to detect errors
         C, V = '0', '-1' # So first/id line starts at 0:0
         lastJ = len(self._processedLines) - 1
@@ -2454,10 +2454,10 @@ class InternalBibleBook:
             elif marker=='v~' and text:
                 bkDict['haveVerseText'] = True
                 bkDict['completedVerseCount'] += 1
-            elif marker in ('mt1','mt2','mt3','mt4',):
+            elif marker in ('mt1','mt2','mt3','mt4'):
                 bkDict['haveMainHeadings'] = True
                 bkDict['mainHeadingsCount'] += 1
-            elif marker in ('s1','s2','s3','s4',):
+            elif marker in ('s1','s2','s3','s4', 'qa'):
                 bkDict['haveSectionHeadings'] = True
                 bkDict['sectionHeadingsCount'] += 1
             elif marker=='r' and text:
@@ -2598,7 +2598,7 @@ class InternalBibleBook:
                         reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
                 level = int( marker[1] ) # 1, 2, etc.
                 qReferences.append( (reference,level,) )
-            elif len(marker)==2 and marker[0]=='s' and marker[1].isdigit():# s1, s2, etc.
+            elif marker in ('s1','s2','s3','s4', 'qa'):
                 if text and text[-1].isspace(): print( self.BBB, chapterNumberStr, verseNumberStr, marker, "'"+text+"'" )
                 reference = (chapterNumberStr,verseNumberStr,)
                 level = int( marker[1] ) # 1, 2, etc.
@@ -2955,7 +2955,7 @@ class InternalBibleBook:
             lastModifiedMarker = marker
 
             # Check for known bad combinations
-            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
+            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5', 'qa'):
                 newlineMarkerErrors.append( lineLocationSpace + _("'nb' not allowed immediately after {!r} section heading").format( marker ) )
             if self.checkUSFMSequencesFlag: # Check for known good combinations
                 commonGoodNewlineMarkerCombinations = (
@@ -3448,7 +3448,8 @@ class InternalBibleBook:
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
 
-            if marker in ('s1','s2','s3','s4', ): newSection = True; bitMarker = originalMarker; continue # Nothing more to process here (although will miss check rare notes in section headings)
+            if marker in ('s1','s2','s3','s4', 'qa'):
+                newSection = True; bitMarker = originalMarker; continue # Nothing more to process here (although will miss check rare notes in section headings)
             if marker in ('p','ip','b', ): # Note 'm' is NOT included in this list
                 newParagraph = True
                 if not bitMarker: bitMarker = originalMarker
@@ -3774,7 +3775,7 @@ class InternalBibleBook:
                 elif text[-1] in '.።':
                     headingErrors.append( lineLocationSpace + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, C, V, _("Title ends with a period") )
-            elif marker in ('s1','s2','s3','s4',):
+            elif marker in ('s1','s2','s3','s4', 'qa'):
                 if marker=='s1': sectionHeadingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: sectionHeadingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not text:

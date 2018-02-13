@@ -77,10 +77,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-13' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.75'
+ProgVersion = '0.76'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1218,6 +1218,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     from USFMMarkers import USFMMarkers
     USFMMarkers = USFMMarkers().loadData()
     USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
     #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
     #for marker in ( ):
         #print( marker )
@@ -1225,9 +1226,9 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
     #    'qm1', 'qm2', 'qm3', 'qm4']
-    # now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
-    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
+    # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
+    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
     #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
     internal_SFMs_to_remove = USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
     internal_SFMd_to_remove = sorted( internal_SFMs_to_remove, key=len, reverse=True ) # List longest first

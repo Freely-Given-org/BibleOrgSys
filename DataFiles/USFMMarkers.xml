@@ -57,7 +57,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.63</version>
-      <date>2016-04-04</date>
+      <date>2018-02-14</date>
       <title>USFM 2.4 markers list (with NET08 extensions)</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://paratext.ubs-translations.org/usfm</identifier>
@@ -1060,6 +1060,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>No</closed>
     <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
+    <description>For example, the Aleph, Beth, etc. headings in Lamentations or Psalm 119</description>
   </USFMMarker>
 
   <USFMMarker>
