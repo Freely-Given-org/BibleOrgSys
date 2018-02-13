@@ -9611,7 +9611,7 @@ class BibleWriter( InternalBible ):
                                     result, result, result, result, result, result, result, result, result, result, result, ]
             #print( "async results2 are", results )
             BibleOrgSysGlobals.alreadyMultiprocessing = False
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doAllExports: Multiprocessing got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
             ( PhotoBibleExportResult, #ODFExportResult,
                 TeXExportResult,
