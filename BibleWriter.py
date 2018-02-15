@@ -175,8 +175,6 @@ class BibleWriter( InternalBible ):
         #    """
         InternalBible.__init__( self  ) # Initialise the base class
         self.doneSetupGeneric = False
-        #self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-80' )
-        #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # self isn't actualised yet!!!
 
         global ALL_CHAR_MARKERS
         if ALL_CHAR_MARKERS is None:
@@ -352,7 +350,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not self.doneSetupGeneric
         #if 'discoveryResults' not in dir(self): self.discover()
         if not self.doneSetupGeneric:
-            self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-80' )
+            self.genericBOS = BibleOrganizationalSystem( 'GENERIC' )
             self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
                 # because unfortunately it causes a recursive linking of objects
             self.doneSetupGeneric = True
@@ -685,6 +683,7 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
+                    print( "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganizationalSystemName(), BBB ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0

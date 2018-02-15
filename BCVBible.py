@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -516,7 +516,7 @@ class BCVBibleBook( BibleBook ):
         self.sourceFolder = os.path.join( folder, self.BBB+'/' )
 
         # Read book metadata
-        self.loadBookMetadata( os.path.join( self.sourceFolder, self.BBB+'_BookMetadata.txt' ) )
+        self.loadBookMetadata( os.path.join( self.sourceFolder, self.BBB+'__BookMetadata.txt' ) )
 
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
@@ -528,9 +528,9 @@ class BCVBibleBook( BibleBook ):
                 C, V = CV
                 filename = self.BBB+'_C'+C+'V'+V+'.txt'
             else:
-                assert CV == ('0',)
-                C = V = '0'
-                filename = self.BBB+'_C0.txt'
+                assert CV == ('-1',)
+                C = V = '-1', '0'
+                filename = self.BBB+'__Intro.txt'
             with open( os.path.join( self.sourceFolder, filename ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1

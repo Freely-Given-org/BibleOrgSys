@@ -4317,13 +4317,14 @@ class InternalBibleBook:
                     introLines += line # collect all of the intro parts
                 else: verseLines += line
 
-            # Write file, but don't write intro until we get to the chapter 1 marker
-            if C != '0':
+            # Write file, but don't write intro until we get to the first chapter marker (usually chapter 1 but could be 0)
+            if C != '-1':
                 if introLines:
-                    with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                    # Double underline in filename for better dir sorting/display
+                    with open( os.path.join( bookFolderPath, self.BBB+'__Intro.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( introLines )
                     introLines = None # Will now cause an error if we try to do more introduction bits -- should only be one intro
-                    CVList.append( ('0',) )
+                    CVList.append( ('-1',) )
                 elif verseLines:
                     with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( verseLines )
@@ -4333,14 +4334,15 @@ class InternalBibleBook:
             assert not CVList
             with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( introLines )
-            CVList.append( ('0',) )
+            CVList.append( ('-1',) )
         assert not verseLines
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )
-        with open( os.path.join( bookFolderPath, self.BBB+'_BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
+         # Double underline in filename for better dir sorting/display
+        with open( os.path.join( bookFolderPath, self.BBB+'__BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             metadataFile.write( metadataLines )
     # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook

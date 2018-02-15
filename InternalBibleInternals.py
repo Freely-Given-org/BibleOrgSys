@@ -67,6 +67,9 @@ Some notes about internal formats:
             stored in an InternalBibleExtraList object.
         Each InternalBibleExtra contains an index back to the adjusted text
             (and hence that index must be adjusted if the text string is edited).
+
+    The introduction is stored as chapter '-1'. (All our chapter and verse "numbers" are stored as strings.)
+        (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
 """
 
 from gettext import gettext as _
@@ -1083,7 +1086,7 @@ class InternalBibleIndex:
         else: # Assume it's a normal C/V book
             saveCV = saveJ = None
             indexEntryLineCount = 0 # indexEntryLineCount is the number of datalines pointed to by this index entry
-            strC, strV = '0', '0'
+            strC, strV = '-1', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 if debuggingThisModule:
                     print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
@@ -1097,13 +1100,13 @@ class InternalBibleIndex:
                     saveAnythingOutstanding()
                     # Save anything before the first verse number as verse 'zero'
                     strC, strV = entry.getCleanText(), '0'
-                    assert strC != '0'
+                    assert strC != '-1'
                     saveCV, saveJ = (strC,strV,), j
                     indexEntryLineCount += 1
 
                 elif marker == 'v': # This bit of indexing code is quite complex!
                     if debuggingThisModule: print( "    Handle v {}".format( entry.getCleanText() ) )
-                    assert strC != '0' # Should be in a chapter by now
+                    assert strC != '-1' # Should be in a chapter by now
 
                     # Go back and look what we passed that might actually belong with this verse
                     #   e.g., section headings, new paragraphs, etc.
@@ -1252,7 +1255,7 @@ class InternalBibleIndex:
         for ixKey in self.__indexData:
             #print( ixKey ); halt
             C, V = ixKey
-            if not C.isdigit():
+            if C!='-1' and not C.isdigit():
                 logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {} {}:{}".format( self.name, self.BBB, repr(C), repr(V) ) )
             if not V.isdigit():
                 logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {} {}:{}".format( self.name, self.BBB, repr(C), repr(V) ) )

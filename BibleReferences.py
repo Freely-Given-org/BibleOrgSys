@@ -758,7 +758,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 logging.error( _("saveReferenceRange: Missing BBB parameter from {} Bible reference {!r}").format( BBB, referenceString ) )
             if not C:
                 logging.error( _("saveReferenceRange: Missing C parameter from {} Bible reference {!r}").format( BBB, referenceString ) )
-            elif not C.isdigit():
+            elif C!='-1' and not C.isdigit():
                 logging.error( _("saveReferenceRange: Non-digit {} C parameter from {} Bible reference {!r}").format( repr(C), BBB, referenceString ) )
             if not V:
                 logging.error( _("saveReferenceRange: Missing V parameter from {} Bible reference {!r}").format( BBB, referenceString ) )

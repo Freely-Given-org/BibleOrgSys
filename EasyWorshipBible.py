@@ -37,7 +37,7 @@ from gettext import gettext as _
 LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -283,7 +283,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         for BBB in BOS.getBookList():
             #bookName = BibleObject.getAssumedBookName( BBB )
             try: bookName = BibleObject.books[BBB].shortTOCName
-            except KeyError: bookName = None
+            except (KeyError,AttributeError): bookName = None # KeyError if no BBB, AttributeError if no shortTOCName
             #print( len(bookName) if bookName else '', bookName )
             assert bookName is None or len(bookName) <= 51
             if bookName: bookNameBytes = bookName.encode( 'utf8' )
