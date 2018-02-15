@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-11' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.10'
+ProgVersion = '0.11'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -487,6 +487,7 @@ class PickledBible( Bible ):
 
         # Now we load the version info file
         if sourceFileOrFolder.endswith( ZIPPED_FILENAME_END ):
+            assert os.path.isfile( sourceFileOrFolder )
             self.pickleFilepath = sourceFileOrFolder
             self.pickleSourceFolder = os.path.dirname( sourceFileOrFolder )
             self.pickleIsZipped = True
@@ -497,6 +498,7 @@ class PickledBible( Bible ):
             except zipfile.BadZipFile:
                 logging.critical( "PickledBible: "+_("Not a valid zipFile at {}").format( self.pickleFilepath ) )
         else: # assume it's a folder
+            assert os.path.isdir( sourceFileOrFolder )
             self.pickleSourceFolder = sourceFileOrFolder
             self.pickleIsZipped = False
             filepath = os.path.join( self.pickleSourceFolder, VERSION_FILENAME )
@@ -844,34 +846,37 @@ def demo():
                                 if originalText and originalText!=cleanText:
                                     print( ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
             elif BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+                print( '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Load a zipped version
         pFilepath = 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END
-        if os.path.exists( pFilepath ):
+        if os.access( pFilepath, os.R_OK ):
             pBible = PickledBible( pFilepath )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
             pBible.load()
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
         elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nSorry, test file {!r} is not readable on this computer.".format( pFilepath ) )
+            print( '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
 
 
-    testResourcesFolder = 'OutputFiles/BOS_Test_Resources/'
     if 1: # demo the file checking code with zip files
+        testResourcesFolder = 'OutputFiles/BOS_Test_Resources/'
         j = 1
-        for folder in (resourcesFolder, testResourcesFolder ):
-            for something in sorted( os.listdir( folder ) ):
-                somepath = os.path.join( folder, something )
-                abbrev = something.split('.',1)[0]
-                pBible = PickledBible( somepath )
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE{}a: {}".format( j, abbrev ), pBible )
-                pBible.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}b: {}".format( j, abbrev ), pBible )
-                assert pBible.pickleIsZipped # That's what we were supposedly testing
-                j += 1
+        for testFolder in ( resourcesFolder, testResourcesFolder ):
+            if os.path.exists( testFolder ):
+                for something in sorted( os.listdir( testFolder ) ):
+                    somepath = os.path.join( testFolder, something )
+                    abbrev = something.split('.',1)[0]
+                    pBible = PickledBible( somepath )
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE{}a: {}".format( j, abbrev ), pBible )
+                    pBible.load()
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( "E{}b: {}".format( j, abbrev ), pBible )
+                    assert pBible.pickleIsZipped # That's what we were supposedly testing
+                    j += 1
+            elif BibleOrgSysGlobals.verbosityLevel > 0:
+                print( '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Test other functions
