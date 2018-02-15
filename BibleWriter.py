@@ -73,10 +73,10 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-13' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = '0.95'
+ProgVersion = '0.96'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -613,14 +613,14 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 for entry in pseudoESFMData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                     #print( repr(marker), repr(cleanText), repr(adjText) )
                     if marker in USFM_PRECHAPTER_MARKERS:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                            assert C=='0' or marker=='rem' or marker.startswith('mte')
+                            assert C=='-1' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
                     if marker == 'c': C, V = adjText, '0'
                     elif marker == 'v': V = adjText
@@ -1632,7 +1632,7 @@ class BibleWriter( InternalBible ):
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
@@ -1640,7 +1640,7 @@ class BibleWriter( InternalBible ):
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                     if marker in USFM_PRECHAPTER_MARKERS:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                            assert C=='0' or marker=='rem' or marker.startswith('mte')
+                            assert C=='-1' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
 
                     if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -1870,7 +1870,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             bookName = gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             chapterRef = bookRef + '.0'
             #verseText = '' # Do we really need this?
             #chapterNumberString = None
@@ -1880,7 +1880,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',
@@ -2580,7 +2580,7 @@ class BibleWriter( InternalBible ):
             html5Globals['nextFootnoteIndex'] = html5Globals['nextEndnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'], html5Globals['endnoteHTML5'], html5Globals['xrefHTML5'] = [], [], []
             gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 haveExtraFormatting = True if extras else False
@@ -2590,7 +2590,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 # Markers usually only found in the introduction
@@ -3206,7 +3206,7 @@ class BibleWriter( InternalBible ):
 
             lastHTML = sectionHTML = outputHTML = ''
             lastMarker = gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             lastC, lastV = '0', '999' # For introduction section
             overallChapterLabel = None
             sOpen = sJustOpened = pOpen = vOpen = False
@@ -3220,7 +3220,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 # Markers usually only found in the introduction
@@ -3929,7 +3929,7 @@ class BibleWriter( InternalBible ):
 
             version = 2
             xtra = ' ' if version<2 else ''
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( USXNumber+USXAbbrev+".usx" ), filesFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
@@ -3942,7 +3942,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
@@ -4384,7 +4384,7 @@ class BibleWriter( InternalBible ):
 
             version = 2
             xtra = ' ' if version<2 else ''
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             xw.writeLineOpen( 'book', ('id',USFXAbbrev) )
             haveOpenPara = paraJustOpened = False
             gotVP = None
@@ -4393,7 +4393,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
@@ -5055,13 +5055,13 @@ class BibleWriter( InternalBible ):
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #print( "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
 
@@ -5710,7 +5710,7 @@ class BibleWriter( InternalBible ):
             # Main code for toZefaniaXML.writeZefBook
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 haveNotesFlag = False
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
@@ -5718,7 +5718,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -5907,14 +5907,14 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
             gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -6502,14 +6502,14 @@ class BibleWriter( InternalBible ):
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             chapterRef = bookRef + '.0'
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
@@ -6958,13 +6958,13 @@ class BibleWriter( InternalBible ):
 
             pseudoESFMData = bookObject._processedLines
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in pseudoESFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -7129,13 +7129,13 @@ class BibleWriter( InternalBible ):
                 return
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             linemark = ''
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -7409,7 +7409,7 @@ class BibleWriter( InternalBible ):
             across, down = leftPadding, leading - 2
 
             # Write the heading
-            heading = '{}{}'.format( bookName, '' if C=='0' else ' '+C )
+            heading = '{}{}'.format( bookName, '' if C=='-1' else ' '+C )
             totalCommands = renderLine( across, down, heading, fontsize, defaultHeadingFontname, topLineColor )
             down += leading
             outputLineCount = 1
@@ -7658,7 +7658,7 @@ class BibleWriter( InternalBible ):
             if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
 
             # First of all, get the text (by chapter) into textBuffer
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             intC = numVerses = 0
             lastMarker = gotVP = None
             textBuffer = ''
@@ -7668,7 +7668,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
@@ -8877,20 +8877,20 @@ class BibleWriter( InternalBible ):
             startingNewParagraphFlag = True
             inTextParagraph = False
             lastMarker = gotVP = None
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in pseudoESFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='0' or marker=='rem' or marker.startswith('mte')
+                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker == 'c':
-                    if C == '0' and runningHeaderField:
+                    if C == '-1' and runningHeaderField:
                         runningHeaderField.setPropertyValue( 'Content', headerField )
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
@@ -9280,13 +9280,13 @@ class BibleWriter( InternalBible ):
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
                     gotVP = None
-                    C, V = '0', '-1' # So first/id line starts at 0:0
+                    C, V = '-1', '-1' # So first/id line starts at -1:0
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                         if marker in USFM_PRECHAPTER_MARKERS:
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                                assert C=='0' or marker=='rem' or marker.startswith('mte')
+                                assert C=='-1' or marker=='rem' or marker.startswith('mte')
                             V = str( int(V) + 1 )
 
                         if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines

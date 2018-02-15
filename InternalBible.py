@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-13' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.81'
+ProgVersion = '0.82'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -2303,7 +2303,7 @@ class InternalBible:
                 #print( exp("  findText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
-                C, V = '0', '-1' # So first/id line starts at 0:0
+                C, V = '-1', '-1' # So first/id line starts at -1:0
                 marker = None
                 for lineEntry in bookObject:
                     if marker in BibleOrgSysGlobals.USFMParagraphMarkers:
@@ -2314,11 +2314,11 @@ class InternalBible:
                     if marker in ('intro','chapters'): continue # we'll always ignore these added lines
                     if marker == 'c': C, V = cleanText, '0'
                     elif marker == 'v': V = cleanText
-                    elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+                    elif C == '-1' and marker!='intro': V = str( int(V) + 1 )
                     if ourMarkerList:
                         if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
                             continue
-                    elif C=='0' and not optionsDict['includeIntroFlag']: continue
+                    elif C=='-1' and not optionsDict['includeIntroFlag']: continue
                     #print( "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
 
                     if optionsDict['chapterList'] is None \

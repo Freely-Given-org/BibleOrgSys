@@ -6,7 +6,7 @@
 # Module to check and compare two closely related Bibles
 #   e.g., a book and its back-translation.
 #
-# Copyright (C) 2016-2017 Robert Hunt
+# Copyright (C) 2016-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -68,10 +68,10 @@ Includes:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-04' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -279,7 +279,7 @@ def checkBookPedantic( bookObject,
     len1 = len(bookObject)
 
     ix1 = 0
-    C, V = '0', '-1' # id line should be 0:0
+    C, V = '-1', '-1' # So first/id line starts at -1:0
     while ix1<len1:
         entry1 = bookObject._processedLines[ix1] # InternalBibleEntry objects
         #print( 'entry', entry1 )
@@ -287,9 +287,9 @@ def checkBookPedantic( bookObject,
 
         if marker1 == 'c': C, V = line1.split()[0], '0'
         elif marker1 == 'v':
-            if C == '0': C = '1' # Some one chapter books might not have a C marker
+            if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
+        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
         #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )
@@ -427,7 +427,7 @@ def compareBooksPedantic( book1, book2,
 
     ix1 = ix2 = offset1 = offset2 = 0
     numMismatchedMarkers = 0
-    C, V = '0', '-1' # id line should be 0:0
+    C, V = '-1', '-1' # So first/id line starts at -1:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
         #print( 'entry', entry1, entry2 )
@@ -436,9 +436,9 @@ def compareBooksPedantic( book1, book2,
 
         if marker1 == 'c': C, V = line1.split()[0], '0'
         elif marker1 == 'v':
-            if C == '0': C = '1' # Some one chapter books might not have a C marker
+            if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
+        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
         #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )
@@ -722,7 +722,7 @@ def segmentizeBooks( book1, book2 ):
 
     ix1 = ix2 = offset1 = offset2 = 0
     numMismatchedMarkers = 0
-    C, V = '0', '-1' # id line should be 0:0
+    C, V = '-1', '-1' # So first/id line starts at -1:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
         #print( 'entry', entry1, entry2 )
@@ -731,9 +731,9 @@ def segmentizeBooks( book1, book2 ):
 
         if marker1 == 'c': C, V = line1.split()[0], '0'
         elif marker1 == 'v':
-            if C == '0': C = '1' # Some one chapter books might not have a C marker
+            if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '0' and marker1!='intro': V = str( int(V) + 1 )
+        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
         #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #print( ' ', entry1.getOriginalText() )
         #print( ' ', entry1.getAdjustedText() )

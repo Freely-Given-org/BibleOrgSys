@@ -48,10 +48,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -406,7 +406,7 @@ class USFXXMLBible( Bible ):
         self.thisBook.objectNameString = 'USFX XML Bible Book object'
         self.thisBook.objectTypeString = 'USFX'
 
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for element in bookElement:
             #print( "element", repr(element.tag) )
             location = "{} of {} {}:{}".format( element.tag, mainLocation, BBB, C, V )

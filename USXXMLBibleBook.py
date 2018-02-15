@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-05' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -91,7 +91,7 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
 
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors = []
 
 
@@ -515,7 +515,7 @@ class USXXMLBibleBook( BibleBook ):
                 elif element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location ) # Not in a paragraph!
                 elif element.tag == 'para':
-                    if C == '0': V = str( int(V) + 1 ) # first/id line will be 0:0
+                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
@@ -568,7 +568,7 @@ class USXXMLBibleBook( BibleBook ):
                             loadErrors.append( _("{} {}:{} Ignoring '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
                             logging.critical( _("Ignoring '\\{}' unknown USFM Marker after {} {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.workName, self.BBB, C, V ) )
                 elif element.tag == 'table':
-                    if C == '0': V = str( int(V) + 1 ) # first/id line will be 0:0
+                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'TT33' )
                     BibleOrgSysGlobals.checkXMLNoText( element, location, 'TT42' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, 'TT88' )

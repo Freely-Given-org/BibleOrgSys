@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-12' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.50'
+ProgVersion = '0.51'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -141,7 +141,7 @@ class USFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
@@ -167,8 +167,8 @@ class USFMBibleBook( BibleBook ):
                                         .format( newV, self.BBB, C, V ) )
                     self.addPriorityError( 100, C, V, _("Got unexpected chapter number") )
                 V = newV
-                if C == '0': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+                if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data

@@ -5,7 +5,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -65,10 +65,10 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "BibleVersificationSystems"
 ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.58'
+ProgVersion = '0.59'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -764,7 +764,7 @@ class BibleVersificationSystem:
         myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
-            if extended and C=='0': return 0 <= int(V) <= 199 # Don't check the verse number range accurately
+            if extended and C=='-1': return 0 <= int(V) <= 199 # Don't check the verse number range accurately
             if C in self.__chapterDataDict[BBB]:
                 if not V: return True # NOTE: This allows blank verse numbers (as a reference can refer to an entire chapter)
                 if extended and V=='0': return True

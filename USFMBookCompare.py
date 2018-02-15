@@ -37,10 +37,10 @@ TODO: Needs internationalisation _("around strings")
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -134,7 +134,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     resultDict['File1']['HasContentCount'] = resultDict['File2']['HasContentCount'] = 0
     startedCVs = False
     lastC = lastV = 0
-    C, V = '0', '-1' # So first/id line starts at 0:0
+    C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf1.lines:
         #print( '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
@@ -169,7 +169,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
 
     startedCVs = False
     lastC = lastV = 0
-    C, V = '0', '-1' # So first/id line starts at 0:0
+    C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf2.lines:
         #print( '1', C, V, lastC, lastV, marker, line )
         if marker=='c':

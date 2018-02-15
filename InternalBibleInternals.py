@@ -71,10 +71,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1066,7 +1066,7 @@ class InternalBibleIndex:
                                 #break # ignore the rest
                         ##assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         #saveCV, saveJ = (strC,digitV,), revertToJ
-                elif strC == '0': # Still in the introduction
+                elif strC == '-1': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
                     assert saveCV is None and saveJ is None
                     self.__indexData[(strC,strV)] = ( j, 1)
@@ -1153,7 +1153,7 @@ class InternalBibleIndex:
                             halt
                         else: print( "Temp index currently ({}) {}".format( len(self.__indexData), self.__indexData ) )
 
-                elif strC == '0': # Still in the introduction
+                elif strC == '-1': # Still in the introduction
                     # Each line is considered a new 'verse' entry in chapter 'zero'
                     #   (usually the id line is 'verse' 0, i.e., 0:0)
                     if debuggingThisModule: print( "    Handle intro {}".format( entry.getCleanText() ) )
@@ -1305,7 +1305,7 @@ class InternalBibleIndex:
             #if self.BBB!='FRT': halt
 
             # Check the order of the markers
-            if C == '0': # the book introduction
+            if C == '-1': # the book introduction
                 pass
             else: # not the book introduction
                 if V == '0':
@@ -1384,7 +1384,7 @@ class InternalBibleIndex:
                     if marker != 'rem': previousMarker = marker
 
             # Now check them
-            if C == '0': # the book introduction
+            if C == '-1': # the book introduction
                 pass
             else: # not the book introduction
                 if  V=='0': # chapter introduction

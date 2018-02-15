@@ -28,10 +28,10 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
-ProgVersion = '0.47'
+ProgVersion = '0.48'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -434,7 +434,7 @@ class ESFMBibleBook( BibleBook ):
         originalBook.read( self.sourceFilepath )
 
         # Do some important cleaning up before we save the data
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
@@ -444,8 +444,8 @@ class ESFMBibleBook( BibleBook ):
             if marker=='c' and originalText: C, V = originalText.split()[0], '0'
             elif marker=='v' and originalText:
                 V = originalText.split()[0]
-                if C == '0': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 )
+                if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data

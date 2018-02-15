@@ -50,10 +50,10 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-13' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.96'
+ProgVersion = '0.97'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1196,7 +1196,7 @@ class InternalBibleBook:
         ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4' )
         ourMainListMarkers = ( 'li','li1','li2','li3','li4' )
         haveIntro = 0 # Count them to detect errors
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         lastJ = len(self._processedLines) - 1
         lastMarker = lastPMarker = lastSMarker = None
         for j,dataLine in enumerate( self._processedLines ):
@@ -1375,7 +1375,7 @@ class InternalBibleBook:
         #    3/ q1 = Text of verse 17.
         newLines = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         lastMarker = lastText = None
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for j,(marker,text) in enumerate( self._rawLines ):
             # Keep track of where we are
             #if marker == 'c': C, V = text, '0'
@@ -1407,7 +1407,7 @@ class InternalBibleBook:
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         #for j,(marker,text) in enumerate( self._rawLines ):
         for marker,text in self._rawLines:
             # Keep track of where we are
@@ -1453,7 +1453,7 @@ class InternalBibleBook:
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         #for j,(marker,text) in enumerate( self._rawLines ):
         for marker,text in self._rawLines:
             # Keep track of where we are
@@ -1568,7 +1568,7 @@ class InternalBibleBook:
                     print( "processLine: {} {}:{} {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
                 assert originalMarker and isinstance( originalMarker, str )
                 assert isinstance( originalText, str )
-            if C=='0': V = int(V) + 1 # Count intro lines
+            if C=='-1': V = int(V) + 1 # Count intro lines
             #if self.BBB == 'PSA':
                 #print( "processLine: {} {}:{} {!r} {!r}".format( self.BBB, C, V, originalMarker, originalText ) )
             text = originalText
@@ -1644,7 +1644,7 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(cBits)>1:
                     print( "InternalBibleBook.processLine: cbits", cBits )
                 C, V = cBits[0], '0'
-                if C == '0':
+                if C == '-1':
                     fixErrors.append( _("{} {}:{} Chapter zero is not allowed {!r}").format( self.BBB, C, V, text ) )
                     logging.error( "InternalBibleBook.processLine: " + _("Found zero {!r} in chapter marker {} {}:{}").format( text, self.BBB, C, V ) )
                     self.addPriorityError( 97, C, V, _("Chapter zero {!r} not allowed").format( text ) )
@@ -1683,15 +1683,15 @@ class InternalBibleBook:
                 haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='cl' and text:
                 if BibleOrgSysGlobals.debugFlag:
-                    if C != '0':
+                    if C != '-1':
                         print( "InternalBibleBook.processLine: Something before cl", self.workName, self.BBB, C, V, repr(text) )
                     if debuggingThisModule: assert V == '0' # coz this should precede the first c, or follow the c and precede the v
-                if C == '0': # it's before the first c
+                if C == '-1': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
                 vBits = splitVNumber( text )
                 V = vBits[0] # Get the actual verse number
-                if C == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
+                if C == '-1': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
                     if not self.isSingleChapterBook:
                         fixErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.BBB, C, V ) )
                         logging.error( "InternalBibleBook.processLine: " + _("Missing chapter number before first verse {} {}:{}").format( self.BBB, C, V ) )
@@ -1918,7 +1918,7 @@ class InternalBibleBook:
         if self.objectTypeString == 'OSIS': self.reorderRawLines()
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         haveWaitingC = False
         for marker,text in self._rawLines:
             #print( "\nQQQ" )
@@ -2008,7 +2008,7 @@ class InternalBibleBook:
             assert self._processedLines
         validationErrors = []
 
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for j, entry in enumerate(self._processedLines):
             marker, text = entry.getMarker(), entry.getText()
             #print( "{} {}:{} {!r} {!r}".format( self.BBB, C, V, marker, text ) )
@@ -2019,14 +2019,14 @@ class InternalBibleBook:
                 else:
                     validationErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Missing chapter number").format( self.BBB, C, V ) )
                     logging.error( _("Missing chapter number after") + " {} {}:{}".format( self.BBB, C, V ) )
-                    if C == '0': C = '1' # Makes it more robust since we had a chapter marker at least
+                    if C == '-1': C = '1' # Makes it more robust since we had a chapter marker at least
                 V = '0'
             elif marker == 'v':
                 if text: V = text.split()[0]
                 else:
                     validationErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Missing verse number").format( self.BBB, C, V ) )
                     logging.error( _("Missing verse number after") + " {} {}:{}".format( self.BBB, C, V ) )
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             # Temporarily substitute some markers just to make this check go easier
             if marker == 'c~': marker = 'v'
@@ -2429,7 +2429,7 @@ class InternalBibleBook:
 
 
         # _discover() main code
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = None
         for entry in self._processedLines:
             marker = entry.getMarker()
@@ -2446,7 +2446,7 @@ class InternalBibleBook:
                 if bkDict['verseCount'] is None: bkDict['verseCount'] = 1
                 else: bkDict['verseCount'] += 1
                 if bkDict['chapterCount'] is None: # Some single chapter books don't have \c 1 explicitly encoded
-                    if BibleOrgSysGlobals.debugFlag: assert C == '0'
+                    if BibleOrgSysGlobals.debugFlag: assert C == '-1'
                     C = '1'
                     bkDict['chapterCount'] = 1
                 bkDict['havePopulatedCVmarkers'] = True
@@ -2845,7 +2845,7 @@ class InternalBibleBook:
         newlineMarkerErrors, internalMarkerErrors, noteMarkerErrors = [], [], []
         functionalCounts = {}
         modifiedMarkerList = []
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         section, lastMarker, lastModifiedMarker = '', '', None
         lastMarkerEmpty = True
         for entry in self._processedLines:
@@ -2858,7 +2858,7 @@ class InternalBibleBook:
             elif marker=='v' and text:
                 V = text.split()[0]
                 functionalCounts['Verses'] = 1 if 'Verses' not in functionalCounts else (functionalCounts['Verses'] + 1)
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3356,14 +3356,14 @@ class InternalBibleBook:
         haveNonAsciiChars = False
         simpleCharacterCounts, unicodeCharacterCounts, letterCounts, punctuationCounts = {}, {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V= text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3431,7 +3431,7 @@ class InternalBibleBook:
         newSection = newParagraph = newBit = False
         bitMarker = ''
         startsWithOpen = endedWithClose = False
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, originalMarker, text, cleanText = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText()
 
@@ -3443,7 +3443,7 @@ class InternalBibleBook:
             elif marker=='v':
                 if text: V = text.split()[0]
                 continue # v fields contain no quote signs and don't affect formatting blocks
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3667,14 +3667,14 @@ class InternalBibleBook:
         wordCounts, caseInsensitiveWordCounts = {}, {}
         wordErrors, repeatedWordErrors = [], []
         lastTextWordTuple = ('','')
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3728,13 +3728,13 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         IDList, encodingList = [], []
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker1!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker1!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             if marker == 'id': IDList.append( "{} '{}'".format( self.BBB, text ) )
             elif marker == 'ide': encodingList.append( "{} '{}'".format( self.BBB, text ) )
@@ -3756,13 +3756,13 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList, headingErrors = [], [], [], [], []
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3836,14 +3836,14 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3922,14 +3922,14 @@ class InternalBibleBook:
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
         footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
         leaderCounts = {}
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '0' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -4313,7 +4313,7 @@ class InternalBibleBook:
                 content = entry.getOriginalText()
                 if content: line += '='+content
                 line += '\n'
-                if C == '0':
+                if C == '-1':
                     introLines += line # collect all of the intro parts
                 else: verseLines += line
 

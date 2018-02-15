@@ -5,7 +5,7 @@
 #
 # Class handling Bible verse references
 #
-# Copyright (C) 2013-2016 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -69,10 +69,10 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-26' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.37'
+ProgVersion = '0.38'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -243,7 +243,7 @@ class SimpleVerseKey():
                 if checkChar in BBB \
                 or checkChar in C \
                 or checkChar in SI \
-                or checkChar in V and ( C=='0' and V=='-1' ): # 0:-1 means the last bit of the book intro
+                or checkChar in V and ( C=='-1' and V=='-1' ): # 0:-1 means the last bit of the book intro
                     raise TypeError
             if SI and SI.isdigit():
                 self.BBB, self.C, self.V, self.I, self.S = BBB, C, V, SI, None

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# DigitalBiblePlatform.py
+# DBPOnline.py
 #
 # Module handling online DBP resources
 #
@@ -64,10 +64,10 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-05' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "DigitalBiblePlatform"
-ProgName = "Digital Bible Platform handler"
-ProgVersion = '0.18'
+ProgName = "Digital Bible Platform onliner handler"
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -796,4 +796,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of DigitalBiblePlatform.py
+# end of DBPOnline.py

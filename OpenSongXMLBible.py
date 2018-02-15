@@ -67,10 +67,10 @@ Sample:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = '0.38'
+ProgVersion = '0.39'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -238,7 +238,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             return
         writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
         haveOpenChapter, startedFlag, gotVP, accumulator = False, False, None, ""
-        C, V = '0', '-1' # So first/id line starts at 0:0
+        C, V = '-1', '-1' # So first/id line starts at -1:0
         for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
             marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
             #print( marker, repr(text) )
@@ -246,7 +246,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             if marker in USFM_PRECHAPTER_MARKERS:
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    assert C=='0' or marker=='rem' or marker.startswith('mte')
+                    assert C=='-1' or marker=='rem' or marker.startswith('mte')
                 V = str( int(V) + 1 )
 
             if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines

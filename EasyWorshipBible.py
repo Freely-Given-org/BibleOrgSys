@@ -34,10 +34,10 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-13' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -614,7 +614,7 @@ class EasyWorshipBible( Bible ):
             thisBook.objectTypeString = 'EasyWorship Bible'
             if bookAbbrev: thisBook.addLine( 'toc3', bookAbbrev )
 
-            C, V = '0', '-1' # So first/id line starts at 0:0
+            C, V = '-1', '-1' # So first/id line starts at -1:0
             for line in textResult.split( '\r\n' ):
                 if not line: continue # skip blank lines
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:

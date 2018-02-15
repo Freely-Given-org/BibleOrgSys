@@ -6,7 +6,7 @@
 # Interface module handling Sword resources
 #   using either the Sword engine (if available) or else our own software
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-02' # by RJH
+LastModifiedDate = '2018-02-15' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.27'
+ProgVersion = '0.28'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -397,7 +397,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif divType == 'glossary': replacement = '\\NL**\\id GLO\\NL**' #### WEIRD -- appended to 3 John
         elif divType == 'book': replacement = '' # We don't need this
         elif divType == 'outline': replacement = '\\NL**\\iot '
-        elif divType == 'paragraph': replacement = '\\NL**\\ip ' if C=='0' else '\\NL**\\p\\NL**'
+        elif divType == 'paragraph': replacement = '\\NL**\\ip ' if C=='-1' else '\\NL**\\p\\NL**'
         elif divType == 'majorSection': replacement = '\\NL**\\ms\\NL**'
         elif divType == 'section': replacement = '\\NL**\\s1 '
         elif divType == 'subSection': replacement = '\\NL**\\s2 '
