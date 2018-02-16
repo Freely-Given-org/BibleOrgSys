@@ -69,7 +69,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-02-16' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.38'
@@ -198,7 +198,7 @@ class SimpleVerseKey():
     """
     Handles individual verse references (no ranges, etc. allowed) in the internal BCVS or BCVI form
         where   B is the BBB reference code
-                C is the chapter number string
+                C is the chapter number string (-1 for book intro)
                 V is the verse number string
                 S is the optional suffix string
                 I is the optional index into the verse
@@ -241,9 +241,9 @@ class SimpleVerseKey():
                 logging.error( "SimpleVerseKey: bad {!r} S/I in {}".format( SI, (BBB,C,V,SI) ) ); raise TypeError
             for checkChar in ' -,.:':
                 if checkChar in BBB \
-                or checkChar in C \
+                or (checkChar in C and C!='-1') \
                 or checkChar in SI \
-                or checkChar in V and ( C=='-1' and V=='-1' ): # 0:-1 means the last bit of the book intro
+                or checkChar in V and ( C=='-1' and V=='-1' ): # -1:-1 means the last bit of the book intro
                     raise TypeError
             if SI and SI.isdigit():
                 self.BBB, self.C, self.V, self.I, self.S = BBB, C, V, SI, None

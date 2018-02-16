@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-02-16' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -499,7 +499,7 @@ class BibleWriter( InternalBible ):
 
         ## Determine all the counts
         #for BBB,bookObject in self.books.items():
-            #C = V = '0' # Just for error messages
+            #C, V = '-1', '0' # Just for error messages
             #for entry in bookObject._processedLines:
                 #marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
                 #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here

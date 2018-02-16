@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-02-16' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.76'
@@ -361,7 +361,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                     bookText = bookFile.read()
                 resultDict['searchedBookList'].append( BBB )
 
-                #C = V = '0'
+                #C, V = '-1', '0'
                 if optionsDict['regexFlag']: # ignores wordMode flag
                     ix = 0
                     while True:

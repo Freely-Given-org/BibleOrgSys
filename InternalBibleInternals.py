@@ -74,7 +74,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-02-16' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.72'
@@ -1158,7 +1158,7 @@ class InternalBibleIndex:
 
                 elif strC == '-1': # Still in the introduction
                     # Each line is considered a new 'verse' entry in chapter 'zero'
-                    #   (usually the id line is 'verse' 0, i.e., 0:0)
+                    #   (usually the id line is 'verse' 0, i.e., -1:0)
                     if debuggingThisModule: print( "    Handle intro {}".format( entry.getCleanText() ) )
                     assert saveCV is None and saveJ is None
                     self.__indexData[(strC,strV)] = ( j, 1 )
