@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-10' # by RJH
+LastModifiedDate = '2018-02-19' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.15'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -71,7 +71,7 @@ class HebrewWLCBibleAddon():
         """
         if debuggingThisModule: print( "HebrewWLCBibleAddon.__init__()" )
 
-        self.glossingDict = None
+        self.glossingDict, self.haveGlossingDictChanges, self.loadedGlossEntryCount = None, False, 0
     # end of HebrewWLCBibleAddon.__init__
 
 
@@ -322,6 +322,8 @@ class HebrewWLCBibleAddon():
         Import the glossing dictionary from (an exported or handcrafted) text file.
 
         NOTE: Usually we use the much faster loadGlossingDict (load pickle) function above.
+
+        The overrideFlag lets you override an already-loaded glossing dictionary.
         """
         import ast
         #print( "importGlossingDictionary()" )
@@ -420,12 +422,24 @@ class HebrewWLCBibleAddon():
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
-        assert normalizedHebrewWord not in self.glossingDict
+        #assert normalizedHebrewWord not in self.glossingDict
         assert isinstance( genericGloss, str ) and genericGloss
         assert ' ' not in genericGloss
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
 
-        self.glossingDict[normalizedHebrewWord] = (genericGloss,[ref],{})
+        if normalizedHebrewWord in self.glossingDict: # it's an update
+            (prevGenericGloss,prevRefList,prevSpecificGlossDict) = self.glossingDict[normalizedHebrewWord]
+            if genericGloss!=prevGenericGloss:
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( _("Updating generic gloss for {!r} from {!r} to {!r}").format( normalizedHebrewWord, prevGenericGloss, genericGloss ) )
+                prevGenericGloss = genericGloss
+            if ref not in prevRefList:
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( _("Adding {} for generic gloss {!r} for {!r}").format( ref, prevGenericGloss, normalizedHebrewWord ) )
+                prevRefList.append( ref )
+            self.glossingDict[normalizedHebrewWord] = (prevGenericGloss,prevRefList,prevSpecificGlossDict)
+        else: # it's a new entry
+            self.glossingDict[normalizedHebrewWord] = (genericGloss,[ref],{})
         self.haveGlossingDictChanges = True
     # end of HebrewWLCBibleAddon.setNewGenericGloss
 
@@ -445,10 +459,16 @@ class HebrewWLCBibleAddon():
         assert isinstance( genericGloss, str ) and genericGloss
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
         assert ref in genericReferencesList
-        assert ref not in specificReferencesDict
+        #assert ref not in specificReferencesDict
         assert isinstance( specificGloss, str )
         assert ' ' not in specificGloss
-        specificReferencesDict[ref] = specificGloss
+
+        if ref in specificReferencesDict: # it must be an update
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( _("Updating specific gloss for {!r} at {} from {!r} to {!r}").format( normalizedHebrewWord, ref, specificReferencesDict[ref], specificGloss ) )
+            specificReferencesDict[ref] = specificGloss
+        else: # it's a new entry
+            specificReferencesDict[ref] = specificGloss
         self.glossingDict[normalizedHebrewWord] = (genericGloss,genericReferencesList,specificReferencesDict)
         self.haveGlossingDictChanges = True
     # end of HebrewWLCBibleAddon.setNewSpecificGloss
@@ -466,11 +486,11 @@ class HebrewWLCBibleAddon():
         assert normalizedHebrewWord in self.glossingDict
         assert isinstance( ref, tuple ) and len(ref)==4 # BBB,C,V plus word# (starting with 1)
 
-        (genericGloss,genericReferencesList) = self.glossingDict[normalizedHebrewWord]
+        (genericGloss,genericReferencesList,specificReferencesDict) = self.glossingDict[normalizedHebrewWord]
         assert ref not in genericReferencesList
         if ref not in genericReferencesList:
             genericReferencesList.append( ref )
-            self.glossingDict[normalizedHebrewWord] = (genericGloss,genericReferencesList)
+            self.glossingDict[normalizedHebrewWord] = (genericGloss,genericReferencesList,specificReferencesDict)
             self.haveGlossingDictChanges = True
     # end of HebrewWLCBibleAddon.addNewGenericGlossingReference
 
@@ -732,7 +752,16 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    if 0: # Update the glossing dictionary from the text file
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUpdating Hebrew WLC glossing dictionary from text file…" )
+        wlc = OSISHebrewWLCBible( DEFAULT_OSIS_WLC_FILEPATH )
+        wlc.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
+        wlc.importGlossingDictionary() # That we've edited in a text editor
+        #wlc.exportGlossingDictionary()
+        wlc.haveGlossingDictChanges = True
+        wlc.saveAnyChangedGlosses()
+    else: # normally
+        demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of HebrewWLCBible.py

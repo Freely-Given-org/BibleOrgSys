@@ -27,10 +27,10 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-15' # by RJH
+LastModifiedDate = '2018-02-21' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -234,16 +234,18 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
 
 # Hebrew interlinear fields
-    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 1 ), },
+    'WordRef': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE ) },
+    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 4 ), 'foreground':'brown', },
     'HebStrong': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
     'HebMorph': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'HebGenericGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE - 1 ), },
-    'HebSpecificGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 1 ), },
-    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE + 1 ), 'background':'yellow', },
+    'HebGenericGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 2 ), 'foreground':'green', },
+    'HebSpecificGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 2 ), 'foreground':'orange', },
+    'WordRefSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 1 ) },
+    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE + 4 ), 'background':'yellow', },
     'HebStrongSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
     'HebMorphSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
-    'HebGenericGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE - 1 ), 'background':'yellow', },
-    'HebSpecificGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 1 ), 'background':'yellow', },
+    'HebGenericGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 2 ), 'background':'yellow', },
+    'HebSpecificGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 2 ), 'background':'yellow', },
     }
 
 
@@ -311,7 +313,7 @@ class BibleStylesheet():
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( exp("validate"), USFMMarker, styleData )
-            if USFMMarker.startswith( 'Heb' ): continue
+            if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
