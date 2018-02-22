@@ -5,7 +5,7 @@
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2017 Robert Hunt
+# Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling Hebrew language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-24' # by RJH
+LastModifiedDate = '2018-02-22' # by RJH
 ShortProgName = "Hebrew"
 ProgName = "Hebrew language handler"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -49,7 +49,7 @@ bet = 'ב'
 gimel = 'ג'
 dalet = 'ד'
 he = 'ה'
-waw = 'ו'
+waw = vav = 'ו'
 zayin = 'ז'
 het = 'ח'
 tet = 'ט'
@@ -74,7 +74,7 @@ allFinalConsonants = ( alef, bet, gimel, dalet, he, waw, zayin, het, tet, yod, k
 
 
 # Vowel points
-sheva = 'ְ'
+sheva = shewa = 'ְ'
 hatafSegol = 'ֱ'
 hatafPatah = 'ֲ'
 hatafQamats = 'ֳ'
@@ -137,7 +137,47 @@ masoraCircle = '֯'
 cantillationMarks = ( etnahta, segolAccent, shalshelet, zaqefQatan, zaqefGadol, tipeha, revia, zarqa, pashta, yetiv, tevir, \
                         geresh, gereshMuqdam, gershayim, qarneyPara, telishaGedola, pazer, atnahHafukh, munah, mahapakh, merkha, \
                         merkhaKefula, darga, qadma, telishaQetana, yerahBenYomo, ole, iluy, dehi, zinor, masoraCircle )
+
+maqaf = '־'
 sofPasuq = '׃'
+
+
+# These substitutions are executed in the order given
+#   (so longer sequences should precede shorter ones)
+BOS_HEBREW_TRANSLITERATION = (
+            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
+            (dalet+dageshOrMapiq,'d'),(dalet,'d'),
+            (he+dageshOrMapiq,'h'),(he+qamats,'āh'),(he,'h'),
+            (waw+dageshOrMapiq,'u'),(waw,'w'), (zayin+dageshOrMapiq,'z'),(zayin,'z'),
+            (het+dageshOrMapiq,'ħ'),(het,'ħ'), (tet+dageshOrMapiq,'ŧ'),(tet,'ŧ'),
+            (yod+dageshOrMapiq,'u'),(yod,'y'), (kaf+dageshOrMapiq,'k'),(kaf,'k'),
+            (lamed+dageshOrMapiq,'l'),(lamed,'l'),
+            (mem+dageshOrMapiq,'m'),(mem,'m'), (memFinal+dageshOrMapiq,'m'),(memFinal,'m'),
+            (nun+dageshOrMapiq,'n'),(nun,'n'), (nunFinal+dageshOrMapiq,'n'),(nunFinal,'n'),
+            (samekh+dageshOrMapiq,'ş'),(samekh,'ş'), (ayin+dageshOrMapiq,''),(ayin,''),
+            (pe+dageshOrMapiq,'p'),(pe,'f'),
+            (tsadi+dageshOrMapiq,'ʦ'),(tsadi,'ʦ'), (tsadiFinal+dageshOrMapiq,'ʦ'),(tsadiFinal,'ʦ'),
+            (qof+dageshOrMapiq,'q'),(qof,'q'), (qofFinal+dageshOrMapiq,'q'),(qofFinal,'q'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sinShin+shinDot,'sh'),(sinShin+sinDot,'s'), (taw+dageshOrMapiq,'t'),(taw,'t'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sheva,'(ə)'),(hatafSegol,'e'),(segol,'e'),(hiriq,'i'),(tsere,'ē'),(patah,'a'),(qamats,'ā'),(holam,'o'),(qubuts,'u'),
+            #sheva = 'ְ'
+            #hatafSegol = 'ֱ'
+            #hatafPatah = 'ֲ'
+            #hatafQamats = 'ֳ'
+            #hiriq = 'ִ'
+            #tsere = 'ֵ'
+            #segol = 'ֶ'
+            #patah = 'ַ'
+            #qamats = 'ָ'
+            #holam = 'ֹ'
+            #holamHaserForVav = 'ֺ'
+            #qubuts = 'ֻ'
+            #metegOrSiluq = 'ֽ'
+            (metegOrSiluq,''),
+            (maqaf,'-'), (sofPasuq,'.'),
+            )
 
 
 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
@@ -332,6 +372,21 @@ class Hebrew():
         for otherMark in otherMarks: text = text.replace(otherMark, '')
         return text
     # end of Hebrew.removeOtherMarks
+
+
+    def transliterate( self, text=None, scheme=None ):
+        """
+        Return a (roughly) transliterated version of the current text.
+        """
+        if text is None: # Use our own text
+            outputText = self.transliterate( self.currentText, scheme=scheme )
+            return outputText
+        # else we were given some text to process
+        outputText = text
+        if scheme is None:
+            transliterationScheme = BOS_HEBREW_TRANSLITERATION
+        for h,tr in transliterationScheme: outputText = outputText.replace( h, tr )
+        return outputText
 # end of Hebrew class
 
 
@@ -342,7 +397,6 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demonstrate the Hebrew class
-    print( "These all display left-to-right in the terminal unfortunately  :-(" )
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
     dan12 = "וַיִּתֵּן֩ אֲדֹנָ֨י בְּיָד֜וֹ אֶת־יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֗ה וּמִקְצָת֙ כְּלֵ֣י בֵית־הָֽאֱלֹהִ֔ים וַיְבִיאֵ֥ם אֶֽרֶץ־שִׁנְעָ֖ר בֵּ֣ית אֱלֹהָ֑יו וְאֶת־הַכֵּלִ֣ים הֵבִ֔יא בֵּ֖ית אוֹצַ֥ר אֱלֹהָֽיו ׃"
     dan13 = "וַיֹּ֣אמֶר הַמֶּ֔לֶךְ לְאַשְׁפְּנַ֖ז רַ֣ב סָרִיסָ֑יו לְהָבִ֞יא מִבְּנֵ֧י יִשְׂרָאֵ֛ל וּמִזֶּ֥רַע הַמְּלוּכָ֖ה וּמִן־הַֽפַּרְתְּמִֽים ׃"
@@ -372,6 +426,10 @@ def demo():
         if msCount: print( "{} meteg or siluq marks remaining".format( msCount ) )
         print()
         h.verifyConsonantsOnly()
+        h = Hebrew( string )
+        h.removeCantillationMarks()
+        #h.printUnicodeData()
+        print( "Transliterated: {}".format( h.transliterate() ) )
 # end of demo
 
 if __name__ == '__main__':
