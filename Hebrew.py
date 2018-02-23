@@ -28,10 +28,10 @@ Module handling Hebrew language particularities.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-22' # by RJH
+LastModifiedDate = '2018-02-23' # by RJH
 ShortProgName = "Hebrew"
 ProgName = "Hebrew language handler"
-ProgVersion = '0.07'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -148,7 +148,8 @@ BOS_HEBREW_TRANSLITERATION = (
             (alef,''), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
             (dalet+dageshOrMapiq,'d'),(dalet,'d'),
             (he+dageshOrMapiq,'h'),(he+qamats,'āh'),(he,'h'),
-            (waw+dageshOrMapiq,'u'),(waw,'w'), (zayin+dageshOrMapiq,'z'),(zayin,'z'),
+            (waw+dageshOrMapiq,'u'),(waw+dageshOrMapiq,'ō'),(waw,'v'),
+            (zayin+dageshOrMapiq,'z'),(zayin,'z'),
             (het+dageshOrMapiq,'ħ'),(het,'ħ'), (tet+dageshOrMapiq,'ŧ'),(tet,'ŧ'),
             (yod+dageshOrMapiq,'u'),(yod,'y'), (kaf+dageshOrMapiq,'k'),(kaf,'k'),
             (lamed+dageshOrMapiq,'l'),(lamed,'l'),
@@ -178,6 +179,79 @@ BOS_HEBREW_TRANSLITERATION = (
             (metegOrSiluq,''),
             (maqaf,'-'), (sofPasuq,'.'),
             )
+STANDARD_HEBREW_TRANSLITERATION = (
+            (alef,'ʾ'), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
+            (dalet+dageshOrMapiq,'d'),(dalet,'d'),
+            (he+dageshOrMapiq,'h'),(he+qamats,'āh'),(he,'h'),
+            (waw+dageshOrMapiq,'u'),(waw+dageshOrMapiq,'ō'),(waw,'w'),
+            (zayin+dageshOrMapiq,'z'),(zayin,'z'),
+            (het+dageshOrMapiq,'ḥḥ'),(het,'ḥ'), (tet+dageshOrMapiq,'ŧ'),(tet,'ŧ'),
+            (yod+dageshOrMapiq,'yy'),(yod,'y'), (kaf+dageshOrMapiq,'k'),(kaf,'k'),
+            (lamed+dageshOrMapiq,'ll'),(lamed,'l'),
+            (mem+dageshOrMapiq,'mm'),(mem,'m'), (memFinal+dageshOrMapiq,'m'),(memFinal,'m'),
+            (nun+dageshOrMapiq,'nn'),(nun,'n'), (nunFinal+dageshOrMapiq,'n'),(nunFinal,'n'),
+            (samekh+dageshOrMapiq,'ş'),(samekh,'ş'), (ayin+dageshOrMapiq,''),(ayin,''),
+            (pe+dageshOrMapiq,'p'),(pe,'̄p'),
+            (tsadi+dageshOrMapiq,'ṣṣ'),(tsadi,'ṣ'), (tsadiFinal+dageshOrMapiq,'ṣṣ'),(tsadiFinal,'ṣ'),
+            (qof+dageshOrMapiq,'q'),(qof,'q'), (qofFinal+dageshOrMapiq,'q'),(qofFinal,'q'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sinShin+shinDot,'š'),(sinShin+sinDot,'s'), (taw+dageshOrMapiq,'t'),(taw,'t'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sheva,'(ə)'),(hatafSegol,'e'),(segol,'e'),(hiriq,'i'),(tsere,'ē'),(patah,'a'),
+                (qamats,'ā'),(holam,'o'),(qubuts,'u'),
+            #sheva = 'ְ'
+            #hatafSegol = 'ֱ'
+            #hatafPatah = 'ֲ'
+            #hatafQamats = 'ֳ'
+            #hiriq = 'ִ'
+            #tsere = 'ֵ'
+            #segol = 'ֶ'
+            #patah = 'ַ'
+            #qamats = 'ָ'
+            #holam = 'ֹ'
+            #holamHaserForVav = 'ֺ'
+            #qubuts = 'ֻ'
+            #metegOrSiluq = 'ֽ'
+            (metegOrSiluq,''),
+            (maqaf,'-'), (sofPasuq,'.'),
+            )
+BOS_NAMES_HEBREW_TRANSLITERATION = (
+            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
+            (dalet+dageshOrMapiq,'d'),(dalet,'d'),
+            (he+dageshOrMapiq,'h'),(he+qamats,'ah'),(he,'h'),
+            (waw+dageshOrMapiq,'u'),(waw+dageshOrMapiq,'ō'),(waw,'v'),
+            (zayin+dageshOrMapiq,'z'),(zayin,'z'),
+            (het+dageshOrMapiq,'ħ'),(het,'ħ'), (tet+dageshOrMapiq,'ŧ'),(tet,'ŧ'),
+            (yod+dageshOrMapiq,'u'),(yod,'y'), (kaf+dageshOrMapiq,'k'),(kaf,'k'),
+            (lamed+dageshOrMapiq,'l'),(lamed,'l'),
+            (mem+dageshOrMapiq,'m'),(mem,'m'), (memFinal+dageshOrMapiq,'m'),(memFinal,'m'),
+            (nun+dageshOrMapiq,'n'),(nun,'n'), (nunFinal+dageshOrMapiq,'n'),(nunFinal,'n'),
+            (samekh+dageshOrMapiq,'ş'),(samekh,'ş'), (ayin+dageshOrMapiq,''),(ayin,''),
+            (pe+dageshOrMapiq,'p'),(pe,'f'),
+            (tsadi+dageshOrMapiq,'ʦ'),(tsadi,'ʦ'), (tsadiFinal+dageshOrMapiq,'ʦ'),(tsadiFinal,'ʦ'),
+            (qof+dageshOrMapiq,'q'),(qof,'q'), (qofFinal+dageshOrMapiq,'q'),(qofFinal,'q'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sinShin+shinDot,'sh'),(sinShin+sinDot,'s'), (taw+dageshOrMapiq,'t'),(taw,'t'),
+            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (sheva,'(ə)'),(hatafSegol,'e'),(segol,'e'),(hiriq,'i'),(tsere,'e'),(patah,'a'),(qamats,'a'),(holam,'o'),(qubuts,'u'),
+            #sheva = 'ְ'
+            #hatafSegol = 'ֱ'
+            #hatafPatah = 'ֲ'
+            #hatafQamats = 'ֳ'
+            #hiriq = 'ִ'
+            #tsere = 'ֵ'
+            #segol = 'ֶ'
+            #patah = 'ַ'
+            #qamats = 'ָ'
+            #holam = 'ֹ'
+            #holamHaserForVav = 'ֺ'
+            #qubuts = 'ֻ'
+            #metegOrSiluq = 'ֽ'
+            (metegOrSiluq,''),
+            (maqaf,'-'), (sofPasuq,'.'),
+            )
+transliterationSchemes = { 'Default':BOS_HEBREW_TRANSLITERATION, 'Standard':STANDARD_HEBREW_TRANSLITERATION, 'Names':BOS_NAMES_HEBREW_TRANSLITERATION }
+
 
 
 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
@@ -383,9 +457,9 @@ class Hebrew():
             return outputText
         # else we were given some text to process
         outputText = text
-        if scheme is None:
-            transliterationScheme = BOS_HEBREW_TRANSLITERATION
-        for h,tr in transliterationScheme: outputText = outputText.replace( h, tr )
+        if scheme is None: scheme = 'Default'
+        assert scheme in ('Default','Standard','Names')
+        for h,tr in transliterationSchemes[scheme]: outputText = outputText.replace( h, tr )
         return outputText
 # end of Hebrew class
 
