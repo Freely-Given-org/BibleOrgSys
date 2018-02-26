@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-19' # by RJH
+LastModifiedDate = '2018-02-26' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -78,7 +78,9 @@ class HebrewWLCBibleAddon():
     def getVerseDictList( self, verseDataEntry, ref ):
         """
         Given a verseDataEntry (an InternalBibleEntry)
-        Return the text as a list of dictionaries.
+            return the text as a list of dictionaries (one for each word).
+
+        e.g., {'word': 'הַ/מַּיִם', 'strong': 'd/4325', 'morph': 'HTd/Ncmpa', 'cantillationLevel': '0.1.1.0'}
         """
         if debuggingThisModule: print( "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
         assert isinstance( verseDataEntry, InternalBibleEntry )
@@ -134,7 +136,7 @@ class HebrewWLCBibleAddon():
                     #ixAdd += len( punctuation )
                     ix -= len( punctuation )
                 if debuggingThisModule: print( ix, "token", repr(token) )
-                something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
+                something = lineExtras.checkForIndex( ix ) if lineExtras else None # Could be moved lower if we remove assert after debugging
                 wwDict = None
                 if isinstance( something, InternalBibleExtra ):
                     wwDict = handleExtra( something )
