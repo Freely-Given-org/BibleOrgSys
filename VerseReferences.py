@@ -3,7 +3,7 @@
 #
 # VerseReferences.py
 #
-# Class handling Bible verse references
+# Class handling internal BOS Bible verse references
 #
 # Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -69,7 +69,7 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-16' # by RJH
+LastModifiedDate = '2018-02-24' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.38'
