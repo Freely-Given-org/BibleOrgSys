@@ -32,6 +32,9 @@ Contains functions:
     addLogfile( projectName, folderName=None )
     removeLogfile( projectHandler )
 
+    findHomeFolderPath()
+    findUsername()
+
     makeSafeFilename( someName )
     makeSafeXML( someString )
     makeSafeString( someString )
@@ -77,7 +80,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-02-26' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.77'
@@ -91,6 +94,10 @@ haltOnXMLWarning = False # Used for XML debugging
 import sys, logging, os.path, pickle
 import unicodedata
 from argparse import ArgumentParser
+try: import pwd
+except ImportError:
+    pwd = None
+    import getpass
 
 
 # Global variables
@@ -272,6 +279,33 @@ def removeLogfile( projectHandler ):
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of BibleOrgSysGlobals.removeLogfile
+
+
+##########################################################################################################
+#
+
+def findHomeFolderPath():
+    """
+    Attempt to find the path to the user's home folder and return it.
+    """
+    possibleHomeFolders = ( os.path.expanduser('~'), os.getcwd(), os.curdir, os.pardir )
+    if debugFlag and debuggingThisModule:
+        print( "possible home folders", possibleHomeFolders )
+    for folder in possibleHomeFolders:
+        if os.path.isdir( folder ) and os.access( folder, os.W_OK ):
+            return folder
+# end of BibleOrgSysGlobals.findHomeFolderPath
+
+
+def findUsername():
+    """
+    Attempt to find the current user name and return it.
+    """
+    if pwd:
+        return pwd.getpwuid(os.geteuid()).pw_name
+    else:
+        return getpass.getuser()
+# end of BibleOrgSysGlobals.findUsername
 
 
 ##########################################################################################################
