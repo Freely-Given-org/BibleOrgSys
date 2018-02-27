@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-26' # by RJH
+LastModifiedDate = '2018-02-27' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -55,6 +55,44 @@ DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLC
 
 ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
+
+POS_ABBR_DICT = { 'A':_("Aj"), 'C':_("Cn"), 'D':_("Av"),
+             'N':_("N"), 'P':_("Pn"), 'R':_("Pr"),
+             'S':_("S"), 'T':_("Pa"), 'V':_("V") }
+POS_DICT = { 'A':_("adjective"), 'C':_("conjunction"), 'D':_("adverb"),
+             'N':_("noun"), 'P':_("pronoun"), 'R':_("preposition"),
+             'S':_("suffix"), 'T':_("particle"), 'V':_("verb") }
+# Next one doesn't include verbs
+POS_TYPE_DICT = { 'Aa':_("adjective"), 'Ac':_("cardinal number"), 'Ag':_("gentillic"), 'Ao':_("ordinal number"),
+                  'C':_("conjunction"), 'D':_("adverb"),
+                  'Nc':_("common noun"), 'Ng':_("gentillic noun"), 'Np':_("proper name"),
+                  'Pd':_("demonstrative pronoun"), 'Pf':_("indefinite pronoun"), 'Pi':_("interrogative pronoun"),
+                            'Pp':_("personal pronoun"), 'Pr':_("relative pronoun"),
+                  'R':_("preposition"), 'Rd':_("definite article"), # (Preposition type is optional)
+                  'Sd':_("directional he suffix"), 'Sh':_("paragogic he suffix"),
+                            'Sn':_("paragogic nun suffix"), 'Sp':_("pronominal suffix"),
+                  'Ta':_("affirmation particle"), 'Td':_("definite article"), 'Te':_("exhortation particle"),
+                            'Ti':_("interrogative particle"), 'Tj':_("interjection particle"),
+                            'Tm':_("demonstrative particle"), 'Tn':_("negative particle"),
+                            'To':_("direct object marker"), 'Tr':_("relative particle") }
+HEBREW_VERB_STEMS = { 'q':'qal', 'N':'niphal', 'p':'piel', 'P':'pual', 'h':'hiphil', 'H':'hophal', 't':'hithpael',
+                      'o':'polel', 'O':'polal', 'r':'hithpolel', 'm':'poel', 'M':'poal', 'k':'palel', 'K':'pulal',
+                      'Q':'qal passive', 'l':'pilpel', 'L':'polpal', 'f':'hithpalpel', 'D':'nithpael', 'j':'pealal',
+                      'i':'pilel', 'u':'hothpaal', 'c':'tiphil', 'v':'hishtaphel', 'w':'nithpalel', 'y':'nithpoel',
+                      'z':'hithpoel' }
+ARAMAIC_VERB_STEMS = { 'q':'peal', 'Q':'peil', 'u':'hithpeel', 'p':'pael', 'P':'ithpaal', 'M':'hithpaal',
+                       'a':'aphel', 'h':'haphel', 's':'saphel', 'e':'shaphel', 'H':'hophal', 'i':'ithpeel',
+                       't':'hishtaphel', 'v':'ishtaphel', 'w':'hithaphel', 'o':'polel', 'z':'ithpoel',
+                       'r':'hithpolel', 'f':'hithpalpel', 'b':'hephal', 'c':'tiphel', 'm':'poel',
+                       'l':'palpel', 'L':'ithpalpel', 'O':'ithpolel', 'G':'ittaphal' }
+VERB_CONJUGATION_TYPES = { 'p':'perfect (qatal)', 'q':'sequential perfect (weqatal)',
+                           'i':'imperfect (yiqtol)', 'w':'sequential imperfect (wayyiqtol)',
+                           'h':_("cohortative"), 'j':_("jussive"), 'v':_("imperative"), 'r':'participle active',
+                           's':_("participle passive"), 'a':_("infinitive absolute"), 'c':_("infinitive construct") }
+PERSON_NAMES = { '1':_("1st-person"), '2':_("2nd-person"), '3':_("3rd-person") }
+GENDER_NAMES = { 'b':_("both"), 'c':_("common"), 'f':_("feminine"), 'm':_("masculine") } # b is for nouns, c is for verbs
+NUMBER_NAMES = { 'd':_("dual"), 'p':_("plural"), 's':_("singular") }
+STATE_NAMES = { 'a':_("absolute"), 'c':_("construct"), 'd':_("determined") }
 
 
 class HebrewWLCBibleAddon():
@@ -97,8 +135,10 @@ class HebrewWLCBibleAddon():
             if thisExtra.getType() == 'ww':
                 wwField = thisExtra.getText()
                 wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
-                if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
+                if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ): # Open Scriptures Hebrew Morphology
                     wwDict['morph'] = wwDict['morph'][5:]
+                #if 'morph' in wwDict and wwDict['morph'].startswith( 'H' ): # H for Hebrew, A for Aramaic
+                    #wwDict['morph'] = wwDict['morph'][1:]
                 if debuggingThisModule: print( "wwDict", wwDict )
                 return wwDict
             else:
@@ -178,6 +218,68 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.getVerseDictList
 
 
+    def expandMorphologyAbbreviations( self, morphAbbrev ):
+        """
+        Return a longer string with the morphology abbreviation(s) converted to something more readable.
+        """
+        if morphAbbrev.startswith( 'OSHM:' ): morphAbbrev = morphAbbrev[5:] # Open Scriptures Hebrew Morphology
+        assert morphAbbrev[0] in 'HA' # Hebrew or Aramaic
+        lgCode, morphAbbrev = morphAbbrev[0], morphAbbrev[1:]
+
+        def handleRemainder( remainder ):
+            resultString = ''
+            if remainder:
+                for p in PERSON_NAMES:
+                    if remainder[0] == p:
+                        resultString += ' ' + PERSON_NAMES[p]
+                        remainder = remainder[1:]
+                        break
+            if remainder:
+                for g in GENDER_NAMES:
+                    if remainder[0] == g:
+                        resultString += ' ' + GENDER_NAMES[g]
+                        remainder = remainder[1:]
+                        break
+            if remainder:
+                for n in NUMBER_NAMES.keys():
+                    if remainder[0] == n:
+                        resultString += ' ' + NUMBER_NAMES[n]
+                        remainder = remainder[1:]
+                        break
+            if remainder:
+                for s in STATE_NAMES.keys():
+                    if remainder[0] == s:
+                        resultString += ' ' + STATE_NAMES[s]
+                        remainder = remainder[1:]
+                        break
+            if remainder:
+                resultString += ' <<<' + remainder + '>>>'
+                if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag: halt
+            return resultString
+        # end of expandMorphologyAbbreviations.handleRemainder
+
+        resultString = ''
+        for bit in morphAbbrev.split( '/' ):
+            if resultString: resultString += ' / '
+            #print( "bit", bit )
+            assert bit[0] in 'ACDNPRSTV'
+            if bit[0] == 'V': # most complex
+                resultString += HEBREW_VERB_STEMS[bit[1]] if lgCode=='H' else ARAMAIC_VERB_STEMS[bit[1]]
+                resultString += ' ' + _("verb")
+                resultString += ' ' + VERB_CONJUGATION_TYPES[bit[2]].replace( ' ', '_' )
+                resultString += handleRemainder( bit[3:] )
+            elif len(bit) > 2: # More complex
+                resultString += POS_TYPE_DICT[bit[:2]].replace( ' ', '_' )
+                resultString += handleRemainder( bit[2:] )
+            else: resultString += POS_TYPE_DICT[bit].replace( ' ', '_' )
+        return resultString
+    # end of HebrewWLCBibleAddon.expandMorphologyAbbreviations
+
+
+#####################################################################################################################
+#
+# Functions for normalising Hebrew words
+#
     def removeMorphemeBreaks( self, text=None ):
         """
         Return the text with morpheme break marks removed.
@@ -219,6 +321,10 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.removeVowelPointing
 
 
+#####################################################################################################################
+#
+# Functions for handling our glossing dictionary
+#
     def _checkLoadedDict( self ):
         """
         """
@@ -597,9 +703,10 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
-
     from VerseReferences import SimpleVerseKey
+    from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demonstrate the Hebrew WLC class
     standardTestReferences = ('GEN', '1', '1'), ('SA1','1','1'), ('DAN', '1', '5')
@@ -617,9 +724,11 @@ def demo():
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
+            verseDataList = wlc.getVerseDataList( testKey )
+            if verseDataList is not None: assert isinstance( verseDataList, InternalBibleEntryList )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
-                print( "VD", wlc.getVerseDataList( testKey ) )
+                print( "VDL", verseDataList )
                 print()
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
@@ -628,15 +737,15 @@ def demo():
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without morpheme breaks" )
                 print( verseText )
             verseText = wlc.removeCantillationMarks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without cantillation marks" )
                 print( verseText )
             consonantalVerseText = wlc.removeVowelPointing()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without vowel pointing" )
                 print( consonantalVerseText )
                 print()
 
@@ -652,9 +761,11 @@ def demo():
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
+            verseDataList = wlc.getVerseDataList( testKey )
+            if verseDataList is not None: assert isinstance( verseDataList, InternalBibleEntryList )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( testKey )
-                print( "VD", wlc.getVerseDataList( testKey ) )
+                print( "VDL", verseDataList )
                 print()
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
@@ -663,17 +774,30 @@ def demo():
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without morpheme breaks" )
                 print( verseText )
             verseText = wlc.removeCantillationMarks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without cantillation marks" )
                 print( verseText )
             consonantalVerseText = wlc.removeVowelPointing()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without vowel pointing" )
                 print( consonantalVerseText )
                 print()
+            # Check code for expanding morphological abbreviations
+            if verseDataList is not None:
+                for verseDataEntry in verseDataList:
+                    assert isinstance( verseDataEntry, InternalBibleEntry )
+                    marker = verseDataEntry.getMarker()
+                    if marker in ('v~','p~'):
+                        verseDictList = wlc.getVerseDictList( verseDataEntry, testKey )
+                        print( "verseDictList", verseDictList )
+                        for j, verseDict in enumerate( verseDictList ):
+                            print( "verseDict", verseDict ) # for one word
+                            #word = verseDict['word']
+                            if 'morph' in verseDict:
+                                print( "  {}".format( wlc.expandMorphologyAbbreviations( verseDict['morph'] ) ) )
 
     if 1: # Load books as we test
         testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
@@ -698,15 +822,15 @@ def demo():
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without morpheme breaks" )
                 print( verseText )
             verseText = wlc.removeCantillationMarks()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without cantillation marks" )
                 print( verseText )
             consonantalVerseText = wlc.removeVowelPointing()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print()
+                print( "Without vowel pointing" )
                 print( consonantalVerseText )
                 print()
 
