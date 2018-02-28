@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-16' # by RJH
+LastModifiedDate = '2018-02-28' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -139,27 +139,6 @@ pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
                     'q1':'poetryParagraph1','q2':'poetryParagraph2','q3':'poetryParagraph3','q4':'poetryParagraph4',
                     'qr':'rightAlignedPoetryParagraph', 'qc':'centeredPoetryParagraph',
                     'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4', }
-
-
-
-def killLibreOfficeServiceManager():
-    """
-    Don't work in Windows.
-    """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "Killing LibreOffice ServiceManager…" )
-    p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
-    out, err = p.communicate()
-    for lineBytes in out.splitlines():
-        line = bytes.decode( lineBytes )
-        #print( "line", repr(line) )
-        if 'libreoffice' in line and "ServiceManager" in line:
-            pid = int( line.split(None, 1)[0] )
-            #print( "pid", pid )
-            if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "  Killing {!r}".format( line ) )
-            try: os.kill( pid, signal.SIGKILL )
-            except PermissionError: # it must belong to another user
-                logging.error( "Don't have permission to kill LibreOffice ServiceManager" )
-# end of killLibreOfficeServiceManager
 
 
 
@@ -7840,10 +7819,32 @@ class BibleWriter( InternalBible ):
             return False
         # end of isServiceManagerRunning
 
+        def killLibreOfficeServiceManager():
+            """
+            Doesn't work in Windows.
+            """
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "Killing LibreOffice ServiceManager…" )
+
+            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
+            out, err = p.communicate()
+            for lineBytes in out.splitlines():
+                line = bytes.decode( lineBytes )
+                #print( "line", repr(line) )
+                if 'libreoffice' in line and "ServiceManager" in line:
+                    pid = int( line.split(None, 1)[0] )
+                    #print( "pid", pid )
+                    if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "  Killing {!r}".format( line ) )
+                    try: os.kill( pid, signal.SIGKILL )
+                    except PermissionError: # it must belong to another user
+                        logging.error( "Don't have permission to kill LibreOffice ServiceManager" )
+        # end of killLibreOfficeServiceManager
+
         def startLibreOfficeServiceManager():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "Starting LibreOffice ServiceManager…" )
+            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Starting LibreOffice ServiceManager…" )
             # Start LibreOffice
             #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
             #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
@@ -7856,7 +7857,7 @@ class BibleWriter( InternalBible ):
                 parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port={};urp;StarOffice.ServiceManager"'.format( DEFAULT_OPENOFFICE_PORT ),'--norestore','--nologo','--headless']
                 print( "Parameters", repr(parameters) )
                 myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-                sleep( 5 ) # Wait 50msec
+                sleep( 5 ) # Wait
                 #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
                 #returnCode = myProcess.returncode
                 #print( "returnCode", returnCode )
@@ -7866,22 +7867,25 @@ class BibleWriter( InternalBible ):
             sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
         # end of startLibreOfficeServiceManager
 
-        if isServiceManagerRunning(): killLibreOfficeServiceManager() # Seems safer to always do this
-        #assert not isServiceManagerRunning() # could be running in another user
-        startLibreOfficeServiceManager()
-        weStartedLibreOffice = True
+        restartLOSMForEachBook = True # Restart LibreOffice ServiceManager for each book
+        #   We restart for each book coz sometimes it seems to lock-up and then lots of books don't get created
+        if not restartLOSMForEachBook:
+            if isServiceManagerRunning(): killLibreOfficeServiceManager() # Seems safer to always do this
+            #assert not isServiceManagerRunning() # could be running in another user
+            startLibreOfficeServiceManager()
+            weStartedLibreOffice = True
 
-        # Set-up LibreOffice
-        localContext = uno.getComponentContext()
-        urlResolver = localContext.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", localContext )
-        componentContext = urlResolver.resolve( "uno:socket,host=localhost,port={};urp;StarOffice.ComponentContext".format( DEFAULT_OPENOFFICE_PORT ) )
-        serviceManager = componentContext.ServiceManager
-        frameDesktop = serviceManager.createInstanceWithContext( "com.sun.star.frame.Desktop", componentContext )
-        #model = frameDesktop.getCurrentComponent()
+            # Set-up LibreOffice
+            localContext = uno.getComponentContext()
+            urlResolver = localContext.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", localContext )
+            componentContext = urlResolver.resolve( "uno:socket,host=localhost,port={};urp;StarOffice.ComponentContext".format( DEFAULT_OPENOFFICE_PORT ) )
+            serviceManager = componentContext.ServiceManager
+            frameDesktop = serviceManager.createInstanceWithContext( "com.sun.star.frame.Desktop", componentContext )
+            #model = frameDesktop.getCurrentComponent()
 
-        # Locate our empty template file (with all the styles there already) that we'll start from
-        templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
-        sourceURL = "file://{}".format( templateFilepath ) if startWithTemplate else "private:factory/swriter"
+            # Locate our empty template file (with all the styles there already) that we'll start from
+            templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
+            sourceURL = "file://{}".format( templateFilepath ) if startWithTemplate else "private:factory/swriter"
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
@@ -8889,11 +8893,12 @@ class BibleWriter( InternalBible ):
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker == 'c':
+                    document.storeAsURL( 'file://{}'.format( filepath ), () ) # Save a copy of the file at each chapter mark
                     if C == '-1' and runningHeaderField:
                         runningHeaderField.setPropertyValue( 'Content', headerField )
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
-                        document.storeAsURL( 'file://{}'.format( filepath ), () ) # Save a preliminary copy of the file
+                        #document.storeAsURL( 'file://{}'.format( filepath ), () ) # Save a preliminary copy of the file
 
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
                             documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
@@ -9028,6 +9033,25 @@ class BibleWriter( InternalBible ):
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
             #if createODFBook( j, BBB, bookObject ):
                 #createCount += 1
+
+            if restartLOSMForEachBook:
+                if isServiceManagerRunning(): killLibreOfficeServiceManager() # Seems safer to always do this
+                #assert not isServiceManagerRunning() # could be running in another user
+                startLibreOfficeServiceManager()
+                weStartedLibreOffice = True
+
+                # Set-up LibreOffice
+                localContext = uno.getComponentContext()
+                urlResolver = localContext.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", localContext )
+                componentContext = urlResolver.resolve( "uno:socket,host=localhost,port={};urp;StarOffice.ComponentContext".format( DEFAULT_OPENOFFICE_PORT ) )
+                serviceManager = componentContext.ServiceManager
+                frameDesktop = serviceManager.createInstanceWithContext( "com.sun.star.frame.Desktop", componentContext )
+                #model = frameDesktop.getCurrentComponent()
+
+                # Locate our empty template file (with all the styles there already) that we'll start from
+                templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
+                sourceURL = "file://{}".format( templateFilepath ) if startWithTemplate else "private:factory/swriter"
+
             if BibleOrgSysGlobals.alreadyMultiprocessing or 'win' in sys.platform: # SIGALRM doesn't work
                 try:
                     if createODFBook( j, BBB, bookObject ):
@@ -9038,24 +9062,39 @@ class BibleWriter( InternalBible ):
                     logging.error( "BibleWriter.doAllExports.toODF: Oops, {} failed!".format( BBB ) )
                     break
             else: # *nix system hopefully
-                timeoutSeconds = max( 20, len(bookObject._processedLines)//40 ) # But depends on footnotes, etc. as well
-                #print( "Timeout for {} is {}".format( BBB, timeoutSeconds ) )
-                class ODFTimeoutException( Exception ): pass
-                def TimeoutHandler( signum, frame ):
-                    logging.critical( _("createODFBook( {} ) went too long!").format( BBB ) )
-                    raise ODFTimeoutException( "ODF writer timed out on {}".format( BBB ) )
-
-                signal.signal( signal.SIGALRM, TimeoutHandler )
-                signal.alarm( timeoutSeconds )
-                try:
-                    if createODFBook( j, BBB, bookObject ):
-                        createCount += 1
-                    signal.alarm( 0 ) # Disable timeout
-                except ODFTimeoutException as err:
-                    print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
-                    logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
-                    killLibreOfficeServiceManager() # Shut down the locked-up  process
-                    break # No real point in continuing with locked-up system
+                if 0: # Signal doesn't time out when LOSM locks up :-(
+                    timeoutSeconds = max( 20, len(bookObject._processedLines)//40 ) # But depends on footnotes, etc. as well
+                    print( "Timeout for {} is {}s".format( BBB, timeoutSeconds ) )
+                    class ODFTimeoutException( Exception ): pass
+                    def TimeoutHandler( signum, frame ):
+                        logging.critical( _("createODFBook( {} ) went too long!").format( BBB ) )
+                        raise ODFTimeoutException( "ODF writer timed out on {}".format( BBB ) )
+                    # end of TimeoutHandler
+                    signal.signal( signal.SIGALRM, TimeoutHandler )
+                    signal.alarm( timeoutSeconds )
+                    try:
+                        if createODFBook( j, BBB, bookObject ):
+                            createCount += 1
+                        signal.alarm( 0 ) # Disable timeout
+                    except ODFTimeoutException as err:
+                        print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                        logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                        killLibreOfficeServiceManager() # Shut down the locked-up  process
+                        if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
+                else: # try something else # NOTE: Linux-only code!!!
+                    proc = subprocess.Popen( ['./BOS_LOSM_Timeout.sh'] ) # Does a 150s timeout then kills
+                    try:
+                        if createODFBook( j, BBB, bookObject ):
+                            createCount += 1
+                        proc.terminate() # Will hopefully terminate the timeout before the shell script kills the LO ServiceManager
+                    except KeyboardInterrupt:
+                        killLibreOfficeServiceManager() # Shut down the locked-up  process
+                        raise KeyboardInterrupt
+                    except Exception as err: # BibleWriter.DisposedException (where does BibleWriter.com.sun.star.lang.DisposedException come from???)
+                        print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                        logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                        killLibreOfficeServiceManager() # Shut down the locked-up  process
+                        if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
 
         if weStartedLibreOffice and not BibleOrgSysGlobals.debugFlag: # Now kill our LibreOffice server
             killLibreOfficeServiceManager()
