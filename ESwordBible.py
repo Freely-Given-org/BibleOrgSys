@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-21' # by RJH
+LastModifiedDate = '2018-02-28' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.38'
@@ -998,7 +998,7 @@ class ESwordBible( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BOS.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -1052,14 +1052,14 @@ class ESwordBible( Bible ):
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = self.BOS.getNextBookCode( BBB )
+                    BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'e-Sword Bible Book object'
                     thisBook.objectTypeString = 'e-Sword-Bible'
                     haveLines = False
 
-                    verseList = self.BOS.getNumVersesList( BBB )
+                    verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -1106,7 +1106,7 @@ class ESwordBible( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BOS.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1

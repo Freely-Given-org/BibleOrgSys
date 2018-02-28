@@ -5,7 +5,7 @@
 #
 # Module handling "e-Sword" Bible commentary module files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-12' # by RJH
+LastModifiedDate = '2018-02-28' # by RJH
 ShortProgName = "e-SwordCommentary"
 ProgName = "e-Sword Commentary format handler"
 ProgVersion = '0.06'
@@ -439,7 +439,7 @@ class ESwordCommentary( Bible ):
             thisBook.objectNameString = 'e-Sword Commentary Book object'
             thisBook.objectTypeString = 'e-Sword-Commentary'
 
-            verseList = self.BOS.getNumVersesList( BBB )
+            verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
 
             try:
                 if BBB in bookCommentary:
@@ -495,7 +495,7 @@ class ESwordCommentary( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Commentary object'
         thisBook.objectTypeString = 'e-Sword-Commentary'
 
-        verseList = self.BOS.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
 
         ourGlobals = {}
