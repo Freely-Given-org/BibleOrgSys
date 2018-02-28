@@ -142,6 +142,28 @@ pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
 
 
 
+def killLibreOfficeServiceManager():
+    """
+    Doesn't work in Windows.
+    """
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "Killing LibreOffice ServiceManager…" )
+
+    p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
+    out, err = p.communicate()
+    for lineBytes in out.splitlines():
+        line = bytes.decode( lineBytes )
+        #print( "line", repr(line) )
+        if 'libreoffice' in line and "ServiceManager" in line:
+            pid = int( line.split(None, 1)[0] )
+            #print( "pid", pid )
+            if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "  Killing {!r}".format( line ) )
+            try: os.kill( pid, signal.SIGKILL )
+            except PermissionError: # it must belong to another user
+                logging.error( "Don't have permission to kill LibreOffice ServiceManager" )
+# end of killLibreOfficeServiceManager
+
+
 class BibleWriter( InternalBible ):
     """
     Class to export Bibles.
@@ -7818,27 +7840,6 @@ class BibleWriter( InternalBible ):
                     continue
             return False
         # end of isServiceManagerRunning
-
-        def killLibreOfficeServiceManager():
-            """
-            Doesn't work in Windows.
-            """
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "Killing LibreOffice ServiceManager…" )
-
-            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
-            out, err = p.communicate()
-            for lineBytes in out.splitlines():
-                line = bytes.decode( lineBytes )
-                #print( "line", repr(line) )
-                if 'libreoffice' in line and "ServiceManager" in line:
-                    pid = int( line.split(None, 1)[0] )
-                    #print( "pid", pid )
-                    if BibleOrgSysGlobals.verbosityLevel > 1: logging.info( "  Killing {!r}".format( line ) )
-                    try: os.kill( pid, signal.SIGKILL )
-                    except PermissionError: # it must belong to another user
-                        logging.error( "Don't have permission to kill LibreOffice ServiceManager" )
-        # end of killLibreOfficeServiceManager
 
         def startLibreOfficeServiceManager():
             """
