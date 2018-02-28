@@ -28,7 +28,7 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-27' # by RJH
+LastModifiedDate = '2018-02-28' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
 ProgVersion = '0.20'
@@ -222,6 +222,10 @@ class HebrewWLCBibleAddon():
         """
         Return a longer string with the morphology abbreviation(s) converted to something more readable.
         """
+        if debuggingThisModule:
+            print( "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
+        if not morphAbbrev: return ''
+
         if morphAbbrev.startswith( 'OSHM:' ): morphAbbrev = morphAbbrev[5:] # Open Scriptures Hebrew Morphology
         assert morphAbbrev[0] in 'HA' # Hebrew or Aramaic
         lgCode, morphAbbrev = morphAbbrev[0], morphAbbrev[1:]
