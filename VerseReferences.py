@@ -69,10 +69,10 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-24' # by RJH
+LastModifiedDate = '2018-02-27' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.38'
+ProgVersion = '0.39'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -100,97 +100,85 @@ import BibleOrgSysGlobals
 #
 #       |       Alternation, or "or" operator
 #
+#       (?:...) Non-capturing group (matched substring can't be retrieved)
+#
 #       All metacharacters (which must be escaped to search for literals): . ^ $ * + ? { } [ ] \ | ( )
 #
 BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Finds BBB codes only (as strict as possible) -- see Apps/TestBooksCodesRE.py
-C_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Chapter numbers 1..199
-V_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Verse numbers 1..199
-S_RE = '([a-f]?)'
-I_RE = '([0-9]{1,3})' #  Index numbers 0..999
+C_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Chapter numbers 1..199 (doesn't handle chapters -1 or 0)
+V_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Verse numbers 1..199 (doesn't handle verse 0)
+S_RE = '!([a-d]?)'
+I_RE = '!([0-9]{1,3})' #  Index numbers 0..999 (maybe ! should be \\.)
 
 # Derived REs
-VS_RE = '{}(?:!{})?'.format( V_RE, S_RE )
-VI_RE = '{}(?:!{})?'.format( V_RE, I_RE )
+CV_RE = '{}:{}'.format( C_RE, V_RE )
+VS_RE = '{}(?:{})?'.format( V_RE, S_RE ) # Subscript (with !) is optional
+VI_RE = '{}(?:{})?'.format( V_RE, I_RE ) # Subscript (with .) is optional
 CVS_RE = '{}:{}'.format( C_RE, VS_RE )
 CVI_RE = '{}:{}'.format( C_RE, VI_RE )
 BCVS_RE = '{}_{}'.format( BBB_RE, CVS_RE )
 BCVI_RE = '{}_{}'.format( BBB_RE, CVI_RE )
+BCVSI_RE = '{}_{}(?:(?:{})|(?:{}))?'.format( BBB_RE, CV_RE, S_RE, I_RE )
 
 # The following all include beginning and end markers, i.e., only match entire strings
-BCVS1_RE = '^{}$'.format( BCVS_RE )
-BCVI1_RE = '^{}$'.format( BCVI_RE )
-BCVS2_RE = '^{},{}$'.format( BCVS_RE, VS_RE )
-BCVS2C_RE = '^{};{}$'.format( BCVS_RE, CVS_RE )
-BCVS3_RE = '^{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
-BCVS3C_RE = '^{};{};{}$'.format( BCVS_RE, CVS_RE, CVS_RE )
-BCVS4_RE = '^{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-BCVS5_RE = '^{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS6_RE = '^{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS7_RE = '^{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS8_RE = '^{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS9_RE = '^{},{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-CHAPTER_RE = '^{}_{}$'.format( BBB_RE, C_RE )
-BCVS_RANGE_RE = '^{}-{}$'.format( BCVS_RE, VS_RE )
-CHAPTER_RANGE_RE = '^{}–{}$'.format( BCVS_RE, CVS_RE )
+BCVS1_RE = re.compile( '^{}$'.format( BCVS_RE ) )
+BCVI1_RE = re.compile( '^{}$'.format( BCVI_RE ) )
+BCVS2_RE = re.compile( '^{},{}$'.format( BCVS_RE, VS_RE ) )
+BCVS2C_RE = re.compile( '^{};{}$'.format( BCVS_RE, CVS_RE ) )
+BCVS3_RE = re.compile( '^{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE ) )
+BCVS3C_RE = re.compile( '^{};{};{}$'.format( BCVS_RE, CVS_RE, CVS_RE ) )
+BCVS4_RE = re.compile( '^{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS5_RE = re.compile( '^{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS6_RE = re.compile( '^{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS7_RE = re.compile( '^{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS8_RE = re.compile( '^{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS9_RE = re.compile( '^{},{},{},{},{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+CHAPTER_RE = re.compile( '^{}_{}$'.format( BBB_RE, C_RE ) )
+BCVS_RANGE_RE = re.compile( '^{}-{}$'.format( BCVS_RE, VS_RE ) )
+CHAPTER_RANGE_RE = re.compile( '^{}–{}$'.format( BCVS_RE, CVS_RE ) )
 # Special cases
-BCVS_RANGE_PLUS_RE = '^{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE )
-BCVS_RANGE_PLUS2_RE = '^{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGE_PLUS3_RE = '^{}-{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGE_PLUS4_RE = '^{}-{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_PLUS_RANGE_RE = '^{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE )
-BCVS_PLUS_RANGES2_RE = '^{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS2_PLUS_RANGES2_RE = '^{},{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGE_PLUS_RANGE_RE = '^{}-{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGE_PLUS2_RANGE_RE = '^{}-{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS2_PLUS_RANGE_RE = '^{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-BCVS3_PLUS_RANGE_RE = '^{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS4_PLUS_RANGE_RE = '^{},{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_PLUS_RANGE_PLUS_RE = '^{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-BCVS2_PLUS_RANGE_PLUS_RE = '^{},{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGES2_RE = '^{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGES2_PLUS_RE = '^{}-{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGES2_PLUS2_RE = '^{}-{},{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGES3_RE = '^{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
-BCVS_RANGES4_RE = '^{}-{},{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE )
+BCVS_RANGE_PLUS_RE = re.compile( '^{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE ) )
+BCVS_RANGE_PLUS2_RE = re.compile( '^{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGE_PLUS3_RE = re.compile( '^{}-{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGE_PLUS4_RE = re.compile( '^{}-{},{},{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_PLUS_RANGE_RE = re.compile( '^{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE ) )
+BCVS_PLUS_RANGES2_RE = re.compile( '^{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS2_PLUS_RANGES2_RE = re.compile( '^{},{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGE_PLUS_RANGE_RE = re.compile( '^{}-{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGE_PLUS2_RANGE_RE = re.compile( '^{}-{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS2_PLUS_RANGE_RE = re.compile( '^{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS3_PLUS_RANGE_RE = re.compile( '^{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS4_PLUS_RANGE_RE = re.compile( '^{},{},{},{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_PLUS_RANGE_PLUS_RE = re.compile( '^{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS2_PLUS_RANGE_PLUS_RE = re.compile( '^{},{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGES2_RE = re.compile( '^{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGES2_PLUS_RE = re.compile( '^{}-{},{}-{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGES2_PLUS2_RE = re.compile( '^{}-{},{}-{},{},{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGES3_RE = re.compile( '^{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
+BCVS_RANGES4_RE = re.compile( '^{}-{},{}-{},{}-{},{}-{}$'.format( BCVS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE, VS_RE ) )
 
 # OSIS
-OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v](?:[DEPacdeghklmnrstuvz](?:[Gachnrsz](?:[nrst][ah]?)?)?)?)?)' # Finds OSIS book codes
-OSIS_C_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Chapter numbers 1..199
-OSIS_V_RE = '([1-9][0-9]?|[1][0-9][0-9])' #  Verse numbers 1..199
-OSIS_S_RE = '([a-f]?)'
+OSIS_BOOK_RE = re.compile( '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v](?:[DEPacdeghklmnrstuvz](?:[Gachnrsz](?:[nrst][ah]?)?)?)?)?)' ) # Finds OSIS book codes
+OSIS_C_RE = re.compile( '([1-9][0-9]?|[1][0-9][0-9])' ) #  Chapter numbers 1..199
+OSIS_V_RE = re.compile( '([1-9][0-9]?|[1][0-9][0-9])' ) #  Verse numbers 1..199
+OSIS_S_RE = re.compile( '([a-f]?)' )
 # Derived REs
 OSIS_VS_RE = '{}(?:!{})?'.format( OSIS_V_RE, OSIS_S_RE )
 OSIS_CVS_RE = '{}\.{}'.format( OSIS_C_RE, OSIS_VS_RE )
 OSIS_BCVS_RE = '{}_{}'.format( OSIS_BOOK_RE, OSIS_CVS_RE )
 # The following all include beginning and end markers, i.e., only match entire strings
-OSIS_BCVS1_RE = '^{}$'.format( OSIS_BCVS_RE )
-OSIS_BCVS2_RE = '^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
-OSIS_BCVS2C_RE = '^{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE )
-OSIS_BCVS3_RE = '^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_BCVS3C_RE = '^{};{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE, OSIS_CVS_RE )
-OSIS_CHAPTER_RE = '^{}_{}$'.format( OSIS_BOOK_RE, OSIS_C_RE )
-OSIS_BCVS_RANGE_RE = '^{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE )
-OSIS_CHAPTER_RANGE_RE = '^{}–{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE )
+OSIS_BCVS1_RE = re.compile( '^{}$'.format( OSIS_BCVS_RE ) )
+OSIS_BCVS2_RE = re.compile( '^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE ) )
+OSIS_BCVS2C_RE = re.compile( '^{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE ) )
+OSIS_BCVS3_RE = re.compile( '^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS3C_RE = re.compile( '^{};{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE, OSIS_CVS_RE ) )
+OSIS_CHAPTER_RE = re.compile( '^{}_{}$'.format( OSIS_BOOK_RE, OSIS_C_RE ) )
+OSIS_BCVS_RANGE_RE = re.compile( '^{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE ) )
+OSIS_CHAPTER_RANGE_RE = re.compile( '^{}–{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE ) )
 # Special cases
-OSIS_BCVS_RANGE_PLUS_RE = '^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_BCVS_PLUS_RANGE_RE = '^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE )
-OSIS_BCVS_PLUS_RANGE_PLUS_RE = '^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE )
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
+OSIS_BCVS_RANGE_PLUS_RE = re.compile( '^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS_PLUS_RANGE_RE = re.compile( '^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS_PLUS_RANGE_PLUS_RE = re.compile( '^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
 
 
 
@@ -213,7 +201,7 @@ class SimpleVerseKey():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )").format( BBB, C, V, SI ) )
+            print( "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
 
         self.ignoreParseErrors = ignoreParseErrors
 
@@ -298,7 +286,7 @@ class SimpleVerseKey():
     def getChapterNumberInt( self ):
         try: return int( self.C )
         except ValueError:
-            logging.warning( exp("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
+            logging.warning( "getChapterNumberInt: " + _("Unusual C value: {}").format( repr(self.C) ) )
             if self.C and self.C[0].isdigit():
                 digitCount = 0
                 for char in self.C:
@@ -310,7 +298,7 @@ class SimpleVerseKey():
     def getVerseNumberInt( self ):
         try: return int( self.V )
         except ValueError:
-            logging.warning( exp("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
+            logging.warning( "getVerseNumberInt: " + _("Unusual V value: {}").format( repr(self.V) ) )
             if self.V and self.V[0].isdigit():
                 digitCount = 0
                 for char in self.V:
@@ -346,7 +334,7 @@ class SimpleVerseKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+            print( "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS1_RE, referenceString )
         if match:
@@ -389,7 +377,7 @@ class SimpleVerseKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+            print( "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
@@ -432,7 +420,7 @@ class SimpleVersesKey():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SimpleVersesKey.__init__( {!r} )").format( referenceString ) )
+            print( "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -498,7 +486,7 @@ class SimpleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+            print( "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS2_RE, referenceString )
         if match:
@@ -732,7 +720,7 @@ class SimpleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+            print( "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
@@ -823,7 +811,7 @@ class VerseRangeKey():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("VerseRangeKey.__init__( {!r} )").format( referenceString ) )
+            print( "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -882,7 +870,7 @@ class VerseRangeKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+            print( "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
@@ -965,7 +953,7 @@ class VerseRangeKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+            print( "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
@@ -1058,7 +1046,7 @@ class FlexibleVersesKey():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("FlexibleVersesKey.__init__( {!r} )").format( referenceString ) )
+            print( "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
 
@@ -1126,7 +1114,7 @@ class FlexibleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseReferenceString( {!r} )").format( referenceString ) )
+            print( "parseReferenceString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1638,7 +1626,7 @@ class FlexibleVersesKey():
         Returns True or False on success
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("parseOSISString( {!r} )").format( referenceString ) )
+            print( "parseOSISString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
