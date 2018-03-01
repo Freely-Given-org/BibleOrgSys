@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-10' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.54'
+ProgVersion = '0.55'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -360,14 +360,15 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
 
     Returns the information in a composed line string.
     """
-    intC = intV = 0
+    intC, intV = -1, 0
     composedLine = ''
     while True:
         #print( "theWordHandleIntroduction", BBB, intC, intV )
-        try: result = bookData.getContextVerseData( (BBB,'0',str(intV),) ) # Currently this only gets one line
+        try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
-        assert len(verseData ) == 1 # in the introductory section
+        if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+            assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
         if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
             if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'

@@ -37,7 +37,7 @@ TODO: Needs internationalisation _("around strings")
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
 ProgVersion = '0.16'
@@ -141,7 +141,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             resultDict['File1']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
             try: intC = int( C )
-            except ValueError: intC = -1
+            except ValueError: intC = -2 # invalid value
             startedCVs = True
             if intC != lastC + 1:
                 if 'File1Chapters' not in resultDict['Summary']: # only record the first one
@@ -176,7 +176,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             resultDict['File2']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
             try: intC = int( C )
-            except ValueError: intC = -1
+            except ValueError: intC = -2 # invalid value
             startedCVs = True
             if intC != lastC + 1:
                 if 'File2Chapters' not in resultDict['Summary']: # only record the first one

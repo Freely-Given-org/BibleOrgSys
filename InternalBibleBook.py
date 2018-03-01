@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -1513,7 +1513,7 @@ class InternalBibleBook:
 
             if adjMarker=='b' and text:
                 fixErrors.append( _("{} {}:{} Paragraph marker {!r} should not contain text").format( self.BBB, C, V, originalMarker ) )
-                logging.error( _("doAppendEntry: Illegal text for {!r} paragraph marker {} {}:{}").format( originalMarker, self.BBB, C, V ) )
+                logging.error( "doAppendEntry: " + _("Illegal text for {!r} paragraph marker {} {}:{}").format( originalMarker, self.BBB, C, V ) )
                 self.addPriorityError( 97, C, V, _("Should not have text following character marker '{}").format( originalMarker ) )
 
             if (adjMarker=='b' or adjMarker in BibleOrgSysGlobals.USFMParagraphMarkers) and text:
@@ -1522,7 +1522,7 @@ class InternalBibleBook:
                 adjMarker = 'p~'
                 if not text.strip():
                     fixErrors.append( _("{} {}:{} Paragraph marker {!r} seems to contain only whitespace").format( self.BBB, C, V, originalMarker ) )
-                    logging.error( _("doAppendEntry: Only whitespace for {!r} paragraph marker {} {}:{}").format( originalMarker, self.BBB, C, V ) )
+                    logging.error( "doAppendEntry: " + _("Only whitespace for {!r} paragraph marker {} {}:{}").format( originalMarker, self.BBB, C, V ) )
                     self.addPriorityError( 68, C, V, _("Only whitespace following character marker '{}").format( originalMarker ) )
                     return # nothing more to do here
 
@@ -1541,9 +1541,9 @@ class InternalBibleBook:
                     if self.sahtCount != -1:
                         self.sahtCount += 1
                         if self.sahtCount <= self.maxNoncriticalErrorsPerBook:
-                            logging.error( _("doAppendEntry: Marker {!r} at {} should always have text").format( originalMarker, self.__makeErrorRef(C,V) ) )
+                            logging.error( "doAppendEntry: " + _("Marker {!r} at {} should always have text").format( originalMarker, self.__makeErrorRef(C,V) ) )
                         else: # we've reached our limit
-                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            logging.error( "doAppendEntry: " + _("Additional \"Marker should always have text\" messages suppressed for {} {}").format( self.workName, self.BBB ) )
                             self.sahtCount = -1 # So we don't do this again (for this book)
                 #self.addPriorityError( 96, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
@@ -3417,7 +3417,10 @@ class InternalBibleBook:
 
 
     def doCheckSpeechMarks( self ):
-        """Runs a number of checks on the speech marks in the Bible book."""
+        """
+        Runs a number of checks on the speech marks in the Bible book.
+        """
+        goodNow = False # Yes, this code needs fixing badly
 
         reopenQuotesAtParagraph = True # Opening quotes are reused after a paragraph break if the speech is continuing
         closeQuotesAtParagraphEnd = False # Closing quotes are used at the end of a paragraph even if the speech is continuing into the next paragraph
@@ -3528,18 +3531,20 @@ class InternalBibleBook:
                     if not openChars:
                         #print( "here1 with ", char, C, V, openChars )
                         if char not in '?!': # Ignore the dual purpose punctuation characters
-                            speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
-                            logging.error( _("Unexpected {!r} speech closing character at {}").format( char, self.__makeErrorRef(C,V) ) )
-                            self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
+                            if goodNow:
+                                speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
+                                logging.error( _("Unexpected {!r} speech closing character at {}").format( char, self.__makeErrorRef(C,V) ) )
+                                self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
                         #print( "here2 with ", char, C, V )
                         openChars.pop()
                     elif char not in '?!': # Ignore the dual purpose punctuation characters
                         # We have closing marker that doesn't match
                         #print( "here3 with ", char, C, V, openChars )
-                        speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
-                        logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
-                        self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
+                        if goodNow:
+                            speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
+                            logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
+                            self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
 
             # End of processing clean-up
             endedWithClose = cleanText[-1] in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS

@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.48'
@@ -1944,7 +1944,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
                     #print( BBB, bookVerseList )
-                    intC = 0
+                    intC = 0 # Get incremented so starts at chapter 1
                     for numVerses in bookVerseList:
                         intC += 1
                         C = str( intC )
@@ -2008,7 +2008,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
                     #print( BBB, bookVerseList )
-                    intC = 0
+                    intC = 0 # Get incremented so starts at chapter 1
                     for numVerses in bookVerseList:
                         intC += 1
                         C = str( intC )

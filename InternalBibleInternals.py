@@ -74,7 +74,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-16' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.72'
@@ -1220,7 +1220,9 @@ class InternalBibleIndex:
                         #print( 'makeIndex: contextMarkerList = {}'.format( contextMarkerList ) )
                         logging.critical( "makeIndex found an unknown nesting error for {} {} around {}:{}".format( self.name, self.BBB, C, V ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                        if contextMarkerList.count( originalMarker ):
+                            print( "{}/ {} {}:{} {!r} {}".format( j, self.BBB, C, V, originalMarker, contextMarkerList ) )
                         assert contextMarkerList.count( originalMarker ) == 0
                 if marker in BOS_NESTING_MARKERS and marker!='v':
                     if debuggingThisModule:
