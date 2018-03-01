@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-28' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.38'
@@ -1275,30 +1275,31 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
 
         Returns the information in a composed line string.
         """
-        C = V = 0
+        intC, intV = -1, 0
         composedLine = ''
         while True:
-            #print( "toESword.handleIntroduction", BBB, C, V )
-            try: result = bookData.getContextVerseData( (BBB,'0',str(V),) ) # Currently this only gets one line
+            #print( "toESword.handleIntroduction", BBB, intC, V )
+            try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
             except KeyError: break # Reached the end of the introduction
             verseData, context = result
-            assert len(verseData ) == 1 # in the introductory section
+            if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+                assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
             marker, text = verseData[0].getMarker(), verseData[0].getFullText()
             if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need added markers here either
-                if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
+                elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,intC,intV,text)+'<Ts>~^~line '
                 else:
                     logging.warning( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                         print( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                         halt
                     ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
-            V += 1 # Step to the next introductory section "verse"
+            intV += 1 # Step to the next introductory section "verse"
 
         # Check what's left at the end
         if '\\' in composedLine:
