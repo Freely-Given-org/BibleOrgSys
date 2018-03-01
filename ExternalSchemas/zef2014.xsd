@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">
+Copyright (C) 2013-2014 Wolfgang Schultz
+
+This file is part of Zefania XML 2014.
+
+Zefania XML 2014 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3 or any later version,
+as published by the Free Software Foundation.
+
+Zefania XML 2014 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License 3 for more details.
+
+You should have received a copy of the GNU General Public License
+along with Zefania XML 2014. If not, see http://www.gnu.org/licenses/.
+
+This file is based on the Zefania XML Schema published by Wolfgang Schultz
+under GNU General Public License version 3. The complete source code
+is available at http://www.zefania.de.
+</xsd:documentation>
+</xsd:annotation>
+<xsd:element name="xmlbible">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Das Wurzelelement einer Zefania XML Bibel</xsd:documentation>
+<xsd:documentation xml:lang="en">The root of a Zefania XML bible</xsd:documentation>
+</xsd:annotation>
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element minOccurs="0" ref="prolog"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="biblebook"/>
+</xsd:sequence>
+<xsd:attribute name="language" type="xsd:language">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Sprache des Bibelmodules</xsd:documentation>
+<xsd:documentation xml:lang="en">Language of bible</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="biblebook">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element minOccurs="0" ref="prolog"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="chapter"/>
+</xsd:sequence>
+<xsd:attribute name="book" type="TBooks" use="required"/>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="chapter">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Markiert ein Kapitel in eimem Bibelbuch</xsd:documentation>
+<xsd:documentation xml:lang="en">Indicates a chapter within a bible book</xsd:documentation>
+</xsd:annotation>
+<xsd:complexType>
+<xsd:choice>
+<xsd:element minOccurs="0" ref="prolog"/>
+<xsd:element maxOccurs="3" minOccurs="0" ref="headline"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="verse"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="paragraph"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="remark"/>
+</xsd:choice>
+<xsd:attribute name="book" type="TBooks" use="required">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Das Bibelbuchkuerzel</xsd:documentation>
+<xsd:documentation xml:lang="en">bible book short form</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+<xsd:attribute name="cn" type="TNumbers" use="required"/>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="paragraph">
+<xsd:complexType>
+<xsd:choice>
+<xsd:element maxOccurs="3" minOccurs="0" ref="headline"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="verse"/>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="remark"/>
+</xsd:choice>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="verse">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Markiert einen einzelenen Bibelvers</xsd:documentation>
+<xsd:documentation xml:lang="en">Indicates a single verse</xsd:documentation>
+</xsd:annotation>
+<xsd:complexType mixed="true">
+<xsd:choice>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="emphasis"/>
+</xsd:choice>
+<xsd:attribute name="book" type="TBooks" use="required">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Das Bibelbuch z.B. "LUK"</xsd:documentation>
+<xsd:documentation xml:lang="en">The bible book e.x. "LUK"</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+<xsd:attribute name="cn" type="TNumbers" use="required">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Die Kapitelnummer</xsd:documentation>
+<xsd:documentation xml:lang="en">The chapter number</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+<xsd:attribute name="vn" type="TNumbers" use="required">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Die Versnummer</xsd:documentation>
+<xsd:documentation xml:lang="en">The verse number</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+<xsd:attribute name="ix" type="TNumbers" use="optional">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">
+Konnektor zur Verbindung inhaltsgleicher Verse in unterschiedlichen Bibelausgaben
+</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="prolog">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Ein Vorwort zu einem Textabschnitt</xsd:documentation>
+<xsd:documentation xml:lang="en">Todo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:element>
+<xsd:element name="headline">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Eine Abschnittsüberschrift</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:element>
+<xsd:element name="remark">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Eine Anmerkung oder Fussnote</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:element>
+<xsd:element name="emphasis">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Markiert eine Hervorhebung vom Typ TEmphasis</xsd:documentation>
+<xsd:documentation xml:lang="en">Indicate an emphasis of type TEmphasis</xsd:documentation>
+</xsd:annotation>
+<xsd:complexType mixed="true">
+<xsd:choice>
+<xsd:element maxOccurs="unbounded" minOccurs="0" ref="emphasis"/>
+</xsd:choice>
+<xsd:attribute name="id" type="TEmphasis" use="required">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Gibt die Art der Hervorhebung an.</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+<xsd:attribute name="xd" type="xsd:positiveInteger" use="optional">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">
+Verweis zu einer externen Resource falls die Möglichkeiten von TEmphasis nicht ausreichen die Hervorhebung zu beschreiben
+</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:attribute>
+</xsd:complexType>
+</xsd:element>
+<xsd:simpleType name="TBooks">
+<xsd:annotation>
+<xsd:documentation xml:lang="en">
+see http://www.crosswire.org/wiki/OSIS_Book_Abbreviations
+</xsd:documentation>
+<xsd:documentation xml:lang="en">
+see http://paratext.org/system/files/usfmReference2_4.pdf
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<!--Old Testament-->
+<xsd:enumeration value="GEN"/>
+<xsd:enumeration value="EXO"/>
+<xsd:enumeration value="LEV"/>
+<xsd:enumeration value="NUM"/>
+<xsd:enumeration value="DEU"/>
+<xsd:enumeration value="JOS"/>
+<xsd:enumeration value="JDG"/>
+<xsd:enumeration value="RUT"/>
+<xsd:enumeration value="1SA"/>
+<xsd:enumeration value="2SA"/>
+<xsd:enumeration value="1KI"/>
+<xsd:enumeration value="2KI"/>
+<xsd:enumeration value="1CH"/>
+<xsd:enumeration value="2CH"/>
+<xsd:enumeration value="EZR"/>
+<xsd:enumeration value="NEH"/>
+<xsd:enumeration value="EST"/>
+<xsd:enumeration value="JOB"/>
+<xsd:enumeration value="PSA"/>
+<xsd:enumeration value="PRO"/>
+<xsd:enumeration value="ECC"/>
+<xsd:enumeration value="SNG"/>
+<xsd:enumeration value="ISA"/>
+<xsd:enumeration value="JER"/>
+<xsd:enumeration value="LAM"/>
+<xsd:enumeration value="EZK"/>
+<xsd:enumeration value="DAN"/>
+<xsd:enumeration value="HOS"/>
+<xsd:enumeration value="JOL"/>
+<xsd:enumeration value="AMO"/>
+<xsd:enumeration value="OBA"/>
+<xsd:enumeration value="JON"/>
+<xsd:enumeration value="MIC"/>
+<xsd:enumeration value="NAM"/>
+<xsd:enumeration value="HAB"/>
+<xsd:enumeration value="ZEP"/>
+<xsd:enumeration value="HAG"/>
+<xsd:enumeration value="ZEC"/>
+<xsd:enumeration value="MAL"/>
+<!--New Testament-->
+<xsd:enumeration value="MAT"/>
+<xsd:enumeration value="MRK"/>
+<xsd:enumeration value="LUK"/>
+<xsd:enumeration value="JHN"/>
+<xsd:enumeration value="ACT"/>
+<xsd:enumeration value="ROM"/>
+<xsd:enumeration value="1CO"/>
+<xsd:enumeration value="2CO"/>
+<xsd:enumeration value="GAL"/>
+<xsd:enumeration value="EPH"/>
+<xsd:enumeration value="PHP"/>
+<xsd:enumeration value="COL"/>
+<xsd:enumeration value="1TH"/>
+<xsd:enumeration value="2TH"/>
+<xsd:enumeration value="1TI"/>
+<xsd:enumeration value="2TI"/>
+<xsd:enumeration value="TIT"/>
+<xsd:enumeration value="PHM"/>
+<xsd:enumeration value="HEB"/>
+<xsd:enumeration value="JAS"/>
+<xsd:enumeration value="1PE"/>
+<xsd:enumeration value="2PE"/>
+<xsd:enumeration value="1JN"/>
+<xsd:enumeration value="2JN"/>
+<xsd:enumeration value="3JN"/>
+<xsd:enumeration value="JUD"/>
+<xsd:enumeration value="REV"/>
+<!--Apocrypha/Deuterocanon-->
+<xsd:enumeration value="TOB"/>
+<xsd:enumeration value="JDT"/>
+<xsd:enumeration value="ESG"/>
+<xsd:enumeration value="ADE"/>
+<xsd:enumeration value="WIS"/>
+<xsd:enumeration value="SIR"/>
+<xsd:enumeration value="BAR"/>
+<xsd:enumeration value="LJE"/>
+<xsd:enumeration value="DAG"/>
+<xsd:enumeration value="S3Y"/>
+<xsd:enumeration value="SUS"/>
+<xsd:enumeration value="BEL"/>
+<xsd:enumeration value="1MA"/>
+<xsd:enumeration value="2MA"/>
+<xsd:enumeration value="3MA"/>
+<xsd:enumeration value="4MA"/>
+<xsd:enumeration value="MAN"/>
+<xsd:enumeration value="1ES"/>
+<xsd:enumeration value="2ES"/>
+<xsd:enumeration value="PS2"/>
+<!--Rahlfs' LXX-->
+<xsd:enumeration value="ODA"/>
+<xsd:enumeration value="PSS"/>
+<!--Rahlfs' variant books-->
+<xsd:enumeration value="JSA"/>
+<xsd:enumeration value="JDB"/>
+<xsd:enumeration value="TBS"/>
+<xsd:enumeration value="SST"/>
+<xsd:enumeration value="DNT"/>
+<xsd:enumeration value="BLT"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TNumbers">
+<xsd:restriction base="xsd:integer">
+<xsd:maxInclusive value="200"/>
+<xsd:minInclusive value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TEmphasis">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Aufzaehlung fuer Hervorhebungen</xsd:documentation>
+<xsd:documentation xml:lang="en">Enumeration of emphasis values</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="acrostic"/>
+<xsd:enumeration value="bold"/>
+<xsd:enumeration value="lookup">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">
+Das markierte Element soll als Eingabe für eine andere externe Resource verwendet werden.
+</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="crossreference">
+<xsd:annotation>
+<xsd:documentation xml:lang="de">Markiert einen Bibelstellenverweis</xsd:documentation>
+<xsd:documentation xml:lang="en">ToDo:engl</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="illuminated"/>
+<xsd:enumeration value="italic"/>
+<xsd:enumeration value="line-through"/>
+<xsd:enumeration value="normal"/>
+<xsd:enumeration value="small-caps"/>
+<xsd:enumeration value="sub"/>
+<xsd:enumeration value="super"/>
+<xsd:enumeration value="underline"/>
+<xsd:enumeration value="overline"/>
+<xsd:enumeration value="capitalize"/>
+<xsd:enumeration value="uppercase"/>
+<xsd:enumeration value="lowercase"/>
+<xsd:enumeration value="divineName"/>
+<xsd:enumeration value="small"/>
+<xsd:enumeration value="added"/>
+<xsd:enumeration value="allusion"/>
+<xsd:enumeration value="alternative"/>
+<xsd:enumeration value="background"/>
+<xsd:enumeration value="citation"/>
+<xsd:enumeration value="devotional"/>
+<xsd:enumeration value="encoder"/>
+<xsd:enumeration value="exegesis"/>
+<xsd:enumeration value="explanation"/>
+<xsd:enumeration value="liturgical"/>
+<xsd:enumeration value="speaker"/>
+<xsd:enumeration value="study"/>
+<xsd:enumeration value="translation"/>
+<xsd:enumeration value="variant"/>
+<xsd:enumeration value="amplified"/>
+<xsd:enumeration value="changed"/>
+<xsd:enumeration value="deleted"/>
+<xsd:enumeration value="implied"/>
+<xsd:enumeration value="moved"/>
+<xsd:enumeration value="tenseChange"/>
+<xsd:enumeration value="commentary"/>
+<xsd:enumeration value="exposition"/>
+<xsd:enumeration value="meditation"/>
+<xsd:enumeration value="outline"/>
+<xsd:enumeration value="rebuttal"/>
+<xsd:enumeration value="sermon"/>
+<xsd:enumeration value="studyGuide"/>
+<xsd:enumeration value="transChange"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>
+ 

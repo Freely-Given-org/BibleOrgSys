@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  usx.rnc
+  This is a compact syntax Relax NG Schema for USX (extension .rnc).
+  DBL bundle version = 1.2
+-->
+<grammar xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!-- Removed USXV for now. See end of document for removed code -->
+  <start>
+    <ref name="USX"/>
+  </start>
+  <define name="USX">
+    <element name="usx">
+      <attribute name="version">
+        <value>2.0</value>
+      </attribute>
+      <optional>
+        <attribute name="xsi:noNamespaceSchemaLocation"/>
+      </optional>
+      <ref name="Book"/>
+      <zeroOrMore>
+        <ref name="HeaderPara"/>
+      </zeroOrMore>
+      <oneOrMore>
+        <ref name="TitlePara"/>
+      </oneOrMore>
+      <zeroOrMore>
+        <ref name="IntroPara"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="TitleParaIntroEnd"/>
+      </zeroOrMore>
+      <optional>
+        <ref name="ChapterLabelBookWide"/>
+      </optional>
+      <ref name="Chapter"/>
+      <zeroOrMore>
+        <!-- Chapter is used to separate intro from scripture text. All books will have chapter including the single chapter books: OBA, PHM, 2JN, 3JN, JUD -->
+        <choice>
+          <ref name="Chapter"/>
+          <ref name="Para"/>
+          <ref name="Table"/>
+          <ref name="Footnote"/>
+          <ref name="CrossReference"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="Book">
+    <element name="book">
+      <group>
+        <ref name="BookIdAttr"/>
+        <!-- e.g. code="GEN" -->
+        <attribute name="style">
+          <value>id</value>
+        </attribute>
+        <optional>
+          <text/>
+        </optional>
+      </group>
+      <!-- Brief description of project -->
+    </element>
+  </define>
+  <define name="HeaderPara">
+    <element name="para">
+      <attribute name="style">
+        <choice>
+          <value>ide</value>
+          <!-- File encoding information -->
+          <value>h</value>
+          <!-- Running header text for a book -->
+          <value>h1</value>
+          <!-- Running header text -->
+          <value>h2</value>
+          <!-- Running header text, left side of page -->
+          <value>h3</value>
+          <!-- Running header text, right side of page -->
+          <value>toc1</value>
+          <!-- Long table of contents text -->
+          <value>toc2</value>
+          <!-- Short table of contents text -->
+          <value>toc3</value>
+          <!-- Book Abbreviation -->
+          <value>rem</value>
+        </choice>
+        <!-- Remark -->
+      </attribute>
+      <optional>
+        <text/>
+      </optional>
+    </element>
+  </define>
+  <define name="TitlePara">
+    <element name="para">
+      <attribute name="style">
+        <choice>
+          <value>mt</value>
+          <!-- The main title of the book (if single level) -->
+          <value>mt1</value>
+          <!-- The main title of the book (if multiple levels) -->
+          <value>mt2</value>
+          <!-- A secondary title usually occurring before the main title -->
+          <value>mt3</value>
+          <!-- !! A tertiary title occurring after the main title  was: A secondary title occurring after the main title -->
+          <value>mt4</value>
+          <!-- !! I have not seen a use case for this   was: A small secondary title sometimes occuring within parentheses -->
+          <value>imt</value>
+          <!-- Introduction major title, level 1 (if single level) -->
+          <value>imt1</value>
+          <!-- Introduction major title, level 1 (if multiple levels) -->
+          <value>imt2</value>
+          <!-- Introduction major title, level 2 -->
+          <value>rem</value>
+        </choice>
+        <!-- Remark -->
+      </attribute>
+      <zeroOrMore>
+        <choice>
+          <ref name="Footnote"/>
+          <ref name="CrossReference"/>
+          <ref name="Char"/>
+          <text/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="IntroPara">
+    <choice>
+      <element name="para">
+        <attribute name="style">
+          <choice>
+            <value>imt</value>
+            <!-- Introduction major title, level 1 (if single level) -->
+            <value>imt1</value>
+            <!-- Introduction major title, level 1 (if multiple levels) -->
+            <value>imt2</value>
+            <!-- Introduction major title, level 2 -->
+            <value>imt3</value>
+            <!-- Introduction major title, level 3 -->
+            <value>imt4</value>
+            <!-- Introduction major title, level 4 (usually within parenthesis) -->
+            <value>ib</value>
+            <!-- Introduction blank line -->
+            <value>ie</value>
+            <!-- Introduction ending marker -->
+            <value>ili</value>
+            <!-- A list entry, level 1 (if single level) -->
+            <value>ili1</value>
+            <!-- A list entry, level 1 (if multiple levels) -->
+            <value>ili2</value>
+            <!-- A list entry, level 2 -->
+            <value>im</value>
+            <!-- Introduction prose paragraph, with no first line indent (may occur after poetry) -->
+            <value>imi</value>
+            <!-- Introduction prose paragraph text, indented, with no first line indent -->
+            <value>imq</value>
+            <!-- Introduction prose paragraph, quote from the body text, with no first line indent -->
+            <value>io</value>
+            <!-- Introduction outline text, level 1 (if single level) -->
+            <value>io1</value>
+            <!-- Introduction outline text, level 1 (if multiple levels) -->
+            <value>io2</value>
+            <!-- Introduction outline text, level 2 -->
+            <value>io3</value>
+            <!-- Introduction outline text, level 3 -->
+            <value>io4</value>
+            <!-- Introduction outline text, level 4 -->
+            <value>iot </value>
+            <!-- Introduction outline title -->
+            <value>ip</value>
+            <!-- Introduction prose paragraph -->
+            <value>ipi</value>
+            <!-- Introduction prose paragraph, indented, with first line indent -->
+            <value>ipq</value>
+            <!-- Introduction prose paragraph, quote from the body text -->
+            <value>ipr</value>
+            <!-- Introduction prose paragraph, right aligned -->
+            <value>iq</value>
+            <!-- Introduction poetry text, level 1 (if single level) -->
+            <value>iq1</value>
+            <!-- Introduction poetry text, level 1 (if multiple levels) -->
+            <value>iq2</value>
+            <!-- Introduction poetry text, level 2 -->
+            <value>iq3</value>
+            <!-- Introduction poetry text, level 3 -->
+            <value>is</value>
+            <!-- Introduction section heading, level 1 (if single level) -->
+            <value>is1 </value>
+            <!-- Introduction section heading, level 1 (if multiple levels) -->
+            <value>is2</value>
+            <!-- Introduction section heading, level 2 -->
+            <value>imte</value>
+            <!-- Introduction major title at introduction end, level 1 (if single level) -->
+            <value>imte1</value>
+            <!-- Introduction major title at introduction end, level 1 (if multiple levels) -->
+            <value>imte2</value>
+            <!-- Introduction major title at introduction end, level 2 -->
+            <value>iex</value>
+            <!-- Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament) -->
+            <value>rem</value>
+          </choice>
+          <!-- Remark -->
+        </attribute>
+        <zeroOrMore>
+          <choice>
+            <ref name="Footnote"/>
+            <ref name="Char"/>
+            <ref name="IntroChar"/>
+            <ref name="Figure"/>
+            <text/>
+          </choice>
+        </zeroOrMore>
+      </element>
+      <ref name="Table"/>
+    </choice>
+  </define>
+  <define name="TitleParaIntroEnd">
+    <element name="para">
+      <attribute name="style">
+        <choice>
+          <value>mt</value>
+          <!-- The main title of the book (if single level) -->
+          <value>mt1</value>
+          <!-- The main title of the book (if multiple levels) -->
+          <value>mt2</value>
+          <!-- A secondary title usually occurring before the main title -->
+          <value>mt3</value>
+          <!-- !! A tertiary title occurring after the main title  was: A secondary title occurring after the main title -->
+          <value>mt4</value>
+          <!-- !! I have not seen a use case for this   was: A small secondary title sometimes occuring within parentheses -->
+          <value>imt</value>
+          <!-- Introduction major title, level 1 (if single level) -->
+          <value>imt1</value>
+          <!-- Introduction major title, level 1 (if multiple levels) -->
+          <value>imt2</value>
+        </choice>
+        <!-- Introduction major title, level 2 -->
+      </attribute>
+      <zeroOrMore>
+        <choice>
+          <ref name="Footnote"/>
+          <ref name="CrossReference"/>
+          <ref name="Char"/>
+          <text/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="paraStyle">
+    <attribute name="style">
+      <choice>
+        <value>restore</value>
+        <!-- Comment about when text was restored -->
+        <value>b</value>
+        <!-- Poetry text stanza break (e.g. stanza break) -->
+        <value>cls</value>
+        <!-- Closure of an Epistle -->
+        <value>iex</value>
+        <!-- Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament) -->
+        <value>lit</value>
+        <!-- For a comment or note inserted for liturgical use -->
+        <value>m</value>
+        <!--  Paragraph text, with no first line indent (may occur after poetry) aka: Paragraph Continuation -->
+        <value>mi</value>
+        <!-- Paragraph text, indented, with no first line indent; often used for discourse -->
+        <value>nb</value>
+        <!-- Paragraph text, with no break from previous paragraph text (at chapter boundary) -->
+        <value>p</value>
+        <!-- Paragraph text, with first line indent -->
+        <value>pb</value>
+        <!-- Page Break used for new reader portions and children's bibles where content is controlled by the page -->
+        <value>pc</value>
+        <!-- Paragraph text, centered (for Inscription) -->
+        <value>pi</value>
+        <!-- Paragraph text, level 1 indent (if single level), with first line indent; often used for discourse -->
+        <value>pi1</value>
+        <!-- Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse -->
+        <value>pi2</value>
+        <!-- Paragraph text, level 2 indent, with first line indent; often used for discourse -->
+        <value>pi3</value>
+        <!-- Paragraph text, level 3 indent, with first line indent; often used for discourse -->
+        <value>pmo</value>
+        <!-- Embedded text opening -->
+        <value>pm</value>
+        <!-- Embedded text paragraph -->
+        <value>pmc</value>
+        <!-- Embedded text closing -->
+        <value>pmr</value>
+        <!-- Embedded text refrain (e.g. Then all the people shall say, "Amen!") -->
+        <value>q</value>
+        <!-- Poetry text, level 1 indent (if single level) -->
+        <value>q1</value>
+        <!-- Poetry text, level 1 indent (if multiple levels) -->
+        <value>q2</value>
+        <!-- Poetry text, level 2 indent -->
+        <value>q3</value>
+        <!-- Poetry text, level 3 indent -->
+        <value>q4</value>
+        <!-- Poetry text, level 4 indent -->
+        <value>qa</value>
+        <!-- Poetry text, Acrostic marker/heading -->
+        <value>qc</value>
+        <!-- Poetry text, centered -->
+        <value>qm</value>
+        <!-- Poetry text, embedded, level 1 indent (if single level) -->
+        <value>qm1</value>
+        <!-- Poetry text, embedded, level 1 indent (if multiple levels) -->
+        <value>qm2</value>
+        <!-- Poetry text, embedded, level 2 indent -->
+        <value>qm3</value>
+        <!-- Poetry text, embedded, level 3 indent -->
+        <value>qr</value>
+        <!-- Poetry text, Right Aligned -->
+        <value>d</value>
+        <!-- A Hebrew text heading, to provide description (e.g. Psalms) -->
+        <value>ms</value>
+        <!-- A major section division heading, level 1 (if single level) -->
+        <value>ms1</value>
+        <!-- A major section division heading, level 1 (if multiple levels) -->
+        <value>ms2</value>
+        <!-- A major section division heading, level 2 -->
+        <value>ms3</value>
+        <!-- A major section division heading, level 3 -->
+        <value>mr</value>
+        <!-- A major section division references range heading -->
+        <value>r</value>
+        <!-- Parallel reference(s) -->
+        <value>s</value>
+        <!-- A section heading, level 1 (if single level) -->
+        <value>s1</value>
+        <!-- A section heading, level 1 (if multiple levels) -->
+        <value>s2</value>
+        <!-- A section heading, level 2 (e.g. Proverbs 22-24) -->
+        <value>s3</value>
+        <!-- A section heading, level 3 (e.g. Genesis "The First Day") -->
+        <value>s4</value>
+        <!-- A section heading, level 4 -->
+        <value>sp</value>
+        <!-- A heading, to identify the speaker (e.g. Job) -->
+        <value>sr</value>
+        <!-- A section division references range heading -->
+        <value>li</value>
+        <!-- A list entry, level 1 (if single level) -->
+        <value>li1</value>
+        <!-- A list entry, level 1 (if multiple levels) -->
+        <value>li2</value>
+        <!-- A list entry, level 2 -->
+        <value>li3</value>
+        <!-- A list entry, level 3 -->
+        <value>li4</value>
+        <!-- A list entry, level 4 -->
+        <value>cp</value>
+        <!-- Published chapter number -->
+        <value>cl</value>
+        <!-- Chapter label used for translations that add a word such as "Chapter" -->
+        <value>cd</value>
+        <!-- Chapter Description (Publishing option D, e.g. in Russian Bibles) -->
+        <value>mte</value>
+        <!-- The main title of the book repeated at the end of the book, level 1 (if single level) -->
+        <value>mte1</value>
+        <!-- The main title of the book repeat /ed at the end of the book, level 1 (if multiple levels) -->
+        <value>mte2</value>
+        <!-- A secondary title occurring before or after the 'ending' main title -->
+        <value>periph</value>
+        <!-- Periheral content division marker which should be followed by an additional division argument/title. -->
+        <value>p</value>
+        <!-- Front or back matter text paragraph, level 1 -->
+        <value>p1</value>
+        <!-- Front or back matter text paragraph, level 1 (if multiple levels) -->
+        <value>p2</value>
+        <!-- Front or back matter text paragraph, level 2 (if multiple levels) -->
+        <value>k1</value>
+        <!-- Concordance main entry text or keyword, level 1 -->
+        <value>k2</value>
+        <!-- Concordance main entry text or keyword, level 2 -->
+        <value>rem</value>
+      </choice>
+      <!-- Remark -->
+    </attribute>
+  </define>
+  <define name="Reference">
+    <element name="reference">
+      <attribute name="usxRef"/>
+      <optional>
+        <text/>
+      </optional>
+    </element>
+  </define>
+  <define name="Table">
+    <element name="table">
+      <oneOrMore>
+        <element name="row">
+          <attribute name="style">
+            <value>tr</value>
+            <!-- Table row -->
+          </attribute>
+          <oneOrMore>
+            <choice>
+              <ref name="Verse"/>
+              <ref name="TableContent"/>
+            </choice>
+          </oneOrMore>
+        </element>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="TableContent">
+    <element name="cell">
+      <attribute name="style">
+        <choice>
+          <value>th</value>
+          <a:documentation>These ought to only be allowed in &lt;row style="tr"&gt;</a:documentation>
+          <!-- A table heading, any column -->
+          <value>tc</value>
+          <!-- A table cell item, any column -->
+          <value>thr</value>
+          <!-- A table heading, any column, right aligned -->
+          <value>tcr</value>
+          <!-- A table cell item, any column, right aligned -->
+          <value>thc</value>
+          <!-- A table heading, any column, center aligned -->
+          <value>tcc</value>
+          <!-- A table cell item, any column, center aligned -->
+          <value>th1</value>
+          <!-- A table heading, column 1 -->
+          <value>tc1</value>
+          <!-- A table cell item, column 1 -->
+          <value>thr1</value>
+          <!-- A table heading, column 1, right aligned -->
+          <value>tcr1</value>
+          <!-- A table cell item, column 1, right aligned -->
+          <value>th2</value>
+          <!-- A table heading, column 2 -->
+          <value>tc2</value>
+          <!-- A table cell item, column 2 -->
+          <value>thr2</value>
+          <!-- A table heading, column 2, right aligned -->
+          <value>tcr2</value>
+          <!-- A table cell item, column 2, right aligned -->
+          <value>th3</value>
+          <!-- A table heading, column 3 -->
+          <value>tc3</value>
+          <!-- A table cell item, column 3 -->
+          <value>thr3</value>
+          <!-- A table heading, column 3, right aligned -->
+          <value>tcr3</value>
+          <!-- A table cell item, column 3, right aligned -->
+          <value>th4</value>
+          <!-- A table heading, column 4 -->
+          <value>tc4</value>
+          <!-- A table cell item, column 4 -->
+          <value>thr4</value>
+          <!-- A table heading, column 4, right aligned -->
+          <value>tcr4</value>
+          <!-- A table cell item, column 4, right aligned -->
+          <value>th5</value>
+          <!-- A table heading, column 5 -->
+          <value>tc5</value>
+          <!-- A table cell item, column 5 -->
+          <value>thr5</value>
+          <!-- A table heading, column 5, right aligned -->
+          <value>tcr5</value>
+          <!-- A table cell item, column 5, right aligned -->
+          <value>rem</value>
+        </choice>
+        <!-- Remark -->
+      </attribute>
+      <attribute name="align">
+        <choice>
+          <value>start</value>
+          <value>center</value>
+          <value>end</value>
+        </choice>
+      </attribute>
+      <zeroOrMore>
+        <!-- Represent "left", "center", and "right" respectively in LTR, and "right", "center", "left" in RTL texts. -->
+        <choice>
+          <ref name="Footnote"/>
+          <ref name="CrossReference"/>
+          <ref name="Char"/>
+          <ref name="Figure"/>
+          <ref name="Verse"/>
+          <text/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="Para">
+    <element name="para">
+      <ref name="paraStyle"/>
+      <oneOrMore>
+        <choice>
+          <ref name="Reference"/>
+          <ref name="Footnote"/>
+          <ref name="CrossReference"/>
+          <ref name="Char"/>
+          <ref name="Figure"/>
+          <ref name="Verse"/>
+          <ref name="Break"/>
+          <text/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="Char">
+    <element name="char">
+      <group>
+        <attribute name="style">
+          <choice>
+            <value>va</value>
+            <!-- Second (alternate) verse number (for coding dual numeration in Psalms; see also NRSV Exo 22.1-4) -->
+            <value>vp</value>
+            <!-- Published verse marker - this is a verse marking that would be used in the published text -->
+            <value>ca</value>
+            <!-- Second (alternate) chapter number -->
+            <value>qac</value>
+            <!-- Poetry text, Acrostic markup of the first character of a line of acrostic poetry -->
+            <value>qs</value>
+            <!-- Poetry text, Selah -->
+            <value>add</value>
+            <!-- For a translational addition to the text -->
+            <value>addpn</value>
+            <!-- For chinese words to be dot underline & underline -->
+            <value>bk</value>
+            <!-- For the quoted name of a book -->
+            <value>dc</value>
+            <!-- Deuterocanonical/LXX additions or insertions in the Protocanonical text -->
+            <value>efm</value>
+            <!-- Reference to caller of previous footnote in a study Bible -->
+            <value>fm</value>
+            <!-- Reference to caller of previous footnote -->
+            <value>k</value>
+            <!-- For a keyword -->
+            <value>nd</value>
+            <!-- For name of deity -->
+            <value>ndx</value>
+            <!-- A subject index text item -->
+            <value>ord</value>
+            <!-- For the text portion of an ordinal number -->
+            <value>pn</value>
+            <!-- For a proper name -->
+            <value>pro</value>
+            <!-- For indicating pronunciation in CJK texts -->
+            <value>qt</value>
+            <!-- For Old Testament quoted text appearing in the New Testament -->
+            <value>rq</value>
+            <!-- A cross-reference indicating the source text for the preceding quotation. -->
+            <value>sig</value>
+            <!-- For the signature of the author of an Epistle -->
+            <value>sls</value>
+            <!-- To represent where the original text is in a secondary language or from an alternate text source -->
+            <value>tl</value>
+            <!-- For transliterated words -->
+            <value>w</value>
+            <!-- A wordlist text item -->
+            <value>wg</value>
+            <!-- A Greek Wordlist text item -->
+            <value>wh</value>
+            <!-- A Hebrew wordlist text item -->
+            <value>wj</value>
+            <!-- For marking the words of Jesus -->
+            <value>no</value>
+            <!-- A character style, use normal text -->
+            <value>it</value>
+            <!-- A character style, use italic text -->
+            <value>bd</value>
+            <!-- A character style, use bold text -->
+            <value>bdit</value>
+            <!-- A character style, use bold + italic text -->
+            <value>em</value>
+            <!-- A character style, use emphasized text style -->
+            <value>sc</value>
+          </choice>
+          <!-- A character style, for small capitalization text -->
+        </attribute>
+        <optional>
+          <attribute name="closed">
+            <data type="boolean"/>
+          </attribute>
+        </optional>
+        <!-- Present to allow roundtripping to USFM, not needed for publishing -->
+        <text/>
+        <zeroOrMore>
+          <choice>
+            <ref name="Reference"/>
+            <ref name="Char"/>
+            <ref name="Footnote"/>
+            <ref name="Break"/>
+            <text/>
+          </choice>
+        </zeroOrMore>
+      </group>
+      <!-- Nested character <char> markup -->
+    </element>
+  </define>
+  <define name="IntroChar">
+    <element name="char">
+      <attribute name="style">
+        <choice>
+          <value>ior</value>
+          <!-- Introduction references range for outline entry; for marking references separately -->
+          <value>iqt</value>
+        </choice>
+        <!-- For quoted scripture text appearing in the introduction -->
+      </attribute>
+      <optional>
+        <attribute name="closed">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- Present to allow roundtripping to USFM, not needed for publishing -->
+        <text/>
+      </optional>
+    </element>
+  </define>
+  <define name="Chapter">
+    <element name="chapter">
+      <interleave>
+        <!-- Start of new chapter -->
+        <attribute name="number">
+          <data type="integer"/>
+        </attribute>
+        <attribute name="style">
+          <value>c</value>
+        </attribute>
+        <optional>
+          <attribute name="altnumber">
+            <data type="string">
+              <param name="minLength">1</param>
+              <param name="pattern">[0-9]+\w?(‏?[\-,][0-9]+\w?)*</param>
+            </data>
+          </attribute>
+        </optional>
+        <optional>
+          <attribute name="pubnumber">
+            <data type="string">
+              <param name="minLength">1</param>
+            </data>
+          </attribute>
+        </optional>
+        <empty/>
+      </interleave>
+    </element>
+  </define>
+  <!-- e.g. <chapter number="1" style="c" altnumber="2" pubnumber="A" /> -->
+  <define name="ChapterLabelBookWide">
+    <element name="para">
+      <!-- A chapter label specified once prior to chpater 1; text to be used for all chapter headings in the current book -->
+      <attribute name="style">
+        <value>cl</value>
+      </attribute>
+      <text/>
+    </element>
+  </define>
+  <define name="Verse">
+    <element name="verse">
+      <interleave>
+        <attribute name="number">
+          <data type="string">
+            <param name="minLength">1</param>
+            <param name="pattern">[0-9]+\w?(‏?[\-,][0-9]+\w?)*</param>
+          </data>
+        </attribute>
+        <attribute name="style">
+          <value>v</value>
+        </attribute>
+        <optional>
+          <attribute name="altnumber">
+            <data type="string">
+              <param name="minLength">1</param>
+              <param name="pattern">[0-9]+\w?(‏?[\-,:][0-9]+\w?)*</param>
+            </data>
+          </attribute>
+        </optional>
+        <optional>
+          <attribute name="pubnumber">
+            <data type="string">
+              <param name="minLength">1</param>
+            </data>
+          </attribute>
+        </optional>
+        <empty/>
+      </interleave>
+    </element>
+  </define>
+  <!-- e.g. <verse number="1" style="v" altnumber="2" pubnumber="B" /> -->
+  <define name="Footnote">
+    <element name="note">
+      <attribute name="style">
+        <choice>
+          <value>f</value>
+          <value>fe</value>
+        </choice>
+      </attribute>
+      <attribute name="caller"/>
+      <oneOrMore>
+        <choice>
+          <ref name="FootnoteChar"/>
+          <text/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="FootnoteChar">
+    <element name="char">
+      <attribute name="style">
+        <choice>
+          <value>fr</value>
+          <!-- The origin reference for the footnote -->
+          <value>sc</value>
+          <!-- used for abbreviations -->
+          <value>ft</value>
+          <!-- Footnote text, Protocanon -->
+          <value>fk</value>
+          <!-- A footnote keyword -->
+          <value>fq</value>
+          <!-- A footnote scripture quote or alternate rendering -->
+          <value>fqa</value>
+          <!-- A footnote alternate rendering for a portion of scripture text -->
+          <value>fl</value>
+          <!-- A footnote label text item, for marking or "labelling" the type or alternate translation being provided in the note. -->
+          <value>fp</value>
+          <!-- A Footnote additional paragraph marker -->
+          <value>fv</value>
+          <!-- A verse number within the footnote text -->
+          <value>fdc</value>
+        </choice>
+        <!-- Footnote text, applies to Deuterocanon only -->
+      </attribute>
+      <optional>
+        <attribute name="closed">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <oneOrMore>
+        <!-- Present to allow roundtripping to USFM, not needed for publishing -->
+        <choice>
+          <text/>
+          <ref name="Char"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="CrossReference">
+    <element name="note">
+      <attribute name="style">
+        <value>x</value>
+      </attribute>
+      <attribute name="caller"/>
+      <oneOrMore>
+        <choice>
+          <ref name="CrossReferenceChar"/>
+          <text/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="CrossReferenceChar">
+    <element name="char">
+      <attribute name="style">
+        <choice>
+          <value>xo</value>
+          <!-- The cross reference origin reference -->
+          <value>xt</value>
+          <!-- The cross reference target reference(s), protocanon only -->
+          <value>xk</value>
+          <!-- A cross reference keyword -->
+          <value>xq</value>
+          <!-- A cross-reference quotation from the scripture text -->
+          <value>xot</value>
+          <!-- Cross-reference target reference(s), Old Testament only -->
+          <value>xnt</value>
+          <!-- Cross-reference target reference(s), New Testament only -->
+          <value>xdc</value>
+        </choice>
+        <!-- Cross-reference target reference(s), Deuterocanon only -->
+      </attribute>
+      <optional>
+        <attribute name="closed">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <oneOrMore>
+        <choice>
+          <text/>
+          <ref name="Char"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="Figure">
+    <element name="figure">
+      <group>
+        <attribute name="style"/>
+        <attribute name="desc"/>
+        <attribute name="file"/>
+        <attribute name="size"/>
+        <attribute name="loc"/>
+        <attribute name="copy"/>
+        <attribute name="ref"/>
+        <optional>
+          <text/>
+        </optional>
+      </group>
+      <!-- Caption -->
+    </element>
+  </define>
+  <define name="Break">
+    <element name="optbreak">
+      <empty/>
+    </element>
+  </define>
+  <define name="BookIdAttr">
+    <attribute name="code">
+      <ref name="bookCode"/>
+    </attribute>
+  </define>
+  <define name="bookCode">
+    <choice>
+      <value>GEN</value>
+      <!-- Genesis -->
+      <value>EXO</value>
+      <!-- Exodus -->
+      <value>LEV</value>
+      <!-- Leviticus -->
+      <value>NUM</value>
+      <!-- Numbers -->
+      <value>DEU</value>
+      <!-- Deuteronomy -->
+      <value>JOS</value>
+      <!-- Joshua -->
+      <value>JDG</value>
+      <!-- Judges -->
+      <value>RUT</value>
+      <!-- Ruth -->
+      <value>1SA</value>
+      <!-- 1 Samuel -->
+      <value>2SA</value>
+      <!-- 2 Samuel -->
+      <value>1KI</value>
+      <!-- 1 Kings -->
+      <value>2KI</value>
+      <!-- 2 Kings -->
+      <value>1CH</value>
+      <!-- 1 Chronicles -->
+      <value>2CH</value>
+      <!-- 2 Chronicles -->
+      <value>EZR</value>
+      <!-- Ezra -->
+      <value>NEH</value>
+      <!-- Nehemiah -->
+      <value>EST</value>
+      <!-- Esther (Hebrew) -->
+      <value>JOB</value>
+      <!-- Job -->
+      <value>PSA</value>
+      <!-- Psalms -->
+      <value>PRO</value>
+      <!-- Proverbs -->
+      <value>ECC</value>
+      <!-- Ecclesiastes -->
+      <value>SNG</value>
+      <!-- Song of Songs -->
+      <value>ISA</value>
+      <!-- Isaiah -->
+      <value>JER</value>
+      <!-- Jeremiah -->
+      <value>LAM</value>
+      <!-- Lamentations -->
+      <value>EZK</value>
+      <!-- Ezekiel -->
+      <value>DAN</value>
+      <!-- Daniel (Hebrew) -->
+      <value>HOS</value>
+      <!-- Hosea -->
+      <value>JOL</value>
+      <!-- Joel -->
+      <value>AMO</value>
+      <!-- Amos -->
+      <value>OBA</value>
+      <!-- Obadiah -->
+      <value>JON</value>
+      <!-- Jonah -->
+      <value>MIC</value>
+      <!-- Micah -->
+      <value>NAM</value>
+      <!-- Nahum -->
+      <value>HAB</value>
+      <!-- Habakkuk -->
+      <value>ZEP</value>
+      <!-- Zephaniah -->
+      <value>HAG</value>
+      <!-- Haggai -->
+      <value>ZEC</value>
+      <!-- Zechariah -->
+      <value>MAL</value>
+      <!-- Malachi -->
+      <value>MAT</value>
+      <!-- Matthew -->
+      <value>MRK</value>
+      <!-- Mark -->
+      <value>LUK</value>
+      <!-- Luke -->
+      <value>JHN</value>
+      <!-- John -->
+      <value>ACT</value>
+      <!-- Acts -->
+      <value>ROM</value>
+      <!-- Romans -->
+      <value>1CO</value>
+      <!-- 1 Corinthians -->
+      <value>2CO</value>
+      <!-- 2 Corinthians -->
+      <value>GAL</value>
+      <!-- Galatians -->
+      <value>EPH</value>
+      <!-- Ephesians -->
+      <value>PHP</value>
+      <!-- Philippians -->
+      <value>COL</value>
+      <!-- Colossians -->
+      <value>1TH</value>
+      <!-- 1 Thessalonians -->
+      <value>2TH</value>
+      <!-- 2 Thessalonians -->
+      <value>1TI</value>
+      <!-- 1 Timothy -->
+      <value>2TI</value>
+      <!-- 2 Timothy -->
+      <value>TIT</value>
+      <!-- Titus -->
+      <value>PHM</value>
+      <!-- Philemon -->
+      <value>HEB</value>
+      <!-- Hebrews -->
+      <value>JAS</value>
+      <!-- James -->
+      <value>1PE</value>
+      <!-- 1 Peter -->
+      <value>2PE</value>
+      <!-- 2 Peter -->
+      <value>1JN</value>
+      <!-- 1 John -->
+      <value>2JN</value>
+      <!-- 2 John -->
+      <value>3JN</value>
+      <!-- 3 John -->
+      <value>JUD</value>
+      <!-- Jude -->
+      <value>REV</value>
+      <!-- Revelation -->
+      <value>TOB</value>
+      <!-- Tobit -->
+      <value>JDT</value>
+      <!-- Judith -->
+      <value>ESG</value>
+      <!-- Esther Greek -->
+      <value>WIS</value>
+      <!-- Wisdom of Solomon -->
+      <value>SIR</value>
+      <!-- Sirach (Ecclesiasticus) -->
+      <value>BAR</value>
+      <!-- Baruch -->
+      <value>LJE</value>
+      <!-- Letter of Jeremiah -->
+      <value>S3Y</value>
+      <!-- Song of 3 Young Men -->
+      <value>SUS</value>
+      <!-- Susanna -->
+      <value>BEL</value>
+      <!-- Bel and the Dragon -->
+      <value>1MA</value>
+      <!-- 1 Maccabees -->
+      <value>2MA</value>
+      <!-- 2 Maccabees -->
+      <value>3MA</value>
+      <!-- 3 Maccabees -->
+      <value>4MA</value>
+      <!-- 4 Maccabees -->
+      <value>1ES</value>
+      <!-- 1 Esdras (Greek) -->
+      <value>2ES</value>
+      <!-- 2 Esdras (Latin) -->
+      <value>MAN</value>
+      <!-- Prayer of Manasseh -->
+      <value>PS2</value>
+      <!-- Psalm 151 -->
+      <value>ODA</value>
+      <!-- Odes -->
+      <value>PSS</value>
+      <!-- Psalms of Solomon -->
+      <value>EZA</value>
+      <!-- Apocalypse of Ezra -->
+      <value>5EZ</value>
+      <!-- 5 Ezra -->
+      <value>6EZ</value>
+      <!-- 6 Ezra -->
+      <value>DAG</value>
+      <!-- Daniel Greek -->
+      <value>PS3</value>
+      <!-- Psalms 152-155 -->
+      <value>2BA</value>
+      <!-- 2 Baruch (Apocalypse) -->
+      <value>LBA</value>
+      <!-- Letter of Baruch -->
+      <value>JUB</value>
+      <!-- Jubilees -->
+      <value>ENO</value>
+      <!-- Enoch -->
+      <value>1MQ</value>
+      <!-- 1 Meqabyan -->
+      <value>2MQ</value>
+      <!-- 2 Meqabyan -->
+      <value>3MQ</value>
+      <!-- 3 Meqabyan -->
+      <value>REP</value>
+      <!-- Reproof -->
+      <value>4BA</value>
+      <!-- 4 Baruch -->
+      <value>LAO</value>
+      <!--
+        Laodiceans
+        Non scripture text Id's
+      -->
+      <value>XXA</value>
+      <!-- Extra A, e.g. a hymnal -->
+      <value>XXB</value>
+      <!-- Extra B -->
+      <value>XXC</value>
+      <!-- Extra C -->
+      <value>XXD</value>
+      <!-- Extra D -->
+      <value>XXE</value>
+      <!-- Extra E -->
+      <value>XXF</value>
+      <!-- Extra F -->
+      <value>XXG</value>
+      <!-- Extra G -->
+      <value>FRT</value>
+      <!-- Front Matter -->
+      <value>BAK</value>
+      <!-- Back Matter -->
+      <value>OTH</value>
+      <!-- Other Matter -->
+      <value>INT</value>
+      <!-- Introduction -->
+      <value>CNC</value>
+      <!-- Concordance -->
+      <value>GLO</value>
+      <!-- Glossary -->
+      <value>TDX</value>
+      <!-- Topical Index -->
+      <value>NDX</value>
+    </choice>
+  </define>
+</grammar>
+<!-- Names Index -->
+<!--
+  start = USX | USXV
+  USXV =
+     element usxv {
+         attribute xsi:noNamespaceSchemaLocation { text }?,
+         
+         ## our test data has this. Ignore. 
+         BookForVerseStyle+
+     }
+  BookForVerseStyle =
+     element book {
+         BookIdAttr,
+         # e.g. id="GEN"
+         attribute style { "id" },
+         text?,
+         # Brief description of project
+         Heading?,
+         Title,
+         Intro?,
+         Body
+     }
+  Heading = element heading { HeaderPara+ }
+  Title = element title { TitlePara+ }
+  Intro = element intro { IntroPara* }
+  Body = element body { ChapterForVerseStyle+ }
+-->
+<!--
+  !! I think following might be obsolete now jaa. See ParaStart and ParaEnd      
+  ParaForVerseStyle =
+     element para {
+         attribute style {
+             ("no_break_verse_paragraph"
+              | # No break verse paragraph
+                "breaking_verse_paragraph")
+             # Breaking verse paragraph
+             
+         },
+         (Para | Footnote | CrossReference | Char | Figure | Verse | text)*
+     }
+  ChapterForVerseStyle =
+     element c {
+         # Start of new chapter
+         attribute book { bookCode },
+         attribute chapter { xsd:integer },
+         attribute number { xsd:integer },
+         VerseForVerseStyle+
+     }
+  VerseForVerseStyle =
+     element v {
+         attribute book { bookCode },
+         attribute chapter { xsd:integer },
+         attribute verse { text },
+         attribute verseStart { xsd:integer }?,
+         attribute verseEnd { xsd:integer }?,
+         attribute number { text },
+         (ParaStart
+          | ParaEnd
+          | Para
+          | Footnote
+          | CrossReference
+          | Char
+          | Figure
+          | Chapter
+          | Verse
+          | text)*
+     }
+  ParaStart =
+     element paraStart {
+         # ForVerseStyle   milestone
+         paraStyle
+     }
+  ParaEnd =
+     element paraEnd {
+         # ForVerseStyle   milestone
+         paraStyle
+     }
+-->
+<!--
+  ==========
+  Known requested additions to para styles - jaa
+  psa - Set_Apart_Paragraph e.g. DEU 28:3-6; JOS 15:2-12a
+  psa_conclusion - Set_Apart_Paragraph_Conclusion e.g. EXO 6:25b
+  psa_continuation - Set_Apart_Paragraph_Continuation e.g. NUM 7:13-17, 19-23, etc. JOS 13:2-5
+  psa_introduction - Set_Apart_Paragraph_Introduction e.g. EXO 6:14
+  p_letter_closing - Letter_Closing_Paragraph; Biblica: pClosing
+  p_letter_opening - Letter_Opening_Paragraph e.g. ROM 1:1-6, 7a, 7b; Biblica pOpening
+  s_variant - Section_Head_Variant e.g. JHN 8; MRK 16 (sometimes a line above and italic)
+  s_variant_tail - Section_Tail_Variant e.g. JHN 8 (formatted with line)
+  p_variant - Paragraph_Variant e.g. JHN 8; MRK 16 (often in italic)
+  p_introduction - Paragraph_Introduction e.g. GEN 5:1, 6:9; JER 48:1a; 49:1a;	Biblica: pIntroduction; An introduction statement (paragraph) related to the following text. Usually rendered with a line space preceding and following. pm
+  p_conclusion - Paragraph_Conclusion e.g., EZK 7:27f; 23:34d; 24:14; Biblica; pConclusion; A paragraph containing a summary (or conclusion) statement related to the preceding text. Usually rendered with line space preceding and following. pm
+  qr_refrain - Refrain e.g. PSA 136:1-3 (NIV) - His love endures forever; DEU 27:16-21 (NIV) - Then all the people shall say, "Amen!" (In NIV this is Embedded_Text_Refrain)
+  qr_attribution - Attribution e.g. ACT 7:49-50 (NIV) - says the Lord (Acts 7:49, 1 Corinthians 14:21, 2 Corinthians 6:17, 18); declares the Lord (Hebrews 8:9, 2 Kings 19:33, Isaiah 14:22); More examples are found in Isaiah, Jeremiah, Ezekiel, Hosea, Amos, Obadiah, Zephaniah, and Zechariah.
+  qr_selah - Selah e.g. PSA and HAB only
+  cl1 - Citation Line1 e.g. MRK 1.1-4 (NET)
+  cl2 - Citation Line2 e.g. MRK 1.1-4 (NET)
+  abbreviation - Abbreviation (character style) e.g., JUD 1.9,14 (in footnote) a.d. or  b.c.e to display in small caps. When rendering in HTML a mouse over event may show full text of abbreviation.
+  label - Label (inline section head) e.g. EZR 10:18-24 (TEV)
+-->

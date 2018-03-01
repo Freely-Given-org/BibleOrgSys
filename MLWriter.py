@@ -37,11 +37,13 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-10' # by RJH
+LastModifiedDate = '2018-03-02' # by RJH
 ShortProgName = "MLWriter"
 ProgName = "ML Writer"
-ProgVersion = '0.33'
+ProgVersion = '0.35'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, logging
@@ -49,11 +51,17 @@ import os, logging
 import BibleOrgSysGlobals
 
 
-allowedOutputTypes = 'XML','HTML'
+allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
 HTMLParaTags = 'p', # Not automatically started on a new line
 HTMLInsideTags = 'a', 'b', 'em', 'i', 'sup', 'sub', 'span' # Not automatically started on or finished with a new line
 HTMLCombinedTags = HTMLParaTags + HTMLInsideTags
-
+XML_PREDEFINED_ENTITIES = ('quot','apos','lt','gt','amp')
+HTML_PREDEFINED_CHARACTER_ENTITIES = (
+                'exclamation','quot','percent','amp','apos','add','lt','equal','gt','nbsp',
+                'iexcl','cent','pound','curren','yen','brevbar','sect','uml','copy','ordf',
+                'laquo','not','shy','reg','macr','deg','plusmn','sup2','sup3','acute',
+                'micro','para','middot','cedil','sup1','ordm','raquo',
+                'frac14','frac12','frac34', 'iquest' ) # plus about 200 more
 
 
 class MLWriter:
@@ -110,7 +118,8 @@ class MLWriter:
 
 
     def setOutputType( self, newType ):
-        """ Set the output type = XML or HTML
+        """
+        Set the output type = XML or HTML
                 Use XML for xHTML.
         """
         assert self._status == 'Idle'
@@ -219,7 +228,9 @@ class MLWriter:
 
 
     def _NL( self ):
-        """Returns a newline character if required (else an empty string)."""
+        """
+        Returns a newline character if required (else an empty string).
+        """
         if self._humanReadable == "None": result = ''
         elif self._humanReadable == "All":  result = self._nl
         elif self._humanReadable == "NLSpace":  result = ' '
@@ -236,7 +247,9 @@ class MLWriter:
 
 
     def removeFinalNewline( self, suppressFollowingIndent=False ):
-        """ Removes a final newline sequence from the buffer. """
+        """
+        Removes a final newline sequence from the buffer.
+        """
         removed = False
         if self._buffer:
             if self._nl in ('\n','\r') and self._buffer[-1]==self._nl:
@@ -245,7 +258,9 @@ class MLWriter:
             elif self._nl=='\r\n' and len(self._buffer)>=2 and self._buffer[-2:]=='\r\n':
                 self._buffer = self._buffer[:-2]
                 removed = True
-        if not removed: logging.error( "MLWriter: No newline to remove" )
+        if not removed:
+            logging.error( "MLWriter: " + _("No newline to remove") )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         self._suppressFollowingIndent = suppressFollowingIndent
     # end of MLWriter.removeFinalNewline
 
@@ -259,8 +274,10 @@ class MLWriter:
         assert self._status == 'Idle'
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
-        else: logging.error( "MLWriter: Unknown {!r} lineEndings flag".format( lineEndings ) )
-        if BibleOrgSysGlobals.verbosityLevel>2: print( 'MLWriter: '+_("Writing {}…").format(self._outputFilePath) )
+        else:
+            logging.error( "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings ) )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+        if BibleOrgSysGlobals.verbosityLevel>2: print( "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
@@ -296,7 +313,27 @@ class MLWriter:
         """
         assert textString # It can't be blank
         if '<' in textString or '>' in textString or '"' in textString:
-            logging.error( _("MLWriter:checkText: unexpected characters found in {!r}").format( textString ) )
+            logging.error( "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString ) )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+        ix = textString.find( '&' )
+        while ix != -1:
+            ix2 = textString.find( ';', ix+1 )
+            if ix2 == -1:
+                logging.error( "MLWriter:checkText: " + _("unescaped ampersand (&) found in {} {!r}").format( self._outputType, textString ) )
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                break # Only give one error
+            elif self._outputType == 'XML':
+                if textString[ix+1:ix2] not in XML_PREDEFINED_ENTITIES:
+                    logging.error( "MLWriter:checkText: " + _("unknown entity starting with ampersand (&) found in XML {!r}").format( textString ) )
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    break # Only give one error
+            elif self._outputType == 'HTML':
+                if textString[ix+1:ix2] not in HTML_PREDEFINED_CHARACTER_ENTITIES:
+                    logging.error( "MLWriter:checkText: " + _("unknown character entity starting with ampersand (&) found in XML {!r}").format( textString ) )
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    break # Only give one error
+            else: programmingError
+            ix = textString.find( '&', ix+1 )
         return textString
     # end of MLWriter.checkText
 
@@ -411,11 +448,13 @@ class MLWriter:
         """
         #print( 'writeLineClose', self._openStack )
         if not self._openStack:
-             logging.error( _("MLWriter:writeLineClose: closed {!r} tag even though no tags open").format( closeTag ) )
+            logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
-                logging.error( _("MLWriter:writeLineClose: closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
+                logging.error( "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -452,12 +491,14 @@ class MLWriter:
         Finish everything up and close the file.
         """
         assert self.__outputFile is not None
-        if self._openStack: logging.error( _("MLWriter:close: have unclosed tags: {}").format(self._openStack) )
+        if self._openStack:
+            logging.error( "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack) )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
         if writeFinalNL: self.writeNewLine()
         if self._buffer: self._writeBuffer()
-        if self._status != "Buffered": pass
+        if self._status != 'Buffered': pass
         self.__outputFile.close()
-        self._status = "Closed"
+        self._status = 'Closed'
     # end of MLWriter.close
 
 
@@ -475,24 +516,30 @@ class MLWriter:
     # end of MLWriter.autoClose
 
 
-    def validate( self, schemaFile ):
+    def validate( self, schemaFilepath ):
         """
         Validate the just closed file against the given schema (pathname or URL).
 
-        Returns a 3-tuple consisting of a result code (0=success) and two strings containing the program output and error output.
+        Returns a 3-tuple consisting of
+            a result code (0=success)
+            and two strings containing the program output and error output.
         """
-        assert self._status == "Closed"
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
+
+        assert self._status == 'Closed'
 
         if self._outputType == 'XML':
             import subprocess # for running xmllint
             # Not sure if this will work on most Linux systems -- certainly won't work on other operating systems
-            parameters = [ '/usr/bin/xmllint', '--noout', '--relaxng' if '.rng' in schemaFile else '--schema', schemaFile, self._outputFilePath ]
+            parameters = [ '/usr/bin/xmllint', '--noout', '--relaxng' if '.rng' in schemaFilepath else '--schema', schemaFilepath, self._outputFilePath ]
             try:
                 checkProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
                 returnCode = checkProcess.returncode
             except FileNotFoundError:
                 logging.error( "MLWriter.validate is unable to open {!r}".format( parameters[0] ) )
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
             if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )
@@ -503,6 +550,9 @@ class MLWriter:
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+                if returnCode == 5: # schema error
+                    logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
             elif BibleOrgSysGlobals.verbosityLevel > 3: print( "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
