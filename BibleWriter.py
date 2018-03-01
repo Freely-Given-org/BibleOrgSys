@@ -73,7 +73,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-28' # by RJH
+LastModifiedDate = '2018-03-01' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -7659,7 +7659,7 @@ class BibleWriter( InternalBible ):
 
             # First of all, get the text (by chapter) into textBuffer
             C, V = '-1', '-1' # So first/id line starts at -1:0
-            intC = numVerses = 0
+            intC, numVerses = -1, 0
             lastMarker = gotVP = None
             textBuffer = ''
             for entry in pseudoESFMData:
@@ -9083,19 +9083,25 @@ class BibleWriter( InternalBible ):
                         killLibreOfficeServiceManager() # Shut down the locked-up  process
                         if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
                 else: # try something else # NOTE: Linux-only code!!!
-                    proc = subprocess.Popen( ['./BOS_LOSM_Timeout.sh'] ) # Does a 150s timeout then kills
-                    try:
+                    # NOTE: This shell script must be findable in the current working directory
+                    timeoutFilepath = './BOS_LOSM_Timeout.sh'
+                    if os.path.exists( timeoutFilepath ):
+                        proc = subprocess.Popen( [timeoutFilepath] ) # Does a 150s timeout then kills
+                        try:
+                            if createODFBook( j, BBB, bookObject ):
+                                createCount += 1
+                            proc.terminate() # Will hopefully terminate the timeout before the shell script kills the LO ServiceManager
+                        except KeyboardInterrupt:
+                            killLibreOfficeServiceManager() # Shut down the locked-up  process
+                            raise KeyboardInterrupt
+                        except Exception as err: # BibleWriter.DisposedException (where does BibleWriter.com.sun.star.lang.DisposedException come from???)
+                            print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                            logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                            killLibreOfficeServiceManager() # Shut down the locked-up  process
+                            if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
+                    else:
                         if createODFBook( j, BBB, bookObject ):
                             createCount += 1
-                        proc.terminate() # Will hopefully terminate the timeout before the shell script kills the LO ServiceManager
-                    except KeyboardInterrupt:
-                        killLibreOfficeServiceManager() # Shut down the locked-up  process
-                        raise KeyboardInterrupt
-                    except Exception as err: # BibleWriter.DisposedException (where does BibleWriter.com.sun.star.lang.DisposedException come from???)
-                        print("BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
-                        logging.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
-                        killLibreOfficeServiceManager() # Shut down the locked-up  process
-                        if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
 
         if weStartedLibreOffice and not BibleOrgSysGlobals.debugFlag: # Now kill our LibreOffice server
             killLibreOfficeServiceManager()
@@ -9628,9 +9634,9 @@ class BibleWriter( InternalBible ):
             # With safety timeout -- more complex
             # timeoutFactors are average seconds per book
             timeoutFactor = 6 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
-            if wantPhotoBible: timeoutFactor +=  35 # 30 minutes for 68 books (Feb2018) = 27
+            if wantPhotoBible: timeoutFactor +=  40 # 30 minutes for 68 books (Feb2018) = 27
             #if wantODFs: timeoutFactor = max( timeoutFactor, 100 ) # Over a minute for longer books with LO v5.4 on my system
-            if wantPDFs: timeoutFactor += 10 # seems about 2 minutes for 68 books
+            if wantPDFs: timeoutFactor += 12 # seems about 2 minutes for 68 books
             processorFactor = 1.0 # Make bigger for a slower CPU, or can make smaller for a fast one
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
@@ -9896,6 +9902,9 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
+    from USFMBible import USFMBible
+    from USFMFilenames import USFMFilenames
+
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
@@ -9904,18 +9913,59 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( BW )
 
 
-    if 1: # Test reading and writing a USFM Bible
-        from USFMBible import USFMBible
-        from USFMFilenames import USFMFilenames
+    if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports)
         testData = ( # name, abbreviation, folder for USFM files
                 ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                ) # You can put your USFM test folder here
+
+        for j, (name, abbrev, testFolder) in enumerate( testData ):
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/…' )
+            if os.access( testFolder, os.R_OK ):
+                UB = USFMBible( testFolder, name, abbrev )
+                UB.load()
+                #print( UB.getVerseDataList( ('PSA','119','0') ) )
+                #print( UB.getVerseDataList( ('PSA','119','1') ) )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
+                if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+                myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True ) \
+                                if UB.books else []
+                if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
+                    outputFolder = 'OutputFiles/BOS_USFM2_Reexport/'
+                    fN = USFMFilenames( testFolder )
+                    folderContents1 = os.listdir( testFolder ) # Originals
+                    folderContents2 = os.listdir( outputFolder ) # Derived
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files…" )
+                    for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
+                        #print( jj, BBB, filename1 )
+                        UUU, nn = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                        #print( jj, BBB, filename1, UUU )
+                        filename2 = None
+                        for fn in folderContents2:
+                            if nn in fn and UUU in fn: filename2 = fn; break
+                        if filename1 in folderContents1 and filename2 in folderContents2:
+                            if BibleOrgSysGlobals.verbosityLevel > 2:
+                                print( "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
+                            result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolder )
+                            if result and BibleOrgSysGlobals.verbosityLevel > 2: print( "  Matched." )
+                            #print( "  result", result )
+                            #if BibleOrgSysGlobals.debugFlag:
+                                #if not result: halt
+                        else:
+                            if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
+                            if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
+            else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+
+
+    if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
+        testData = ( # name, abbreviation, folder for USFM files
                 ('CustomTest', 'Custom', '../'),
                 ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
                 ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
-                ('ESFMTest1', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
-                ('ESFMTest2', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                ('ESFMTest1-LV', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                ('ESFMTest2-RV', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
                 ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
-                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
                 ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
                 ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
                 ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
