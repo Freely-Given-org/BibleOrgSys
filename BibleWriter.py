@@ -3782,6 +3782,8 @@ class BibleWriter( InternalBible ):
                             if frOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
+                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                frOpen = False
                             if fTextOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -9915,8 +9917,9 @@ def demo():
 
     if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports)
         testData = ( # name, abbreviation, folder for USFM files
-                ('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
-                ('OEB', 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
+                ("OEB", 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9960,20 +9963,20 @@ def demo():
 
     if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
         testData = ( # name, abbreviation, folder for USFM files
-                ('CustomTest', 'Custom', '../'),
-                ('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
-                ('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
-                ('ESFMTest1-LV', 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
-                ('ESFMTest2-RV', 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
-                ('WEB', 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
-                ('Matigsalug', 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
-                ('MS-BT', 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
-                ('MS-ABT', 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
-                ('WEB', 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
-                ('OSISTest1', 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
+                ("CustomTest", 'Custom', '../'),
+                ("USFMTest1", 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
+                ("USFMTest2", 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),
+                ("ESFMTest1-LV", 'ESFM1', 'Tests/DataFilesForTests/ESFMTest1/'),
+                ("ESFMTest2-RV", 'ESFM2', 'Tests/DataFilesForTests/ESFMTest2/'),
+                ("WEB", 'WEB', 'Tests/DataFilesForTests/USFM-WEB/'),
+                ("Matigsalug", 'MBTV', '../../../../../Data/Work/Matigsalug/Bible/MBTV/'),
+                ("MS-BT", 'MBTBT', '../../../../../Data/Work/Matigsalug/Bible/MBTBT/'),
+                ("MS-ABT", 'MBTABT', '../../../../../Data/Work/Matigsalug/Bible/MBTABT/'),
+                ("WEB2", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'),
+                ("WEB3", 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
+                ("WEB4", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
+                ("WEB5", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                ("OSISTest1", 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
