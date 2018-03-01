@@ -4602,7 +4602,7 @@ class BibleWriter( InternalBible ):
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             xsdFilepath = 'ExternalSchemas/usfx.xsd'
-            if os.path.exists( rncFilepath ): validationSchema = xsdFilepath
+            if os.path.exists( xsdFilepath ): validationSchema = xsdFilepath
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
@@ -5138,6 +5138,9 @@ class BibleWriter( InternalBible ):
             except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
+        if not validationSchema: # We'll use our copy
+            xsdFilepath = 'ExternalSchemas/osisCore.2.1.1.xsd'
+            if os.path.exists( xsdFilepath ): validationSchema = xsdFilepath
 
         # Set-up our Bible reference system
         #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter:toOSISXML publicationCode =", controlDict['PublicationCode'] )

@@ -524,7 +524,7 @@ class MLWriter:
             a result code (0=success)
             and two strings containing the program output and error output.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
 
         assert self._status == 'Closed'
