@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-28' # by RJH
+LastModifiedDate = '2018-03-08' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -50,8 +50,8 @@ DEFAULT_OSIS_WLC_FILEPATH = '../morphhb/wlc/'
 DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER + 'WLC' + ZIPPED_FILENAME_END
 
 DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
-DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.txt'
-DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGenericGlossesReversed.txt'
+DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/DerivedFiles/WLCHebrewGlosses.txt'
+DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/DerivedFiles/WLCHebrewGenericGlossesReversed.txt'
 
 ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
