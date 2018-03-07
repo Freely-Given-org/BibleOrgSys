@@ -29,10 +29,10 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-12' # by RJH
+LastModifiedDate = '2018-03-07' # by RJH
 ShortProgName = "FreeBibleConverter"
 ProgName = "FreeBible Converter"
-ProgVersion = '0.08'
+ProgVersion = '0.09'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -161,10 +161,10 @@ def main():
     # Book divisions
     entireText = noisyRegExReplaceAll( entireText,
         "<div style=\"text-align:center;\">'''Free Bible Version(.+?)'''</div>",
-        '\n\\\\id \\1 -- Free BibleVersion\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1' )
+        '\n\\\\id \\1' )
     entireText = noisyRegExReplaceAll( entireText,
         "\n<div style=\"text-align:center;\">'''Free Bible Version'''</div>\n\n?<div style=\"text-align:center;\">'''(.+?)'''</div>",
-        '\n\\\\id \\1 -- {}\\n\\\\h \\1\\n\\\\toc1 \\1\\n\\\\mt1 \\1'.format( ID_LINE ) )
+        '\n\\\\id \\1' )
 
     entireText = noisyRegExReplaceAll( entireText, '<div style="text-align:center;">(.+?)</div>', '\\\\pc \\1' ) # Centred paragraphs
 
@@ -215,20 +215,25 @@ def main():
     entireText = noisyReplaceAll( entireText, '\n\n', '\n', loop=True )
     entireText = noisyReplaceAll( entireText, ' \n', '\n', loop=True )
 
-    # Adjust book IDs, etc
+    # Adjust book IDs, and insert h,toc1,toc2,toc3,mt1
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "Adjusting book names and IDs…" )
-    for name,bookID in ( ('Matthew','MAT'), ('Mark','MRK'), ('Luke','LUK'), ('John','JHN'), ('Acts','ACT'),
-                        ('Romans','ROM'), ('First Corinthians','1CO'), ('Second Corinthians','2CO'),
-                        ('Galatians','GAL'), ('Ephesians','EPH'), ('Philippians','PHP'), ('Colossians','COL'),
-                        ('First Thessalonians','1TH'), ('Second Thessalonians','2TH'), ('First Timothy','1TI'), ('Second Timothy','2TI'),
-                        ('Titus','TIT'), ('Philemon','PHM'), ('Hebrews','HEB'), ('James','JAS'),
-                        ('First Peter','1PE'), ('Second Peter','2PE'),
-                        ('First John','1JN'), ('Second John','2JN'), ('Third John','3JN'),
-                        ('Jude','JUD'), ('Revelation','REV'), ):
-        entireText = entireText.replace( '\\id '+name+' ', '\\id '+bookID+' ' )
-    entireText = noisyReplaceAll( entireText, '\\h First ', '\\h 1 ')
-    entireText = noisyReplaceAll( entireText, '\\h Second ', '\\h 2 ')
-    entireText = noisyReplaceAll( entireText, '\\h Third ', '\\h 3 ')
+    for name,abbrev,bookID in ( ('Matthew','Mat','MAT'), ('Mark','Mrk','MRK'), ('Luke','Luk','LUK'), ('John','Jhn','JHN'), ('Acts','Act','ACT'),
+                        ('Romans','Rom','ROM'), ('First Corinthians','1 Cor','1CO'), ('Second Corinthians','2 Cor','2CO'),
+                        ('Galatians','Gal','GAL'), ('Ephesians','Eph','EPH'), ('Philippians','Php','PHP'), ('Colossians','Col','COL'),
+                        ('First Thessalonians','1 Thess','1TH'), ('Second Thessalonians','2 Thess','2TH'), ('First Timothy','1 Tim','1TI'), ('Second Timothy','2 Tim','2TI'),
+                        ('Titus','Tit','TIT'), ('Philemon','Phm','PHM'), ('Hebrews','Heb','HEB'), ('James','Jas','JAS'),
+                        ('First Peter','1 Pet','1PE'), ('Second Peter','2 Pet','2PE'),
+                        ('First John','1 Jhn','1JN'), ('Second John','2 Jhn','2JN'), ('Third John','3 Jhn','3JN'),
+                        ('Jude','Jud','JUD'), ('Revelation','Rev','REV'), ):
+        shortenedName = name.replace('First','1').replace('Second','2').replace('Third','3')
+        entireText = entireText.replace( '\\id '+name,
+                                '\\id {} -- {}'.format( bookID, ID_LINE ) + \
+                                '\n\\h {}'.format( shortenedName ) + \
+                                '\n\\toc1 {}'.format( name ) + \
+                                '\n\\toc2 {}'.format( shortenedName ) + \
+                                '\n\\toc3 {}'.format( abbrev ) + \
+                                '\n\\mt1 {}'.format( name )
+                                )
 
     # Check again
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "Final checks before writing files…" )
