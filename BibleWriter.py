@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-05' # by RJH
+LastModifiedDate = '2018-03-09' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -83,8 +83,8 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 
 debuggingThisModule = False
 
-OSISNameSpace = "http://www.bibletechnologies.net/2003/OSIS/namespace"
-OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
+OSISNameSpace = 'http://www.bibletechnologies.net/2003/OSIS/namespace'
+OSISSchemaLocation = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd'
 
 
 import sys, os, shutil, logging
@@ -5791,7 +5791,7 @@ class BibleWriter( InternalBible ):
                 xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
                 try: xlg = controlDict['xmlLanguage']
                 except KeyError: xlg = 'eng'
-                try: oIDw = controlDict['osisIDWork'].replace('(','').replace(')','')
+                try: oIDw = controlDict['osisIDWork'].replace( ' ', '_' ).replace( '(', '' ).replace( ')', '' ).replace( "'", '' )
                 except KeyError: oIDw = 'Bible'
                 xw.writeLineOpen( 'osisText', [('osisRefWork','Bible' ), ('xml:lang',xlg), ('osisIDWork',oIDw)] )
                 xw.setSectionName( 'Header' )
