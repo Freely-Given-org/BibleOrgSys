@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-08' # by RJH
+LastModifiedDate = '2018-03-09' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -332,8 +332,10 @@ class HebrewWLCBibleAddon():
     def _checkLoadedDict( self ):
         """
         """
-        #print( "_checkLoadedDict()" )
-        assert self.glossingDict
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            print( "_checkLoadedDict()" )
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+            assert self.glossingDict
 
         print( "Checking {} loaded Hebrew gloss entries for consistency…".format( self.loadedGlossEntryCount ) )
         for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.copy().items(): # Use a copy because we can modify it
@@ -366,6 +368,7 @@ class HebrewWLCBibleAddon():
             #self.glossingDict[word] = (genericGloss,genericReferencesList,{})
             #self.haveGlossingDictChanges = True; continue
             for reference,specificGloss in specificReferencesDict.items():
+                print( "{!r} {!r} {} {!r}".format( word, genericGloss, reference, specificGloss ) )
                 assert isinstance( reference, tuple )
                 assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
                 for part in reference:
@@ -374,7 +377,7 @@ class HebrewWLCBibleAddon():
                 assert isinstance( specificGloss, str ) and specificGloss
                 assert ' ' not in specificGloss
                 assert ORIGINAL_MORPHEME_BREAK_CHAR not in specificGloss
-                assert OUR_MORPHEME_BREAK_CHAR not in specificGloss
+                #assert OUR_MORPHEME_BREAK_CHAR not in specificGloss
                 assert specificGloss != genericGloss # Just leave it blank if they're the same
         print( "  "+_("Finished checking Hebrew glosses") )
     # end of HebrewWLCBibleAddon._checkLoadedDict
