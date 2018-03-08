@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-03-08' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.48'
@@ -45,7 +45,7 @@ from ESFMFile import ESFMFile
 from Bible import BibleBook
 
 
-ESFM_SEMANTIC_TAGS = 'AGLOPQS'
+ESFM_SEMANTIC_TAGS = 'AGLOPQTS' # S is put last coz it must be the last tag if there are multiple tags
 ESFM_STRONGS_TAGS = 'HG'
 
 
