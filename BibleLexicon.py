@@ -422,14 +422,14 @@ def demo():
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',
                            'G1','G123','G165','G1732','G1979','G2011','G5624','G5625',): # Last ones of each are invalid
             print( '\n' + strongsKey )
-            print( " Data:", bl.getStrongsEntryData( strongsKey ) )
-            print( " Usage:", bl.getStrongsEntryField( strongsKey, 'usage' ) )
-            print( " HTML:", bl.getStrongsEntryHTML( strongsKey ) )
+            print( " Data (all):", bl.getStrongsEntryData( strongsKey ) )
+            print( " 'Usage' field:", bl.getStrongsEntryField( strongsKey, 'usage' ) )
+            print( " HTML entry:", bl.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
             print( '\n' + BrDrBrKey )
-            print( " Data:", bl.getBrDrBrEntryData( BrDrBrKey ) )
-            print( " Status:", bl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            print( " HTML:", bl.getBrDrBrEntryHTML( BrDrBrKey ) )
+            print( " Data (all):", bl.getBrDrBrEntryData( BrDrBrKey ) )
+            print( " 'Status' field:", bl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            print( " HTML entry:", bl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of demo
 
 if __name__ == '__main__':

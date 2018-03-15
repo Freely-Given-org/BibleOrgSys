@@ -28,14 +28,14 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-09' # by RJH
+LastModifiedDate = '2018-03-13' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.22'
+ProgVersion = '0.23'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os.path
@@ -90,7 +90,7 @@ VERB_CONJUGATION_TYPES = { 'p':'perfect (qatal)', 'q':'sequential perfect (weqat
                            'h':_("cohortative"), 'j':_("jussive"), 'v':_("imperative"), 'r':'participle active',
                            's':_("participle passive"), 'a':_("infinitive absolute"), 'c':_("infinitive construct") }
 PERSON_NAMES = { '1':_("1st-person"), '2':_("2nd-person"), '3':_("3rd-person") }
-GENDER_NAMES = { 'b':_("both"), 'c':_("common"), 'f':_("feminine"), 'm':_("masculine") } # b is for nouns, c is for verbs
+GENDER_NAMES = { 'b':_("both(mf)"), 'c':_("common(mf)"), 'f':_("feminine"), 'm':_("masculine") } # b is for nouns, c is for verbs
 NUMBER_NAMES = { 'd':_("dual"), 'p':_("plural"), 's':_("singular") }
 STATE_NAMES = { 'a':_("absolute"), 'c':_("construct"), 'd':_("determined") }
 
