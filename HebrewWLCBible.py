@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-13' # by RJH
+LastModifiedDate = '2018-03-16' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.23'
+ProgVersion = '0.24'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -376,7 +376,7 @@ class HebrewWLCBibleAddon():
                 assert reference in genericReferencesList
                 assert isinstance( specificGloss, str ) and specificGloss
                 assert ' ' not in specificGloss
-                assert ORIGINAL_MORPHEME_BREAK_CHAR not in specificGloss
+                #assert ORIGINAL_MORPHEME_BREAK_CHAR not in specificGloss
                 #assert OUR_MORPHEME_BREAK_CHAR not in specificGloss
                 assert specificGloss != genericGloss # Just leave it blank if they're the same
         print( "  "+_("Finished checking Hebrew glosses") )
