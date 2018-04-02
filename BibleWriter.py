@@ -48,7 +48,7 @@ Contains functions:
     toMarkdown( outputFolder=None )
     toDoor43( outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
-    toCustomBible( outputFolder=None, removeVerseBridges=False )
+    toBibleDoor( outputFolder=None, removeVerseBridges=False )
     toUSX2XML( outputFolder=None, controlDict=None, validationSchema=None )
     toUSX3XML( outputFolder=None, controlDict=None, validationSchema=None )
     toUSFXXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-09' # by RJH
+LastModifiedDate = '2018-04-03' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -122,7 +122,7 @@ def setDefaultControlFolder( newFolderName ):
 
 
 ALL_CHAR_MARKERS = None
-# The following are used by both toHTML5 and toCustomBible
+# The following are used by both toHTML5 and toBibleDoor
 ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
                     'ipq':'introductionQuoteParagraph', 'ipr':'introductionRightAlignedParagraph',
                     'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph',
@@ -2026,7 +2026,7 @@ class BibleWriter( InternalBible ):
         """
         Format character codes within the text into HTML
 
-        Called by toHTML5 and toCustomBible
+        Called by toHTML5 and toBibleDoor
 
         NOTE: This is actually a function not a method (i.e., no self argument).
         """
@@ -2834,16 +2834,16 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toCustomBible( self, outputFolder=None, removeVerseBridges=False ):
+    def toBibleDoor( self, outputFolder=None, removeVerseBridges=False ):
         """
-        Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) CustomBible (Android) app.
+        Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) BibleDoor (Android) app.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toCustomBible…" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBibleDoor…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in dir(self): self.discover()
-        if not outputFolder: outputFolder = 'OutputFiles/BOS_CustomBible_' + ('Reexport/' if self.objectTypeString=='CustomBible' else 'Export/')
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_BibleDoor_' + ('Reexport/' if self.objectTypeString=='BibleDoor' else 'Export/')
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -2962,7 +2962,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "  Writing compression entries…" )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
             with open( compressionDictFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
@@ -2987,7 +2987,7 @@ class BibleWriter( InternalBible ):
                 usageCount['~~'] += 1
             if '^' in result:
                 print( 'have^', entry )
-                halt # CustomBible compression will fail!
+                halt # BibleDoor compression will fail!
             for longString, shortString in reversedCompressions:
                 if longString in result:
                     result = result.replace( longString, shortString )
@@ -3082,7 +3082,7 @@ class BibleWriter( InternalBible ):
                         numChapters = dataLine.getCleanText()
                 try: intNumChapters = int( numChapters )
                 except ValueError:
-                    logging.error( "toCustomBible: no chapters in {}".format( BBB ) )
+                    logging.error( "toBibleDoor: no chapters in {}".format( BBB ) )
                     intNumChapters = 0
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
                 if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR(BBB):
@@ -3160,7 +3160,7 @@ class BibleWriter( InternalBible ):
                 Next parameter is the HTML5 segment for the section
                 """
                 nonlocal numCBSections
-                #print( "  toCustomBible.handleCBSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
+                #print( "  toBibleDoor.handleCBSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
                 assert BCV
                 assert sectionHTML
 
@@ -3170,9 +3170,9 @@ class BibleWriter( InternalBible ):
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
-                    logging.error( "toCustomBible programming error: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
+                    logging.error( "toBibleDoor programming error: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( "toCustomBible: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
+                        print( "toBibleDoor: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
@@ -3231,7 +3231,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if pOpen:
-                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3242,7 +3242,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<h1 class="{}{}">{}</h1>'.format( tClass, marker[2], text )
                 elif marker in ('is1','is2','is3','is4',):
                     if pOpen:
-                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if BBB == 'FRT' and marker == 'is1':
@@ -3264,7 +3264,7 @@ class BibleWriter( InternalBible ):
                     for lx in ('4','3','2','1'): # Close any open lists
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
                     if pOpen:
-                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3276,7 +3276,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'iot':
                     if pOpen:
-                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3286,7 +3286,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<h3 class="outlineTitle">{}</h3>'.format( text )
                 elif marker in ('io1','io2','io3','io4',):
                     if pOpen:
-                        logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3415,7 +3415,7 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not vOpen
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
-                        logging.warning( "toCustomBible: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
+                        logging.warning( "toBibleDoor: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
                         thisHTML += '<section class="regularSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
@@ -3489,14 +3489,14 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag and marker=='nb': assert not text and not extras
                 else:
                     if text:
-                        logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.critical( "toBibleDoor: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
-                        logging.critical( "toCustomBible: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.critical( "toBibleDoor: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
-                    logging.critical( "toCustomBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    logging.critical( "toBibleDoor: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                 sectionHTML += lastHTML
@@ -3564,21 +3564,21 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #createdHTMLIndex = sorted(createdHTMLIndex)
-            #print( "    toCustomBible: {} index entries created.".format( len(newHTMLIndex) ) )
+            #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( newHTMLIndex, jsonFile, ensure_ascii=False, indent=jsonIndent )
             writeCompressions()
 
         if ignoredMarkers:
-            logging.info( "toCustomBible: Ignored markers were {}".format( ignoredMarkers ) )
+            logging.info( "toBibleDoor: Ignored markers were {}".format( ignoredMarkers ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toCustomBible markers were {}").format( ignoredMarkers ) )
+                print( "  " + _("WARNING: Ignored toBibleDoor markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
-            logging.warning( "toCustomBible: Unhandled markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toBibleDoor: Unhandled markers were {}".format( unhandledMarkers ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toCustomBible markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toBibleDoor markers were {}").format( unhandledMarkers ) )
 
         # Display compression info
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -3593,7 +3593,7 @@ class BibleWriter( InternalBible ):
                     print( "    Compressed bytes: {}".format( bytesCompressed ) )
 
         ## Now create a zipped collection
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping CustomBible files…" )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BibleDoor files…" )
         #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         #for filename in os.listdir( outputFolder ):
             #if not filename.endswith( '.zip' ):
@@ -3602,9 +3602,9 @@ class BibleWriter( InternalBible ):
         #zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toCustomBible finished successfully." )
+            print( "  BibleWriter.toBibleDoor finished successfully." )
         return True
-    # end of BibleWriter.toCustomBible
+    # end of BibleWriter.toBibleDoor
 
 
 
@@ -10018,7 +10018,7 @@ class BibleWriter( InternalBible ):
         markdownOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Markdown_Export/' )
         D43OutputFolder = os.path.join( givenOutputFolderName, 'BOS_Door43_' + ('Reexport/' if self.objectTypeString=='Door43' else 'Export/' ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, 'BOS_HTML5_Export/' )
-        CBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_CustomBible_' + 'Export/' )
+        CBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BibleDoor_' + 'Export/' )
         EWBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_EasyWorshipBible_' + 'Export/' )
         USX2OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USX2_' + ('Reexport/' if self.objectTypeString=='USX' else 'Export/' ) )
         USX3OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USX3_' + ('Reexport/' if self.objectTypeString=='USX3' else 'Export/' ) )
@@ -10074,7 +10074,7 @@ class BibleWriter( InternalBible ):
             markdownExportResult = self.toMarkdown( markdownOutputFolder )
             D43ExportResult = self.toDoor43( D43OutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
-            CBExportResult = self.toCustomBible( CBOutputFolder )
+            CBExportResult = self.toBibleDoor( CBOutputFolder )
             EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
             USX2ExportResult = self.toUSX2XML( USX2OutputFolder )
             USX3ExportResult = self.toUSX3XML( USX3OutputFolder )
@@ -10107,7 +10107,7 @@ class BibleWriter( InternalBible ):
                                     self.toBOSBCV, self.toPseudoUSFM,
                                     self.toUSFM2, self.toUSFM3, self.toESFM, self.toText, self.toVPL,
                                     self.toMarkdown, self.toDoor43, self.toHTML5,
-                                    self.toCustomBible, self.toEasyWorshipBible,
+                                    self.toBibleDoor, self.toEasyWorshipBible,
                                     self.toUSX2XML, self.toUSX3XML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword, self.toMyBible,
@@ -10266,11 +10266,11 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = False
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
-            try: CBExportResult = self.toCustomBible( CBOutputFolder )
+            try: CBExportResult = self.toBibleDoor( CBOutputFolder )
             except Exception as err:
                 CBExportResult = False
-                print("BibleWriter.doAllExports.toCustomBible Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toCustomBible: Oops, failed!" )
+                print("BibleWriter.doAllExports.toBibleDoor Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toBibleDoor: Oops, failed!" )
             try: EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
             except Exception as err:
                 EWBExportResult = False
@@ -10402,7 +10402,7 @@ class BibleWriter( InternalBible ):
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFM2Export':USFM2ExportResult, 'USFM3Export':USFM3ExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
                 'markdownExport':markdownExportResult, 'D43Export':D43ExportResult, 'htmlExport':htmlExportResult,
-                'CustomBibleExport':CBExportResult, 'EasyWorshipBibleExport':EWBExportResult,
+                'BibleDoorExport':CBExportResult, 'EasyWorshipBibleExport':EWBExportResult,
                 'USX2Export':USX2ExportResult, 'USX3Export':USX3ExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult,
                 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                 'swExport':swExportResult,

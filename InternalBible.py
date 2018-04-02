@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-04-03' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.82'
@@ -266,7 +266,7 @@ class InternalBible:
                               'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
                               'getVerseDataList', 'getVerseText', 'writeBOSBCVFiles' ):
                 continue # ignore my own functions
-            if myPropertyName in ( 'toBOSBCV', 'toCustomBible', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
+            if myPropertyName in ( 'toBOSBCV', 'toBibleDoor', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
                               'toHTML5', 'toHaggaiXML', 'toMarkdown', 'toMySword', 'toODF', 'toOSISXML',
                               'toOpenSongXML', 'toPhotoBible', 'toPickleObject', 'toPseudoUSFM', 'toSwordModule',
                               'toSwordSearcher', 'toTeX', 'toText', 'toUSFM', 'toUSFXXML', 'toUSXXML',
