@@ -2848,31 +2848,31 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
         #assert controlDict and isinstance( controlDict, dict )
 
-        CBDataFormatVersion = 1 # Increment this when the data files / arrays change
+        BDDataFormatVersion = 1 # Increment this when the data files / arrays change
         jsonIndent = 1 # Keep files small for small phones
 
-        bookOutputFolderJSON = os.path.join( outputFolder, 'ByBook.{}.JSON/'.format( CBDataFormatVersion ) )
+        bookOutputFolderJSON = os.path.join( outputFolder, 'ByBook.{}.JSON/'.format( BDDataFormatVersion ) )
         if not os.access( bookOutputFolderJSON, os.F_OK ): os.makedirs( bookOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        chapterOutputFolderJSON = os.path.join( outputFolder, 'ByChapter.{}.JSON/'.format( CBDataFormatVersion ) )
+        chapterOutputFolderJSON = os.path.join( outputFolder, 'ByChapter.{}.JSON/'.format( BDDataFormatVersion ) )
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        bookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.HTML/'.format( CBDataFormatVersion ) )
+        bookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.HTML/'.format( BDDataFormatVersion ) )
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
-            debugBookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.debug.HTML/'.format( CBDataFormatVersion ) )
+            debugBookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.debug.HTML/'.format( BDDataFormatVersion ) )
             if not os.access( debugBookOutputFolderHTML, os.F_OK ): os.makedirs( debugBookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
-        headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
-        divisionNamesFilepath = os.path.join( outputFolder, 'CBDivisionNames.{}.json'.format( CBDataFormatVersion ) )
-        bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
-        compressionDictFilepath = os.path.join( outputFolder, 'CBCmprnDict.{}.json'.format( CBDataFormatVersion ) )
-        destinationIndexFilepath = os.path.join( outputFolder, 'CB-BCV-index.{}.json'.format( CBDataFormatVersion ) )
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, 'CBBook.{}.{}.html'.format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+        headerFilepath = os.path.join( outputFolder, 'BDHeader.json' )
+        divisionNamesFilepath = os.path.join( outputFolder, 'BDDivisionNames.{}.json'.format( BDDataFormatVersion ) )
+        bookNamesFilepath = os.path.join( outputFolder, 'BDBookNames.{}.json'.format( BDDataFormatVersion ) )
+        compressionDictFilepath = os.path.join( outputFolder, 'BDCmprnDict.{}.json'.format( BDDataFormatVersion ) )
+        destinationIndexFilepath = os.path.join( outputFolder, 'BD-BCV-index.{}.json'.format( BDDataFormatVersion ) )
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) ) # Missing the BBB
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
-            debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, 'CBBook.{}C{}V{}.{}.html'.format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
+            debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, 'BDBook.{}C{}V{}.{}.html'.format( '{}', '{}', '{}', BDDataFormatVersion ) ) # Missing the BBB, C, V
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
-        CBCompressions = (
+        BDCompressions = (
             ('@A','<h1 class="mainTitle'), # numbered
             ('@B','<h2 class="introductionSectionHeading'), # numbered
             ('@C','<section class="introSection">'),
@@ -2938,7 +2938,7 @@ class BibleWriter( InternalBible ):
 
         usageCount = {}
         codeSet, dataSet, reversedCompressions = [], [], []
-        for shortString, longString in CBCompressions:
+        for shortString, longString in BDCompressions:
             usageCount[shortString] = 0
             if shortString in codeSet: # check for duplicates
                 logging.critical( "Duplicate {!r} in compression dict".format( shortString ) )
@@ -2961,14 +2961,14 @@ class BibleWriter( InternalBible ):
             """
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "  Writing compression entries…" )
-            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
+            #filepath = os.path.join( outputFolder, 'BDHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
             with open( compressionDictFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
-                json.dump( CBCompressions, jsonFile, ensure_ascii=False, indent=jsonIndent )
+                json.dump( BDCompressions, jsonFile, ensure_ascii=False, indent=jsonIndent )
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {} compression entries written.".format( len(CBCompressions) ) )
+                print( "    {} compression entries written.".format( len(BDCompressions) ) )
         # end of writeCompressions
 
 
@@ -3001,17 +3001,17 @@ class BibleWriter( InternalBible ):
             """
             """
             result = entry
-            for shortString, longString in CBCompressions:
+            for shortString, longString in BDCompressions:
                 result = result.replace( shortString, longString )
             return result
         # end of decompress
 
 
-        def writeCBHeader():
+        def writeBDHeader():
             """
             """
             headerDict = OrderedDict()
-            headerDict['Data format version'] = CBDataFormatVersion
+            headerDict['Data format version'] = BDDataFormatVersion
             headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
             headerDict['Conversion program'] = ProgNameVersion
             workTitle = self.getSetting( 'WorkTitle' )
@@ -3020,13 +3020,13 @@ class BibleWriter( InternalBible ):
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
             #print( headerDict )
 
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}…").format( headerFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
             with open( headerFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( headerDict, jsonFile, ensure_ascii=False, indent=jsonIndent )
-        # end of writeCBHeader
+        # end of writeBDHeader
 
 
-        def writeCBBookNames():
+        def writeBDBookNames():
             """
             Writes the two files:
                 list of division names
@@ -3091,22 +3091,22 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
             with open( bookNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( bkData, jsonFile, ensure_ascii=False, indent=jsonIndent )
-        # end of writeCBBookNames
+        # end of writeBDBookNames
 
 
-        def writeCBBookAsJSON( BBB, bookData ):
+        def writeBDBookAsJSON( BBB, bookData ):
             """
             Creates json data files for the entire book in one folder,
                 and for each chapter (for RAM challenged devices) in another folder.
             """
-            def writeCBChapter( BBB, chapter, cData ):
+            def writeBDChapter( BBB, chapter, cData ):
                 """
                 """
-                filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
+                filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, BDDataFormatVersion ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                     json.dump( cData, jsonFile, ensure_ascii=False, indent=jsonIndent )
-            # end of writeCBChapter
+            # end of writeBDChapter
 
             outputData, chapterOutputData = [], []
             lastC = '0'
@@ -3115,7 +3115,7 @@ class BibleWriter( InternalBible ):
                 marker = marker.replace( '¬', '~' ) # Encodes cleaner in JSON
                 if marker == 'c':
                     C = text
-                    writeCBChapter( BBB, lastC, chapterOutputData ) # Write the previous chapter (if any)
+                    writeBDChapter( BBB, lastC, chapterOutputData ) # Write the previous chapter (if any)
                     chapterOutputData = [] # Start afresh
                     lastC = C
                 extrasList = []
@@ -3133,39 +3133,39 @@ class BibleWriter( InternalBible ):
                     chapterOutputData.append( (marker,text) )
                     outputData.append( (marker,text) )
                 #print( outputData )
-            writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
+            writeBDChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
-            filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
+            filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, BDDataFormatVersion ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
             with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( outputData, jsonFile, ensure_ascii=False, indent=jsonIndent )
-        # end of writeCBBookAsJSON
+        # end of writeBDBookAsJSON
 
 
-        def writeCBBookAsHTML( BBB, bookData, currentIndex ):
+        def writeBDBookAsHTML( BBB, bookData, currentIndex ):
             """
             If the book has section headings, breaks it by section
                 otherwise breaks the book by chapter.
 
             Returns the number of sections written.
             """
-            numCBSections = 0
-            CBGlobals = {}
-            CBGlobals['nextFootnoteIndex'] = CBGlobals['nextEndnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
-            CBGlobals['footnoteHTML5'], CBGlobals['endnoteHTML5'], CBGlobals['xrefHTML5'] = [], [], []
+            numBDSections = 0
+            BDGlobals = {}
+            BDGlobals['nextFootnoteIndex'] = BDGlobals['nextEndnoteIndex'] = BDGlobals['nextXRefIndex'] = 0
+            BDGlobals['footnoteHTML5'], BDGlobals['endnoteHTML5'], BDGlobals['xrefHTML5'] = [], [], []
 
-            def handleCBSection( BCV, sectionHTML, outputFile ):
+            def handleBDSection( BCV, sectionHTML, outputFile ):
                 """
                 First 3-tuple parameter contains BBB,C,V variables representing the first verse in this section.
                 Next parameter is the HTML5 segment for the section
                 """
-                nonlocal numCBSections
-                #print( "  toBibleDoor.handleCBSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
+                nonlocal numBDSections
+                #print( "  toBibleDoor.handleBDSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
                 assert BCV
                 assert sectionHTML
 
                 sectionBBB, sectionC, sectionV = BCV
-                numCBSections += 1
+                numBDSections += 1
                 #if BBB == 'GLS': print( BBB, sectionHTML ); halt
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
@@ -3196,10 +3196,10 @@ class BibleWriter( InternalBible ):
                     compressedHTML += '\n'
                 bytesWritten = outputFile.write( compressedHTML.encode('UTF8') )
                 return bytesWritten
-            # end of writeCBBookAsHTML.handleCBSection
+            # end of writeBDBookAsHTML.handleBDSection
 
 
-            # Main code for writeCBBookAsHTML
+            # Main code for writeBDBookAsHTML
             try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
             except AttributeError: haveSectionHeadings = False
             #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
@@ -3218,7 +3218,7 @@ class BibleWriter( InternalBible ):
             for dataLine in bookData:
                 thisHTML = ''
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
-                #print( " toCB: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
+                #print( " toBD: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
                 #print( "   sectionBCV", sectionBCV )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
@@ -3250,7 +3250,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -3273,7 +3273,7 @@ class BibleWriter( InternalBible ):
                         sectionBCV = (BBB,C,V)
                     #if not text and not extras: print( "{} at {} {}:{} has nothing!".format( marker, BBB, C, V ) );halt
                     if text or extras:
-                        thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                 elif marker == 'iot':
                     if pOpen:
                         logging.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
@@ -3294,7 +3294,7 @@ class BibleWriter( InternalBible ):
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
                     if text or extras:
-                        thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                 elif marker == 'ib':
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     thisHTML += '<p class="introductionBlankParagraph"></p>'
@@ -3327,7 +3327,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -3385,7 +3385,7 @@ class BibleWriter( InternalBible ):
                     if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
-                        bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                        bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                         sectionHTML = ''
                         indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                         currentIndex.append( indexEntry )
@@ -3400,7 +3400,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -3409,7 +3409,7 @@ class BibleWriter( InternalBible ):
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
                     if text or extras:
-                        thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                 elif marker in ('r', 'sr', 'mr',):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not vOpen
@@ -3425,7 +3425,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<p class="{}">{}</p>'.format( rClass, text )
                 elif marker == 'd': # descriptive title or Hebrew subtitle
                     if text or extras:
-                        thisHTML = '<p class="descriptiveTitle">{}</p>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML = '<p class="descriptiveTitle">{}</p>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                 elif marker == 'sp': # speaker
                     thisHTML = '<p class="speaker">{}</p>'.format( text )
 
@@ -3442,7 +3442,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -3459,7 +3459,7 @@ class BibleWriter( InternalBible ):
                     if text or extras:
                         if not vOpen:
                             thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V+'b' ); vOpen = True
-                        thisHTML += '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                     sJustOpened = False
                 elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
                     if marker.startswith('li'): level, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
@@ -3474,7 +3474,7 @@ class BibleWriter( InternalBible ):
                     if marker.startswith('li'):
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not text
                         thisHTML += '<span class="{}">'.format( iClass )
-                    elif text: thisHTML += '<span class="{}">{}</span>'.format( iClass, BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                    elif text: thisHTML += '<span class="{}">{}</span>'.format( iClass, BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                     sJustOpened = False
                 elif marker == 'b':
                     if vOpen: lastHTML += '</span>'; vOpen = False
@@ -3509,12 +3509,12 @@ class BibleWriter( InternalBible ):
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
             if sectionHTML:
-                bytesWritten = handleCBSection( sectionBCV, sectionHTML, htmlFile )
+                bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
                 indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
                 currentIndex.append( indexEntry )
 
             htmlFile.close()
-            return numCBSections
+            return numBDSections
             #if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
                 #for key,count in usageCount.items():
                     #if count == 0: logging.error( "Compression code {} is unused".format( key ) )
@@ -3527,21 +3527,21 @@ class BibleWriter( InternalBible ):
                         #print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
                         #print( "    {} compressed bytes: {}".format( BBB, bytesCompressed ) )
             #if BibleOrgSysGlobals.debugFlag: print( "Finished", BBB ); halt
-        # end of writeCBBookAsHTML
+        # end of writeBDBookAsHTML
 
 
-        writeCBHeader()
+        writeBDHeader()
 
         # Write the books
         createdHTMLIndex = []
         numSectionsDict = {}
         for BBB,bookObject in self.books.items():
             pseudoESFMData = bookObject._processedLines
-            writeCBBookAsJSON( BBB, pseudoESFMData )
-            numSections = writeCBBookAsHTML( BBB, pseudoESFMData, createdHTMLIndex )
+            writeBDBookAsJSON( BBB, pseudoESFMData )
+            numSections = writeBDBookAsHTML( BBB, pseudoESFMData, createdHTMLIndex )
             numSectionsDict[BBB] = numSections
 
-        writeCBBookNames()
+        writeBDBookNames()
 
         if createdHTMLIndex: # Sort the main index and write it
             if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -3565,7 +3565,7 @@ class BibleWriter( InternalBible ):
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #createdHTMLIndex = sorted(createdHTMLIndex)
             #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
-            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
+            #filepath = os.path.join( outputFolder, 'BDHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( newHTMLIndex, jsonFile, ensure_ascii=False, indent=jsonIndent )
@@ -3594,7 +3594,7 @@ class BibleWriter( InternalBible ):
 
         ## Now create a zipped collection
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BibleDoor files…" )
-        #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBDUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         #for filename in os.listdir( outputFolder ):
             #if not filename.endswith( '.zip' ):
                 #filepath = os.path.join( outputFolder, filename )
@@ -10018,7 +10018,7 @@ class BibleWriter( InternalBible ):
         markdownOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Markdown_Export/' )
         D43OutputFolder = os.path.join( givenOutputFolderName, 'BOS_Door43_' + ('Reexport/' if self.objectTypeString=='Door43' else 'Export/' ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, 'BOS_HTML5_Export/' )
-        CBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BibleDoor_' + 'Export/' )
+        BDOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BibleDoor_' + 'Export/' )
         EWBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_EasyWorshipBible_' + 'Export/' )
         USX2OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USX2_' + ('Reexport/' if self.objectTypeString=='USX' else 'Export/' ) )
         USX3OutputFolder = os.path.join( givenOutputFolderName, 'BOS_USX3_' + ('Reexport/' if self.objectTypeString=='USX3' else 'Export/' ) )
@@ -10074,7 +10074,7 @@ class BibleWriter( InternalBible ):
             markdownExportResult = self.toMarkdown( markdownOutputFolder )
             D43ExportResult = self.toDoor43( D43OutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
-            CBExportResult = self.toBibleDoor( CBOutputFolder )
+            BDExportResult = self.toBibleDoor( BDOutputFolder )
             EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
             USX2ExportResult = self.toUSX2XML( USX2OutputFolder )
             USX3ExportResult = self.toUSX3XML( USX3OutputFolder )
@@ -10119,7 +10119,7 @@ class BibleWriter( InternalBible ):
                                     USFM2OutputFolder, USFM3OutputFolder, ESFMOutputFolder,
                                     textOutputFolder, VPLOutputFolder,
                                     markdownOutputFolder, D43OutputFolder,
-                                    htmlOutputFolder, CBOutputFolder, EWBOutputFolder,
+                                    htmlOutputFolder, BDOutputFolder, EWBOutputFolder,
                                     USX2OutputFolder, USX3OutputFolder, USFXOutputFolder, OSISOutputFolder,
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
                                     swOutputFolder, tWOutputFolder, MySwOutputFolder, ESwOutputFolder, MyBOutputFolder,
@@ -10138,7 +10138,7 @@ class BibleWriter( InternalBible ):
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
                     #USFM2ExportResult, ESFMExportResult, textExportResult, \
-                    #markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult, \
+                    #markdownExportResult, D43ExportResult, htmlExportResult, BDExportResult, EWBExportResult, \
                     #USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
                         #= results
@@ -10177,7 +10177,7 @@ class BibleWriter( InternalBible ):
                 TeXExportResult,
                 pickledBibleOutputResult, listOutputResult, BCVExportResult, pseudoUSFMExportResult,
                 USFM2ExportResult, USFM3ExportResult, ESFMExportResult, textExportResult, VPLExportResult,
-                markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, EWBExportResult,
+                markdownExportResult, D43ExportResult, htmlExportResult, BDExportResult, EWBExportResult,
                 USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult,
                 swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult,
                 DrExportResult ) = results
@@ -10266,9 +10266,9 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = False
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
-            try: CBExportResult = self.toBibleDoor( CBOutputFolder )
+            try: BDExportResult = self.toBibleDoor( BDOutputFolder )
             except Exception as err:
-                CBExportResult = False
+                BDExportResult = False
                 print("BibleWriter.doAllExports.toBibleDoor Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toBibleDoor: Oops, failed!" )
             try: EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
@@ -10368,13 +10368,13 @@ class BibleWriter( InternalBible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM2={} USFM3={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
-                            "HTML={} CB={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
+                            "HTML={} BD={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
                             "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={} {}" \
                 .format( pickleResult, listOutputResult, BCVExportResult,
                     pseudoUSFMExportResult, USFM2ExportResult, USFM3ExportResult, ESFMExportResult,
                     textExportResult, VPLExportResult,
                     markdownExportResult, D43ExportResult, htmlExportResult,
-                    CBExportResult, EWBExportResult,
+                    BDExportResult, EWBExportResult,
                     USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult,
                     ZefExportResult, HagExportResult, OSExportResult,
                     swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult,
@@ -10388,7 +10388,7 @@ class BibleWriter( InternalBible ):
             #if pickleResult and listOutputResult and BCVExportResult \
             #and pseudoUSFMExportResult and USFM2ExportResult and ESFMExportResult and textExportResult \
             #and VPLExportResult and markdownExportResult and D43ExportResult and htmlExportResult \
-            #and CBExportResult and EWBExportResult \
+            #and BDExportResult and EWBExportResult \
             #and USX2ExportResult and USX3ExportResult and USFXExportResult and OSISExportResult \
             #and ZefExportResult and HagExportResult and OSExportResult \
             #and swExportResult and tWExportResult and MySwExportResult and ESwExportResult and MyBExportResult \
@@ -10402,7 +10402,7 @@ class BibleWriter( InternalBible ):
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFM2Export':USFM2ExportResult, 'USFM3Export':USFM3ExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
                 'markdownExport':markdownExportResult, 'D43Export':D43ExportResult, 'htmlExport':htmlExportResult,
-                'BibleDoorExport':CBExportResult, 'EasyWorshipBibleExport':EWBExportResult,
+                'BibleDoorExport':BDExportResult, 'EasyWorshipBibleExport':EWBExportResult,
                 'USX2Export':USX2ExportResult, 'USX3Export':USX3ExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult,
                 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                 'swExport':swExportResult,
