@@ -80,7 +80,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-26' # by RJH
+LastModifiedDate = '2018-04-15' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.77'
@@ -118,6 +118,7 @@ verbosityString = 'Normal'
 
 DEFAULT_LOG_FOLDER = 'Logs/' # Relative path
 DEFAULT_CACHE_FOLDER = 'ObjectCache/' # Relative path
+DEFAULT_OUTPUT_FOLDER = 'OutputFiles/' # Relative path
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
 
