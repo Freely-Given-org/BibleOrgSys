@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-13' # by RJH
+LastModifiedDate = '2018-04-20' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.70'
@@ -409,8 +409,11 @@ class USFMMarkers:
 
 
     def markerShouldHaveContent( self, marker ):
-        """ Return "N", "S", "A" for "never", "sometimes", "always".
-            Returns False for an invalid marker. """
+        """
+        Return "N", "S", "A" for "never", "sometimes", "always".
+
+        Returns False for an invalid marker.
+        """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
         hasContent = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["hasContent"]
         #if hasContent is None: return "N"

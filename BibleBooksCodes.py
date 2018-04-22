@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2018-04-18' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.79'
@@ -563,14 +563,18 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getEnglishNameList_NR
 
     def isOldTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
-        """ Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book (39).
-            NOTE: This is not truly international so it's not a recommended function. """
+        """
+        Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book (39).
+            NOTE: This is not truly international so it's not a recommended function.
+        """
         return 1 <= self.getReferenceNumber(BBB) <= 39
     # end of BibleBooksCodes.isOldTestament_NR
 
     def isNewTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
-        """ Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book (27).
-            NOTE: This is not truly international so it's not a recommended function. """
+        """
+        Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book (27).
+            NOTE: This is not truly international so it's not a recommended function.
+        """
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 
