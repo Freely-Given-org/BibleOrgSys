@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-03' # by RJH
+LastModifiedDate = '2018-04-22' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -2838,6 +2838,8 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) BibleDoor (Android) app.
         """
+        import hashlib
+
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBibleDoor…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -2861,15 +2863,23 @@ class BibleWriter( InternalBible ):
             debugBookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.debug.HTML/'.format( BDDataFormatVersion ) )
             if not os.access( debugBookOutputFolderHTML, os.F_OK ): os.makedirs( debugBookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
-        headerFilepath = os.path.join( outputFolder, 'BDHeader.json' )
-        divisionNamesFilepath = os.path.join( outputFolder, 'BDDivisionNames.{}.json'.format( BDDataFormatVersion ) )
-        bookNamesFilepath = os.path.join( outputFolder, 'BDBookNames.{}.json'.format( BDDataFormatVersion ) )
-        compressionDictFilepath = os.path.join( outputFolder, 'BDCmprnDict.{}.json'.format( BDDataFormatVersion ) )
-        destinationIndexFilepath = os.path.join( outputFolder, 'BD-BCV-index.{}.json'.format( BDDataFormatVersion ) )
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) ) # Missing the BBB
+        headerFilename = 'BDHeader.json'
+        headerFilepath = os.path.join( outputFolder, headerFilename )
+        checksumFilepath = os.path.join( outputFolder, 'BDChecksums.{}.json'.format( BDDataFormatVersion ) )
+        divisionNamesFilename = 'BDDivisionNames.{}.json'
+        divisionNamesFilepath = os.path.join( outputFolder, divisionNamesFilename )
+        bookNamesFilename = 'BDBookNames.{}.json'.format( BDDataFormatVersion )
+        bookNamesFilepath = os.path.join( outputFolder, bookNamesFilename )
+        compressionDictFilename = 'BDCmprnDict.{}.json'.format( BDDataFormatVersion )
+        compressionDictFilepath = os.path.join( outputFolder, compressionDictFilename )
+        destinationIndexFilename = 'BD-BCV-index.{}.json'.format( BDDataFormatVersion )
+        destinationIndexFilepath = os.path.join( outputFolder, destinationIndexFilename )
+        destinationHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, destinationHTMLFilenameTemplate ) # Missing the BBB
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
             debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, 'BDBook.{}C{}V{}.{}.html'.format( '{}', '{}', '{}', BDDataFormatVersion ) ) # Missing the BBB, C, V
 
+        checksums = OrderedDict()
         ignoredMarkers, unhandledMarkers = set(), set()
 
         BDCompressions = (
@@ -2963,10 +2973,10 @@ class BibleWriter( InternalBible ):
                 print( "  Writing compression entries…" )
             #filepath = os.path.join( outputFolder, 'BDHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
-            with open( compressionDictFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                #for compression in SDCompressions:
-                    #compFile.write( compression[0] + compression[1] + '\n' )
-                json.dump( BDCompressions, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( BDCompressions, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( compressionDictFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[compressionDictFilename] = hashlib.md5(outputBytes).hexdigest()
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "    {} compression entries written.".format( len(BDCompressions) ) )
         # end of writeCompressions
@@ -2975,9 +2985,13 @@ class BibleWriter( InternalBible ):
         bytesRaw = bytesCompressed = 0
         def compress( entry ):
             """
+            entry is a string
+
+            Returns a compressed string
+                but has side-effects as updates the two above byte variables
             """
             nonlocal bytesRaw, bytesCompressed
-            #print( '\n', entry )
+            #print( '\nBDCompress', repr(entry) )
             #if C=='4': halt
             bytesRaw += len( entry.encode('UTF8') )
             result = entry
@@ -2999,7 +3013,11 @@ class BibleWriter( InternalBible ):
 
         def decompress( entry ):
             """
+            entry is a string
+
+            Returns a decompressed string
             """
+            #print( '\nBDDecompress', repr(entry) )
             result = entry
             for shortString, longString in BDCompressions:
                 result = result.replace( shortString, longString )
@@ -3021,9 +3039,22 @@ class BibleWriter( InternalBible ):
             #print( headerDict )
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
-            with open( headerFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( headerDict, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( headerDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( headerFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[headerFilename] = hashlib.md5(outputBytes).hexdigest()
         # end of writeBDHeader
+
+
+        def writeChecksums():
+            """
+            After we've written all the other files,
+                we write a json dictionary/map of md5 checksums (written as 32 hex characters in a string)
+            """
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting BD checksums to {}…").format( checksumFilepath ) )
+            with open( checksumFilepath, 'wt', encoding='utf-8' ) as jsonFile:
+                json.dump( checksums, jsonFile, ensure_ascii=False, indent=jsonIndent )
+        # end of writeChecksums
 
 
         def writeBDBookNames():
@@ -3089,8 +3120,10 @@ class BibleWriter( InternalBible ):
                     doneAny = doneBooks = True
             #print( bkData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
-            with open( bookNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( bkData, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( bkData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( bookNamesFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[bookNamesFilename] = hashlib.md5(outputBytes).hexdigest()
         # end of writeBDBookNames
 
 
@@ -3135,10 +3168,13 @@ class BibleWriter( InternalBible ):
                 #print( outputData )
             writeBDChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
-            filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, BDDataFormatVersion ) )
+            filename = '{}.{}.json'.format( BBB, BDDataFormatVersion )
+            filepath = os.path.join( bookOutputFolderJSON, filename )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
-            with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( outputData, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( outputData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( filepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[filename] = hashlib.md5(outputBytes).hexdigest()
         # end of writeBDBookAsJSON
 
 
@@ -3158,8 +3194,10 @@ class BibleWriter( InternalBible ):
                 """
                 First 3-tuple parameter contains BBB,C,V variables representing the first verse in this section.
                 Next parameter is the HTML5 segment for the section
+
+                Returns the number of bytes written.
                 """
-                nonlocal numBDSections
+                nonlocal numBDSections, BDHash
                 #print( "  toBibleDoor.handleBDSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
                 assert BCV
                 assert sectionHTML
@@ -3194,8 +3232,10 @@ class BibleWriter( InternalBible ):
                         halt
                     #compressedHTML = sectionHTML # Leave it uncompressed so we can easily look at it
                     compressedHTML += '\n'
-                bytesWritten = outputFile.write( compressedHTML.encode('UTF8') )
-                return bytesWritten
+                bytesToWrite = compressedHTML.encode('UTF8')
+                BDHash.update( bytesToWrite )
+                numBytesWritten = outputFile.write( bytesToWrite )
+                return numBytesWritten
             # end of writeBDBookAsHTML.handleBDSection
 
 
@@ -3206,6 +3246,7 @@ class BibleWriter( InternalBible ):
 
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
             fileOffset = 0
+            BDHash = hashlib.md5()
 
             lastHTML = sectionHTML = outputHTML = ''
             lastMarker = gotVP = None
@@ -3514,6 +3555,7 @@ class BibleWriter( InternalBible ):
                 currentIndex.append( indexEntry )
 
             htmlFile.close()
+            checksums[destinationHTMLFilenameTemplate.format( BBB )] = BDHash.hexdigest()
             return numBDSections
             #if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
                 #for key,count in usageCount.items():
@@ -3567,9 +3609,12 @@ class BibleWriter( InternalBible ):
             #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'BDHeader.json' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
-            with open( destinationIndexFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( newHTMLIndex, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( destinationIndexFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[destinationIndexFilename] = hashlib.md5(outputBytes).hexdigest()
             writeCompressions()
+        writeChecksums()
 
         if ignoredMarkers:
             logging.info( "toBibleDoor: Ignored markers were {}".format( ignoredMarkers ) )
@@ -10504,7 +10549,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toUSX2XML(); print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
+                    #result = UB.toBibleDoor(); print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -10567,7 +10612,7 @@ def demo():
                     thisBible = result
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
-                    thisBible.toUSFM2(); thisBible.toUSFM3(); halt
+                    thisBible.toBibleDoor(); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = thisBible.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
