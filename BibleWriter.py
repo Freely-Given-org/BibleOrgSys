@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-22' # by RJH
+LastModifiedDate = '2018-04-23' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -1295,8 +1295,8 @@ class BibleWriter( InternalBible ):
                     print( "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
 
             # Now create a zipped collection
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files…" )
-            zf = zipfile.ZipFile( os.path.join( thisOutputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping VPL text files…" )
+            zf = zipfile.ZipFile( os.path.join( thisOutputFolder, 'AllVPLTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( thisOutputFolder ):
                 if not filename.endswith( '.zip' ):
                     filepath = os.path.join( thisOutputFolder, filename )
@@ -2859,6 +2859,8 @@ class BibleWriter( InternalBible ):
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
         bookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.HTML/'.format( BDDataFormatVersion ) )
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
+        bookOutputFolderZippedHTML = os.path.join( outputFolder, 'BySection.{}.HTML.zip/'.format( BDDataFormatVersion ) )
+        if not os.access( bookOutputFolderZippedHTML, os.F_OK ): os.makedirs( bookOutputFolderZippedHTML ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
             debugBookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.debug.HTML/'.format( BDDataFormatVersion ) )
             if not os.access( debugBookOutputFolderHTML, os.F_OK ): os.makedirs( debugBookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
@@ -2866,16 +2868,20 @@ class BibleWriter( InternalBible ):
         headerFilename = 'BDHeader.json'
         headerFilepath = os.path.join( outputFolder, headerFilename )
         checksumFilepath = os.path.join( outputFolder, 'BDChecksums.{}.json'.format( BDDataFormatVersion ) )
-        divisionNamesFilename = 'BDDivisionNames.{}.json'
+        divisionNamesFilename = 'BDDivisionNames.{}.json'.format( BDDataFormatVersion )
         divisionNamesFilepath = os.path.join( outputFolder, divisionNamesFilename )
         bookNamesFilename = 'BDBookNames.{}.json'.format( BDDataFormatVersion )
         bookNamesFilepath = os.path.join( outputFolder, bookNamesFilename )
         compressionDictFilename = 'BDCmprnDict.{}.json'.format( BDDataFormatVersion )
         compressionDictFilepath = os.path.join( outputFolder, compressionDictFilename )
-        destinationIndexFilename = 'BD-BCV-index.{}.json'.format( BDDataFormatVersion )
-        destinationIndexFilepath = os.path.join( outputFolder, destinationIndexFilename )
+        compressedIndexFilename = 'BD-BCV-CHTML-Index.{}.json'.format( BDDataFormatVersion )
+        compressedIndexFilepath = os.path.join( outputFolder, compressedIndexFilename )
+        uncompressedIndexFilename = 'BD-BCV-ZHTML-Index.{}.json'.format( BDDataFormatVersion )
+        uncompressedIndexFilepath = os.path.join( outputFolder, uncompressedIndexFilename )
         destinationHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, destinationHTMLFilenameTemplate ) # Missing the BBB
+        destinationZippedHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
+        destinationZippedHTMLFilepathTemplate = os.path.join( bookOutputFolderZippedHTML, destinationZippedHTMLFilenameTemplate+'.zip' ) # Missing the BBB
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
             debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, 'BDBook.{}C{}V{}.{}.html'.format( '{}', '{}', '{}', BDDataFormatVersion ) ) # Missing the BBB, C, V
 
@@ -3095,8 +3101,10 @@ class BibleWriter( InternalBible ):
                     doneAny = doneBooks = True
             #print( divisionData )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
-            with open( divisionNamesFilepath, 'wt', encoding='utf-8' ) as jsonFile:
-                json.dump( divisionData, jsonFile, ensure_ascii=False, indent=jsonIndent )
+            outputBytes = json.dumps( divisionData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( divisionNamesFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[divisionNamesFilename] = hashlib.md5(outputBytes).hexdigest()
 
             # Make a list of book data including names and abbreviations and write them to a JSON file
             bkData = []
@@ -3178,7 +3186,7 @@ class BibleWriter( InternalBible ):
         # end of writeBDBookAsJSON
 
 
-        def writeBDBookAsHTML( BBB, bookData, currentIndex ):
+        def writeBDBookAsHTML( BBB, bookData, currentUncompressedIndex, currentCompressedIndex ):
             """
             If the book has section headings, breaks it by section
                 otherwise breaks the book by chapter.
@@ -3195,9 +3203,9 @@ class BibleWriter( InternalBible ):
                 First 3-tuple parameter contains BBB,C,V variables representing the first verse in this section.
                 Next parameter is the HTML5 segment for the section
 
-                Returns the number of bytes written.
+                XXXReturns the number of bytes written.
                 """
-                nonlocal numBDSections, BDHash
+                nonlocal numBDSections, BDHash, uncompressedFileOffset, compressedFileOffset
                 #print( "  toBibleDoor.handleBDSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
                 assert BCV
                 assert sectionHTML
@@ -3212,6 +3220,11 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                         print( "toBibleDoor: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                HTMLSections.append( sectionHTML )
+                indexEntry1 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,uncompressedFileOffset,len(sectionHTML)
+                currentUncompressedIndex.append( indexEntry1 )
+                uncompressedFileOffset += len(sectionHTML)
+
                 compressedHTML = compress( sectionHTML )
                 if BibleOrgSysGlobals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
                     with open( debugDestinationHTMLFilepathTemplate.format( sectionBBB, sectionC, sectionV ), 'wt', encoding='utf-8' ) as debugOutputFile:
@@ -3235,7 +3248,10 @@ class BibleWriter( InternalBible ):
                 bytesToWrite = compressedHTML.encode('UTF8')
                 BDHash.update( bytesToWrite )
                 numBytesWritten = outputFile.write( bytesToWrite )
-                return numBytesWritten
+                #return numBytesWritten
+                indexEntry2 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,numBytesWritten
+                currentCompressedIndex.append( indexEntry2 )
+                compressedFileOffset += numBytesWritten
             # end of writeBDBookAsHTML.handleBDSection
 
 
@@ -3244,8 +3260,9 @@ class BibleWriter( InternalBible ):
             except AttributeError: haveSectionHeadings = False
             #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
 
+            HTMLSections = []
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
-            fileOffset = 0
+            uncompressedFileOffset = compressedFileOffset = 0
             BDHash = hashlib.md5()
 
             lastHTML = sectionHTML = outputHTML = ''
@@ -3291,11 +3308,11 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                            currentIndex.append( indexEntry )
-                            fileOffset += bytesWritten
+                            #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                            #currentCompressedIndex.append( indexEntry )
+                            #compressedFileOffset += bytesWritten
                     if not sOpen:
                         thisHTML += '<section class="introSection">'
                         sOpen = sJustOpened = True
@@ -3368,11 +3385,11 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                            currentIndex.append( indexEntry )
-                            fileOffset += bytesWritten
+                            #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                            #currentCompressedIndex.append( indexEntry )
+                            #compressedFileOffset += bytesWritten
                         thisHTML += '<section class="chapterSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
@@ -3426,11 +3443,11 @@ class BibleWriter( InternalBible ):
                     if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
-                        bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                        handleBDSection( sectionBCV, sectionHTML, htmlFile )
                         sectionHTML = ''
-                        indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                        currentIndex.append( indexEntry )
-                        fileOffset += bytesWritten
+                        #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                        #currentCompressedIndex.append( indexEntry )
+                        #compressedFileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert haveSectionHeadings
@@ -3441,11 +3458,11 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                            currentIndex.append( indexEntry )
-                            fileOffset += bytesWritten
+                            #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                            #currentCompressedIndex.append( indexEntry )
+                            #compressedFileOffset += bytesWritten
                         thisHTML += '<section class="regularSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
@@ -3483,11 +3500,11 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                            currentIndex.append( indexEntry )
-                            fileOffset += bytesWritten
+                            #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                            #currentCompressedIndex.append( indexEntry )
+                            #compressedFileOffset += bytesWritten
                             sectionBCV = (BBB,C,V)
                         thisHTML += '<section class="regularSection">'
                         sOpen = sJustOpened = True
@@ -3550,12 +3567,24 @@ class BibleWriter( InternalBible ):
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
             if sectionHTML:
-                bytesWritten = handleBDSection( sectionBCV, sectionHTML, htmlFile )
-                indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,fileOffset,bytesWritten
-                currentIndex.append( indexEntry )
+                handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
+                #currentCompressedIndex.append( indexEntry )
 
             htmlFile.close()
             checksums[destinationHTMLFilenameTemplate.format( BBB )] = BDHash.hexdigest()
+
+            # Write the zipped version
+            completeHTMLString = ''
+            for sectionHTML in HTMLSections:
+                completeHTMLString += sectionHTML
+            filename = destinationZippedHTMLFilenameTemplate.format( BBB )
+            filepath = destinationZippedHTMLFilepathTemplate.format( BBB )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} HTML file…".format( filename ) )
+            zf = zipfile.ZipFile( filepath, 'w', compression=zipfile.ZIP_DEFLATED )
+            zf.writestr( filename, completeHTMLString )
+            zf.close()
+
             return numBDSections
             #if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
                 #for key,count in usageCount.items():
@@ -3575,19 +3604,19 @@ class BibleWriter( InternalBible ):
         writeBDHeader()
 
         # Write the books
-        createdHTMLIndex = []
+        uncompressedHTMLIndex, compressedHTMLIndex = [], []
         numSectionsDict = {}
         for BBB,bookObject in self.books.items():
             pseudoESFMData = bookObject._processedLines
             writeBDBookAsJSON( BBB, pseudoESFMData )
-            numSections = writeBDBookAsHTML( BBB, pseudoESFMData, createdHTMLIndex )
+            numSections = writeBDBookAsHTML( BBB, pseudoESFMData, uncompressedHTMLIndex, compressedHTMLIndex )
             numSectionsDict[BBB] = numSections
 
         writeBDBookNames()
 
-        if createdHTMLIndex: # Sort the main index and write it
+        if uncompressedHTMLIndex: # Sort the main uncompressed index and write it
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  Fixing and writing main index…" )
+                print( "  Fixing and writing main uncompressed index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3601,19 +3630,51 @@ class BibleWriter( InternalBible ):
             # end of toInt
 
             newHTMLIndex = []
-            for B,C1,V1,C2,V2,fO,rL in createdHTMLIndex: # Convert strings to integers for the JSON index
+            for B,C1,V1,C2,V2,fO,rL in uncompressedHTMLIndex: # Convert strings to integers for the JSON index
                 intC1, intC2 = toInt( C1 ), toInt( C2 )
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
-            #createdHTMLIndex = sorted(createdHTMLIndex)
+            #compressedHTMLIndex = sorted(compressedHTMLIndex)
             #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'BDHeader.json' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    toBibleDoor: " +  _("Exporting index to {}…").format( destinationIndexFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "    toBibleDoor: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
-            with open( destinationIndexFilepath, 'wb' ) as jsonFile:
+            with open( uncompressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
-            checksums[destinationIndexFilename] = hashlib.md5(outputBytes).hexdigest()
+            checksums[uncompressedIndexFilename] = hashlib.md5(outputBytes).hexdigest()
+
+        if compressedHTMLIndex: # Sort the main uncompressed index and write it
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "  Fixing and writing main compressed index…" )
+
+            def toInt( CVstring ):
+                try: return int( CVstring )
+                except ValueError:
+                    #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert CVstring
+                    newCV = '0'
+                    for char in CVstring:
+                        if char.isdigit(): newCV += char
+                        else: break
+                    return int( newCV )
+            # end of toInt
+
+            newHTMLIndex = []
+            for B,C1,V1,C2,V2,fO,rL in compressedHTMLIndex: # Convert strings to integers for the JSON index
+                intC1, intC2 = toInt( C1 ), toInt( C2 )
+                intV1, intV2 = toInt( V1 ), toInt( V2 )
+                newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
+            #compressedHTMLIndex = sorted(compressedHTMLIndex)
+            #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
+            #filepath = os.path.join( outputFolder, 'BDHeader.json' )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "    toBibleDoor: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
+            outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( compressedIndexFilepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+            checksums[compressedIndexFilename] = hashlib.md5(outputBytes).hexdigest()
             writeCompressions()
+
         writeChecksums()
 
         if ignoredMarkers:
