@@ -35,6 +35,8 @@ Contains functions:
     findHomeFolderPath()
     findUsername()
 
+    getLatestPythonModificationDate()
+
     makeSafeFilename( someName )
     makeSafeXML( someString )
     makeSafeString( someString )
@@ -80,10 +82,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-15' # by RJH
+LastModifiedDate = '2018-04-24' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.77'
+ProgVersion = '0.78'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -307,6 +309,50 @@ def findUsername():
     else:
         return getpass.getuser()
 # end of BibleOrgSysGlobals.findUsername
+
+
+##########################################################################################################
+#
+
+def getLatestPythonModificationDate():
+    """
+    Goes through the .py files in the current folder
+        and tries to find the latest modification date.
+    """
+    if debugFlag and debuggingThisModule: print( "getLatestPythonModificationDate()…" )
+
+    #collectedFilepaths = []
+    latestYYYY, latestMM, latestDD = 1999, 0, 0
+    for filepath in os.listdir( '.' ):
+        #filepath = os.path.join( '.', filename )
+        if filepath.endswith( '.py' ):
+            with open( filepath, 'rt', encoding='utf-8' ) as pythonFile:
+                for line in pythonFile:
+                    if line.startswith( 'LastModifiedDate = ' ):
+                        #print( filepath, line )
+                        #print( filepath )
+                        lineBit = line[19:]
+                        if '#' in lineBit: lineBit = lineBit.split('#',1)[0]
+                        if lineBit[-1]=='\n': lineBit = lineBit[:-1] # Removing trailing newline character
+                        lineBit = lineBit.replace("'",'').replace('"','').strip()
+                        #print( '  {!r}'.format( lineBit ) )
+                        lineBits = lineBit.split( '-' )
+                        assert len(lineBits) == 3 # YYYY MM DD
+                        YYYY, MM, DD = int(lineBits[0]), int(lineBits[1]), int(lineBits[2])
+                        #print( '  ', YYYY, MM, DD )
+                        if YYYY > latestYYYY:
+                            latestYYYY, latestMM, latestDD = YYYY, MM, DD
+                            #collectedFilepaths.append( (filepath,lineBit) )
+                        elif YYYY==latestYYYY and MM>latestMM:
+                            latestMM, latestDD = MM, DD
+                            #collectedFilepaths.append( (filepath,lineBit) )
+                        elif YYYY==latestYYYY and MM==latestMM and DD>latestDD:
+                            latestDD = DD
+                            #collectedFilepaths.append( (filepath,lineBit) )
+                        break
+    #print( latestYYYY, latestMM, latestDD, collectedFilepaths )
+    return '{}-{:02}-{:02}'.format( latestYYYY, latestMM, latestDD )
+# end of BibleOrgSysGlobals.getLatestPythonModificationDate
 
 
 ##########################################################################################################
@@ -1299,12 +1345,14 @@ def demo():
     Demo program to handle command line parameters
         and then demonstrate some basic functions.
     """
-    if verbosityLevel>0: print( ProgNameVersion )
+    if verbosityLevel>0:
+        print( ProgNameVersionDate )
+        print( "   BOS last updated: {}".format( getLatestPythonModificationDate() ) )
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
-    if verbosityLevel > 0: print( "Bible.py starts with {!r}".format( line1a ) )
+    if verbosityLevel > 0: print( "\nBible.py starts with {!r}".format( line1a ) )
     line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folderName
     if verbosityLevel > 0: print( "ReadMe.txt starts with {!r}".format( line1b ) )
     line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
