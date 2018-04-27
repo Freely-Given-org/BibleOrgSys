@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-23' # by RJH
+LastModifiedDate = '2018-04-27' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -100,8 +100,10 @@ from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKER
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, \
-                            USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
+from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_TITLE_MARKERS, \
+                            USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS, \
+                            USFM_ALL_SECTION_HEADING_MARKERS, \
+                            USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from NoisyReplaceFunctions import noisyRegExDeleteAll
 from MLWriter import MLWriter
 
@@ -776,7 +778,7 @@ class BibleWriter( InternalBible ):
 
             # Write the bookUSFM output
             #print( "\nUSFM", bookUSFM[:3000] )
-            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
+            filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM2: ' + _("Writing {!r}…").format( filepath ) )
@@ -796,6 +798,22 @@ class BibleWriter( InternalBible ):
                 filepath = os.path.join( outputFolder, filename )
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
+        # Now create the gzipped file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USFM2 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSFM2Files.gzip' ), 'w:gz' )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.usfm' ):
+                filepath = os.path.join( outputFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
+        # Now create the bz2 file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping USFM2 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSFM2Files.bz2' ), 'w:bz2' )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.usfm' ):
+                filepath = os.path.join( outputFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.toUSFM2 finished successfully." )
@@ -924,7 +942,7 @@ class BibleWriter( InternalBible ):
 
             # Write the bookUSFM output
             #print( "\nUSFM", bookUSFM[:3000] )
-            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
+            filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toUSFM3: ' + _("Writing {!r}…").format( filepath ) )
@@ -940,10 +958,26 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping USFM3 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllUSFM3Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
-            if not filename.endswith( '.zip' ):
+            if filename.endswith( '.usfm' ):
                 filepath = os.path.join( outputFolder, filename )
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
+        # Now create the gzipped file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USFM3 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSFM3Files.gzip' ), 'w:gz' )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.usfm' ):
+                filepath = os.path.join( outputFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
+        # Now create the bz2 file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping USFM3 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSFM3Files.bz2' ), 'w:bz2' )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.usfm' ):
+                filepath = os.path.join( outputFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.toUSFM3 finished successfully." )
@@ -1139,7 +1173,7 @@ class BibleWriter( InternalBible ):
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ''
                         myFile.write( "{}\n\n".format( text ) )
-                    elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
+                    elif marker in USFM_ALL_INTRODUCTION_MARKERS: # Drop the introduction
                         ignoredMarkers.add( marker )
                     elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ''
@@ -1252,7 +1286,7 @@ class BibleWriter( InternalBible ):
                             ignoredMarkers.add( marker )
                             #if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ''
                             #myFile.write( "{}\n\n".format( text ) )
-                        elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
+                        elif marker in USFM_ALL_INTRODUCTION_MARKERS: # Drop the introduction
                             ignoredMarkers.add( marker )
                         elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                             ignoredMarkers.add( marker )
@@ -2834,6 +2868,162 @@ class BibleWriter( InternalBible ):
 
 
 
+    def _toBibleDoorText( self, outputFolder=None ):
+        """
+        Adjust the pseudo USFM and write the text files to be used by BibleDoor
+
+        Text is chunked into paragraphs (if possible).
+        Chapter and verse numbers are placed inline in {} fields.
+        USFM footnote and character formatting remains unchanged.
+
+        The output format looks like this (with backslashes escaped here but not in the file):
+            mt2:Ka igkarangeb ne sulat ni
+            mt1:Huwan
+            is1:Igpewun-a
+            ip:Seini ka igkarangeb ne sulat ni Apustul Huwan ne sabeka te me hibateen ni Hisus. Impeendiye din ka seini ne sulat te malitan ne in-alam te Manama wey diye degma te me anak din. Ne kema ke punduk buwa te migmalintutuu ka igpasabut din kayi. Seini se malepet ne sulat, mighangyu te keilangan ne eg-ikul te kamalehetan wey egpaheyinaweey ka tagse sabeka, wey migpaney-paney degma seini meyitenged te me etew ne migpanulu ne ware kun migpekeetew si Hisu Kristu.
+            iot:Ka nenasulat te seini ne baseen
+            io1:Pegpangemusta \\ior 1-3\\ior*
+            io1:Ka kamalehetan wey ka geyinawa \\ior 4-6\\ior*
+            io1:Pegpaney-paney meyitenged te kene ne malehet ne pegpanulu \\ior 7-11\\ior*
+            io1:Ka katammanan \\ior 12-13\\ior*
+            p:{c1}{v1}Sikeddiey si Huwan ka igbuyag te migmalintutuu ka migpeuyan te seini ne sulat. Egpangemusta a te malitan\\f + \\fr 1:1 \\ft Iyan buwa igpasabut te “malitan” ka sabeka ne punduk te migmalintutuu.\\f* ne in-alam te Manama wey diye degma te me anak din. Miggeyinawaan ku sikaniyu langun due te kamalehetan, ne kene ne sikeddiey re, ke kene, ka langun degma ne nakataha te kamalehetan,{v2}tenged su kayid e te pusung ta ka kamalehetan wey kenad e egkaawe te minsan ken-u.
+            p:{v3}Ka keupiya, keyid-u, wey keupianan ne egpuun te Manama ne Amey wey te Anak din ne si Hisu Kristu, egkaangken niyu. Igbehey sika te Manama te seeye se egdawat te kamalehetan wey te geyinawa.
+            s1:Ka kamalehetan wey ka geyinawa
+            p:{v4}Amana a nahale te pegkanengnengi ku ne due me anak nu ne mig-ikul te kamalehetan, sumale te insuhu kanta te Amey.{v5}\\x + \\xo 5: \\xt Huw 13:34; 15:12,17.\\x*Ne kuntee, eghangyuen ku sikeykew atebey, ne paheyinaweey ki ka tagse sabeka. Kene ne iyam sika ne suhu, ke kene, tapey e sika puun pad te bunsuranan.{v6}Egkakita ka geyinawa ne egkahiyen ku pinaahi te pegtuman ta te me suhu din. Tapey niyud e ne narineg ka sika ne suhu puun pad te bunsuranan, ne keilangan ne egbatasanen niyu ka peggeyinawa.
+            p:{v7}Masulug ka nanginguma kayi te kalibutan ne eg-akal te me etew. Kene egpalintutuu sikandan ne migpekeetew si Hisu Kristu. Ka me etew ne iling due, talag-akal wey kuntere ni Kristu!{v8}Bantey kew ne kene egkalaag ka ingkalasey ta su eyew kene egkasalinan ka dasag ne egkarawat niyu.
+            p:{v9}Ka minsan hentew ne ware mig-ikul te impanulu ni Kristu piru nasi migtimul kayi, ware diye te kandin ka Manama. Piru ka minsan hentew ne mig-ikul te impanulu ni Kristu, due te kandin ka Amey wey ka Anak degma.{v10}Ke due eggendue te kaniyu ne kene egpanulu te impanulu ni Kristu, kene niyu sikandin palasura diye te baley niyu, wey kene niyu banasali.{v11}Su seeye se egbanasal kandin, egpakaruma te mareet ne himu rin.
+            s1:Ka pegpanaha-taha
+            p:{v12}Masulug pad perem ka iglalag ku kaniyu, piru kena a egkeupian ne igsulat ku pad seini. Igkeupii ku ne egpakapanumbaley e pad kaniyu wey egpakiglalag iya kaniyu su eyew amana ki egkahale.
+            p:{v13}Egpangemusta degma keykew ka me anak te suled nu\\f + \\fr 1:13 \\ft Iyan buwa igpasabut te “anak te suled nu ne malitan” ka me sakup te lein ne punduk te migmalintutuu.\\f* ne in-alam degma te Manama.
+
+        with a separate index entry (by section) like this:
+            index {('Iv0'): 742, ('1v0'): 1412, ('1v3'): 2665}
+
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:_toBibleDoorText…" )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
+
+        BDDataFormatVersion = 1 # Increment this when the data files / arrays change
+        jsonIndent = 1 # Keep files small for small phones
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = 'OutputFiles/BOS_BDText_Export/'
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
+        #assert controlDict and isinstance( controlDict, dict )
+        bookOutputFolder = os.path.join( outputFolder, 'ByBook.{}.BDTXT/'.format( BDDataFormatVersion ) )
+        if not os.access( bookOutputFolder, os.F_OK ): os.makedirs( bookOutputFolder ) # Make the empty folder if there wasn't already one there
+
+        ignoredMarkers, unhandledMarkers = set(), set()
+
+        # Adjust the extracted outputs
+        paragraphMarkers = USFM_ALL_TITLE_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS \
+                                + USFM_ALL_BIBLE_PARAGRAPH_MARKERS \
+                                + ('r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr')
+        for BBB,bookObject in self.books.items():
+            try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
+            except AttributeError: haveSectionHeadings = False
+            #print( "\nhaveSectionHeadings", BBB, haveSectionHeadings ) #, self.discoveryResults[BBB] )
+
+            pseudoESFMData = bookObject._processedLines
+            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+
+            bookText, bookIndex = '', {}
+            inField = None
+            C, V = 'I', '0'
+            sectionCV = '{}v{}'.format( C, V )
+            for processedBibleEntry in pseudoESFMData:
+                pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
+                #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
+                if pseudoMarker in ('vp#',):
+                    ignoredMarkers.add( pseudoMarker )
+                    continue
+                #fullText = cleanText # (temp)
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #print( 'BDText2', BBB, pseudoMarker, repr(fullText) )
+
+                if (BBB=='FRT' and pseudoMarker=='is1') \
+                or pseudoMarker == 's1' \
+                or (C=='1' and V=='0' and ('1','0') not in bookIndex):
+                    # Start a new section
+                    assert bookText
+                    bookIndex[sectionCV] = len(bookText)
+                    sectionCV = '{}v{}'.format( C, V )
+
+                if pseudoMarker == 'c': C, V = cleanText, '0' # ignores footnotes on chapter numbers
+                elif pseudoMarker == 'c#': bookText += '{{c{}}}'.format( cleanText )
+                elif pseudoMarker == 'v':
+                    V = cleanText
+                    if '-' in V: V = V[:V.index('-')]
+                    elif '–' in V: V = V[:V.index('–')] # en dash
+                    bookText += '{{v{}}}'.format( cleanText ) # ignores footnotes on verse numbers
+                elif pseudoMarker in paragraphMarkers:
+                    if bookText: bookText += '\n'
+                    bookText += '{}:{}'.format( pseudoMarker, fullText )
+                elif pseudoMarker == 'v~':
+                    #print( "Ooops", repr(bookText[-4:]) )
+                    assert bookText[-1] == '}' # Verse marker
+                    bookText += fullText
+                elif pseudoMarker == 'p~':
+                    #print( "Ooops", repr(bookText[-4:]) )
+                    assert bookText[-1] == ':' # Paragraph marker
+                    bookText += fullText
+                else:
+                    #print( 'BDText3 remainder!', BBB, pseudoMarker, repr(fullText) )
+                    unhandledMarkers.add( pseudoMarker )
+
+            ## Adjust the bookText output
+            #bookText = noisyRegExDeleteAll( bookText, '\\\\str .+?\\\str\\*' )
+            #if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                #assert '\\str' not in bookText
+                #assert '&quot;' not in bookText
+                #assert '&amp;' not in bookText
+                #assert '&lt;' not in bookText and '&gt;' not in bookText
+
+            # Write the bookText output
+            #print( "BDText", bookText[:4000] )
+            filename = "{}.{}.bd.txt".format( BBB, BDDataFormatVersion )
+            filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+                myFile.write( bookText )
+
+            # Write the index
+            #print( "index", bookIndex )
+            filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
+            filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            outputBytes = json.dumps( bookIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( filepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+
+        if ignoredMarkers:
+            logging.info( "_toBibleDoorText: Ignored markers were {}".format( ignoredMarkers ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored _toBibleDoorText markers were {}").format( ignoredMarkers ) )
+        if unhandledMarkers:
+            logging.error( "_toBibleDoorText: Unhandled markers were {}".format( ignoredMarkers ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Unhandled _toBibleDoorText markers were {}").format( ignoredMarkers ) )
+
+        # Now create the bz2 file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping BDText files…" )
+        tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
+        for filename in os.listdir( bookOutputFolder ):
+            if filename.endswith( '.bd.txt' ):
+                filepath = os.path.join( bookOutputFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
+
+        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+            print( "  BibleWriter._toBibleDoorText finished successfully." )
+        return True
+    # end of BibleWriter._toBibleDoorText
+
+
+
     def toBibleDoor( self, outputFolder=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) BibleDoor (Android) app.
@@ -2849,6 +3039,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
         #assert controlDict and isinstance( controlDict, dict )
+
+        self._toBibleDoorText( outputFolder ) # Do our customised text outputs
 
         BDDataFormatVersion = 1 # Increment this when the data files / arrays change
         jsonIndent = 1 # Keep files small for small phones
@@ -2873,11 +3065,11 @@ class BibleWriter( InternalBible ):
         bookNamesFilename = 'BDBookNames.{}.json'.format( BDDataFormatVersion )
         bookNamesFilepath = os.path.join( outputFolder, bookNamesFilename )
         compressionDictFilename = 'BDCmprnDict.{}.json'.format( BDDataFormatVersion )
-        compressionDictFilepath = os.path.join( outputFolder, compressionDictFilename )
+        compressionDictFilepath = os.path.join( bookOutputFolderHTML, compressionDictFilename )
         compressedIndexFilename = 'BD-BCV-CHTML-Index.{}.json'.format( BDDataFormatVersion )
-        compressedIndexFilepath = os.path.join( outputFolder, compressedIndexFilename )
+        compressedIndexFilepath = os.path.join( bookOutputFolderHTML, compressedIndexFilename )
         uncompressedIndexFilename = 'BD-BCV-ZHTML-Index.{}.json'.format( BDDataFormatVersion )
-        uncompressedIndexFilepath = os.path.join( outputFolder, uncompressedIndexFilename )
+        uncompressedIndexFilepath = os.path.join( bookOutputFolderZippedHTML, uncompressedIndexFilename )
         destinationHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, destinationHTMLFilenameTemplate ) # Missing the BBB
         destinationZippedHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
@@ -4199,10 +4391,19 @@ class BibleWriter( InternalBible ):
         zf.close()
         # Now create the gzipped file
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USX2 files…" )
-        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX2Files.qz' ), 'w:gz' )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX2Files.gzip' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
-            filepath = os.path.join( filesFolder, filename )
-            tar.add( filepath, filename )
+            if filename.endswith( '.usx' ):
+                filepath = os.path.join( filesFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
+        # Now create the bz2 file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping USX2 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX2Files.bz2' ), 'w:bz2' )
+        for filename in os.listdir( filesFolder ):
+            if filename.endswith( '.usx' ):
+                filepath = os.path.join( filesFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
@@ -4673,10 +4874,19 @@ class BibleWriter( InternalBible ):
         zf.close()
         # Now create the gzipped file
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  GZipping USX3 files…" )
-        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX3Files.qz' ), 'w:gz' )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX3Files.gzip' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
-            filepath = os.path.join( filesFolder, filename )
-            tar.add( filepath, filename )
+            if filename.endswith( '.usx' ):
+                filepath = os.path.join( filesFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
+        tar.close()
+        # Now create the bz2 file
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping USX3 files…" )
+        tar = tarfile.open( os.path.join( outputFolder, 'AllUSX3Files.bz2' ), 'w:bz2' )
+        for filename in os.listdir( filesFolder ):
+            if filename.endswith( '.usx' ):
+                filepath = os.path.join( filesFolder, filename )
+                tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
@@ -6356,7 +6566,7 @@ class BibleWriter( InternalBible ):
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
-                or marker in USFM_INTRODUCTION_MARKERS \
+                or marker in USFM_ALL_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
@@ -6561,7 +6771,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen ( 'PARAGRAPH' )
                     haveOpenParagraph = True
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFM_INTRODUCTION_MARKERS \
+                or marker in USFM_ALL_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
@@ -7599,7 +7809,7 @@ class BibleWriter( InternalBible ):
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFM_INTRODUCTION_MARKERS \
+                or marker in USFM_ALL_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
@@ -7782,7 +7992,7 @@ class BibleWriter( InternalBible ):
                         #print( "toDrupalBible V is now", repr(V) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFM_INTRODUCTION_MARKERS \
+                or marker in USFM_ALL_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
@@ -8295,7 +8505,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
+                elif marker in USFM_ALL_INTRODUCTION_MARKERS: # Drop the introduction
                     ignoredMarkers.add( marker )
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
@@ -10540,6 +10750,7 @@ def demo():
                 ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
                 ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
                 ("OEB", 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
+                ("OSISTest1", 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -10597,7 +10808,6 @@ def demo():
                 ("WEB3", 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
                 ("WEB4", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
                 ("WEB5", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
-                ("OSISTest1", 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -10784,10 +10994,6 @@ def demo():
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
