@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-01' # by RJH
+LastModifiedDate = '2018-04-27' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -69,7 +69,7 @@ from collections import OrderedDict
 import unicodedata
 
 import BibleOrgSysGlobals
-from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
+from USFMMarkers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, \
@@ -1240,7 +1240,7 @@ class InternalBibleBook:
             nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
             #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
 
-            if marker in USFM_INTRODUCTION_MARKERS and 'intro' not in openMarkers:
+            if marker in USFM_ALL_INTRODUCTION_MARKERS and 'intro' not in openMarkers:
                 openMarker( 'intro' )
                 haveIntro += 1 # now 'true' but counted to detect errors
                 if haveIntro > 1:
@@ -1303,7 +1303,7 @@ class InternalBibleBook:
                     #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
                     openMarker( 'ilist' )
                 #haveIntro = True
-            elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
+            elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_ALL_INTRODUCTION_MARKERS because they overlap
                 #if marker=='is' or marker=='is1': print( "XX", marker, openMarkers, lastPMarker )
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
@@ -1312,7 +1312,7 @@ class InternalBibleBook:
                 openMarkers.append( marker )
                 lastSMarker = marker
                 #if marker=='is' or marker=='is1': print( "YY", marker, openMarkers, lastPMarker )
-            #elif marker in USFM_INTRODUCTION_MARKERS:
+            #elif marker in USFM_ALL_INTRODUCTION_MARKERS:
                 #haveIntro = True
             elif marker in ourMainListMarkers:
                 assert not text

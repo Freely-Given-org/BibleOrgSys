@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-01' # by RJH
+LastModifiedDate = '2018-04-27' # by RJH
 ShortProgName = "e-SwordCommentary"
 ProgName = "e-Sword Commentary format handler"
 ProgVersion = '0.06'
@@ -613,7 +613,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
     from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 

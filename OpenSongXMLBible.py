@@ -67,7 +67,7 @@ Sample:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-04-27' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.39'
@@ -85,7 +85,7 @@ from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleBooksNames import BibleBooksNamesSystems
 from Bible import Bible, BibleBook
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, \
+from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from MLWriter import MLWriter
 
@@ -278,7 +278,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
                 verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
             elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-            or marker in USFM_INTRODUCTION_MARKERS \
+            or marker in USFM_ALL_INTRODUCTION_MARKERS \
             or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                 ignoredMarkers.add( marker )
             elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:

@@ -74,7 +74,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-01' # by RJH
+LastModifiedDate = '2018-04-27' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.72'
@@ -89,8 +89,8 @@ import logging
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
-from USFMMarkers import USFM_TITLE_MARKERS, USFM_INTRODUCTION_MARKERS, \
-                        USFM_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
+from USFMMarkers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+                        USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 #from BibleReferences import BibleAnchorReference
 
 
@@ -112,9 +112,9 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
 
     NOTE: Don't use any of the following symbols here: = ¬ or slashes.
 """
-BOS_PRINTABLE_MARKERS = USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS + USFM_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
+BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
 
-BOS_REGULAR_NESTING_MARKERS = USFM_SECTION_HEADING_MARKERS + ('c','v' )
+BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' )
 
 BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
