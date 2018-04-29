@@ -2928,9 +2928,10 @@ class BibleWriter( InternalBible ):
             pseudoESFMData = bookObject._processedLines
             #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
 
-            bookText, bookIndex = '', {}
+            bookText, bookIndexDict, bookIndexList = '', {}, []
             inField = None
             C, V = 'I', '0'
+            lastC, lastV = C, V
             sectionCV = '{}v{}'.format( C, V )
             for processedBibleEntry in pseudoESFMData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
@@ -2946,10 +2947,12 @@ class BibleWriter( InternalBible ):
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
                 or pseudoMarker == 's1' \
-                or (C=='1' and V=='0' and ('1','0') not in bookIndex):
+                or (C=='1' and V=='0' and ('1','0') not in bookIndexDict):
                     # Start a new section
                     assert bookText
-                    bookIndex[sectionCV] = len(bookText)
+                    bookIndexDict[sectionCV] = len(bookText)
+                    bookIndexList.append( (lastC,lastV,len(bookText)) )
+                    lastC, lastV = C, V
                     sectionCV = '{}v{}'.format( C, V )
 
                 if pseudoMarker == 'c': C, V = cleanText, '0' # ignores footnotes on chapter numbers
@@ -2990,12 +2993,27 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( bookText )
 
-            # Write the index
+            # Write the index dict
             #print( "index", bookIndex )
-            filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
+            filename = "{}.{}.bd.d.idx".format( BBB, BDDataFormatVersion )
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
-            outputBytes = json.dumps( bookIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            outputBytes = json.dumps( bookIndexDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            with open( filepath, 'wb' ) as jsonFile:
+                jsonFile.write( outputBytes )
+
+            # Write the index list
+            newBookIndexList = []
+            for C,V,fO in bookIndexList: # Convert strings to integers for the JSON index
+                if C=='I': C = -1
+                intC, intV = int( C ), int( V )
+                newBookIndexList.append( (intC,intV,fO) )
+            # Write the index list
+            #print( "index", bookIndex )
+            filename = "{}.{}.bd.l.idx".format( BBB, BDDataFormatVersion )
+            filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
 
@@ -3012,7 +3030,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping BDText files…" )
         tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
         for filename in os.listdir( bookOutputFolder ):
-            if filename.endswith( '.bd.txt' ) or filename.endswith( '.bd.idx' ):
+            if filename.endswith( '.bd.txt' ) or filename.endswith( '.idx' ):
                 filepath = os.path.join( bookOutputFolder, filename )
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
