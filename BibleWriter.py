@@ -74,7 +74,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-04-29' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -3012,7 +3012,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping BDText files…" )
         tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
         for filename in os.listdir( bookOutputFolder ):
-            if filename.endswith( '.bd.txt' ):
+            if filename.endswith( '.bd.txt' ) or filename.endswith( '.bd.idx' ):
                 filepath = os.path.join( bookOutputFolder, filename )
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
