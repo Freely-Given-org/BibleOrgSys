@@ -37,10 +37,10 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-02' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "MLWriter"
 ProgName = "ML Writer"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -314,7 +314,7 @@ class MLWriter:
         assert textString # It can't be blank
         if '<' in textString or '>' in textString or '"' in textString:
             logging.error( "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString ) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
         ix = textString.find( '&' )
         while ix != -1:
             ix2 = textString.find( ';', ix+1 )
@@ -449,12 +449,12 @@ class MLWriter:
         #print( 'writeLineClose', self._openStack )
         if not self._openStack:
             logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
                 logging.error( "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -493,7 +493,7 @@ class MLWriter:
         assert self.__outputFile is not None
         if self._openStack:
             logging.error( "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
         if writeFinalNL: self.writeNewLine()
         if self._buffer: self._writeBuffer()
         if self._status != 'Buffered': pass
@@ -552,7 +552,7 @@ class MLWriter:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
                 if returnCode == 5: # schema error
                     logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
             elif BibleOrgSysGlobals.verbosityLevel > 3: print( "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
