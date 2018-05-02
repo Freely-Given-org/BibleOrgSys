@@ -2956,8 +2956,8 @@ class InternalBibleBook:
                 if logger is not None:
                     logger( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
 
-            if marker[0] == '¬' or marker in BOS_ADDED_NESTING_MARKERS: # Just ignore these added markers
-                continue
+            if marker[0] == '¬' or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                continue # Just ignore these added markers
             elif marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
                 continue
@@ -3020,7 +3020,7 @@ class InternalBibleBook:
             lastModifiedMarker = marker
 
             # Check for known bad combinations
-            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5', 'qa'):
+            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4', 'qa'):
                 newlineMarkerErrors.append( lineLocationSpace + _("'nb' not allowed immediately after {!r} section heading").format( marker ) )
             if self.checkUSFMSequencesFlag: # Check for known good combinations
                 commonGoodNewlineMarkerCombinations = (

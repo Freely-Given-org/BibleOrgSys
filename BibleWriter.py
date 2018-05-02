@@ -78,7 +78,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
+LastModifiedDate = '2018-05-03' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -2008,10 +2008,10 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 else:
                     if adjText:
-                        logging.error( "toDoor43: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, adjText ) )
+                        logging.error( "toDoor43: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, adjText ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.error( "toDoor43: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.error( "toDoor43: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'q1','q2','q3','q4', 'm','li1','li2','li3','li4',): logging.critical( "toDoor43: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -2791,10 +2791,10 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toHTML5: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.critical( "toHTML5: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
-                        logging.critical( "toHTML5: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.critical( "toHTML5: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
@@ -2882,8 +2882,11 @@ class BibleWriter( InternalBible ):
         Adjust the pseudo USFM and write the text and index files (by book) to be used by BibleDoor.
 
         Text is chunked into paragraphs (if possible).
-        Paragraph markers are placed at the beginning of each chunk followed by an equals sign.
+        Paragraph markers (without backslashes) are placed at the beginning of each chunk
+                followed by an equals sign.
             Note: some markers (like 'b') don't have any text after the equals sign.
+            Also, uncompleted Bibles might have blank fields (or maybe just a series of verse markers).
+            Hopefully each line in the output file will start with a paragraph marker and equals sign.
         Chapter and verse numbers are placed inline in {} fields at the display position, e.g., {c1}{v1}.
         USFM footnote and character formatting remains unchanged
             (because they already have both start and END markers for easy parsing)
@@ -2947,7 +2950,7 @@ class BibleWriter( InternalBible ):
             C, V = 'I', '-1' # So first/id line starts at I:0
             savedC, savedV = C, '0'
             sectionCV = '{}v{}'.format( C, V )
-            currentText = ''
+            currentText = currentParagraphMarker = ''
             for processedBibleEntry in pseudoESFMData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
                 #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
@@ -2957,7 +2960,7 @@ class BibleWriter( InternalBible ):
                         assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
                     V = str( int(V) + 1 )
                 if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
-                #print( "_toBibleDoorText processing {!r} {}".format( pseudoMarker, fullText[:40]+('…' if len(fullText)>40 else '') ) )
+                #print( "_toBibleDoorText processing {!r} {!r} {}".format( self.abbreviation, pseudoMarker, fullText[:60]+('…' if len(fullText)>60 else '') ) )
                 if pseudoMarker in ('vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -2969,30 +2972,37 @@ class BibleWriter( InternalBible ):
                 or pseudoMarker == 's1' \
                 or (pseudoMarker == 'c' and not haveSectionHeadings):
                 #or (C=='1' and V=='1' and ('1','0') not in bookIndexDict):
-                    # Start a new section
-                    assert currentText
-                    if pseudoMarker=='s1': assert haveSectionHeadings
-                    elif pseudoMarker=='c':
-                        assert not haveSectionHeadings
-                        assert cleanText.isdigit() # Chapter number only
-                        savedC, V = C, '0' # Catch up on the chapter number
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        print( "\nAt {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
-                        for j,line in enumerate( currentText.splitlines() ):
-                            print( '  {}/ {}'.format( j+1, line ) )
-                            assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
-                    assert sectionCV not in bookIndexDict
-                    bookIndexDict[sectionCV] = len(bookText)
-                    bookIndexList.append( (savedC,savedV,len(bookText)) )
-                    bookText += currentText
-                    savedC, savedV, savedText = C, V, currentText
-                    currentText = ''
-                    sectionCV = '{}v{}'.format( C, V )
+                    if currentText: # start a new section
+                        if pseudoMarker=='s1': assert haveSectionHeadings
+                        elif pseudoMarker=='c':
+                            assert not haveSectionHeadings
+                            assert cleanText.isdigit() # Chapter number only
+                            savedC, V = C, '0' # Catch up on the chapter number
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            print( "\nAt {!r} {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( self.abbreviation, BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
+                            for j,line in enumerate( currentText.splitlines() ):
+                                print( '  {}/ {}'.format( j+1, line ) )
+                                assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
+                        assert sectionCV not in bookIndexDict
+                        bookIndexDict[sectionCV] = len(bookText)
+                        bookIndexList.append( (savedC,savedV,len(bookText)) )
+                        bookText += currentText
+                        savedC, savedV, savedText = C, V, currentText
+                        currentText = currentParagraphMarker = ''
+                        sectionCV = '{}v{}'.format( C, V )
+                    else:
+                        logging.warning( "_toBibleDoorText {} skipped making an index entry for blank text around {} {}:{}" \
+                                                    .format( self.abbreviation, BBB, C, V ) )
 
                 if pseudoMarker == 'c':
                     assert cleanText.isdigit() # Chapter number only
                     C, V = cleanText, '0' # ignores footnotes on chapter numbers
-                elif pseudoMarker == 'c#': currentText += '{{c{}}}'.format( cleanText )
+                elif pseudoMarker == 'c#':
+                    if currentParagraphMarker in ('','s1','r'):
+                        logging.warning( "_toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
+                                                    .format( self.abbreviation, BBB, currentParagraphMarker, C, V ) )
+                        currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
+                    currentText += '{{c{}}}'.format( cleanText )
                 elif pseudoMarker in ('v=','v'): # v= precedes the following section heading, etc.
                     V = cleanText
                     if '-' in V: V = V[:V.index('-')]
@@ -3002,13 +3012,19 @@ class BibleWriter( InternalBible ):
                 elif pseudoMarker in paragraphMarkers:
                     if currentText: currentText += '\n'
                     currentText += '{}{}{}'.format( pseudoMarker, paragraphDelimiter, fullText )
+                    currentParagraphMarker = pseudoMarker
                 elif pseudoMarker == 'v~':
-                    #print( "Ooops", repr(currentText[-4:]) )
+                    #print( "Ooops {!r} {!r} {!r}".format( pseudoMarker, currentText[-4:], currentParagraphMarker ) )
                     assert currentText[-1] == '}' # Verse marker
+                    if currentParagraphMarker in ('','s1','r'):
+                        logging.warning( "_toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
+                                                    .format( self.abbreviation, BBB, currentParagraphMarker, C, V ) )
+                        currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
                     currentText += fullText
                 elif pseudoMarker == 'p~':
                     #print( "Ooops", repr(currentText[-4:]) )
                     assert currentText[-1] == paragraphDelimiter
+                    assert currentParagraphMarker not in ('','s1','r')
                     currentText += fullText
                 else:
                     #print( 'BDText3 remainder!', BBB, pseudoMarker, repr(fullText) )
@@ -3804,10 +3820,10 @@ class BibleWriter( InternalBible ):
                     if BibleOrgSysGlobals.debugFlag and marker=='nb': assert not text and not extras
                 else:
                     if text:
-                        logging.critical( "toBibleDoor: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.critical( "toBibleDoor: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
-                        logging.critical( "toBibleDoor: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.critical( "toBibleDoor: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
@@ -5829,14 +5845,14 @@ class BibleWriter( InternalBible ):
                 #verseText = text[offset:] # Get the rest of the string which is the verse text
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     toOSISGlobals['verseRef']  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
                     sID    = toOSISGlobals['verseRef'] + '-' + verseRef2
                     osisID = toOSISGlobals['verseRef'] + ' ' + verseRef2
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
-                    if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                    if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     sID = toOSISGlobals['verseRef'] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
@@ -5846,7 +5862,7 @@ class BibleWriter( InternalBible ):
                 elif verseNumberString.isdigit():
                     sID = osisID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
-                    logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                    logging.critical( _("toOSIS: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     tempID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString # Try it anyway
                     sID = osisID = tempID.replace('<','').replace('>','').replace('"','') # But remove anything that'll cause a big XML problem later
                 #print( "here SID={!r} osisID={!r}".format( sID, osisID ) )
@@ -6132,10 +6148,10 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toOSIS: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.critical( "toOSIS: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.critical( "toOSIS: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.critical( "toOSIS: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
@@ -6673,10 +6689,10 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveNotesFlag )
                 else:
                     if text:
-                        logging.error( "toZefania: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.error( "toZefania: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.error( "toZefania: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.error( "toZefania: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
@@ -6866,10 +6882,10 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
                 else:
                     if text:
-                        logging.error( "toHaggai: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.error( "toHaggai: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.error( "toHaggai: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.error( "toHaggai: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
@@ -7304,7 +7320,7 @@ class BibleWriter( InternalBible ):
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
                     if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit():
-                        logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                        logging.critical( _("toSwordModule: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     toSwordGlobals['verseRef']  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
                     sID    = toSwordGlobals['verseRef'] + '-' + verseRef2
@@ -7312,7 +7328,7 @@ class BibleWriter( InternalBible ):
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
                     if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit():
-                        logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                        logging.critical( _("toSwordModule: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     sID = toSwordGlobals['verseRef'] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
@@ -7322,7 +7338,7 @@ class BibleWriter( InternalBible ):
                 elif verseNumberString.isdigit():
                     sID = osisID = toSwordGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
-                    logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
+                    logging.critical( _("toSwordModule: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
                 #adjText = processXRefsAndFootnotes( verseText, extras )
                 #writerObject.writeLineText( checkSwordText(adjText), noTextCheck=True )
@@ -7616,10 +7632,10 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if text:
-                        logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.critical( "toSwordModule: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.critical( "toSwordModule: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.critical( "toSwordModule: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4', 'd', ): logging.critical( "toSwordModule: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -7896,7 +7912,7 @@ class BibleWriter( InternalBible ):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
-                        logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.error( "toSwordSearcher: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logging.critical( "toSwordSearcher: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -8080,7 +8096,7 @@ class BibleWriter( InternalBible ):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
-                        logging.warning( "toDrupalBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                        logging.warning( "toDrupalBible: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logging.critical( "toDrupalBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -8640,7 +8656,7 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n'
                 else:
                     if cleanText:
-                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, cleanText ) )
+                        logging.error( "toPhotoBible: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, cleanText ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',):
@@ -9669,7 +9685,7 @@ class BibleWriter( InternalBible ):
                             assert not txt
                             logging.warning( "toODF: ignored blank {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
                         else:
-                            logging.critical( "toODF: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, textSegment ) )
+                            logging.critical( "toODF: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, textSegment ) )
                             unhandledMarkers.add( "{} (char)".format( marker ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 elif textSegment: # No character formatting here
@@ -9914,10 +9930,10 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 else:
                     if adjText:
-                        logging.error( "toODF: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, adjText ) )
+                        logging.error( "toODF: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, adjText ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     if extras:
-                        logging.error( "toODF: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        logging.error( "toODF: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 lastMarker = marker
@@ -10311,7 +10327,7 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "{}\n".format( texText(text) ) )
                         else:
                             if text:
-                                logging.error( "toTeX: lost text in {} field in {} {}:{} {!r}".format( marker, BBB, C, V, text ) )
+                                logging.error( "toTeX: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
                                 #if BibleOrgSysGlobals.debugFlag: halt
                             unhandledMarkers.add( marker )
                         #if extras and marker not in ('v~','p~',): logging.critical( "toTeX: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
@@ -10823,7 +10839,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( BW )
 
 
-    if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports)
+    if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
         testData = ( # name, abbreviation, folder for USFM files
                 ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
                 ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
@@ -10865,8 +10881,8 @@ def demo():
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
-                                if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
-                                if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
+                                if filename1 not in folderContents1: logging.warning( "  1/ Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
+                                if filename2 not in folderContents2: logging.warning( "  2/ Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
                 else: logging.error( "Sorry, test folder {!r} has no loadable books.".format( testFolder ) )
             else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
@@ -10888,10 +10904,15 @@ def demo():
                 ("WEB5", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
                 ("WEB6", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2017-08-22 eng-web_usfm'),
                 ("WEBLatest", 'WEB', '../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/eng-web_usfm/'),
+                ('ULT','ULT','../../../../../Data/Work/Bibles/English translations/UnfoldingWordVersions/ULT/en_ult/'),
+                ('UST','UST','../../../../../Data/Work/Bibles/English translations/UnfoldingWordVersions/UST/en_ust/'),
+                ('ULB','ULB','../../../../../Data/Work/Bibles/English translations/Door43Versions/ULB/en_ulb/'),
+                ('UDB','UDB','../../../../../Data/Work/Bibles/English translations/Door43Versions/UDB/en_udb/'),
+                ('UEB','UEB','../../../../../Data/Work/Bibles/English translations/Door43Versions/UEB/en_ueb/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/…' )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
@@ -10954,7 +10975,7 @@ def demo():
                 ) # You can put your test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/…' )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UnkB = UnknownBible( testFolder )
                 result = UnkB.search( autoLoadAlways=True, autoLoadBooks=True )
@@ -10988,8 +11009,8 @@ def demo():
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
-                                if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
-                                if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
+                                if filename1 not in folderContents1: logging.warning( "  1/ Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
+                                if filename2 not in folderContents2: logging.warning( "  2/ Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
                 else:
                     logging.critical( "Unable to load {} Bible from {!r}—aborting".format( abbrev, testFolder ) )
             else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
@@ -11004,7 +11025,7 @@ def demo():
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/…' )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter D'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
@@ -11051,7 +11072,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter D'+str(j+1)+'/', UB )
+                if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter E'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )

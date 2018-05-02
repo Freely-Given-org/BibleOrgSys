@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.51'
@@ -200,7 +200,13 @@ class USFMBibleBook( BibleBook ):
                 lastText +=  '\\' + marker + ' ' + text
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
-                if marker and marker[0] == 'z': # it's a custom marker
+                if marker == 's5' and not text: # it's a Door43 translatable section marker
+                    loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with no text") \
+                                        .format( self.BBB, C, V, marker ) )
+                    logging.warning( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
+                                        .format( marker, self.BBB, C, V ) )
+                    marker = '' # so it gets deleted
+                elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {!r}") \
                                             .format( self.BBB, C, V, marker, text ) )
@@ -227,12 +233,12 @@ class USFMBibleBook( BibleBook ):
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker: doaddLine( lastMarker, lastText )
-                            if marker=='s5' and not text:
-                                # Door43 projects use empty s5 fields as some kind of division markers
-                                lastMarker, lastText = 's', '---'
-                            else:
-                                # Move the extra appendage to the marker into the actual text
-                                lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
+                            #if marker=='s5' and not text:
+                                ## Door43 projects use empty s5 fields as some kind of division markers
+                                #lastMarker, lastText = 's', '---'
+                            #else:
+                            # Move the extra appendage to the marker into the actual text
+                            lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                             if text:
                                 loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
                                 logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
