@@ -27,6 +27,7 @@ EARLY PROTOTYPE ONLY AT THIS STAGE! (Developmental code not very well structured
 
 TODO: Check handling of chapter -1 == introduction
 TODO: Rewrite some of the loops to take advantage of 'v=' entries.
+TODO: Go through all unhandled fields and find out how they should be handled.
 
 Module for exporting Bibles in various formats listed below.
 
@@ -718,7 +719,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
                     continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
@@ -883,7 +884,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
                     continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
@@ -2979,7 +2980,7 @@ class BibleWriter( InternalBible ):
                         print( "\nAt {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                         for j,line in enumerate( currentText.splitlines() ):
                             print( '  {}/ {}'.format( j+1, line ) )
-                            assert line.index(paragraphDelimiter) <= 4 # Should start with a paragraph marker, e.g., imt1
+                            assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                     assert sectionCV not in bookIndexDict
                     bookIndexDict[sectionCV] = len(bookText)
                     bookIndexList.append( (savedC,savedV,len(bookText)) )
@@ -3019,7 +3020,7 @@ class BibleWriter( InternalBible ):
                     print( "\nAt {} {}:{} {!r}: saving final index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                     for j,line in enumerate( currentText.splitlines() ):
                         print( '  {}/ {}'.format( j+1, line ) )
-                        assert line.index(paragraphDelimiter) <= 4 # Should start with a paragraph marker, e.g., imt1
+                        assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                 assert sectionCV not in bookIndexDict
                 bookIndexDict[sectionCV] = len(bookText)
                 bookIndexList.append( (savedC,savedV,len(bookText)) )
@@ -4242,7 +4243,6 @@ class BibleWriter( InternalBible ):
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
-                    #if BBB=='EXO' and C=='17' and V=='7': halt
                     return USXfootnoteXML
                 # end of toUSX2XML.processFootnote
 
@@ -4729,7 +4729,6 @@ class BibleWriter( InternalBible ):
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
-                    #if BBB=='EXO' and C=='17' and V=='7': halt
                     return USXfootnoteXML
                 # end of toUSX3XML.processFootnote
 
@@ -5207,7 +5206,6 @@ class BibleWriter( InternalBible ):
                     if fTextOpen: USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USFXfootnoteXML += '</f>'
                     #print( '', USFXfootnote, USFXfootnoteXML )
-                    #if BBB=='EXO' and C=='17' and V=='7': halt
                     return USFXfootnoteXML
                 # end of toUSFXXML.processFootnote
 
