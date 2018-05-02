@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -69,7 +69,8 @@ from collections import OrderedDict
 import unicodedata
 
 import BibleOrgSysGlobals
-from USFMMarkers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
+from USFMMarkers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
+    USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, \
@@ -147,7 +148,7 @@ class InternalBibleBook:
             self.workName = parameter1
         else:
             self.containerBibleObject = parameter1
-            self.workName = self.containerBibleObject.name
+            self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
         if BibleOrgSysGlobals.debugFlag: assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
 
@@ -1127,6 +1128,60 @@ class InternalBibleBook:
     # end of InternalBibleBook.processLines.processLineFix
 
 
+    def addVerseStartMarkers( self ):
+        """
+        We add v= lines here.
+
+            c       5
+            v=      1
+            s       Section heading (could also be s1)
+            p
+            c#      5
+            v       1
+            v~      Verse one text
+            q1
+            p~      More verse one text
+
+        Note: we don't number lines in the introduction (i.e., before c 1).
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "addVerseStartMarkers() for {}".format( self.BBB ) )
+
+        newLines = InternalBibleEntryList()
+        fieldsPreceded = ('s','s1','s2','s3','s4','sp')
+        fieldsAlsoPreceded = USFM_ALL_BIBLE_PARAGRAPH_MARKERS \
+                                + ('c#','r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr')
+        # NOTE: This code can add multiple v= lines if a sp follows a s1, etc.
+
+        C, V = '-1', '-1' # So first/id line starts at -1:0
+        lastJ = len(self._processedLines) - 1
+        for j,dataEntry in enumerate( self._processedLines ):
+            assert isinstance( dataEntry, InternalBibleEntry )
+            marker, text = dataEntry.getMarker(), dataEntry.getCleanText()
+            if marker == 'c': C, V = text, '0'
+            elif marker == 'v': V = text
+
+            if marker in fieldsPreceded:
+                #print( "  Looking ahead after {} {}:{} {!r} field...".format( self.BBB, C, V, marker ) )
+                for k in range( 1, 5 ): # Number of lines to look ahead
+                    if j+k <= lastJ:
+                        nextDataEntry = self._processedLines[j+k]
+                        assert isinstance( nextDataEntry, InternalBibleEntry )
+                        nextMarker = nextDataEntry.getMarker()
+                        if nextMarker == 'v':
+                            vText = nextDataEntry.getCleanText()
+                            #print( "  Adding v= {} at {} {}:{}".format( vText, self.BBB, C, V ) )
+                            newLines.append( InternalBibleEntry('v=', 'v', nextDataEntry.getAdjustedText(), vText, None, nextDataEntry.getOriginalText()) )
+                        #elif nextMarker in fieldsAlsoPreceded: print( "  Noting {} line".format( nextMarker ) )
+                        elif nextMarker not in fieldsAlsoPreceded: break # got something else
+            newLines.append( dataEntry ) # Put pre-existing line in
+
+        if debuggingThisModule and (len(newLines) != len(self._processedLines)):
+            print( "  addVerseStartMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
+        self._processedLines = newLines # replace the old set
+    # end of addVerseStartMarkers
+
+
     def addNestingMarkers( self ):
         """
         Or 'addEndMarkers'. End markers start with not sign ¬.
@@ -1148,6 +1203,7 @@ class InternalBibleBook:
             ¬p
             ¬c      4
             c       5
+            v=      1
             s       Section heading (could also be s1)
             p
             c#      5
@@ -1162,7 +1218,7 @@ class InternalBibleBook:
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("addNestingMarkers()") )
+            print( "addNestingMarkers() for {}".format( self.BBB ) )
 
         newLines = InternalBibleEntryList()
         openMarkers = []
@@ -1349,11 +1405,13 @@ class InternalBibleBook:
                 elif lMarker == 'c': closeLastOpenMarker( C )
                 else: closeLastOpenMarker()
         assert not openMarkers
+        if debuggingThisModule and (len(newLines) != len(self._processedLines)):
+            print( "  addNestingMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
         self._processedLines = newLines # replace the old set
     # end of InternalBibleBook.processLines.addNestingMarkers
 
 
-    def reorderRawLines( self ):
+    def reorderRawOsisLines( self ):
         """
         Using self._rawLines from OSIS input, reorder them before further processing.
         This is because processing the XML provides the markers in a different order from USFM
@@ -1486,7 +1544,7 @@ class InternalBibleBook:
         #print( 'RO-3', len(self._rawLines) )
         #print( self.BBB, "RL" )
         #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
-    # end of InternalBibleBook.processLines.reorderRawLines
+    # end of InternalBibleBook.processLines.reorderRawOsisLines
 
 
     def processLines( self ):
@@ -1582,7 +1640,7 @@ class InternalBibleBook:
 
             def splitCNumber( inputString ):
                 """
-                Splits a chapter number and returns a list of bits (normally 1, maximum 2)
+                Splits a chapter number and returns a list of bits (normally 1, maximum 2 if there's a foonote on the chapter number))
                 """
                 #print( "splitCNumber( {} )".format( repr(inputString) ) )
                 bit1, bit2 = '', ''
@@ -1640,32 +1698,37 @@ class InternalBibleBook:
             if originalMarker=='c' and text:
                 if haveWaitingC: logging.warning( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.BBB, C, V ) )
                 #C = text.split()[0]; V = '0'
+                if text.lstrip() != text:
+                    fixErrors.append( _("{} {}:{} Extra whitespace before chapter number").format( self.BBB, C, V ) )
+                    logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace before chapter number around {}").format( self.__makeErrorRef(C,V) ) )
+                    self.addPriorityError( 20, C, V, _("Extra whitespace before chapter number") )
+                    text = text.lstrip()
                 cBits = splitCNumber( text )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(cBits)>1:
                     print( "InternalBibleBook.processLine: cbits", cBits )
                 C, V = cBits[0], '0'
-                if C == '-1':
-                    fixErrors.append( _("{} {}:{} Chapter zero is not allowed {!r}").format( self.BBB, C, V, text ) )
-                    logging.error( "InternalBibleBook.processLine: " + _("Found zero {!r} in chapter marker {} {}:{}").format( text, self.BBB, C, V ) )
-                    self.addPriorityError( 97, C, V, _("Chapter zero {!r} not allowed").format( text ) )
-                    if len(self._processedLines) < 30: # It's near the beginning of the file
-                        logging.warning( "Converting given chapter zero to chapter one in {}".format( self.BBB ) )
-                        C = '1' # Our best guess
-                        text = C + text[1:]
+                #if C == '-1':
+                    #fixErrors.append( _("{} {}:{} Chapter -1 is not allowed {!r}").format( self.BBB, C, V, text ) )
+                    #logging.error( "InternalBibleBook.processLine: " + _("Found -1 {!r} in chapter marker {} {}:{}").format( text, self.BBB, C, V ) )
+                    #self.addPriorityError( 97, C, V, _("Chapter -1 {!r} not allowed").format( text ) )
+                    #if len(self._processedLines) < 30: # It's near the beginning of the file
+                        #logging.warning( "Converting given chapter -1 to chapter zero in {}".format( self.BBB ) )
+                        #C = '0' # Our best guess
+                        #text = C + text[1:]
                 haveWaitingC = C
                 if len(cBits) > 1: # We have extra stuff on the c line after the chapter number
                     if cBits[1] == ' ': # It's just a space
-                        fixErrors.append( _("{} {}:{} Extra space after chapter marker").format( self.BBB, C, V ) )
-                        logging.warning( "InternalBibleBook.processLine: " + _("Extra space after chapter marker at {}").format( self.__makeErrorRef(C,V) ) )
-                        self.addPriorityError( 10, C, V, _("Extra space after chapter marker") )
+                        fixErrors.append( _("{} {}:{} Extra space after chapter number").format( self.BBB, C, V ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra space after chapter number at {}").format( self.__makeErrorRef(C,V) ) )
+                        self.addPriorityError( 10, C, V, _("Extra space after chapter number") )
                     elif not cBits[1].strip(): # It's more than a space but just whitespace
-                        fixErrors.append( _("{} {}:{} Extra whitespace after chapter marker").format( self.BBB, C, V ) )
-                        logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker at {}").format( self.__makeErrorRef(C,V) ) )
-                        self.addPriorityError( 20, C, V, _("Extra whitespace after chapter marker") )
+                        fixErrors.append( _("{} {}:{} Extra whitespace after chapter number").format( self.BBB, C, V ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter number at {}").format( self.__makeErrorRef(C,V) ) )
+                        self.addPriorityError( 20, C, V, _("Extra whitespace after chapter number") )
                     else: # it's more than just whitespace
-                        fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material {!r}").format( self.BBB, C, V, cBits[1] ) )
-                        logging.error( "InternalBibleBook.processLine: " + _("Extra {!r} material in chapter marker {}").format( cBits[1], self.__makeErrorRef(C,V) ) )
-                        self.addPriorityError( 30 if '\f ' in cBits[1] else 98, C, V, _("Extra {!r} material after chapter marker").format( cBits[1] ) )
+                        fixErrors.append( _("{} {}:{} Chapter number seems to contain extra material {!r}").format( self.BBB, C, V, cBits[1] ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Extra {!r} material in chapter number {}").format( cBits[1], self.__makeErrorRef(C,V) ) )
+                        self.addPriorityError( 30 if '\f ' in cBits[1] else 98, C, V, _("Extra {!r} material after chapter number").format( cBits[1] ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "InternalBibleBook.processLine: Something on c line", self.BBB, C, V, repr(text), repr(cBits[1]) )
                         adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, cBits[1], fixErrors )
@@ -1915,7 +1978,7 @@ class InternalBibleBook:
 
 
         # This is the main processLines code
-        if self.objectTypeString == 'OSIS': self.reorderRawLines()
+        if self.objectTypeString == 'OSIS': self.reorderRawOsisLines()
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -1926,6 +1989,8 @@ class InternalBibleBook:
             processLine( marker, text ) # Saves its results in self._processedLines
         del self.pntsCount, self.nfvnCount, self.owfvnCount, self.rtsCount, self.sahtCount, self.fwmifCount, self.fswncCount
 
+        # Go through and add v= markers (for logical verses)
+        self.addVerseStartMarkers()
         # Go through the lines and add nesting markers like 'intro', 'chapter', etc.
         self.addNestingMarkers()
 

@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.70'
@@ -68,7 +68,7 @@ USFM_ALL_SECTION_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'is','is1','is2','
 USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
                             'pi','pi1','pi2','pi3','pi4', 'ph','ph1','ph2','ph3','ph4',
                             'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
-                            'li','li1','li2','li3','li4' ) # (37) Doesn't include nb and qa -- WHY NOT???
+                            'li','li1','li2','li3','li4' ) # (37) Doesn't include nb and qa and sp -- WHY NOT???
                                                             #   but does include q, qm, li, pi, and ph
 USFM_ALL_BIBLE_PARAGRAPH_MARKERS = USFM_INTRODUCTION_PARAGRAPH_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 

@@ -25,6 +25,9 @@
 """
 EARLY PROTOTYPE ONLY AT THIS STAGE! (Developmental code not very well structured yet.)
 
+TODO: Check handling of chapter -1 == introduction
+TODO: Rewrite some of the loops to take advantage of 'v=' entries.
+
 Module for exporting Bibles in various formats listed below.
 
 A class which extends InternalBible.
@@ -74,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-29' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -299,7 +302,7 @@ class BibleWriter( InternalBible ):
                             #print( '  Skipping books' )
                             pass
                         else:
-                            #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '...' )
+                            #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
                             json.dump( attributeName, jsonOutputFile, ensure_ascii=False )
                             json.dump( attributeValue, jsonOutputFile, ensure_ascii=False )
             except TypeError as err:
@@ -506,7 +509,8 @@ class BibleWriter( InternalBible ):
             #C, V = '-1', '0' # Just for error messages
             #for entry in bookObject._processedLines:
                 #marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
-                #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    #continue # Just ignore added markers -- not needed here
 
                 ## Keep track of where we are for more helpful error messages
                 #if marker=='c' and text: C, V = text.split()[0], '0'
@@ -714,7 +718,8 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -878,7 +883,8 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -1275,7 +1281,7 @@ class BibleWriter( InternalBible ):
                     haveP = False
                     for entry in pseudoESFMData:
                         marker, text = entry.getMarker(), entry.getCleanText()
-                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS:
+                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                             continue # Just ignore added markers -- not needed here
                         if marker in ('c#','vp#',):
                             ignoredMarkers.add( marker )
@@ -1912,7 +1918,8 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, adjText, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #print( "toDoor43:writeD43Book", BBB, bookRef, bookName, marker, adjText, extras )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -2623,7 +2630,8 @@ class BibleWriter( InternalBible ):
                 if text != processedBibleEntry.getCleanText(): haveExtraFormatting = True
                 #if BBB=='MRK': print( "writeHTML5Book", marker, text )
                 #print( "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -2870,34 +2878,38 @@ class BibleWriter( InternalBible ):
 
     def _toBibleDoorText( self, outputFolder=None ):
         """
-        Adjust the pseudo USFM and write the text files to be used by BibleDoor
+        Adjust the pseudo USFM and write the text and index files (by book) to be used by BibleDoor.
 
         Text is chunked into paragraphs (if possible).
-        Chapter and verse numbers are placed inline in {} fields.
-        USFM footnote and character formatting remains unchanged.
+        Paragraph markers are placed at the beginning of each chunk followed by an equals sign.
+            Note: some markers (like 'b') don't have any text after the equals sign.
+        Chapter and verse numbers are placed inline in {} fields at the display position, e.g., {c1}{v1}.
+        USFM footnote and character formatting remains unchanged
+            (because they already have both start and END markers for easy parsing)
 
         The output format looks like this (with backslashes escaped here but not in the file):
-            mt2:Ka igkarangeb ne sulat ni
-            mt1:Huwan
-            is1:Igpewun-a
-            ip:Seini ka igkarangeb ne sulat ni Apustul Huwan ne sabeka te me hibateen ni Hisus. Impeendiye din ka seini ne sulat te malitan ne in-alam te Manama wey diye degma te me anak din. Ne kema ke punduk buwa te migmalintutuu ka igpasabut din kayi. Seini se malepet ne sulat, mighangyu te keilangan ne eg-ikul te kamalehetan wey egpaheyinaweey ka tagse sabeka, wey migpaney-paney degma seini meyitenged te me etew ne migpanulu ne ware kun migpekeetew si Hisu Kristu.
-            iot:Ka nenasulat te seini ne baseen
-            io1:Pegpangemusta \\ior 1-3\\ior*
-            io1:Ka kamalehetan wey ka geyinawa \\ior 4-6\\ior*
-            io1:Pegpaney-paney meyitenged te kene ne malehet ne pegpanulu \\ior 7-11\\ior*
-            io1:Ka katammanan \\ior 12-13\\ior*
-            p:{c1}{v1}Sikeddiey si Huwan ka igbuyag te migmalintutuu ka migpeuyan te seini ne sulat. Egpangemusta a te malitan\\f + \\fr 1:1 \\ft Iyan buwa igpasabut te “malitan” ka sabeka ne punduk te migmalintutuu.\\f* ne in-alam te Manama wey diye degma te me anak din. Miggeyinawaan ku sikaniyu langun due te kamalehetan, ne kene ne sikeddiey re, ke kene, ka langun degma ne nakataha te kamalehetan,{v2}tenged su kayid e te pusung ta ka kamalehetan wey kenad e egkaawe te minsan ken-u.
-            p:{v3}Ka keupiya, keyid-u, wey keupianan ne egpuun te Manama ne Amey wey te Anak din ne si Hisu Kristu, egkaangken niyu. Igbehey sika te Manama te seeye se egdawat te kamalehetan wey te geyinawa.
-            s1:Ka kamalehetan wey ka geyinawa
-            p:{v4}Amana a nahale te pegkanengnengi ku ne due me anak nu ne mig-ikul te kamalehetan, sumale te insuhu kanta te Amey.{v5}\\x + \\xo 5: \\xt Huw 13:34; 15:12,17.\\x*Ne kuntee, eghangyuen ku sikeykew atebey, ne paheyinaweey ki ka tagse sabeka. Kene ne iyam sika ne suhu, ke kene, tapey e sika puun pad te bunsuranan.{v6}Egkakita ka geyinawa ne egkahiyen ku pinaahi te pegtuman ta te me suhu din. Tapey niyud e ne narineg ka sika ne suhu puun pad te bunsuranan, ne keilangan ne egbatasanen niyu ka peggeyinawa.
-            p:{v7}Masulug ka nanginguma kayi te kalibutan ne eg-akal te me etew. Kene egpalintutuu sikandan ne migpekeetew si Hisu Kristu. Ka me etew ne iling due, talag-akal wey kuntere ni Kristu!{v8}Bantey kew ne kene egkalaag ka ingkalasey ta su eyew kene egkasalinan ka dasag ne egkarawat niyu.
-            p:{v9}Ka minsan hentew ne ware mig-ikul te impanulu ni Kristu piru nasi migtimul kayi, ware diye te kandin ka Manama. Piru ka minsan hentew ne mig-ikul te impanulu ni Kristu, due te kandin ka Amey wey ka Anak degma.{v10}Ke due eggendue te kaniyu ne kene egpanulu te impanulu ni Kristu, kene niyu sikandin palasura diye te baley niyu, wey kene niyu banasali.{v11}Su seeye se egbanasal kandin, egpakaruma te mareet ne himu rin.
-            s1:Ka pegpanaha-taha
-            p:{v12}Masulug pad perem ka iglalag ku kaniyu, piru kena a egkeupian ne igsulat ku pad seini. Igkeupii ku ne egpakapanumbaley e pad kaniyu wey egpakiglalag iya kaniyu su eyew amana ki egkahale.
-            p:{v13}Egpangemusta degma keykew ka me anak te suled nu\\f + \\fr 1:13 \\ft Iyan buwa igpasabut te “anak te suled nu ne malitan” ka me sakup te lein ne punduk te migmalintutuu.\\f* ne in-alam degma te Manama.
+            mt2=Ka igkarangeb ne sulat ni
+            mt1=Huwan
+            is1=Igpewun-a
+            ip=Seini ka igkarangeb ne sulat ni Apustul Huwan ne sabeka te me hibateen ni Hisus. Impeendiye din ka seini ne sulat te malitan ne in-alam te Manama wey diye degma te me anak din. Ne kema ke punduk buwa te migmalintutuu ka igpasabut din kayi. Seini se malepet ne sulat, mighangyu te keilangan ne eg-ikul te kamalehetan wey egpaheyinaweey ka tagse sabeka, wey migpaney-paney degma seini meyitenged te me etew ne migpanulu ne ware kun migpekeetew si Hisu Kristu.
+            iot=Ka nenasulat te seini ne baseen
+            io1=Pegpangemusta \\ior 1-3\\ior*
+            io1=Ka kamalehetan wey ka geyinawa \\ior 4-6\\ior*
+            io1=Pegpaney-paney meyitenged te kene ne malehet ne pegpanulu \\ior 7-11\\ior*
+            io1=Ka katammanan \\ior 12-13\\ior*
+            p={c1}{v1}Sikeddiey si Huwan ka igbuyag te migmalintutuu ka migpeuyan te seini ne sulat. Egpangemusta a te malitan\\f + \\fr 1:1 \\ft Iyan buwa igpasabut te “malitan” ka sabeka ne punduk te migmalintutuu.\\f* ne in-alam te Manama wey diye degma te me anak din. Miggeyinawaan ku sikaniyu langun due te kamalehetan, ne kene ne sikeddiey re, ke kene, ka langun degma ne nakataha te kamalehetan,{v2}tenged su kayid e te pusung ta ka kamalehetan wey kenad e egkaawe te minsan ken-u.
+            p={v3}Ka keupiya, keyid-u, wey keupianan ne egpuun te Manama ne Amey wey te Anak din ne si Hisu Kristu, egkaangken niyu. Igbehey sika te Manama te seeye se egdawat te kamalehetan wey te geyinawa.
+            s1=Ka kamalehetan wey ka geyinawa
+            p={v4}Amana a nahale te pegkanengnengi ku ne due me anak nu ne mig-ikul te kamalehetan, sumale te insuhu kanta te Amey.{v5}\\x + \\xo 5: \\xt Huw 13:34; 15:12,17.\\x*Ne kuntee, eghangyuen ku sikeykew atebey, ne paheyinaweey ki ka tagse sabeka. Kene ne iyam sika ne suhu, ke kene, tapey e sika puun pad te bunsuranan.{v6}Egkakita ka geyinawa ne egkahiyen ku pinaahi te pegtuman ta te me suhu din. Tapey niyud e ne narineg ka sika ne suhu puun pad te bunsuranan, ne keilangan ne egbatasanen niyu ka peggeyinawa.
+            b=
+            p={v7}Masulug ka nanginguma kayi te kalibutan ne eg-akal te me etew. Kene egpalintutuu sikandan ne migpekeetew si Hisu Kristu. Ka me etew ne iling due, talag-akal wey kuntere ni Kristu!{v8}Bantey kew ne kene egkalaag ka ingkalasey ta su eyew kene egkasalinan ka dasag ne egkarawat niyu.
+            p={v9}Ka minsan hentew ne ware mig-ikul te impanulu ni Kristu piru nasi migtimul kayi, ware diye te kandin ka Manama. Piru ka minsan hentew ne mig-ikul te impanulu ni Kristu, due te kandin ka Amey wey ka Anak degma.{v10}Ke due eggendue te kaniyu ne kene egpanulu te impanulu ni Kristu, kene niyu sikandin palasura diye te baley niyu, wey kene niyu banasali.{v11}Su seeye se egbanasal kandin, egpakaruma te mareet ne himu rin.
+            s1=Ka pegpanaha-taha
+            p={v12}Masulug pad perem ka iglalag ku kaniyu, piru kena a egkeupian ne igsulat ku pad seini. Igkeupii ku ne egpakapanumbaley e pad kaniyu wey egpakiglalag iya kaniyu su eyew amana ki egkahale.
+            p={v13}Egpangemusta degma keykew ka me anak te suled nu\\f + \\fr 1:13 \\ft Iyan buwa igpasabut te “anak te suled nu ne malitan” ka me sakup te lein ne punduk te migmalintutuu.\\f* ne in-alam degma te Manama.
 
         with a separate index entry (by section) like this:
-            index {('Iv0'): 742, ('1v0'): 1412, ('1v3'): 2665}
+            index {('Iv0'): 742, ('1v0'): 1412, ('1v3'): 2665, …}
 
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:_toBibleDoorText…" )
@@ -2905,6 +2917,7 @@ class BibleWriter( InternalBible ):
 
         BDDataFormatVersion = 1 # Increment this when the data files / arrays change
         jsonIndent = 1 # Keep files small for small phones
+        paragraphDelimiter = '='
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_BDText_Export/'
@@ -2928,16 +2941,22 @@ class BibleWriter( InternalBible ):
             pseudoESFMData = bookObject._processedLines
             #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
 
-            bookText, bookIndexDict, bookIndexList = '', {}, []
+            bookText, bookIndexDict, bookIndexList = '', OrderedDict(), []
             inField = None
-            C, V = 'I', '0'
-            lastC, lastV = C, V
+            C, V = 'I', '-1' # So first/id line starts at I:0
+            savedC, savedV = C, '0'
             sectionCV = '{}v{}'.format( C, V )
+            currentText = ''
             for processedBibleEntry in pseudoESFMData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
                 #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers -- not needed here
+                if pseudoMarker in USFM_PRECHAPTER_MARKERS:
+                    if 1 or debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
+                    V = str( int(V) + 1 )
                 if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
+                #print( "_toBibleDoorText processing {!r} {}".format( pseudoMarker, fullText[:40]+('…' if len(fullText)>40 else '') ) )
                 if pseudoMarker in ('vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -2947,35 +2966,64 @@ class BibleWriter( InternalBible ):
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
                 or pseudoMarker == 's1' \
-                or (C=='1' and V=='0' and ('1','0') not in bookIndexDict):
+                or (pseudoMarker == 'c' and not haveSectionHeadings):
+                #or (C=='1' and V=='1' and ('1','0') not in bookIndexDict):
                     # Start a new section
-                    assert bookText
+                    assert currentText
+                    if pseudoMarker=='s1': assert haveSectionHeadings
+                    elif pseudoMarker=='c':
+                        assert not haveSectionHeadings
+                        assert cleanText.isdigit() # Chapter number only
+                        savedC, V = C, '0' # Catch up on the chapter number
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        print( "\nAt {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
+                        for j,line in enumerate( currentText.splitlines() ):
+                            print( '  {}/ {}'.format( j+1, line ) )
+                            assert line.index(paragraphDelimiter) <= 4 # Should start with a paragraph marker, e.g., imt1
+                    assert sectionCV not in bookIndexDict
                     bookIndexDict[sectionCV] = len(bookText)
-                    bookIndexList.append( (lastC,lastV,len(bookText)) )
-                    lastC, lastV = C, V
+                    bookIndexList.append( (savedC,savedV,len(bookText)) )
+                    bookText += currentText
+                    savedC, savedV, savedText = C, V, currentText
+                    currentText = ''
                     sectionCV = '{}v{}'.format( C, V )
 
-                if pseudoMarker == 'c': C, V = cleanText, '0' # ignores footnotes on chapter numbers
-                elif pseudoMarker == 'c#': bookText += '{{c{}}}'.format( cleanText )
-                elif pseudoMarker == 'v':
+                if pseudoMarker == 'c':
+                    assert cleanText.isdigit() # Chapter number only
+                    C, V = cleanText, '0' # ignores footnotes on chapter numbers
+                elif pseudoMarker == 'c#': currentText += '{{c{}}}'.format( cleanText )
+                elif pseudoMarker in ('v=','v'): # v= precedes the following section heading, etc.
                     V = cleanText
                     if '-' in V: V = V[:V.index('-')]
                     elif '–' in V: V = V[:V.index('–')] # en dash
-                    bookText += '{{v{}}}'.format( cleanText ) # ignores footnotes on verse numbers
+                    if pseudoMarker == 'v': # only (not v=)
+                        currentText += '{{v{}}}'.format( cleanText ) # ignores footnotes on verse numbers
                 elif pseudoMarker in paragraphMarkers:
-                    if bookText: bookText += '\n'
-                    bookText += '{}:{}'.format( pseudoMarker, fullText )
+                    if currentText: currentText += '\n'
+                    currentText += '{}{}{}'.format( pseudoMarker, paragraphDelimiter, fullText )
                 elif pseudoMarker == 'v~':
-                    #print( "Ooops", repr(bookText[-4:]) )
-                    assert bookText[-1] == '}' # Verse marker
-                    bookText += fullText
+                    #print( "Ooops", repr(currentText[-4:]) )
+                    assert currentText[-1] == '}' # Verse marker
+                    currentText += fullText
                 elif pseudoMarker == 'p~':
-                    #print( "Ooops", repr(bookText[-4:]) )
-                    assert bookText[-1] == ':' # Paragraph marker
-                    bookText += fullText
+                    #print( "Ooops", repr(currentText[-4:]) )
+                    assert currentText[-1] == paragraphDelimiter
+                    currentText += fullText
                 else:
                     #print( 'BDText3 remainder!', BBB, pseudoMarker, repr(fullText) )
                     unhandledMarkers.add( pseudoMarker )
+
+            if len(currentText) > 0: # save the final index entry
+                if not haveSectionHeadings: savedC, V = C, '0' # Catch up on the chapter number
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    print( "\nAt {} {}:{} {!r}: saving final index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
+                    for j,line in enumerate( currentText.splitlines() ):
+                        print( '  {}/ {}'.format( j+1, line ) )
+                        assert line.index(paragraphDelimiter) <= 4 # Should start with a paragraph marker, e.g., imt1
+                assert sectionCV not in bookIndexDict
+                bookIndexDict[sectionCV] = len(bookText)
+                bookIndexList.append( (savedC,savedV,len(bookText)) )
+                bookText += currentText
 
             ## Adjust the bookText output
             #bookText = noisyRegExDeleteAll( bookText, '\\\\str .+?\\\str\\*' )
@@ -2993,14 +3041,14 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( bookText )
 
-            # Write the index dict
-            #print( "index", bookIndex )
-            filename = "{}.{}.bd.d.idx".format( BBB, BDDataFormatVersion )
-            filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
-            outputBytes = json.dumps( bookIndexDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
-            with open( filepath, 'wb' ) as jsonFile:
-                jsonFile.write( outputBytes )
+            ## Write the index dict
+            ##print( "index", bookIndex )
+            #filename = "{}.{}.bd.d.idx".format( BBB, BDDataFormatVersion )
+            #filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            #outputBytes = json.dumps( bookIndexDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
+            #with open( filepath, 'wb' ) as jsonFile:
+                #jsonFile.write( outputBytes )
 
             # Write the index list
             newBookIndexList = []
@@ -3010,7 +3058,7 @@ class BibleWriter( InternalBible ):
                 newBookIndexList.append( (intC,intV,fO) )
             # Write the index list
             #print( "index", bookIndex )
-            filename = "{}.{}.bd.l.idx".format( BBB, BDDataFormatVersion )
+            filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
             outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
@@ -3022,15 +3070,15 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "  " + _("WARNING: Ignored _toBibleDoorText markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
-            logging.error( "_toBibleDoorText: Unhandled markers were {}".format( ignoredMarkers ) )
+            logging.error( "_toBibleDoorText: Unhandled markers were {}".format( unhandledMarkers ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Unhandled _toBibleDoorText markers were {}").format( ignoredMarkers ) )
+                print( "  " + _("WARNING: Unhandled _toBibleDoorText markers were {}").format( unhandledMarkers ) )
 
         # Now create the bz2 file
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping BDText files…" )
         tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
         for filename in os.listdir( bookOutputFolder ):
-            if filename.endswith( '.bd.txt' ) or filename.endswith( '.idx' ):
+            if filename.endswith( '.bd.txt' ) or filename.endswith( '.bd.idx' ):
                 filepath = os.path.join( bookOutputFolder, filename )
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
@@ -3252,6 +3300,7 @@ class BibleWriter( InternalBible ):
             headerDict['Version name'] = workTitle if workTitle else self.name
             workAbbreviation = self.getSetting( 'WorkAbbreviation' )
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
+            headerDict['Has section headings'] = haveSectionHeadings
             #print( headerDict )
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
@@ -3466,10 +3515,6 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for writeBDBookAsHTML
-            try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
-            except AttributeError: haveSectionHeadings = False
-            #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
-
             HTMLSections = []
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
             uncompressedFileOffset = compressedFileOffset = 0
@@ -3488,14 +3533,15 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
                 #print( " toBD: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
                 #print( "   sectionBCV", sectionBCV )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
                 # Markers usually only found in the introduction
-                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie','v='): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if pOpen:
@@ -3811,6 +3857,10 @@ class BibleWriter( InternalBible ):
         # end of writeBDBookAsHTML
 
 
+        # Start of main code for
+        try: haveSectionHeadings = True if self.discoveryResults['ALL']['haveSectionHeadings']>0 else False
+        except AttributeError: haveSectionHeadings = False
+        #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
         writeBDHeader()
 
         # Write the books
@@ -4263,7 +4313,8 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -4748,7 +4799,8 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -5217,7 +5269,8 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -5888,7 +5941,8 @@ class BibleWriter( InternalBible ):
             C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -6553,7 +6607,8 @@ class BibleWriter( InternalBible ):
                 haveNotesFlag = False
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -6753,7 +6808,8 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -7349,7 +7405,8 @@ class BibleWriter( InternalBible ):
             chapterRef = bookRef + '.0'
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -7804,7 +7861,8 @@ class BibleWriter( InternalBible ):
             C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in pseudoESFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -7975,7 +8033,8 @@ class BibleWriter( InternalBible ):
             C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -8508,7 +8567,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoESFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText() # Clean text completely ignores formatting and footnotes, cross-references, etc.
                 #print( BBB, C, V, marker, repr(cleanText) )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -9728,7 +9788,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoESFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    continue # Just ignore added markers -- not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -10171,7 +10232,8 @@ class BibleWriter( InternalBible ):
                     C, V = '-1', '-1' # So first/id line starts at -1:0
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
-                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+                        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                            continue # Just ignore added markers -- not needed here
                         if marker in USFM_PRECHAPTER_MARKERS:
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                                 assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -10826,6 +10888,8 @@ def demo():
                 ("WEB3", 'WEB', '../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/'),
                 ("WEB4", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/'),
                 ("WEB5", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/'),
+                ("WEB6", 'WEB', '../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2017-08-22 eng-web_usfm'),
+                ("WEBLatest", 'WEB', '../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/eng-web_usfm/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):

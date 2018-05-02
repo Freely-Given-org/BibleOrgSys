@@ -23,6 +23,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+TODO: Rewrite makeIndex to take advantage of the new v= fields.
+
 Module for defining and manipulating internal Bible objects including:
 
     InternalBibleExtra
@@ -74,10 +76,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-05-02' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.72'
+ProgVersion = '0.73'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -95,13 +97,15 @@ from USFMMarkers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
 
 
 
-BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp#', )
+BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 """
     c~  anything after the chapter number on a \c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
     c#  the chapter number in the correct position to be printed
             This is usually a duplicate of the c field, but may have come from the cp field instead
             Usually only one of c or c# is used for exports
+    v= the verse number (not to be printed)
+            that the next field(s) (usually a section heading) logically belong together with
     v~  verse text -- anything after the verse number on a \v line is split off into here
     p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.) is split off into here
     cl¤ used to rename cl markers BEFORE the '\c 1' marker --
@@ -941,7 +945,7 @@ class InternalBibleIndex:
         """
         Index the Bible book lines for faster reference.
 
-        The parameter is a InternalBibleEntryList(), i.e., self._processedLines
+        The parameter is a InternalBibleEntryList(), i.e., self._processedLines (from InternalBibleBook)
             i.e., a specialised list of InternalBibleEntry objects.
 
         The keys to the index dictionary for each Bible book are (C,V,) 2-tuples.
