@@ -2948,7 +2948,7 @@ class BibleWriter( InternalBible ):
             bookText, bookIndexDict, bookIndexList = '', OrderedDict(), []
             inField = None
             C, V = 'I', '-1' # So first/id line starts at I:0
-            savedC, savedV = C, '0'
+            savedC, savedV = C, '1'
             sectionCV = '{}v{}'.format( C, V )
             currentText = currentParagraphMarker = ''
             for processedBibleEntry in pseudoESFMData:
@@ -2956,7 +2956,7 @@ class BibleWriter( InternalBible ):
                 #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers -- not needed here
                 if pseudoMarker in USFM_PRECHAPTER_MARKERS:
-                    if 1 or debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
                     V = str( int(V) + 1 )
                 if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
@@ -2977,8 +2977,9 @@ class BibleWriter( InternalBible ):
                         elif pseudoMarker=='c':
                             assert not haveSectionHeadings
                             assert cleanText.isdigit() # Chapter number only
-                            savedC, V = C, '0' # Catch up on the chapter number
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            savedC, V = C, '1' # Catch up on the chapter number
+                            #if savedV == '0': savedV = '1' # Assume no intro so get a more likely verse number
+                        if 1 or debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                             print( "\nAt {!r} {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( self.abbreviation, BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                             for j,line in enumerate( currentText.splitlines() ):
                                 print( '  {}/ {}'.format( j+1, line ) )
@@ -2996,7 +2997,7 @@ class BibleWriter( InternalBible ):
 
                 if pseudoMarker == 'c':
                     assert cleanText.isdigit() # Chapter number only
-                    C, V = cleanText, '0' # ignores footnotes on chapter numbers
+                    C, V = cleanText, '1' # ignores footnotes on chapter numbers
                 elif pseudoMarker == 'c#':
                     if currentParagraphMarker in ('','s1','r'):
                         logging.warning( "_toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
@@ -3031,7 +3032,7 @@ class BibleWriter( InternalBible ):
                     unhandledMarkers.add( pseudoMarker )
 
             if len(currentText) > 0: # save the final index entry
-                if not haveSectionHeadings: savedC, V = C, '0' # Catch up on the chapter number
+                if not haveSectionHeadings: savedC, V = C, '1' # Catch up on the chapter number
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     print( "\nAt {} {}:{} {!r}: saving final index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                     for j,line in enumerate( currentText.splitlines() ):
@@ -10839,7 +10840,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( BW )
 
 
-    if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
+    if 0: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
         testData = ( # name, abbreviation, folder for USFM files
                 ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
                 ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
@@ -10906,9 +10907,9 @@ def demo():
                 ("WEBLatest", 'WEB', '../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/eng-web_usfm/'),
                 ('ULT','ULT','../../../../../Data/Work/Bibles/English translations/UnfoldingWordVersions/ULT/en_ult/'),
                 ('UST','UST','../../../../../Data/Work/Bibles/English translations/UnfoldingWordVersions/UST/en_ust/'),
+                ('UEB','UEB','../../../../../Data/Work/Bibles/English translations/Door43Versions/UEB/en_ueb/'),
                 ('ULB','ULB','../../../../../Data/Work/Bibles/English translations/Door43Versions/ULB/en_ulb/'),
                 ('UDB','UDB','../../../../../Data/Work/Bibles/English translations/Door43Versions/UDB/en_udb/'),
-                ('UEB','UEB','../../../../../Data/Work/Bibles/English translations/Door43Versions/UEB/en_ueb/'),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
