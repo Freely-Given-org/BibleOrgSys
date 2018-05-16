@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2018-05-14 by RJH (also update ProgVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
 ProgName = "Bible Books Codes tests"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -131,13 +131,13 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 1234 )
     # end of test_2030_getBBBFromReferenceNumber
 
-    def test_2040_isValidReferenceAbbreviation( self ):
-        """ Test the isValidReferenceAbbreviation function. """
+    def test_2040_isValidBBB( self ):
+        """ Test the isValidBBB function. """
         for goodBBB in ( 'GEN', 'MAL', 'MAT', 'CO1', 'REV', ):
-            self.assertTrue( self.bbc.isValidReferenceAbbreviation(goodBBB) )
+            self.assertTrue( self.bbc.isValidBBB(goodBBB) )
         for badBBB in ( 'XYZ', 'Gen', 'CO4', ):
-            self.assertFalse( self.bbc.isValidReferenceAbbreviation(badBBB) )
-    # end of test_2040_isValidReferenceAbbreviation
+            self.assertFalse( self.bbc.isValidBBB(badBBB) )
+    # end of test_2040_isValidBBB
 
     def test_2060_getAllReferenceAbbreviations( self ):
         """ Test the getAllReferenceAbbreviations function. """
@@ -375,27 +375,27 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbc.getByzantineAbbreviation, 'Mat' )
     # end of test_2170_getByzantineAbbreviation
 
-    def test_2200_getBBBFromOSIS( self ):
-        """ Test the getBBBFromOSIS function. """
-        self.assertEqual( self.bbc.getBBBFromOSIS('Gen'), 'GEN' )
-        self.assertEqual( self.bbc.getBBBFromOSIS('1Cor'), 'CO1' )
-        self.assertEqual( self.bbc.getBBBFromOSIS('Rev'), 'REV' )
+    def test_2200_getBBBFromOSISAbbreviation( self ):
+        """ Test the getBBBFromOSISAbbreviation function. """
+        self.assertEqual( self.bbc.getBBBFromOSISAbbreviation('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromOSISAbbreviation('1Cor'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromOSISAbbreviation('Rev'), 'REV' )
         for badCode in ('XYZ','Genesis',):
-            self.assertRaises( KeyError, self.bbc.getBBBFromOSIS, badCode )
-    # end of test_2200_getBBBFromOSIS
+            self.assertRaises( KeyError, self.bbc.getBBBFromOSISAbbreviation, badCode )
+    # end of test_2200_getBBBFromOSISAbbreviation
 
-    def test_2210_getBBBFromUSFM( self ):
+    def test_2210_getBBBFromUSFMAbbreviation( self ):
         """ Test the getBBBFromUSFM function. """
-        self.assertEqual( self.bbc.getBBBFromUSFM('Gen'), 'GEN' )
-        self.assertEqual( self.bbc.getBBBFromUSFM('Ezr'), 'EZR' )
-        self.assertEqual( self.bbc.getBBBFromUSFM('Mat'), 'MAT' )
-        self.assertEqual( self.bbc.getBBBFromUSFM('1Co'), 'CO1' )
-        self.assertEqual( self.bbc.getBBBFromUSFM('Rev'), 'REV' )
+        self.assertEqual( self.bbc.getBBBFromUSFMAbbreviation('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromUSFMAbbreviation('Ezr'), 'EZR' )
+        self.assertEqual( self.bbc.getBBBFromUSFMAbbreviation('Mat'), 'MAT' )
+        self.assertEqual( self.bbc.getBBBFromUSFMAbbreviation('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromUSFMAbbreviation('Rev'), 'REV' )
         for badCode in ('XYZ','Abc',): # Must be three characters
-            self.assertRaises( KeyError, self.bbc.getBBBFromUSFM, badCode )
+            self.assertRaises( KeyError, self.bbc.getBBBFromUSFMAbbreviation, badCode )
         for badCode in (':)','WXYZ','Genesis',): # Must not be three characters
-            self.assertRaises( AssertionError, self.bbc.getBBBFromUSFM, badCode )
-    # end of test_2210_getBBBFromUSFM
+            self.assertRaises( AssertionError, self.bbc.getBBBFromUSFMAbbreviation, badCode )
+    # end of test_2210_getBBBFromUSFMAbbreviation
 
     def test_2215_getBBBFromUnboundBibleCode( self ):
         """ Test the getBBBFromUnboundBibleCode function. """
@@ -413,14 +413,14 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbc.getBBBFromUnboundBibleCode, badCode )
     # end of test_2215_getBBBFromUnboundBibleCode
 
-    def test_2220_getBBB( self ):
-        """ Test the getBBB function. """
-        self.assertEqual( self.bbc.getBBB('Gen'), 'GEN' )
-        self.assertEqual( self.bbc.getBBB('1Co'), 'CO1' )
-        self.assertEqual( self.bbc.getBBB('Rev'), 'REV' )
+    def test_2220_getBBBFromText( self ):
+        """ Test the getBBBFromText function. """
+        self.assertEqual( self.bbc.getBBBFromText('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromText('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromText('Rev'), 'REV' )
         for badCode in ('XYZ','Abc',':)','WXYZ','Genesis',):
-            self.assertEqual( self.bbc.getBBB( badCode ), None )
-    # end of test_2220_getBBB
+            self.assertEqual( self.bbc.getBBBFromText( badCode ), None )
+    # end of test_2220_getBBBFromText
 
     def test_300_getExpectedChaptersList( self ):
         """ Test the getSingleChapterBooksList function. """
