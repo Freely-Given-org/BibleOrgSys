@@ -78,7 +78,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-03' # by RJH
+LastModifiedDate = '2018-05-16' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -1267,9 +1267,9 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-                    try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
-                    except UnicodeEncodeError: # why does this fail on Windows???
-                        logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
+                    #try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
+                    #except UnicodeEncodeError: # why does this fail on Windows???
+                        #logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
 
                     # Write the intro stuff
                     myFile.write( '; TITLE: {}\n'.format( title ) )
@@ -3388,8 +3388,11 @@ class BibleWriter( InternalBible ):
             doneAny = doneBooks = False
             for BBB,bookObject in self.books.items():
                 abbreviation = self.getBooknameAbbreviation( BBB )
+                if not abbreviation: abbreviation = BBB
                 shortName = self.getShortTOCName( BBB )
                 longName = self.getAssumedBookName( BBB )
+                if not shortName: shortName = longName
+                if not longName: longName = shortName # to be safe
                 divisionNumber = divisionData.index( getDivisionName( BBB, doneAny, doneBooks ) )
                 #except: divisionNumber = -1
                 numChapters = ''
@@ -7922,10 +7925,13 @@ class BibleWriter( InternalBible ):
 
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to SwordSearcher format…") )
-        filename = "Bible.txt"
+        filename = 'Bible.txt'
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toSwordSearcher: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+            try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
+            except UnicodeEncodeError: # why does this fail on Windows???
+                logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
                 if BibleOrgSysGlobals.debugFlag: writeSSBook( myFile, BBB, bookObject ) # Halts on errors
@@ -10840,7 +10846,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( BW )
 
 
-    if 0: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
+    if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
         testData = ( # name, abbreviation, folder for USFM files
                 ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
                 ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
