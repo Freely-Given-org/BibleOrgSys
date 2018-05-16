@@ -370,7 +370,7 @@ class BibleWriter( InternalBible ):
         Do some global name replacements in the given control dictionary.
         """
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert isinstance( existingControlDict, dict )
-        if not existingControlDict: logging.warning( exp("adjustControlDict: The control dictionary is empty!") )
+        if not existingControlDict: logging.warning( "adjustControlDict: The control dictionary is empty!" )
         for entry in existingControlDict:
             existingControlDict[entry] = existingControlDict[entry] \
                 .replace( '__PROJECT_NAME__', self.projectName ) \
@@ -1269,7 +1269,7 @@ class BibleWriter( InternalBible ):
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     #try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
                     #except UnicodeEncodeError: # why does this fail on Windows???
-                        #logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
+                        #logging.critical( "toForgeForSwordSearcher: Unable to write BOM to file" )
 
                     # Write the intro stuff
                     myFile.write( '; TITLE: {}\n'.format( title ) )
@@ -7083,7 +7083,7 @@ class BibleWriter( InternalBible ):
                 with open( os.path.join( defaultControlFolder, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
             except FileNotFoundError:
                 print( "dCF", defaultControlFolder )
-                logging.critical( exp("toSwordModule: Unable to read sample conf file SwordProject.conf") )
+                logging.critical( "toSwordModule: Unable to read sample conf file SwordProject.conf" )
                 confText = ''
             # Do common text replacements
             # Unfortunately, we can only really make wild guesses without more detailed metadata
@@ -7931,7 +7931,7 @@ class BibleWriter( InternalBible ):
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
-                logging.critical( exp("toForgeForSwordSearcher: Unable to write BOM to file") )
+                logging.critical( "toForgeForSwordSearcher: Unable to write BOM to file" )
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
                 if BibleOrgSysGlobals.debugFlag: writeSSBook( myFile, BBB, bookObject ) # Halts on errors
