@@ -3081,7 +3081,8 @@ class BibleWriter( InternalBible ):
                 if endC=='I': endC = -1
                 intStartC, intStartV = int( startC ), int( startV )
                 intEndC, intEndV = int( endC ), int( endV )
-                newBookIndexList.append( (intStartC,intStartV, intEndC, intEndV, fileOffset,length) )
+                if intEndC==intStartC: newBookIndexList.append( (intStartC,intStartV, fileOffset,length, intEndV) )
+                else: newBookIndexList.append( (intStartC,intStartV, fileOffset,length, intEndV,intEndC) )
             # Write the index list
             #print( "index", bookIndex )
             filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
