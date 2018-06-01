@@ -78,7 +78,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-16' # by RJH
+LastModifiedDate = '2018-06-01' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -599,7 +599,7 @@ class BibleWriter( InternalBible ):
             try: rawUSFMData = bookObject._rawLines
             except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
-                #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+                #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
                 #USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 #USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
@@ -610,8 +610,8 @@ class BibleWriter( InternalBible ):
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
 
-            pseudoESFMData = bookObject._processedLines
-            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+            internalBibleBookData = bookObject._processedLines
+            #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
@@ -622,7 +622,7 @@ class BibleWriter( InternalBible ):
             indentLevel = 0
             C, V = '-1', '-1' # So first/id line starts at -1:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-                for entry in pseudoESFMData:
+                for entry in internalBibleBookData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                     #print( repr(marker), repr(cleanText), repr(adjText) )
                     if marker in USFM_PRECHAPTER_MARKERS:
@@ -682,8 +682,8 @@ class BibleWriter( InternalBible ):
 
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
-            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+            internalBibleBookData = bookObject._processedLines
+            #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
@@ -699,14 +699,14 @@ class BibleWriter( InternalBible ):
 
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
-            if pseudoESFMData.contains( 'id', 1 ) is None:
+            if internalBibleBookData.contains( 'id', 1 ) is None:
                 bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoESFMData.contains( 'h', 8 ) is None:
+                if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
                         if h: bookUSFM += '\n\\h {}'.format( h )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
-                if pseudoESFMData.contains( 'mt1', 12 ) is None:
+                if internalBibleBookData.contains( 'mt1', 12 ) is None:
                     try:
                         mt = self.suppliedMetadata['File'][BBB+'LongName']
                         if mt: bookUSFM += '\n\\mt1 {}'.format( mt )
@@ -714,7 +714,7 @@ class BibleWriter( InternalBible ):
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM2 output…" ) )
-            for processedBibleEntry in pseudoESFMData:
+            for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
@@ -848,8 +848,8 @@ class BibleWriter( InternalBible ):
 
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
-            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+            internalBibleBookData = bookObject._processedLines
+            #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
@@ -864,14 +864,14 @@ class BibleWriter( InternalBible ):
 
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
-            if pseudoESFMData.contains( 'id', 1 ) is None:
+            if internalBibleBookData.contains( 'id', 1 ) is None:
                 bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoESFMData.contains( 'h', 8 ) is None:
+                if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
                         if h: bookUSFM += '\n\\h {}'.format( h )
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
-                if pseudoESFMData.contains( 'mt1', 12 ) is None:
+                if internalBibleBookData.contains( 'mt1', 12 ) is None:
                     try:
                         mt = self.suppliedMetadata['File'][BBB+'LongName']
                         if mt: bookUSFM += '\n\\mt1 {}'.format( mt )
@@ -879,7 +879,7 @@ class BibleWriter( InternalBible ):
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting USFM3 output…" ) )
-            for processedBibleEntry in pseudoESFMData:
+            for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
@@ -1010,8 +1010,8 @@ class BibleWriter( InternalBible ):
 
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
-            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+            internalBibleBookData = bookObject._processedLines
+            #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
@@ -1022,7 +1022,7 @@ class BibleWriter( InternalBible ):
             indentLevel, indentSize =  0, 2
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            initialMarkers = [processedBibleEntry.getMarker() for processedBibleEntry in pseudoESFMData[:4]]
+            initialMarkers = [processedBibleEntry.getMarker() for processedBibleEntry in internalBibleBookData[:4]]
             #print( BBB, initialMarkers )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output…" ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -1035,7 +1035,7 @@ class BibleWriter( InternalBible ):
                     if 'rem' not in initialMarkers:
                         #print( "Write REM" )
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
-                for j, processedBibleEntry in enumerate( pseudoESFMData ):
+                for j, processedBibleEntry in enumerate( internalBibleBookData ):
                     pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                     if debuggingThisModule: print( "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
@@ -1165,7 +1165,7 @@ class BibleWriter( InternalBible ):
 
         # Write the plain text files
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
+            internalBibleBookData = bookObject._processedLines
 
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -1173,7 +1173,7 @@ class BibleWriter( InternalBible ):
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
-                for entry in pseudoESFMData:
+                for entry in internalBibleBookData:
                     marker, text = entry.getMarker(), entry.getCleanText()
                     if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                         ignoredMarkers.add( marker )
@@ -1260,7 +1260,7 @@ class BibleWriter( InternalBible ):
             # Write the plain text files
             for BBB,bookObject in self.books.items():
                 bookName = ForgeBookNames[BBB] if BBB in ForgeBookNames else BBB
-                pseudoESFMData = bookObject._processedLines
+                internalBibleBookData = bookObject._processedLines
 
                 filename = "BOS-BibleWriter-{}.txt".format( bookName )
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -1280,7 +1280,7 @@ class BibleWriter( InternalBible ):
 
                     gotVP = None
                     haveP = False
-                    for entry in pseudoESFMData:
+                    for entry in internalBibleBookData:
                         marker, text = entry.getMarker(), entry.getCleanText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                             continue # Just ignore added markers -- not needed here
@@ -1666,7 +1666,7 @@ class BibleWriter( InternalBible ):
 
         # Write the formatted text files
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
+            internalBibleBookData = bookObject._processedLines
 
             filename = "BOS-BibleWriter-{}.md".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -1678,7 +1678,7 @@ class BibleWriter( InternalBible ):
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 gotVP = None
-                for entry in pseudoESFMData:
+                for entry in internalBibleBookData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                     if marker in USFM_PRECHAPTER_MARKERS:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -2881,7 +2881,9 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the text and index files (by book) to be used by BibleDoor.
 
-        Text is chunked into paragraphs (if possible).
+        Text is chunked into sections if possible, else chapters.
+
+        Each section is broken into paragraphs if possible, else verses.
         Paragraph markers (without backslashes) are placed at the beginning of each chunk
                 followed by an equals sign.
             Note: some markers (like 'b') don't have any text after the equals sign.
@@ -2938,20 +2940,21 @@ class BibleWriter( InternalBible ):
                                 + USFM_ALL_BIBLE_PARAGRAPH_MARKERS \
                                 + ('r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr')
         for BBB,bookObject in self.books.items():
-            try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
-            except AttributeError: haveSectionHeadings = False
-            #print( "\nhaveSectionHeadings", BBB, haveSectionHeadings ) #, self.discoveryResults[BBB] )
+            try: haveSectionHeadingsForBook = self.discoveryResults[BBB]['haveSectionHeadings']
+            except AttributeError: haveSectionHeadingsForBook = False
+            #print( "\nhaveSectionHeadingsForBook", BBB, haveSectionHeadingsForBook ) #, self.discoveryResults[BBB] )
 
-            pseudoESFMData = bookObject._processedLines
-            #print( "\pseudoESFMData", pseudoESFMData[:50] ); halt
+            internalBibleBookData = bookObject._processedLines
+            #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
 
             bookText, bookIndexDict, bookIndexList = '', OrderedDict(), []
             inField = None
             C, V = 'I', '-1' # So first/id line starts at I:0
-            savedC, savedV = C, '1'
+            lastC = savedC = C
+            lastV = savedV = '1'
             sectionCV = '{}v{}'.format( C, V )
             currentText = currentParagraphMarker = ''
-            for processedBibleEntry in pseudoESFMData:
+            for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
                 #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers -- not needed here
@@ -2959,6 +2962,7 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
                     V = str( int(V) + 1 )
+                    lastV = V
                 if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
                 #print( "_toBibleDoorText processing {!r} {!r} {}".format( self.abbreviation, pseudoMarker, fullText[:60]+('…' if len(fullText)>60 else '') ) )
                 if pseudoMarker in ('vp#',):
@@ -2970,23 +2974,24 @@ class BibleWriter( InternalBible ):
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
                 or pseudoMarker == 's1' \
-                or (pseudoMarker == 'c' and not haveSectionHeadings):
+                or (pseudoMarker == 'c' and not haveSectionHeadingsForBook):
                 #or (C=='1' and V=='1' and ('1','0') not in bookIndexDict):
                     if currentText: # start a new section
-                        if pseudoMarker=='s1': assert haveSectionHeadings
+                        if pseudoMarker=='s1': assert haveSectionHeadingsForBook
                         elif pseudoMarker=='c':
-                            assert not haveSectionHeadings
+                            assert not haveSectionHeadingsForBook
                             assert cleanText.isdigit() # Chapter number only
-                            savedC, V = C, '1' # Catch up on the chapter number
+                            savedC = C
+                            V = '1' # Catch up on the chapter number
                             #if savedV == '0': savedV = '1' # Assume no intro so get a more likely verse number
-                        if 1 or debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                             print( "\nAt {!r} {} {}:{} {!r}: saving index entry {}:{} @ {:,}".format( self.abbreviation, BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                             for j,line in enumerate( currentText.splitlines() ):
                                 print( '  {}/ {}'.format( j+1, line ) )
                                 assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                         assert sectionCV not in bookIndexDict
                         bookIndexDict[sectionCV] = len(bookText)
-                        bookIndexList.append( (savedC,savedV,len(bookText)) )
+                        bookIndexList.append( (savedC,savedV, lastC,lastV, len(bookText),len(currentText)) )
                         bookText += currentText
                         savedC, savedV, savedText = C, V, currentText
                         currentText = currentParagraphMarker = ''
@@ -3009,6 +3014,7 @@ class BibleWriter( InternalBible ):
                     if '-' in V: V = V[:V.index('-')]
                     elif '–' in V: V = V[:V.index('–')] # en dash
                     if pseudoMarker == 'v': # only (not v=)
+                        lastC, lastV = C, V
                         currentText += '{{v{}}}'.format( cleanText ) # ignores footnotes on verse numbers
                 elif pseudoMarker in paragraphMarkers:
                     if currentText: currentText += '\n'
@@ -3032,7 +3038,7 @@ class BibleWriter( InternalBible ):
                     unhandledMarkers.add( pseudoMarker )
 
             if len(currentText) > 0: # save the final index entry
-                if not haveSectionHeadings: savedC, V = C, '1' # Catch up on the chapter number
+                if not haveSectionHeadingsForBook: savedC, V = C, '1' # Catch up on the chapter number
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     print( "\nAt {} {}:{} {!r}: saving final index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
                     for j,line in enumerate( currentText.splitlines() ):
@@ -3040,7 +3046,7 @@ class BibleWriter( InternalBible ):
                         assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                 assert sectionCV not in bookIndexDict
                 bookIndexDict[sectionCV] = len(bookText)
-                bookIndexList.append( (savedC,savedV,len(bookText)) )
+                bookIndexList.append( (savedC,savedV, lastC,lastV, len(bookText),len(currentText)) )
                 bookText += currentText
 
             ## Adjust the bookText output
@@ -3070,10 +3076,12 @@ class BibleWriter( InternalBible ):
 
             # Write the index list
             newBookIndexList = []
-            for C,V,fO in bookIndexList: # Convert strings to integers for the JSON index
-                if C=='I': C = -1
-                intC, intV = int( C ), int( V )
-                newBookIndexList.append( (intC,intV,fO) )
+            for startC,startV,endC,endV,fileOffset,length in bookIndexList: # Convert strings to integers for the JSON index
+                if startC=='I': startC = -1
+                if endC=='I': endC = -1
+                intStartC, intStartV = int( startC ), int( startV )
+                intEndC, intEndV = int( endC ), int( endV )
+                newBookIndexList.append( (intStartC,intStartV, intEndC, intEndV, fileOffset,length) )
             # Write the index list
             #print( "index", bookIndex )
             filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
@@ -3133,8 +3141,8 @@ class BibleWriter( InternalBible ):
         if not os.access( bookOutputFolderJSON, os.F_OK ): os.makedirs( bookOutputFolderJSON ) # Make the empty folder if there wasn't already one there
         chapterOutputFolderJSON = os.path.join( outputFolder, 'ByChapter.{}.JSON/'.format( BDDataFormatVersion ) )
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        bookOutputFolderHTML = os.path.join( outputFolder, 'BySection.{}.HTML/'.format( BDDataFormatVersion ) )
-        if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
+        bookOutputFolderCHTML = os.path.join( outputFolder, 'BySection.{}.CHTML/'.format( BDDataFormatVersion ) )
+        if not os.access( bookOutputFolderCHTML, os.F_OK ): os.makedirs( bookOutputFolderCHTML ) # Make the empty folder if there wasn't already one there
         bookOutputFolderZippedHTML = os.path.join( outputFolder, 'BySection.{}.HTML.zip/'.format( BDDataFormatVersion ) )
         if not os.access( bookOutputFolderZippedHTML, os.F_OK ): os.makedirs( bookOutputFolderZippedHTML ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
@@ -3149,13 +3157,13 @@ class BibleWriter( InternalBible ):
         bookNamesFilename = 'BDBookNames.{}.json'.format( BDDataFormatVersion )
         bookNamesFilepath = os.path.join( outputFolder, bookNamesFilename )
         compressionDictFilename = 'BDCmprnDict.{}.json'.format( BDDataFormatVersion )
-        compressionDictFilepath = os.path.join( bookOutputFolderHTML, compressionDictFilename )
+        compressionDictFilepath = os.path.join( bookOutputFolderCHTML, compressionDictFilename )
         compressedIndexFilename = 'BD-BCV-CHTML-Index.{}.json'.format( BDDataFormatVersion )
-        compressedIndexFilepath = os.path.join( bookOutputFolderHTML, compressedIndexFilename )
+        compressedIndexFilepath = os.path.join( bookOutputFolderCHTML, compressedIndexFilename )
         uncompressedIndexFilename = 'BD-BCV-ZHTML-Index.{}.json'.format( BDDataFormatVersion )
         uncompressedIndexFilepath = os.path.join( bookOutputFolderZippedHTML, uncompressedIndexFilename )
-        destinationHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, destinationHTMLFilenameTemplate ) # Missing the BBB
+        destinationCHTMLFilenameTemplate = 'BDBook.{}.{}.chtml'.format( '{}', BDDataFormatVersion ) # Missing the BBB
+        destinationCHTMLFilepathTemplate = os.path.join( bookOutputFolderCHTML, destinationCHTMLFilenameTemplate ) # Missing the BBB
         destinationZippedHTMLFilenameTemplate = 'BDBook.{}.{}.html'.format( '{}', BDDataFormatVersion ) # Missing the BBB
         destinationZippedHTMLFilepathTemplate = os.path.join( bookOutputFolderZippedHTML, destinationZippedHTMLFilenameTemplate+'.zip' ) # Missing the BBB
         if BibleOrgSysGlobals.debugFlag: # Write HTML sections uncompressed in a separate folder (for debugging)
@@ -3318,7 +3326,7 @@ class BibleWriter( InternalBible ):
             headerDict['Version name'] = workTitle if workTitle else self.name
             workAbbreviation = self.getSetting( 'WorkAbbreviation' )
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
-            headerDict['Has section headings'] = haveSectionHeadings
+            headerDict['Has section headings'] = haveAnySectionHeadings
             #print( headerDict )
 
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
@@ -3478,7 +3486,7 @@ class BibleWriter( InternalBible ):
             BDGlobals['nextFootnoteIndex'] = BDGlobals['nextEndnoteIndex'] = BDGlobals['nextXRefIndex'] = 0
             BDGlobals['footnoteHTML5'], BDGlobals['endnoteHTML5'], BDGlobals['xrefHTML5'] = [], [], []
 
-            def handleBDSection( BCV, sectionHTML, outputFile ):
+            def handleBDSection( BCV, sectionHTML, outputCHTMLFile ):
                 """
                 First 3-tuple parameter contains BBB,C,V variables representing the first verse in this section.
                 Next parameter is the HTML5 segment for the section
@@ -3486,7 +3494,7 @@ class BibleWriter( InternalBible ):
                 XXXReturns the number of bytes written.
                 """
                 nonlocal numBDSections, BDHash, uncompressedFileOffset, compressedFileOffset
-                #print( "  toBibleDoor.handleBDSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
+                #print( "  toBibleDoor.handleBDSection() {} haveAnySectionHeadings={}".format( BBB, haveAnySectionHeadings ) )
                 assert BCV
                 assert sectionHTML
 
@@ -3527,7 +3535,7 @@ class BibleWriter( InternalBible ):
                     compressedHTML += '\n'
                 bytesToWrite = compressedHTML.encode('UTF8')
                 BDHash.update( bytesToWrite )
-                numBytesWritten = outputFile.write( bytesToWrite )
+                numBytesWritten = outputCHTMLFile.write( bytesToWrite )
                 #return numBytesWritten
                 indexEntry2 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,numBytesWritten
                 currentCompressedIndex.append( indexEntry2 )
@@ -3537,7 +3545,7 @@ class BibleWriter( InternalBible ):
 
             # Main code for writeBDBookAsHTML
             HTMLSections = []
-            htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
+            chtmlFile = open( destinationCHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
             uncompressedFileOffset = compressedFileOffset = 0
             BDHash = hashlib.md5()
 
@@ -3585,7 +3593,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                             sectionHTML = ''
                             #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                             #currentCompressedIndex.append( indexEntry )
@@ -3656,13 +3664,13 @@ class BibleWriter( InternalBible ):
                     #if extras: print( "have extras at c at",BBB,C); halt
                     C, V = text, '0'
                     chapterLabel = None
-                    if not haveSectionHeadings: # Treat each chapter as a new section
+                    if not haveAnySectionHeadings: # Treat each chapter as a new section
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                             sectionHTML = ''
                             #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                             #currentCompressedIndex.append( indexEntry )
@@ -3720,14 +3728,14 @@ class BibleWriter( InternalBible ):
                     if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
-                        handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                        handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                         sectionHTML = ''
                         #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                         #currentCompressedIndex.append( indexEntry )
                         #compressedFileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert haveSectionHeadings
+                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert haveAnySectionHeadings
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if marker == 's1':
                         if pOpen: lastHTML += '</p>'; pOpen = False
@@ -3735,7 +3743,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                             sectionHTML = ''
                             #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                             #currentCompressedIndex.append( indexEntry )
@@ -3777,7 +3785,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                            handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                             sectionHTML = ''
                             #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                             #currentCompressedIndex.append( indexEntry )
@@ -3844,12 +3852,12 @@ class BibleWriter( InternalBible ):
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
             if sectionHTML:
-                handleBDSection( sectionBCV, sectionHTML, htmlFile )
+                handleBDSection( sectionBCV, sectionHTML, chtmlFile )
                 #indexEntry = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,compressedFileOffset,bytesWritten
                 #currentCompressedIndex.append( indexEntry )
 
-            htmlFile.close()
-            checksums[destinationHTMLFilenameTemplate.format( BBB )] = BDHash.hexdigest()
+            chtmlFile.close()
+            checksums[destinationCHTMLFilenameTemplate.format( BBB )] = BDHash.hexdigest()
 
             # Write the zipped version
             completeHTMLString = ''
@@ -3879,18 +3887,18 @@ class BibleWriter( InternalBible ):
 
 
         # Start of main code for
-        try: haveSectionHeadings = True if self.discoveryResults['ALL']['haveSectionHeadings']>0 else False
-        except AttributeError: haveSectionHeadings = False
-        #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
+        try: haveAnySectionHeadings = True if self.discoveryResults['ALL']['haveSectionHeadings']>0 else False
+        except AttributeError: haveAnySectionHeadings = False
+        #print( haveAnySectionHeadings, BBB ) #, self.discoveryResults[BBB] )
         writeBDHeader()
 
         # Write the books
         uncompressedHTMLIndex, compressedHTMLIndex = [], []
         numSectionsDict = {}
         for BBB,bookObject in self.books.items():
-            pseudoESFMData = bookObject._processedLines
-            writeBDBookAsJSON( BBB, pseudoESFMData )
-            numSections = writeBDBookAsHTML( BBB, pseudoESFMData, uncompressedHTMLIndex, compressedHTMLIndex )
+            internalBibleBookData = bookObject._processedLines
+            writeBDBookAsJSON( BBB, internalBibleBookData )
+            numSections = writeBDBookAsHTML( BBB, internalBibleBookData, uncompressedHTMLIndex, compressedHTMLIndex )
             numSectionsDict[BBB] = numSections
 
         writeBDBookNames()
@@ -7874,10 +7882,10 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
 
-            pseudoESFMData = bookObject._processedLines
+            internalBibleBookData = bookObject._processedLines
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             C, V = '-1', '-1' # So first/id line starts at -1:0
-            for entry in pseudoESFMData:
+            for entry in internalBibleBookData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers -- not needed here
@@ -8555,7 +8563,7 @@ class BibleWriter( InternalBible ):
         # This is the main code of toPhotoBible
         # Write the JPG files in the appropriate folders
         for BBB,bookObject in self.books.items(): # BBB is our three-character book code
-            pseudoESFMData = bookObject._processedLines
+            internalBibleBookData = bookObject._processedLines
 
             # Find a suitable bookname
             #bookName = self.getAssumedBookName( BBB )
@@ -8585,7 +8593,7 @@ class BibleWriter( InternalBible ):
             intC, numVerses = -1, 0
             lastMarker = gotVP = None
             textBuffer = ''
-            for entry in pseudoESFMData:
+            for entry in internalBibleBookData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText() # Clean text completely ignores formatting and footnotes, cross-references, etc.
                 #print( BBB, C, V, marker, repr(cleanText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
@@ -9753,7 +9761,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Creating ODF file for {}…".format( BBB ) )
             elif BibleOrgSysGlobals.verbosityLevel > 1: # Very basic progress bar
                 print( "{}-{}…".format( BBB, datetime.now().strftime('%H:%M') ), end='', flush=True )
-            pseudoESFMData = bookObject._processedLines
+            internalBibleBookData = bookObject._processedLines
 
             # Create the blank document
             filename = "{:02}-{}_BOS-BibleWriter.odt".format( bookNum, BBB )
@@ -9806,7 +9814,7 @@ class BibleWriter( InternalBible ):
             inTextParagraph = False
             lastMarker = gotVP = None
             C, V = '-1', '-1' # So first/id line starts at -1:0
-            for entry in pseudoESFMData:
+            for entry in internalBibleBookData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
@@ -10928,7 +10936,8 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toBibleDoor(); print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
+                    #result = UB.toBibleDoor(); continue # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    #print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
