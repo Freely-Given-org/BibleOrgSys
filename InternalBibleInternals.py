@@ -76,10 +76,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
+LastModifiedDate = '2018-06-15' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.73'
+ProgVersion = '0.74'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -87,7 +87,7 @@ debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 
-import logging
+import logging, re
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
@@ -482,7 +482,7 @@ class InternalBibleExtraList:
 
     def summary( self ):
         """
-        Like __str__ but just returns a one-line string summary.
+        Like __str__ but just returns a (possibly abbreviated) one-line string summary.
         """
         if not self.data: return "NO_EXTRAS"
         if len( self.data ) == 1:
@@ -492,6 +492,21 @@ class InternalBibleExtraList:
         resultString = "EXTRAS( "
         for j, entry in enumerate( self.data ):
             resultString += "{}{} @ {}".format( ", " if j>0 else "", entry.myType, entry.index )
+        return resultString + " )"
+    # end of InternalBibleExtraList.summary
+
+    def fullSummary( self ):
+        """
+        Like __str__ and summary, but returns a long one-line string summary.
+        """
+        if not self.data: return "NO_EXTRAS"
+        if len( self.data ) == 1:
+            entry = self.data[0]
+            return "EXTRA( {} @ {} = {})".format( entry.myType, entry.index, repr(entry.noteText) )
+        # Multiple extras
+        resultString = "EXTRAS( "
+        for j, entry in enumerate( self.data ):
+            resultString += "{}{}@{}={}".format( ", " if j>0 else "", entry.myType, entry.index, repr(entry.noteText) )
         return resultString + " )"
     # end of InternalBibleExtraList.summary
 
@@ -653,47 +668,56 @@ class InternalBibleEntry:
     def getFullText( self ):
         """
         Returns the full text with footnotes and cross-references reinserted.
+        Also has figures, word attributes and vp fields reinserted.
 
         Note that some spaces may not be recovered,
             e.g., in 'lamb\f + \fr 18.9 \ft Sheep \f* more text here'
             the space before the close of the footnote is not restored!
         Otherwise it should be identical to the original text.
         """
-        result = self.adjustedText
-        offset = 0
-        if self.extras:
-            for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-                #print( "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-                #print( "getFullText:  was {!r}".format( result ) )
-                ix = extraIndex + offset
-                if extraType == 'fn': USFM, lenUSFM = 'f', 1
-                elif extraType == 'en': USFM, lenUSFM = 'fe', 2
-                elif extraType == 'xr': USFM, lenUSFM = 'x', 1
-                elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
-                elif extraType == 'str': USFM, lenUSFM = 'str', 3
-                elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
-                elif extraType == 'ww': USFM, lenUSFM = 'ww', 2
-                elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
-                elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
-                if USFM:
-                    result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-                #print( "getFullText:  now {!r}".format( result ) )
-                offset += len(extraText ) + 2*lenUSFM + 4
-            result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
+        if 1:
+            return self.originalText
+        else: # re-create it
+            result = self.adjustedText # Can be None for our inserted end markers, e.g., ¬v
+            print( "getFullText() got adjustedText: {!r}".format( self.adjustedText ) )
+            print( "  (Clean text is {!r})".format( self.cleanText ) )
+            offset = 0
+            if self.extras:
+                for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
+                    print( "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+                    print( "getFullText:  was {!r}".format( result ) )
+                    ix = extraIndex + offset
+                    if extraType == 'fn': USFM, lenUSFM = 'f', 1
+                    elif extraType == 'en': USFM, lenUSFM = 'fe', 2
+                    elif extraType == 'xr': USFM, lenUSFM = 'x', 1
+                    elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
+                    elif extraType == 'str': USFM, lenUSFM = 'str', 3
+                    elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
+                    elif extraType == 'ww': USFM, lenUSFM = 'ww', 2
+                    elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
+                    elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
+                    if USFM:
+                        result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
+                    print( "getFullText:  now {!r}".format( result ) )
+                    offset += len(extraText ) + 2*lenUSFM + 4
+                # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
+                #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
+                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w ...\w* fields
+                result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
 
-        #if result != self.adjustedText:
-            #if len(self.extras) > 1:
-                #print( "\nWas {!r}".format( self.cleanText ) )
-                #print( "And {!r}".format( self.adjustedText ) )
-                #print( "Orig{!r}".format( self.originalText ) )
-                #print( "Now {!r}".format( result ) )
-                #print( "Extras are {}".format( self.extras ) )
-        #if result != self.originalText.strip():
-            #print( "\nWe're giving {!r}".format( result ) )
-            #print( "   Should be {!r}".format( self.originalText.strip() ) )
-            #print( "        From {!r}".format( self.originalText ) )
-        #if BibleOrgSysGlobals.debugFlag: assert result == self.originalText.strip()
-        return result
+            if result != self.adjustedText:
+                if len(self.extras) > 1:
+                    print( "\nWas {!r}".format( self.cleanText ) )
+                    print( "And {!r}".format( self.adjustedText ) )
+                    print( "Orig{!r}".format( self.originalText ) )
+                    print( "Now {!r}".format( result ) )
+                    print( "Extras are {}".format( self.extras ) )
+            if result is not None and result != self.originalText.strip():
+                print( "\nWe're giving {!r}".format( result ) )
+                print( "   Should be {!r}".format( self.originalText.strip() ) )
+                print( "        From {!r}".format( self.originalText ) )
+            if BibleOrgSysGlobals.debugFlag and self.originalText is not None: assert result == self.originalText.strip()
+            return result
     # end of InternalBibleEntry.getFullText
 # end of class InternalBibleEntry
 

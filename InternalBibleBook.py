@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
+LastModifiedDate = '2018-06-14' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -564,7 +564,7 @@ class InternalBibleBook:
 
         largeDummyValue = 99999
 
-        # Adjust \w fields to remove attributes into a separate \ww field
+        # Adjust \w fields to remove attributes (and copy the word) into a separate \ww field
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.
         if '|' in adjText: # Mostly won't happen
