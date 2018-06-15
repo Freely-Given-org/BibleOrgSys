@@ -50,7 +50,7 @@ Contains functions:
     toText( outputFolder=None )
     toVPL( outputFolder=None )
     toMarkdown( outputFolder=None )
-    toDoor43( outputFolder=None, controlDict=None, validationSchema=None )
+    #toDoor43( outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
     toBibleDoor( outputFolder=None, removeVerseBridges=False )
     toUSX2XML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -78,7 +78,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-06-01' # by RJH
+LastModifiedDate = '2018-06-15' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -594,6 +594,9 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PseudoUSFM_Export/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
+        NUM_INDENT_SPACES = 3
+        INDENT_SPACES = ' ' * NUM_INDENT_SPACES
+
         # Write the raw and pseudo-USFM files
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
             try: rawUSFMData = bookObject._rawLines
@@ -615,7 +618,6 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
 
-            indent = 3
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
@@ -632,15 +634,19 @@ class BibleWriter( InternalBible ):
                     if marker == 'c': C, V = adjText, '0'
                     elif marker == 'v': V = adjText
 
-                    myFile.write( "{}{}{} = {} {} {}\n".format( ' '*indent*indentLevel, ' ' if len(marker)<2 else '',
-                                marker, repr(adjText) if adjText is not None else '',
+                    myFile.write( "{}{}{} = {} {} {}\n" \
+                            .format( INDENT_SPACES*indentLevel,
+                                ' ' if len(marker)<2 and marker not in ('h',) else '',
+                                marker,
+                                repr(adjText) if adjText is not None else '',
                                 repr(cleanText) if cleanText and cleanText!=adjText else '',
-                                entry.getExtras().summary() if extras else '' ) )
+                                entry.getExtras().fullSummary() if extras else '' ) )
 
                     if marker in BOS_NESTING_MARKERS:
                         indentLevel += 1
                     elif indentLevel and marker[0]=='¬': indentLevel -= 1
-                    if indentLevel > 7: print( "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}".format( BBB, C, V, indentLevel, marker ) )
+                    if indentLevel > 7: print( "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}".format( BBB, C, V,
+                                                                                                                    Level, marker ) )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert indentLevel <= 7 # Should only be 7: e.g., chapters c s1 p v list li1
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert indentLevel == 0
 
@@ -692,7 +698,7 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    print( "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganizationalSystemName(), BBB ) )
+                    #print( "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganizationalSystemName(), BBB ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0
@@ -845,6 +851,7 @@ class BibleWriter( InternalBible ):
         #assert controlDict and isinstance( controlDict, dict )
 
         ignoredMarkers = set()
+        addedUSFMfield = False
 
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
@@ -866,6 +873,8 @@ class BibleWriter( InternalBible ):
             # Prepend any important missing (header/title) fields
             if internalBibleBookData.contains( 'id', 1 ) is None:
                 bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                bookUSFM += '\n\\usfm 3.0'
+                addedUSFMfield = True
                 if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -889,6 +898,10 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
+                if pseudoMarker not in ('id','usfm') and not addedUSFMfield:
+                    bookUSFM += '\n\\usfm 3.0'
+                    addedUSFMfield = True
+
                 #fullText = cleanText # (temp)
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
@@ -1743,324 +1756,324 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toDoor43( self, outputFolder=None, controlDict=None, validationSchema=None ):
-        """
-        Using settings from the given control file,
-            converts the internal Bible (pseudo-USFM) information to the Door43.org format
-                which used to be MediaWiki but is now DokuWiki.
-        """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDoor43…" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
+    #def toDoor43( self, outputFolder=None, controlDict=None, validationSchema=None ):
+        #"""
+        #Using settings from the given control file,
+            #converts the internal Bible (pseudo-USFM) information to the Door43.org format
+                #which used to be MediaWiki but is now DokuWiki.
+        #"""
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toDoor43…" )
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = 'OutputFiles/BOS_Door43_Export/'
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict:
-            controlDict, defaultControlFilename = {}, "To_Door43_controls.txt"
-            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except FileNotFoundError:
-                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
-        self.__adjustControlDict( controlDict )
+        #if not self.doneSetupGeneric: self.__setupWriter()
+        #if not outputFolder: outputFolder = 'OutputFiles/BOS_Door43_Export/'
+        #if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict:
+            #controlDict, defaultControlFilename = {}, "To_Door43_controls.txt"
+            #try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            #except FileNotFoundError:
+                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        #self.__adjustControlDict( controlDict )
 
-        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
+        #ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
-        for BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
-            if BBB in controlDict and controlDict[BBB]:
-                bits = controlDict[BBB].split(',')
-                if len(bits)!=2: logging.error( _("toDoor43: Unrecognized language book abbreviation and name for {}: {!r}").format( BBB, controlDict[BBB] ) )
-                bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
-                bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
-                bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
-                if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
-                if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
+        #bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
+        #for BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
+            #if BBB in controlDict and controlDict[BBB]:
+                #bits = controlDict[BBB].split(',')
+                #if len(bits)!=2: logging.error( _("toDoor43: Unrecognized language book abbreviation and name for {}: {!r}").format( BBB, controlDict[BBB] ) )
+                #bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                #bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                #bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
+                #if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
+                #if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
 
-        toWikiMediaGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":BibleOrgSysGlobals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
+        #toWikiMediaGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":BibleOrgSysGlobals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
-# TODO: Need to handle footnotes \f + \fr ref \fk key \ft text \f*      becomes <ref><!--\fr ref \fk key \ft-->text</ref>
-        def writeDoor43Book( writerObject, BBB, bkData ):
-            """Writes a book to the Door43 writerObject."""
+## TODO: Need to handle footnotes \f + \fr ref \fk key \ft text \f*      becomes <ref><!--\fr ref \fk key \ft-->text</ref>
+        #def writeDoor43Book( writerObject, BBB, bkData ):
+            #"""Writes a book to the Door43 writerObject."""
 
-            def processXRefsAndFootnotes( verse, extras ):
-                """
-                Convert cross-references and footnotes and return the adjusted verse text.
-                """
+            #def processXRefsAndFootnotes( verse, extras ):
+                #"""
+                #Convert cross-references and footnotes and return the adjusted verse text.
+                #"""
 
-                def processXRef( USFMxref ):
-                    """
-                    Return the OSIS code for the processed cross-reference (xref).
+                #def processXRef( USFMxref ):
+                    #"""
+                    #Return the OSIS code for the processed cross-reference (xref).
 
-                    NOTE: The parameter here already has the /x and /x* removed.
+                    #NOTE: The parameter here already has the /x and /x* removed.
 
-                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                        gives
-                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
-                    <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
-                    \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
-                    """
-                    nonlocal BBB
-                    toWikiMediaGlobals["XRefNum"] += 1
-                    OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["XRefNum"] )
-                    for j,token in enumerate(USFMxref.split('\\')):
-                        #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
-                        if j==0: # The first token (but the x has already been removed)
-                            rest = token.strip()
-                            if rest != '+':
-                                logging.warning( _("toDoor43a: We got something else here other than plus (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
-                        elif token.startswith('xo '): # xref reference follows
-                            adjToken = token[3:].strip()
-                            if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
-                            if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
-                            adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
-                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
-                            if osisRef is not None:
-                                OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef,token[3:] )
-                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toDoor43: Cross-reference at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
-                        elif token.startswith('xt '): # xref text follows
-                            xrefText = token[3:]
-                            finalPunct = ''
-                            while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
-                            #adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
-                            osisRef = BRL.parseToOSIS( xrefText, toWikiMediaGlobals['verseRef'] )
-                            if osisRef is not None:
-                                OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef, xrefText+finalPunct )
-                        elif token.startswith('x '): # another whole xref entry follows
-                            rest = token[2:].strip()
-                            if rest != '+':
-                                logging.warning( _("toDoor43b: We got something else here other than plus (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
-                        elif token in ('xt*', 'x*'):
-                            pass # We're being lazy here and not checking closing markers properly
-                        else:
-                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} xref {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMxref ) )
-                    OSISxref += '</note>'
-                    return OSISxref
-                # end of toDoor43.processXRef
+                    #\\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        #gives
+                    #<note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    #<note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
+                    #\\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
+                    #"""
+                    #nonlocal BBB
+                    #toWikiMediaGlobals["XRefNum"] += 1
+                    #OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["XRefNum"] )
+                    #for j,token in enumerate(USFMxref.split('\\')):
+                        ##print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        #if j==0: # The first token (but the x has already been removed)
+                            #rest = token.strip()
+                            #if rest != '+':
+                                #logging.warning( _("toDoor43a: We got something else here other than plus (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
+                        #elif token.startswith('xo '): # xref reference follows
+                            #adjToken = token[3:].strip()
+                            #if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
+                            #if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
+                            #adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
+                            #osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
+                            #if osisRef is not None:
+                                #OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef,token[3:] )
+                                #if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
+                                    #logging.error( _("toDoor43: Cross-reference at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
+                        #elif token.startswith('xt '): # xref text follows
+                            #xrefText = token[3:]
+                            #finalPunct = ''
+                            #while xrefText[-1] in ' ,;.': finalPunct = xrefText[-1] + finalPunct; xrefText = xrefText[:-1]
+                            ##adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
+                            #osisRef = BRL.parseToOSIS( xrefText, toWikiMediaGlobals['verseRef'] )
+                            #if osisRef is not None:
+                                #OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef, xrefText+finalPunct )
+                        #elif token.startswith('x '): # another whole xref entry follows
+                            #rest = token[2:].strip()
+                            #if rest != '+':
+                                #logging.warning( _("toDoor43b: We got something else here other than plus (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
+                        #elif token in ('xt*', 'x*'):
+                            #pass # We're being lazy here and not checking closing markers properly
+                        #else:
+                            #logging.warning( _("toDoor43: Unprocessed {!r} token in {} xref {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMxref ) )
+                    #OSISxref += '</note>'
+                    #return OSISxref
+                ## end of toDoor43.processXRef
 
-                def processFootnote( USFMfootnote ):
-                    """
-                    Return the OSIS code for the processed footnote.
+                #def processFootnote( USFMfootnote ):
+                    #"""
+                    #Return the OSIS code for the processed footnote.
 
-                    NOTE: The parameter here already has the /f and /f* removed.
+                    #NOTE: The parameter here already has the /f and /f* removed.
 
-                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
-                        gives
-                    <note n="1">1:20 Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Crosswire)
-                    <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
-                    """
-                    toWikiMediaGlobals["FootnoteNum"] += 1
-                    OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["FootnoteNum"] )
-                    for j,token in enumerate(USFMfootnote.split('\\')):
-                        #print( "processFootnote", j, token, USFMfootnote )
-                        if j==0: continue # ignore the + for now
-                        elif token.startswith('fr '): # footnote reference follows
-                            adjToken = token[3:].strip()
-                            if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
-                            adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
-                            osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
-                            if osisRef is not None:
-                                OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format( osisRef, token[3:] )
-                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toDoor43: Footnote at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
-                        elif token.startswith('ft '): # footnote text follows
-                            OSISfootnote += token[3:]
-                        elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
-                            OSISfootnote += '<catchWord>{}</catchWord>'.format( token[3:] ) # Note that the trailing space goes in the catchword here -- seems messy
-                        elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
-                            pass # We're being lazy here and not checking closing markers properly
-                        else:
-                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} footnote {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMfootnote ) )
-                    OSISfootnote += '</note>'
-                    #print( '', OSISfootnote )
-                    return OSISfootnote
-                # end of toDoor43.processFootnote
+                    #\\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        #gives
+                    #<note n="1">1:20 Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Crosswire)
+                    #<note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
+                    #"""
+                    #toWikiMediaGlobals["FootnoteNum"] += 1
+                    #OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toWikiMediaGlobals['verseRef'], toWikiMediaGlobals['verseRef'], toWikiMediaGlobals["FootnoteNum"] )
+                    #for j,token in enumerate(USFMfootnote.split('\\')):
+                        ##print( "processFootnote", j, token, USFMfootnote )
+                        #if j==0: continue # ignore the + for now
+                        #elif token.startswith('fr '): # footnote reference follows
+                            #adjToken = token[3:].strip()
+                            #if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
+                            #adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend the vernacular book abbreviation
+                            #osisRef = BRL.parseToOSIS( adjToken, toWikiMediaGlobals['verseRef'] )
+                            #if osisRef is not None:
+                                #OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format( osisRef, token[3:] )
+                                #if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
+                                    #logging.error( _("toDoor43: Footnote at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
+                        #elif token.startswith('ft '): # footnote text follows
+                            #OSISfootnote += token[3:]
+                        #elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
+                            #OSISfootnote += '<catchWord>{}</catchWord>'.format( token[3:] ) # Note that the trailing space goes in the catchword here -- seems messy
+                        #elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
+                            #pass # We're being lazy here and not checking closing markers properly
+                        #else:
+                            #logging.warning( _("toDoor43: Unprocessed {!r} token in {} footnote {!r}").format( token, toWikiMediaGlobals['verseRef'], USFMfootnote ) )
+                    #OSISfootnote += '</note>'
+                    ##print( '', OSISfootnote )
+                    #return OSISfootnote
+                ## end of toDoor43.processFootnote
 
-                while '\\x ' in verse and '\\x*' in verse: # process cross-references (xrefs)
-                    ix1 = verse.index('\\x ')
-                    ix2 = verse.find('\\x* ') # Note the extra space here at the end
-                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
-                        ix2 = verse.index('\\x*')
-                        ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( _("toDoor43: No space after xref entry in {}").format( toWikiMediaGlobals['verseRef'] ) )
-                    else: ix2b = ix2 + 4
-                    xref = verse[ix1+3:ix2]
-                    osisXRef = processXRef( xref )
-                    #print( osisXRef )
-                    verse = verse[:ix1] + osisXRef + verse[ix2b:]
-                while '\\f ' in verse and '\\f*' in verse: # process footnotes
-                    ix1 = verse.index('\\f ')
-                    ix2 = verse.find('\\f*')
-#                    ix2 = verse.find('\\f* ') # Note the extra space here at the end -- doesn't always work if there's two footnotes within one verse!!!
-#                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
-#                        ix2 = verse.index('\\f*')
-#                        ix2b = ix2 + 3 # Where the footnote ends
-#                        #logging.warning( 'toDoor43: No space after footnote entry in {}'.format(toWikiMediaGlobals['verseRef'] )
-#                    else: ix2b = ix2 + 4
-                    footnote = verse[ix1+3:ix2]
-                    osisFootnote = processFootnote( footnote )
-                    #print( osisFootnote )
-                    verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
-#                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
-                return verse
-            # end of toDoor43.processXRefsAndFootnotes
+                #while '\\x ' in verse and '\\x*' in verse: # process cross-references (xrefs)
+                    #ix1 = verse.index('\\x ')
+                    #ix2 = verse.find('\\x* ') # Note the extra space here at the end
+                    #if ix2 == -1: # Didn't find it so must be no space after the asterisk
+                        #ix2 = verse.index('\\x*')
+                        #ix2b = ix2 + 3 # Where the xref ends
+                        #logging.warning( _("toDoor43: No space after xref entry in {}").format( toWikiMediaGlobals['verseRef'] ) )
+                    #else: ix2b = ix2 + 4
+                    #xref = verse[ix1+3:ix2]
+                    #osisXRef = processXRef( xref )
+                    ##print( osisXRef )
+                    #verse = verse[:ix1] + osisXRef + verse[ix2b:]
+                #while '\\f ' in verse and '\\f*' in verse: # process footnotes
+                    #ix1 = verse.index('\\f ')
+                    #ix2 = verse.find('\\f*')
+##                    ix2 = verse.find('\\f* ') # Note the extra space here at the end -- doesn't always work if there's two footnotes within one verse!!!
+##                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
+##                        ix2 = verse.index('\\f*')
+##                        ix2b = ix2 + 3 # Where the footnote ends
+##                        #logging.warning( 'toDoor43: No space after footnote entry in {}'.format(toWikiMediaGlobals['verseRef'] )
+##                    else: ix2b = ix2 + 4
+                    #footnote = verse[ix1+3:ix2]
+                    #osisFootnote = processFootnote( footnote )
+                    ##print( osisFootnote )
+                    #verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
+##                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
+                #return verse
+            ## end of toDoor43.processXRefsAndFootnotes
 
 
-            # Main code for toDoor43.writeDoor43Book
-            bookRef = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
-            if bookRef is None:
-                logging.warning( "toDoor43: Doesn't know how to encode {!r} book yet".format( BBB ) )
-                unhandledBooks.append( BBB )
-                return
-            bookName = gotVP = None
-            C, V = '-1', '-1' # So first/id line starts at -1:0
-            chapterRef = bookRef + '.0'
-            #verseText = '' # Do we really need this?
-            #chapterNumberString = None
-            for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, adjText, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                #print( "toDoor43:writeD43Book", BBB, bookRef, bookName, marker, adjText, extras )
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
-                if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
-                    V = str( int(V) + 1 )
+            ## Main code for toDoor43.writeDoor43Book
+            #bookRef = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
+            #if bookRef is None:
+                #logging.warning( "toDoor43: Doesn't know how to encode {!r} book yet".format( BBB ) )
+                #unhandledBooks.append( BBB )
+                #return
+            #bookName = gotVP = None
+            #C, V = '-1', '-1' # So first/id line starts at -1:0
+            #chapterRef = bookRef + '.0'
+            ##verseText = '' # Do we really need this?
+            ##chapterNumberString = None
+            #for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
+                #marker, adjText, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
+                ##print( "toDoor43:writeD43Book", BBB, bookRef, bookName, marker, adjText, extras )
+                #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                    #continue # Just ignore added markers -- not needed here
+                #if marker in USFM_PRECHAPTER_MARKERS:
+                    #if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        #assert C=='-1' or marker=='rem' or marker.startswith('mte')
+                    #V = str( int(V) + 1 )
 
-                if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',
-                              'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4',):
-                    writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
-                    bookName = adjText # in case there's no toc2 entry later
-                elif marker == 'toc2':
-                    bookName = adjText
-                elif marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('nb','b','ib','ie',): # Just ignore these lines
-                    ignoredMarkers.add( marker )
-                elif marker == 'iot': # outline title
-                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
-                elif marker in ('io1','io2','io3','io4',): # outline entries
-                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
+                #if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',
+                              #'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4',):
+                    #writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
+                    #bookName = adjText # in case there's no toc2 entry later
+                #elif marker == 'toc2':
+                    #bookName = adjText
+                #elif marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('nb','b','ib','ie',): # Just ignore these lines
+                    #ignoredMarkers.add( marker )
+                #elif marker == 'iot': # outline title
+                    #if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
+                #elif marker in ('io1','io2','io3','io4',): # outline entries
+                    #if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
 
-                elif marker == 'c':
-                    C, V = adjText, '0'
-                    chapterNumberString = adjText
-                    chapterRef = bookRef + '.' + chapterNumberString
-                    # Bible:BookName_#
-                    if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
-                elif marker == 'c#': # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
-                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
-                    gotVP = adjText # Just remember it for now
-                elif marker == 'v':
-                    #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
-                    #    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
-                    #    chapterNumberString = '1'
-                    #    chapterRef = bookRef + '.' + chapterNumberString
-                    V = adjText
-                    if gotVP: # this is the verse number to be published
-                        adjText = gotVP
-                        gotVP = None
-                    verseNumberString = adjText # Gets written with in the v~ line
-                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
+                #elif marker == 'c':
+                    #C, V = adjText, '0'
+                    #chapterNumberString = adjText
+                    #chapterRef = bookRef + '.' + chapterNumberString
+                    ## Bible:BookName_#
+                    #if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
+                #elif marker == 'c#': # These are the markers that we can safely ignore for this export
+                    #ignoredMarkers.add( marker )
+                #elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
+                    #gotVP = adjText # Just remember it for now
+                #elif marker == 'v':
+                    ##if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
+                    ##    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
+                    ##    chapterNumberString = '1'
+                    ##    chapterRef = bookRef + '.' + chapterNumberString
+                    #V = adjText
+                    #if gotVP: # this is the verse number to be published
+                        #adjText = gotVP
+                        #gotVP = None
+                    #verseNumberString = adjText # Gets written with in the v~ line
+                    ## <span id="chapter#_#"><sup>#</sup> adjText</span>
+                    ##writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
+
+                #elif marker in ('ms1','ms2','ms3','ms4'):
+                    ## === adjText ===
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( '=== {} ==='.format(adjText) )
+                #elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
+                    ## === adjText ===
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( '=== {} ==='.format(adjText) )
+                #elif marker in ('r', 'sr', 'mr',):
+                    ## <span class="srefs">adjText</span>
+                    #if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
+                #elif marker == 'd': # descriptive title or Hebrew subtitle
+                    #if adjText or extras:
+                        #adjText = processXRefsAndFootnotes( adjText, extras )
+                        #writerObject.writeLineOpenClose( 'p', adjText, ('class','descriptiveTitle') )
+                #elif marker == 'sp': # speaker
+                    #if adjText: writerObject.writeLineOpenClose( 'p', adjText, ('class','speaker') )
+                #elif marker in ('p','pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4', 'pr','pq',) \
+                #or marker in ('ip','ipi','ipr','ipq', 'iex',):
+                    #writerObject.writeNewLine( 2 )
+                #elif marker in ( 'q1','q2','q3','q4', 'iq1','iq2','iq3','iq4',):
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
+                #elif marker == 'v~':
+                    ##print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
+                    #assert adjText or extras
+                    ## TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
+                    #if not adjText: # this is an empty (untranslated) verse
+                        #adjText = '- - -' # but we'll put in a filler
+                    #else: adjText = processXRefsAndFootnotes( adjText, extras )
+                    ## <span id="chapter#_#"><sup>#</sup> adjText</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
+                #elif marker == 'p~':
+                    ##print( "Ouch", marker, repr(adjText), chapterRef, verseNumberString )
+                    #assert adjText or extras
+                    ## TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
+                #elif marker == 'm': # Margin/Flush-left paragraph
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( '::{}'.format(adjText), noTextCheck=True )
+                #elif marker in ( 'li1','li2','li3','li4', ):
+                    #adjText = processXRefsAndFootnotes( adjText, extras )
+                    #writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
+                #else:
+                    #if adjText:
+                        #logging.error( "toDoor43: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, adjText ) )
+                        ##if BibleOrgSysGlobals.debugFlag: halt
+                    #if extras:
+                        #logging.error( "toDoor43: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
+                        ##if BibleOrgSysGlobals.debugFlag: halt
+                    #unhandledMarkers.add( marker )
+                #if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'q1','q2','q3','q4', 'm','li1','li2','li3','li4',): logging.critical( "toDoor43: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+        ## end of toDoor43.writeD43Book
 
-                elif marker in ('ms1','ms2','ms3','ms4'):
-                    # === adjText ===
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( '=== {} ==='.format(adjText) )
-                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
-                    # === adjText ===
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( '=== {} ==='.format(adjText) )
-                elif marker in ('r', 'sr', 'mr',):
-                    # <span class="srefs">adjText</span>
-                    if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
-                elif marker == 'd': # descriptive title or Hebrew subtitle
-                    if adjText or extras:
-                        adjText = processXRefsAndFootnotes( adjText, extras )
-                        writerObject.writeLineOpenClose( 'p', adjText, ('class','descriptiveTitle') )
-                elif marker == 'sp': # speaker
-                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, ('class','speaker') )
-                elif marker in ('p','pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4', 'pr','pq',) \
-                or marker in ('ip','ipi','ipr','ipq', 'iex',):
-                    writerObject.writeNewLine( 2 )
-                elif marker in ( 'q1','q2','q3','q4', 'iq1','iq2','iq3','iq4',):
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker == 'v~':
-                    #print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
-                    assert adjText or extras
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
-                    if not adjText: # this is an empty (untranslated) verse
-                        adjText = '- - -' # but we'll put in a filler
-                    else: adjText = processXRefsAndFootnotes( adjText, extras )
-                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
-                    writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
-                elif marker == 'p~':
-                    #print( "Ouch", marker, repr(adjText), chapterRef, verseNumberString )
-                    assert adjText or extras
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Door43 handles them yet
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker == 'm': # Margin/Flush-left paragraph
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( '::{}'.format(adjText), noTextCheck=True )
-                elif marker in ( 'li1','li2','li3','li4', ):
-                    adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
-                else:
-                    if adjText:
-                        logging.error( "toDoor43: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, adjText ) )
-                        #if BibleOrgSysGlobals.debugFlag: halt
-                    if extras:
-                        logging.error( "toDoor43: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
-                        #if BibleOrgSysGlobals.debugFlag: halt
-                    unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'q1','q2','q3','q4', 'm','li1','li2','li3','li4',): logging.critical( "toDoor43: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-        # end of toDoor43.writeD43Book
+        ## Set-up our Bible reference system
+        #if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == 'GENERIC':
+            #BOS = self.genericBOS
+            #BRL = self.genericBRL
+        #else:
+            #BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        # Set-up our Bible reference system
-        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == 'GENERIC':
-            BOS = self.genericBOS
-            BRL = self.genericBRL
-        else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
-            BRL = BibleReferenceList( BOS, BibleObject=None )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format…") )
+        #try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['Door43OutputFilename'] )
+        #except KeyError: filename = 'Bible.d43'
+        #xw = MLWriter( filename, outputFolder )
+        #xw.setHumanReadable()
+        #xw.start()
+        #for BBB,bookData in self.books.items():
+            #writeDoor43Book( xw, BBB, bookData )
+        #xw.close()
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format…") )
-        try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['Door43OutputFilename'] )
-        except KeyError: filename = 'Bible.d43'
-        xw = MLWriter( filename, outputFolder )
-        xw.setHumanReadable()
-        xw.start()
-        for BBB,bookData in self.books.items():
-            writeDoor43Book( xw, BBB, bookData )
-        xw.close()
+        #if ignoredMarkers:
+            #logging.info( "toDoor43: Ignored markers were {}".format( ignoredMarkers ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 2:
+                #print( "  " + _("WARNING: Ignored toDoor43 markers were {}").format( ignoredMarkers ) )
+        #if unhandledMarkers:
+            #logging.warning( "toDoor43: Unhandled markers were {}".format( unhandledMarkers ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 1:
+                #print( "  " + _("WARNING: Unhandled toDoor43 markers were {}").format( unhandledMarkers ) )
+        #if unhandledBooks:
+            #logging.warning( "toDoor43: Unhandled books were {}".format( unhandledBooks ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 1:
+                #print( "  " + _("WARNING: Unhandled toDoor43 books were {}").format( unhandledBooks ) )
 
-        if ignoredMarkers:
-            logging.info( "toDoor43: Ignored markers were {}".format( ignoredMarkers ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toDoor43 markers were {}").format( ignoredMarkers ) )
-        if unhandledMarkers:
-            logging.warning( "toDoor43: Unhandled markers were {}".format( unhandledMarkers ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toDoor43 markers were {}").format( unhandledMarkers ) )
-        if unhandledBooks:
-            logging.warning( "toDoor43: Unhandled books were {}".format( unhandledBooks ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toDoor43 books were {}").format( unhandledBooks ) )
+        ## Now create a zipped version
+        #filepath = os.path.join( outputFolder, filename )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Door43 file…".format( filename ) )
+        #zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        #zf.write( filepath, filename )
+        #zf.close()
 
-        # Now create a zipped version
-        filepath = os.path.join( outputFolder, filename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} Door43 file…".format( filename ) )
-        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
-        zf.write( filepath, filename )
-        zf.close()
-
-        if validationSchema: validationResult = xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toDoor43 finished successfully." )
-        if validationSchema: return validationResult # Returns a 3-tuple: intCode, logString, errorLogString
-        return True
-    # end of BibleWriter.toDoor43
+        #if validationSchema: validationResult = xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
+        #if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+            #print( "  BibleWriter.toDoor43 finished successfully." )
+        #if validationSchema: return validationResult # Returns a 3-tuple: intCode, logString, errorLogString
+        #return True
+    ## end of BibleWriter.toDoor43
 
 
 
@@ -2958,7 +2971,8 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
                 #print( 'BDText1', BBB, pseudoMarker, repr(fullText) )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers -- not needed here
-                if pseudoMarker in USFM_PRECHAPTER_MARKERS:
+                if pseudoMarker in USFM_PRECHAPTER_MARKERS \
+                or C == 'I': # This second part also copes with misuse of
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
                     V = str( int(V) + 1 )
@@ -3010,6 +3024,7 @@ class BibleWriter( InternalBible ):
                         currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
                     currentText += '{{c{}}}'.format( cleanText )
                 elif pseudoMarker in ('v=','v'): # v= precedes the following section heading, etc.
+                    if C=='I': C = '1' # Some single chapter books don't have a chapter one marker
                     V = cleanText
                     if '-' in V: V = V[:V.index('-')]
                     elif '–' in V: V = V[:V.index('–')] # en dash
@@ -10442,7 +10457,7 @@ class BibleWriter( InternalBible ):
         textOutputFolder = os.path.join( givenOutputFolderName, 'BOS_PlainText_' + ('Reexport/' if self.objectTypeString=='Text' else 'Export/' ) )
         VPLOutputFolder = os.path.join( givenOutputFolderName, 'BOS_VersePerLine_' + ('Reexport/' if self.objectTypeString=='VPL' else 'Export/' ) )
         markdownOutputFolder = os.path.join( givenOutputFolderName, 'BOS_Markdown_Export/' )
-        D43OutputFolder = os.path.join( givenOutputFolderName, 'BOS_Door43_' + ('Reexport/' if self.objectTypeString=='Door43' else 'Export/' ) )
+        #D43OutputFolder = os.path.join( givenOutputFolderName, 'BOS_Door43_' + ('Reexport/' if self.objectTypeString=='Door43' else 'Export/' ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, 'BOS_HTML5_Export/' )
         BDOutputFolder = os.path.join( givenOutputFolderName, 'BOS_BibleDoor_' + 'Export/' )
         EWBOutputFolder = os.path.join( givenOutputFolderName, 'BOS_EasyWorshipBible_' + 'Export/' )
@@ -10498,7 +10513,7 @@ class BibleWriter( InternalBible ):
             textExportResult = self.toText( textOutputFolder )
             VPLExportResult = self.toVPL( VPLOutputFolder )
             markdownExportResult = self.toMarkdown( markdownOutputFolder )
-            D43ExportResult = self.toDoor43( D43OutputFolder )
+            #D43ExportResult = self.toDoor43( D43OutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             BDExportResult = self.toBibleDoor( BDOutputFolder )
             EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
@@ -10532,7 +10547,8 @@ class BibleWriter( InternalBible ):
                                     self.toPickledBible, self.makeLists,
                                     self.toBOSBCV, self.toPseudoUSFM,
                                     self.toUSFM2, self.toUSFM3, self.toESFM, self.toText, self.toVPL,
-                                    self.toMarkdown, self.toDoor43, self.toHTML5,
+                                    self.toMarkdown, #self.toDoor43,
+                                    self.toHTML5,
                                     self.toBibleDoor, self.toEasyWorshipBible,
                                     self.toUSX2XML, self.toUSX3XML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
@@ -10544,7 +10560,7 @@ class BibleWriter( InternalBible ):
                                     BCVOutputFolder, pseudoUSFMOutputFolder,
                                     USFM2OutputFolder, USFM3OutputFolder, ESFMOutputFolder,
                                     textOutputFolder, VPLOutputFolder,
-                                    markdownOutputFolder, D43OutputFolder,
+                                    markdownOutputFolder, #D43OutputFolder,
                                     htmlOutputFolder, BDOutputFolder, EWBOutputFolder,
                                     USX2OutputFolder, USX3OutputFolder, USFXOutputFolder, OSISOutputFolder,
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
@@ -10603,7 +10619,8 @@ class BibleWriter( InternalBible ):
                 TeXExportResult,
                 pickledBibleOutputResult, listOutputResult, BCVExportResult, pseudoUSFMExportResult,
                 USFM2ExportResult, USFM3ExportResult, ESFMExportResult, textExportResult, VPLExportResult,
-                markdownExportResult, D43ExportResult, htmlExportResult, BDExportResult, EWBExportResult,
+                markdownExportResult, #D43ExportResult,
+                htmlExportResult, BDExportResult, EWBExportResult,
                 USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult,
                 swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult,
                 DrExportResult ) = results
@@ -10682,11 +10699,11 @@ class BibleWriter( InternalBible ):
                 markdownExportResult = False
                 print("BibleWriter.doAllExports.toMarkdown Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toMarkdown: Oops, failed!" )
-            try: D43ExportResult = self.toDoor43( D43OutputFolder )
-            except Exception as err:
-                D43ExportResult = False
-                print("BibleWriter.doAllExports.toDoor43 Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toDoor43: Oops, failed!" )
+            #try: D43ExportResult = self.toDoor43( D43OutputFolder )
+            #except Exception as err:
+                #D43ExportResult = False
+                #print("BibleWriter.doAllExports.toDoor43 Unexpected error:", sys.exc_info()[0], err)
+                #logging.error( "BibleWriter.doAllExports.toDoor43: Oops, failed!" )
             try: htmlExportResult = self.toHTML5( htmlOutputFolder )
             except Exception as err:
                 htmlExportResult = False
@@ -10793,13 +10810,14 @@ class BibleWriter( InternalBible ):
                     logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM2={} USFM3={} ESFM={} Tx={} VPL={}  md={} D43={}  " \
-                            "HTML={} BD={} EWB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
+            finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM2={} USFM3={} ESFM={} Tx={} VPL={}  md={}  " \
+                            "HTML={} BD={} EWB={}  USX2={} USX3={}  USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  " \
                             "tW={} MySw={} eSw={} MyB={}  SwS={} Dr={}  PB={} ODF={} TeX={} {}" \
                 .format( pickleResult, listOutputResult, BCVExportResult,
                     pseudoUSFMExportResult, USFM2ExportResult, USFM3ExportResult, ESFMExportResult,
                     textExportResult, VPLExportResult,
-                    markdownExportResult, D43ExportResult, htmlExportResult,
+                    markdownExportResult, #D43ExportResult,
+                    htmlExportResult,
                     BDExportResult, EWBExportResult,
                     USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult,
                     ZefExportResult, HagExportResult, OSExportResult,
@@ -10821,13 +10839,14 @@ class BibleWriter( InternalBible ):
             #and SwSExportResult and DrExportResult \
             #and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
             if falseCount == 0:
-                print( "BibleWriter.doAllExports finished all requested (which was {}/31) exports successfully!".format( trueCount ) )
+                print( "BibleWriter.doAllExports finished all requested (which was {}/30) exports successfully!".format( trueCount ) )
             else:
                 print( "{} ({} True, {} False, {} None)".format( finishString, trueCount, falseCount, noneCount ) )
         return { 'Pickle':pickleResult, 'listOutput':listOutputResult, 'BCVOutput':BCVExportResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFM2Export':USFM2ExportResult, 'USFM3Export':USFM3ExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'VPLExport':VPLExportResult,
-                'markdownExport':markdownExportResult, 'D43Export':D43ExportResult, 'htmlExport':htmlExportResult,
+                'markdownExport':markdownExportResult, #'D43Export':D43ExportResult,
+                'htmlExport':htmlExportResult,
                 'BibleDoorExport':BDExportResult, 'EasyWorshipBibleExport':EWBExportResult,
                 'USX2Export':USX2ExportResult, 'USX3Export':USX3ExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult,
                 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
@@ -10937,7 +10956,8 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toBibleDoor(); continue # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    #result = UB.toBibleDoor()
+                    #result = UB.toUSFM2(); continue # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     #print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
