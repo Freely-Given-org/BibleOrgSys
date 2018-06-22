@@ -78,7 +78,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-06-15' # by RJH
+LastModifiedDate = '2018-06-22' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -2749,7 +2749,8 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]), noTextCheck=haveExtraFormatting )
                 elif marker in ('r', 'sr', 'mr',):
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not haveOpenVerse
+                    if BibleOrgSysGlobals.strictCheckingFlag and (debuggingThisModule or BibleOrgSysGlobals.debugFlag): assert not haveOpenVerse
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if not haveOpenSection:
                         logging.warning( "toHTML5: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
@@ -3003,7 +3004,9 @@ class BibleWriter( InternalBible ):
                             for j,line in enumerate( currentText.splitlines() ):
                                 print( '  {}/ {}'.format( j+1, line ) )
                                 assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
-                        assert sectionCV not in bookIndexDict
+                        if BibleOrgSysGlobals.strictCheckingFlag: assert sectionCV not in bookIndexDict
+                        elif sectionCV in bookIndexDict:
+                            logging.critical( f"toBibleDoorText at {BBB} {C}:{V} is losing a section: {savedText!r}" )
                         bookIndexDict[sectionCV] = len(bookText)
                         bookIndexList.append( (savedC,savedV, lastC,lastV, len(bookText),len(currentText)) )
                         bookText += currentText
@@ -3011,18 +3014,17 @@ class BibleWriter( InternalBible ):
                         currentText = currentParagraphMarker = ''
                         sectionCV = '{}v{}'.format( C, V )
                     else:
-                        logging.warning( "_toBibleDoorText {} skipped making an index entry for blank text around {} {}:{}" \
-                                                    .format( self.abbreviation, BBB, C, V ) )
+                        logging.warning( f"toBibleDoorText {self.abbreviation} skipped making an index entry for blank text around {BBB} {C}:{V}" )
 
                 if pseudoMarker == 'c':
                     assert cleanText.isdigit() # Chapter number only
                     C, V = cleanText, '1' # ignores footnotes on chapter numbers
                 elif pseudoMarker == 'c#':
                     if currentParagraphMarker in ('','s1','r'):
-                        logging.warning( "_toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
+                        logging.warning( "toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
                                                     .format( self.abbreviation, BBB, currentParagraphMarker, C, V ) )
                         currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
-                    currentText += '{{c{}}}'.format( cleanText )
+                    currentText += f'{{c{cleanText}}}'
                 elif pseudoMarker in ('v=','v'): # v= precedes the following section heading, etc.
                     if C=='I': C = '1' # Some single chapter books don't have a chapter one marker
                     V = cleanText
@@ -3771,7 +3773,8 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                 elif marker in ('r', 'sr', 'mr',):
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not vOpen
+                    if BibleOrgSysGlobals.strictCheckingFlag and (debuggingThisModule or BibleOrgSysGlobals.debugFlag): assert not vOpen
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
                         logging.warning( "toBibleDoor: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
