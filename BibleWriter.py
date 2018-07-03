@@ -31,10 +31,7 @@ TODO: Go through all unhandled fields and find out how they should be handled.
 
 Module for exporting Bibles in various formats listed below.
 
-A class which extends InternalBible.
-
-This is intended to be a virtual class, i.e., to be extended further
-    by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
+A class which extends InternalBible to add Bible export functions.
 
 Contains functions:
     toPickleObject( self, outputFolder=None )
@@ -71,14 +68,16 @@ Contains functions:
     toODF( outputFolder=None ) for LibreOffice/OpenOffice exports
     toTeX( outputFolder=None ) and thence to PDF
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+        (doAllExports supports multiprocessing -- it shares the exports out amongst available processes)
 
 Note that not all exports export all books.
-    Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
+    Some formats only handle subsets of books (or markers/fields),
+        e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-06-22' # by RJH
+LastModifiedDate = '2018-07-04' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -1162,6 +1161,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
+            Introductions and several other fields are ignored.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toText…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
@@ -1169,27 +1169,36 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = 'OutputFiles/BOS_PlainText_Export/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        outputFolder2 = os.path.join( outputFolder, 'Without_ByteOrderMarker' )
+        if not os.access( outputFolder2, os.F_OK ): os.makedirs( outputFolder2 ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers = set()
 
         # First determine our format
         columnWidth = 80
-        verseByVerse = True
+        #verseByVerse = True
 
-        # Write the plain text files
-        for BBB,bookObject in self.books.items():
-            internalBibleBookData = bookObject._processedLines
 
+        def writeTextFile( BBB, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ):
+            """
+            Helper function to write the actual text file
+            """
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
-            filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
+            filepath = os.path.join( wtfOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toText: ' + _("Writing {!r}…").format( filepath ) )
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+                if withBOMFlag:
+                    try: myFile.write('\ufeff')
+                    except UnicodeEncodeError: # why does this fail on Windows???
+                        logging.critical( "toText.writeTextFile: Unable to write BOM to file" )
                 gotVP = None
                 for entry in internalBibleBookData:
-                    marker, text = entry.getMarker(), entry.getCleanText()
-                    if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
-                        ignoredMarkers.add( marker )
+                    marker, text = entry.getMarker(), entry.getCleanText() # Clean text has no notes or character formatting
+                    if marker.startswith('¬') or marker in ('c#','v='):
+                        continue # silent ignore some of our added markers
+                    if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('r','d','sp','cp','ie'):
+                        ignoredMarkers.add( marker ) # Just ignore these lines
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ''
                         myFile.write( "{}\n\n".format( text ) )
@@ -1217,6 +1226,8 @@ class BibleWriter( InternalBible ):
                     elif marker in ('p','pi1','pi2','pi3','pi4', 's1','s2','s3','s4', 'ms1','ms2','ms3','ms4',): # Drop out these fields
                         ignoredMarkers.add( marker )
                     elif text:
+                        #if marker not in ('p~','v~'): # The most common ones
+                            #print( "toText.writeTextFile: Using marker {!r}:{!r}".format( marker, text ) )
                         textBuffer += (' ' if textBuffer else '') + text
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
@@ -1224,19 +1235,26 @@ class BibleWriter( InternalBible ):
                         #myFile.write( "{} ({}): {!r} {!r} {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
+            # Now create a zipped collection
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files…" )
+            zf = zipfile.ZipFile( os.path.join( wtfOutputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            for filename in os.listdir( wtfOutputFolder ):
+                if not filename.endswith( '.zip' ):
+                    filepath = os.path.join( wtfOutputFolder, filename )
+                    zf.write( filepath, filename ) # Save in the archive without the path
+            zf.close()
+
+        # Main code for toText()
+        # Write the plain text files
+        for BBB,bookObject in self.books.items():
+            # NOTE: We currently write ALL books, even though some books (e.g., FRT,GLS,XXA,... may end up blank)
+            writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolder, withBOMFlag=True )
+            writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolder2, withBOMFlag=False )
+
         if ignoredMarkers:
             logging.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
-
-        # Now create a zipped collection
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping text files…" )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if not filename.endswith( '.zip' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.toText finished successfully." )
@@ -10959,7 +10977,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toBibleDoor()
+                    #result = UB.toText(); continue
                     #result = UB.toUSFM2(); continue # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     #print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
