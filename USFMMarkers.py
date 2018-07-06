@@ -24,8 +24,8 @@
 
 """
 Module handling USFMMarkers.
-
-See http://paratext.org/about/usfm
+    See http://ubsicap.github.io/usfm/
+        (and the old http://paratext.org/about/usfm)
 
 Contains functions:
     removeUSFMCharacterField( marker, originalText, closedFlag )
@@ -36,7 +36,7 @@ Contains the singleton class: USFMMarkers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
+LastModifiedDate = '2018-07-05' # by RJH
 ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
 ProgVersion = '0.70'
@@ -144,7 +144,7 @@ def replaceUSFMCharacterFields( replacements, originalText ):
     Returns the adjusted text.
     """
     text = originalText
-    for markers, openReplacment, closeReplacement in replacements:
+    for markers, openReplacement, closeReplacement in replacements:
         for marker in markers:
             assert '\\' not in marker and ' ' not in marker and '*' not in marker
 
@@ -155,7 +155,7 @@ def replaceUSFMCharacterFields( replacements, originalText ):
                 logging.warning( "replaceUSFMCharacterFields: missing close marker for {!r} in {!r}".format( openMarker, originalText ) )
             elif openCount < closedCount:
                 logging.warning( "replaceUSFMCharacterFields: superfluous {!r} close marker in {!r}".format( closeMarker, originalText ) )
-            text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
+            text = text.replace( openMarker, openReplacement ).replace( closeMarker, closeReplacement )
 
             # Handle the new v2.4 nested markers
             openMarker, closeMarker = '\\+'+marker+' ', '\\+'+marker+'*'
@@ -164,7 +164,7 @@ def replaceUSFMCharacterFields( replacements, originalText ):
                 logging.warning( "replaceUSFMCharacterFields: missing nested close marker for {!r} in {!r}".format( openMarker, originalText ) )
             elif openCount < closedCount:
                 logging.warning( "replaceUSFMCharacterFields: superfluous {!r} nested close marker in {!r}".format( closeMarker, originalText ) )
-            text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
+            text = text.replace( openMarker, openReplacement ).replace( closeMarker, closeReplacement )
     return text
 # end of replaceUSFMCharacterFields
 
