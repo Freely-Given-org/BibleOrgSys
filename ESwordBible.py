@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-07-06' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.38'
+ProgVersion = '0.39'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1228,7 +1228,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
             line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
             replacements = (
-                ( ('add',), '~^~cf15~^~i','~^~cf0~^~i0' ),
+                ( ('add',), '~^~cf15~^~i ',' ~^~cf0~^~i0' ), # Note the spaces!
                 ( ('qt',), '<FO>','<Fo>' ),
                 ( ('wj',), '<FR>','<Fr>' ),
                 ( ('ca','va',), '(',')' ),
@@ -1466,6 +1466,11 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                 halt
+        haveAdd = False
+        for verseDataEntry in verseData:
+            marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+            if text and '\\add' in text: haveAdd = True; break
+        if haveAdd: print( "Returning {} {}:{}: {}".format( BBB, C, V, composedLine.replace( '~^~', '\\' ).rstrip() ) )
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
 
