@@ -1466,11 +1466,11 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                 halt
-        haveAdd = False
-        for verseDataEntry in verseData:
-            marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-            if text and '\\add' in text: haveAdd = True; break
-        if haveAdd: print( "Returning {} {}:{}: {}".format( BBB, C, V, composedLine.replace( '~^~', '\\' ).rstrip() ) )
+        #haveAdd = False
+        #for verseDataEntry in verseData:
+            #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+            #if text and '\\add' in text: haveAdd = True; break
+        #if haveAdd: print( "Returning {} {}:{}: {}".format( BBB, C, V, composedLine.replace( '~^~', '\\' ).rstrip() ) )
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
 
@@ -1704,15 +1704,15 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
 
         eSwB.discover() # Just to test this
 
-        if 0:# Now export the Bible and compare the round trip
-            eSwB.toESword()
-            #doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files…" )
-                result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
-                if BibleOrgSysGlobals.debugFlag:
-                    if not result: halt
+        #if 0:# Now export the Bible and compare the round trip
+            #eSwB.toESword()
+            ##doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            #if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                #outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
+                #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files…" )
+                #result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
+                #if BibleOrgSysGlobals.debugFlag:
+                    #if not result: halt
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "testeSwB2:", eSwB ) # Just print a summary
 # end of testeSwB
 
