@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-07-04' # by RJH
+LastModifiedDate = '2018-07-05' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -1298,9 +1298,9 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-                    #try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
+                    #try: myFile.write('\ufeff') # VPL needs the BOM
                     #except UnicodeEncodeError: # why does this fail on Windows???
-                        #logging.critical( "toForgeForSwordSearcher: Unable to write BOM to file" )
+                        #logging.critical( "toVPL: Unable to write BOM to file" )
 
                     # Write the intro stuff
                     myFile.write( '; TITLE: {}\n'.format( title ) )
@@ -10977,7 +10977,6 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toText(); continue
                     #result = UB.toUSFM2(); continue # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     #print( "{} {!r}\n{}".format( result[0], result[1], result[2]  )); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
