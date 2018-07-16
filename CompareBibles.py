@@ -27,6 +27,10 @@
 Module to check and compare two closely related Bibles
    e.g., a book and its back-translation.
 
+In this context COMPLETE_LINE (completeLine) means a text line
+    WITH THE NOTES, etc. STILL IN PLACE.
+    cf. TEXT_ONLY (textOnly) means after the notes, etc., have been removed.
+
 Includes:
     loadWordCompares( folder, filename )
     compareBooksPedantic( book1, book2,
@@ -64,14 +68,19 @@ Includes:
                         breakOnOne=False )
     demo()
     main()
+
+REGEX stuff:
+    \w for Unicode (str) patterns:
+        Matches Unicode word characters; this includes most characters that can be part of a word in any language,
+        as well as numbers and the underscore. If the ASCII flag is used, only [a-zA-Z0-9_] is matched.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-07-16' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
-ProgVersion = '0.24'
+ProgVersion = '0.25'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -144,23 +153,25 @@ DEFAULT_LEGAL_PAIRS_VERNACULAR = () + DEFAULT_LEGAL_PAIRS_COMMON
 DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION = () + DEFAULT_LEGAL_PAIRS_COMMON
 
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
-                    '\\\\f [^+][^ ]', # Footnote that doesn't start with +
-                    '\\\\f \\+ [^\\\\][^f][^r][^ ]', # Footnote that doesn't start with \fr
-                    '\\\\fr [0-9]{1,3}:[0-9]{1,3} [^\\\\][^f][^t][^ ]', # Footnote that doesn't start with \ft
-                    '\\\\fr [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3} [^\\\\][^f][^t][^ ]', # Bridged footnote that doesn't start with \ft
-                    '[^.?!)”*]\\\\f\\*', # Footnote that doesn't end with period, etc.
-                    '\\\\x [^+][^ ]', # Cross-reference that doesn't start with +
-                    '\\\\x \\+ [^\\\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
-                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}(-[0-9]{1,3})? ', # Cross-reference (incl. bridged) that doesn't end with colon
-                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}: a [^\\\\][^x][^t][^ ]', # Cross-reference that doesn't start with \xt
-                    '\\\\xo [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}: a [^\\\\][^x][^t][^ ]', # Bridged cross-reference that doesn't start with \xt
-                    '[^.]\\\\x\\*', # Cross-reference that doesn't end with period
-                    '\\\\x\\* ', # Cross-reference followed by a space
-                    ' \\\\[a-z]{1,3}\\*', # Closing marker after a space
-                    '^\\([1-4][A-Z].*?\\)$', # \r reference without space e.g. 2Ki instead of 2 Ki
-                    '[a-z]\\\\[^fx][a-z]? ' # character marker (not footnote or cross-reference) not preceded by space
-                    '=[^AGLOPQS]' # for ESFM tags only, but doesn't normally cause other problems
-                    '=S[^GH]' # for ESFM Strongs tags only, but doesn't normally cause other problems
+                    r'\\f [^+][^ ]', # Footnote that doesn't start with +
+                    r'\\f \\+ [^\\][^f][^r][^ ]', # Footnote that doesn't start with \fr
+                    r'\\fr [0-9]{1,3}:[0-9]{1,3} [^\\][^f][^t][^ ]', # Footnote that doesn't start with \ft
+                    r'\\fr [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3} [^\\][^f][^t][^ ]', # Bridged footnote that doesn't start with \ft
+                    r'[^.?!)”*]\\f\*', # Footnote that doesn't end with period, etc.
+                    r'\\x [^+][^ ]', # Cross-reference that doesn't start with +
+                    r'\\x \\+ [^\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
+                    r'\\xo [0-9]{1,3}:[0-9]{1,3}(-[0-9]{1,3})? ', # Cross-reference (incl. bridged) that doesn't end with colon
+                    r'\\xo [0-9]{1,3}:[0-9]{1,3}: a [^\\][^x][^t][^ ]', # Cross-reference that doesn't start with \xt
+                    r'\\xo [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}: a [^\\][^x][^t][^ ]', # Bridged cross-reference that doesn't start with \xt
+                    r'[^.]\\x\*', # Cross-reference that doesn't end with period
+                    r'\\x\* ', # Cross-reference followed by a space
+                    r' \\[a-z]{1,3}\*', # Closing marker after a space
+                    r'^\([1-4][A-Z].*?\)$', # \r reference without space e.g. 2Ki instead of 2 Ki
+                    r'[a-z]\\[^fx][a-z]? ', # character marker (not footnote or cross-reference) not preceded by space
+                    r'”\w', r'’\w', # Closing quote followed by a character
+                    r'»\w', r'›\w', # Closing quote followed by a character
+                    '=[^AGLOPQS]', # for ESFM tags only, but doesn't normally cause other problems
+                    '=S[^GH]', # for ESFM Strongs tags only, but doesn't normally cause other problems
                     )
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
