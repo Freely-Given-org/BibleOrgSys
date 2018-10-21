@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-07-05' # by RJH
+LastModifiedDate = '2018-10-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -3007,12 +3007,12 @@ class BibleWriter( InternalBible ):
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
                 or pseudoMarker == 's1' \
-                or (pseudoMarker == 'c' and not haveSectionHeadingsForBook):
+                or (pseudoMarker == 'c' and (BBB=='PSA' or not haveSectionHeadingsForBook)):
                 #or (C=='1' and V=='1' and ('1','0') not in bookIndexDict):
                     if currentText: # start a new section
                         if pseudoMarker=='s1': assert haveSectionHeadingsForBook
                         elif pseudoMarker=='c':
-                            assert not haveSectionHeadingsForBook
+                            assert BBB=='PSA' or not haveSectionHeadingsForBook
                             assert cleanText.isdigit() # Chapter number only
                             savedC = C
                             V = '1' # Catch up on the chapter number
@@ -3075,7 +3075,7 @@ class BibleWriter( InternalBible ):
             if len(currentText) > 0: # save the final index entry
                 if not haveSectionHeadingsForBook: savedC, V = C, '1' # Catch up on the chapter number
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    print( "\nAt {} {}:{} {!r}: saving final index entry {}:{} @ {:,}".format( BBB, C, V, pseudoMarker, savedC, savedV, len(bookText) ) )
+                    print( f"\nAt {BBB} {C}:{V} {pseudoMarker!r}: saving final index entry {savedC}:{savedV} @ {len(bookText):,}" )
                     for j,line in enumerate( currentText.splitlines() ):
                         print( '  {}/ {}'.format( j+1, line ) )
                         assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
@@ -3094,7 +3094,7 @@ class BibleWriter( InternalBible ):
 
             # Write the bookText output
             #print( "BDText", bookText[:4000] )
-            filename = "{}.{}.bd.txt".format( BBB, BDDataFormatVersion )
+            filename = f'{BBB}.{BDDataFormatVersion}.bd.txt'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -3118,11 +3118,17 @@ class BibleWriter( InternalBible ):
                 intEndC, intEndV = int( endC ), int( endV )
                 if intEndC==intStartC: newBookIndexList.append( (intStartC,intStartV, fileOffset,length, intEndV) )
                 else: newBookIndexList.append( (intStartC,intStartV, fileOffset,length, intEndV,intEndC) )
+            if C != 'I': # Check the index list
+                #logging.info( f"_toBibleDoorText: Found {C!r} chapters in {BBB}" )
+                numChapters = int(C)
+                #logging.info( f"_toBibleDoorText: Found {numChapters!r} chapters in {BBB}" )
+                if len(newBookIndexList) < numChapters: # something went wrong
+                    logging.critical( f"_toBibleDoorText: Why did {BBB} ({'with' if haveSectionHeadingsForBook else 'without'} section headings) with {numChapters} chapters only have {len(newBookIndexList)} sections???" )
             # Write the index list
             #print( "index", bookIndex )
-            filename = "{}.{}.bd.idx".format( BBB, BDDataFormatVersion )
+            filename = f'{BBB}.{BDDataFormatVersion}.bd.idx'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( '  toBDText: ' + _(f"Writing {filepath!r}…") )
             outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3132,9 +3138,9 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "  " + _("WARNING: Ignored _toBibleDoorText markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
-            logging.error( "_toBibleDoorText: Unhandled markers were {}".format( unhandledMarkers ) )
+            logging.error( f"_toBibleDoorText: Unhandled markers were {unhandledMarkers}" )
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Unhandled _toBibleDoorText markers were {}").format( unhandledMarkers ) )
+                print( "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
 
         # Now create the bz2 file
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  BZipping BDText files…" )
