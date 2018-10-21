@@ -3,7 +3,10 @@ __pycache__/
 *.o
 
 Logs/
+DownloadedResources/
 OutputFiles/
 
 *.bak
 *.bak2
+*.bak3
+*.bak4
