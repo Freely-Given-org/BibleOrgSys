@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-11-01' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.26'
@@ -316,7 +316,7 @@ class USXXMLBibleBook( BibleBook ):
             for attrib,value in paragraphXML.items():
                 if attrib=='style': paragraphStyle = value # This is basically the USFM marker name
                 else:
-                    logging.warning( _("CH46 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    logging.warning( _("CH46 Unprocessed {} attribute ({}) in {}").format( attrib, value, paragraphlocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
             # Now process the paragraph text (or write a paragraph marker anyway)
