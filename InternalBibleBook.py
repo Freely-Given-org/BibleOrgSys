@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-06-14' # by RJH
+LastModifiedDate = '2018-11-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -2500,6 +2500,7 @@ class InternalBibleBook:
             marker = entry.getMarker()
             if '¬' in marker: continue # Just ignore end markers -- not needed here
             text, cleanText, extras = entry.getText(), entry.getCleanText(), entry.getExtras()
+            #print(f"Discover {self.BBB} {C}:{V} {marker}={text}")
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -2580,6 +2581,7 @@ class InternalBibleBook:
                     logging.debug( "InternalBibleBook.discover: ToProgrammer -- Some wrong in {} here. Why? {!r} {!r}".format( self.BBB, aKey, bkDict[aKey] ) )
                 del bkDict[aKey]
         else: # Do some finalizing to do with verse counts
+            if not bkDict['haveVerseText']: bkDict['seemsFinished'] = False
             if bkDict['verseCount'] is not None:
                 bkDict['percentageProgress'] = round( bkDict['completedVerseCount'] * 100 / bkDict['verseCount'] )
                 if bkDict['percentageProgress'] > 100:

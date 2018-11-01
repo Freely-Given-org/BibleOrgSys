@@ -384,7 +384,8 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j, (name, testFolder) in enumerate( testData ):
-            print( "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
             result1 = USXXMLBibleFileCheck( testFolder )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}a".format( j+1 ), result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
@@ -394,7 +395,8 @@ def demo():
 
     if 1:
         for j, (name, testFolder) in enumerate( testData ):
-            print( "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
