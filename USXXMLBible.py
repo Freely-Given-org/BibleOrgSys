@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-12' # by RJH
+LastModifiedDate = '2018-11-01' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.38'
@@ -44,7 +44,7 @@ from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from USXFilenames import USXFilenames
-from PTX7Bible import loadPTX7ProjectData
+#from PTX7Bible import loadPTX7ProjectData
 from USXXMLBibleBook import USXXMLBibleBook
 from Bible import Bible
 
