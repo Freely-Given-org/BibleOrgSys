@@ -31,10 +31,10 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-16' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.76'
+ProgVersion = '0.77'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -509,8 +509,8 @@ class USFMBible( Bible ):
 
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'USFM2 Bible object'
-        self.objectTypeString = 'USFM2'
+        self.objectNameString = 'USFM Bible object'
+        self.objectTypeString = 'USFM'
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
@@ -695,7 +695,8 @@ def demo():
                             'Tests/DataFilesForTests/USFMTest1/',
                             'Tests/DataFilesForTests/USFMTest2/',
                             'Tests/DataFilesForTests/USFMTest3/',
-                            'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                            'Tests/DataFilesForTests/USFM2AllMarkersProject/',
+                            'Tests/DataFilesForTests/USFM3AllMarkersProject/',
                             'Tests/DataFilesForTests/USFMErrorProject/',
                             'Tests/DataFilesForTests/PTX7Test/',
                             'OutputFiles/BOS_USFM2_Export/',
@@ -728,7 +729,8 @@ def demo():
                         ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest1/'),
                         ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest2/'),
                         ("Matigsalug", 'utf-8', 'Tests/DataFilesForTests/USFMTest3/'),
-                        ("WEB+", 'utf-8', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                        ("USFM2", 'utf-8', 'Tests/DataFilesForTests/USFM2AllMarkersProject/'),
+                        ("USFM3", 'utf-8', 'Tests/DataFilesForTests/USFM3AllMarkersProject/'),
                         ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
                         ("Exported2", 'utf-8', 'OutputFiles/BOS_USFM2_Export/'),
                         ("Exported3", 'utf-8', 'OutputFiles/BOS_USFM3_Export/'),

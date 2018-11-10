@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-10-21' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -103,7 +103,7 @@ from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKER
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_TITLE_MARKERS, \
+from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_TITLE_MARKERS, \
                             USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS, \
                             USFM_ALL_SECTION_HEADING_MARKERS, \
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS
@@ -10903,7 +10903,8 @@ def demo():
 
     if 1: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
         testData = ( # name, abbreviation, folder for USFM files
-                ("USFM-AllMarkers", 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                ("USFM2-AllMarkers", 'USFM2-All', 'Tests/DataFilesForTests/USFM2AllMarkersProject/'),
+                ("USFM3-AllMarkers", 'USFM3-All', 'Tests/DataFilesForTests/USFM3AllMarkersProject/'),
                 ("UEP", 'utf-8', 'Tests/DataFilesForTests/USFMErrorProject/'),
                 ("OEB", 'OEB', 'Tests/DataFilesForTests/USFM-OEB/'),
                 ("OSISTest1", 'OSIS1', 'Tests/DataFilesForTests/OSISTest1/'),
@@ -11019,7 +11020,8 @@ def demo():
         from UnknownBible import UnknownBible
         from Bible import Bible
         testData = ( # name, abbreviation, folder for USFM files
-                #('USFM-AllMarkers', 'USFM-All', 'Tests/DataFilesForTests/USFMAllMarkersProject/'),
+                #('USFM2-AllMarkers', 'USFM2-All', 'Tests/DataFilesForTests/USFM2AllMarkersProject/'),
+                #('USFM3-AllMarkers', 'USFM3-All', 'Tests/DataFilesForTests/USFM3AllMarkersProject/'),
                 #('CustomTest', 'Custom', '../'),
                 #('USFMTest1', 'USFM1', 'Tests/DataFilesForTests/USFMTest1/'),
                 #('USFMTest2', 'MBTV', 'Tests/DataFilesForTests/USFMTest2/'),

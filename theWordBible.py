@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-01' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.55'
@@ -67,7 +67,7 @@ import multiprocessing
 import BibleOrgSysGlobals
 from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 

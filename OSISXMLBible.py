@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-10' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.63'
@@ -53,7 +53,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
 from ISO_639_3_Languages import ISO_639_3_Languages
-from USFMMarkers import USFM_BIBLE_PARAGRAPH_MARKERS
+from USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from Bible import Bible, BibleBook
 
 
@@ -3481,7 +3481,8 @@ def demo():
                         'Tests/DataFilesForTests/OSISTest2/',
                         '../morphhb/wlc/',
                         'Tests/DataFilesForTests/USFMTest3/',
-                        'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                        'Tests/DataFilesForTests/USFM2AllMarkersProject/',
+                        'Tests/DataFilesForTests/USFM3AllMarkersProject/',
                         'Tests/DataFilesForTests/USFMErrorProject/',
                         'Tests/DataFilesForTests/PTX7Test/',
                         'Tests/DataFilesForTests/PTX8Test1/',

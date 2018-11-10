@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
-# Module testing USFMMarkers.py
+# Module testing USFM3Markers.py
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,11 +23,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing USFMMarkers.py.
+Module testing USFM3Markers.py.
 """
 
+LastModifiedDate = '2018-11-09' # by RJH
 ProgName = "USFM Markers tests"
-ProgVersion = '0.60'
+ProgVersion = '0.61'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -36,7 +36,7 @@ import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, USFMMarkersConverter, USFMMarkers
+import BibleOrgSysGlobals, USFM3MarkersConverter, USFM3Markers
 
 
 class USFMMarkersConverterTests( unittest.TestCase ):
@@ -44,7 +44,7 @@ class USFMMarkersConverterTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the USFMMarkersConvertor object
-        self.UMc = USFMMarkersConverter.USFMMarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+        self.UMc = USFM3MarkersConverter.USFMMarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_1010_str( self ):
         """ Test the __str__ function. """
@@ -98,7 +98,7 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the USFMMarkers object
-        self.UMs = USFMMarkers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
+        self.UMs = USFM3Markers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
 
     def test_2010_str( self ):
         """ Test the __str__ function. """

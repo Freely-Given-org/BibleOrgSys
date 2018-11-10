@@ -41,7 +41,7 @@ TODO: Check if PTX8Bible object should be based on USFMBible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-01' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "Paratext8Bible"
 ProgName = "Paratext-8 Bible handler"
 ProgVersion = '0.26'
@@ -3002,7 +3002,8 @@ def demo():
         for standardTestFolder in ( 'Tests/DataFilesForTests/USFMTest1/',
                             'Tests/DataFilesForTests/USFMTest2/',
                             'Tests/DataFilesForTests/USFMTest3/',
-                            'Tests/DataFilesForTests/USFMAllMarkersProject/',
+                            'Tests/DataFilesForTests/USFM2AllMarkersProject/',
+                            'Tests/DataFilesForTests/USFM3AllMarkersProject/',
                             'Tests/DataFilesForTests/USFMErrorProject/',
                             'Tests/DataFilesForTests/PTX7Test/',
                             'Tests/DataFilesForTests/PTX8Test1/',

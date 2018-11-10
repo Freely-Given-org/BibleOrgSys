@@ -76,10 +76,10 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-06-15' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.74'
+ProgVersion = '0.75'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -91,7 +91,7 @@ import logging, re
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
-from USFMMarkers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+from USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 #from BibleReferences import BibleAnchorReference
 
@@ -191,10 +191,10 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
 
     Returns a dictionary of attributes.
 
-    NOTE: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
+    TODO: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( "parseWordAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, wordAttributeString, errorList ) )
+        print( f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )" )
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
@@ -216,7 +216,7 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
     state = 0
     name = value = quote = ''
     for j, char in enumerate( attributeString ):
-        #print( "{} char={!r} state={} name={!r} value={!r} quote={!r}".format( j, char, state, name, value, quote ) )
+        #print( f"{j} char={char!r} state={state} name='{name}' value={value!r} quote={quote!r}" )
         if state == 0: # Ready to get attribute name
             if not char.isspace():
                 if name:
@@ -230,10 +230,13 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
                 name += char
             elif char == '=':
                 #print( "name", name )
-                assert name in ('lemma','strong') or name.startswith( 'x-' )
+                if name not in ('lemma','strong') \
+                and not name.startswith( 'x-' ):
+                    logging.error( f"{BBB} {C}:{V} unexpected '{name}' attribute for '{word}'" )
                 if name.startswith( 'x-' ): name = name[2:] # Remove x- prefix for convenience
                 state = 2
-            else: halt
+            else:
+                logging.error( f"{BBB} {C}:{V} attribute '{name+char}' for '{word}' is invalid" )
         elif state == 2: # Ready to get attribute value
             if char=='"':
                 quote = char
@@ -245,7 +248,8 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
             if char == quote \
             or ( quote=='' and char.isspace() ):
                 assert name
-                assert value
+                if not value:
+                    logging.warning( f"{BBB} {C}:{V} attribute '{name}' for '{word}' is blank" )
                 resultDict[name] = value
                 name = value = quote = ''
                 state = 0

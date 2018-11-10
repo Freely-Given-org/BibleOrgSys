@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-01' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -69,7 +69,7 @@ from collections import OrderedDict
 import unicodedata
 
 import BibleOrgSysGlobals
-from USFMMarkers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
+from USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \

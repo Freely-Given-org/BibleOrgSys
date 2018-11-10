@@ -28,8 +28,8 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-08' # by RJH
-ShortProgName = "USFMBibleBook"
+LastModifiedDate = '2018-11-09' # by RJH
+ShortProgName = "ESFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.48'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
@@ -40,7 +40,8 @@ debuggingThisModule = False
 
 import os, logging
 
-import BibleOrgSysGlobals, USFMMarkers
+import BibleOrgSysGlobals
+from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from ESFMFile import ESFMFile
 from Bible import BibleBook
 
@@ -449,7 +450,7 @@ class ESFMBibleBook( BibleBook ):
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            if marker in USFMMarkers.OFTEN_IGNORED_USFM_HEADER_MARKERS:
+            if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS:
                 text = originalText
             else:
                 text = ESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM

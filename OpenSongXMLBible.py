@@ -67,7 +67,7 @@ Sample:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-27' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.39'
@@ -85,7 +85,7 @@ from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleBooksNames import BibleBooksNamesSystems
 from Bible import Bible, BibleBook
-from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from MLWriter import MLWriter
 

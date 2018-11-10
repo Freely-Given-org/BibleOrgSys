@@ -28,10 +28,10 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = '0.51'
+ProgVersion = '0.52'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -75,8 +75,8 @@ class USFMBibleBook( BibleBook ):
         Create the USFM Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
-        self.objectNameString = 'USFM2 Bible Book object'
-        self.objectTypeString = 'USFM2'
+        self.objectNameString = 'USFM Bible Book object'
+        self.objectTypeString = 'USFM'
 
         global sortedNLMarkers
         if sortedNLMarkers is None:

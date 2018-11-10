@@ -82,10 +82,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-04-24' # by RJH
+LastModifiedDate = '2018-11-09' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.78'
+ProgVersion = '0.79'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -1245,7 +1245,7 @@ def setStrictCheckingFlag( newValue=True ):
 
 
 # Some global variables
-BibleBooksCodes = USFMMarkers = USFMParagraphMarkers = internal_SFMs_to_remove = None
+BibleBooksCodes = USFM2Markers = USFMParagraphMarkers = internal_SFMs_to_remove = None
 
 def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
@@ -1296,21 +1296,25 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     global BibleBooksCodes, USFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
     from BibleBooksCodes import BibleBooksCodes
     BibleBooksCodes = BibleBooksCodes().loadData()
-    from USFMMarkers import USFMMarkers
-    USFMMarkers = USFMMarkers().loadData()
-    USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
-    USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
+    #from USFM2Markers import USFM2Markers
+    #USFM2Markers = USFM2Markers().loadData()
+    #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
+    #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
+    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
     #for marker in ( ):
         #print( marker )
-        #USFMParagraphMarkers.remove( marker )
+        #USFM2ParagraphMarkers.remove( marker )
     # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
     #    'qm1', 'qm2', 'qm3', 'qm4']
     # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
     #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
-    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
+    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
+    from USFM3Markers import USFM3Markers
+    USFMMarkers = USFM3Markers().loadData()
+    USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
     internal_SFMs_to_remove = USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
     internal_SFMd_to_remove = sorted( internal_SFMs_to_remove, key=len, reverse=True ) # List longest first
 
@@ -1398,8 +1402,8 @@ if 0 and __name__ != '__main__':
     # Load Bible data sets that are globally useful
     from BibleBooksCodes import BibleBooksCodes
     BibleBooksCodes = BibleBooksCodes().loadData()
-    from USFMMarkers import USFMMarkers
-    USFMMarkers = USFMMarkers().loadData()
+    from USFM3Markers import USFM3Markers
+    USFMMarkers = USFM3Markers().loadData()
     USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
     #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
     #for marker in ( ):
