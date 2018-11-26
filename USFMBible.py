@@ -31,10 +31,10 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.77'
+ProgVersion = '0.78'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -151,12 +151,20 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
     if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
-    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
-        print( "  Found {} USFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
-    if filenameTuples:
+    # Check they are USFM3 (not 2)
+    goodIndexList = []
+    for n,(BBB,filename) in enumerate(filenameTuples):
+        try:
+            for line in BibleOrgSysGlobals.peekIntoFile( filename, givenFolderName, numLines=4 ):
+                if line.lower().startswith('\\usfm 3') or line.lower().startswith('\\usfm3'):
+                    goodIndexList.append(n); break # Can't delete it yet
+        except TypeError: pass # If file is empty peekIntoFile returns None
+    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples and goodIndexList:
+        print( "  Found {} USFM3 file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if filenameTuples and goodIndexList:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM3 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
             if not discountSSF:
                 # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
@@ -168,9 +176,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  USFM returningB1", uB )
+            if debuggingThisModule: print ("  USFM3 returningB1", uB )
             return uB
-        if debuggingThisModule: print ("  USFM returningB2", numFound )
+        if debuggingThisModule: print ("  USFM3 returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -211,14 +219,22 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
-            print( "  Found {} USFM files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
-            print( "  Found {} USFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
-        if filenameTuples:
+        # Check they are USFM3 (not 2)
+        goodIndexList = []
+        for n,(BBB,filename) in enumerate(filenameTuples):
+            try:
+                for line in BibleOrgSysGlobals.peekIntoFile( filename, tryFolderName, numLines=4 ):
+                    if line.lower().startswith('\\usfm 3') or line.lower().startswith('\\usfm3'):
+                        goodIndexList.append(n); break # Can't delete it yet
+            except TypeError: pass # If file is empty peekIntoFile returns None
+        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples and goodIndexList:
+            print( "  Found {} USFM3 files: {}".format( len(filenameTuples), filenameTuples ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and goodIndexList and debuggingThisModule:
+            print( "  Found {} USFM3 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        if filenameTuples and goodIndexList:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM SSFs: ({}) {}".format( len(SSFs), SSFs ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM3 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
                 if not discountSSF:
                     # if there's an SSF, we won't accept it as a USFM Bible, because it should be opened as a PTX7 Bible
@@ -233,11 +249,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  USFM returningC1", uB )
+            if debuggingThisModule: print ("  USFM3 returningC1", uB )
             return uB
-        if debuggingThisModule: print ("  USFM returningC2", numFound )
+        if debuggingThisModule: print ("  USFM3 returningC2", numFound )
         return numFound
-    if debuggingThisModule: print ("  USFM returningN", None )
+    if debuggingThisModule: print ("  USFM3 returningN", None )
 # end of USFMBibleFileCheck
 
 

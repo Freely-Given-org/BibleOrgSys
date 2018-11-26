@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# USFMBibleBook.py
+# USFM2BibleBook.py
 #
-# Module handling the importation of USFM Bible books
+# Module handling the importation of USFM2 Bible books
 #
 # Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,15 +23,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for defining and manipulating USFM Bible books.
+Module for defining and manipulating USFM2 Bible books.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
-ShortProgName = "USFMBibleBook"
-ProgName = "USFM Bible book handler"
-ProgVersion = '0.52'
+LastModifiedDate = '2018-11-24' # by RJH
+ShortProgName = "USFM2BibleBook"
+ProgName = "USFM2 Bible book handler"
+ProgVersion = '0.53'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -44,7 +44,7 @@ import BibleOrgSysGlobals
 from USFMFile import USFMFile
 from Bible import BibleBook
 
-from USFM2Markers import USFM2Markers
+from USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
 USFM2Markers = USFM2Markers().loadData()
 
 #def exp( messageString ):
@@ -67,14 +67,14 @@ sortedNLMarkers = None
 
 
 
-class USFMBibleBook( BibleBook ):
+class USFM2BibleBook( BibleBook ):
     """
-    Class to load and manipulate a single USFM file / book.
+    Class to load and manipulate a single USFM2 file / book.
     """
 
     def __init__( self, containerBibleObject, BBB ):
         """
-        Create the USFM Bible book object.
+        Create the USFM2 Bible book object.
         """
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = 'USFM2 Bible Book object'
@@ -83,15 +83,15 @@ class USFMBibleBook( BibleBook ):
         global sortedNLMarkers
         if sortedNLMarkers is None:
             sortedNLMarkers = sorted( USFM2Markers.getNewlineMarkersList('Combined'), key=len, reverse=True )
-    # end of USFMBibleBook.__init__
+    # end of USFM2BibleBook.__init__
 
 
     def load( self, filename, folder=None, encoding=None ):
         """
-        Load the USFM Bible book from a file.
+        Load the USFM2 Bible book from a file.
 
         Tries to combine physical lines into logical lines,
-            i.e., so that all lines begin with a USFM paragraph marker.
+            i.e., so that all lines begin with a USFM2 paragraph marker.
 
         Uses the addLine function of the base class to save the lines.
 
@@ -131,15 +131,29 @@ class USFMBibleBook( BibleBook ):
         # end of doaddLine
 
 
-        # Main code for USFMBibleBook.load()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
-        #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+        # Main code for USFM2BibleBook.load()
+        if encoding is None: encoding = 'utf-8'
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
+        loadErrors = []
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Preloading {}…").format( filename ) )
+        with open( self.sourceFilepath, 'rt', encoding=encoding) as f:
+            try: completeText = f.read()
+            except Exception: completeText = ''
+        for marker in USFM3_ALL_NEW_MARKERS:
+            count = completeText.count(f'\\{marker}')
+            if count:
+                loadErrors.append( _("Found {} USFM3 '\\{}' markers in USFM2 file: {}").format( count, marker, self.sourceFilename ) )
+                logging.error( _("Found {} USFM3 '\\{}' markers in USFM2 file: {}").format( count, marker, self.sourceFilepath ) )
+                self.addPriorityError( 88, 0, 0, _("Found {} USFM3 '\\{}' markers in file").format( count, marker ) )
+        del completeText # Not required any more
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
+        #self.BBB = BBB
+        #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
         originalBook = USFMFile()
-        if encoding is None: encoding = 'utf-8'
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
@@ -252,27 +266,27 @@ class USFMBibleBook( BibleBook ):
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
-            loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
-            logging.error( _("USFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
+            loadErrors.append( _("{} This USFM2 file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
+            logging.error( _("USFM2 file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         #if debugging: print( self._rawLines ); halt
-    # end of USFMBibleBook.load
-# end of class USFMBibleBook
+    # end of USFM2BibleBook.load
+# end of class USFM2BibleBook
 
 
 
 def demo():
     """
-    Demonstrate reading and processing some USFM Bible databases.
+    Demonstrate reading and processing some USFM2 Bible databases.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     def demoFile( name, filename, folder, BBB ):
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
-        UBB = USFMBibleBook( name, BBB )
+        UBB = USFM2BibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Header is {!r}".format( UBB.getField( 'h' ) ) )
@@ -323,4 +337,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of USFMBibleBook.py
+# end of USFM2BibleBook.py

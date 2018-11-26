@@ -3,7 +3,7 @@
 #
 # PTX7Bible.py
 #
-# Module handling UBS/SIL Paratext (PTX 7) collections of USFM Bible books
+# Module handling UBS/SIL Paratext (PTX 7) collections of USFM2 Bible books
 #                                   along with XML and other metadata
 #
 # Copyright (C) 2015-2018 Robert Hunt
@@ -36,15 +36,15 @@ The Paratext 7 Bible (PTX7Bible) object contains USFM 2 BibleBooks.
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
 
-TODO: Check if PTX7Bible object should be based on USFMBible.
+TODO: Check if PTX7Bible object should be based on USFM2Bible.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-09-11' # by RJH
+LastModifiedDate = '2018-11-23' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
-ProgVersion = '0.30'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -59,7 +59,7 @@ from xml.etree.ElementTree import ElementTree
 import BibleOrgSysGlobals
 from Bible import Bible
 from USFMFilenames import USFMFilenames
-from USFMBibleBook import USFMBibleBook
+from USFM2BibleBook import USFM2BibleBook
 
 
 
@@ -119,8 +119,8 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         return False
 
     # Check that there's a USFM Bible here first
-    from USFMBible import USFMBibleFileCheck
-    if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
+    from USFM2Bible import USFM2BibleFileCheck
+    if not USFM2BibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
         if debuggingThisModule: print ("  PTX7 returningA3", False )
         return False
 
@@ -1738,7 +1738,7 @@ class PTX7Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  PTX7Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( "PTX7Bible.loadBook: Unable to find file for {}".format( BBB ) )
-        UBB = USFMBibleBook( self, BBB )
+        UBB = USFM2BibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -1768,7 +1768,7 @@ class PTX7Bible( Bible ):
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-        UBB = USFMBibleBook( self, BBB )
+        UBB = USFM2BibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )

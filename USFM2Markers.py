@@ -36,10 +36,10 @@ Contains the singleton class: USFM2Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-23' # by RJH
 ShortProgName = "USFM2Markers"
 ProgName = "USFM2 Markers handler"
-ProgVersion = '0.71'
+ProgVersion = '0.72'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -77,6 +77,12 @@ USFM_PRINTABLE_MARKERS = ('v','r','ms1',) + USFM_ALL_TITLE_MARKERS + USFM_ALL_IN
                             + USFM_ALL_SECTION_HEADING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
                         # What about 'b' ???
 
+# The following are used for error checks
+USFM3_NEW_PARAGRAPH_MARKERS = ( 'usfm', 'toca', 'po', 'lh', 'lf', 'lim', 'lik', 'liv', 'litl',
+                                'qd', 'sd', 'jmp', 'ts', )
+USFM3_NEW_CHARACTER_MARKERS = ( 'wa', 'png', 'xta', 'xop', 'rb',
+                                'qt-s','qt-e', 'qt1-s','qt1-e', 'qt2-s','qt2-e', 'fw', 'sup', )
+USFM3_ALL_NEW_MARKERS = USFM3_NEW_PARAGRAPH_MARKERS + USFM3_NEW_CHARACTER_MARKERS
 
 
 def removeUSFMCharacterField( marker, originalText, closedFlag ):

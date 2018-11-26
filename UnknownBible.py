@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-17' # by RJH
+LastModifiedDate = '2018-11-23' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -55,6 +55,7 @@ from ESFMBible import ESFMBibleFileCheck
 from PTX8Bible import PTX8BibleFileCheck
 from PTX7Bible import PTX7BibleFileCheck
 from USFMBible import USFMBibleFileCheck
+from USFM2Bible import USFM2BibleFileCheck
 from DBLBible import DBLBibleFileCheck
 from USXXMLBible import USXXMLBibleFileCheck
 from USFXXMLBible import USFXXMLBibleFileCheck
@@ -282,6 +283,12 @@ class UnknownBible:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
 
                 # Search for USFM Bibles
+                USFM2BibleStrictCount = USFM2BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if USFM2BibleStrictCount:
+                    totalBibleStrictCount += USFM2BibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'USFM:' + str(USFM2BibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: USFM2BibleStrictCount", USFM2BibleStrictCount )
                 USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
                 if USFMBibleStrictCount:
                     totalBibleStrictCount += USFMBibleStrictCount
@@ -380,7 +387,7 @@ class UnknownBible:
                 theWordBibleStrictCount = MySwordBibleStrictCount = ESwordBibleStrictCount = ESwordCommentaryStrictCount = 0
                 MyBibleBibleStrictCount = PDBBibleStrictCount = OnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
                 SwordBibleStrictCount = UnboundBibleStrictCount = DrupalBibleStrictCount = YETBibleStrictCount = 0
-                ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFMBibleStrictCount = 0
+                ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFM2BibleStrictCount = USFMBibleStrictCount = 0
                 DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
                 OpenSongBibleStrictCount = ZefaniaBibleStrictCount = HaggaiBibleStrictCount = VerseViewBibleStrictCount = 0
                 CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
@@ -519,6 +526,12 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
 
             # Search for USFM Bibles
+            USFM2BibleCount = USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if USFM2BibleCount:
+                totalBibleCount += USFM2BibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'USFM2:' + str(USFM2BibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: USFM2BibleCount", USFM2BibleCount )
             USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
             if USFMBibleCount:
                 totalBibleCount += USFMBibleCount
@@ -617,7 +630,7 @@ class UnknownBible:
             theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
             MyBibleBibleCount = PDBBibleCount = OnlineBibleCount = EasyWorshipBibleCount = 0
             SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
-            ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFMBibleCount = 0
+            ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFM2BibleCount = USFMBibleCount = 0
             DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
             OpenSongBibleCount = ZefaniaBibleCount = HaggaiBibleCount = VerseViewBibleCount = 0
             CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
@@ -671,7 +684,7 @@ class UnknownBible:
         #if 1 or debuggingThisModule:
             #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, OnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
-            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM={}' \
+            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
             #print( '  CSV={} F4SS={} VPL={}' \
                 #.format( CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
@@ -680,7 +693,7 @@ class UnknownBible:
         #if 0 and debuggingThisModule:
             #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, OnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
-            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM={}' \
+            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
             #print( '  CSV={} F4SS={} VPL={}' \
                 #.format( CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
@@ -753,6 +766,10 @@ class UnknownBible:
             elif PTX7BibleCount == 1: # Must be ahead of USFM
                 self.foundType = 'PTX7 Bible'
                 if autoLoad: return PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif USFM2BibleCount == 1:
+                self.foundType = 'USFM2 Bible'
+                if autoLoad: return USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFMBibleCount == 1:
                 self.foundType = 'USFM Bible'
@@ -868,7 +885,7 @@ def demo():
                     '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
                     '../../../../AutoProcesses/Processed/',
                     'Tests/DataFilesForTests/PickledBibleTest1/',
-                    'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',
+                    'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/', 'Tests/DataFilesForTests/USFMTest3/',
                     'Tests/DataFilesForTests/USFM-OEB/', 'Tests/DataFilesForTests/USFM-WEB/',
                     'Tests/DataFilesForTests/ESFMTest1/', 'Tests/DataFilesForTests/ESFMTest2/',
                     'Tests/DataFilesForTests/DBLTest/',
