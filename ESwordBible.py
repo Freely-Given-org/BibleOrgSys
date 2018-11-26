@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.39'
+ProgVersion = '0.40'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -584,6 +584,7 @@ class ESwordBible( Bible ):
 
         #if self.fileExtension.upper().endswith('X'):
             #logging.warning( _("ESwordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
+        self.preloaded = False
     # end of ESwordBible.__init__
 
 
@@ -896,7 +897,8 @@ class ESwordBible( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.preloaded = True
     # end of ESwordBible.preload
 
 
@@ -906,6 +908,7 @@ class ESwordBible( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( exp("load()") )
+        if not self.preloaded: self.preload()
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -998,7 +1001,7 @@ class ESwordBible( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -1052,14 +1055,14 @@ class ESwordBible( Bible ):
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
+                    BBB = self.BibleOrganizationalSystem.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'e-Sword Bible Book object'
                     thisBook.objectTypeString = 'e-Sword-Bible'
                     haveLines = False
 
-                    verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+                    verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -1074,7 +1077,7 @@ class ESwordBible( Bible ):
                 ourGlobals['haveParagraph'] = False
 
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            self.checkForExtraMaterial( self.cursor, self.BOS )
+            self.checkForExtraMaterial( self.cursor, self.BibleOrganizationalSystem )
         self.cursor.close()
         del self.cursor
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -1106,7 +1109,7 @@ class ESwordBible( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1

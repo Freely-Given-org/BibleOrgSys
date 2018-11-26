@@ -48,10 +48,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "e-SwordCommentary"
 ProgName = "e-Sword Commentary format handler"
-ProgVersion = '0.06'
+ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -211,6 +211,7 @@ class ESwordCommentary( Bible ):
 
         #if self.fileExtension.upper().endswith('X'):
             #logging.warning( _("ESwordCommentary: File {!r} is encrypted").format( self.sourceFilepath ) )
+        self.preloaded = False
     # end of ESwordCommentary.__init__
 
 
@@ -327,7 +328,9 @@ class ESwordCommentary( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        assert self.BibleOrganizationalSystem is not None
+        self.preloaded = True
     # end of ESwordCommentary.preload
 
 
@@ -337,6 +340,7 @@ class ESwordCommentary( Bible ):
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("load()") )
+        if not self.preloaded: self.preload()
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -439,7 +443,7 @@ class ESwordCommentary( Bible ):
             thisBook.objectNameString = 'e-Sword Commentary Book object'
             thisBook.objectTypeString = 'e-Sword-Commentary'
 
-            verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+            verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
 
             try:
                 if BBB in bookCommentary:
@@ -463,7 +467,7 @@ class ESwordCommentary( Bible ):
             self.stashBook( thisBook )
 
         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            #self.checkForExtraMaterial( self.cursor, self.BOS )
+            #self.checkForExtraMaterial( self.cursor, self.BibleOrganizationalSystem )
         self.cursor.close()
         del self.cursor
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -495,7 +499,7 @@ class ESwordCommentary( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Commentary object'
         thisBook.objectTypeString = 'e-Sword-Commentary'
 
-        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
 
         ourGlobals = {}

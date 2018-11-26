@@ -32,10 +32,10 @@ TODO: Check if we really need this class at all???
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-11' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "BibleObjects"
 ProgName = "Bible object handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -190,7 +190,7 @@ class Bible( BibleWriter ):
         self.objectNameString = 'Bible object (generic/unknown type)'
         self.objectTypeString = 'Unknown'
 
-        self.BibleOrganisationalSystem = None
+        self.BibleOrganizationalSystem = None
         # Add our own extended data stores
         #self.metadata = {}
         #self.frontMatter = []

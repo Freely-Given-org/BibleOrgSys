@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
-ProgVersion = "0.25"
+ProgVersion = '0.26'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -141,7 +141,7 @@ class BibleOrganizationalSystemsConverter:
         self.__XMLFilepath = XMLFilepath
         assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from {!r}…").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganizationalSystems XML file from {!r}…").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert self._XMLtree # Fail here if we didn't load anything at all
 

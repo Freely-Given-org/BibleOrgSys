@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-28' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -258,7 +258,7 @@ class MySwordBible( Bible ):
         if 'encryption' in self.suppliedMetadata['MySword']:
             logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
 
-        self.BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
 
         self.preloadDone = True
     # end of MySwordBible.preload
@@ -290,7 +290,7 @@ class MySwordBible( Bible ):
         thisBook.objectNameString = 'MySword Bible Book object'
         thisBook.objectTypeString = 'MySword'
 
-        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -341,14 +341,14 @@ class MySwordBible( Bible ):
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
+                    BBB = self.BibleOrganizationalSystem.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'MySword Bible Book object'
                     thisBook.objectTypeString = 'MySword'
                     haveLines = False
 
-                    verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+                    verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -403,7 +403,7 @@ class MySwordBible( Bible ):
         thisBook.objectNameString = 'MySword Bible Book object'
         thisBook.objectTypeString = 'MySword'
 
-        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1

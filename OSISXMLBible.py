@@ -38,10 +38,10 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-25' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -989,7 +989,7 @@ class OSISXMLBible( Bible ):
             if subelement.tag == OSISXMLBible.OSISNameSpace+'reference': # cross-references
                 sublocation = "validateCrossReferenceOrFootnote: reference of " + locationDescription
                 #print( "  Have", sublocation, "7h3f" )
-                referenceText = subelement.text.strip()
+                referenceText = (subelement.text if subelement.text is not None else '').strip()
                 referenceTail = (subelement.tail if subelement.tail is not None else '').strip()
                 referenceOsisRef = referenceType = None
                 for attrib,value in subelement.items():

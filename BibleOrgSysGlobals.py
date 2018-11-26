@@ -82,10 +82,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-11-24' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.79'
+ProgVersion = '0.80'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -107,7 +107,7 @@ except ImportError:
 
 DOWNLOADED_RESOURCES_FOLDER = '../BibleOrgSys/DownloadedResources/'
 # TODO: Should be https as soon as supported by the site
-DISTRIBUTABLE_RESOURCES_URL = 'http://Freely-Given.org/Software/BibleOrganisationalSystem/DistributableResources/'
+DISTRIBUTABLE_RESOURCES_URL = 'http://Freely-Given.org/Software/BibleOrganizationalSystem/DistributableResources/'
 
 commandLineArguments = None
 
