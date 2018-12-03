@@ -34,10 +34,10 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = '0.28'
+ProgVersion = '0.29'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -360,6 +360,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif sectionType == 'x-majorSection1': titleMarker = 'ms1' # in vietlccmn
         elif sectionType == 'x-majorSection2': titleMarker = 'ms2' # in vietlccmn
         elif sectionType == 'x-subSubSection': titleMarker = 's3'
+        elif sectionType == 'x-subSubSubSection': titleMarker = 's4'
         else:
             print( 'filterOSISVerseLine HF253 matched:', repr(match.group(0)) ); halt
             if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
@@ -783,7 +784,10 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
     else: replacementList.append( ('<transChange type="added">','\\add ','</transChange>','\\add*') )
     if haveFootnoteFlag:
         replacementList.append( ('<rdg type="alternative">','\\fqa ','</rdg>','') ) # Presumably inside a footnote
+        replacementList.append( ('<rdg type="x-equivalent">','\\fl Equiv. \\fq ','</rdg>','') ) # Presumably inside a footnote
+        replacementList.append( ('<rdg type="x-identity">','\\fl Identity: \\fq ','</rdg>','') ) # Presumably inside a footnote
         replacementList.append( ('<rdg type="x-literal">','\\fl Lit. \\fq ','</rdg>','') ) # Presumably inside a footnote
+        replacementList.append( ('<rdg type="x-meaning">','\\fl Meaning: \\fq ','</rdg>','') ) # Presumably inside a footnote
     verseLine = replaceFixedPairs( replacementList, verseLine )
 
     # Check for anything left that we should have caught above
@@ -796,6 +800,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 
     return verseLine
 # end of filterOSISVerseLine
+
 
 def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
     """
@@ -1887,11 +1892,6 @@ def demo():
 if __name__ == '__main__':
     #from multiprocessing import freeze_support
     #freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

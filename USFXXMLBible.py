@@ -48,10 +48,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.31'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -535,8 +535,11 @@ class USFXXMLBible( Bible ):
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 if idField and text is None:
                     text = idField
+                elif text and idField is None and element.tag=='cl' and C=='-1':
+                    # Contains text for chapter field
+                    pass
                 else:
-                    logging.warning( _("dve4 Unprocessed idField ({}) in {}").format( idField, location ) )
+                    logging.warning( _("dve4 Unprocessed idField ({}) with '{}' in {}").format( idField, text, location ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 if text is None:
                     logging.critical( "Why is {} empty at {}".format( marker, location ) )
@@ -633,6 +636,8 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'x':
                 #print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
+            elif element.tag == 'w':
+                self.loadWordFormatting( element, location, BBB, C, V )
             elif element.tag in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                 self.loadCharacterFormatting( element, location, BBB, C, V )
             elif element.tag == 'cs': # character style -- seems like a USFX hack
@@ -695,6 +700,12 @@ class USFXXMLBible( Bible ):
                 self.thisBook.appendToLastLine( ' \\{} {}\\{}* {}'.format( sfm, text, sfm, tail ) )
                 logging.error( "What should we do with the gw root value: {!r} ?".format( root ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            elif element.tag == 'xt' and BBB == 'GLS':
+                logging.warning("No code for handling GLS xt field yet!!!")
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'bd34' )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'kz32' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'ka81' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ka16' )
             else:
                 logging.warning( _("df45 Unprocessed {} element after {} {}:{} in {}").format( repr(element.tag), self.thisBook.BBB, C, V, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -702,11 +713,41 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadParagraph
 
 
+    def loadWordFormatting( self, element, location, BBB, C, V ):
+        """
+        """
+        marker, text, tail = element.tag, clean(element.text), clean(element.tail)
+        assert marker == 'w'
+        BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'bs62' )
+        self.thisBook.appendToLastLine( ' \\{}'.format( marker ) )
+        strongs = None
+        for attrib,value in element.items():
+            if attrib == 's':
+                strongs = value
+            else:
+                logging.warning( _("dj75 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+        if strongs:
+            assert marker == 'w'
+            self.thisBook.appendToLastLine( ' \\str {}\\str*'.format( strongs ) )
+        self.thisBook.appendToLastLine( ' {}'.format( text ) )
+        for subelement in element:
+            sublocation = subelement.tag + " of " + location
+            #print( "element", repr(element.tag) )
+            if subelement.tag == 'f':
+                #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
+                self.loadFootnote( subelement, sublocation, BBB, C, V )
+            else:
+                logging.warning( _("sh61 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+        self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, (' '+tail) if tail else '' ) )
+
+
     def loadCharacterFormatting( self, element, location, BBB, C, V ):
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
-        BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'sd12' )
+        BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'cb25' )
         self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, text ) )
         for subelement in element:
             sublocation = subelement.tag + " of " + location
@@ -714,6 +755,8 @@ class USFXXMLBible( Bible ):
             if subelement.tag == 'f':
                 #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
                 self.loadFootnote( subelement, sublocation, BBB, C, V )
+            elif subelement.tag == 'w':
+                self.loadWordFormatting( subelement, sublocation, BBB, C, V )
             else:
                 logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -813,13 +856,14 @@ class USFXXMLBible( Bible ):
             sublocation = subelement.tag + " of " + location
             marker, fText, fTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
             #print( "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
-            if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
+            if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','w'):
                 logging.warning( "USFX.loadFootnote found {!r} {!r} {!r} {!r}".format( caller, marker, fText, fTail ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-                assert marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','xt',)
+                assert marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','xt','w')
             if marker=='ref':
-                assert fText
+                if not fText:
+                    logging.error("Expected text in footnote ref field at {} {}:{}".format( BBB, C, V ) )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
                 target = None
                 for attrib,value in subelement.items():
@@ -830,6 +874,8 @@ class USFXXMLBible( Bible ):
                 if target:
                     self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, target, marker, fText ) )
                 else: halt
+            elif marker=='w':
+                self.loadWordFormatting( subelement, sublocation, BBB, C, V )
             else:
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'dq54' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
@@ -854,17 +900,21 @@ class USFXXMLBible( Bible ):
                                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else:
                                 if debuggingThisModule: halt
+                        elif marker2 == 'w':
+                            self.loadWordFormatting( sub2element, sub2location, BBB, C, V )
                         elif marker2 in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                             self.loadCharacterFormatting( sub2element, sub2location, BBB, C, V )
                         else:
                             print( 'Ignored marker2', repr(marker2), BBB, C, V )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                         if fTail2: self.thisBook.appendToLastLine( fTail2 )
+                elif marker == 'w':
+                    self.loadWordFormatting( subelement, sublocation, BBB, C, V )
                 elif marker in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                     self.loadCharacterFormatting( subelement, sublocation, BBB, C, V )
                 else:
                     print( 'Ignored marker', repr(marker), BBB, C, V )
-                    halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             if fTail:
                 self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, fTail ) )
         self.thisBook.appendToLastLine( '\\f*{}'.format( (' '+tail) if tail else '' ) )
@@ -942,7 +992,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = 'Tests/DataFilesForTests/USFXTest1/'
         resultA1 = USFXXMLBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
@@ -960,11 +1010,12 @@ def demo():
 
     if 1:
         testData = (
-                    ('ASV', "Tests/DataFilesForTests/USFXTest1/"),
-                    ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
-                    ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
-                    ("HBO", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/hbo_usfx/",),
-                    ("ZIA", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/zia_usfx/",),
+            ('GLW', '../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/eng-glw_usfx/'),
+                    ('ASV', 'Tests/DataFilesForTests/USFXTest1/'),
+                    ('Tst', '../../../../../Data/Work/Bibles/Formats/USFX/',),
+                    ('AGM', '../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/',),
+                    ('HBO', '../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/hbo_usfx/',),
+                    ('ZIA', '../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/zia_usfx/',),
                     ) # You can put your USFX test folder here
 
         for name, testFolder in testData:

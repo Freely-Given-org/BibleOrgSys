@@ -27,7 +27,7 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-21' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
 ProgVersion = '0.16'
@@ -566,11 +566,6 @@ def demo():
 
 if __name__ == '__main__':
     #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

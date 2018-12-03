@@ -54,10 +54,10 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-01' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
-ProgVersion = '0.48'
+ProgVersion = '0.49'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -839,22 +839,23 @@ class SwordModule():
         # The offsets are stored by BBB, then by chapter (starting with 0) and then you add the verse number less 1
 
         # Setup filled containers for the object
-        if versificationString == 'KJV': BOS = 'GENERIC-KJV-80'
-        elif versificationString == 'KJVA': BOS = 'GENERIC-KJV-80'
-        elif versificationString == 'NRSV': BOS = 'GENERIC-NRSV-80'
-        elif versificationString == 'MT': BOS = 'GENERIC-Original-80'
-        elif versificationString == 'Vulg': BOS = 'GENERIC-Vulgate-80'
-        elif versificationString == 'Synodal': BOS = 'GENERIC-Synodal-80'
-        elif versificationString == 'SynodalProt': BOS = 'GENERIC-Synodal-80'
-        elif versificationString == 'Catholic': BOS = 'GENERIC-Catholic-80'
-        elif versificationString == 'Catholic2': BOS = 'GENERIC-CatholicEsther16-80'
-        elif versificationString == 'German': BOS = 'GENERIC-German-80'
-        elif versificationString == 'Leningrad': BOS = 'GENERIC-Leningrad-80'
-        elif versificationString == 'LXX': BOS = 'LXX'
+        # TODO: Create a separate mapping table for these versification systems
+        if versificationString == 'KJV': BOSname = 'GENERIC-KJV-80'
+        elif versificationString == 'KJVA': BOSname = 'GENERIC-KJV-80'
+        elif versificationString == 'NRSV': BOSname = 'GENERIC-NRSV-80'
+        elif versificationString == 'MT': BOSname = 'GENERIC-Original-80'
+        elif versificationString == 'Vulg': BOSname = 'GENERIC-Vulgate-82'
+        elif versificationString == 'Synodal': BOSname = 'GENERIC-Synodal-80'
+        elif versificationString == 'SynodalProt': BOSname = 'GENERIC-Synodal-80'
+        elif versificationString == 'Catholic': BOSname = 'GENERIC-Catholic-80'
+        elif versificationString == 'Catholic2': BOSname = 'GENERIC-CatholicEsther16-80'
+        elif versificationString == 'German': BOSname = 'GENERIC-German-80'
+        elif versificationString == 'Leningrad': BOSname = 'GENERIC-Leningrad-80'
+        elif versificationString == 'LXX': BOSname = 'LXX'
         else:
             logging.critical( _("Unknown {!r} versification scheme for {}").format( versificationString, self.SwordModuleConfiguration.abbreviation ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-        self.BibleOrgSystem = BibleOrganizationalSystem( BOS )
+        self.BibleOrgSystem = BibleOrganizationalSystem( BOSname )
 
         # Setup containers that we will fill
         self.chapterOffsets = {}
@@ -890,6 +891,7 @@ class SwordModule():
         self.OTIndex.append( ('FRT','0','0',) ); self.OTIndex.append( ('FRT','0','0',) )
 
         for BBB in self.OTList:
+            #print("BOSname", BOSname, "BBB", BBB )
             bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True ) # Note: BBB might get substituted!!!
             OTOffset += 1 # Allow for heading of book
             #self.OTIndex.append( (BBB,'0','0',) )
@@ -2583,11 +2585,6 @@ def demo():
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

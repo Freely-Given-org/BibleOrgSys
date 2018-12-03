@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-17' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.36'
@@ -163,7 +163,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                                     elif subfolderType == 'zcom' and something2 in ( 'ot.czs','ot.czv','ot.czz', 'nt.czs','nt.czv','nt.czz' ):
                                         foundTextFiles.append( something2 )
                                     elif subfolderType in ('rawcom','rawcom4',):
-                                        logging.critical( "Program not finished yet (confirmThisFolder)" )
+                                        logging.critical( "Program not finished yet: confirmThisFolder( {} ) for rawcom/rawcom4".format( checkFolderPath ) )
                                     else:
                                         if something2 not in ( 'errata', 'appendix', ):
                                             logging.warning( _("SwordBibleFileCheck1: Didn't expect this file in {} text folder: {}").format( something, something2 ) )
@@ -540,7 +540,8 @@ def demo():
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    testFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
+    MSTestFolderOld = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
+    MSTestFolder = '../../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule'
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
@@ -551,8 +552,8 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Sword TestA3", result3 )
 
     if 1: # specify testFolder containing a single module
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword B/ Trying single module in {}".format( testFolder ) )
-        testSwB( testFolder )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSword B/ Trying single module in {}".format( MSTestFolder ) )
+        testSwB( MSTestFolder )
 
     if 1: # specified single installed module
         singleModule = 'ASV'
@@ -566,7 +567,7 @@ def demo():
                     print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 1: # specified installed modules
-        good = ('KJV','WEB','KJVA','YLT','ASV','LEB','ESV','ISV','NET','OEB',
+        good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ESV2001','ESV2011', 'ISV','NET','OEB',
                 'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
                 'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',
                 'MKJV','Montgomery','Murdock','NETfree','NETtext','NHEB','NHEBJE','NHEBME','Noyes',
@@ -606,11 +607,6 @@ def demo():
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

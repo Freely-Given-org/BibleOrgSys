@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-05-28' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
 ProgVersion = '0.79'
@@ -868,11 +868,6 @@ def demo():
 
 if __name__ == '__main__':
     #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

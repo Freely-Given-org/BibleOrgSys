@@ -36,7 +36,7 @@ Contains the singleton class: USFM2Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-23' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "USFM2Markers"
 ProgName = "USFM2 Markers handler"
 ProgVersion = '0.72'
@@ -792,11 +792,6 @@ def demo():
 
 if __name__ == '__main__':
     #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

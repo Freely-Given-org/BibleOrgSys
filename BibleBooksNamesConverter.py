@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-09' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "BibleBooksNamesConverter"
 ProgName = "Bible Books Names Systems converter"
 ProgVersion = '0.36'
@@ -584,11 +584,6 @@ def demo():
 
 if __name__ == '__main__':
     #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

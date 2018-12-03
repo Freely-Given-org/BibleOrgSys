@@ -5,7 +5,7 @@
 #
 # Module handling downloading and installing of Sword resources
 #
-# Copyright (C) 2016-2017 Robert Hunt
+# Copyright (C) 2016-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "SwordInstallManager"
 ProgName = "Sword download handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -103,21 +103,32 @@ IMPORTANT_SWORD_CONF_FIELD_NAMES = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Di
             'DistributionSource', 'DistributionNotes', 'DistributionLicense',
             'Category', 'Feature', 'Versification', 'Scope', 'About',
             'Notes', 'NoticeLink', 'NoticeText',
-            'Copyright', 'CopyrightHolder', 'CopyrightDate', 'CopyrightContactName', 'CopyrightContactEmail',
+            'Copyright',
+            'CopyrightHolder',
+            'CopyrightDate', 'CopyrightContact', 'CopyrightContactName', 'CopyrightContactEmail',
                 'CopyrightContactAddress', 'CopyrightContactNotes', 'ShortCopyright',
-                'CopyrightNotes', 'CopyrightYear',
-            'DictionaryModule', 'ReferenceBible',
+                'CopyrightNotes', 'CopyrightYear', 'CopyrightLicense',
+            'FontSizeAdjust', 'LineHeight',
+            'DictionaryModule', 'ReferenceBible', 'Companion',
+            'AudioCode',
+            'PreferredCSSXHTML', # e.g., swmodule.css
+            'TabLabel',
             'Siglum1', 'Siglum2', )
 TECHNICAL_SWORD_CONF_FIELD_NAMES = ( 'ModDrv', 'DataPath', 'Encoding', 'SourceType', 'GlobalOptionFilter',
-            'CaseSensitiveKeys', 'SearchOption',
+            'CaseSensitiveKeys',
+            'KeyType', # e.g., TreeKey
+            'SearchOption',
             'CompressType', 'BlockType',
-            'MinimumVersion', 'MinimumSwordVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion',
+            'MinimumVersion', 'MinimumSwordVersion', 'SwordVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion',
             'DisplayLevel', 'LangSortOrder', 'LangSortSkipChars', 'StrongsPadding',
             'CipherKey', 'InstallSize', 'BlockCount', 'OSISqToTick', 'MinimumBlockNumber', 'MaximumBlockNumber', )
-ALL_SWORD_CONF_FIELD_NAMES = IMPORTANT_SWORD_CONF_FIELD_NAMES + TECHNICAL_SWORD_CONF_FIELD_NAMES
+POSSIBLE_ERROR_SWORD_CONF_FIELD_NAMES = ( 'Copyright+por', 'onDate', 'Abour_sr', 'ModuleType', )
+ALL_SWORD_CONF_FIELD_NAMES = IMPORTANT_SWORD_CONF_FIELD_NAMES + TECHNICAL_SWORD_CONF_FIELD_NAMES + POSSIBLE_ERROR_SWORD_CONF_FIELD_NAMES
 
-# Ones that have an underline and then a subfield
-SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING = ('History', 'Description', 'About', 'Copyright', 'DistributionNotes',)
+# Ones that have an underline and then a subfield such as a language _en or _ru
+SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING = ('History', 'Description', 'About',
+                                             'Copyright', 'CopyrightHolder', 'CopyrightContactAddress',
+                                             'DistributionNotes', 'DistributionLicense', )
 
 # These are the only ones where we expect multiple values (and some of these are probably module bugs)
 SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES = ('Feature', 'GlobalOptionFilter', 'DistributionLicense', 'LCSH',
@@ -685,10 +696,6 @@ def demo():
 if __name__ == '__main__':
     #from multiprocessing import freeze_support
     #freeze_support() # Multiprocessing support for frozen Windows executables
-
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )

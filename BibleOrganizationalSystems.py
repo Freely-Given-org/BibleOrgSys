@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -57,10 +57,10 @@ BibleOrganizationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-11-17' # by RJH
+LastModifiedDate = '2018-12-02' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = '0.32'
+ProgVersion = '0.33'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -308,6 +308,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         self.__boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganizationalSystem( systemName )
         if result is None:
+            logging.critical( _("No {!r} system in Bible Organisational Systems").format( systemName ) )
             self.__dataDict = self.__systemName = None
             del self
             return
@@ -631,11 +632,6 @@ def demo():
 
 if __name__ == '__main__':
     #multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
-
-    import sys
-    if 'win' in sys.platform: # Convert stdout so we don't get zillions of UnicodeEncodeErrors
-        from io import TextIOWrapper
-        sys.stdout = TextIOWrapper( sys.stdout.detach(), sys.stdout.encoding, 'namereplace' if sys.version_info >= (3,5) else 'backslashreplace' )
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
