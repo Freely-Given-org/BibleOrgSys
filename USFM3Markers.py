@@ -35,10 +35,10 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-03' # by RJH
 ShortProgName = "USFM3Markers"
 ProgName = "USFM3 Markers handler"
-ProgVersion = '0.01'
+ProgVersion = '0.02'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -375,32 +375,32 @@ class USFM3Markers:
     def isCompulsoryMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
-        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["compulsoryFlag"]
+        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['compulsoryFlag']
 
 
     def isNumberableMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
-        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["numberableFlag"]
+        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['highestNumberSuffix'] != 'None'
 
 
     def isNestingMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
-        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["nestsFlag"]
+        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['nestsFlag']
 
 
     def isPrinted( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
-        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["printedFlag"]
+        return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['printedFlag']
 
 
     def markerShouldBeClosed( self, marker ):
         """ Return 'N', 'S', 'A' for "never", "sometimes", "always".
             Returns False for an invalid marker. """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
-        closed = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["closed"]
+        closed = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['closed']
         #if closed is None: return 'N'
         if closed == "No": return 'N'
         if closed == "Always": return 'A'
@@ -516,12 +516,13 @@ class USFM3Markers:
                     result.append( adjMarker + '*' )
                     if includeNestedMarkers: result.append( nestedMarker + '*' )
                 if expandNumberableMarkers and self.isNumberableMarker( marker ):
-                    for digit in ('1','2','3',):
-                        result.append( adjMarker+digit )
-                        if includeNestedMarkers: result.append( nestedMarker+digit )
+                    for digit in range(1, int(self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['highestNumberSuffix'])+1):
+                        str_digit = str(digit)
+                        result.append( adjMarker+str_digit )
+                        if includeNestedMarkers: result.append( nestedMarker+str_digit )
                         if includeEndMarkers:
-                            result.append( adjMarker + digit + '*' )
-                            if includeNestedMarkers: result.append( nestedMarker + digit + '*' )
+                            result.append( adjMarker + str_digit + '*' )
+                            if includeNestedMarkers: result.append( nestedMarker + str_digit + '*' )
         return result
     # end of USFM3Markers.getCharacterMarkersList
 

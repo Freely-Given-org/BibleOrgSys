@@ -3,7 +3,7 @@
     "id": {
       "compulsoryFlag": true,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -16,7 +16,7 @@
     "ide": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -29,7 +29,7 @@
     "sts": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -42,7 +42,7 @@
     "rem": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -55,7 +55,7 @@
     "h": {
       "compulsoryFlag": true,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -68,7 +68,7 @@
     "toc1": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -81,7 +81,7 @@
     "toc2": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -94,7 +94,7 @@
     "toc3": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -107,7 +107,7 @@
     "toc4": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -120,7 +120,7 @@
     "imt": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -133,7 +133,7 @@
     "is": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -146,7 +146,7 @@
     "ip": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -159,7 +159,7 @@
     "ipi": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -172,7 +172,7 @@
     "im": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -185,7 +185,7 @@
     "imi": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -198,7 +198,7 @@
     "ipq": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -211,7 +211,7 @@
     "imq": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -224,7 +224,7 @@
     "ipr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -237,7 +237,7 @@
     "iq": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -250,7 +250,7 @@
     "ib": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Never",
       "occursIn": "Introduction",
@@ -263,7 +263,7 @@
     "ili": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -276,7 +276,7 @@
     "iot": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -289,7 +289,7 @@
     "io": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -302,7 +302,7 @@
     "ior": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -315,7 +315,7 @@
     "iex": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -328,7 +328,7 @@
     "iqt": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -341,7 +341,7 @@
     "imte": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -354,7 +354,7 @@
     "ie": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Introduction",
@@ -367,7 +367,7 @@
     "mt": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Header",
@@ -380,7 +380,7 @@
     "mte": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -393,7 +393,7 @@
     "ms": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -406,7 +406,7 @@
     "mr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -419,7 +419,7 @@
     "s": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -432,7 +432,7 @@
     "sr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -445,7 +445,7 @@
     "r": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -458,7 +458,7 @@
     "rq": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -471,7 +471,7 @@
     "d": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Text",
@@ -484,7 +484,7 @@
     "sp": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -497,7 +497,7 @@
     "c": {
       "compulsoryFlag": true,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -510,7 +510,7 @@
     "ca": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -523,7 +523,7 @@
     "cl": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -536,7 +536,7 @@
     "cp": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -549,7 +549,7 @@
     "cd": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -562,7 +562,7 @@
     "v": {
       "compulsoryFlag": true,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -575,7 +575,7 @@
     "va": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -588,7 +588,7 @@
     "vp": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Numbering",
@@ -601,7 +601,7 @@
     "p": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -614,7 +614,7 @@
     "m": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -627,7 +627,7 @@
     "pmo": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -640,7 +640,7 @@
     "pm": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -653,7 +653,7 @@
     "pmc": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -666,7 +666,7 @@
     "pmr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -679,7 +679,7 @@
     "pi": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -692,7 +692,7 @@
     "mi": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -705,7 +705,7 @@
     "nb": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Never",
       "occursIn": "Canonical Text",
@@ -718,7 +718,7 @@
     "cls": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -731,7 +731,7 @@
     "li": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -744,7 +744,7 @@
     "pc": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -757,7 +757,7 @@
     "pr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -770,7 +770,7 @@
     "ph": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -783,7 +783,7 @@
     "b": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Never",
       "occursIn": "Text, Poetry",
@@ -796,7 +796,7 @@
     "q": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Canonical Text",
@@ -809,7 +809,7 @@
     "qr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -822,7 +822,7 @@
     "qc": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -835,7 +835,7 @@
     "qs": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -848,7 +848,7 @@
     "qa": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -861,7 +861,7 @@
     "qac": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Acrostic verse",
@@ -874,7 +874,7 @@
     "qm": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Canonical Text",
@@ -887,7 +887,7 @@
     "tr": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -900,7 +900,7 @@
     "th": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Table row",
@@ -913,7 +913,7 @@
     "thr": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Table row",
@@ -926,7 +926,7 @@
     "tc": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Table row",
@@ -939,7 +939,7 @@
     "tcr": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": true,
+      "highestNumberSuffix": "4",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Table row",
@@ -952,7 +952,7 @@
     "f": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -965,7 +965,7 @@
     "e": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -978,7 +978,7 @@
     "fr": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -991,7 +991,7 @@
     "fk": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1004,7 +1004,7 @@
     "fq": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1017,7 +1017,7 @@
     "fqa": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1030,7 +1030,7 @@
     "fl": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1043,7 +1043,7 @@
     "fp": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1056,7 +1056,7 @@
     "fv": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1069,7 +1069,7 @@
     "fn": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1082,7 +1082,7 @@
     "ft": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1095,7 +1095,7 @@
     "fdc": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1108,7 +1108,7 @@
     "fm": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1121,7 +1121,7 @@
     "x": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1134,7 +1134,7 @@
     "xo": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1147,7 +1147,7 @@
     "xk": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1160,7 +1160,7 @@
     "xq": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1173,7 +1173,7 @@
     "xt": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1186,7 +1186,7 @@
     "xot": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1199,7 +1199,7 @@
     "xnt": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1212,7 +1212,7 @@
     "xdc": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Cross-reference",
@@ -1225,7 +1225,7 @@
     "add": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1238,7 +1238,7 @@
     "bk": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1251,7 +1251,7 @@
     "dc": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1264,7 +1264,7 @@
     "k": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1277,7 +1277,7 @@
     "lit": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1290,7 +1290,7 @@
     "nd": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1303,7 +1303,7 @@
     "ord": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1316,7 +1316,7 @@
     "pn": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1329,7 +1329,7 @@
     "qt": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1342,7 +1342,7 @@
     "sig": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1355,7 +1355,7 @@
     "sls": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1368,7 +1368,7 @@
     "tl": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1381,7 +1381,7 @@
     "wj": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1394,7 +1394,7 @@
     "em": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1407,7 +1407,7 @@
     "bd": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1420,7 +1420,7 @@
     "it": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1433,7 +1433,7 @@
     "bdit": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1446,7 +1446,7 @@
     "no": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1459,7 +1459,7 @@
     "sc": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1472,7 +1472,7 @@
     "pb": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Never",
       "occursIn": "Text",
@@ -1485,7 +1485,7 @@
     "fig": {
       "compulsoryFlag": false,
       "level": "Note",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1498,7 +1498,7 @@
     "ndx": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1511,7 +1511,7 @@
     "pro": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1524,7 +1524,7 @@
     "w": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1537,7 +1537,7 @@
     "wg": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1550,7 +1550,7 @@
     "wh": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1563,7 +1563,7 @@
     "periph": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Front and back matter",
@@ -1576,7 +1576,7 @@
     "ef": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1589,7 +1589,7 @@
     "fs": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Footnote",
@@ -1602,7 +1602,7 @@
     "ex": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1615,7 +1615,7 @@
     "esb": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Never",
       "occursIn": "Text",
@@ -1628,7 +1628,7 @@
     "cat": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1641,7 +1641,7 @@
     "pdi": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1654,7 +1654,7 @@
     "pde": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1667,7 +1667,7 @@
     "wr": {
       "compulsoryFlag": false,
       "level": "Internal",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": true,
       "hasContent": "Always",
       "occursIn": "Text",
@@ -1680,7 +1680,7 @@
     "ps": {
       "compulsoryFlag": false,
       "level": "Newline",
-      "numberableFlag": false,
+      "highestNumberSuffix": "None",
       "nestsFlag": false,
       "hasContent": "Sometimes",
       "occursIn": "Text",

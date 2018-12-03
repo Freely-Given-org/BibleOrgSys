@@ -28,10 +28,10 @@ Module handling USFM2Markers.xml and to export to JSON, C, and Python data table
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-12-03' # by RJH
 ShortProgName = "USFM2MarkersConverter"
 ProgName = "USFM2 Markers converter"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,7 +72,7 @@ class USFM2MarkersConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( 'nameEnglish', 'marker', 'compulsory', 'level', 'numberable', 'nests', 'hasContent', 'printed', 'closed', 'occursIn', 'deprecated', )
+        self._compulsoryElements = ( 'nameEnglish', 'marker', 'compulsory', 'level', 'highestNumberSuffix', 'nests', 'hasContent', 'printed', 'closed', 'occursIn', 'deprecated', )
         self._optionalElements = ( 'description', )
         #self._uniqueElements = self._compulsoryElements + self.optionalElements
         self._uniqueElements = ( 'nameEnglish', 'marker', )
@@ -275,10 +275,12 @@ class USFM2MarkersConverter:
             elif level == 'Internal': internalMarkersList.append( marker )
             elif level == 'Note': noteMarkersList.append( marker )
             else: logging.error( _("Unexpected {!r} level field for marker {!r}").format( level, marker ) )
-            numberable = element.find('numberable').text
-            if  numberable not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} numberable field for marker {!r}").format( numberable, marker ) )
-            numberableFlag = numberable == "Yes"
-            if numberableFlag and level == "Character": logging.error( _("Unexpected {!r} numberable field for character marker {!r}").format( numberable, marker ) )
+            highestNumberSuffix = element.find('highestNumberSuffix').text
+            if  highestNumberSuffix not in ( 'None', '3','4','5','6','7','8','9' ):
+                logging.error( _("Unexpected {!r} highestNumberSuffix field for marker {!r}").format( highestNumberSuffix, marker ) )
+            numberableFlag = highestNumberSuffix != 'None'
+            if numberableFlag and level == 'Character':
+                logging.error( _("Unexpected {!r} highestNumberSuffix field for character marker {!r}").format( highestNumberSuffix, marker ) )
             nests = element.find("nests").text
             if  nests not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} nests field for marker {!r}").format( nests, marker ) )
             nestsFlag = nests == 'Yes'
@@ -306,14 +308,14 @@ class USFM2MarkersConverter:
             # Now put it into my dictionaries and lists for easy access
             #   The marker is lowercase by definition
             if 'marker' in self._uniqueElements: assert marker not in rawMarkerDict # Shouldn't be any duplicates
-            rawMarkerDict[marker] = { 'compulsoryFlag':compulsoryFlag, 'level':level, 'numberableFlag':numberableFlag, 'nestsFlag':nestsFlag,
+            rawMarkerDict[marker] = { 'compulsoryFlag':compulsoryFlag, 'level':level, 'highestNumberSuffix':highestNumberSuffix, 'nestsFlag':nestsFlag,
                                         'hasContent':hasContent, 'occursIn':occursIn, 'printedFlag':printedFlag, 'closed':closed, 'deprecatedFlag':deprecatedFlag,
                                         'description':description, 'nameEnglish':nameEnglish }
             combinedMarkerDict[marker] = marker
-            if numberableFlag: # We have some extra work to do
+            if highestNumberSuffix != 'None': # We have some extra work to do
                 conversionDict[marker] = marker + '1'
-                for suffix in '1234': # These are the suffix digits that we allow
-                    numberedMarker = marker + suffix
+                for suffix in range(1,int(highestNumberSuffix)+1): # These are the suffix digits that we allow
+                    numberedMarker = marker + str(suffix)
                     backConversionDict[numberedMarker] = marker
                     numberedMarkerList.append( numberedMarker )
                     combinedMarkerDict[numberedMarker] = marker

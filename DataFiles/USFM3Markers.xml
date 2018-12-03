@@ -7,7 +7,7 @@ This file gives a table of USFM3 markers:
         and without suffixed digits for generic numbered fields like q1, q2, q3 (only listed as q)
     compulsory: Yes or No
     level: Newline or Internal (within a line) or Note (footnote/xref/fig) type field
-    numberable: Yes or No
+    highestNumberSuffix: None or 3/4/5/6
     nests: Yes or No
     hasContent (on the same line after a space): Sometimes, Always or Never
     closed (for character fields only): Always or Optional
@@ -38,12 +38,12 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT originalRights (#PCDATA)>
                 <!ELEMENT derivedRights (#PCDATA)>
-        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,numberable,nests,hasContent,printed,closed,occursIn,deprecated,description?)>
+        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,highestNumberSuffix,nests,hasContent,printed,closed,occursIn,deprecated,description?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT marker (#PCDATA)>
             <!ELEMENT compulsory (#PCDATA)>
             <!ELEMENT level (#PCDATA)>
-            <!ELEMENT numberable (#PCDATA)>
+            <!ELEMENT highestNumberSuffix (#PCDATA)>
             <!ELEMENT nests (#PCDATA)>
             <!ELEMENT hasContent (#PCDATA)>
             <!ELEMENT printed (#PCDATA)>
@@ -57,8 +57,8 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.01</version>
-      <date>2018-11-09</date>
+      <version>0.02</version>
+      <date>2018-12-03</date>
       <title>USFM 3.0 markers list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">https://ubsicap.github.io/usfm/index.html</identifier>
@@ -74,7 +74,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>id</marker>
     <compulsory>Yes</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -89,7 +89,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>usfm</marker>
     <compulsory>Yes</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -104,7 +104,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ide</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -119,7 +119,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sts</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -134,7 +134,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>rem</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -149,7 +149,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>h</marker>
     <compulsory>Yes</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable> <!-- USFM 2.4 spec seems unclear about what can follow h fields -->
+    <highestNumberSuffix>None</highestNumberSuffix> <!-- USFM 2.4 spec seems unclear about what can follow h fields -->
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -164,7 +164,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>toc1</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -179,7 +179,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>toc2</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -194,7 +194,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>toc3</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -209,7 +209,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>toc4</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -226,7 +226,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>imt</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -241,7 +241,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>is</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -255,7 +255,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ip</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -269,7 +269,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ipi</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -283,7 +283,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>im</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -297,7 +297,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>imi</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -311,7 +311,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ipq</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -325,7 +325,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>imq</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -339,7 +339,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ipr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -354,7 +354,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>iq</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -368,7 +368,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ib</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
@@ -383,7 +383,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ili</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -397,7 +397,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>iot</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -411,7 +411,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>io</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -426,7 +426,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ior</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -441,7 +441,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>iex</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -456,7 +456,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>iqt</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -471,7 +471,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>imte</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -486,7 +486,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ie</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -503,7 +503,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>mt</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -518,7 +518,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>mte</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -533,7 +533,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ms</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -548,7 +548,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>mr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -563,7 +563,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>s</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -578,7 +578,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -593,7 +593,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>r</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -608,7 +608,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>rq</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -623,7 +623,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>d</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -638,7 +638,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sp</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -655,7 +655,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>c</marker>
     <compulsory>Yes</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -670,7 +670,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ca</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -685,7 +685,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>cl</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -700,7 +700,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>cp</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -715,7 +715,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>cd</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -730,7 +730,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>v</marker>
     <compulsory>Yes</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -745,7 +745,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>va</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -760,7 +760,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>vp</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -777,7 +777,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>p</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -792,7 +792,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>m</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -807,7 +807,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pmo</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -821,7 +821,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pm</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -835,7 +835,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pmc</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -849,7 +849,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pmr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -863,7 +863,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pi</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -879,7 +879,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>mi</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -894,7 +894,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>nb</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
@@ -914,7 +914,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>cls</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -929,7 +929,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>li</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -946,7 +946,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pc</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -961,7 +961,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -976,7 +976,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ph</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -992,7 +992,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>b</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
@@ -1011,7 +1011,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>q</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
@@ -1026,7 +1026,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1041,7 +1041,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qc</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1055,7 +1055,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qs</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1070,7 +1070,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qa</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1085,7 +1085,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qac</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1100,7 +1100,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qm</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1117,7 +1117,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>tr</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1132,7 +1132,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>th</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1147,7 +1147,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>thr</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1162,7 +1162,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>tc</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1177,7 +1177,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>tcr</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>Yes</numberable>
+    <highestNumberSuffix>4</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1194,7 +1194,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>f</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1209,7 +1209,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>e</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1224,7 +1224,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fr</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1239,7 +1239,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fk</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1254,7 +1254,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fq</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1269,7 +1269,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fqa</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1284,7 +1284,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fl</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1299,7 +1299,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fp</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1314,7 +1314,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fv</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1330,7 +1330,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fn</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1345,7 +1345,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ft</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1360,7 +1360,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fdc</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1375,7 +1375,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fm</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1392,7 +1392,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>x</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1407,7 +1407,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xo</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1422,7 +1422,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xk</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1437,7 +1437,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xq</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1452,7 +1452,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xt</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1467,7 +1467,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xot</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1482,7 +1482,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xnt</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1497,7 +1497,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>xdc</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1514,7 +1514,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>add</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1529,7 +1529,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>bk</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1543,7 +1543,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>dc</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1558,7 +1558,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>k</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1572,7 +1572,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>lit</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1587,7 +1587,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>nd</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1601,7 +1601,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ord</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1616,7 +1616,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pn</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1630,7 +1630,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>qt</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1645,7 +1645,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sig</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1660,7 +1660,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sls</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1675,7 +1675,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>tl</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1690,7 +1690,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>wj</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1705,7 +1705,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>em</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1719,7 +1719,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>bd</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1733,7 +1733,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>it</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1747,7 +1747,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>bdit</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1761,7 +1761,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>no</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1775,7 +1775,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>sc</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1790,7 +1790,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pb</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
@@ -1805,7 +1805,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fig</marker>
     <compulsory>No</compulsory>
     <level>Note</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -1819,7 +1819,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ndx</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -1834,7 +1834,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pro</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -1849,7 +1849,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>w</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1864,7 +1864,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>wg</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -1879,7 +1879,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>wh</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
@@ -1896,7 +1896,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>periph</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1912,7 +1912,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ef</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1927,7 +1927,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>fs</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1942,7 +1942,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ex</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1957,7 +1957,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>esb</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
@@ -1972,7 +1972,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>cat</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -1988,7 +1988,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pdi</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -2003,7 +2003,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>pde</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -2018,7 +2018,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>wr</marker>
     <compulsory>No</compulsory>
     <level>Internal</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
@@ -2033,7 +2033,7 @@ See the supplied USFM3Markers.ReadMe.txt for more details.
     <marker>ps</marker>
     <compulsory>No</compulsory>
     <level>Newline</level>
-    <numberable>No</numberable>
+    <highestNumberSuffix>None</highestNumberSuffix>
     <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
