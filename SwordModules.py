@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.49'
@@ -72,7 +72,7 @@ import struct, zlib
 
 import BibleOrgSysGlobals
 from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from Bible import Bible, BibleBook
 from VerseReferences import SimpleVerseKey
 from SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
@@ -820,7 +820,7 @@ class SwordModule():
 
     def createChapterOffsets( self, versificationString ):
         """
-        Create a list of chapter offsets (organized by book) to allow direct access to the chapter information.
+        Create a list of chapter offsets (organised by book) to allow direct access to the chapter information.
 
         Each entry consists of a 3-tuple:
             0: OTNTOffset = offset if 39 OT books and 27 NT books included
@@ -855,7 +855,7 @@ class SwordModule():
         else:
             logging.critical( _("Unknown {!r} versification scheme for {}").format( versificationString, self.SwordModuleConfiguration.abbreviation ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-        self.BibleOrgSystem = BibleOrganizationalSystem( BOSname )
+        self.BibleOrgSystem = BibleOrganisationalSystem( BOSname )
 
         # Setup containers that we will fill
         self.chapterOffsets = {}

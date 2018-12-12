@@ -5,7 +5,7 @@
 #
 # App to convert between Bible references and absolute verse numbers.
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,7 +54,7 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-04-10' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "GetKJVVerseNumber"
 ProgName = "Get KJV Verse Number"
 ProgVersion = '0.10'
@@ -65,7 +65,7 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 import sys
 sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
 import BibleOrgSysGlobals
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleReferences import BibleSingleReference
 
 
@@ -85,9 +85,9 @@ def main():
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( ProgNameVersion )
 
-    ourBibleOrganizationalSystem = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
-    ourVersificationSystem = ourBibleOrganizationalSystem.getVersificationSystemName()
-    ourBibleSingleReference = BibleSingleReference( ourBibleOrganizationalSystem )
+    ourBibleOrganisationalSystem = BibleOrganisationalSystem( "GENERIC-KJV-66-ENG" )
+    ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
+    ourBibleSingleReference = BibleSingleReference( ourBibleOrganisationalSystem )
 
     print( _("Use QUIT or EXIT to finish.") )
 
@@ -101,7 +101,7 @@ def main():
         except ValueError: userInt = None
         if userInt:
             if 1 <= userInt <= 31102:
-                BBB, C, V = ourBibleOrganizationalSystem.convertAbsoluteVerseNumber( userInt )
+                BBB, C, V = ourBibleOrganisationalSystem.convertAbsoluteVerseNumber( userInt )
                 print( _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
             else:
                 print( _("Absolute verse numbers must be in range 1..31,102.") )
@@ -118,7 +118,7 @@ def main():
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
                 print( _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
-                absoluteVerseNumber = ourBibleOrganizationalSystem.getAbsoluteVerseNumber( BBB, C, V )
+                absoluteVerseNumber = ourBibleOrganisationalSystem.getAbsoluteVerseNumber( BBB, C, V )
                 print( _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
                 if BibleOrgSysGlobals.debugFlag:
                     print( _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )

@@ -67,7 +67,7 @@ Sample:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = '0.39'
@@ -82,7 +82,7 @@ from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleBooksNames import BibleBooksNamesSystems
 from Bible import Bible, BibleBook
 from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
@@ -314,7 +314,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
         BOS = BibleObject.genericBOS
         BRL = BibleObject.genericBRL
     else:
-        BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+        BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
         BRL = BibleReferenceList( BOS, BibleObject=None )
 
     if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OpenSong format…") )
@@ -386,7 +386,7 @@ class OpenSongXMLBible( Bible ):
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
-        self.genericBOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.genericBOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):

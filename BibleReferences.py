@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-27' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.35'
@@ -95,7 +95,7 @@ debuggingThisModule = False
 import logging
 
 import BibleOrgSysGlobals
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 # This is a hack because it's language dependant :-(
@@ -111,7 +111,7 @@ class BibleReferenceBase:
     def __init__( self, BOSObject, BibleObject ): # The BibleObject passed by the superclass may be None
         """
         Initialize the object with necessary sub-systems.
-            A Bible organization system, e.g., BibleOrganizationalSystem( 'RSV' )
+            A Bible Organisation system, e.g., BibleOrganisationalSystem( 'RSV' )
                 gives various things including:
                     a book order (useful for determining ranges that cross books)
                     a punctuation system
@@ -120,16 +120,16 @@ class BibleReferenceBase:
                 We can use this to guess book names.
         """
         assert BOSObject
-        self._BibleOrganizationalSystem = BOSObject
+        self._BibleOrganisationalSystem = BOSObject
         if BibleOrgSysGlobals.debugFlag:
-            print( "BibleReferenceBase: org={}".format( BOSObject.getOrganizationalSystemName() ) )
+            print( "BibleReferenceBase: org={}".format( BOSObject.getOrganisationalSystemName() ) )
 
         # Handle things differently if we don't know the punctuation system
-        punctuationSystemName = BOSObject.getOrganizationalSystemValue( 'punctuationSystem' )
+        punctuationSystemName = BOSObject.getOrganisationalSystemValue( 'punctuationSystem' )
         #print( 'pSN', punctuationSystemName )
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': # default (if we know the punctuation system)
             assert BibleObject is None
-            self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
+            self.punctuationDict = self._BibleOrganisationalSystem.getPunctuationDict()
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
         else: # else use a very generic punctuation system
             assert BibleObject is not None
@@ -146,13 +146,13 @@ class BibleReferenceBase:
                                     'statementTerminator': '.', 'questionTerminator': '?', 'exclamationTerminator': '!',
                                     'commaPauseCharacter': ',', }
         # Handle things differently if we don't know the vernacular book names
-        booksNamesSystemName = BOSObject.getOrganizationalSystemValue( 'booksNamesSystem' )
+        booksNamesSystemName = BOSObject.getOrganisationalSystemValue( 'booksNamesSystem' )
         #print( 'bNSN', booksNamesSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
             #assert BibleObject is not None
-            self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
-            getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
-            self.getBBBFromText = self._BibleOrganizationalSystem.getBBBFromText # This is the function that finds a book code from the vernacular name or abbreviation
+            self.getBookNameFunction = self._BibleOrganisationalSystem.getBookName
+            getBookAbbreviationFunction = self._BibleOrganisationalSystem.getBookAbbreviation
+            self.getBBBFromText = self._BibleOrganisationalSystem.getBBBFromText # This is the function that finds a book code from the vernacular name or abbreviation
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
             assert BibleObject is not None
@@ -344,12 +344,12 @@ class BibleSingleReference( BibleReferenceBase ):
             haveErrors = True
             S = S[0] # Just take the first one
         if BBB is not None:
-            if status==2 and C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
+            if status==2 and C and self._BibleOrganisationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
                 V = C
                 C = '1'
                 status = 4
             if status>=4 and not haveErrors:
-                if self._BibleOrganizationalSystem.isValidBCVRef( (BBB, C, V, S), referenceString ):
+                if self._BibleOrganisationalSystem.isValidBCVRef( (BBB, C, V, S), referenceString ):
                     status = 9
         self.reference = (BBB, C, V, S,)
         #print( "BSR final status: {}:{} -- got {!r}from {!r}\n".format(status,statusList[status],self.referenceList,referenceString) )
@@ -408,7 +408,7 @@ class BibleSingleReferences( BibleReferenceBase ):
             if refTuple in refList:
                 logging.warning( _("Reference {} is repeated in Bible reference {!r}").format( refTuple, referenceString ) )
                 haveWarnings = True
-            if BBB is None or not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, referenceString ):
+            if BBB is None or not self._BibleOrganisationalSystem.isValidBCVRef( refTuple, referenceString ):
                 haveErrors = True
             refList.append( refTuple )
         # end of saveReference
@@ -609,7 +609,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         if status==3: # Got a C but still getting the V hopefully
             if V: status = 4
         if BBB is not None:
-            if status==2 and C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
+            if status==2 and C and self._BibleOrganisationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
                 V = C
                 C = '1'
                 status = 4
@@ -646,7 +646,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
     def __init__( self, BOSObject, BibleObject=None ):
         """ Initialize the object with necessary sub-systems.
-                A Bible organization system, e.g., BibleOrganizationalSystem( 'RSV' )
+                A Bible Organisation system, e.g., BibleOrganisationalSystem( 'RSV' )
                     gives various things including:
                         a book order (useful for determining ranges that cross books)
                         a punctuation system
@@ -693,7 +693,7 @@ class BibleReferenceList( BibleReferenceBase ):
             BBBstr = BBB[0] + ( BBB[1:] if BnC=='U' else BBB[1:].lower() if BnC=='L' else BBB[1:].capitalize() )
         else:
             BBBstr = BBB if BnC=='U' else BBB.lower() if BnC=='L' else BBB.capitalize()
-        if self._BibleOrganizationalSystem.isSingleChapterBook( BBB ):
+        if self._BibleOrganisationalSystem.isSingleChapterBook( BBB ):
             #print( "makeReferenceString-iSCB", refTuple, location )
             if C!='1': logging.error( _("makeReferenceString: Expected chapter number to be 1 (not {!r}) for this {} single chapter book (from {} at {})").format( C, BBB, refTuple, location ) )
             resultString = "{}{}{}{}".format( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', V )
@@ -725,7 +725,7 @@ class BibleReferenceList( BibleReferenceBase ):
             if refTuple in refList:
                 logging.warning( _("Reference {} is repeated in Bible reference {!r}").format( refTuple, referenceString ) )
                 haveWarnings = True
-            if BBB is None or not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, referenceString ):
+            if BBB is None or not self._BibleOrganisationalSystem.isValidBCVRef( refTuple, referenceString ):
                 haveErrors = True
             refList.append( refTuple )
             totalVerseList.append( refTuple )
@@ -740,7 +740,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 haveErrors = True
                 S = S[0] # Just take the first one
             startReferenceTuple = ( BBB, C, V, S, )
-            if BBB is None or not self._BibleOrganizationalSystem.isValidBCVRef( startReferenceTuple, referenceString ):
+            if BBB is None or not self._BibleOrganisationalSystem.isValidBCVRef( startReferenceTuple, referenceString ):
                 haveErrors = True
         # end of saveStartReference
 
@@ -776,10 +776,10 @@ class BibleReferenceList( BibleReferenceBase ):
                 haveErrors = True
                 S = S[0] # Just take the first one
             finishTuple = ( BBB, C, V, S, )
-            if BBB is None or not self._BibleOrganizationalSystem.isValidBCVRef( finishTuple, referenceString ): # No error messages here because it will be caught at expandCVRange below
+            if BBB is None or not self._BibleOrganisationalSystem.isValidBCVRef( finishTuple, referenceString ): # No error messages here because it will be caught at expandCVRange below
                 haveErrors = True # Just set this flag
             rangeTuple = (startTuple, finishTuple,)
-            verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self._BibleOrganizationalSystem )
+            verseList = self._BibleOrganisationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self._BibleOrganisationalSystem )
             if verseList is not None: totalVerseList.extend( verseList )
             if rangeTuple in refList:
                 logging.warning( _("saveReferenceRange: Reference range {} is repeated in Bible reference {!r}").format( rangeTuple, referenceString ) )
@@ -918,7 +918,7 @@ class BibleReferenceList( BibleReferenceBase ):
                     S = char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
-                elif C and self._BibleOrganizationalSystem.isSingleChapterBook( BBB ):
+                elif C and self._BibleOrganisationalSystem.isSingleChapterBook( BBB ):
                     V = C
                     C = '1'
                     if char in self.punctuationDict['verseSeparator']:
@@ -1124,12 +1124,12 @@ class BibleReferenceList( BibleReferenceBase ):
                     C += char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 8 # Start getting the verse number
-                elif C and char in self.punctuationDict['verseSeparator'] and BBB!='???' and self._BibleOrganizationalSystem.isSingleChapterBook(BBB):
+                elif C and char in self.punctuationDict['verseSeparator'] and BBB!='???' and self._BibleOrganisationalSystem.isSingleChapterBook(BBB):
                     V = C
                     C = '1'
                     saveReferenceRange( startReferenceTuple, BBB, C, V, S, self.referenceList )
                     status, V, S = 8, '', ''
-                elif C and char in self.punctuationDict['bookSeparator'] and BBB!='???' and self._BibleOrganizationalSystem.isSingleChapterBook(BBB):
+                elif C and char in self.punctuationDict['bookSeparator'] and BBB!='???' and self._BibleOrganisationalSystem.isSingleChapterBook(BBB):
                     V = C
                     C = '1'
                     saveReferenceRange( startReferenceTuple, BBB, C, V, S, self.referenceList )
@@ -1180,7 +1180,7 @@ class BibleReferenceList( BibleReferenceBase ):
                     break # Seems better to break on this one or else we get lots of errors (e.g., if a fr is left open in a footnote)
                 continue
         if status==2 and C: # Getting chapter number
-            if self._BibleOrganizationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
+            if self._BibleOrganisationalSystem.isSingleChapterBook( BBB ): # Have a single chapter book and what we were given is presumably the verse number
                 V = C
                 C = '1'
                 status = 4
@@ -1263,8 +1263,8 @@ class BibleReferenceList( BibleReferenceBase ):
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
 
         # Set things up again how they were
-        self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
-        self.getBBBFromText = self._BibleOrganizationalSystem.getBBBFromText # This is the function that finds a book by name
+        self.punctuationDict = self._BibleOrganisationalSystem.getPunctuationDict()
+        self.getBBBFromText = self._BibleOrganisationalSystem.getBBBFromText # This is the function that finds a book by name
 
         return sucessFlag, haveWarnings, resultList
     # end of BibleReferenceList.parseOSISReferenceString
@@ -1279,7 +1279,7 @@ class BibleReferenceList( BibleReferenceBase ):
             for refTuple in self.referenceList:
                 if len(refTuple) == 2: # it's a range
                     startRefTuple, endRefTuple = refTuple
-                    expandedRange = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                    expandedRange = self._BibleOrganisationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                     if expandedRange is not None: expandedList.extend( expandedRange )
                 else: expandedList.append( refTuple )
             return expandedList
@@ -1331,14 +1331,14 @@ class BibleReferenceList( BibleReferenceBase ):
     #def XXXUnusedXXXMaybeUntestedXXXcontainsReferenceTuple( self, refTuple ):
         #""" Returns True/False if the internal reference list contains the given reference tuple. """
         #assert refTuple and len(refTuple)==4
-        #if not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}".format(refTuple[0],refTuple[1],refTuple[2],refTuple[3]) ):
+        #if not self._BibleOrganisationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}".format(refTuple[0],refTuple[1],refTuple[2],refTuple[3]) ):
             #haveErrors = True
 
         ## See if we can find this reference in our internal list
         #for refTuple in self.referenceList:
             #if len(refTuple) == 2: # it's a range
                 #startRefTuple, endRefTuple = refTuple
-                #expandedList = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                #expandedList = self._BibleOrganisationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                 #if refTuple in expandedList: return True
             #elif refTuple == refTuple: return True
         #return False
@@ -1356,7 +1356,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # First find out what we were given
         if V.isdigit(): # it's simple
             myTuple = (BBB, C, V, S)
-            if not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
+            if not self._BibleOrganisationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
                 haveErrors = True
             myList = [ myTuple, ]
         else: # Must have a list or range
@@ -1367,13 +1367,13 @@ class BibleReferenceList( BibleReferenceBase ):
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got a verse number
                         myTuple = (BBB, C, myV, S)
-                        if not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        if not self._BibleOrganisationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
                         myList.append( myTuple )
                         myV = ''
                     elif myV and char in self.punctuationDict['verseBridgeCharacter']: # Just got the start verse of a range
                         startTuple = (BBB, C, myV, S)
-                        if not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        if not self._BibleOrganisationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
                         status, myV = 1, ''
                     logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1382,9 +1382,9 @@ class BibleReferenceList( BibleReferenceBase ):
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         endTuple = (BBB, C, myV, S)
-                        if not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        if not self._BibleOrganisationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
-                        verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                        verseList = self._BibleOrganisationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                         if verseList is not None: myList.extend( verseList )
                         status, myV = 0, ''
             if status>0 or myV: logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1395,7 +1395,7 @@ class BibleReferenceList( BibleReferenceBase ):
             for refTuple in self.referenceList:
                 if len(refTuple) == 2: # it's a range
                     startRefTuple, endRefTuple = refTuple
-                    expandedList = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                    expandedList = self._BibleOrganisationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                     if not expandedList: return False
                     if myRefTuple in expandedList: return True
                     elif S is None:
@@ -1503,7 +1503,7 @@ class BibleAnchorReference:
             if refTuple in refList:
                 logging.warning( _("Reference {} is repeated in Bible reference {!r}{}").format( refTuple, anchorString, '' if location is None else " at {}".format(location) ) )
                 haveWarnings = True
-            if BBB is None: # or not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, referenceString ):
+            if BBB is None: # or not self._BibleOrganisationalSystem.isValidBCVRef( refTuple, referenceString ):
                 haveErrors = True
             refList.append( refTuple )
             totalVerseList.append( refTuple )
@@ -1518,7 +1518,7 @@ class BibleAnchorReference:
                 haveErrors = True
                 S = S[0] # Just take the first one
             startReferenceTuple = ( BBB, C, V, S, )
-            if BBB is None: # or not self._BibleOrganizationalSystem.isValidBCVRef( startReferenceTuple, referenceString ):
+            if BBB is None: # or not self._BibleOrganisationalSystem.isValidBCVRef( startReferenceTuple, referenceString ):
                 haveErrors = True
         # end of saveStartReference
 
@@ -1543,10 +1543,10 @@ class BibleAnchorReference:
                 haveErrors = True
                 S = S[0] # Just take the first one
             finishTuple = ( BBB, C, V, S, )
-            if BBB is None: # or not self._BibleOrganizationalSystem.isValidBCVRef( finishTuple, referenceString ): # No error messages here because it will be caught at expandCVRange below
+            if BBB is None: # or not self._BibleOrganisationalSystem.isValidBCVRef( finishTuple, referenceString ): # No error messages here because it will be caught at expandCVRange below
                 haveErrors = True # Just set this flag
             rangeTuple = (startTuple, finishTuple,)
-            #verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self._BibleOrganizationalSystem )
+            #verseList = self._BibleOrganisationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self._BibleOrganisationalSystem )
             print( "How do we expand the verse list without a reference system???" ); verseList = None
             if verseList is not None: totalVerseList.extend( verseList )
             if rangeTuple in refList:
@@ -1788,7 +1788,7 @@ class BibleAnchorReference:
             for refTuple in self.referenceList:
                 if len(refTuple) == 2: # it's a range
                     startRefTuple, endRefTuple = refTuple
-                    #expandedRange = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                    #expandedRange = self._BibleOrganisationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                     print( "How do we expand the range without a reference system???" ); expandedRange = None
                     if expandedRange is not None: expandedList.extend( expandedRange )
                 else: expandedList.append( refTuple )
@@ -1807,7 +1807,7 @@ class BibleAnchorReference:
         ## First find out what we were given
         #if V.isdigit(): # it's simple
             #myTuple = (BBB, C, V, S)
-            #if not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
+            #if not self._BibleOrganisationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
                 #haveErrors = True
             #myList = [ myTuple, ]
         #else: # Must have a list or range
@@ -1818,13 +1818,13 @@ class BibleAnchorReference:
                     #if char.isdigit(): myV += char
                     #elif myV and char in self.punctuationDict['verseSeparator']: # Just got a verse number
                         #myTuple = (BBB, C, myV, S)
-                        #if not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        #if not self._BibleOrganisationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
                         #myList.append( myTuple )
                         #myV = ''
                     #elif myV and char in self.allowedBridgeCharacters: # Just got the start verse of a range
                         #startTuple = (BBB, C, myV, S)
-                        #if not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        #if not self._BibleOrganisationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
                         #status, myV = 1, ''
                     #logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1833,9 +1833,9 @@ class BibleAnchorReference:
                     #if char.isdigit(): myV += char
                     #elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         #endTuple = (BBB, C, myV, S)
-                        #if not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
+                        #if not self._BibleOrganisationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
-                        #verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                        #verseList = self._BibleOrganisationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                         #if verseList is not None: myList.extend( verseList )
                         #status, myV = 0, ''
             #if (status>0 or myV): logging.error( _("Invalid {!r} verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1846,7 +1846,7 @@ class BibleAnchorReference:
             #for refTuple in self.referenceList:
                 #if len(refTuple) == 2: # it's a range
                     #startRefTuple, endRefTuple = refTuple
-                    #expandedList = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                    #expandedList = self._BibleOrganisationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganisationalSystem )
                     #if myRefTuple in expandedList: return True
                     #elif S is None:
                         #for refTuple in expandedList:
@@ -1907,7 +1907,7 @@ def demo():
     """
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    ourBOS = BibleOrganizationalSystem( 'RSV' )
+    ourBOS = BibleOrganisationalSystem( 'RSV' )
     printProcessingMessages = True
 
     if 1: # test BibleSingleReference

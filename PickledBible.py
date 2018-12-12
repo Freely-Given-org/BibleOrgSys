@@ -47,7 +47,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
 ProgVersion = '0.11'
@@ -256,7 +256,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
                 #print( 'attrib', attributeName, typeAsString )
                 if '__' not in attributeName and 'method' not in typeAsString:
                     if attributeName == 'genericBOS': # Just save the name, not the BOS
-                        attributeValue = BibleObject.genericBOS.getOrganizationalSystemName()
+                        attributeValue = BibleObject.genericBOS.getOrganisationalSystemName()
                     if (dataLevel==1 and attributeName in ( 'sourceFolder','sourceFilename','sourceFilepath',
                                                 'abbreviation','givenName','shortName','name',
                                                 'description','version',

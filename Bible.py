@@ -194,7 +194,7 @@ class Bible( BibleWriter ):
         self.objectNameString = 'Bible object (generic/unknown type)'
         self.objectTypeString = 'Unknown'
 
-        self.BibleOrganizationalSystem = None
+        self.BibleOrganisationalSystem = None
         # Add our own extended data stores
         #self.metadata = {}
         #self.frontMatter = []

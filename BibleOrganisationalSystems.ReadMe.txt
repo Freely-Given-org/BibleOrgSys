@@ -1,7 +1,7 @@
-# BibleOrganizationalSystems.ReadMe.txt
-#   ReadMe.txt for Bible Organizational Systems
+# BibleOrganisationalSystems.ReadMe.txt
+#   ReadMe.txt for Bible Organisational Systems
 #   Version 0.10
-#   Last modified: 2010-10-14
+#   Last modified: 2018-12-12
 #
 # Abbreviations:
 #   XML = eXtensible Markup Language -- see http://en.wikipedia.org/wiki/XML
@@ -20,7 +20,7 @@
 #
 # Enclosed are three files:
 #
-#   DataFiles/BibleOrganizationalSystems.xml
+#   DataFiles/BibleOrganisationalSystems.xml
 #       A UTF-8 XML file encoding SBL, OSIS and UBS Paratext/USFM/OXES Bible books codes
 #       The file also includes an internal DTD. To validate the XML on Linux systems, use
 #           xmllint --noout --valid DataFiles/BibleBooksCodes.xml
@@ -35,25 +35,25 @@
 #       While it is a derived work, I don't expect anyone to object to the use of this data. I think it is fair use to offer it as a public domain compilation.
 #
 #
-#   DataFiles/BibleOrganizationalSystems.rnc
+#   DataFiles/BibleOrganisationalSystems.rnc
 #       A Relax NG Compact Syntax schema file
 #       On Linux, to convert to RNG, use
-#           trang DataFiles/BibleOrganizationalSystems.rnc DerivedFiles/BibleOrganizationalSystems.rng
+#           trang DataFiles/BibleOrganisationalSystems.rnc DerivedFiles/BibleOrganisationalSystems.rng
 #       On Linux, to validate against the .rng file, use
-#           xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng DataFiles/BibleOrganizationalSystems.xml
+#           xmllint --noout --relaxng DerivedFiles/BibleOrganisationalSystems.rng DataFiles/BibleOrganisationalSystems.xml
 #       or to validate against both this and the internal DTD, use
-#           xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng --valid DataFiles/BibleOrganizationalSystems.xml
+#           xmllint --noout --relaxng DerivedFiles/BibleOrganisationalSystems.rng --valid DataFiles/BibleOrganisationalSystems.xml
 #
 #
-#   BibleOrganizationalSystems.py (for Python 3)
+#   BibleOrganisationalSystems.py (for Python 3)
 #       This small program will load and do some very basic checking of the XML data file.
 #       It can be used in a larger Python program to load the XML data into a number of Python dictionaries (with different fields as the key).
 #       It can also be used to convert the XML data directly to Python or C code which can be included in another program (if you don't want to supply the master XML file).
 #       It is expected that the user might want to modify the Python code in order to customize it to your particular needs for either of the above strategies.
 #       The program is open source with a GPL-3.0 licence.
-#       If you have Python3 installed on Linux, run the program with ./BibleBibleOrganizationalSystems.py (once you have made the program file "executable").
+#       If you have Python3 installed on Linux, run the program with ./BibleBibleOrganisationalSystems.py (once you have made the program file "executable").
 #               (Alternatively, try: python3 BibleBooksCodes.py)
-#           This should load and check the XML file and create BibleOrganizationalSystemsTables.py and BibleOrganizationalSystemsTables.h files in the DerivedFiles folder, suitable for including in other programs.
+#           This should load and check the XML file and create BibleOrganisationalSystemsTables.py and BibleOrganisationalSystemsTables.h files in the DerivedFiles folder, suitable for including in other programs.
 #
 #
 # Robert Hunt

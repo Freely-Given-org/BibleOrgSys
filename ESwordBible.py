@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.40'
@@ -64,7 +64,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 
@@ -897,7 +897,7 @@ class ESwordBible( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
         self.preloaded = True
     # end of ESwordBible.preload
 
@@ -994,14 +994,14 @@ class ESwordBible( Bible ):
             loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         #halt
 
-        #BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        #BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         # Create the first book
         thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -1055,14 +1055,14 @@ class ESwordBible( Bible ):
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = self.BibleOrganizationalSystem.getNextBookCode( BBB )
+                    BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'e-Sword Bible Book object'
                     thisBook.objectTypeString = 'e-Sword-Bible'
                     haveLines = False
 
-                    verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+                    verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -1077,7 +1077,7 @@ class ESwordBible( Bible ):
                 ourGlobals['haveParagraph'] = False
 
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            self.checkForExtraMaterial( self.cursor, self.BibleOrganizationalSystem )
+            self.checkForExtraMaterial( self.cursor, self.BibleOrganisationalSystem )
         self.cursor.close()
         del self.cursor
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -1109,7 +1109,7 @@ class ESwordBible( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Book object'
         thisBook.objectTypeString = 'e-Sword-Bible'
 
-        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -1552,7 +1552,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
     # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)

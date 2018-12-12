@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -101,7 +101,7 @@ import signal
 import BibleOrgSysGlobals, ControlFiles
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
 from InternalBible import InternalBible
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleReferences import BibleReferenceList
 from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_TITLE_MARKERS, \
                             USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS, \
@@ -357,7 +357,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not self.doneSetupGeneric
         #if 'discoveryResults' not in dir(self): self.discover()
         if not self.doneSetupGeneric:
-            self.genericBOS = BibleOrganizationalSystem( 'GENERIC' )
+            self.genericBOS = BibleOrganisationalSystem( 'GENERIC' )
             self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
                 # because unfortunately it causes a recursive linking of objects
             self.doneSetupGeneric = True
@@ -697,7 +697,7 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    #print( "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganizationalSystemName(), BBB ) )
+                    #print( "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganisationalSystemName(), BBB ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0
@@ -2053,7 +2053,7 @@ class BibleWriter( InternalBible ):
             #BOS = self.genericBOS
             #BRL = self.genericBRL
         #else:
-            #BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            #BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format…") )
@@ -2850,7 +2850,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to HTML5 format…") )
@@ -4488,7 +4488,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format…") )
@@ -4971,7 +4971,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format…") )
@@ -5436,7 +5436,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USFX XML format…") )
@@ -5490,7 +5490,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def _writeSwordLocale( self, name, description, BibleOrganizationalSystem, getBookNameFunction, localeFilepath ):
+    def _writeSwordLocale( self, name, description, BibleOrganisationalSystem, getBookNameFunction, localeFilepath ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
@@ -5503,7 +5503,7 @@ class BibleWriter( InternalBible ):
 
             # This first section contains EnglishBookName=VernacularBookName
             bookList = []
-            for BBB in BibleOrganizationalSystem.getBookList():
+            for BBB in BibleOrganisationalSystem.getBookList():
                 if BBB in self.books:
                     vernacularName = getBookNameFunction(BBB)
                     SwLocFile.write( '{}={}\n'.format( BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB), vernacularName ) ) # Write the first English book name and the language book name
@@ -5512,7 +5512,7 @@ class BibleWriter( InternalBible ):
             # This second section contains many VERNACULARABBREV=SwordBookAbbrev
             SwLocFile.write( '\n[Book Abbrevs]\n' )
             abbreviationList = []
-            for BBB in BibleOrganizationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
+            for BBB in BibleOrganisationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
                 if BBB in self.books:
                     swordAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getSwordAbbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).upper()
@@ -5528,7 +5528,7 @@ class BibleWriter( InternalBible ):
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert vernacularAbbrev not in abbreviationList
                         SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                         abbreviationList.append( vernacularAbbrev )
-            for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
+            for BBB in BibleOrganisationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
                 if BBB in self.books:
                     swordAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getSwordAbbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
@@ -5604,10 +5604,10 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        booksNamesSystemName = BOS.getOrganizationalSystemValue( 'booksNamesSystem' )
+        booksNamesSystemName = BOS.getOrganisationalSystemValue( 'booksNamesSystem' )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
             getBookNameFunction = BOS.getBookName
             getBookAbbreviationFunction = BOS.getBookAbbreviation
@@ -6347,10 +6347,10 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        booksNamesSystemName = BOS.getOrganizationalSystemValue( 'booksNamesSystem' )
+        booksNamesSystemName = BOS.getOrganisationalSystemValue( 'booksNamesSystem' )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
             getBookNameFunction = BOS.getBookName
             getBookAbbreviationFunction = BOS.getBookAbbreviation
@@ -6762,7 +6762,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Zefania format…") )
@@ -6957,7 +6957,7 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Haggai format…") )
@@ -7061,10 +7061,10 @@ class BibleWriter( InternalBible ):
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
-            BOS = BibleOrganizationalSystem( controlDict['PublicationCode'] )
+            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        booksNamesSystemName = BOS.getOrganizationalSystemValue( 'booksNamesSystem' )
+        booksNamesSystemName = BOS.getOrganisationalSystemValue( 'booksNamesSystem' )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
             getBookNameFunction = BOS.getBookName
             getBookAbbreviationFunction = BOS.getBookAbbreviation

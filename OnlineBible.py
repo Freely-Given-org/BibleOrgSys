@@ -5,7 +5,7 @@
 #
 # Module handling Online Bible files
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "OnlineBible"
 ProgName = "Online Bible format handler"
 ProgVersion = '0.20'
@@ -50,7 +50,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPPERCASE
@@ -164,7 +164,7 @@ class OnlineBible( Bible ):
             logging.critical( _("OnlineBible: Folder {!r} is unreadable").format( self.sourceFolder ) )
 
         global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
         #self.name = self.givenName
         #if self.name is None:
             #pass

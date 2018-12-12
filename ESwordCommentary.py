@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "e-SwordCommentary"
 ProgName = "e-Sword Commentary format handler"
 ProgVersion = '0.07'
@@ -65,7 +65,7 @@ from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from ESwordBible import handleESwordLine
 
 
@@ -328,8 +328,8 @@ class ESwordCommentary( Bible ):
             #loadErrors.append( "Row count for {} seems wrong: {} instead of {}".format( self.sourceFilename, numRows, textLineCountExpected ) )
         ##halt
 
-        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-        assert self.BibleOrganizationalSystem is not None
+        self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
+        assert self.BibleOrganisationalSystem is not None
         self.preloaded = True
     # end of ESwordCommentary.preload
 
@@ -443,7 +443,7 @@ class ESwordCommentary( Bible ):
             thisBook.objectNameString = 'e-Sword Commentary Book object'
             thisBook.objectTypeString = 'e-Sword-Commentary'
 
-            verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+            verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
 
             try:
                 if BBB in bookCommentary:
@@ -467,7 +467,7 @@ class ESwordCommentary( Bible ):
             self.stashBook( thisBook )
 
         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            #self.checkForExtraMaterial( self.cursor, self.BibleOrganizationalSystem )
+            #self.checkForExtraMaterial( self.cursor, self.BibleOrganisationalSystem )
         self.cursor.close()
         del self.cursor
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -499,7 +499,7 @@ class ESwordCommentary( Bible ):
         thisBook.objectNameString = 'e-Sword Bible Commentary object'
         thisBook.objectTypeString = 'e-Sword-Commentary'
 
-        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
 
         ourGlobals = {}
@@ -986,7 +986,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
     halt # Not written yet
 

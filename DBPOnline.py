@@ -36,7 +36,7 @@ In this module, we use:
             "O" Old Testament – Contains one or more books of the Old Testament.
             "N" New Testament – Contains one or more books of the New Testament.
             "C" Complete – Contains books from both the Old and New Testament. (These volumes are used primarily for content downloads, and are not generally used by the actual reader applications).
-            "S" Story – Contains content that is not organized by books and chapters.
+            "S" Story – Contains content that is not organised by books and chapters.
             "P" Partial – Contains only partial content, such as a few chapters from one book of the Bible.
         8: Drama type
             "1" (Audio includes only spoken text)
@@ -64,7 +64,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform onliner handler"
 ProgVersion = '0.19'

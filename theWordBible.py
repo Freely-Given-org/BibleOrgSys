@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.55'
@@ -68,7 +68,7 @@ import BibleOrgSysGlobals
 from InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 BOS = None
@@ -239,7 +239,7 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     assert volumeType in ('OT','NT','BOTH',)
 
     global BOS
-    if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
     if volumeType == 'OT':
         bookCount, books, totalLines, bookLines = theWordOTBookCount, theWordOTBooks, theWordOTTotalLines, theWordOTBookLines
@@ -837,7 +837,7 @@ class theWordBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['theWord'] = {}
@@ -1228,7 +1228,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
     # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLS, etc.)

@@ -34,7 +34,7 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-15' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.13'
@@ -52,7 +52,7 @@ from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 
@@ -165,7 +165,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
     ignoredMarkers = set()
 
@@ -385,7 +385,7 @@ class EasyWorshipBible( Bible ):
             logging.critical( _("EasyWorshipBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         global BOS
-        if BOS is None: BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         assert FILENAME_ENDING in self.sourceFilename.upper()
         self.abbreviation = os.path.splitext( self.sourceFilename)[0] # Remove file extension

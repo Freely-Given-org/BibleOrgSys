@@ -1,13 +1,13 @@
-# BibleOrganizationalSystems.rnc           Relax NG Compact Syntax schema file
-#   Version 0.21
-#   Last modified: 2011-02-15
+# BibleOrganisationalSystems.rnc           Relax NG Compact Syntax schema file
+#   Version 0.22
+#   Last modified: 2018-12-12
 #
 # On Linux, to convert to RNG, use
-#       trang BibleOrganizationalSystems.rnc DerivedFiles/BibleOrganizationalSystems.rng
+#       trang BibleOrganisationalSystems.rnc DerivedFiles/BibleOrganisationalSystems.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng BibleOrganizationalSystems.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleOrganisationalSystems.rng BibleOrganisationalSystems.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng --valid BibleOrganizationalSystems.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleOrganisationalSystems.rng --valid BibleOrganisationalSystems.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
@@ -15,12 +15,12 @@
 #
 
 # The root element
-start = BibleOrganizationalSystems
+start = BibleOrganisationalSystems
 
-# A single header, then multiple BibleOrganizationalSystem entries
-BibleOrganizationalSystems = element BibleOrganizationalSystems
+# A single header, then multiple BibleOrganisationalSystem entries
+BibleOrganisationalSystems = element BibleOrganisationalSystems
 {   header,
-    BibleOrganizationalSystem+
+    BibleOrganisationalSystem+
 }
 
 header  = element header
@@ -42,7 +42,7 @@ work = element work
     element rights { xsd:string }
 }
 
-BibleOrganizationalSystem = element BibleOrganizationalSystem
+BibleOrganisationalSystem = element BibleOrganisationalSystem
 {   attribute type {"original"|"translation"|"revision"|"edition"},
     element referenceAbbreviation { xsd:string { minLength="3" } },
     element languageCode { xsd:string { length="3" } },

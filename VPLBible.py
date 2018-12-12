@@ -71,7 +71,7 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.37'
@@ -86,7 +86,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 BOS66 = BOS81 = BOSx = None
@@ -301,9 +301,9 @@ class VPLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS66, BOS81, BOSx
-        if BOS66 is None: BOS66 = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
-        if BOS81 is None: BOS81 = BibleOrganizationalSystem( 'GENERIC-KJV-80-ENG' )
-        if BOSx is None: BOSx = BibleOrganizationalSystem( 'GENERIC-ENG' )
+        if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS81 is None: BOS81 = BibleOrganisationalSystem( 'GENERIC-KJV-80-ENG' )
+        if BOSx is None: BOSx = BibleOrganisationalSystem( 'GENERIC-ENG' )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 

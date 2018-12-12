@@ -84,7 +84,7 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "MyBibleBible"
 ProgName = "MyBible Bible format handler"
 ProgVersion = '0.20'
@@ -102,7 +102,7 @@ from random import randrange
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 
@@ -412,8 +412,8 @@ class MyBibleBible( Bible ):
         or self.getSetting('LanguageName') in ('Russian',) \
         or self.getSetting('ISOLanguageCode') in ('rus',) \
         or self.getSetting('language_iso639-2b') in ('rus',):
-            self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-80-RUS' )
-        else: self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-ENG' ) # All possible books
+            self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-80-RUS' )
+        else: self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-ENG' ) # All possible books
 
         # Now get the book info -- try the books_all table first to see if it exists
         self.suppliedMetadata['MyBible']['BookInfo'] = OrderedDict()
@@ -431,8 +431,8 @@ class MyBibleBible( Bible ):
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
-                    BBB = self.BibleOrganizationalSystem.getBBBFromText( longName ) # Might not work for other languages
-                    if BBB is None: BBB = self.BibleOrganizationalSystem.getBBBFromText( shortName ) # Might not work for other languages
+                    BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
+                    if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
                 #print( "  Got1 BBB", BBB, repr(longName) )
                 assert BBB
                 self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
@@ -456,8 +456,8 @@ class MyBibleBible( Bible ):
                     longName = longName.strip() # Why do some have a \n at the end???
                     if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                     else:
-                        BBB = self.BibleOrganizationalSystem.getBBBFromText( longName ) # Might not work for other languages
-                        if BBB is None: BBB = self.BibleOrganizationalSystem.getBBBFromText( shortName ) # Might not work for other languages
+                        BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
+                        if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
                         if BBB is None and shortName=='3Ма': BBB = 'MA3' # Cant't track down why this fails ???
                     #print( "  Got2 BBB", BBB, repr(longName), repr(shortName) )
                     assert BBB
@@ -1161,7 +1161,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-80-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-80-ENG' )
     extension = '.SQLite3'
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 

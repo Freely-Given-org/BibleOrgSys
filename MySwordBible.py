@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
 ProgVersion = '0.35'
@@ -67,7 +67,7 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 from theWordBible import handleRTFLine
 
 
@@ -258,7 +258,7 @@ class MySwordBible( Bible ):
         if 'encryption' in self.suppliedMetadata['MySword']:
             logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
 
-        self.BibleOrganizationalSystem = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         self.preloadDone = True
     # end of MySwordBible.preload
@@ -290,7 +290,7 @@ class MySwordBible( Bible ):
         thisBook.objectNameString = 'MySword Bible Book object'
         thisBook.objectTypeString = 'MySword'
 
-        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -341,14 +341,14 @@ class MySwordBible( Bible ):
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
-                    BBB = self.BibleOrganizationalSystem.getNextBookCode( BBB )
+                    BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'MySword Bible Book object'
                     thisBook.objectTypeString = 'MySword'
                     haveLines = False
 
-                    verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+                    verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
@@ -403,7 +403,7 @@ class MySwordBible( Bible ):
         thisBook.objectNameString = 'MySword Bible Book object'
         thisBook.objectTypeString = 'MySword'
 
-        verseList = self.BibleOrganizationalSystem.getNumVersesList( BBB )
+        verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
         nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
@@ -546,7 +546,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
 
 
     # Set-up their Bible reference system
-    BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+    BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
 
     # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)

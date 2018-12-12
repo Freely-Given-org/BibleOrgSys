@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# BibleOrganizationalSystemsConverter.py
+# BibleOrganisationalSystemsConverter.py
 #
-# Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
+# Module handling BibleOrganisationalSystems.xml to produce C and Python data tables
 #
 # Copyright (C) 2010-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,14 +23,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleOrganizationalSystems.xml to produce C and Python data tables.
+Module handling BibleOrganisationalSystems.xml to produce C and Python data tables.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-24' # by RJH
-ShortProgName = "BibleOrganizationalSystemsConverter"
-ProgName = "Bible Organization Systems converter"
+LastModifiedDate = '2018-12-12' # by RJH
+ShortProgName = "BibleOrganisationalSystemsConverter"
+ProgName = "Bible Organisation Systems converter"
 ProgVersion = '0.26'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
@@ -53,9 +53,9 @@ allowedTypes = ( 'edition', 'revision', 'translation', 'original', ) # NOTE: The
 
 
 @singleton # Can only ever have one instance
-class BibleOrganizationalSystemsConverter:
+class BibleOrganisationalSystemsConverter:
     """
-    Class for handling and converting BibleOrganizationalSystems.
+    Class for handling and converting BibleOrganisationalSystems.
     """
 
     def __init__( self ):
@@ -63,12 +63,12 @@ class BibleOrganizationalSystemsConverter:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        self._filenameBase = 'BibleOrganizationalSystems'
+        self._filenameBase = 'BibleOrganisationalSystems'
 
         # These fields are used for parsing the XML
-        self._treeTag = 'BibleOrganizationalSystems'
+        self._treeTag = 'BibleOrganisationalSystems'
         self._headerTag = 'header'
-        self._mainElementTag = 'BibleOrganizationalSystem'
+        self._mainElementTag = 'BibleOrganisationalSystem'
 
         # These fields are used for automatically checking/validating the XML
         self._compulsoryAttributes = ( 'type', )
@@ -91,7 +91,7 @@ class BibleOrganizationalSystemsConverter:
         self._BiblePunctuationSystems = BiblePunctuationSystems().loadData()
         self._BibleVersificationSystems = BibleVersificationSystems().loadData()
         self._BibleBooksNamesSystems = BibleBooksNamesSystems().loadData()
-    # end of BibleOrganizationalSystemsConverter.__init__
+    # end of BibleOrganisationalSystemsConverter.__init__
 
 
     def __str__( self ):
@@ -107,13 +107,13 @@ class BibleOrganizationalSystemsConverter:
         if self.date: result += ('\n' if result else '') + "  Date: {}".format( self.date )
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self._XMLtree) )
         return result
-    # end of BibleOrganizationalSystemsConverter.__str__
+    # end of BibleOrganisationalSystemsConverter.__str__
 
 
     def __len__( self ):
         """ Returns the number of items loaded. """
         return len( self._XMLtree )
-    # end of BibleOrganizationalSystemsConverter.__len__
+    # end of BibleOrganisationalSystemsConverter.__len__
 
 
     def loadAndValidate( self, XMLFilepath=None ):
@@ -129,7 +129,7 @@ class BibleOrganizationalSystemsConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self._validate()
         return self
-    # end of BibleOrganizationalSystemsConverter.loadAndValidate
+    # end of BibleOrganisationalSystemsConverter.loadAndValidate
 
 
     def _load( self, XMLFilepath ):
@@ -141,7 +141,7 @@ class BibleOrganizationalSystemsConverter:
         self.__XMLFilepath = XMLFilepath
         assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganizationalSystems XML file from {!r}…").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from {!r}…").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert self._XMLtree # Fail here if we didn't load anything at all
 
@@ -166,7 +166,7 @@ class BibleOrganizationalSystemsConverter:
                 logging.warning( _("Missing header element (looking for {!r} tag)").format( self._headerTag ) )
         else:
             logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
-    # end of BibleOrganizationalSystemsConverter._load
+    # end of BibleOrganisationalSystemsConverter._load
 
 
     def _validate( self ):
@@ -250,7 +250,7 @@ class BibleOrganizationalSystemsConverter:
 
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-    # end of BibleOrganizationalSystemsConverter._validate
+    # end of BibleOrganisationalSystemsConverter._validate
 
 
     def importDataToPython( self ):
@@ -402,7 +402,7 @@ class BibleOrganizationalSystemsConverter:
         dataDict, indexDict, combinedIndexDict = self.importDataToPython()
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BibleOrganisationalSystemsConverter.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
             if self.title: myFile.write( "# {}\n".format( self.title ) )
             if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
@@ -481,7 +481,7 @@ class BibleOrganizationalSystemsConverter:
         ifdefName = self._filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "// {}\n//\n".format( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} on {}\n//\n".format( ProgVersion, datetime.now() ) )
+            myFile.write( "// This UTF-8 file was automatically generated by BibleOrganisationalSystemsConverter.py V{} on {}\n//\n".format( ProgVersion, datetime.now() ) )
             if self.title: myFile.write( "// {}\n".format( self.title ) )
             if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
@@ -495,7 +495,7 @@ class BibleOrganizationalSystemsConverter:
             exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNum; int id; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* EngName;}", "ParatextNumberString (sorted), ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, id, nameEnglish (comment only)" )
             myFile.write( "#endif // {}\n".format( ifdefName ) )
     # end of exportDataToC
-# end of BibleOrganizationalSystemsConverter class
+# end of BibleOrganisationalSystemsConverter class
 
 
 
@@ -506,7 +506,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     if BibleOrgSysGlobals.commandLineArguments.export:
-        bosc = BibleOrganizationalSystemsConverter().loadAndValidate()
+        bosc = BibleOrganisationalSystemsConverter().loadAndValidate()
         bosc.pickle() # Produce a pickle output file
         bosc.exportDataToPython() # Produce the .py tables
         bosc.exportDataToJSON() # Produce a json output file
@@ -514,7 +514,7 @@ def demo():
 
     else: # Must be demo mode
         # Demo the converter object
-        bosc = BibleOrganizationalSystemsConverter().loadAndValidate()
+        bosc = BibleOrganisationalSystemsConverter().loadAndValidate()
         print( bosc ) # Just print a summary
 # end of demo
 
@@ -526,4 +526,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of BibleOrganizationalSystemsConverter.py
+# end of BibleOrganisationalSystemsConverter.py

@@ -5,7 +5,7 @@
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2017 Robert Hunt
+# Copyright (C) 2012-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-12-07' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "GreekNTHandler"
 ProgName = "Greek NT format handler"
 ProgVersion = '0.08'
@@ -268,7 +268,7 @@ class GreekNT( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
 
-        self.wordCounts = {} # Wordcount organized by BBB
+        self.wordCounts = {} # Wordcount organised by BBB
         self.wordCounts['Total'] = 0
         self.actualWordsToNormalized, self.normalizedWordsToActual, self.normalizedWordsToParsing, self.lemmasToNormalizedWords = {}, {}, {}, {}
         for BBB in self.books:

@@ -5,7 +5,7 @@
 #
 # Module handling BibleReferencesLinks.xml to produce C and Python data tables
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.40'
@@ -44,7 +44,7 @@ from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import BibleOrgSysGlobals
-from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleOrganisationalSystems import BibleOrganisationalSystem
 #from BibleReferences import BibleSingleReference, BibleReferenceList
 from VerseReferences import SimpleVerseKey, FlexibleVersesKey
 
@@ -345,7 +345,7 @@ class BibleReferencesLinksConverter:
 
         myRefLinkList = []
         actualLinkCount = 0
-        BOS = BibleOrganizationalSystem( 'GENERIC-KJV-66-ENG' )
+        BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
         for j,(sourceReference,sourceComponent,actualRawLinksList) in enumerate( rawRefLinkList ):
             # Just do some testing first
