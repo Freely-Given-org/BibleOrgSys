@@ -36,10 +36,10 @@ Contains the singleton class: USFM2Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-03' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "USFM2Markers"
 ProgName = "USFM2 Markers handler"
-ProgVersion = '0.72'
+ProgVersion = '0.73'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -573,7 +573,8 @@ class USFM2Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFM2Markers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "USFM2Markers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
         if not text: return []
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )
@@ -585,6 +586,7 @@ class USFM2Markers:
             if iy<textLength:
                 c1 = text[iy]
                 if c1==' ': logging.error( _("USFM2Markers.getMarkerListFromText found invalid '\\' in {!r}").format( text ) )
+                elif c1=='\\': logging.error( _("USFM2Markers.getMarkerListFromText found invalid '\\\\' in {!r}").format( text ) )
                 elif c1=='*': logging.error( _("USFM2Markers.getMarkerListFromText found invalid '\\*' in {!r}").format( text ) )
                 elif c1=='+': # it's a nested USFM 2.4 marker
                     iy += 1 # skip past the +
@@ -622,6 +624,8 @@ class USFM2Markers:
                 firstResult.append( ('\\',ixBS,'','\\') )
                 logging.error( _("USFM2Markers.getMarkerListFromText found invalid '\\' at end of {!r}").format( text ) )
             ixBS = text.find( '\\', ixBS+1 )
+        if debuggingThisModule:
+            print("Got first result:", firstResult )
 
         # Now that we have found all the markers and where they are, get the text fields between them
         rLen = len( firstResult )
@@ -766,6 +770,7 @@ def demo():
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
+                 '\\v 7 \\wj \+nd Jesus said \+add this \+em nested\+em*\+add*\+nd* \+bd 3 levels\+bd*.\wj* maybe.'
                  ):
         print( "\nFor text {!r} got markers:".format( text ) )
         print( "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )

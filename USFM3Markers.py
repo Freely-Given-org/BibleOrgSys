@@ -35,10 +35,10 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-03' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "USFM3Markers"
 ProgName = "USFM3 Markers handler"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -578,6 +578,7 @@ class USFM3Markers:
             if iy<textLength:
                 c1 = text[iy]
                 if c1==' ': logging.error( _("USFM3Markers.getMarkerListFromText found invalid '\\' in {!r}").format( text ) )
+                elif c1=='\\': logging.error( _("USFM3Markers.getMarkerListFromText found invalid '\\\\' in {!r}").format( text ) )
                 elif c1=='*': logging.error( _("USFM3Markers.getMarkerListFromText found invalid '\\*' in {!r}").format( text ) )
                 elif c1=='+': # it's a nested USFM 2.4 marker
                     iy += 1 # skip past the +
@@ -759,6 +760,7 @@ def demo():
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
+                 '\\v 7 \\wj \+nd Jesus said \+add this \+em nested\+em*\+add*\+nd* \+bd 3 levels\+bd*.\wj* maybe.'
                  ):
         print( "\nFor text {!r} got markers:".format( text ) )
         print( "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )

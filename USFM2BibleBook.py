@@ -28,7 +28,7 @@ Module for defining and manipulating USFM2 Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-24' # by RJH
+LastModifiedDate = '2018-12-12' # by RJH
 ShortProgName = "USFM2BibleBook"
 ProgName = "USFM2 Bible book handler"
 ProgVersion = '0.53'
@@ -46,21 +46,6 @@ from Bible import BibleBook
 
 from USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
 USFM2Markers = USFM2Markers().loadData()
-
-#def exp( messageString ):
-    #"""
-    #Expands the message string in debug mode.
-    #Prepends the module name to a error or warning message string
-        #if we are in debug mode.
-    #Returns the new string.
-    #"""
-    #try: nameBit, errorBit = messageString.split( ': ', 1 )
-    #except ValueError: nameBit, errorBit = '', messageString
-    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit, errorBit )
-## end of exp
-
 
 
 sortedNLMarkers = None
@@ -308,11 +293,12 @@ def demo():
     import USFMFilenames
 
     if 1: # Test individual files -- choose one of these or add your own
+        name, encoding, testFolder, filename, BBB = "USFM2Test", 'utf-8', 'Tests/DataFilesForTests/USFM2AllMarkersProject/', '70-MATeng-amp.usfm', 'MAT' # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
