@@ -81,22 +81,6 @@ from VerseReferences import SimpleVerseKey
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 #@singleton # Can only ever have one instance (but doesn't work for multiprocessing
 class BibleOrganisationalSystems:
     """
@@ -495,7 +479,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         The length of the list is the number of chapters in the book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("getNumVersesList( {} )").format( BBB ) )
+            print( "getNumVersesList( {} )".format( BBB ) )
             assert len(BBB) == 3
 
         if not allowAlternatives: return BibleVersificationSystem.getNumVersesList( self, BBB )
@@ -520,7 +504,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Extended flag allows chapter and verse numbers of zero.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("isValidBCVRef( {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
+            print( "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
             assert isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
 
