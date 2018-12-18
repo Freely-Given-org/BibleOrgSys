@@ -28,10 +28,10 @@ Module handling USFM3Markers.xml and to export to JSON, C, and Python data table
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-03' # by RJH
+LastModifiedDate = '2018-12-19' # by RJH
 ShortProgName = "USFM3MarkersConverter"
 ProgName = "USFM3 Markers converter"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -277,9 +277,11 @@ class USFM3MarkersConverter:
             elif level == 'Note': noteMarkersList.append( marker )
             else: logging.error( _("Unexpected {!r} level field for marker {!r}").format( level, marker ) )
             highestNumberSuffix = element.find('highestNumberSuffix').text
-            if  highestNumberSuffix not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} highestNumberSuffix field for marker {!r}").format( highestNumberSuffix, marker ) )
+            if  highestNumberSuffix not in ( 'None', '3','4','5','6','7','8','9' ):
+                logging.error( _("Unexpected {!r} highestNumberSuffix field for marker {!r}").format( highestNumberSuffix, marker ) )
             numberableFlag = highestNumberSuffix != 'None'
-            if numberableFlag and level == 'Character': logging.error( _("Unexpected {!r} highestNumberSuffix field for character marker {!r}").format( highestNumberSuffix, marker ) )
+            if numberableFlag and level == 'Character':
+                logging.error( _("Unexpected {!r} highestNumberSuffix field for character marker {!r}").format( highestNumberSuffix, marker ) )
             nests = element.find("nests").text
             if  nests not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} nests field for marker {!r}").format( nests, marker ) )
             nestsFlag = nests == 'Yes'
