@@ -4037,6 +4037,32 @@
       "nameEnglish": "Kings",
       "typicalSection": "OT"
     },
+    "625": {
+      "referenceAbbreviation": "SMK",
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": "102",
+      "possibleAlternativeBooks": [
+        "SAM",
+        "KGS",
+        "SA1",
+        "SA2",
+        "KI1",
+        "KI2"
+      ],
+      "nameEnglish": "Samuel-Kings",
+      "typicalSection": "NT"
+    },
     "630": {
       "referenceAbbreviation": "CHR",
       "SBLAbbreviation": null,
@@ -8674,6 +8700,32 @@
       "nameEnglish": "Kings",
       "typicalSection": "OT"
     },
+    "SMK": {
+      "referenceNumber": 625,
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": "102",
+      "possibleAlternativeBooks": [
+        "SAM",
+        "KGS",
+        "SA1",
+        "SA2",
+        "KI1",
+        "KI2"
+      ],
+      "nameEnglish": "Samuel-Kings",
+      "typicalSection": "NT"
+    },
     "CHR": {
       "referenceNumber": 630,
       "SBLAbbreviation": null,
@@ -9292,6 +9344,7 @@
     "SA1",
     "SA2",
     "KGS",
+    "SMK",
     "KI1",
     "KI2",
     "CHR",
@@ -15811,6 +15864,10 @@
     "KINGS": [
       620,
       "KGS"
+    ],
+    "SAMUEL-KINGS": [
+      625,
+      "SMK"
     ],
     "CHRONICLES": [
       630,
