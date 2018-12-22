@@ -82,10 +82,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2018-12-22' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.80'
+ProgVersion = '0.81'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -94,6 +94,7 @@ haltOnXMLWarning = False # Used for XML debugging
 
 
 import sys, logging, os.path, pickle
+from datetime import datetime
 import unicodedata
 from argparse import ArgumentParser
 try: import pwd
@@ -104,6 +105,8 @@ except ImportError:
 
 # Global variables
 #=================
+
+programStartTime = datetime.now()
 
 DOWNLOADED_RESOURCES_FOLDER = '../BibleOrgSys/DownloadedResources/'
 # TODO: Should be https as soon as supported by the site
@@ -1156,7 +1159,7 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.setup( {!r}, {!r}, {!r} )".format( sShortProgName, sProgVersion, loggingFolderPath ) )
     setupLoggingToFile( sShortProgName, sProgVersion, folderPath=loggingFolderPath )
-    logging.info( "{} v{} started".format( sShortProgName, sProgVersion ) )
+    logging.info( f"{sShortProgName} v{sProgVersion} started at {programStartTime.strftime('%H:%M')}" )
 
     if verbosityLevel > 2:
         print( "  This program comes with ABSOLUTELY NO WARRANTY." )
@@ -1335,11 +1338,32 @@ def printAllGlobals( indent=None ):
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
+def elapsedTime( startTime ):
+    """
+    Returns a formatted string containing the elapsed time since startTime.
+    """
+    timeElapsed = ( datetime.now() - startTime )
+    seconds = timeElapsed.seconds # This is an integer
+    if seconds == 0:
+        return f'{timeElapsed.microseconds // 1_000} milliseconds'
+    minutes = seconds / 60.0
+    hours = minutes / 60.0
+    if minutes > 90:
+        return '{0:.2g} hours'.format( hours ).lstrip()
+    if seconds > 90:
+        return '{0:.2g} minutes'.format( minutes ).lstrip()
+    secondsString = str(seconds)
+    return secondsString + (' second' if secondsString=='1' else ' seconds')
+# end of elapsedTime
+
+
 def closedown( cProgName, cProgVersion ):
     """
     Does all the finishing off for the program.
     """
-    logging.info( "{} v{} finished.".format( cProgName, cProgVersion ) )
+    msg = f"{cProgName} v{cProgVersion} finished at {datetime.now().strftime('%H:%M')} after {elapsedTime(programStartTime)}."
+    logging.info( msg )
+    if debugFlag or verbosityLevel >= 2: print( msg )
 # end of BibleOrgSysGlobals.closedown
 
 
