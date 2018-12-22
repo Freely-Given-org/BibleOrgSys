@@ -38,10 +38,10 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-25' # by RJH
+LastModifiedDate = '2018-12-22' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.64'
+ProgVersion = '0.65'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -577,10 +577,17 @@ class OSISXMLBible( Bible ):
         """
         location = "validateDivineName: " + locationDescription
         BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '3f7h', loadErrors )
-        BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'v4g7', loadErrors )
-        divineName, trailingText = element.text, element.tail
-        self.thisBook.appendToLastLine( '\\nd {}\\nd*'.format( clean(divineName) ) )
-        if trailingText and trailingText.strip(): self.thisBook.appendToLastLine( clean(trailingText) )
+        self.thisBook.appendToLastLine( f'\\nd {clean(element.text)}' )
+        for subelement in element:
+            if subelement.tag == OSISXMLBible.OSISNameSpace+'w':
+                sublocation = "w of " + location
+                self.validateAndLoadWord( subelement, sublocation, verseMilestone, loadErrors )
+            else:
+                logging.error( "v4g7 Unprocessed {!r} subelement ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
+                loadErrors.append( "Unprocessed {!r} subelement ({}) in {} at {} (v4g7)".format( subelement.tag, subelement.text, location, verseMilestone ) )
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+        self.thisBook.appendToLastLine( '\\nd*' )
+        if element.tail and element.tail.strip(): self.thisBook.appendToLastLine( clean(element.tail) )
     # end of validateDivineName
 
 
@@ -644,18 +651,25 @@ class OSISXMLBible( Bible ):
     def validateAndLoadWord( self, element, location, verseMilestone, loadErrors ):
         """
         Handle a 'w' element and submit a string (which may include embedded Strongs' numbers, etc.).
+
+        Nothing is returned.
         """
+        #print(self.sourceFilepath)
         #print( "validateAndLoadWord( {}, {}, {}, … )".format( element, location, verseMilestone ) )
 
         sublocation = "validateAndLoadWord: w of " + location
         word = clean( element.text, loadErrors, sublocation, verseMilestone )
+        #print( ' w', word )
         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             #assert word -- might be false, e.g., in <w lemma="strong:H03069"><divineName>God</divineName></w>
         self.thisBook.appendToLastLine( '\\w ' + (word if word else '' ) )
 
         # Process the sub-elements (formatted parts of the word) first
-        assert len(element) <= 1
+        #assert len(element) <= 1
+        if len(element) > 1:
+            logging.warning( "Unusual for word '{}' to have multiple ({}) sub-elements in {} at {} (bd52)".format( word, len(element), sublocation, verseMilestone ) )
         for subelement in element:
+            #print('  st', subelement.tag )
             if subelement.tag == OSISXMLBible.OSISNameSpace+'divineName':
                 self.validateDivineName( subelement, sublocation, verseMilestone, loadErrors )
             elif subelement.tag == OSISXMLBible.OSISNameSpace+'seg':
@@ -968,6 +982,10 @@ class OSISXMLBible( Bible ):
                     self.thisBook.appendToLastLine( '\\ft {}'.format( footnoteText )  )
                 else: # Let's assume it's a simple note
                     self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
+            elif noteType == 'exegesis':
+                #print( "Need to handle exegesis note properly here" ) # … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                self.thisBook.appendToLastLine( '\\ft {}'.format( clean(noteText) ) )
+                #print( "exegesis note fl35", location, "Type =", noteType, "N =", repr(noteN), "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement )
             elif noteType == 'study':
                 #print( "Need to handle study note properly here" ) # … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 self.thisBook.appendToLastLine( '\\ft {}'.format( clean(noteText) ) )
@@ -1059,11 +1077,11 @@ class OSISXMLBible( Bible ):
                 elif noteType=='translation' and referenceType is None: # This bit needs fixing up properly …xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                         print( "{}: rT={!r} nT={!r} rTail={!r}".format( self.abbreviation, referenceText, noteText, referenceTail ) )
-                        assert referenceText
+                        #assert referenceText
                     if noteText:
                         self.thisBook.appendToLastLine( '\\fr {} \\ft {}'.format( referenceText, noteText ) )
                     else:
-                        if not referenceText[-1] == ' ': referenceText += ' '
+                        if referenceText and referenceText[-1]!=' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
                 else:
                     logging.critical( "Don't know how to handle notetype={!r} and referenceType={!r} yet".format( noteType, referenceType ) )
@@ -1092,7 +1110,7 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.error( "7h45 Unprocessed {!r} sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {} at {} (7h45)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                        if BibleOrgs.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( self.abbreviation, sub2element.tag ); halt
                 if referenceTail and referenceTail.strip():
                     self.thisBook.appendToLastLine( '\\{} {}'.format( ('xt' if noteType=='crossReference' else 'ft'), clean(referenceTail) ) )
@@ -3087,9 +3105,17 @@ class OSISXMLBible( Bible ):
                         sublocation = "closer of " + location
                         clsText = clean(subelement.text, loadErrors, sublocation, verseMilestone )
                         clsTail = clean(subelement.tail, loadErrors, sublocation, verseMilestone )
-                        BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'js29', loadErrors )
-                        BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'jas7', loadErrors )
-                        self.thisBook.appendToLastLine( '\\cls {}\\cls*{}'.format( clsText, clsTail if clsTail else '' ) )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation+" at "+verseMilestone, 'js29', loadErrors )
+                        self.thisBook.appendToLastLine( f'\\cls {clsText}' )
+                        for sub2element in subelement:
+                            if sub2element.tag == OSISXMLBible.OSISNameSpace+'p':
+                                sub2location = "p of " + sublocation
+                                verseMilestone = validateParagraph( sub2element, sub2location, verseMilestone )
+                            else:
+                                logging.error( "dc63 Unprocessed {!r} sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                                loadErrors.append( "Unprocessed {!r} sub2element ({}) in {} at {} (dc63)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+                        self.thisBook.appendToLastLine( f'\\cls*{clsTail if clsTail else ""}' )
 ###                 ### table in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'table': # not actually written yet! XXXXXXX ……
                         sublocation = 'table of ' + location
