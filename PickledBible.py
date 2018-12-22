@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2018-12-19' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -69,7 +69,8 @@ from InternalBibleInternals import InternalBibleIndex, InternalBibleEntryList
 
 
 # The following are all case sensitive
-ZIPPED_FILENAME_END = '.BOSPickledBible.zip' # This is what the filename must END WITH
+ZIPPED_PICKLE_FILENAME_END = '.BOSPickledBible.zip' # This is what the filename must END WITH
+DBL_FILENAME_END = 'DBL.zip'
 VERSION_FILENAME = 'BibleVersion.pickle' # Contains the object version number
 INFO_FILENAME = 'BibleInfo.pickle' # Contains the Bible metadata
 BOOK_FILENAME = '{}.pickle' # Each book is stored in a separate BBB.pickle file
@@ -99,7 +100,7 @@ def PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, auto
         logging.critical( _("PickledBibleFileCheck: Given {!r} path is unreadable").format( givenPathname ) )
         return False
 
-    if givenPathname.endswith( ZIPPED_FILENAME_END ): # it's a zipped pickled Bible
+    if givenPathname.endswith( ZIPPED_PICKLE_FILENAME_END ): # it's a zipped pickled Bible
         if autoLoad or autoLoadBooks:
             pB = PickledBible( givenPathname )
             if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
@@ -123,7 +124,7 @@ def PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, auto
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             #somethingUpper = something.upper()
-            if something in (ZIPPED_FILENAME_END, VERSION_FILENAME):
+            if something in (ZIPPED_PICKLE_FILENAME_END, VERSION_FILENAME):
                 foundFiles.append( something )
 
     # See if there's an PickledBible project here in this given folder
@@ -152,7 +153,7 @@ def PickledBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, auto
             if os.path.isdir( somepath ): foundSubfolders.append( something )
             elif os.path.isfile( somepath ):
                 #somethingUpper = something.upper()
-                if something in (ZIPPED_FILENAME_END, VERSION_FILENAME):
+                if something in (ZIPPED_PICKLE_FILENAME_END, VERSION_FILENAME):
                     foundSubfiles.append( something )
                     numFound += 1
 
@@ -301,7 +302,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     # Now create a zipped version of the entire folder
     zipFilename = BibleObject.getAName( abbrevFirst=True )
     if BibleOrgSysGlobals.debugFlag: assert zipFilename
-    zipFilename = BibleOrgSysGlobals.makeSafeFilename( zipFilename+ZIPPED_FILENAME_END )
+    zipFilename = BibleOrgSysGlobals.makeSafeFilename( zipFilename+ZIPPED_PICKLE_FILENAME_END )
     zipFilepath = os.path.join( outputFolder, zipFilename )
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle files…".format( len(createdFilenames) ) )
     zf = zipfile.ZipFile( zipFilepath, 'w', compression=zipfile.ZIP_DEFLATED )
@@ -383,7 +384,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
         print( _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        assert zipFilepath.endswith( ZIPPED_FILENAME_END )
+        assert zipFilepath.endswith( ZIPPED_PICKLE_FILENAME_END )
 
     pB = PickledBible( zipFilepath )
     if extended:
@@ -417,7 +418,7 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
         #print( "getZippedPickledBiblesDetails something", something )
         somepath = os.path.join( zipFolderpath, something )
         if os.path.isfile( somepath ):
-            if something.endswith( ZIPPED_FILENAME_END ):
+            if something.endswith( ZIPPED_PICKLE_FILENAME_END ):
                 detailDict = getZippedPickledBibleDetails( somepath, extended )
                 assert 'zipFilename' not in detailDict
                 detailDict['zipFilename'] = something
@@ -486,7 +487,7 @@ class PickledBible( Bible ):
         # end of PickledBible.__init_ loadVersionStuff
 
         # Now we load the version info file
-        if sourceFileOrFolder.endswith( ZIPPED_FILENAME_END ):
+        if sourceFileOrFolder.endswith( ZIPPED_PICKLE_FILENAME_END ):
             assert os.path.isfile( sourceFileOrFolder )
             self.pickleFilepath = sourceFileOrFolder
             self.pickleSourceFolder = os.path.dirname( sourceFileOrFolder )
@@ -771,7 +772,7 @@ def demo():
     resourcesFolder = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER
     if 1: # demo the file checking code with zip files
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
-            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
+            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
             result1 = PickledBibleFileCheck( testFilepath )
@@ -850,7 +851,7 @@ def demo():
 
 
     if 1: # Load a zipped version
-        pFilepath = 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_FILENAME_END
+        pFilepath = 'OutputFiles/BOS_PickledBible_Export/MBTV'+ZIPPED_PICKLE_FILENAME_END
         if os.access( pFilepath, os.R_OK ):
             pBible = PickledBible( pFilepath )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
@@ -868,6 +869,11 @@ def demo():
             if os.path.exists( testFolder ):
                 for something in sorted( os.listdir( testFolder ) ):
                     somepath = os.path.join( testFolder, something )
+                    if not something.endswith( ZIPPED_PICKLE_FILENAME_END ):
+                        # Could be a DBL.zip file or something
+                        logger = logging.warning if something.endswith(DBL_FILENAME_END) else logging.error
+                        logger( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
+                        continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE{}a: {}".format( j, abbrev ), pBible )
@@ -881,7 +887,7 @@ def demo():
 
     if 1: # Test other functions
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
-            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_FILENAME_END )
+            testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nPickle Bible F{} testFilepath is: {}".format( j+1, testFilepath ) )
                 print( "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
