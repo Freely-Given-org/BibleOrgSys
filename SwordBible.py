@@ -30,11 +30,17 @@ Files are usually:
     ot.vss
     nt
     nt.vss
+
+It uses the SwordInterface in SwordResources,
+    which will either use the Sword SWIG code, or our SwordModules.py
+
+Note: The demo takes about 4 minutes with our Sword code,
+        cf. 13 minutes using the Sword library! (Why?)
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2018-12-23' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.36'
@@ -50,7 +56,8 @@ import multiprocessing
 
 import BibleOrgSysGlobals
 from Bible import Bible #, BibleBook
-from SwordResources import SwordType, SwordInterface
+import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
+                      # Normally it wouldn't be a problem, but we adjust SwordType in DemoTests to test both modes
 #from BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
@@ -65,22 +72,6 @@ compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'n
 #FMT_UNKNOWN = 0; FMT_PLAIN = 1; FMT_THML = 2; FMT_GBF = 3; FMT_HTML = 4; FMT_HTMLHREF = 5; FMT_RTF = 6; FMT_OSIS = 7; FMT_WEBIF = 8; FMT_TEI = 9; FMT_XHTML = 10
 #FMT_DICT = { 1:'PLAIN', 2:'THML', 3:'GBF', 4:'HTML', 5:'HTMLHREF', 6:'RTF', 7:'OSIS', 8:'WEBIF', 9:'TEI', 10:'XHTML', 11:'LaTeX' }
 #ENC_UNKNOWN = 0; ENC_LATIN1 = 1; ENC_UTF8 = 2; ENC_UTF16 = 3; ENC_RTF = 4; ENC_HTML = 5
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 
@@ -261,7 +252,7 @@ class SwordBible( Bible ):
             (with or without the .conf on it).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "SwordBible.__init__( {} {} {} )".format( sourceFolder, moduleName, encoding ) )
+            print( f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
 
         if not sourceFolder and not moduleName:
             logging.critical( _("SwordBible must be passed either a folder path or a module name!" ) )
@@ -270,7 +261,7 @@ class SwordBible( Bible ):
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Sword Bible object'
-        self.objectTypeString = 'CrosswireSword' if SwordType=='CrosswireLibrary' else 'Sword'
+        self.objectTypeString = 'CrosswireSword' if SwordResources.SwordType=='CrosswireLibrary' else 'Sword'
 
         # Now we can set our object variables
         self.sourceFolder, self.moduleName, self.encoding = sourceFolder, moduleName, encoding
@@ -299,16 +290,16 @@ class SwordBible( Bible ):
         self.abbreviation = self.moduleName # First attempt
 
         # Load the Sword manager and find our module
-        if self.SwordInterface is None and SwordType is not None:
-            self.SwordInterface = SwordInterface() # Load the Sword library
+        if self.SwordInterface is None and SwordResources.SwordType is not None:
+            self.SwordInterface = SwordResources.SwordInterface() # Load the Sword library
         if self.SwordInterface is None: # still
-            logging.critical( exp("SwordBible: no Sword interface available") )
+            logging.critical( _("SwordBible: no Sword interface available") )
             return
         #try: self.SWMgr = Sword.SWMgr()
         #except NameError:
             #logging.critical( _("Unable to initialise {!r} module -- no Sword manager available").format( self.moduleName ) )
             #return # our Sword import must have failed
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and SwordType=='CrosswireLibrary':
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and SwordResources.SwordType=='CrosswireLibrary':
             availableGlobalOptions = [str(option) for option in self.SwordInterface.library.getGlobalOptions()]
             print( "availableGlobalOptions", availableGlobalOptions )
         # Don't need to set options if we use getRawEntry() rather than stripText() or renderText()
@@ -321,9 +312,7 @@ class SwordBible( Bible ):
         availableModuleCodes = []
         for j,something in enumerate(self.SwordInterface.library.getModules()):
             # something can be a moduleBuffer (Crosswire) or just a string (BOS)
-            if SwordType=='CrosswireLibrary':
-                if isinstance( something, str ):
-                    print( "Why did we get a string instead of a module? {}".format( something ) )
+            if SwordResources.SwordType == 'CrosswireLibrary':
                 if BibleOrgSysGlobals.strictCheckingFlag: assert not isinstance( something, str )
                 moduleID = something.getRawData()
             else:
@@ -355,7 +344,7 @@ class SwordBible( Bible ):
         Load the compressed data file and import book elements.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordBible.loadBooks()") )
+            print( _("SwordBible.loadBooks()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( _("\nLoading {} module…").format( self.moduleName ) )
@@ -370,7 +359,7 @@ class SwordBible( Bible ):
             #logging.critical( _("Unable to load {!r} module -- not known by Sword").format( self.moduleName ) )
             #return
 
-        #if SwordType=='CrosswireLibrary': # need to load the module
+        #if SwordResources.SwordType=='CrosswireLibrary': # need to load the module
             #markupCode = ord( module.getMarkup() )
             #encoding = ord( module.getEncoding() )
             #if encoding == ENC_LATIN1: self.encoding = 'latin-1'
@@ -476,7 +465,7 @@ class SwordBible( Bible ):
                 #self.stashBook( thisBook )
 
 
-        #elif SwordType=='OurCode': # module is already loaded above
+        #elif SwordResources.SwordType=='OurCode': # module is already loaded above
             ##print( "moduleConfig =", module.SwordModuleConfiguration )
             #self.books = module.books
 

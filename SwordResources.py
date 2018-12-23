@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2018-12-23' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.29'
@@ -72,27 +72,26 @@ try:
     except ImportError: pass # doesn't really matter
 except ImportError: # Sword library (dll and python bindings) seem to be not available
     try:
-        import SwordModules # Not as good/reliable/efficient as the real Sword library, but better than nothing
+        import SwordModules # Not as good/reliable/efficient/well-tested/up-to-date as the real Sword library, but better than nothing
         SwordType = 'OurCode'
     except ImportError:
         logging.critical( _("You don't appear to have any way installed to read Sword modules.") )
 
 
-
-def exp( messageString ):
+def setSwordType( newType ):
     """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
+    Used for testing.
 
+    Sets the global SwordType to a different value
+    """
+    global SwordType
+    assert newType in ('CrosswireLibrary', 'OurCode' )
+    oldType = SwordType
+    assert oldType in ('CrosswireLibrary', 'OurCode' )
+    SwordType = newType
+    if BibleOrgSysGlobals.verbosityLevel > 0 and newType != oldType:
+        print( f"SwordResources.SwordType changed to '{newType}'." )
+# end of setSwordType
 
 
 def replaceFixedPairs( replacementList, verseLine ):
@@ -1140,7 +1139,8 @@ class SwordInterface():
     def __init__( self ):
         """
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "SwordResources.SwordInterface is using {!r}".format( SwordType ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            print( f"SwordResources.SwordInterface is using '{SwordType}'." )
         if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -1158,7 +1158,7 @@ class SwordInterface():
         Adds another path to search for modules in.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInterface.augmentModules( {} )").format( newPath ) )
+            print( f"SwordInterface.augmentModules( {newPath} )" )
             assert self.library is not None
 
         someFlag = 0 # Don't know what this means in undocumented Sword library
@@ -1176,7 +1176,7 @@ class SwordInterface():
         Returns a list of available Sword module codes.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
+            print( _("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1202,7 +1202,7 @@ class SwordInterface():
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
+            print( _("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1537,7 +1537,7 @@ class SwordInterface():
             ]
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
+            print( _("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
 
         if SwordType == 'CrosswireLibrary':
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -1549,7 +1549,7 @@ class SwordInterface():
                 return
             if '\n' in verseText or '\r' in verseText: # Why!!!
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( exp("getContextVerseData: Why does it have CR or LF in {} {} {}") \
+                    print( _("getContextVerseData: Why does it have CR or LF in {} {} {}") \
                             .format( module.getName(), key.getShortText(), repr(verseText) ) )
                 verseText = verseText.replace( '\n', '' ).replace( '\r', '' )
             verseText = verseText.rstrip()
@@ -1565,7 +1565,7 @@ class SwordInterface():
             verseData.append( InternalBibleEntry( 'v~','v~', verseText, verseText, None, verseText ) )
             contextVerseData = verseData, [] # No context
         elif SwordType == 'OurCode':
-            #print( exp("module"), module )
+            #print( _("module"), module )
             try: contextVerseData = module.getContextVerseData( key ) # a call to InternalBible.py
             except KeyError: # Just create a blank verse entry
                 verseData = InternalBibleEntryList()
@@ -1573,10 +1573,10 @@ class SwordInterface():
                 if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
                 verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
                 contextVerseData = verseData, [] # No context
-            #print( exp("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
+            #print( _("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
             if contextVerseData is None:
                 if key.getChapter()!=0 or key.getVerse()!=0: # We're not surprised if there's no chapter or verse zero
-                    print( exp("SwordInterface.getContextVerseData no VerseData"), module.getName(), key, contextVerseData )
+                    print( _("SwordInterface.getContextVerseData no VerseData"), module.getName(), key, contextVerseData )
                 contextVerseData = [], None
             else:
                 verseData, context = contextVerseData
@@ -1613,7 +1613,7 @@ class SwordInterface():
                 return
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 if '\n' in verseText or '\r' in verseText:
-                    print( exp("getVerseDataList: Why does it have CR or LF in {} {}").format( module.getName(), repr(verseText) ) )
+                    print( _("getVerseDataList: Why does it have CR or LF in {} {}").format( module.getName(), repr(verseText) ) )
             verseData = []
             c, v = str(key.getChapter()), str(key.getVerse())
             # Prepend the verse number since Sword modules don't contain that info in the data
@@ -1621,11 +1621,11 @@ class SwordInterface():
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         elif SwordType == 'OurCode':
-            #print( exp("module"), module )
+            #print( _("module"), module )
             stuff = module.getContextVerseData( key )
-            #print( exp("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
+            #print( _("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
             if stuff is None:
-                print( exp("SwordInterface.getVerseDataList no VerseData"), module.getName(), key, stuff )
+                print( _("SwordInterface.getVerseDataList no VerseData"), module.getName(), key, stuff )
                 assert key.getChapter()==0 or key.getVerse()==0
             else:
                 verseData, context = stuff
@@ -1707,17 +1707,103 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( " using", SwordType )
 
     #print( "\ndir Sword", dir(Sword) )
-
+    # Gives: dir Sword ['AttributeListMap', 'AttributeListMap_swigregister', 'AttributeTypeListMap',
+    # 'AttributeTypeListMap_swigregister', 'AttributeValueMap', 'AttributeValueMap_swigregister', 'BIB_BIBTEX',
+    # 'BOOKBLOCKS', 'BasicFilterUserData', 'BasicFilterUserData_swigregister', 'CHAPTERBLOCKS', 'DIRECTION_BIDI',
+    # 'DIRECTION_LTR', 'DIRECTION_RTL', 'DirEntry', 'DirEntryVector', 'DirEntryVector_swigregister',
+    # 'DirEntry_swigregister', 'ENC_HTML', 'ENC_LATIN1', 'ENC_RTF', 'ENC_SCSU', 'ENC_UNKNOWN', 'ENC_UTF16',
+    # 'ENC_UTF8', 'ENDOFABBREVS', 'EncodingFilterMgr', 'EncodingFilterMgr_castTo',
+    # 'EncodingFilterMgr_swigregister', 'FAILED',
+    # 'FMT_GBF', 'FMT_HTML', 'FMT_HTMLHREF', 'FMT_LATEX', 'FMT_OSIS', 'FMT_PLAIN', 'FMT_RTF', 'FMT_TEI',
+    # 'FMT_THML', 'FMT_UNKNOWN', 'FMT_WEBIF', 'FMT_XHTML',
+    # 'FileDesc', 'FileDesc_swigregister', 'FileMgr', 'FileMgr_copyDir', 'FileMgr_copyFile',
+    # 'FileMgr_createParent', 'FileMgr_createPathAndFile', 'FileMgr_existsDir', 'FileMgr_existsFile',
+    # 'FileMgr_getLine', 'FileMgr_getSystemFileMgr', 'FileMgr_isDirectory', 'FileMgr_openFileReadOnly',
+    # 'FileMgr_removeDir', 'FileMgr_removeFile', 'FileMgr_setSystemFileMgr', 'FileMgr_swigregister',
+    # 'GBFHTMLHREF', 'GBFHTMLHREF_swigregister', 'INHERITED', 'InstallMgr', 'InstallMgr_getModuleStatus',
+    # 'InstallMgr_swigregister', 'InstallSource', 'InstallSourceMap', 'InstallSourceMap_swigregister',
+    # 'InstallSource_swigregister', 'JUNKBUFSIZE', 'KEYERR_OUTOFBOUNDS', 'LZSSCompress', 'LZSSCompress_castTo',
+    # 'LZSSCompress_swigregister', 'ListKey', 'ListKey_castTo', 'ListKey_swigregister', 'LocaleMgr',
+    # 'LocaleMgr_getSystemLocaleMgr', 'LocaleMgr_setSystemLocaleMgr', 'LocaleMgr_swigregister', 'MarkupCallback',
+    # 'MarkupCallback_swigregister', 'MarkupFilterMgr', 'MarkupFilterMgr_castTo', 'MarkupFilterMgr_swigregister',
+    # 'ModuleMap', 'ModuleMap_swigregister', 'MyMarkup', 'MyMarkup_swigregister', 'OSISData',
+    # 'OSISData_swigregister', 'OSISHTMLHREF', 'OSISHTMLHREF_swigregister', 'PyConfigEntMap',
+    # 'PyConfigEntMap_swigregister', 'PyOSISHTMLHREF', 'PyOSISHTMLHREF_getData', 'PyOSISHTMLHREF_swigregister',
+    # 'PySectionMap', 'PySectionMap_swigregister', 'PyStringMgr', 'PyStringMgr_swigregister', 'PyThMLHTMLHREF',
+    # 'PyThMLHTMLHREF_getData', 'PyThMLHTMLHREF_swigregister', 'RawCom', 'RawCom_castTo', 'RawCom_createModule',
+    # 'RawCom_swigregister', 'RawGenBook', 'RawGenBook_castTo', 'RawGenBook_createModule',
+    # 'RawGenBook_swigregister', 'RawLD', 'RawLD4', 'RawLD4_castTo', 'RawLD4_createModule', 'RawLD4_swigregister',
+    # 'RawLD_castTo', 'RawLD_createModule', 'RawLD_swigregister', 'RawStr', 'RawStr4', 'RawStr4_createModule',
+    # 'RawStr4_swigregister', 'RawStr_createModule', 'RawStr_swigregister', 'RawText', 'RawText_castTo',
+    # 'RawText_createModule', 'RawText_swigregister', 'RawVerse', 'RawVerse_createModule',
+    # 'RawVerse_swigregister', 'RemoteTransport', 'RemoteTransport_swigregister', 'RenderCallback',
+    # 'RenderCallback_swigregister', 'ReturnSuccess', 'ReturnSuccess_swigregister', 'SEARCHFLAG_MATCHWHOLEENTRY',
+    # 'SUCCEEDED', 'SWBasicFilter', 'SWBasicFilter_swigregister', 'SWBuf', 'SWBuf_swigregister', 'SWClass',
+    # 'SWClass_swigregister', 'SWCom', 'SWCom_castTo', 'SWCom_swigregister', 'SWCompress',
+    # 'SWCompress_swigregister', 'SWConfig', 'SWConfig_swigregister', 'SWDisplay', 'SWDisplay_swigregister',
+    # 'SWFilter', 'SWFilterMgr', 'SWFilterMgr_swigregister', 'SWFilter_swigregister', 'SWGenBook',
+    # 'SWGenBook_castTo', 'SWGenBook_swigregister', 'SWKey', 'SWKey_swigregister', 'SWLD', 'SWLD_castTo',
+    # 'SWLD_swigregister', 'SWLocale', 'SWLocale_swigregister', 'SWLog', 'SWLog_getSystemLog',
+    # 'SWLog_setSystemLog', 'SWLog_swigregister', 'SWMgr', 'SWMgr_swigregister', 'SWModule', 'SWModule_castTo',
+    # 'SWModule_createModule', 'SWModule_swigregister', 'SWORD_VERSION_MAJOR', 'SWORD_VERSION_MICRO',
+    # 'SWORD_VERSION_MINOR', 'SWORD_VERSION_NANO', 'SWORD_VERSION_NUM', 'SWORD_VERSION_STR', 'SWObject',
+    # 'SWObject_swigregister', 'SWOptionFilter', 'SWOptionFilter_castTo', 'SWOptionFilter_swigregister',
+    # 'SWSearchable', 'SWSearchable_swigregister', 'SWSearcher', 'SWSearcher_Callback', 'SWSearcher_swigregister',
+    # 'SWText', 'SWText_castTo', 'SWText_swigregister', 'SWVersion', 'SWVersion_swigregister', 'SW_POSITION',
+    # 'SW_POSITION_swigregister', 'StatusReporter', 'StatusReporter_swigregister', 'StringList',
+    # 'StringList_swigregister', 'StringMgr', 'StringMgr_getSystemStringMgr', 'StringMgr_hasUTF8Support',
+    # 'StringMgr_setSystemStringMgr', 'StringMgr_swigregister', 'StringVector', 'StringVector_swigregister',
+    # 'SwigPyIterator', 'SwigPyIterator_swigregister',
+    # 'ThMLData', 'ThMLData_swigregister', 'ThMLHTMLHREF', 'ThMLHTMLHREF_swigregister',
+    # 'TreeKey', 'TreeKeyIdx', 'TreeKeyIdx_castTo', 'TreeKeyIdx_create', 'TreeKeyIdx_swigregister',
+    # 'TreeKey_castTo', 'TreeKey_swigregister',
+    # 'URL', 'URL_decode', 'URL_encode', 'URL_swigregister',
+    # 'UTF8HTML', 'UTF8HTML_swigregister', 'VERSEBLOCKS',
+    # 'VerseKey', 'VerseKey_castTo', 'VerseKey_convertToOSIS', 'VerseKey_swigregister', 'VerseTreeKey',
+    # 'VerseTreeKey_castTo', 'VerseTreeKey_swigregister',
+    # 'VersificationMgr', 'VersificationMgr_getSystemVersificationMgr',
+    # 'VersificationMgr_setSystemVersificationMgr', 'VersificationMgr_swigregister',
+    # 'XMLTag', 'XMLTag_swigregister',
+    # 'ZipCompress', 'ZipCompress_castTo', 'ZipCompress_swigregister',
+    # '_Sword', '__builtin__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+    # '__package__', '__spec__', '_newclass', '_object', '_swig_getattr', '_swig_property', '_swig_repr',
+    # '_swig_setattr', '_swig_setattr_nondynamic', 'abbrev', 'abbrev_swigregister', 'builtin_abbrevs', 'cvar',
+    # 'sbook', 'sbook_swigregister', 'toupperstr', 'toupperstr_utf8', 'weakref', 'weakref_proxy',
+    # 'zCom', 'zCom_castTo', 'zCom_createModule', 'zCom_swigregister',
+    # 'zLD', 'zLD_castTo', 'zLD_createModule', 'zLD_swigregister',
+    # 'zStr', 'zStr_createModule', 'zStr_swigregister',
+    # 'zText', 'zText_castTo', 'zText_createModule', 'zText_swigregister',
+    # 'zVerse', 'zVerse_createModule', 'zVerse_swigregister']
 
     if SwordType == 'CrosswireLibrary':
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
-            print( 'version', Sword.SWVersion().getText() )
-            print( "Versions", Sword.SWVersion().major, Sword.SWVersion().minor, Sword.SWVersion().minor2, Sword.SWVersion().minor3 ) # ints
+        print( "Sword Version string", Sword.SWORD_VERSION_STR )
+        # Gives: Sword Version string 1.8.900
+        #if BibleOrgSysGlobals.verbosityLevel > 0:
+            #print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
+            # Gives: dir Sword.SWVersion() ['__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__',
+            # '__eq__', '__format__', '__ge__', '__getattr__', '__getattribute__', '__gt__', '__hash__', '__init__',
+            # '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__',
+            # '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__',
+            # '__swig_destroy__', '__swig_getmethods__', '__swig_setmethods__', '__weakref__', 'compare',
+            # 'currentVersion', 'getText', 'major', 'minor', 'minor2', 'minor3', 'this']
+            #print( 'Version string', repr(Sword.SWVersion().getText()) )
+            # Gives: Version string '0.0'
+            #print( "Version ints", repr(Sword.SWVersion().major), Sword.SWVersion().minor, Sword.SWVersion().minor2, Sword.SWVersion().minor3 ) # ints
+            # Gives: Version ints 0 0 -1 -1
 
         library = Sword.SWMgr()
         #print( "\ndir library", dir(library) )
-        #print( "\nlibrary getHomeDir", library.getHomeDir().getRawData() )
+        # Gives: dir library ['InstallScan', 'MODTYPE_BIBLES', 'MODTYPE_COMMENTARIES', 'MODTYPE_DAILYDEVOS',
+        # 'MODTYPE_GENBOOKS', 'MODTYPE_LEXDICTS', '__class__', '__del__', '__delattr__', '__dict__', '__dir__',
+        # '__doc__', '__eq__', '__format__', '__ge__', '__getattr__', '__getattribute__', '__gt__', '__hash__',
+        # '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__',
+        # '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__',
+        # '__swig_destroy__', '__swig_getmethods__', '__swig_setmethods__', '__weakref__', 'augmentModules',
+        # 'config', 'configPath', 'deleteModule', 'filterText', 'getGlobalOption', 'getGlobalOptionTip',
+        # 'getGlobalOptionValues', 'getGlobalOptionValuesVector', 'getGlobalOptions', 'getGlobalOptionsVector',
+        # 'getModule', 'getModuleAt', 'getModules', 'globalConfPath', 'isICU', 'load', 'prefixPath',
+        # 'setCipherKey', 'setGlobalOption', 'sysConfig', 'this']
+        #print( "\nlibrary getHomeDir", library.getHomeDir().getRawData() ) # Fails
 
     def Find( attribute ):
         """
@@ -1887,6 +1973,24 @@ def demo():
     #Find( "sw" ) # lots!
     #Find( "store" ) # storeItemInfoForLaterUse
     #Find( "getGlobal" ) # should be lots
+
+    if 1: # Test the SwordInterface (using Sword code)
+        print( "\n\nTesting SwordInterface using", SwordType )
+        si = SwordInterface()
+        print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )
+        print( "SwordInterface getAvailableModuleCodeDuples", si.getAvailableModuleCodeDuples() )
+        print( "KJV", si.getModule() )
+        print( "makeKey", si.makeKey( 'GEN', '1', '1' ) )
+
+    if 1 and __name__=='__main__' and SwordType=='CrosswireLibrary': # Test the SwordInterface again (using our code)
+        # Don't switch SwordType unless this is the main module, coz it messes up the demo tests
+        setSwordType( 'OurCode' )
+        print( "\n\nTesting SwordInterface using", SwordType )
+        si = SwordInterface()
+        print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )
+        print( "SwordInterface getAvailableModuleCodeDuples", si.getAvailableModuleCodeDuples() )
+        print( "KJV", si.getModule() )
+        print( "makeKey", si.makeKey( 'GEN', '1', '1' ) )
 # end of demo
 
 if __name__ == '__main__':

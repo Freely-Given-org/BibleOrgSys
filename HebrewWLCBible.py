@@ -28,7 +28,7 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-03-16' # by RJH
+LastModifiedDate = '2018-12-23' # by RJH
 ShortProgName = "HebrewWLCBibleHandler"
 ProgName = "Hebrew WLC format handler"
 ProgVersion = '0.24'
@@ -44,10 +44,10 @@ import logging, pickle
 import BibleOrgSysGlobals, Hebrew
 from InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 from OSISXMLBible import OSISXMLBible
-from PickledBible import PickledBible, ZIPPED_FILENAME_END
+from PickledBible import PickledBible, ZIPPED_PICKLE_FILENAME_END
 
 DEFAULT_OSIS_WLC_FILEPATH = '../morphhb/wlc/'
-DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER + 'WLC' + ZIPPED_FILENAME_END
+DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER + 'WLC' + ZIPPED_PICKLE_FILENAME_END
 
 DEFAULT_GLOSSING_DICT_FILEPATH = '../BibleOrgSys/DataFiles/WLCHebrewGlosses.pickle'
 DEFAULT_GLOSSING_EXPORT_FILEPATH = '../BibleOrgSys/DataFiles/DerivedFiles/WLCHebrewGlosses.txt'

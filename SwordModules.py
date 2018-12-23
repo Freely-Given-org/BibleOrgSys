@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2018-12-23' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.49'
@@ -99,22 +99,6 @@ GENERIC_SWORD_MODULE_TYPE_NAMES = { 'RawText':'Biblical Texts', 'zText':'Biblica
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 class SwordModuleConfiguration:
     """
     A class that loads, processes, and stores a Sword .conf file.
@@ -127,7 +111,7 @@ class SwordModuleConfiguration:
             and attempts to load moduleAbbreviation.conf.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModuleConfiguration.__init__( {!r}, {} )").format( moduleAbbreviation, swordFolder ) )
+            print( "SwordModuleConfiguration.__init__( {!r}, {} )".format( moduleAbbreviation, swordFolder ) )
 
         # Set our defaults
         self.abbreviation = moduleAbbreviation # a string like 'ylt'
@@ -152,7 +136,7 @@ class SwordModuleConfiguration:
             self.locked (from CipherKey)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModuleConfiguration.loadConf()") )
+            print( "SwordModuleConfiguration.loadConf()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  Loading Sword config file for {}…".format( self.abbreviation ) )
@@ -234,7 +218,7 @@ class SwordModuleConfiguration:
         @rtype: string
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModuleConfiguration.__str__()") )
+            print( "SwordModuleConfiguration.__str__()" )
 
         result = "SwordModuleConfiguration for {}".format( self.abbreviation )
         #if self.abbreviation: result += ('\n' if result else '') + "  " + _("Abbreviation: ") + self.abbreviation
@@ -262,7 +246,7 @@ class SwordModuleConfiguration:
         Return the value for fieldname (str) if it's in the configDict (loading from the Sword module .conf file).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModuleConfiguration.get( {} )").format( fieldName ) )
+            print( "SwordModuleConfiguration.get( {} )".format( fieldName ) )
 
         if fieldName in self.confDict: return self.confDict[fieldName]
     # end of SwordModuleConfiguration.get
@@ -320,7 +304,7 @@ class SwordModule():
         Load an uncompressed lexicon / dictionary type module.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadRawLD()") )
+            print( "SwordModule.loadRawLD()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',)
@@ -372,7 +356,7 @@ class SwordModule():
         Decrypt if necessary, and then decompress (using zlib) a chunk of a work.
         """
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( exp("SwordModule.decompressChunk( … )") )
+            #print( "SwordModule.decompressChunk( … )" )
 
 
         # The following decryption code is adapted from sapphire.cpp -- the Saphire II stream cipher class.
@@ -472,7 +456,7 @@ class SwordModule():
         Load a compressed lexicon / dictionary type module.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadCompressedLD()") )
+            print( "SwordModule.loadCompressedLD()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading compressed {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('zLD',)
@@ -645,7 +629,7 @@ class SwordModule():
         Expand a lexicon / dictionary.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.expandLD()") )
+            print( "SwordModule.expandLD()" )
 
         # Make cross-references
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Auto-adding cross-references for {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
@@ -696,7 +680,7 @@ class SwordModule():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadRawGenBook()") )
+            print( "SwordModule.loadRawGenBook()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loading raw general book from {}…".format( self.dataFolder ) )
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
@@ -828,7 +812,7 @@ class SwordModule():
             2: NTOffset = offset if only 27 NT books included
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.createChapterOffsets( {} )").format( versificationString ) )
+            print( "SwordModule.createChapterOffsets( {} )".format( versificationString ) )
 
         # Now build an index for each book:
         #   0 is the work header
@@ -954,7 +938,7 @@ class SwordModule():
         Can load either one or all (if requestedBBB=None) books.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadVersifiedBibleData( {} ) with {}").format( requestedBBB, self.inMemoryFlag ) )
+            print( "SwordModule.loadVersifiedBibleData( {} ) with {}".format( requestedBBB, self.inMemoryFlag ) )
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
             assert self.SwordModuleConfiguration.modCategory in ('Bible','Commentary','General',)
 
@@ -1219,7 +1203,7 @@ class SwordModule():
         Load the Sword module index into memory (and possibly also the data)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadBooks( {} )").format( inMemoryFlag ) )
+            print( "SwordModule.loadBooks( {} )".format( inMemoryFlag ) )
             #print( "\n\nSwIndex", self.swordIndex )
             #print( "\n\nSwData", self.swordData )
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
@@ -1305,7 +1289,7 @@ class SwordModule():
         Load the Sword module index into memory (and possibly also the data)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.loadBook( {}, {} )").format( BBB, inMemoryFlag ) )
+            print( "SwordModule.loadBook( {}, {} )".format( BBB, inMemoryFlag ) )
             #print( "\n\nSwIndex", self.swordIndex )
             #print( "\n\nSwData", self.swordData )
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
@@ -1465,7 +1449,7 @@ class SwordModule():
         Returns the raw data for the given Bible reference.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( exp("SwordModule.getRawVersifiedData( {} )").format( reference ) )
+            #print( "SwordModule.getRawVersifiedData( {} )".format( reference ) )
             assert self.versifiedFlag
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
 
@@ -1538,7 +1522,7 @@ class SwordModule():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.getRawDictData( {} )").format( word ) )
+            print( "SwordModule.getRawDictData( {} )".format( word ) )
 
         if self.inMemoryFlag: # it's easy -- we already have all the data
             try: result = self.swordData[word]
@@ -1652,7 +1636,7 @@ class SwordModule():
         Note: not all module types have BCV references.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModule.filterToHTML( {} )").format( rawData ) )
+            print( "SwordModule.filterToHTML( {} )".format( rawData ) )
 
         #assert not self.versifiedFlag # for now
         if rawData is None: return None
@@ -1695,7 +1679,7 @@ class SwordModule():
         from SwordResources import filterOSISVerseLine, filterGBFVerseLine, filterTHMLVerseLine
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( exp("SwordModule.filterToUSFM( {} )").format( rawData ) )
+            #print( "SwordModule.filterToUSFM( {} )".format( rawData ) )
             assert self.versifiedFlag # only makes sense for versified data
             assert self.SwordModuleConfiguration.modCategory == 'Bible' # USFM doesn't really make sense for commentaries
 
@@ -1919,7 +1903,7 @@ class SwordBibleModule( SwordModule, Bible ):
         TODO: This should be faster if both the above actions were done together.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordBibleModule.loadBooks( ({}) )").format( inMemoryFlag ) )
+            print( "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
@@ -1983,7 +1967,7 @@ class SwordBibleModule( SwordModule, Bible ):
         TODO: This should be faster if both the above actions were done together.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordBibleModule.loadBook( ({}) )").format( BBB ) )
+            print( "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
@@ -2127,7 +2111,7 @@ class SwordModules:
         Doesn't load the actual modules.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.__init__()") )
+            print( "SwordModules.__init__()" )
 
         self.searchFolders = SwordSearchFolders
         self.inMemoryFlag = True
@@ -2151,7 +2135,7 @@ class SwordModules:
         Adds another path to search for modules in.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.augmentModules( {}, {} )").format( newPath, someFlag ) )
+            print( "SwordModules.augmentModules( {}, {} )".format( newPath, someFlag ) )
             #assert newPath not in self.searchFolders
 
         global SwordSearchFolders # Saved between object instances
@@ -2168,7 +2152,7 @@ class SwordModules:
         Load all the conf files that we can find.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.__loadAllConfs()") )
+            print( "SwordModules.__loadAllConfs()" )
 
         # Things to fill later
         self.folders = [] # Folders where we actually found modules
@@ -2181,7 +2165,7 @@ class SwordModules:
         totalFolders = totalCount = 0
         for folder in self.searchFolders:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( '  ' + exp("__loadAllConfs: checking {}").format( folder ) )
+                print( '  ' + "__loadAllConfs: checking {}".format( folder ) )
             if os.path.isdir( folder ):
                 loadCount = self.__loadConfs( folder ) # Also updates self.confs, self.confKeys, self.index, etc.
                 if loadCount:
@@ -2201,7 +2185,7 @@ class SwordModules:
         Called automatically by the __init__ routine.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.__loadConfs( {} )").format( loadFolder ) )
+            print( "SwordModules.__loadConfs( {} )".format( loadFolder ) )
 
         count = 0
         for moduleConfFilename in sorted( os.listdir( os.path.join( loadFolder, 'mods.d/' ) ) ):
@@ -2289,7 +2273,7 @@ class SwordModules:
         For Sword compatibility
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.getModules()") )
+            print( "SwordModules.getModules()" )
 
         if self.modules:
             halt # not written yet
@@ -2310,15 +2294,15 @@ class SwordModules:
         Returns a list of available module codes.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
+            print( "SwordModules.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
-            print( exp("getAvailableModuleCodes: modules") )
+            print( "getAvailableModuleCodes: modules" )
             for j, (moduleRoughName,module) in enumerate( sorted(self.modules.items()) ):
                 print( "  ", j, moduleRoughName )
             return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
-            print( exp("getAvailableModuleCodes: confs") )
+            print( "getAvailableModuleCodes: confs" )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
                 #print( "  ", j, moduleRoughName )
             result = []
@@ -2339,10 +2323,10 @@ class SwordModules:
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
+            print( "SwordModules.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
-            print( exp("getAvailableModuleCodeDuples--modules") )
+            print( "getAvailableModuleCodeDuples--modules" )
             for j, (moduleRoughName,module) in enumerate( sorted(self.modules.items()) ):
                 print( "  ", j, moduleRoughName )
             for moduleRoughName,module in sorted(self.modules.items()):
@@ -2354,7 +2338,7 @@ class SwordModules:
             #return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( exp("getAvailableModuleCodeDuples--confs") )
+                print( "getAvailableModuleCodeDuples--confs" )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
                 #print( "  ", j, moduleRoughName )
             result = []
@@ -2375,7 +2359,7 @@ class SwordModules:
         For Sword compatibility
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordModules.getModule( {} )").format( moduleRoughName ) )
+            print( "SwordModules.getModule( {} )".format( moduleRoughName ) )
 
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
         except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
@@ -2390,7 +2374,7 @@ class SwordModules:
         Loads the requested module indexes or data into memory.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("SwordModules.loadModule( {} )").format( moduleRoughName ) )
+            print( "SwordModules.loadModule( {} )".format( moduleRoughName ) )
 
         #print( [key for key in self.confs.keys()] )
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
@@ -2411,7 +2395,7 @@ class SwordModules:
         MAX_MODULES = 0 # Set to around 300 with 32GB RAM, or set to zero to load all modules without storing them
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("SwordModules.loadModule( {} )").format( inMemoryFlag ) )
+            print( "SwordModules.loadModule( {} )".format( inMemoryFlag ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nSwordModules.loadAllModules()…" )
         self.inMemoryFlag = inMemoryFlag
