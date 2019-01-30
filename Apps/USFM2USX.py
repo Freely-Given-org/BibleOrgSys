@@ -124,7 +124,7 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
-        print(f"\n {ShortProgName}: output should be in {defaultOutputFolder} folder.")
+        print(f"\n{ShortProgName}: output should be in {defaultOutputFolder} folder.")
 # end of main
 
 if __name__ == '__main__':
