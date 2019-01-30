@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# MakePhotoBible.py
+# USFM2USX.py
 #
-# Command-line app to export a PhotoBible.
+# Command-line app to export a USX (XML) Bible.
 #
-# Copyright (C) 2015-2017 Robert Hunt
+# Copyright (C) 2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -25,27 +25,26 @@
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
 This app inputs any known type of Bible file(s) [set inputFolder below]
-    and then exports a PhotoBible in the (default) OutputFiles folder
+    and then exports a USX version in the (default) OutputFiles folder
         (inside the folder where you installed the BOS).
 
 Of course, you must already have Python3 installed on your system.
     (Probably installed by default on most modern Linux systems.)
-For the PhotoBible export, you also need ImageMagick installed.
 
 Note that this app MUST BE RUN FROM YOUR BOS folder,
     e.g., using the command:
-        Apps/MakePhotoBible.py
+        Apps/USFM2USX.py
 
 You can discover the version with
-        Apps/MakePhotoBible.py --version
+        Apps/USFM2USX.py --version
 
 You can discover the available command line parameters with
-        Apps/MakePhotoBible.py --help
+        Apps/USFM2USX.py --help
 
     e.g., for verbose mode
-        Apps/MakePhotoBible.py --verbose
+        Apps/USFM2USX.py --verbose
     or
-        Apps/MakePhotoBible.py -v
+        Apps/USFM2USX.py -v
 
 This app also demonstrates how little code is required to use the BOS
     to load a Bible (in any of a large range of formats -- see UnknownBible.py)
@@ -53,31 +52,25 @@ This app also demonstrates how little code is required to use the BOS
 
 The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
-(The PhotoBible export is unlikely to work straight away on Windows
-    because it calls external programs outside of Python to make the JPEG files,
-    but most other Bible exports should work fine.)
-
-Because it repeatedly runs external programs (ImageMagick), the PhotoBible export
-    runs several orders of magnitude slower than most other Bible exports.
 """
 
 # You must specify where to find a Bible to read --
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own here
+defaultInputFolder = '/home/robert/Paratext8Projects/MBTV/'
 
 
 from gettext import gettext as _
 
 LastModifiedDate = '2019-01-29' # by RJH
-ShortProgName = "MakePhotoBible"
-ProgName = "Make PhotoBible"
-ProgVersion = '0.23'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ShortProgName = "USFM2USX"
+ProgName = "USFM to USX"
+ProgVersion = '0.01'
+ProgNameVersion = f'{ProgName} v{ProgVersion}'
+ProgNameVersionDate = f'{ProgNameVersion} {_("last modified")} {LastModifiedDate}'
 
-import os
+import os, shutil
 
 # Allow the system to find the BOS even when the app is down in its own folder
 import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
@@ -91,7 +84,7 @@ def main():
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a PhotoBible (in the default OutputFiles folder).
+        and then export a USX Bible (in the default OutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -99,9 +92,11 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
+    inputFolder = defaultInputFolder
+
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( ProgNameVersion )
-        print( "\n{}: processing input folder {!r} …".format( ShortProgName, inputFolder ) )
+        print( f"\n{ShortProgName}: processing input folder {inputFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
@@ -112,17 +107,24 @@ def main():
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{}: starting export (may take up to 60 minutes)…".format( ShortProgName ) )
 
-        # We only want to do the PhotoBible export (from the BibleWriter.py module)
-        result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
+        defaultOutputFolder = os.path.join( os.getcwd(), 'OutputFiles/', 'BOS_USX2_Export/' )
+        if os.path.exists( defaultOutputFolder ):
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( f"\n{ShortProgName}: removing previous {defaultOutputFolder} folder…" )
+                shutil.rmtree( defaultOutputFolder )
+
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( f"\n{ShortProgName}: starting export…" )
+
+        # We only want to do the USX export (from the BibleWriter.py module)
+        result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
         # However, you could easily change this to do all exports
-        #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
+        #result = loadedBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
-        print(f"Output should be in {os.path.join(os.getcwd(), 'OutputFiles/')} folder.")
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
+        print(f"\n {ShortProgName}: output should be in {defaultOutputFolder} folder.")
 # end of main
 
 if __name__ == '__main__':
@@ -133,4 +135,4 @@ if __name__ == '__main__':
     main()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of MakePhotoBible.py
+# end of USFM2USX.py
