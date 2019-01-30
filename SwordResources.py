@@ -70,7 +70,7 @@ try:
     from Bible import BibleBook
     try: import SwordModules #anyway, even if only used for testing
     except ImportError: pass # doesn't really matter
-except ImportError: # Sword library (dll and python bindings) seem to be not available
+except (ImportError, ModuleNotFoundError): # Sword library (dll and python bindings) seem to be not available
     try:
         import SwordModules # Not as good/reliable/efficient/well-tested/up-to-date as the real Sword library, but better than nothing
         SwordType = 'OurCode'
