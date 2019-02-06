@@ -5,7 +5,7 @@
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2018 Robert Hunt
+# Copyright (C) 2013-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -59,14 +59,14 @@ In this module, we use:
 
 We currently use version 2 of the DBP.
 
-More details are available from http://www.DigitalBiblePlatform.com.
+More details are available from https://www.digitalbibleplatform.com/docs.
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "DigitalBiblePlatform"
-ProgName = "Digital Bible Platform onliner handler"
+ProgName = "Digital Bible Platform online handler"
 ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
@@ -398,33 +398,9 @@ class DBPBibles:
     # end of DBPBibles.fetchAllEnglishTextVolumes
 
 
-    #def load( self ):
-        #"""
-        #Downline the volume lists from FCBH.
-
-        #This can be quite slow.
-
-        #Populates self.languageList, self.versionList, self.volumeList, self.volumeNameDict
-        #"""
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("load: Loading list of available text volumes from FCBH…") )
-
-        #if self.onlineVersion: # Get a list of available data sets
-            #self.fetchAllTextVolumes()
-
-            #if 0: # Get all book codes and English names
-                #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
-                ##print( "bookCodeDictList", len(bookCodeDictList), bookCodeDictList )
-                ## Not sure why it comes back as a dictionary in a one-element list
-                #assert isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1
-                #bookCodeDict = bookCodeDictList[0]
-                #assert isinstance( bookCodeDict, dict )
-                #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
-    ## end of DBPBibles.load
-
-
     def __str__( self ):
         """
-        Create a string representation of the Bibles object.
+        Create a string representation of the DBPBibles object.
         """
         indent = 2
         result = "DBP online Bible object"
@@ -457,7 +433,7 @@ class DBPBibles:
         except urllib.error.URLError as err:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
             #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "DBL URLError '{}' from {}".format( err, requestString ) )
+            logging.error( "DBP URLError '{}' from {}".format( err, requestString ) )
             return None
         #print( "HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
