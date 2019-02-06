@@ -10,35 +10,35 @@
 #
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
-This app inputs any known type of Bible file(s) [set inputFolder below]
+This app inputs any known type of Bible file(s) from disk [set inputFolder below]
     and then exports a USX version in the (default) OutputFiles folder
         (inside the folder where you installed the BOS).
 
 Of course, you must already have Python3 installed on your system.
     (Probably installed by default on most modern Linux systems.)
 
-Note that this app MUST BE RUN FROM YOUR BOS folder,
+Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/USFM2USX.py
+        Apps/USFM2USX.minimal.py
 
 You can discover the available command line parameters with
-        Apps/USFM2USX.py --help
+        Apps/USFM2USX.minimal.py --help
 
 This app also demonstrates how little code is required to use the BOS
     to load a Bible (in any of a large range of formats -- see UnknownBible.py)
     and then to export it in your desired format (see options in BibleWriter.py).
 """
 
-import os
-
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+import os, sys
+sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+sys.path.append( '..' ) # Append the above folder to the path to search for the BOS (so it can also be run dirrect from the Apps folder)
 import BibleOrgSysGlobals
 from UnknownBible import UnknownBible
 
 
-ProgName = "USFM to USX"
-ProgVersion = '0.01'
+ProgName = "USFM to USX (minimal)"
+ProgVersion = '0.02'
 
 
 # You must specify where to find a Bible to read --
@@ -48,20 +48,16 @@ ProgVersion = '0.01'
 inputFolder = '/home/robert/Paratext8Projects/MBTV/'
 
 
-def main():
-    unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
-    loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    if loadedBible is not None:
-        loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
-        print(f"\nOutput should be in {os.path.join( os.getcwd(), 'OutputFiles/', 'BOS_USX2_Export/' )} folder.")
-# end of main
+# Configure basic Bible Organisational System (BOS) set-up
+parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-if __name__ == '__main__':
-    # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
-    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+# Do the actual Bible load and export work that we want
+unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
+loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
+if loadedBible is not None:
+    loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
+    print(f"\nOutput should be in {os.path.join( os.getcwd(), 'OutputFiles/', 'BOS_USX2_Export/' )} folder.")
 
-    main()
-
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of USFM2USX.minimal.py
+# Do the BOS close-down stuff
+BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
