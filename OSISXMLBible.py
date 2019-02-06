@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-22' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.65'
@@ -116,7 +116,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()

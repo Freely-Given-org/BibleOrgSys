@@ -105,7 +105,7 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS: continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()

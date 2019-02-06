@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015-2018 Robert Hunt
+# Copyright (C) 2015-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,7 +40,7 @@ Note: The demo takes about 4 minutes with our Sword code,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-23' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.36'
@@ -116,7 +116,8 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         for something in os.listdir( confFolder ):
             somepath = os.path.join( confFolder, something )
             if os.path.isdir( somepath ):
-                if something == '__MACOSX': continue # don't visit these directories
+                if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                    continue # don't visit these directories
                 print( _("SwordBibleFileCheck: Didn't expect a subfolder in conf folder: {}").format( something ) )
             elif os.path.isfile( somepath ):
                 if something.endswith( '.conf' ):
@@ -135,7 +136,8 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 for something in os.listdir( mainTextFolder ):
                     somepath = os.path.join( mainTextFolder, something )
                     if os.path.isdir( somepath ):
-                        if something == '__MACOSX': continue # don't visit these directories
+                        if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                            continue # don't visit these directories
                         potentialName = something.upper()
                         if potentialName in foundConfFiles:
                             foundTextFiles = []
@@ -143,7 +145,8 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                             for something2 in os.listdir( textFolder ):
                                 somepath2 = os.path.join( textFolder, something2 )
                                 if os.path.isdir( somepath2 ):
-                                    if something2 == '__MACOSX': continue # don't visit these directories
+                                    if something2 in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                                        continue # don't visit these directories
                                     if something2 != 'lucene':
                                         logging.warning( _("SwordBibleFileCheck1: Didn't expect a subfolder in {} text folder: {}").format( something, something2 ) )
                                 elif os.path.isfile( somepath2 ):
@@ -181,7 +184,8 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something ) # Save folder name in case we have to go a level down
             if something in compulsoryTopFolders:
                 foundFolderCount += 1

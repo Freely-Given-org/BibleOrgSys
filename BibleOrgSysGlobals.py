@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -82,7 +82,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-22' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.81'
@@ -124,6 +124,7 @@ verbosityString = 'Normal'
 DEFAULT_LOG_FOLDER = 'Logs/' # Relative path
 DEFAULT_CACHE_FOLDER = 'ObjectCache/' # Relative path
 DEFAULT_OUTPUT_FOLDER = 'OutputFiles/' # Relative path
+COMMONLY_IGNORED_FOLDERS = '.hg/', '.git/', '__MACOSX' # Used when searching for Bibles
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
 

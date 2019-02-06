@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2018 Robert Hunt
+# Copyright (C) 2012-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
 ProgVersion = '0.38'
@@ -80,7 +80,8 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
 

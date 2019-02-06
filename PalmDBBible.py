@@ -5,7 +5,7 @@
 #
 # Module handling PDB Bible files
 #
-# Copyright (C) 2013-2017 Robert Hunt
+# Copyright (C) 2013-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-04' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.67'
@@ -106,7 +106,8 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()

@@ -5,7 +5,7 @@
 #
 # Module handling Bibles where each verse is stored in a separate file.
 #
-# Copyright (C) 2014-2018 Robert Hunt
+# Copyright (C) 2014-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "BCVBible"
 ProgName = "BCV Bible handler"
 ProgVersion = '0.22'
@@ -100,7 +100,8 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
@@ -210,7 +211,8 @@ class BCVBible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX',): continue
+                if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                    continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( _("BCVBible.preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )

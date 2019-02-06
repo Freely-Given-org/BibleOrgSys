@@ -66,6 +66,7 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
 
 import os, logging
 from collections import OrderedDict
+import re
 import unicodedata
 
 import BibleOrgSysGlobals
@@ -833,6 +834,12 @@ class InternalBibleBook:
                             '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
                                 + BibleOrgSysGlobals.internal_SFMs_to_remove:
                 cleanedNote = cleanedNote.replace( marker, '' )
+            if '\\z' in cleanedNote:
+                fixErrors.append( lineLocationSpace + _("Found custom marker in {}: {}").format( thisOne, cleanedNote ) )
+                logging.warning( _("processLineFix: Found custom marker after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
+                self.addPriorityError( 21, C, V, _("{} contains custom marker").format( thisOne.title() ) )
+                cleanedNote = re.sub( '\\\\z.+? ', '', cleanedNote ) # Remove custom markers
+                cleanedNote = re.sub( '\\\\z.+?\*', '', cleanedNote ) # Remove custom marker closings (don't normally occur in footnotes)
             if '\\' in cleanedNote:
                 fixErrors.append( lineLocationSpace + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
                 logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )

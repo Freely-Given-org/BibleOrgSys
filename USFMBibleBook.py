@@ -292,7 +292,7 @@ def demo():
     import USFMFilenames
 
     if 1: # Test individual files -- choose one of these or add your own
-        name, encoding, testFolder, filename, BBB = "USFM3Test", 'utf-8', 'Tests/DataFilesForTests/USFM3AllMarkersProject/', '70-MATeng-amp.usfm', 'MAT' # You can put your test file here
+        name, encoding, testFolder, filename, BBB = "USFM3Test", 'utf-8', 'Tests/DataFilesForTests/USFM3AllMarkersProject/', '81-COLeng-amp.usfm', 'COL' # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here

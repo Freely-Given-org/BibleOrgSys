@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 7) collections of USFM2 Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2018 Robert Hunt
+# Copyright (C) 2015-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,7 +41,7 @@ TODO: Check if PTX7Bible object should be based on USFM2Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-23' # by RJH
+LastModifiedDate = '2019-02-04' # by RJH
 ShortProgName = "Paratext7Bible"
 ProgName = "Paratext-7 Bible handler"
 ProgVersion = '0.31'
@@ -130,7 +130,8 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ):
-            if something == '__MACOSX': continue # don't visit these directories
+            if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                continue # don't visit these directories
             foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
 
@@ -591,7 +592,8 @@ class PTX7Bible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX'): continue
+                if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                    continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( _("PTX7 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
