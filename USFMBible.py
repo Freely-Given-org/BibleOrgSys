@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-02-16' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.78'
@@ -57,36 +57,6 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT'
                     'SAV', 'SAVE', 'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
-#def removeUnwantedTupleExtensions( fnTuples ):
-    #"""
-    #Given a container of (BBB,filename) 2-tuples,
-        #results a list without any of the above file extensions.
-    #"""
-    #resultList = []
-    #for BBB,filename in fnTuples:
-        #ignoreFlag = False
-        #for ignoreExtension in extensionsToIgnore:
-            #if filename.upper().endswith( ignoreExtension ): ignoreFlag = True; break
-        #if not ignoreFlag: resultList.append( (BBB,filename) )
-    #return resultList
-## end of removeUnwantedTupleExtensions
-
 
 def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False, discountSSF=True ):
     """
@@ -110,11 +80,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( exp("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         if debuggingThisModule: print ("  USFM returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( exp("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( _("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         if debuggingThisModule: print ("  USFM returningA2", False )
         return False
 
@@ -172,7 +142,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 numFound += 1
         else: numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
@@ -245,7 +215,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 foundProjects.append( tryFolderName )
                 numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
@@ -284,7 +254,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
+            print( _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
             assert 'findText' in optionsDict
             assert 'replaceText' in optionsDict
 
@@ -372,7 +342,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     if self.maximumPossibleFilenameTuples:
         for BBB,filename in self.maximumPossibleFilenameTuples:
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #print( exp("findReplaceText: will search book {}").format( BBB ) )
+                #print( _("findReplaceText: will search book {}").format( BBB ) )
                 bookFilepath = os.path.join( self.sourceFolder, filename )
                 with open( bookFilepath, 'rt', encoding=encoding ) as bookFile:
                     bookText = bookFile.read()
@@ -489,7 +459,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                 break
 
     else:
-        logging.critical( exp("No book files to search/replace in {}!").format( self.sourceFolder ) )
+        logging.critical( _("No book files to search/replace in {}!").format( self.sourceFolder ) )
 
     for BBB,(filepath,fileText) in filesToSave.items():
         if optionsDict['doBackups']:
@@ -504,7 +474,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
             bookFile.write( fileText )
         self.bookNeedsReloading[BBB] = True
 
-    #print( exp("findReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
+    #print( _("findReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
     return optionsDict, resultDict
 # end of findReplaceText
 
@@ -531,6 +501,8 @@ class USFMBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
+        if self.givenName and not self.name:
+            self.name = self.givenName
     # end of USFMBible.__init_
 
 
@@ -539,7 +511,7 @@ class USFMBible( Bible ):
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("preload() from {}").format( self.sourceFolder ) )
+            print( _("preload() from {}").format( self.sourceFolder ) )
             assert not self.preloadDone
             assert self.sourceFolder is not None
 
@@ -550,7 +522,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( exp("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( _("preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -560,7 +532,7 @@ class USFMBible( Bible ):
             if unexpectedFolders:
                 logging.info( _("USFM preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( _("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -574,7 +546,7 @@ class USFMBible( Bible ):
             #ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             ##print( "ssfFilepathList", ssfFilepathList )
             #if len(ssfFilepathList) > 1:
-                #logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
+                #logging.error( _("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             #if len(ssfFilepathList) >= 1: # Seems we found the right one
                 #from PTX7Bible import loadPTX7ProjectData
                 #PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
@@ -638,7 +610,7 @@ class USFMBible( Bible ):
         Returns the book info.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( exp("loadBookMP( {} )").format( BBB_Filename_duple ) )
+            print( _("loadBookMP( {} )").format( BBB_Filename_duple ) )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
@@ -650,7 +622,7 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            print( '  ' + _("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -663,7 +635,7 @@ class USFMBible( Bible ):
         """
         Load all the Bible books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 

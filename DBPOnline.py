@@ -64,7 +64,7 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-02-13' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform online handler"
 ProgVersion = '0.19'
@@ -403,7 +403,7 @@ class DBPBibles:
         Create a string representation of the DBPBibles object.
         """
         indent = 2
-        result = "DBP online Bible object"
+        result = "DBP online Bibles object"
         if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
         if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
         if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
@@ -733,7 +733,7 @@ def demo():
 
     if 1: # Test the DBPBible class with the ESV
         print()
-        dbpBible1 = DBPBible( "ENGESV" )
+        dbpBible1 = DBPBible( 'ENGESV' )
         print( dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
@@ -748,7 +748,7 @@ def demo():
 
     if 1: # Test the DBPBible class with the MS
         print()
-        dbpBible2 = DBPBible( "MBTWBT" )
+        dbpBible2 = DBPBible( 'MBTWBT' )
         print( dbpBible2 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )

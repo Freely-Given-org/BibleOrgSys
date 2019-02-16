@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,10 +56,10 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-02-16' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = '0.82'
+ProgVersion = '0.83'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -84,20 +84,6 @@ NT27_BOOKLIST = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL',
         'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
 assert len(NT27_BOOKLIST) == 27
 
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 InternalBibleProperties = {} # Used for diagnostic reasons
@@ -190,7 +176,7 @@ class InternalBible:
         This method returns the number of loaded books in the Bible.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( exp("__len__ result is unreliable because all books not loaded!") )
+            logging.critical( _("__len__ result is unreliable because all books not loaded!") )
         return len( self.books )
     # end of InternalBible.__len__
 
@@ -206,7 +192,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag: assert isinstance(BBB,str) and len(BBB)==3
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not self.loadedAllBooks:
-            logging.critical( exp("__contains__ result is unreliable because all books not loaded!") )
+            logging.critical( _("__contains__ result is unreliable because all books not loaded!") )
 
         return BBB in self.books
     # end of InternalBible.__contains__
@@ -219,7 +205,7 @@ class InternalBible:
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
-        #print( exp("__getitem__( {} )").format( keyIndex ) )
+        #print( _("__getitem__( {} )").format( keyIndex ) )
         #print( list(self.books.items()) )
         if isinstance( keyIndex, int ):
             return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
@@ -235,7 +221,7 @@ class InternalBible:
         NOTE: Most other functions return the BBB -- this returns the actual book object!
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( exp("__iter__ result is unreliable because all books not loaded!") )
+            logging.critical( _("__iter__ result is unreliable because all books not loaded!") )
 
         for BBB in self.books:
             yield self.books[BBB]
@@ -294,7 +280,7 @@ class InternalBible:
         Returns True if any of the 39 common OT books are present.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( exp("containsAnyOT39Books result is unreliable because all books not loaded!") )
+            logging.critical( _("containsAnyOT39Books result is unreliable because all books not loaded!") )
         for BBB in OT39_BOOKLIST:
             if BBB in self: return True
         return False
@@ -306,7 +292,7 @@ class InternalBible:
         Returns True if any of the 27 common NT books are present.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( exp("containsAnyNT27Books result is unreliable because all books not loaded!") )
+            logging.critical( _("containsAnyNT27Books result is unreliable because all books not loaded!") )
         for BBB in NT27_BOOKLIST:
             if BBB in self: return True
         return False
@@ -322,6 +308,7 @@ class InternalBible:
         """
         #print( "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
+        if not self.name and self.givenName: self.name = self.givenName
         if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
         if not self.shortName and 'ShortName' in self.settingsDict: self.shortName = self.settingsDict['ShortName']
         if not self.shortName and 'Name' in self.settingsDict: self.shortName = self.settingsDict['Name']
@@ -345,6 +332,7 @@ class InternalBible:
         if abbrevFirst and self.abbreviation: return self.abbreviation
 
         if self.name: return self.name
+        if self.givenName: return self.givenName
         if self.shortName: return self.shortName
         if self.projectName and self.projectName != 'Unknown': return self.projectName
         if self.abbreviation: return self.abbreviation
@@ -358,7 +346,7 @@ class InternalBible:
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBookIfNecessary( {} )").format( BBB ) )
+            print( _("loadBookIfNecessary( {} )").format( BBB ) )
             #print( "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
             #print( "bnr {}".format( self.bookNeedsReloading ) )
 
@@ -390,7 +378,7 @@ class InternalBible:
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("reloadBook( {} )").format( BBB ) )
+            print( _("reloadBook( {} )").format( BBB ) )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -408,12 +396,12 @@ class InternalBible:
         Tries to re-index a loaded book.
         """
         if BibleOrgSysGlobals.debugFlag:
-            print( exp("reProcessBook( {} )…").format( BBB ) )
+            print( _("reProcessBook( {} )…").format( BBB ) )
             assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: print( exp("reloadBook has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: print( _("reloadBook has no discoveryResults to delete") )
 
         if 'discoveryResults' in dir(self): # need to update them
             # Need to double-check that this doesn't cause any double-ups …XXXXXXXXXXXXXXXXXXXXXX
@@ -447,7 +435,7 @@ class InternalBible:
         #"""
         #Called to unload books, usually coz one or more of them has been edited.
         #"""
-        #if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks()…") )
+        #if BibleOrgSysGlobals.debugFlag: print( _("unloadBooks()…") )
         #self.books = OrderedDict()
         #self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         #self.reverseDict, self.guesses = {}, '' # A program history
@@ -458,7 +446,7 @@ class InternalBible:
 
         #try: del self.discoveryResults # These are now irrelevant
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: print( exp("unloadBooks has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: print( _("unloadBooks has no discoveryResults to delete") )
     ## end of InternalBible.unloadBooks
 
 
@@ -507,10 +495,10 @@ class InternalBible:
                 if line[0] == '#': continue # Just discard comment lines
                 if not continuedFlag:
                     if '=' not in line:
-                        logging.warning( exp("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {!r}").format( line ) )
+                        logging.warning( _("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {!r}").format( line ) )
                     else: # Seems like a field=something type line
                         if line.count( '=' ) > 1:
-                            logging.warning( exp("loadMetadataTextFile: Surprised to find multiple equal signs in line: {!r}").format( line ) )
+                            logging.warning( _("loadMetadataTextFile: Surprised to find multiple equal signs in line: {!r}").format( line ) )
                         bits = line.split( '=', 1 )
                         assert len(bits) == 2
                         fieldName = bits[0]
@@ -527,7 +515,7 @@ class InternalBible:
                     else: continuedFlag = False
                     fieldContents += line
                     if not continuedFlag:
-                        logging.warning( exp("loadMetadataTextFile: Metadata lines result in a blank entry for {!r}").format( fieldName ) )
+                        logging.warning( _("loadMetadataTextFile: Metadata lines result in a blank entry for {!r}").format( fieldName ) )
                         saveMetadataField( fieldName, fieldContents )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
@@ -561,7 +549,7 @@ class InternalBible:
             Rights
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( exp("applySuppliedMetadata( {} )").format( applyMetadataType ) )
+            print( _("applySuppliedMetadata( {} )").format( applyMetadataType ) )
             assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
                                          'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
@@ -650,25 +638,25 @@ class InternalBible:
                 if ssfEncoding == '65001': adjSSFencoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( exp("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+                        print( _("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
                     if ssfEncoding.isdigit():
                         adjSSFencoding = 'cp' + ssfEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            print( exp("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
+                            print( _("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
                     else:
-                        logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+                        logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
                         adjSSFencoding = ssfEncoding
                 if self.encoding is None:
                     self.encoding = adjSSFencoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( exp("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        print( _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
                 elif self.encoding == adjSSFencoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( exp("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        print( _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
                 else: # we have a conflict of encodings for some reason !
-                    logging.critical( exp("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSSFencoding
-                    logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( _("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
 
         elif applyMetadataType == 'PTX8':
             # This is a special case (coz it's inside 'Settings' inside the PTX8 metadata)
@@ -694,25 +682,25 @@ class InternalBible:
                 if settingsEncoding == '65001': adjSettingsEncoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( exp("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
+                        print( _("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
                     if settingsEncoding.isdigit():
                         adjSettingsEncoding = 'cp' + settingsEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            print( exp("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
+                            print( _("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
                     else:
-                        logging.critical( exp("__init__: Unsure how to handle {!r} file encoding").format( settingsEncoding ) )
+                        logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( settingsEncoding ) )
                         adjSettingsEncoding = settingsEncoding
                 if self.encoding is None:
                     self.encoding = adjSettingsEncoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( exp("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        print( _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
                 elif self.encoding == adjSettingsEncoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( exp("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        print( _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
                 else: # we have a conflict of encodings for some reason !
-                    logging.critical( exp("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSettingsEncoding
-                    logging.critical( exp("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( _("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
 
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
@@ -810,7 +798,7 @@ class InternalBible:
 
         Returns None if nothing found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getSetting( {} )").format( settingName ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( _("getSetting( {} )").format( settingName ) )
         #print( "\nSettingsDict:", self.settingsDict )
         #print( "\nSupplied Metadata:", self.suppliedMetadata )
 
@@ -870,7 +858,7 @@ class InternalBible:
         Returns a list of loaded book codes.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( exp("getBookList result is unreliable because all books not loaded!") )
+            logging.critical( _("getBookList result is unreliable because all books not loaded!") )
         return [BBB for BBB in self.books]
 
 
@@ -883,7 +871,7 @@ class InternalBible:
         BBB = bookData.BBB
         if BBB in self.books: # already
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( exp("stashBook: Already have"), self.getBookList() )
+                print( _("stashBook: Already have"), self.getBookList() )
             import __main__
             #print( "main file", __main__.__file__ )
             suppressErrorFlag = False
@@ -892,7 +880,7 @@ class InternalBible:
                     suppressErrorFlag = True
             except AttributeError: pass
             if not suppressErrorFlag:
-                logging.critical( exp("stashBook: stashing already stashed {} book!").format( BBB ) )
+                logging.critical( _("stashBook: stashing already stashed {} book!").format( BBB ) )
         self.books[BBB] = bookData
         self.availableBBBs.add( BBB )
 
@@ -925,7 +913,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("pickle: Saving {} to {}…") \
+            print( _("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
         try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folder )
         except TypeError: # Could be a yet undebugged SWIG error
@@ -992,7 +980,7 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-            print( exp("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
+            print( _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2…" )
             for bookName in self.combinedBookNameDict:
@@ -1031,11 +1019,11 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( exp("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                print( _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("  guessXRefBBB using first plus other characters…") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( _("  guessXRefBBB using first plus other characters…") )
             for bookName in self.bookNameDict:
                 if not bookName: print( self.bookNameDict ); halt # temp……
                 #print( "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
@@ -1054,7 +1042,7 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( exp("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                print( _("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
@@ -1075,10 +1063,10 @@ class InternalBible:
                     self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (letters)".format( referenceString, BBB )
                     return BBB
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                    print( exp("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                    print( _("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( exp("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
+            print( _("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess {!r}".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
@@ -1143,7 +1131,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "InternalBible:discover()" )
         if BibleOrgSysGlobals.debugFlag and 'discoveryResults' in dir(self):
-            logging.warning( exp("discover: We had done this already!") ) # We've already called this once
+            logging.warning( _("discover: We had done this already!") ) # We've already called this once
             halt
 
         self.discoveryResults = OrderedDict()
@@ -1152,17 +1140,17 @@ class InternalBible:
         #import pickle
         #folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}…").format( filepath ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing from {}…").format( filepath ) )
         #with open( filepath, 'rb' ) as pickleFile:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running discover on {}…").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running discover on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
         if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
         and BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( exp("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+                print( _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
                 print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1173,7 +1161,7 @@ class InternalBible:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for BBB in self.books: # Do individual book prechecks
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Prechecking {}…").format( BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
 
         if self.objectTypeString == 'PTX8':
@@ -1279,7 +1267,7 @@ class InternalBible:
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
-                    elif value != -1.0: logging.warning( exp("discover: invalid ratio (float) {} {} {!r}").format( BBB, key, value ) )
+                    elif value != -1.0: logging.warning( _("discover: invalid ratio (float) {} {} {!r}").format( BBB, key, value ) )
                 elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
                     #print( "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
@@ -1313,7 +1301,7 @@ class InternalBible:
                     #halt
                     #pass # No action needed here
                 else:
-                    logging.warning( exp("discover: unactioned discovery result {} {} {!r}").format( BBB, key, value ) )
+                    logging.warning( _("discover: unactioned discovery result {} {} {!r}").format( BBB, key, value ) )
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
@@ -1387,14 +1375,14 @@ class InternalBible:
         """
         # Get our recommendations for added units -- only load this once per Bible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if givenBookList is None: print( exp("Checking {} Bible…").format( self.name ) )
-            else: print( exp("Checking {} Bible books {}…").format( self.name, givenBookList ) )
+            if givenBookList is None: print( _("Checking {} Bible…").format( self.name ) )
+            else: print( _("Checking {} Bible books {}…").format( self.name, givenBookList ) )
         if 'discoveryResults' not in dir(self): self.discover()
 
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("Importing from {}…").format( pickleFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing from {}…").format( pickleFilepath ) )
         try:
             with open( pickleFilepath, 'rb' ) as pickleFile:
                 typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -1403,11 +1391,11 @@ class InternalBible:
                 typicalAddedUnitData = None
 
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running checks on {}…").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running checks on {}…").format( self.name ) )
         if givenBookList is None:
             givenBookList = self.books # this is an OrderedDict
         for BBB in givenBookList: # Do individual book checks
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + exp("Checking {}…").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Checking {}…").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -2076,7 +2064,7 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("getNumChapters( {} )").format( BBB ) )
+            print( _("getNumChapters( {} )").format( BBB ) )
             assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
@@ -2095,14 +2083,14 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("getNumVerses( {}, {!r} )").format( BBB, C ) )
+            print( _("getNumVerses( {}, {!r} )").format( BBB, C ) )
             assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             if isinstance( C, int ): # Just double-check the parameter
-                logging.debug( exp("getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
+                logging.debug( _("getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
                 C = str( C )
             return self.books[BBB].getNumVerses( C )
     # end of InternalBible.getNumVerses
@@ -2171,7 +2159,7 @@ class InternalBible:
         Raises a KeyError if the BCVReference isn't found/valid.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
+            print( _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
@@ -2231,7 +2219,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
-                print( exp("findText( {} )").format( optionsDict ) )
+                print( _("findText( {} )").format( optionsDict ) )
                 assert 'findText' in optionsDict
 
         optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
@@ -2298,9 +2286,9 @@ class InternalBible:
         resultSummaryDict = { 'searchedBookList':[], 'foundBookList':[], }
         resultList = [] # Contains 4-tuples or 5-tuples -- first entry is the SimpleVerseKey
         for BBB,bookObject in self.books.items():
-            #print( exp("  findText: got book {}").format( BBB ) )
+            #print( _("  findText: got book {}").format( BBB ) )
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #print( exp("  findText: will search book {}").format( BBB ) )
+                #print( _("  findText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
                 C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -2325,7 +2313,7 @@ class InternalBible:
                     or C in optionsDict['chapterList'] \
                     or int(C) in optionsDict['chapterList']:
                         #if optionsDict['chapterList'] and V=='0':
-                            #print( exp("  findText: will search {} chapter {}").format( BBB, C ) )
+                            #print( _("  findText: will search {} chapter {}").format( BBB, C ) )
 
                         # Get our text to search
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
@@ -2403,7 +2391,7 @@ class InternalBible:
                                 resultList.append( resultTuple )
                                 if BBB not in resultSummaryDict['foundBookList']: resultSummaryDict['foundBookList'].append( BBB )
 
-        #print( exp("findText: returning {}").format( resultList ) )
+        #print( _("findText: returning {}").format( resultList ) )
         return optionsDict, resultSummaryDict, resultList
     # end of InternalBible.findText
 
@@ -2413,7 +2401,7 @@ class InternalBible:
         Write the internal pseudoUSFM out directly with one file per verse.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("writeBOSBCVFiles( {} )").format( outputFolderPath ) )
+            print( _("writeBOSBCVFiles( {} )").format( outputFolderPath ) )
 
         BBBList = []
         for BBB,bookObject in self.books.items():
