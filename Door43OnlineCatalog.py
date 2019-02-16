@@ -291,7 +291,7 @@ class Door43CatalogResources:
                         self.BibleList.append( resourceTuple )
                         break
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( f"    Found {len(self.resourceList)} Door43 resources (of which {len(self.BibleList)} are BCV structured)" )
+            print( f"    Found {len(self.resourceList)} Door43 resources (of which {len(self.BibleList)} are USFM)" )
         #assert len(self.resourceList) == self.totalEntryCount
     # end of Door43CatalogResources.fetchCatalog
 
@@ -306,7 +306,7 @@ class Door43CatalogResources:
         if self.catalogDict: result += ('\n' if result else '') + ' '*indent + _("Catalogs: {}").format( len(self.catalogDict) )
         if self.languageDict: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageDict) )
         if self.resourceList: result += ('\n' if result else '') + ' '*indent + _("Resources: {}").format( len(self.resourceList) )
-        if self.BibleList: result += ('\n' if result else '') + ' '*indent + _("BCV resources: {}").format( len(self.BibleList) )
+        if self.BibleList: result += ('\n' if result else '') + ' '*indent + _("USFM resources: {}").format( len(self.BibleList) )
         return result
     # end of Door43CatalogResources.__str__
 
