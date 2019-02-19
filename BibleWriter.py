@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2019-02-19' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -4098,7 +4098,7 @@ class BibleWriter( InternalBible ):
         def writeUSXBook( BBB, bkData ):
             """ Writes a book to the filesFolder. """
 
-            def handleInternalTextMarkersForUSX( originalText ):
+            def handleInternalTextMarkersForUSX2( originalText ):
                 """
                 Handles character formatting markers within the originalText.
                 Tries to find pairs of markers and replaces them with html char segments.
@@ -4115,14 +4115,14 @@ class BibleWriter( InternalBible ):
                 adjText = originalText
                 haveOpenChar = False
                 for charMarker in ALL_CHAR_MARKERS:
-                    #print( "handleInternalTextMarkersForUSX", charMarker )
+                    #print( "handleInternalTextMarkersForUSX2", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                             logging.info( "toUSX2XML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
-                        adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
+                        adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
@@ -4133,13 +4133,34 @@ class BibleWriter( InternalBible ):
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
                             adjText = adjText.replace( endCharMarker, '</char>' )
                             haveOpenChar = False
+                if '\\z' in adjText:
+                    # Handle custom (character) markers
+                    while True:
+                        matchOpen = re.search( r'\\z([\w\d]+?) ', adjText )
+                        if not matchOpen: break
+                        #print( f"Matched custom marker open '{matchOpen.group(0)}'" )
+                        adjText = adjText[:matchOpen.start(0)] + f'<char style="z{matchOpen.group(1)}"CLOSED_BIT>' + adjText[matchOpen.end(0):]
+                        haveOpenChar = True
+                        #print( "adjText", adjText )
+                        matchClose = re.search( r'\\z{}\*'.format( matchOpen.group(1) ), adjText )
+                        if matchClose:
+                            #print( f"Matched custom marker close '{matchClose.group(0)}'" )
+                            adjText = adjText[:matchClose.start(0)] + '</char>' + adjText[matchClose.end(0):]
+                            if haveOpenChar:
+                                adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
+                                haveOpenChar = False
+                            #print( "adjText", adjText )
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
                     logging.info( "toUSX2XML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSX2XML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText:
+                    logging.critical( "toUSX2XML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                    halt
+                if 'CLOSED_BIT' in adjText:
+                    logging.critical( "toUSX2XML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
                 return adjText
-            # end of toUSX2XML.handleInternalTextMarkersForUSX
+            # end of toUSX2XML.handleInternalTextMarkersForUSX2
 
             def handleNotes( text, extras ):
                 """ Integrate notes into the text again. """
@@ -4408,7 +4429,7 @@ class BibleWriter( InternalBible ):
                         logging.error( "toUSX2XML: Book {}{} might have incorrect code on id line -- we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                         #halt
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
-                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
+                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX2(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
                     else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
                     #elif not text: logging.error( "toUSX2XML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
 
@@ -4426,7 +4447,7 @@ class BibleWriter( InternalBible ):
                     if not adjText: logging.warning( "toUSX2XML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
@@ -4448,7 +4469,7 @@ class BibleWriter( InternalBible ):
                     if not adjText: logging.warning( "toUSX2XML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
@@ -4464,7 +4485,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     if not adjText: xw.writeLineOpen( 'para', ('style',originalMarker) )
                     else:
-                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX2(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
                     #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
@@ -4474,7 +4495,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX2(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'para' )
@@ -4584,7 +4605,7 @@ class BibleWriter( InternalBible ):
         def writeUSXBook( BBB, bkData ):
             """ Writes a book to the filesFolder. """
 
-            def handleInternalTextMarkersForUSX( originalText ):
+            def handleInternalTextMarkersForUSX3( originalText ):
                 """
                 Handles character formatting markers within the originalText.
                 Tries to find pairs of markers and replaces them with html char segments.
@@ -4601,14 +4622,14 @@ class BibleWriter( InternalBible ):
                 adjText = originalText
                 haveOpenChar = False
                 for charMarker in ALL_CHAR_MARKERS:
-                    #print( "handleInternalTextMarkersForUSX", charMarker )
+                    #print( "handleInternalTextMarkersForUSX3", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                             logging.info( "toUSX3XML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
-                        adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
+                        adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
@@ -4619,13 +4640,35 @@ class BibleWriter( InternalBible ):
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
                             adjText = adjText.replace( endCharMarker, '</char>' )
                             haveOpenChar = False
+                if '\\z' in adjText:
+                    # Handle custom (character) markers
+                    while True:
+                        matchOpen = re.search( r'\\z([\w\d]+?) ', adjText )
+                        if not matchOpen: break
+                        #print( f"Matched custom marker open '{matchOpen.group(0)}'" )
+                        adjText = adjText[:matchOpen.start(0)] + f'<char style="z{matchOpen.group(1)}"CLOSED_BIT>' + adjText[matchOpen.end(0):]
+                        haveOpenChar = True
+                        #print( "adjText", adjText )
+                        matchClose = re.search( r'\\z{}\*'.format( matchOpen.group(1) ), adjText )
+                        if matchClose:
+                            #print( f"Matched custom marker close '{matchClose.group(0)}'" )
+                            adjText = adjText[:matchClose.start(0)] + '</char>' + adjText[matchClose.end(0):]
+                            if haveOpenChar:
+                                adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
+                                haveOpenChar = False
+                            #print( "adjText", adjText )
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
                     logging.info( "toUSX3XML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSX3XML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText:
+                    logging.critical( "toUSX3XML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                    halt
+                if 'CLOSED_BIT' in adjText:
+                    logging.critical( "toUSX3XML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
                 return adjText
-            # end of toUSX3XML.handleInternalTextMarkersForUSX
+            # end of toUSX3XML.handleInternalTextMarkersForUSX3
+
 
             def handleNotes( text, extras ):
                 """ Integrate notes into the text again. """
@@ -4891,7 +4934,7 @@ class BibleWriter( InternalBible ):
                     if adjText[0:3] != USXAbbrev:
                         logging.error( "toUSX3XML: Book {}{} might have incorrect code on id line -- we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
-                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText), [('code',USXAbbrev),('style',marker)] )
+                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX3(adjText), [('code',USXAbbrev),('style',marker)] )
                     else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
                     #elif not text: logging.error( "toUSX3XML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
 
@@ -4909,7 +4952,7 @@ class BibleWriter( InternalBible ):
                     if not adjText: logging.warning( "toUSX3XML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
@@ -4931,7 +4974,7 @@ class BibleWriter( InternalBible ):
                     if not adjText: logging.warning( "toUSX3XML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
                 elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
@@ -4947,7 +4990,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     if not adjText: xw.writeLineOpen( 'para', ('style',originalMarker) )
                     else:
-                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText), ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX3(adjText), ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
                     #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
@@ -4957,7 +5000,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText), ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX3(adjText), ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'para' )
