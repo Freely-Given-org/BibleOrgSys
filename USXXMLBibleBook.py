@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2018 Robert Hunt
+# Copyright (C) 2012-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-02-19' # by RJH
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
 ProgVersion = '0.26'
@@ -544,7 +544,7 @@ class USXXMLBibleBook( BibleBook ):
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {!r}").format( self.BBB, C, V, USFMMarker, text ) )
                             logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {!r}").format( USFMMarker, self.BBB, C, V, text ) )
                         else: # no text
-                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
+                            loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text)").format( self.BBB, C, V, USFMMarker ) )
                             logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.BBB, C, V ) )
                         self.addPriorityError( 100, C, V, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
                         fixed = False
@@ -565,7 +565,7 @@ class USXXMLBibleBook( BibleBook ):
                                     fixed = True
                                     break
                         if not fixed: # Otherwise, don't bother processing this line -- it'll just cause more problems later on
-                            loadErrors.append( _("{} {}:{} Ignoring '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.BBB, C, V, USFMMarker ) )
+                            loadErrors.append( _("{} {}:{} Ignoring '\\{}' unknown USFM Marker at beginning of line (with no text)").format( self.BBB, C, V, USFMMarker ) )
                             logging.critical( _("Ignoring '\\{}' unknown USFM Marker after {} {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.workName, self.BBB, C, V ) )
                 elif element.tag == 'table':
                     if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0

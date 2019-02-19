@@ -56,7 +56,6 @@ import tempfile, zipfile
 
 import BibleOrgSysGlobals
 from USFMBible import USFMBible
-from VerseReferences import SimpleVerseKey
 
 
 URL_BASE = 'https://api.door43.org'
@@ -76,7 +75,7 @@ class Door43CatalogResources:
         Create the internal Bibles object.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "Door43CatalogResources.__init__()" )
+            print( "Door43CatalogResources.__init__()…" )
 
         self.subjectJsonList = self.subjectNameList = self.subjectsJsonList = self.subjectDict = None
         self.catalogDict = self.languageDict = self.resourceList = self.BibleList = None
@@ -95,7 +94,7 @@ class Door43CatalogResources:
         Returns None if the data cannot be fetched.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"Door43CatalogResources.getOnlineData( {fieldREST!r}, {additionalParameters!r} )…" )
+            print( f"Door43CatalogResources.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -109,7 +108,7 @@ class Door43CatalogResources:
         # print( "  HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "    contentType", contentType )
+            print( f"    contentType='{contentType}'" )
         if contentType == 'application/json':
             responseJSON = HTTPResponseObject.read()
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -442,6 +441,8 @@ def demo():
     """
     Demonstrate how some of the above classes can be used.
     """
+    from VerseReferences import SimpleVerseKey
+
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Test the Door43CatalogResources class

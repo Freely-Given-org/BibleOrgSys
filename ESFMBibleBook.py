@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-11-09' # by RJH
+LastModifiedDate = '2019-02-19' # by RJH
 ShortProgName = "ESFMBibleBook"
 ProgName = "ESFM Bible book handler"
 ProgVersion = '0.48'
@@ -486,7 +486,7 @@ class ESFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.BBB, C, V, marker ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
                 self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space

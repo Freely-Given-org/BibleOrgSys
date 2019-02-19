@@ -64,10 +64,10 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-13' # by RJH
+LastModifiedDate = '2019-02-17' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform online handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -80,30 +80,13 @@ import urllib.request, json
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
-from VerseReferences import SimpleVerseKey
 
 
 URL_BASE = 'http://dbt.io/'
-DPB_VERSION = '2'
+DBP_VERSION = '2'
 KEY_FILENAME = "DBPKey.txt"
 KEY_SEARCH_PATHS = ( KEY_FILENAME, os.path.join( "../BibleOrgSys/DataFiles", KEY_FILENAME ) )
 MAX_CACHED_VERSES = 100 # Per Bible version in use
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 
@@ -116,10 +99,10 @@ def getSecurityKey():
     """
     for keyPath in KEY_SEARCH_PATHS:
         if os.path.exists( keyPath ): # in our current folder
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("getSecurityKey: found key file in {!r}").format( keyPath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("getSecurityKey: found key file in {!r}").format( keyPath ) )
             with open( keyPath, 'rt' ) as keyFile:
                 return keyFile.read() # Our personal key
-    raise FileNotFoundError( exp("Cannot find key file {!r}").format( KEY_FILENAME ) )
+    raise FileNotFoundError( _("Cannot find key file {!r}").format( KEY_FILENAME ) )
 # end of getSecurityKey
 
 
@@ -135,10 +118,10 @@ class DBPBibles:
         Create the internal Bibles object.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.__init__()") )
+            print( _("DBPBibles.__init__()") )
 
         self.key = getSecurityKey() # Our personal key
-        self.URLFixedData = "?v={}&key={}".format( DPB_VERSION, self.key )
+        self.URLFixedData = "?v={}&key={}".format( DBP_VERSION, self.key )
 
         # See if the site is online by making a small call to get the API version
         self.URLTest = 'api/apiversion'
@@ -148,6 +131,62 @@ class DBPBibles:
 
         self.languageList = self.versionList = self.volumeList = self.volumeNameDict = self.EnglishVolumeNameDict = None
     # end of DBPBibles.__init__
+
+
+    def getOnlineData( self, fieldREST, additionalParameters=None ):
+        """
+        Given a string, e.g., "api/apiversion"
+            Does an HTTP GET to our site.
+            Receives the JSON result (hopefully)
+            Converts the JSON bytes to a JSON string
+            Loads the JSON string into a Python container.
+            Returns the container.
+
+        Returns None if the data cannot be fetched.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( _("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+
+        requestString = '{}{}{}{}'.format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        #print( "Request string is", repr(requestString) )
+        try: HTTPResponseObject = urllib.request.urlopen( requestString )
+        except urllib.error.URLError as err:
+            #errorClass, exceptionInstance, traceback = sys.exc_info()
+            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            logging.error( "DBP URLError '{}' from {}".format( err, requestString ) )
+            return None
+        #print( "HTTPResponseObject", HTTPResponseObject )
+        contentType = HTTPResponseObject.info().get( 'content-type' )
+        #print( f"    contentType='{contentType}'" )
+        if contentType == 'application/json':
+            responseJSON = HTTPResponseObject.read()
+            #print( "responseJSON", len(responseJSON), responseJSON )
+            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
+            #print( "responseJSONencoding", responseJSONencoding )
+            responseSTR = responseJSON.decode( responseJSONencoding )
+            #print( "responseSTR", len(responseSTR), repr(responseSTR) )
+            return json.loads( responseSTR )
+        else:
+            print( 'contentType', contentType )
+            halt # Haven't had this contentType before
+    # end of DBPBibles.getOnlineData
+
+
+    def getDAM( self, refNumber ):
+        """
+        DAM = Digital Asset Management – the software system for users to administer the volumes contained in the DBP.
+        DAM ID – the unique 10-character id by which an individual volume is identified.
+
+        Returns the DAM ID which is typically something like: ENGNLVN2ET
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( f"DBPBibles.getDAM( {refNumber} )" )
+
+        gotDAM = self.volumeList[refNumber]['dam_id']
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( f"  got DAM='{gotDAM}'" )
+        return gotDAM
+    # end of DBPBibles.getDAM
 
 
     def fetchAllLanguages( self ):
@@ -174,10 +213,10 @@ class DBPBibles:
                 'language_iso_1': '', 'language_iso_2T': 'zun'}
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.fetchAllLanguages()") )
+            print( "DBPBibles.fetchAllLanguages()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("Downloading list of available languages from FCBH…") )
+            print( _("Downloading list of available languages from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
@@ -208,10 +247,10 @@ class DBPBibles:
             {'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.fetchAllVersions()") )
+            print( "DBPBibles.fetchAllVersions()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("Downloading list of available versions from FCBH…") )
+            print( _("Downloading list of available versions from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
@@ -274,9 +313,9 @@ class DBPBibles:
                 'collection_code': 'NT'}
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.fetchAllVolumes()") )
+            print( "DBPBibles.fetchAllVolumes()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Downloading list of available volumes from FCBH…") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Downloading list of available volumes from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.volumeList = self.getOnlineData( 'library/volume' ) # Get an alphabetically ordered list of dictionaries -- one for each volume
@@ -308,10 +347,10 @@ class DBPBibles:
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.fetchAllTextVolumes()") )
+            print( "DBPBibles.fetchAllTextVolumes()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("Creating list of available text volumes from FCBH…") )
+            print( _("Creating list of available text volumes from FCBH…") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -369,10 +408,10 @@ class DBPBibles:
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.fetchAllEnglishTextVolumes()") )
+            print( "DBPBibles.fetchAllEnglishTextVolumes()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("Creating list of available English text volumes from FCBH…") )
+            print( _("Creating list of available English text volumes from FCBH…") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -413,64 +452,11 @@ class DBPBibles:
     # end of DBPBibles.__str__
 
 
-    def getOnlineData( self, fieldREST, additionalParameters=None ):
-        """
-        Given a string, e.g., "api/apiversion"
-            Does an HTTP GET to our site.
-            Receives the JSON result (hopefully)
-            Converts the JSON bytes to a JSON string
-            Loads the JSON string into a Python container.
-            Returns the container.
-
-        Returns None if the data cannot be fetched.
-        """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
-
-        requestString = '{}{}{}{}'.format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        #print( "Request string is", repr(requestString) )
-        try: HTTPResponseObject = urllib.request.urlopen( requestString )
-        except urllib.error.URLError as err:
-            #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "DBP URLError '{}' from {}".format( err, requestString ) )
-            return None
-        #print( "HTTPResponseObject", HTTPResponseObject )
-        contentType = HTTPResponseObject.info().get( 'content-type' )
-        #print( "contentType", contentType )
-        if contentType == 'application/json':
-            responseJSON = HTTPResponseObject.read()
-            #print( "responseJSON", len(responseJSON), responseJSON )
-            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            #print( "responseJSONencoding", responseJSONencoding )
-            responseSTR = responseJSON.decode( responseJSONencoding )
-            #print( "responseSTR", len(responseSTR), repr(responseSTR) )
-            return json.loads( responseSTR )
-        else:
-            print( "contentType", contentType )
-            halt # Haven't had this contentType before
-    # end of DBPBibles.getOnlineData
-
-
-    def getDAM( self, refNumber ):
-        """
-        DAM = Digital Asset Management – the software system for users to administer the volumes contained in the DBP.
-        DAM ID – the unique 10-character id by which an individual volume is identified.
-
-        Returns the DAM ID which is typically something like: ENGNLVN2ET
-        """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.getDAM( {!r} )").format( refNumber ) )
-
-        return self.volumeList[refNumber]['dam_id']
-    # end of DBPBibles.getDAM
-
-
     def searchNames( self, searchText ):
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBibles.searchNames( {!r} )").format( searchText ) )
+            print( _("DBPBibles.searchNames( {!r} )").format( searchText ) )
 
         searchTextUC = searchText.upper()
         resultsList = []
@@ -479,7 +465,7 @@ class DBPBibles:
                 for refNumber in self.volumeNameDict[name]:
                     DAM = self.getDAM(refNumber)
                     if BibleOrgSysGlobals.debugFlag:
-                        print( exp("DAM: {}").format( DAM ) )
+                        print( _("DAM: {}").format( DAM ) )
                         if BibleOrgSysGlobals.debugFlag:
                             assert DAM.endswith('2ET') or DAM.endswith('1ET') # O2 (OT) or N2 (NT), plus ET for text
                     resultsList.append( (refNumber,DAM,) )
@@ -504,7 +490,7 @@ class DBPBible:
                 4-6: Version code, e.g., ESV
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.__init__( {!r} )").format( damRoot ) )
+            print( _("DBPBible.__init__( {!r} )").format( damRoot ) )
             assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
         self.damRoot = damRoot
 
@@ -512,7 +498,7 @@ class DBPBible:
         #InternalBible.__init__( self, givenFolderName, givenName, encoding )
 
         self.key = getSecurityKey() # Our personal key
-        self.URLFixedData = '?v={}&key={}'.format( DPB_VERSION, self.key )
+        self.URLFixedData = '?v={}&key={}'.format( DBP_VERSION, self.key )
 
         # See if the site is online by making a small call to get the API version
         self.URLTest = 'api/apiversion'
@@ -521,7 +507,7 @@ class DBPBible:
         if result:
             if 'Version' in result: self.onlineVersion = result['Version']
         else:
-            logging.critical( "DPBBible.__init__: Digital Bible Platform appears to be offline" )
+            logging.critical( "DBPBible.__init__: Digital Bible Platform appears to be offline" )
             raise ConnectionError # What should this really be?
 
         self.bookList = None
@@ -591,7 +577,7 @@ class DBPBible:
         Given an index, return the book object (or raise an IndexError)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.__getitem__( {!r} )").format( keyIndex ) )
+            print( _("DBPBible.__getitem__( {!r} )").format( keyIndex ) )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of DBPBible.__getitem__
@@ -608,7 +594,7 @@ class DBPBible:
         Returns None if the data cannot be fetched.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+            print( _("DBPBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
@@ -627,10 +613,10 @@ class DBPBible:
         Equivalent to the one in InternalBible, except we may have to fetch the data (if it's not already cached).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
+            print( _("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
 
         if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + exp("Retrieved from cache") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
         BBB = key.getBBB()
@@ -664,7 +650,7 @@ class DBPBible:
         (The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
+            print( _("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
 
         return self.getVerseDataList( key ), [] # No context
     # end of DBPBible.getContextVerseData
@@ -676,6 +662,8 @@ def demo():
     """
     Demonstrate how some of the above classes can be used.
     """
+    from VerseReferences import SimpleVerseKey
+
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # Test the DBPBibles class
@@ -707,7 +695,7 @@ def demo():
             print( "395", dbpBibles.volumeList[395] )
 
         if 0:
-            dbpBibles.fetchTextVolumes()
+            dbpBibles.fetchAllTextVolumes()
             print( "\nVolume name dict ({}):".format( len(dbpBibles.volumeNameDict) ) )
             for j, someName in enumerate( dbpBibles.volumeNameDict ):
                 #if 'English' in someName:
