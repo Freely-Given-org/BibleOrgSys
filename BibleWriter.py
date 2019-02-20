@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-19' # by RJH
+LastModifiedDate = '2019-02-20' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -4239,19 +4239,19 @@ class BibleWriter( InternalBible ):
                     USXfootnoteXML = '<note style="f" '
                     frOpen = fTextOpen = fCharOpen = False
                     for j,token in enumerate(USXfootnote.split('\\')):
-                        #print( "USX processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, USXfootnote )
+                        #print( f"USX processFootnote {j}: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
                         lcToken = token.lower()
                         if j==0:
-                            USXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
+                            USXfootnoteXML += f'caller="{token.rstrip()}">'
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 logging.error( _("toUSX2XML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 frOpen = False
                             if fTextOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 fTextOpen = False
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                             adjToken = token[3:]
@@ -4259,22 +4259,22 @@ class BibleWriter( InternalBible ):
                             frOpen = True
                         elif lcToken.startswith('fr* '):
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert frOpen and not fTextOpen and not fCharOpen
-                            USXfootnoteXML += '>' + adjToken + '</char>'
+                            USXfootnoteXML += f'>{adjToken}</char>'
                             frOpen = False
                         elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
                             if fCharOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += '>' + adjToken + '</char>'
+                                USXfootnoteXML += f'>{adjToken}</char>'
                                 fCharOpen = False
                             if frOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 frOpen = False
                             if fTextOpen:
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 fTextOpen = False
                             fMarker = lcToken.split()[0] # Get the bit before the space
-                            USXfootnoteXML += '<char style="{}"'.format( fMarker )
+                            USXfootnoteXML += f'<char style="{fMarker}"'
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
@@ -4283,9 +4283,38 @@ class BibleWriter( InternalBible ):
                                 #print( "toUSX2XML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
                                 #assert fTextOpen and not frOpen and not fCharOpen
                             if frOpen or fCharOpen or not fTextOpen:
-                                logging.error( "toUSX2XML.processFootnote: Problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
-                            USXfootnoteXML += '>' + adjToken + '</char>'
+                                logging.error( "toUSX2XML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                            USXfootnoteXML += f'>{adjToken}</char>'
                             fTextOpen = False
+                        elif lcToken.startswith('z'):
+                            #print( f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
+                            ixSpace = lcToken.find( ' ' )
+                            if ixSpace == -1: ixSpace = 9999
+                            ixAsterisk = lcToken.find( '*' )
+                            if ixAsterisk == -1: ixAsterisk = 9999
+                            if ixSpace < ixAsterisk: # Must be an opening marker
+                                if fCharOpen:
+                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
+                                    USXfootnoteXML += f'>{adjToken}</char>'
+                                    fCharOpen = False
+                                if frOpen:
+                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                                    frOpen = False
+                                if fTextOpen:
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                                    fTextOpen = False
+                                marker = lcToken[:ixSpace]
+                                USXfootnoteXML += f'<char style="{marker}"'
+                                adjToken = token[len(marker)+1:] # Get the bit after the space
+                                fCharOpen = marker
+                            elif ixAsterisk < ixSpace: # Must be an closing marker
+                                if not fCharOpen:
+                                    logging.error( "toUSX2XML.processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                                USXfootnoteXML += f'>{adjToken}</char>'
+                                fCharOpen = False
+                            else:
+                                logging.error( "toUSX2XML.processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
                         else: # Could be character formatting (or closing of character formatting)
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
@@ -4293,13 +4322,13 @@ class BibleWriter( InternalBible ):
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                    USXfootnoteXML += '>' + adjToken + '</char>'
+                                    USXfootnoteXML += f'>{adjToken}</char>'
                                     fCharOpen = False
                                 if frOpen:
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
-                                    USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                     frOpen = False
-                                USXfootnoteXML += '<char style="{}"'.format( firstToken )
+                                USXfootnoteXML += f'<char style="{firstToken}"'
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
@@ -4308,7 +4337,7 @@ class BibleWriter( InternalBible ):
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                             logging.warning( _("toUSX2XML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                        USXfootnoteXML += '>' + adjToken + '</char>'
+                                        USXfootnoteXML += f'>{adjToken}</char>'
                                         fCharOpen = False
                                     logging.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                 else:
@@ -4316,23 +4345,26 @@ class BibleWriter( InternalBible ):
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
-                                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
+                                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                                                assert not frOpen
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                                 logging.warning( _("toUSX2XML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                            USXfootnoteXML += '>' + adjToken + '</char>'
+                                            USXfootnoteXML += f'>{adjToken}</char>'
                                             fCharOpen = False
                                         logging.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logging.warning( _("toUSX2XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        #print( ALL_CHAR_MARKERS )
-                                        #halt
+                                        print( ALL_CHAR_MARKERS )
+                                        halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logging.warning( _("toUSX2XML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
-                        USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toUSX2XML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
-                    if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                    if fCharOpen:
+                        logging.info( _("toUSX2XML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
+                    if fTextOpen or fCharOpen:
+                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
                     return USXfootnoteXML
@@ -4747,19 +4779,19 @@ class BibleWriter( InternalBible ):
                     USXfootnoteXML = '<note style="f" '
                     frOpen = fTextOpen = fCharOpen = False
                     for j,token in enumerate(USXfootnote.split('\\')):
-                        #print( "USX processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, USXfootnote )
+                        #print( f"USX processFootnote {j}: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
                         lcToken = token.lower()
                         if j==0:
-                            USXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
+                            USXfootnoteXML += f'caller="{token.rstrip()}">'
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
                                 logging.error( _("toUSX3XML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 frOpen = False
                             if fTextOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 fTextOpen = False
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
                             adjToken = token[3:]
@@ -4767,22 +4799,22 @@ class BibleWriter( InternalBible ):
                             frOpen = True
                         elif lcToken.startswith('fr* '):
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert frOpen and not fTextOpen and not fCharOpen
-                            USXfootnoteXML += '>' + adjToken + '</char>'
+                            USXfootnoteXML += f'>{adjToken}</char>'
                             frOpen = False
                         elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
                             if fCharOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += '>' + adjToken + '</char>'
+                                USXfootnoteXML += f'>{adjToken}</char>'
                                 fCharOpen = False
                             if frOpen:
                                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 frOpen = False
                             if fTextOpen:
-                                USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                 fTextOpen = False
                             fMarker = lcToken.split()[0] # Get the bit before the space
-                            USXfootnoteXML += '<char style="{}"'.format( fMarker )
+                            USXfootnoteXML += f'<char style="{fMarker}"'
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
                             #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
@@ -4791,9 +4823,38 @@ class BibleWriter( InternalBible ):
                                 #print( "toUSX3XML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
                                 #assert fTextOpen and not frOpen and not fCharOpen
                             if frOpen or fCharOpen or not fTextOpen:
-                                logging.error( "toUSX3XML.processFootnote: Problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
-                            USXfootnoteXML += '>' + adjToken + '</char>'
+                                logging.error( "toUSX3XML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                            USXfootnoteXML += f'>{adjToken}</char>'
                             fTextOpen = False
+                        elif lcToken.startswith('z'):
+                            #print( f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
+                            ixSpace = lcToken.find( ' ' )
+                            if ixSpace == -1: ixSpace = 9999
+                            ixAsterisk = lcToken.find( '*' )
+                            if ixAsterisk == -1: ixAsterisk = 9999
+                            if ixSpace < ixAsterisk: # Must be an opening marker
+                                if fCharOpen:
+                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
+                                    USXfootnoteXML += f'>{adjToken}</char>'
+                                    fCharOpen = False
+                                if frOpen:
+                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                                    frOpen = False
+                                if fTextOpen:
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                                    fTextOpen = False
+                                marker = lcToken[:ixSpace]
+                                USXfootnoteXML += f'<char style="{marker}"'
+                                adjToken = token[len(marker)+1:] # Get the bit after the space
+                                fCharOpen = marker
+                            elif ixAsterisk < ixSpace: # Must be an closing marker
+                                if not fCharOpen:
+                                    logging.error( "toUSX3XML.processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                                USXfootnoteXML += f'>{adjToken}</char>'
+                                fCharOpen = False
+                            else:
+                                logging.error( "toUSX3XML.processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
                         else: # Could be character formatting (or closing of character formatting)
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
@@ -4801,13 +4862,13 @@ class BibleWriter( InternalBible ):
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                    USXfootnoteXML += '>' + adjToken + '</char>'
+                                    USXfootnoteXML += f'>{adjToken}</char>'
                                     fCharOpen = False
                                 if frOpen:
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
-                                    USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
                                     frOpen = False
-                                USXfootnoteXML += '<char style="{}"'.format( firstToken )
+                                USXfootnoteXML += f'<char style="{firstToken}"'
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
@@ -4816,7 +4877,7 @@ class BibleWriter( InternalBible ):
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                             logging.warning( _("toUSX3XML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                        USXfootnoteXML += '>' + adjToken + '</char>'
+                                        USXfootnoteXML += f'>{adjToken}</char>'
                                         fCharOpen = False
                                     logging.warning( _("toUSX3XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                 else:
@@ -4824,23 +4885,26 @@ class BibleWriter( InternalBible ):
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
-                                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
+                                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                                                assert not frOpen
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                                 logging.warning( _("toUSX3XML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                            USXfootnoteXML += '>' + adjToken + '</char>'
+                                            USXfootnoteXML += f'>{adjToken}</char>'
                                             fCharOpen = False
                                         logging.warning( _("toUSX3XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logging.warning( _("toUSX3XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        #print( ALL_CHAR_MARKERS )
-                                        #halt
+                                        print( ALL_CHAR_MARKERS )
+                                        halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logging.warning( _("toUSX3XML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
-                        USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toUSX3XML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
-                    if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
+                    if fCharOpen:
+                        logging.info( _("toUSX3XML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
+                    if fTextOpen or fCharOpen:
+                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
                     return USXfootnoteXML
