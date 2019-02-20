@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-02-20' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -807,15 +807,14 @@ class InternalBibleBook:
                     if self.fwmifCount != -1:
                         self.fwmifCount += 1
                         if self.fwmifCount <= self.maxNoncriticalErrorsPerBook:
-                            logging.error( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found {} without marked internal fields at {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
                         else: # we've reached our limit
-                            logging.error( _('processLineFix: Additional "Found without marked internal fields" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                            logging.warning( _('processLineFix: Additional "Found without marked internal fields" messages suppressed for {} {}').format( self.workName, self.BBB ) )
                             self.fwmifCount = -1 # So we don't do this again (for this book)
                     fixErrors.append( lineLocationSpace + _("Found {} without marked internal fields in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    self.addPriorityError( 84, C, V, _("{} should have an internal field marked").format( thisOne.title() ) )
+                    self.addPriorityError( 44, C, V, _("{} should have an internal field marked").format( thisOne.title() ) )
                     # Add the expected fields (could be the wrong ones, but saves lots of problems later, especially if exporting)
-                    if thisOne == 'cross-reference': add = 'xt'
-                    else: add = 'ft'
+                    add = 'xt' if thisOne=='cross-reference' else 'ft'
                     note = '{} \\{} {}'.format( caller, add, rest ) # Add in a default field
 
             # Now prepare a cleaned version
