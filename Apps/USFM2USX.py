@@ -63,6 +63,7 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 defaultInputFolder = '/home/robert/Paratext8Projects/MBTV/'
 defaultInputFolder = 'Tests/DataFilesForTests/USFM2AllMarkersProject/'
 # defaultInputFolder = 'Tests/DataFilesForTests/USFM3AllMarkersProject/'
+defaultInputFolder = 'Tests/DataFilesForTests/zTemp/'
 
 
 from gettext import gettext as _

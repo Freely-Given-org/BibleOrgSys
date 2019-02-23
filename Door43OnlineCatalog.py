@@ -39,10 +39,10 @@ More details are available from https://api-info.readthedocs.io/en/latest/index.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-16' # by RJH
+LastModifiedDate = '2019-02-22' # by RJH
 ShortProgName = "Door43OnlineCatalog"
 ProgName = "Door43 Online Catalog online handler"
-ProgVersion = '0.04'
+ProgVersion = '0.05'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -446,20 +446,20 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Test the Door43CatalogResources class
-    door43Resources = Door43CatalogResources()
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( door43Resources )
+    door43CatalogResources = Door43CatalogResources()
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( door43CatalogResources )
     #Door43CatalogResources.load() # takes a minute
     #print( Door43CatalogResources )
 
-    door43Resources.fetchCatalog()
+    door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print()
-        print( door43Resources )
+        print( door43CatalogResources )
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( f"\nLanguage list ({len(door43Resources.languageDict)}):" )
-        for j, (lg,lgDict) in enumerate( door43Resources.languageDict.items() ):
+            print( f"\nLanguage list ({len(door43CatalogResources.languageDict)}):" )
+        for j, (lg,lgDict) in enumerate( door43CatalogResources.languageDict.items() ):
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( '  Lg', j+1, lg, lgDict['direction'], lgDict['title'] )
             # lgDict.keys() are lgDict['identifier']
@@ -472,7 +472,7 @@ def demo():
                     print( f"   \"{something['title']}\" ({something['subject']}) ({len(something.keys())}) {something.keys()}" )
                 if not something['subject']:
                     logging.critical( f"Missing subject field from {lgDict['identifier']} {something['title']}" )
-                elif door43Resources.subjectNameList and something['subject'] not in door43Resources.subjectNameList:
+                elif door43CatalogResources.subjectNameList and something['subject'] not in door43CatalogResources.subjectNameList:
                     logging.critical( f"Unknown '{something['subject']}' subject field from {lgDict['identifier']} {something['title']}" )
             if 'category_labels' in lgDict:
                 if BibleOrgSysGlobals.verbosityLevel > 2:
@@ -483,8 +483,8 @@ def demo():
 
     if BibleOrgSysGlobals.verbosityLevel > 2:
         # Neatly list all available resources
-        print( f"\n  Resource list ({len(door43Resources.resourceList)}):" )
-        for j, (lg, resourceTitle, resourceEntry) in enumerate( door43Resources.resourceList ):
+        print( f"\n  Resource list ({len(door43CatalogResources.resourceList)}):" )
+        for j, (lg, resourceTitle, resourceEntry) in enumerate( door43CatalogResources.resourceList ):
             print( f"    {j+1:3}/ {lg:5} '{resourceTitle}'   ({resourceEntry['subject']})" )
             if 'formats' in resourceEntry:
                 formats = resourceEntry['formats']
@@ -497,8 +497,8 @@ def demo():
                 print( f"            '{formatEntry['format']}'  {formatEntry['url']}" )
 
     if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( f"\n  Bible list ({len(door43Resources.BibleList)}):" )
-        for j, (lg, resourceTitle, resourceEntry) in enumerate( door43Resources.BibleList ):
+        print( f"\n  Bible list ({len(door43CatalogResources.BibleList)}):" )
+        for j, (lg, resourceTitle, resourceEntry) in enumerate( door43CatalogResources.BibleList ):
             print( f"    {j+1:3}/ {lg:5} '{resourceTitle}'   ({resourceEntry['subject']})" )
             if 'formats' in resourceEntry:
                 formats = resourceEntry['formats']
@@ -515,12 +515,16 @@ def demo():
                  ('MAT','1','1'), ('JHN','3','16'), ('TIT','2','2'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the Door43CatalogBible class by finding a Bible
-        lgCode = 'en'
-        for desiredTitle in ('unfoldingWord Literal Text', 'unfoldingWord Simplified Text'):
+        for lgCode, desiredTitle in (
+                                        ('en','unfoldingWord Literal Text'),
+                                        ('en', 'unfoldingWord Simplified Text'),
+                                        ('fr','unfoldingWord Literal Text'),
+                                        ('el-x-koine','unfoldingWord Greek New Testament'),
+                                    ):
             if BibleOrgSysGlobals.verbosityLevel > 0: print()
-            USTDict = door43Resources.searchBibles( lgCode, desiredTitle )
-            if USTDict:
-                Door43CatalogBible1 = Door43CatalogBible( USTDict )
+            searchResultDict = door43CatalogResources.searchBibles( lgCode, desiredTitle )
+            if searchResultDict:
+                Door43CatalogBible1 = Door43CatalogBible( searchResultDict )
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
                 Door43CatalogBible1.preload()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
@@ -532,26 +536,6 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
             elif BibleOrgSysGlobals.verbosityLevel > 0:
                 print( f"{lgCode} '{desiredTitle}' was not found!" )
-
-
-    if 1: # Test the Door43CatalogBible class again
-        if BibleOrgSysGlobals.verbosityLevel > 0: print()
-        lgCode = 'fr'
-        desiredTitle = 'unfoldingWord Literal Text'
-        USTDict = door43Resources.searchBibles( lgCode, desiredTitle )
-        if USTDict:
-            Door43CatalogBible1 = Door43CatalogBible( USTDict )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
-            Door43CatalogBible1.preload()
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
-            for testRef in testRefs:
-                verseKey = SimpleVerseKey( *testRef )
-                if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( verseKey )
-                    print( " ", Door43CatalogBible1.getVerseDataList( verseKey ) )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogBible1 )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( f"{lgCode} '{desiredTitle}' was not found!" )
 # end of demo
 
 if __name__ == '__main__':
