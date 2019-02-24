@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-16' # by RJH
+LastModifiedDate = '2019-02-24' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.83'
@@ -132,7 +132,7 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.__str__()" )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.__str__()…" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
@@ -346,7 +346,7 @@ class InternalBible:
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("loadBookIfNecessary( {} )").format( BBB ) )
+            print( f"InternalBible.loadBookIfNecessary( {BBB} )…" )
             #print( "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
             #print( "bnr {}".format( self.bookNeedsReloading ) )
 
@@ -378,7 +378,7 @@ class InternalBible:
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("reloadBook( {} )").format( BBB ) )
+            print( f"InternalBible.reloadBook( {BBB} )…" )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -396,7 +396,7 @@ class InternalBible:
         Tries to re-index a loaded book.
         """
         if BibleOrgSysGlobals.debugFlag:
-            print( _("reProcessBook( {} )…").format( BBB ) )
+            print( f"InternalBible.reProcessBook( {BBB} )…" )
             assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
@@ -417,7 +417,8 @@ class InternalBible:
         Doesn't do a "discover" yet, in case it's not really required yet,
             coz discover() is quite time-consuming.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.doPostLoadProcessing()" )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( "InternalBible.doPostLoadProcessing()…" )
 
         self.loadedAllBooks = True
 

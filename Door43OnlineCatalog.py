@@ -39,10 +39,10 @@ More details are available from https://api-info.readthedocs.io/en/latest/index.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-22' # by RJH
+LastModifiedDate = '2019-02-24' # by RJH
 ShortProgName = "Door43OnlineCatalog"
 ProgName = "Door43 Online Catalog online handler"
-ProgVersion = '0.05'
+ProgVersion = '0.06'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -51,8 +51,11 @@ debuggingThisModule = False
 
 from singleton import singleton
 import os, logging
-import urllib.request, json
+import urllib.request
+import json
 import tempfile, zipfile
+from datetime import datetime
+
 
 import BibleOrgSysGlobals
 from USFMBible import USFMBible
@@ -330,13 +333,13 @@ class Door43CatalogResources:
     # end of Door43CatalogResources.getBibleResourceDict
 
 
-    def searchBibles( self, languageCode, BibleTitle ):
+    def searchBibles( self, languageCode=None, BibleTitle=None ):
         """
         Search thru the list of available online Bibles to find
-            a match of the language and title.
+            a match of the optional language and optional title.
 
         Returns the dictionary for the resource
-            (or a list of dictionaries if there's multiple matches
+            (or a list of dictionaries if there's multiple matches)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( f"Door43CatalogResources.searchBibles( {languageCode!r}, {BibleTitle!r} )" )
@@ -346,7 +349,8 @@ class Door43CatalogResources:
             #print( 'entry', type(entry), len(entry), repr(entry), '\n' )
             assert entry and isinstance( entry, tuple) and len(entry)==3
             lg, title, entryDict = entry
-            if lg==languageCode and title==BibleTitle:
+            if (languageCode is None or languageCode in lg) \
+            and (BibleTitle is None or BibleTitle in title):
                 assert isinstance( entryDict, dict )
                 if 'language' not in entryDict:
                     entryDict['language'] = lg
@@ -361,7 +365,9 @@ class Door43CatalogResources:
 
 class Door43CatalogBible( USFMBible ):
     """
-    Class to download and manipulate an online Door43 Bible.
+    Class to download and manipulate an online Door43 Bible from the catalog.
+
+    The interface provides a link to a zip file containing all of the USFM books.
     """
     def __init__( self, parameterOne, resourcesObject=None ):
         """
@@ -397,39 +403,54 @@ class Door43CatalogBible( USFMBible ):
             logging.critical( f"No zip URL found for '{resourceDict['language']}' '{resourceDict['title']}'" )
             return
 
-        # TODO: See if files already exist and are current (so don't download again)
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Downloading {:,} bytes from '{}'…".format( size, zipURL ) )
-        try: HTTPResponseObject = urllib.request.urlopen( zipURL )
-        except urllib.error.URLError as err:
-            #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "Door43 URLError '{}' from {}".format( err, requestString ) )
-            return None
-        # print( "  HTTPResponseObject", HTTPResponseObject )
-        contentType = HTTPResponseObject.info().get( 'content-type' )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "    contentType", contentType )
-        unzippedFolder = None
-        if contentType == 'application/zip':
-            myTempFile = tempfile.SpooledTemporaryFile()
-            myTempFile.write( HTTPResponseObject.read() )
-            unzippedFolder = os.path.join( BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER,
-                                    'Door43Catalog/', f"{resourceDict['language']}_{resourceDict['title']}" )
-            try: os.makedirs( unzippedFolder )
-            except FileExistsError: pass
-            with zipfile.ZipFile( myTempFile ) as myzip:
-                # NOTE: Could be a security risk here
-                myzip.extractall( unzippedFolder )
+        # See if files already exist and are current (so don't download again)
+        alreadyDownloadedFlag = False
+        unzippedFolderPath = os.path.join( BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDER,
+                                'Door43Catalog/', f"{resourceDict['language']}_{resourceDict['title']}/" )
+        if os.path.isdir( unzippedFolderPath ):
+            #print( f"Issued: {resourceDict['issued']}" )
+            issuedDatetime = datetime.strptime( resourceDict['issued'], '%Y-%m-%dT%H:%M:%S+00:00' )
+            #print( f"issuedDatetime: {issuedDatetime}" )
+            #print( f"folder: {os.stat(unzippedFolderPath).st_mtime}" )
+            folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderPath).st_mtime)
+            #print( f"folderModifiedDatetime: {folderModifiedDatetime}" )
+            alreadyDownloadedFlag = folderModifiedDatetime > issuedDatetime
+            #print( f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
+
+        if alreadyDownloadedFlag:
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Skipping download because folder '{}' already exists.".format( unzippedFolderPath ) )
+        else: # Download the zip file (containing all the USFM files, LICENSE.md, manifest.yaml, etc.)
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                print( "Downloading {:,} bytes from '{}'…".format( size, zipURL ) )
+            try: HTTPResponseObject = urllib.request.urlopen( zipURL )
+            except urllib.error.URLError as err:
+                #errorClass, exceptionInstance, traceback = sys.exc_info()
+                #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                logging.critical( "Door43 URLError '{}' from {}".format( err, zipURL ) )
+                return None
+            # print( "  HTTPResponseObject", HTTPResponseObject )
+            contentType = HTTPResponseObject.info().get( 'content-type' )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( "    contentType", contentType )
+            if contentType == 'application/zip':
+                try: os.makedirs( unzippedFolderPath )
+                except FileExistsError: pass
+                myTempFile = tempfile.SpooledTemporaryFile()
+                myTempFile.write( HTTPResponseObject.read() )
+                with zipfile.ZipFile( myTempFile ) as myzip:
+                    # NOTE: Could be a security risk here
+                    myzip.extractall( unzippedFolderPath )
+            else: halt # unknown content type
 
         # There's probably a folder inside this folder
-        folders = os.listdir( unzippedFolder )
+        folders = os.listdir( unzippedFolderPath )
         #print( 'folders', folders )
         assert len(folders) == 1
-        desiredFolder = folders[0]
-        #print( 'desiredFolder', desiredFolder )
+        desiredFolderName = folders[0] + '/'
+        #print( 'desiredFolderName', desiredFolderName )
 
-        USFMBible.__init__( self, os.path.join( unzippedFolder, desiredFolder ),
+        USFMBible.__init__( self, os.path.join( unzippedFolderPath, desiredFolderName ),
                                     givenName=resourceDict['title'], givenAbbreviation=resourceDict['identifier'] )
         self.objectNameString = 'Door43 USFM Bible object'
     # end of Door43CatalogBible.__init__
@@ -443,7 +464,7 @@ def demo():
     """
     from VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion, end='\n\n' )
 
     # Test the Door43CatalogResources class
     door43CatalogResources = Door43CatalogResources()
@@ -481,8 +502,7 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 2:
                     print( '    versification_labels', lgDict['versification_labels'] )
 
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        # Neatly list all available resources
+    if BibleOrgSysGlobals.verbosityLevel > 2: # Neatly list all available resources
         print( f"\n  Resource list ({len(door43CatalogResources.resourceList)}):" )
         for j, (lg, resourceTitle, resourceEntry) in enumerate( door43CatalogResources.resourceList ):
             print( f"    {j+1:3}/ {lg:5} '{resourceTitle}'   ({resourceEntry['subject']})" )

@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-02-24' # by RJH
 ShortProgName = "USFM2Bible"
 ProgName = "USFM2 Bible handler"
 ProgVersion = '0.77'
@@ -568,7 +568,8 @@ class USFM2Bible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX',): continue
+                if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                    continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( _("USFM2 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )

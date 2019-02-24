@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-16' # by RJH
+LastModifiedDate = '2019-02-24' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.78'
@@ -492,7 +492,7 @@ class USFMBible( Bible ):
         Note that sourceFolder can be None if we don't know that yet.
         """
         if debuggingThisModule:
-            print( "USFMBible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
+            print( f"USFMBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -527,7 +527,8 @@ class USFMBible( Bible ):
             unexpectedFolders = []
             for folderName in foundFolders:
                 if folderName.startswith( 'Interlinear_'): continue
-                if folderName in ('__MACOSX',): continue
+                if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                    continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
                 logging.info( _("USFM preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
@@ -588,7 +589,11 @@ class USFMBible( Bible ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-        if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
+        try:
+            if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
+        except AttributeError as e:
+            logging.critical( "Was a preload() done on this USFMBible?" )
+            raise e
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
