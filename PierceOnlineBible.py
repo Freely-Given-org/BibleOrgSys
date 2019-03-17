@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# OnlineBible.py
+# PierceOnlineBible.py
 #
-# Module handling Online Bible files
+# Module handling Larry Pierce's Online Bible files
 #
 # Copyright (C) 2015-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -34,10 +34,10 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "OnlineBible"
-ProgName = "Online Bible format handler"
-ProgVersion = '0.20'
+LastModifiedDate = '2019-03-10' # by RJH
+ShortProgName = "PierceOnlineBible"
+ProgName = "Pierce Online Bible format handler"
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -57,7 +57,7 @@ compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPPER
 
 
 
-def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Online Bible files or folders in the folder and in the next level down.
 
@@ -67,22 +67,22 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         returns None, or the number of Bibles found.
 
     if autoLoad is true and exactly one Online Bible is found,
-        returns the loaded OnlineBible object.
+        returns the loaded PierceOnlineBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("OnlineBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("PierceOnlineBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("OnlineBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( _("PierceOnlineBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " OnlineBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " PierceOnlineBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -97,9 +97,9 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if foundFileCount >= len(compulsoryFiles):
         numFound = 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OnlineBibleFileCheck got", numFound, givenFolderName )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            oB = OnlineBible( givenFolderName )
+            oB = PierceOnlineBible( givenFolderName )
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
         return numFound
@@ -112,9 +112,9 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("OnlineBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("PierceOnlineBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    OnlineBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    PierceOnlineBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -126,22 +126,22 @@ def OnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OnlineBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
-            oB = OnlineBible( foundProjects[0] )
+            oB = PierceOnlineBible( foundProjects[0] )
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
         return numFound
-# end of OnlineBibleFileCheck
+# end of PierceOnlineBibleFileCheck
 
 
 BOS = None
 
 
-class OnlineBible( Bible ):
+class PierceOnlineBible( Bible ):
     """
-    Class for reading, validating, and converting OnlineBible files.
+    Class for reading, validating, and converting PierceOnlineBible files.
 
     KJV OT has 23,145 verses = 5A69
         NT has  7,957 verses = 1F15
@@ -162,14 +162,14 @@ class OnlineBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFolder, os.R_OK ):
-            logging.critical( _("OnlineBible: Folder {!r} is unreadable").format( self.sourceFolder ) )
+            logging.critical( _("PierceOnlineBible: Folder {!r} is unreadable").format( self.sourceFolder ) )
 
         global BOS
         if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
         #self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of OnlineBible.__init__
+    # end of PierceOnlineBible.__init__
 
 
     def load( self ):
@@ -179,7 +179,7 @@ class OnlineBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading from {}…").format( self.sourceFolder ) )
 
 
-        def loadOnlineBibleMetadata():
+        def loadPierceOnlineBibleMetadata():
             """
             Version.Ext contains lines of text.
             """
@@ -199,14 +199,14 @@ class OnlineBible( Bible ):
                         for line in myFile:
                             lineCount += 1
                             if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                                logging.info( "loadOnlineBibleMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
+                                logging.info( "loadPierceOnlineBibleMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                             #if not line: continue # Just discard blank lines
                             lines.append( line )
                             lastLine = line
                 except UnicodeDecodeError:
-                    logging.error( _("loadOnlineBibleMetadata fails with encoding: {}{}").format( encoding, {} if encoding==encodings[-1] else ' -- trying again' ) )
+                    logging.error( _("loadPierceOnlineBibleMetadata fails with encoding: {}{}").format( encoding, {} if encoding==encodings[-1] else ' -- trying again' ) )
 
             if self.encoding is None and lines:
                 self.encoding = encoding
@@ -221,7 +221,7 @@ class OnlineBible( Bible ):
             #self.name = self.longName
 
             self.applySuppliedMetadata( 'Online' ) # Copy some to self.settingsDict
-        # end of load.loadOnlineBibleMetadata
+        # end of load.loadPierceOnlineBibleMetadata
 
 
         #def getBinaryString( binary, numBytes ):
@@ -1225,7 +1225,7 @@ class OnlineBible( Bible ):
 
 
         if 1:
-            loadOnlineBibleMetadata()
+            loadPierceOnlineBibleMetadata()
             loadVersion()
             loadTokenCharacters()
             loadVerseTextIndex()
@@ -1243,11 +1243,11 @@ class OnlineBible( Bible ):
         else: # for testing/debugging
             for something in ('AV','ASV','AKJV','CEVUK','Darby','KJ21','RWebster','WEBSTER','Wey','Williams','YLT',): # 'MART_1707',
                 self.abbreviation = something
-                self.sourceFolder = os.path.join( 'Tests/DataFilesForTests/OnlineBible/', something+'/' )
-                loadOnlineBibleMetadata()
+                self.sourceFolder = os.path.join( 'Tests/DataFilesForTests/PierceOnlineBible/', something+'/' )
+                loadPierceOnlineBibleMetadata()
             for something in ('AV','ASV','AKJV','CEVUK','Darby','KJ21','RWebster','WEBSTER','Wey','Williams','YLT',): # 'MART_1707',
                 self.abbreviation = something
-                self.sourceFolder = os.path.join( 'Tests/DataFilesForTests/OnlineBible/', something+'/' )
+                self.sourceFolder = os.path.join( 'Tests/DataFilesForTests/PierceOnlineBible/', something+'/' )
                 loadVersion()
             for vbh in VBH1s: print( '{:10} = {} {}'.format( vbh, len(VBH1s[vbh]), VBH1s[vbh] ) )
             for vbh in VBH2s: print( '{:10} = {} {}'.format( vbh, len(VBH2s[vbh]), VBH2s[vbh] ) )
@@ -1255,20 +1255,20 @@ class OnlineBible( Bible ):
             halt
 
         self.doPostLoadProcessing()
-    # end of OnlineBible.load
-# end of OnlineBible class
+    # end of PierceOnlineBible.load
+# end of PierceOnlineBible class
 
 
 
 def testOB( TOBfilename ):
     # Crudely demonstrate the Online Bible class
     import VerseReferences
-    testFolder = 'Tests/DataFilesForTests/OnlineBible/'
+    testFolder = 'Tests/DataFilesForTests/PierceOnlineBible/'
 
     TOBfolder = os.path.join( testFolder, TOBfilename+'/' )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Online Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TOBfolder, TOBfilename ) )
-    olb = OnlineBible( TOBfolder )
+    olb = PierceOnlineBible( TOBfolder )
     olb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( olb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1308,23 +1308,23 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = 'Tests/DataFilesForTests/OnlineBible/'
+    testFolder = 'Tests/DataFilesForTests/PierceOnlineBible/'
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = OnlineBibleFileCheck( testFolder )
+        result1 = PierceOnlineBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA1", result1 )
-        result2 = OnlineBibleFileCheck( testFolder, autoLoad=True )
+        result2 = PierceOnlineBibleFileCheck( testFolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA2", result2 )
-        result3 = OnlineBibleFileCheck( testFolder, autoLoadBooks=True )
+        result3 = PierceOnlineBibleFileCheck( testFolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA3", result3 )
 
         testSubfolder = os.path.join( testFolder, 'AV/' )
-        result3 = OnlineBibleFileCheck( testSubfolder )
+        result3 = PierceOnlineBibleFileCheck( testSubfolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB1", result3 )
-        result4 = OnlineBibleFileCheck( testSubfolder, autoLoad=True )
+        result4 = PierceOnlineBibleFileCheck( testSubfolder, autoLoad=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB2", result4 )
-        result5 = OnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        result5 = PierceOnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB3", result5 )
 
 
@@ -1379,4 +1379,4 @@ if __name__ == '__main__':
     demo()
 
     BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
-# end of OnlineBible.py
+# end of PierceOnlineBible.py

@@ -1516,7 +1516,7 @@ def demo():
                     'Tests/DataFilesForTests/MyBibleTest/',
                     'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
                     'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
-                    'Tests/DataFilesForTests/OnlineBible/',
+                    'Tests/DataFilesForTests/PierceOnlineBible/',
                     'Tests/DataFilesForTests/EasyWorshipBible/',
                     'Tests/DataFilesForTests/DrupalTest/',
                     'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',

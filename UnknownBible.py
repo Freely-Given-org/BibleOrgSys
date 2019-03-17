@@ -74,7 +74,7 @@ from ESwordCommentary import ESwordCommentaryFileCheck
 from MyBibleBible import MyBibleBibleFileCheck
 from PalmDBBible import PalmDBBibleFileCheck
 from PickledBible import PickledBibleFileCheck
-from OnlineBible import OnlineBibleFileCheck
+from PierceOnlineBible import PierceOnlineBibleFileCheck
 from EasyWorshipBible import EasyWorshipBibleFileCheck
 from SwordBible import SwordBibleFileCheck
 from CSVBible import CSVBibleFileCheck
@@ -213,12 +213,12 @@ class UnknownBible:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
 
                 # Search for Online Bibles
-                OnlineBibleStrictCount = OnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if OnlineBibleStrictCount:
-                    totalBibleStrictCount += OnlineBibleStrictCount
+                PierceOnlineBibleStrictCount = PierceOnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if PierceOnlineBibleStrictCount:
+                    totalBibleStrictCount += PierceOnlineBibleStrictCount
                     totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Online:' + str(OnlineBibleStrictCount) )
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: OnlineBibleStrictCount", OnlineBibleStrictCount )
+                    typesStrictlyFound.append( 'PierceOnline:' + str(PierceOnlineBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PierceOnlineBibleStrictCount", PierceOnlineBibleStrictCount )
 
                 # Search for EasyWorship Bibles
                 EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -385,7 +385,7 @@ class UnknownBible:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
             else:
                 theWordBibleStrictCount = MySwordBibleStrictCount = ESwordBibleStrictCount = ESwordCommentaryStrictCount = 0
-                MyBibleBibleStrictCount = PDBBibleStrictCount = OnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
+                MyBibleBibleStrictCount = PDBBibleStrictCount = PierceOnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
                 SwordBibleStrictCount = UnboundBibleStrictCount = DrupalBibleStrictCount = YETBibleStrictCount = 0
                 ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFM2BibleStrictCount = USFMBibleStrictCount = 0
                 DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
@@ -456,12 +456,12 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
 
             # Search for Online Bibles
-            OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if OnlineBibleCount:
-                totalBibleCount += OnlineBibleCount
+            PierceOnlineBibleCount = PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if PierceOnlineBibleCount:
+                totalBibleCount += PierceOnlineBibleCount
                 totalBibleTypes += 1
-                typesFound.append( 'Online:' + str(OnlineBibleCount) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OnlineBibleCount", OnlineBibleCount )
+                typesFound.append( 'PierceOnline:' + str(PierceOnlineBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PierceOnlineBibleCount", PierceOnlineBibleCount )
 
             # Search for EasyWorship Bibles
             EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -628,7 +628,7 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
         else: # we weren't given a folder to look in
             theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
-            MyBibleBibleCount = PDBBibleCount = OnlineBibleCount = EasyWorshipBibleCount = 0
+            MyBibleBibleCount = PDBBibleCount = PierceOnlineBibleCount = EasyWorshipBibleCount = 0
             SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
             ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFM2BibleCount = USFMBibleCount = 0
             DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
@@ -683,7 +683,7 @@ class UnknownBible:
 
         #if 1 or debuggingThisModule:
             #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
-                #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, OnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
+                #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
             #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
             #print( '  CSV={} F4SS={} VPL={}' \
@@ -692,7 +692,7 @@ class UnknownBible:
                 #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
         #if 0 and debuggingThisModule:
             #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
-                #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, OnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
+                #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
             #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
             #print( '  CSV={} F4SS={} VPL={}' \
@@ -730,9 +730,9 @@ class UnknownBible:
                 self.foundType = 'PalmDB Bible'
                 if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
-            elif OnlineBibleCount == 1:
-                self.foundType = 'Online Bible'
-                if autoLoad: return OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+            elif PierceOnlineBibleCount == 1:
+                self.foundType = 'Pierce Online Bible'
+                if autoLoad: return PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif EasyWorshipBibleCount == 1:
                 self.foundType = 'EasyWorship Bible'
@@ -902,7 +902,7 @@ def demo():
                     'Tests/DataFilesForTests/MyBibleTest/',
                     'Tests/DataFilesForTests/theWordTest/', 'Tests/DataFilesForTests/MySwordTest/',
                     'Tests/DataFilesForTests/YETTest/', 'Tests/DataFilesForTests/PDBTest/',
-                    'Tests/DataFilesForTests/OnlineBible/',
+                    'Tests/DataFilesForTests/PierceOnlineBible/',
                     'Tests/DataFilesForTests/EasyWorshipBible/',
                     'Tests/DataFilesForTests/DrupalTest/',
                     'Tests/DataFilesForTests/CSVTest1/', 'Tests/DataFilesForTests/CSVTest2/',
