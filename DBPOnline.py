@@ -64,10 +64,10 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-17' # by RJH
+LastModifiedDate = '2019-03-17' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform online handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -80,13 +80,13 @@ import urllib.request, json
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
+from GenericOnlineBible import GenericOnlineBible
 
 
 URL_BASE = 'http://dbt.io/'
 DBP_VERSION = '2'
 KEY_FILENAME = "DBPKey.txt"
 KEY_SEARCH_PATHS = ( KEY_FILENAME, os.path.join( "../BibleOrgSys/DataFiles", KEY_FILENAME ) )
-MAX_CACHED_VERSES = 100 # Per Bible version in use
 
 
 
@@ -475,7 +475,7 @@ class DBPBibles:
 
 
 
-class DBPBible:
+class DBPBible( GenericOnlineBible ):
     """
     Class to download and manipulate an online DBP Bible.
 
@@ -492,11 +492,11 @@ class DBPBible:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("DBPBible.__init__( {!r} )").format( damRoot ) )
             assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
-        self.damRoot = damRoot
 
          # Setup and initialise the base class first
-        #InternalBible.__init__( self, givenFolderName, givenName, encoding )
+        GenericOnlineBible.__init__( self )
 
+        self.damRoot = damRoot
         self.key = getSecurityKey() # Our personal key
         self.URLFixedData = '?v={}&key={}'.format( DBP_VERSION, self.key )
 
@@ -510,7 +510,7 @@ class DBPBible:
             logging.critical( "DBPBible.__init__: Digital Bible Platform appears to be offline" )
             raise ConnectionError # What should this really be?
 
-        self.bookList = None
+        #self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "DBPBible.__init__: bookList", len(bookList))#, bookList )
@@ -523,7 +523,7 @@ class DBPBible:
                 #assert isinstance( bookCodeDict, dict )
                 #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
 
-        self.books = OrderedDict()
+        #self.books = OrderedDict()
         if bookList: # Convert to a form that's easier for us to use later
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
@@ -534,8 +534,6 @@ class DBPBible:
                 #print( bookDict )
                 self.books[BBB] = bookDict
             del bookList
-
-        self.cache = OrderedDict()
     # end of DBPBible.__init__
 
 
@@ -550,37 +548,6 @@ class DBPBible:
         if self.books: result += ('\n' if result else '') + ' '*indent + _("Books: {}").format( len(self.books) )
         return result
     # end of DBPBible.__str__
-
-
-    def __len__( self ):
-        """
-        This method returns the number of books in the Bible.
-        """
-        return len( self.books )
-    # end of DBPBible.__len__
-
-
-    def __contains__( self, BBB ):
-        """
-        This method checks whether the Bible contains the BBB book.
-        Returns True or False.
-        """
-        if BibleOrgSysGlobals.debugFlag:
-            assert isinstance(BBB,str) and len(BBB)==3
-
-        return BBB in self.books
-    # end of DBPBible.__contains__
-
-
-    def __getitem__( self, keyIndex ):
-        """
-        Given an index, return the book object (or raise an IndexError)
-        """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("DBPBible.__getitem__( {!r} )").format( keyIndex ) )
-
-        return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
-    # end of DBPBible.__getitem__
 
 
     def getOnlineData( self, fieldREST, additionalParameters=None ):
@@ -610,15 +577,14 @@ class DBPBible:
 
     def getVerseDataList( self, key ):
         """
-        Equivalent to the one in InternalBible, except we may have to fetch the data (if it's not already cached).
+        Equivalent to the one in InternalBible, except we may have to fetch the data.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
 
-        if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + _("Retrieved from cache") )
-            self.cache.move_to_end( str(key) )
-            return self.cache[str(key)]
+        cachedResult = GenericOnlineBible.getCachedVerseDataList( self, key )
+        if isinstance( cachedResult, list): return cachedResult
+
         BBB = key.getBBB()
         if BBB in self.books:
             info = self.books[BBB]
@@ -632,10 +598,7 @@ class DBPBible:
                 if key.getVerseNumber()=='1': resultList.append( ('c#','c#',rawDataDict['chapter_id'],rawDataDict['chapter_id'],[]) )
                 resultList.append( ('v','v',rawDataDict['verse_id'],rawDataDict['verse_id'],[]) )
                 resultList.append( ('v~','v~',rawDataDict['verse_text'].strip(),rawDataDict['verse_text'].strip(),[]) )
-                self.cache[str(key)] = resultList
-                if len(self.cache) > MAX_CACHED_VERSES:
-                    #print( "Removing oldest cached entry", len(self.cache) )
-                    self.cache.popitem( last=False )
+                GenericOnlineBible.cacheVerse( self, key, resultList )
             return resultList
         else: # This version doesn't have this book
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
@@ -643,17 +606,17 @@ class DBPBible:
     # end of DBPBible.getVerseDataList
 
 
-    def getContextVerseData( self, key ):
-        """
-        Given a BCV key, get the verse data.
+    #def getContextVerseData( self, key ):
+        #"""
+        #Given a BCV key, get the verse data.
 
-        (The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
-        """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
+        #(The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
+        #"""
+        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            #print( _("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
 
-        return self.getVerseDataList( key ), [] # No context
-    # end of DBPBible.getContextVerseData
+        #return self.getVerseDataList( key ), [] # No context
+    ## end of DBPBible.getContextVerseData
 # end of class DBPBible
 
 
