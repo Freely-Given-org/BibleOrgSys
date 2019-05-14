@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2018 Robert Hunt
+# Copyright (C) 2013-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-05-14' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -73,6 +73,7 @@ from ESwordBible import ESwordBibleFileCheck
 from ESwordCommentary import ESwordCommentaryFileCheck
 from MyBibleBible import MyBibleBibleFileCheck
 from PalmDBBible import PalmDBBibleFileCheck
+from GoBible import GoBibleFileCheck
 from PickledBible import PickledBibleFileCheck
 from PierceOnlineBible import PierceOnlineBibleFileCheck
 from EasyWorshipBible import EasyWorshipBibleFileCheck
@@ -211,6 +212,14 @@ class UnknownBible:
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'PalmDB:' + str(PDBBibleStrictCount) )
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
+
+                # Search for GoBibles
+                GoBibleStrictCount = GoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if GoBibleStrictCount:
+                    totalBibleStrictCount += GoBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'GoBible:' + str(GoBibleStrictCount) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.recheckStrict: GoBibleStrictCount", GoBibleStrictCount )
 
                 # Search for Online Bibles
                 PierceOnlineBibleStrictCount = PierceOnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -390,7 +399,7 @@ class UnknownBible:
                 ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFM2BibleStrictCount = USFMBibleStrictCount = 0
                 DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
                 OpenSongBibleStrictCount = ZefaniaBibleStrictCount = HaggaiBibleStrictCount = VerseViewBibleStrictCount = 0
-                CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
+                GoBibleStrictCount = CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
 
             return totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
         # end of recheckStrict
@@ -454,6 +463,14 @@ class UnknownBible:
                 totalBibleTypes += 1
                 typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+
+            # Search for GoBibles
+            GoBibleCount = GoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if GoBibleCount:
+                totalBibleCount += GoBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'GoBible:' + str(GoBibleCount) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: GoBibleCount", GoBibleCount )
 
             # Search for Online Bibles
             PierceOnlineBibleCount = PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -633,7 +650,7 @@ class UnknownBible:
             ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFM2BibleCount = USFMBibleCount = 0
             DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
             OpenSongBibleCount = ZefaniaBibleCount = HaggaiBibleCount = VerseViewBibleCount = 0
-            CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
+            GoBibleCount = CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
 
         assert len(typesFound) == totalBibleTypes
         if totalBibleCount == 0:
@@ -686,8 +703,8 @@ class UnknownBible:
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
             #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
-            #print( '  CSV={} F4SS={} VPL={}' \
-                #.format( CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
+            #print( '  GB={} CSV={} F4SS={} VPL={}' \
+                #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
             #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
         #if 0 and debuggingThisModule:
@@ -695,8 +712,8 @@ class UnknownBible:
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
             #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
-            #print( '  CSV={} F4SS={} VPL={}' \
-                #.format( CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
+            #print( '  GB={} CSV={} F4SS={} VPL={}' \
+                #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
             #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
 
@@ -729,6 +746,10 @@ class UnknownBible:
             elif PDBBibleCount == 1:
                 self.foundType = 'PalmDB Bible'
                 if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif GoBibleCount == 1:
+                self.foundType = 'GoBible Bible'
+                if autoLoad: return GoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif PierceOnlineBibleCount == 1:
                 self.foundType = 'Pierce Online Bible'
@@ -881,6 +902,7 @@ def demo():
                     '../../../../../Data/Work/Bibles/OpenSong Bibles/',
                     '../../../../../Data/Work/Bibles/Zefania modules/',
                     '../../../../../Data/Work/Bibles/YET modules/',
+                    '../../../../../Data/Work/Bibles/GoBible modules/',
                     '../../../../../Data/Work/Bibles/MyBible modules/',
                     '../../../../../Data/Work/Matigsalug/Bible/MBTV/',
                     '../../../../AutoProcesses/Processed/',
