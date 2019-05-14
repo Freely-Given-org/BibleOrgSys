@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-20' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -3568,7 +3568,7 @@ class BibleWriter( InternalBible ):
                     if checkHTML != sectionHTML:
                         print( "\noriginal: {} {!r}".format( len(sectionHTML), sectionHTML ) )
                         print( "\ndecompressed: {} {!r}".format( len(checkHTML), checkHTML ) )
-                        for ix in range( 0, min( len(sectionHTML), len(checkHTML) ) ):
+                        for ix in range( min( len(sectionHTML), len(checkHTML) ) ):
                             if checkHTML[ix] != sectionHTML[ix]:
                                 if ix > 10: print( '\n', repr(sectionHTML[ix-10:ix+2]), '\n', repr(checkHTML[ix-10:ix+2]) )
                                 print( ix, repr(sectionHTML[ix]), repr(checkHTML[ix]) ); break

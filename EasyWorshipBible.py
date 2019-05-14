@@ -34,7 +34,7 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "EasyWorshipBible"
 ProgName = "EasyWorship Bible format handler"
 ProgVersion = '0.13'
@@ -411,7 +411,7 @@ class EasyWorshipBible( Bible ):
         #if debuggingThisModule: print( 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
         keep['introBlock'] = (index,fileBytes[index:index+32])
         hString = ''
-        for j in range( 0, 32 ):
+        for j in range( 32 ):
             char8 = fileBytes[index+j]
             #print( char8, repr(char8) )
             if char8 < 0x20: break
@@ -430,7 +430,7 @@ class EasyWorshipBible( Bible ):
         keep['moduleNameBlock'] = (index,moduleNameBlock)
         #if debuggingThisModule: print( 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
         nString = ''
-        for j in range( 0, 32 ):
+        for j in range( 32 ):
             char8 = fileBytes[index+j]
             #print( char8, repr(char8) )
             if char8 < 0x20: break
@@ -459,7 +459,7 @@ class EasyWorshipBible( Bible ):
             keep[blockName] = (index,bookInfoBlock)
             #if debuggingThisModule: print( blockName, hexlify( bookInfoBlock ), bookInfoBlock )
             bookName = ''
-            for j in range( 0, 32 ):
+            for j in range( 32 ):
                 char8 = fileBytes[index+j]
                 #print( char8, repr(char8) )
                 if char8 < 0x20: break # bookName seems quite optional -- maybe the English ones are assumed if empty???
@@ -471,7 +471,7 @@ class EasyWorshipBible( Bible ):
                 #print( 'bookName', repr(bookName) )
             numChapters = fileBytes[index]
             numVerses = []
-            for j in range( 0, numChapters ):
+            for j in range( numChapters ):
                 numVerses.append( fileBytes[index+j+1] )
             #print( "here1", 157-j-2, hexlify(fileBytes[index+j+2:index+157]), fileBytes[index+j+2:index+157] )
             if self.abbreviation != 'fn1938': # Why does this fail???

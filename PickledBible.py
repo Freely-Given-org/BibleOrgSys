@@ -47,10 +47,10 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-06' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -891,21 +891,26 @@ def demo():
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( "\nPickle Bible F{} testFilepath is: {}".format( j+1, testFilepath ) )
-                print( "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
+            if os.path.isfile( testFilepath ):
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
+            else:
+                logging.error( f"testFilepath '{testFilepath}' is not available on this computer!" )
+                continue
         pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "\nG: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
+            print( "\nG1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
         elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nG: getZippedPickledBiblesDetails()", len(pbdDictList) )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nG1: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
+            print( "\nG2: getZippedPickledBiblesDetails()", len(pbdDictList) )
+        if pbdDictList and BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nG3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
         pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "\nH: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
+            print( "\nH1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
         elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nH: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nH1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
+            print( "\nH2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
+        if pbdExtendedDictList and BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\nH3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
             #for a,v in pbdExtendedDictList[0].items(): print( "  {}={}".format( a, v ) )
 #end of demo
 

@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -76,7 +76,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.75'
@@ -1170,7 +1170,7 @@ class InternalBibleIndex:
                         ##print( "  makeIndex check at {} {}".format( j, entry ) )
                         ##print( "    indexEntryLineCount is {} thus including:".format( indexEntryLineCount ) )
                         #vCount = 0
-                        #for scj in range( 0, indexEntryLineCount ):
+                        #for scj in range( indexEntryLineCount ):
                             #thisEntry = self.givenBibleEntries[ j + scj ] # This is an InternalBibleEntry
                             ##print( "      {}".format( thisEntry ) )
                             #if thisEntry.getMarker() == 'v': vCount += 1
@@ -1178,7 +1178,7 @@ class InternalBibleIndex:
                         #if vCount > 1: # Should never happen -- verses should all have their own separate index entries
                             #print( "  makeIndex check for {} {} {}:{} at ({}) {}".format( self.name, self.BBB, strC, strV, j, entry ) )
                             #print( "    indexEntryLineCount is {} thus including:".format( indexEntryLineCount ) )
-                            #for scj in range( 0, indexEntryLineCount ):
+                            #for scj in range( indexEntryLineCount ):
                                 #print( "      {}".format( self.givenBibleEntries[ j + scj ] ) ) # This is an InternalBibleEntry
                             #print( "    vCount={}".format( vCount ) )
                             ##halt
@@ -1463,7 +1463,7 @@ class InternalBibleIndex:
                 for j, (iKey,iEntry) in enumerate( self.__indexData.items() ):
                     print( " {:3} {}: {}".format( j, iKey, iEntry ) )
                     if iEntry.entryCount > 1:
-                        for scj in range( 0, iEntry.entryCount ):
+                        for scj in range( iEntry.entryCount ):
                             print( "      {}".format( self.givenBibleEntries[ iEntry.entryIndex + scj ] ) ) # This is an InternalBibleEntry
                     if j > 40: break
                 halt

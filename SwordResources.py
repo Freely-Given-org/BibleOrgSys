@@ -6,7 +6,7 @@
 # Interface module handling Sword resources
 #   using either the Sword engine (if available) or else our own software
 #
-# Copyright (C) 2013-2018 Robert Hunt
+# Copyright (C) 2013-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,7 +34,7 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-23' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = '0.29'
@@ -174,7 +174,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         attributeReplacementResult = ''
         attributeCount = attributeString.count( '="' )
         #print( 'Attributes={} {!r}'.format( attributeCount, attributeString ) )
-        for j in range( 0, attributeCount ):
+        for j in range( attributeCount ):
             match2 = re.search( 'savlm="(.+?)"', attributeString )
             if match2:
                 savlm = match2.group(1)
@@ -1303,7 +1303,7 @@ class SwordInterface():
                 #return
 
 # UNFINISHED
-            for index in range( 0, 999999 ):
+            for index in range( 999999 ):
                 module.setIndex( index )
                 if module.getIndex() != index: break # Gone too far
 
@@ -1415,7 +1415,7 @@ class SwordInterface():
 
             bookCount = 0
             currentBBB = None
-            for index in range( 0, 999999 ):
+            for index in range( 999999 ):
                 module.setIndex( index )
                 if module.getIndex() != index: break # Gone too far
 

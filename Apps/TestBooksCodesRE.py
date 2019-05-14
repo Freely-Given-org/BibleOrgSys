@@ -5,7 +5,7 @@
 #
 # Module which checks regular expressions.
 #
-# Copyright (C) 2015 Robert Hunt
+# Copyright (C) 2015-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module which tests the regular expression for Bible Books Codes.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-25' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "TestBooksCodesRE"
 ProgName = "TestBooksCodes Regular Expressions"
 ProgVersion = '0.20'
@@ -104,7 +104,7 @@ def doOSIS():
             if j not in L: L[j] = {}
             if OB[j] in L[j]: L[j][OB[j]] += 1
             else: L[j][OB[j]] = 1
-    for k in range( 0, maxL ):
+    for k in range( maxL ):
         print( ' ', k, sorted(L[k]) )
     print( ' ', minL, maxL )
 

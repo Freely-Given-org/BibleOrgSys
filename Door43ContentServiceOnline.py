@@ -29,7 +29,7 @@ This module interfaces with the online Bible versions available
 In this module, we use:
     DCS = Door43 content service
 
-We currently use version 1 of the DCS.
+We currently use version 1.4.1 of the DCS.
 
 More details are available from https://api-info.readthedocs.io/en/latest/dcs.html
                             and https://git.door43.org/api/swagger.
@@ -37,10 +37,10 @@ More details are available from https://api-info.readthedocs.io/en/latest/dcs.ht
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-24' # by RJH
+LastModifiedDate = '2019-05-02' # by RJH
 ShortProgName = "Door43ContentService"
 ProgName = "Door43 Content Service online handler"
-ProgVersion = '0.02'
+ProgVersion = '0.03'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -335,14 +335,17 @@ class DCSBible( USFMBible ):
                 if contentType == 'application/octet-stream':
                     try: os.makedirs( unzippedFolderPath )
                     except FileExistsError: pass
-                    myTempFile = tempfile.SpooledTemporaryFile()
                     downloadedData = HTTPResponseObject.read()
                     if BibleOrgSysGlobals.verbosityLevel > 0:
                         print( f"  Downloaded {len(downloadedData):,} bytes from '{zipURL}'" )
+                    # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
+                    # myTempFile = tempfile.SpooledTemporaryFile()
+                    myTempFile = tempfile.TemporaryFile()
                     myTempFile.write( downloadedData )
                     with zipfile.ZipFile( myTempFile ) as myzip:
                         # NOTE: Could be a security risk here
                         myzip.extractall( unzippedFolderPath )
+                    myTempFile.close() # Automatically deletes the file
                 else:
                     print( "    contentType", repr(contentType) )
                     halt # unknown content type
@@ -351,7 +354,7 @@ class DCSBible( USFMBible ):
             # There's probably a folder inside this folder
             folders = os.listdir( unzippedFolderPath )
             #print( 'folders', folders )
-            assert len(folders) == 1
+            assert len(folders) == 1 # else maybe a previous download failed -- just manually delete the folder
             desiredFolderName = folders[0] + '/'
             #print( 'desiredFolderName', desiredFolderName )
             USFMBible.__init__( self, os.path.join( unzippedFolderPath, desiredFolderName ),
@@ -383,7 +386,8 @@ class DCSBible( USFMBible ):
                 # TODO: Change to .tar.gz instead of zip
                 nn = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                 if nn > 39: nn += 1 # DSC uses #41 for MAT (not 39)
-                USFMfilename = f'{nn:02}-{BBB}.usfm'
+                uBBB = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
+                USFMfilename = f'{nn:02}-{uBBB}.usfm'
                 zipURL = f'{self.baseURL}/raw/branch/master/{USFMfilename}'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( "Downloading {} file from '{}'…".format( BBB, zipURL ) )

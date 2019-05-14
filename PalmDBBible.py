@@ -37,7 +37,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.67'
@@ -323,7 +323,7 @@ class PalmDBBible( Bible ):
             #print( " totalIndicesCount =",totalIndicesCount )
             wordIndexMetadata = []
             expectedWords = 0
-            for n in range( 0, totalIndicesCount ):
+            for n in range( totalIndicesCount ):
                 wordLength, numFixedLengthWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
                 if BibleOrgSysGlobals.verbosityLevel > 3:
                     print( "   {:2}: wordLength={} numFixedLengthWords={} compressedFlag={}".format( n, wordLength, numFixedLengthWords, compressedFlag ) )
@@ -347,7 +347,7 @@ class PalmDBBible( Bible ):
                     print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}…".format( wordLength, numFixedLengthWords, compressedFlag ) )
                 wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
                 #else: print( wordCountIndexes )
-                for n in range( 0, numFixedLengthWords ):
+                for n in range( numFixedLengthWords ):
                     numRemainingBufferBytes = len(binary) - byteOffset
                     #print( "Got {} bytes available in buffer".format(  numRemainingBufferBytes ) )
                     if numRemainingBufferBytes < wordLength: # Need to continue to the next record
@@ -571,20 +571,20 @@ class PalmDBBible( Bible ):
                 print( "  uniqueIDseed={} nextRecordListID={} numDBRecords={}".format( uniqueIDseed, nextRecordListID, numDBRecords ) )
                 print( "  numDBRecords =", numDBRecords )
             tmpIndex = []
-            for n in range( 0, numDBRecords ):
+            for n in range( numDBRecords ):
                 binary8 = myFile.read( 8 )
                 dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
                 #print( '', dataOffset, recordAttributes, id0, id1, id2 )
                 assert recordAttributes + id0 + id1 + id2 == 0
                 tmpIndex.append( (dataOffset, recordAttributes, id0, id1, id2) )
-            for recordNumber in range( 0, len(tmpIndex) ):
+            for recordNumber in range( len(tmpIndex) ):
                 dataOffset, recordAttributes, id0, id1, id2 = tmpIndex[recordNumber]
                 recordLength = 4096 if recordNumber==len(tmpIndex)-1 else (tmpIndex[recordNumber+1][0] - dataOffset)
                 mainDBIndex.append( (dataOffset, recordLength, recordAttributes, id0, id1, id2) )
             if 0:
                 print( "  {} DB header bytes read".format( myFile.tell() ) )
                 print()
-                for recordNumber in range( 0, len(mainDBIndex) ):
+                for recordNumber in range( len(mainDBIndex) ):
                     dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
                     print( "Record {} @ {} len={} attribs={} {} {} {}".format( recordNumber, dataOffset, recordLength, recordAttributes, id0, id1, id2 ) )
                     #assert recordLength <= 4096
@@ -670,18 +670,18 @@ class PalmDBBible( Bible ):
                 numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
                 #print( longName, "numChapters", numChapters )
                 accumulatedVersesList = []
-                for c in range( 0, numChapters ):
+                for c in range( numChapters ):
                     accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
                     accumulatedVersesList.append( accumulatedVerses )
                     #print( c+1, accumulatedVerses, "accumulatedVerses" )
                 accumulatedTokensPerChapterList = []
-                for c in range( 0, numChapters ):
+                for c in range( numChapters ):
                     accumulatedTokensPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
                     #print( c+1, accumulatedTokensPerChapter, "accumulatedTokensPerChapter" )
                     accumulatedTokensPerChapterList.append( accumulatedTokensPerChapter )
                 accumulatedTokensPerVerseList = []
                 totalAccumulatedVerses = 0
-                for n in range( 0, accumulatedVerses ):
+                for n in range( accumulatedVerses ):
                     accumulatedTokensPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
                     #print( n+1, accumulatedTokensPerVerse, "accumulatedTokensPerVerse" )
                     accumulatedTokensPerVerseList.append( accumulatedTokensPerVerse )
@@ -741,7 +741,7 @@ class PalmDBBible( Bible ):
                 byteOffset = 0
                 binary = b''
                 verse = ''
-                for j in range( 0, totalCharacters ):
+                for j in range( totalCharacters ):
                     #if BBB=='EXO' and V==3: halt
                     #print( self.name )
                     #if (name == 'kjv' and BBB=='GAL' and V>5) \

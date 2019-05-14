@@ -51,7 +51,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
 ProgVersion = '0.55'
@@ -322,7 +322,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     if filename1.lower().endswith( '.nt' ): testament = 'NT'
     elif filename1.lower().endswith( '.ot' ): testament = 'OT'
     diffCount = 0
-    for k in range( 0, min( len1, len2 ) ):
+    for k in range( min( len1, len2 ) ):
         if lines1[k] != lines2[k]:
             if printFlag:
                 BBB, C, V = theWordGetBBBCV( k, testament )
@@ -330,7 +330,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
                         .format( BBB, C, V, k+1, repr(lines1[k]), len(lines1[k]), \
                                 BBB, C, V, k+1, repr(lines2[k]), len(lines2[k]) ) )
             if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                for x in range( 0, min( len(lines1[k]), len(lines2[k]) ) ):
+                for x in range( min( len(lines1[k]), len(lines2[k]) ) ):
                     if lines1[k][x] != lines2[k][x]:
                         print( "      Differ at position {} {!r} vs {!r}".format( x+1, lines1[k][x], lines2[k][x] ) )
                         break

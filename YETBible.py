@@ -58,6 +58,12 @@ Plus optional
 Limitations:
     Unsure whether italic codes in verse text could just be \it instead of \add
     Currently ignores encoded verse references in cross-references
+
+As of 2019-05-05, there's documentation here:
+    https://docs.google.com/document/d/1SGk70g7R3UfN1MTF5jFE9u5bNCY7J9Jeftiq5RjZA0A/edit
+
+Seems that a YES Bible file is a binary version of a YET text Bible file.
+    (We don't yet read .yes files.)
 """
 
 from gettext import gettext as _

@@ -82,7 +82,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.81'
@@ -641,7 +641,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Now compare the actual lines
     diffCount = 0
-    for k in range( 0, min( len1, len2 ) ):
+    for k in range( min( len1, len2 ) ):
         if lines1[k] != lines2[k]:
             if printFlag:
                 print( "  {}a:{!r} ({} chars)\n  {}b:{!r} ({} chars)" \
@@ -711,7 +711,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     # Now compare the actual lines
     diffCount = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
-    for k in range( 0, min( len1, len2 ) ):
+    for k in range( min( len1, len2 ) ):
         originalLine1, originalLine2 = lines1[k], lines2[k]
         adjustedLine1, adjustedLine2 = originalLine1, originalLine2
         while adjustedLine1 and adjustedLine1[-1]==' ': adjustedLine1 = adjustedLine1[:-1] # Remove the final space
@@ -837,7 +837,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
             diffCount += 1
             if diffCount > exitCount: return
         # Compare the subelements
-        for j in range( 0, min( len(element1), len(element2) ) ):
+        for j in range( min( len(element1), len(element2) ) ):
             compareElements( element1[j], element2[j] ) # Recursive call
             if diffCount > exitCount: return
 

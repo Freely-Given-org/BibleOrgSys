@@ -34,7 +34,7 @@ Files are usually:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-03-10' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "PierceOnlineBible"
 ProgName = "Pierce Online Bible format handler"
 ProgVersion = '0.21'
@@ -361,7 +361,7 @@ class PierceOnlineBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 print( "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
             vHeader3 = vHeader3[9:]
-            for ix in range( 0, 11+1 ): assert vHeader3[ix] == 0
+            for ix in range( 11+1 ): assert vHeader3[ix] == 0
             vHeader3 = vHeader3[12:]
             if BibleOrgSysGlobals.debugFlag:
                 print( "    {} vBH3 {} {}".format( self.abbreviation, len(vHeader3), hexlify(vHeader3) ) )
@@ -412,7 +412,7 @@ class PierceOnlineBible( Bible ):
                 vLen = vBytes[0]
                 #print( "vL2", repr(vLen) )
                 vString = ''
-                for j in range( 0, int(vLen/2) ):
+                for j in range( int(vLen/2) ):
                     #print( vBytes[2*j+1:2*j+3] )
                     char16, = struct.unpack( "<H", vBytes[2*j+1:2*j+3] )
                     #print( char16 )
@@ -693,7 +693,7 @@ class PierceOnlineBible( Bible ):
                 vString = ''
                 if self.characterBitSize == 8:
                     # Nine 8-bit chars filled with rubbish past the specified number
-                    for j in range( 0, vLen ):
+                    for j in range( vLen ):
                         #print( vBytes[2*j+1:2*j+3] )
                         char8 = optBytes[index+j+1]
                         #print( vLen, j, char8 )
@@ -705,7 +705,7 @@ class PierceOnlineBible( Bible ):
                 elif self.characterBitSize == 16:
                     # Nine 16-bit characters
                     vBytes = optBytes[index+1:index+19]
-                    for j in range( 0, int(vLen/2) ):
+                    for j in range( int(vLen/2) ):
                         #print( vBytes[2*j+1:2*j+3] )
                         try: char16, = struct.unpack( "<H", vBytes[2*j:2*j+2] )
                         except struct.error: logging.critical( "Struct error" ); index += 999999; break
@@ -786,7 +786,7 @@ class PierceOnlineBible( Bible ):
                     print( '    a {} {} {}'.format( len(indexEntry1), hexlify(indexEntry1), indexEntry1[3:] ) )
                     print( '     {:06x}={}'.format( diskPointer2, diskPointer2 ) )
                     print( '    b {} {} {}'.format( len(indexEntry2), hexlify(indexEntry2), indexEntry2[3:] ) )
-                for x in range( 0, 32 ):
+                for x in range( 32 ):
                     b1, w2 = indexEntry1[x+3], (indexEntry2[2*x+3+1]<<8) + indexEntry2[2*x+3]
                     if b1 == 0:
                         assert w2 == 0
@@ -804,7 +804,7 @@ class PierceOnlineBible( Bible ):
             assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
             assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
             #print( "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
-            #for index in range( 0, 150 ):
+            #for index in range( 150 ):
                 #print( "      {}: {:02x} @ {:04x}={}".format( index, self.xrefIndex[index][0], self.xrefIndex[index][1], self.xrefIndex[index][1] ) )
         # end of load.loadXrefIndex
 
@@ -870,7 +870,7 @@ class PierceOnlineBible( Bible ):
                 if 0 and len(self.xrefIndex) < 10:
                     print( '  {} {:06x}={}'.format( len(self.xrefIndex), diskPointer, diskPointer ) )
                     print( '    {} {} {}'.format( len(indexEntry), hexlify(indexEntry), indexEntry[3:] ) )
-                for x in range( 0, 32 ):
+                for x in range( 32 ):
                     w2 = (indexEntry[2*x+3+1]<<8) + indexEntry[2*x+3]
                     #print( '    {} w2={:04x}={} @ {}'.format( x, w2, w2, len(self.StrongsIndex) ) )
                     if w2 == 0 and len(self.StrongsIndex)>8849: break
@@ -1144,7 +1144,7 @@ class PierceOnlineBible( Bible ):
 
             bookCount = 0
             currentBBB = None
-            for n in range( 0, 31102 ):
+            for n in range( 31102 ):
                 BCVRef = BOS.convertAbsoluteVerseNumber( n+1 )
                 BBB, C, V = BCVRef
                 if BBB != currentBBB:
@@ -1189,14 +1189,14 @@ class PierceOnlineBible( Bible ):
                         verseString = getBibleText( verseStuff, BCVRef )
                         print( "\n{} {} {} = {}".format( self.abbreviation, n, BCVRef, repr(verseString) ) )
                         if 0:
-                            for j in range( 0, int( len(verseStuff)/2 ) ):
+                            for j in range( int( len(verseStuff)/2 ) ):
                                 w2 = (verseStuff[2*j+1]<<8) + verseStuff[2*j]
                                 print( '   {} {:04x}={} {!r}'.format( j, w2, w2, self.tokenString[w2:w2+3] ) )
                     except IndexError:
                         print( "No such verse: {} {} {}".format( self.abbreviation, n, BCVRef ) )
 
             if 0:
-                for n in range( 0, 31102 ):
+                for n in range( 31102 ):
                     BCVRef = BOS.convertAbsoluteVerseNumber( n+1 )
                     try:
                         verseString = getBibleText( getVerseBytes( n ), BCVRef )

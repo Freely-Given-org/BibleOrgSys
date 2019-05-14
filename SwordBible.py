@@ -40,7 +40,7 @@ Note: The demo takes about 4 minutes with our Sword code,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "SwordBible"
 ProgName = "Sword Bible format handler"
 ProgVersion = '0.36'
@@ -387,7 +387,7 @@ class SwordBible( Bible ):
 
             #bookCount = 0
             #currentBBB = None
-            #for index in range( 0, 999999 ):
+            #for index in range( 999999 ):
                 #module.setIndex( index )
                 #if module.getIndex() != index: break # Gone too far
 

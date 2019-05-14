@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "BibleBooksNames"
 ProgName = "Bible Books Names Systems handler"
 ProgVersion = '0.39'
@@ -328,7 +328,7 @@ class BibleBooksNamesSystems:
         for systemName in self.__DataDicts:
             #print( '\n'+repr(systemName) )
             #print( self.__DataDicts[systemName] )
-            #for j in range( 0, len(self.__DataDicts[systemName]) ):
+            #for j in range( len(self.__DataDicts[systemName]) ):
                 #print( '\nHere1', j, self.__DataDicts[systemName][j] )
             #for BBB in self.__DataDicts[systemName][2]:
                 #print( 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )

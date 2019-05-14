@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-20' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -367,7 +367,7 @@ class InternalBibleBook:
             assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
 
-        for loopCounter in range( 0, 10 ): # Do this a few times to iron every thing out
+        for loopCounter in range( 10 ): # Do this a few times to iron every thing out
             if forceDebugHere: print( loopCounter, "LOOPSTART", repr(ourText) )
             savedText = ourText
 
@@ -1498,7 +1498,7 @@ class InternalBibleBook:
         self._rawLines = newLines # replace the old set
         #print( 'RO-2', len(self._rawLines) )
         #print( self.BBB, "RL" )
-        #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+        #for j in range( 50 ): print( "", j, self._rawLines[j] )
 
         # For OSIS, change lines like:
         #    1/ p = ''
@@ -1549,7 +1549,7 @@ class InternalBibleBook:
         self._rawLines = newLines # replace the old set
         #print( 'RO-3', len(self._rawLines) )
         #print( self.BBB, "RL" )
-        #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+        #for j in range( 50 ): print( "", j, self._rawLines[j] )
     # end of InternalBibleBook.processLines.reorderRawOsisLines
 
 
@@ -2057,9 +2057,9 @@ class InternalBibleBook:
         print( "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
         numLines = 50
         if '_rawLines' in dir(self):
-            for j in range( 0, min( numLines, len(self._rawLines) ) ):
+            for j in range( min( numLines, len(self._rawLines) ) ):
                 print( " Raw {}: {} = {!r}".format( j, self._rawLines[j][0], self._rawLines[j][1] ) )
-        for j in range( 0, min( numLines, len(self._processedLines) ) ):
+        for j in range( min( numLines, len(self._processedLines) ) ):
             print( " Proc {}: {}{} = {!r}".format( j, self._processedLines[j][0], '({})'.format(self._processedLines[j][1]) if self._processedLines[j][1]!=self._processedLines[j][0] else '', self._processedLines[j][2] ) )
     # end of InternalBibleBook.debugPrint
 

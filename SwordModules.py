@@ -5,7 +5,7 @@
 #
 # Module handling Sword modules directly
 #
-# Copyright (C) 2012-2018 Robert Hunt
+# Copyright (C) 2012-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,7 +54,7 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-23' # by RJH
+LastModifiedDate = '2019-05-12' # by RJH
 ShortProgName = "SwordModules"
 ProgName = "Sword module handler"
 ProgVersion = '0.49'
@@ -404,7 +404,7 @@ class SwordModule():
             # Alternatively, shorter keys hashed from a pass phrase or generated randomly may be used.
             # For random keys, lengths of from 4 to 16 bytes are recommended, depending on how secure you want this to be.
             if not key: hashInit(); return # If we have been given no key, assume the default hash setup
-            cards = bytearray( range( 0, 256 ) ) # Start with cards all in order -- one of each
+            cards = bytearray( range( 256 ) ) # Start with cards all in order -- one of each
             #print( len(cards), cards ); halt
             # Swap the card at each position with some other card
             keyPos = rsum = 0
@@ -1935,7 +1935,7 @@ class SwordBibleModule( SwordModule, Bible ):
                         intC += 1
                         C = str( intC )
                         thisBook.addLine( 'c', C )
-                        for intV in range( 0, numVerses+1 ):
+                        for intV in range( numVerses+1 ):
                             V = str( intV )
                             #print( BBB, intC, intV )
                             #thisBook.addLine( 'v', str(intV) )
@@ -1999,7 +1999,7 @@ class SwordBibleModule( SwordModule, Bible ):
                         intC += 1
                         C = str( intC )
                         thisBook.addLine( 'c', C )
-                        for intV in range( 0, numVerses+1 ):
+                        for intV in range( numVerses+1 ):
                             V = str( intV )
                             #print( BBB, intC, intV )
                             #thisBook.addLine( 'v', str(intV) )
