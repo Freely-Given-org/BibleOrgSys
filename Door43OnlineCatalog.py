@@ -39,10 +39,10 @@ More details are available from https://api-info.readthedocs.io/en/latest/index.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-24' # by RJH
+LastModifiedDate = '2019-07-15' # by RJH
 ShortProgName = "Door43OnlineCatalog"
 ProgName = "Door43 Online Catalog online handler"
-ProgVersion = '0.06'
+ProgVersion = '0.08'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -177,44 +177,49 @@ class Door43CatalogResources:
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( f"    Discovered {len(self.subjectNameList)} Door43 subject fields" )
                 print( f"    Discovered {len(self.subjectDict)} sets of Door43 subject entries ({self.totalEntryCount} total entries)" )
-        else: # old code -- many individual downloads
-            # Download the subject lists from Door43 (around 700 bytes in 2019-02)
-            subjectJsonList = self.getOnlineData( 'subjects' ) # Get a normalised, alphabetically ordered list of subject strings
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "    subjectJsonList", len(subjectJsonList), subjectJsonList )
-                assert len(subjectJsonList) >= 12 # Otherwise we are losing stuff
-                assert isinstance( subjectJsonList, list )
-            if subjectJsonList:
-                # Extract the subject names
-                jsonFilenameList, self.subjectNameList = [], []
-                for subjectJsonURL in subjectJsonList:
-                    assert isinstance( subjectJsonURL, str ) # e.g., 'https://api.door43.org/v3/subjects/Translation_Words.json'
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "      subjectJsonURL", subjectJsonURL )
-                    bits1 = subjectJsonURL.split('/')
-                    assert len(bits1) == 6 # e.g., ['https:', '', 'api.door43.org', 'v3', 'subjects', 'Hebrew_Old_Testament.json']
-                    # print( "      bits1", bits1 )
-                    jsonFilenameList.append( bits1[-1] )
-                    subjectName = bits1[-1].split('.')[0] # e.g., 'Translation_Academy'
-                    self.subjectNameList.append( subjectName.replace( '_', ' ' ) )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "    subjectNameList", len(self.subjectNameList), self.subjectNameList )
-                    assert len(self.subjectNameList) == len(subjectJsonList) # Otherwise we are losing stuff
-                if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( f"    Downloaded {len(self.subjectNameList)} Door43 subject fields" )
+        #else: # old code -- many individual downloads
+            ## Download the subject lists from Door43 (around 700 bytes in 2019-02)
+            #subjectJsonList = self.getOnlineData( 'subjects' ) # Get a normalised, alphabetically ordered list of subject strings
+            #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                #print( "    subjectJsonList", len(subjectJsonList), subjectJsonList )
+                #assert len(subjectJsonList) >= 12 # Otherwise we are losing stuff
+                #assert isinstance( subjectJsonList, list )
+            #if subjectJsonList:
+                ## Extract the subject names
+                #jsonFilenameList, self.subjectNameList = [], []
+                #for subjectJsonURL in subjectJsonList:
+                    #assert isinstance( subjectJsonURL, str ) # e.g., 'https://api.door43.org/v3/subjects/Translation_Words.json'
+                    #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        #print( "      subjectJsonURL", subjectJsonURL )
+                    #bits1 = subjectJsonURL.split('/')
+                    #assert len(bits1) == 6 # e.g., ['https:', '', 'api.door43.org', 'v3', 'subjects', 'Hebrew_Old_Testament.json']
+                    ## print( "      bits1", bits1 )
+                    #jsonFilenameList.append( bits1[-1] )
+                    #subjectName = bits1[-1].split('.')[0] # e.g., 'Translation_Academy'
+                    #self.subjectNameList.append( subjectName.replace( '_', ' ' ) )
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    #print( "    subjectNameList", len(self.subjectNameList), self.subjectNameList )
+                    #assert len(self.subjectNameList) == len(subjectJsonList) # Otherwise we are losing stuff
+                #if BibleOrgSysGlobals.verbosityLevel > 1:
+                    #print( f"    Downloaded {len(self.subjectNameList)} Door43 subject fields" )
 
-                # Now load the individual subject files
-                self.totalEntryCount = 0
-                self.subjectDict = {}
-                for subjectName, subjectJsonFilename in zip(self.subjectNameList, jsonFilenameList):
-                    self.subjectDict[subjectName] = self.getOnlineData( f'subjects/{subjectJsonFilename}' )
-                    if BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( f"      Downloaded {len(self.subjectDict[subjectName])} Door43 '{subjectName}' subject entries" )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( f"{subjectName}: {self.subjectDict[subjectName]}" )
-                    self.totalEntryCount += len( self.subjectDict[subjectName] )
-                if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( f"    Downloaded {len(self.subjectDict)} sets of Door43 subject entries ({self.totalEntryCount} total entries)" )
+                ## Now load the individual subject files
+                #self.totalEntryCount = 0
+                #self.subjectDict = {}
+                #for subjectName, subjectJsonFilename in zip(self.subjectNameList, jsonFilenameList):
+                    #self.subjectDict[subjectName] = self.getOnlineData( f'subjects/{subjectJsonFilename}' )
+                    #if BibleOrgSysGlobals.verbosityLevel > 1:
+                        #print( f"      Downloaded {len(self.subjectDict[subjectName])} Door43 '{subjectName}' subject entries" )
+                    #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                        #print( f"{subjectName}: {self.subjectDict[subjectName]}" )
+                    #self.totalEntryCount += len( self.subjectDict[subjectName] )
+                    ##print( f"\n\n\n{subjectName}" )
+                    ##for something in self.subjectDict[subjectName]:
+                        ##assert isinstance( something, dict )
+                        ##if something['language'] == 'ru':
+                            ##print( f'\n{something}' )
+                #if BibleOrgSysGlobals.verbosityLevel > 0:
+                    #print( f"    Downloaded {len(self.subjectDict)} sets of Door43 subject entries ({self.totalEntryCount} total entries)" )
     # end of Door43CatalogResources.fetchSubjects
 
 
@@ -231,7 +236,7 @@ class Door43CatalogResources:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "Door43CatalogResources.fetchCatalog()…" )
 
-        #self.fetchSubjects() # Seems to cover the same info
+        #self.fetchSubjects() # Seems to cover the same info just from a different perspective
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  Downloading catalog of available resources from Door43…" )
@@ -268,6 +273,10 @@ class Door43CatalogResources:
                 #self.totalEntryCount += 1
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "\n    languageDict", len(self.languageDict), self.languageDict['en'] )
+        #for something in self.languageDict['ru']['resources']:
+            #assert isinstance( something, dict )
+            #print( f'\n{something}' )
+
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( f"    Downloaded {len(self.languageDict)} Door43 languages" )
         if BibleOrgSysGlobals.verbosityLevel > 2:
@@ -392,8 +401,14 @@ class Door43CatalogBible( USFMBible ):
         #print( 'resourceDict', resourceDict )
         #print( 'resourceDict', resourceDict.keys() )
 
-        #print( 'formats', resourceDict['formats'] )
-        for formatDict in resourceDict['formats']:
+        if debuggingThisModule: print( 'formats', resourceDict['formats'] )
+        if 'formats' in resourceDict:
+            formats = resourceDict['formats']
+        else:
+            assert len(resourceDict['projects']) == 1
+            formats = resourceDict['projects'][0]['formats']
+        assert formats
+        for formatDict in formats:
             #print( 'formatDict', formatDict )
             formatString = formatDict['format']
             if 'application/zip;' in formatString and 'usfm' in formatString:
@@ -436,7 +451,9 @@ class Door43CatalogBible( USFMBible ):
             if contentType == 'application/zip':
                 try: os.makedirs( unzippedFolderPath )
                 except FileExistsError: pass
-                myTempFile = tempfile.SpooledTemporaryFile()
+                # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
+                # myTempFile = tempfile.SpooledTemporaryFile()
+                myTempFile = tempfile.TemporaryFile()
                 myTempFile.write( HTTPResponseObject.read() )
                 with zipfile.ZipFile( myTempFile ) as myzip:
                     # NOTE: Could be a security risk here
@@ -517,8 +534,30 @@ def demo():
                 print( f"            '{formatEntry['format']}'  {formatEntry['url']}" )
 
     if BibleOrgSysGlobals.verbosityLevel > 1:
+        # List all Bibles (i.e., all USFM format)
         print( f"\n  Bible list ({len(door43CatalogResources.BibleList)}):" )
         for j, (lg, resourceTitle, resourceEntry) in enumerate( door43CatalogResources.BibleList ):
+            print( f"    {j+1:3}/ {lg:5} '{resourceTitle}'   ({resourceEntry['subject']})" )
+            if 'formats' in resourceEntry:
+                formats = resourceEntry['formats']
+            else:
+                assert len(resourceEntry['projects']) == 1
+                formats = resourceEntry['projects'][0]['formats']
+            assert formats
+            for formatEntry in formats:
+                assert isinstance( formatEntry, dict )
+                print( f"            '{formatEntry['format']}'  {formatEntry['url']}" )
+
+        # List all Open Bible Stories
+        OBSList = []
+        for lg, lgEntry in door43CatalogResources.languageDict.items():
+            for resourceEntry in lgEntry['resources']:
+                assert isinstance( resourceEntry, dict )
+                resourceTuple = lg, resourceEntry['title'], resourceEntry
+                if 'Bible Stories' in resourceEntry['subject']:
+                    OBSList.append( resourceTuple )
+        print( f"\n  Bible Stories list ({len(OBSList)}):" )
+        for j, (lg, resourceTitle, resourceEntry) in enumerate( OBSList ):
             print( f"    {j+1:3}/ {lg:5} '{resourceTitle}'   ({resourceEntry['subject']})" )
             if 'formats' in resourceEntry:
                 formats = resourceEntry['formats']
@@ -536,6 +575,10 @@ def demo():
 
     if 1: # Test the Door43CatalogBible class by finding a Bible
         for lgCode, desiredTitle in (
+                                        ('ru','Russian Synodal Bible'),
+                                        ('ru','Russian Unlocked Literal Bible'),
+                                        ('ru','Russian Open Bible'),
+                                        ('ru','Russion Literal Bible'),
                                         ('en','unfoldingWord Literal Text'),
                                         ('en', 'unfoldingWord Simplified Text'),
                                         ('fr','unfoldingWord Literal Text'),
