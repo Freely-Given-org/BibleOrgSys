@@ -122,8 +122,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.78</version>
-      <date>2018-12-19</date>
+      <version>0.79</version>
+      <date>2019-09-06</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -3367,6 +3367,15 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
 
+  <!-- Code to use for a TEST book -->
+  <BibleBookCodes>
+    <nameEnglish>TEST</nameEnglish>
+    <referenceAbbreviation>TST</referenceAbbreviation>
+    <referenceNumber>998</referenceNumber>
+    <sequenceNumber>998</sequenceNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
   <!-- Code to use for an UNKNOWN book -->
   <BibleBookCodes>
     <nameEnglish>UNKNOWN</nameEnglish>
@@ -3376,6 +3385,6 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
 
-  <!-- referenceNumbers 900..1,000 are reserved for user defined books -->
+  <!-- referenceNumbers 900..997 are reserved for user defined books -->
 
 </BibleBooksCodes>
