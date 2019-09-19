@@ -28,10 +28,10 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-14' # by RJH
+LastModifiedDate = '2019-09-19' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
-ProgVersion = '0.80'
+ProgVersion = '0.81'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,8 +72,8 @@ class BibleBooksCodes:
             standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleBooksCodes_Tables.pickle" )
             if XMLFilepath is None \
             and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
-            and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
+            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
+            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:

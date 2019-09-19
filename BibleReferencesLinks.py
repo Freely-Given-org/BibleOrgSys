@@ -5,7 +5,7 @@
 #
 # Module handling BibleReferencesLinks functions
 #
-# Copyright (C) 2015-2016 Robert Hunt
+# Copyright (C) 2015-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-02-25' # by RJH
+LastModifiedDate = '2019-09-19' # by RJH
 ShortProgName = "BibleReferencesLinks"
 ProgName = "Bible References Links handler"
 ProgVersion = '0.40'
@@ -208,14 +208,14 @@ class BibleReferencesLinks:
             #standardXMLFilepath = os.path.join( dataFilepath, "BibleReferencesLinks.xml" )
             #standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleReferencesLinks_Tables.pickle" )
             ##print( os.access( standardPickleFilepath, os.R_OK ) )
-            ##print( os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] )
-            ##print( os.stat(standardPickleFilepath)[9] )
-            ##print( os.stat(standardXMLFilepath)[9] )
-            ##print( os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9] )
+            ##print( os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime )
+            ##print( os.stat(standardPickleFilepath).st_ctime )
+            ##print( os.stat(standardXMLFilepath).st_ctime )
+            ##print( os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime )
             #if XMLFilepath is None \
             #and os.access( standardPickleFilepath, os.R_OK ) \
-            #and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
-            #and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
+            #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
+            #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:

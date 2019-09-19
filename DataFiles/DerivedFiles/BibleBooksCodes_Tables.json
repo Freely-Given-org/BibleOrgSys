@@ -4642,6 +4642,25 @@
       "nameEnglish": "Unspecified extra XXG",
       "typicalSection": "BAK"
     },
+    "998": {
+      "referenceAbbreviation": "TST",
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": null,
+      "possibleAlternativeBooks": null,
+      "nameEnglish": "TEST",
+      "typicalSection": "???"
+    },
     "999": {
       "referenceAbbreviation": "UNK",
       "SBLAbbreviation": null,
@@ -9305,6 +9324,25 @@
       "nameEnglish": "Unspecified extra XXG",
       "typicalSection": "BAK"
     },
+    "TST": {
+      "referenceNumber": 998,
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": null,
+      "possibleAlternativeBooks": null,
+      "nameEnglish": "TEST",
+      "typicalSection": "???"
+    },
     "UNK": {
       "referenceNumber": 999,
       "SBLAbbreviation": null,
@@ -9564,6 +9602,7 @@
     "HYP",
     "STR",
     "SEM",
+    "TST",
     "UNK"
   ],
   "SBLAbbreviationDict": {
@@ -15988,6 +16027,10 @@
     "UNSPECIFIED EXTRA XXG": [
       860,
       "XXG"
+    ],
+    "TEST": [
+      998,
+      "TST"
     ],
     "UNKNOWN": [
       999,

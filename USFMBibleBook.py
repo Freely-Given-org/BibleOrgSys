@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-19' # by RJH
+LastModifiedDate = '2019-09-06' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.52'
@@ -43,22 +43,6 @@ import os, logging
 import BibleOrgSysGlobals
 from USFMFile import USFMFile
 from Bible import BibleBook
-
-
-#def exp( messageString ):
-    #"""
-    #Expands the message string in debug mode.
-    #Prepends the module name to a error or warning message string
-        #if we are in debug mode.
-    #Returns the new string.
-    #"""
-    #try: nameBit, errorBit = messageString.split( ': ', 1 )
-    #except ValueError: nameBit, errorBit = '', messageString
-    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit, errorBit )
-## end of exp
-
 
 
 sortedNLMarkers = None
@@ -312,6 +296,16 @@ def demo():
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
         else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+
+    if 0: # Test with translationCore test files
+        testFolder = '../../../ExternalPrograms/usfm-js/__tests__/resources/'
+        for filename in os.listdir( testFolder ):
+            if filename.endswith( '.usfm' ):
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    print( f"\nLoading translationCore test file: {filename}…" )
+                #filepath = os.path.join( testFolder, filename )
+                UBB = USFMBibleBook( 'test', 'TST' )
+                UBB.load( filename, testFolder )
 # end of demo
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2016 Robert Hunt
+# Copyright (C) 2010-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-04-23' # by RJH
+LastModifiedDate = '2019-09-19' # by RJH
 ShortProgName = "BiblePunctuationSystems"
 ProgName = "Bible Punctuation Systems handler"
-ProgVersion = '0.43'
+ProgVersion = '0.44'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -72,8 +72,8 @@ class BiblePunctuationSystems:
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
-                        if pickle8 <= os.stat( XMLfilepath )[8] \
-                        or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
+                        if pickle8 <= os.stat( XMLfilepath ).st_mtime \
+                        or pickle9 <= os.stat( XMLfilepath ).st_ctime: # The pickle file is older
                             picklesGood = False; break
             if picklesGood:
                 import pickle

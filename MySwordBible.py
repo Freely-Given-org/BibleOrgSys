@@ -51,10 +51,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
+LastModifiedDate = '2019-09-07' # by RJH
 ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = '0.35'
+ProgVersion = '0.36'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -504,7 +504,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
                         result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
                         verseData, context = result
                     except KeyError: # Missing verses
-                        logging.warning( "BibleWriter.toMySword: missing source verse at {} {}:{}".format( BBB, C, V ) )
+                        logging.warning( "BibleWriter.createMySwordModule: missing source verse at {} {}:{}".format( BBB, C, V ) )
                     # Handle some common versification anomalies
                     if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
                         try:
@@ -543,7 +543,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
             sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
                 (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
             lineCount += 1
-    # end of toMySword.writeMSBook
+    # end of createMySwordModule.writeMSBook
 
 
     # Set-up their Bible reference system
@@ -645,16 +645,16 @@ def createMySwordModule( self, outputFolder, controlDict ):
     cursor.close()
 
     if mySettings['unhandledMarkers']:
-        logging.warning( "BibleWriter.toMySword: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+        logging.warning( "BibleWriter.createMySwordModule: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled toMySword markers were {}").format( mySettings['unhandledMarkers'] ) )
+            print( "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
-        logging.warning( "toMySword: Unhandled books were {}".format( unhandledBooks ) )
+        logging.warning( "createMySwordModule: Unhandled books were {}".format( unhandledBooks ) )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled toMySword books were {}").format( unhandledBooks ) )
+            print( "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
 
     # Now create the gzipped file
     if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Compressing {} MySword file…".format( filename ) )
@@ -663,7 +663,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     tar.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        print( "  BibleWriter.toMySword finished successfully." )
+        print( "  BibleWriter.createMySwordModule finished successfully." )
     return True
 # end of createMySwordModule
 
@@ -704,7 +704,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
 
         if 0: # Now export the Bible and compare the round trip
-            MySwB.toMySword()
+            MySwB.createMySwordModule()
             #doaResults = MySwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/BOS_MySword_Reexport/"

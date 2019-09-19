@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2018 Robert Hunt
+# Copyright (C) 2011-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,10 +35,10 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
+LastModifiedDate = '2019-09-19' # by RJH
 ShortProgName = "USFM3Markers"
 ProgName = "USFM3 Markers handler"
-ProgVersion = '0.03'
+ProgVersion = '0.04'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -294,8 +294,8 @@ class USFM3Markers:
             standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "USFM3Markers_Tables.pickle" )
             if XMLFilepath is None \
             and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
-            and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
+            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
+            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
