@@ -36,7 +36,7 @@ A class which extends InternalBible to add Bible export functions.
 Contains functions:
     toPickleObject( self, outputFolder=None )
     toPickledBible( self, outputFolder=None )
-    toJSONBible( self, outputFolder=None )
+    toBOSJSONBible( self, outputFolder=None )
     makeLists( outputFolder=None )
     toBOSBCV( self, outputFolder=None ) -- one file per verse using our internal Bible format
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
+LastModifiedDate = '2019-09-07' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.96'
@@ -250,7 +250,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toJSONBible( self, outputFolder=None, sourceURL=None, licenceString=None ):
+    def toBOSJSONBible( self, outputFolder=None, sourceURL=None, licenceString=None ):
         """
         Saves the Python book objects as json files
             then the Bible object (less books)
@@ -259,91 +259,18 @@ class BibleWriter( InternalBible ):
 
         Note: This can add up to a couple of GB if discovery data is included!
         """
-        from JSONBible import BOOK_FILENAME, INFO_FILENAME, VERSION_FILENAME, ZIPPED_FILENAME
-        if BibleOrgSysGlobals.debugFlag: print( "toJSONBible( {}, {}, {} )".format( outputFolder, sourceURL, licenceString ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toJSONBible" )
+        from JSONBible import createBOSJSONBible
+        if BibleOrgSysGlobals.debugFlag: print( "toBOSJSONBible( {}, {}, {} )".format( outputFolder, sourceURL, licenceString ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSJSONBible" )
         if not outputFolder: outputFolder = 'OutputFiles/BOS_JSONBible_Export/'
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         if sourceURL is None: sourceURL = "Source: (unknown)"
         if licenceString is None: licenceString = "Licence: (unknown)"
+        controlDict = {}
 
-        createdFilenames = []
-
-        # First save the individual books
-        for BBB,bookObject in self.books.items():
-            filename = BOOK_FILENAME.format( BBB )
-            createdFilenames.append( filename )
-            filepath = os.path.join( outputFolder, filename )
-            with open( filepath, 'wb' ) as jsonOutputFile:
-                try:
-                    json.dump( bookObject, jsonOutputFile, ensure_ascii=False )
-                except TypeError as err:
-                    logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBook: {0} {1}".format( sys.exc_info()[0], err ) )
-                    logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json book into {}".format( filename ) )
-                    return False
-
-        # Now json the main object attributes (less the books)
-        filepath = os.path.join( outputFolder, INFO_FILENAME )
-        createdFilenames.append( INFO_FILENAME )
-        with open( filepath, 'wb' ) as jsonOutputFile:
-            try:
-                for attributeName in dir( self ):
-                    #print( "here1: attributeName =", repr(attributeName) )
-                    attributeValue = self.__getattribute__( attributeName )
-                    #print( "here2", repr(attributeValue) )
-                    attributeType = type( attributeValue )
-                    #print( "here3: attributeType =", repr(attributeType) )
-                    typeAsString = str(attributeType)
-                    #print( "here4: typeAsString =", repr(typeAsString) )
-                    #print( 'attrib', attributeName, typeAsString )
-                    if '__' not in attributeName and 'method' not in typeAsString:
-                        if attributeName=='books':
-                            #print( '  Skipping books' )
-                            pass
-                        else:
-                            #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
-                            json.dump( attributeName, jsonOutputFile, ensure_ascii=False )
-                            json.dump( attributeValue, jsonOutputFile, ensure_ascii=False )
-            except TypeError as err:
-                logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBible: {0} {1}".format( sys.exc_info()[0], err ) )
-                logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json Bible into {}".format( filename ) )
-                return False
-
-        # Now json the version object
-        from InternalBible import ProgNameVersionDate as IBProgVersion
-        from InternalBibleBook import ProgNameVersionDate as IBBProgVersion
-        from InternalBibleInternals import ProgNameVersionDate as IBIProgVersion
-        filepath = os.path.join( outputFolder, VERSION_FILENAME )
-        createdFilenames.append( VERSION_FILENAME )
-        with open( filepath, 'wb' ) as jsonOutputFile:
-            for something in ( ProgNameVersionDate, datetime.now().isoformat(' '),
-                              IBProgVersion, IBBProgVersion, IBIProgVersion,
-                              self.getAName(), self.getBookList(),
-                              sourceURL, licenceString ):
-                try:
-                    #print( "Pickling", repr(something) )
-                    json.dump( something, jsonOutputFile, ensure_ascii=False )
-                except TypeError as err:
-                    logging.error( "BibleOrgSysGlobals: Unexpected error in jsonBible: {0} {1}".format( sys.exc_info()[0], err ) )
-                    logging.critical( "BibleOrgSysGlobals.jsonObject: Unable to json Bible into {}".format( filename ) )
-                    return False
-
-        # Now create a zipped version of the entire folder
-        zipFilename = self.getAName( abbrevFirst=True )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert zipFilename
-        zipFilename = BibleOrgSysGlobals.makeSafeFilename( zipFilename+'.json.zip' )
-        zipFilepath = os.path.join( outputFolder, zipFilename )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} JSON files…".format( len(createdFilenames) ) )
-        zf = zipfile.ZipFile( zipFilepath, 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in createdFilenames:
-            zf.write( os.path.join( outputFolder, filename ), filename )
-        zf.close()
-
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            print( "  BibleWriter.toJSONBible finished successfully." )
-        return True
-    # end of BibleWriter.toJSONBible
+        return createBOSJSONBible( self, outputFolder, controlDict )
+    # end of BibleWriter.toBOSJSONBible
 
 
 
