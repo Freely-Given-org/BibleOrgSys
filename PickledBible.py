@@ -47,7 +47,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-06' # by RJH
+LastModifiedDate = '2019-09-26' # by RJH
 ShortProgName = "PickledBible"
 ProgName = "Pickle Bible handler"
 ProgVersion = '0.13'
@@ -64,7 +64,7 @@ from collections import OrderedDict
 import BibleOrgSysGlobals
 from Bible import Bible
 from InternalBibleBook import InternalBibleBook
-from InternalBibleInternals import InternalBibleIndex, InternalBibleEntryList
+from InternalBibleInternals import InternalBibleCVIndex, InternalBibleEntryList
 
 
 
@@ -336,7 +336,7 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
         attributeValue = pickle.load( pickleFileObject )
         #print( "Attribute {}={!r}".format( attributeName, attributeValue ) )
         assert attributeValue is None \
-            or isinstance( attributeValue, (str,bool,InternalBibleIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+            or isinstance( attributeValue, (str,bool,InternalBibleCVIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
         #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
@@ -363,7 +363,7 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
         attributeValue = pickle.load( pickleFileObject )
         #print( "Attribute {}={}".format( attributeName, attributeValue ) )
         assert attributeValue is None \
-            or isinstance( attributeValue, (str,bool,InternalBibleIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+            or isinstance( attributeValue, (str,bool,InternalBibleCVIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
         #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )

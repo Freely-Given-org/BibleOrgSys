@@ -38,10 +38,10 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-14' # by RJH
+LastModifiedDate = '2019-09-19' # by RJH
 ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = '0.34'
+ProgVersion = '0.35'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -894,6 +894,18 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( "  A2 result5 is: {}".format( result5 ) )
                     print( "  A2 result6 is: {}".format( result6 ) )
+
+        #from Bible import Bible
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #uB = UnknownBible( testFolder )
+        #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
+        #if BibleOrgSysGlobals.verbosityLevel > 2:
+            #print( "  A3 result1 is: {}".format( result1 ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+        #if isinstance( result1, Bible ):
+            #thisBible = result1
+            #thisBible.check()
+            #errorDictionary = thisBible.getErrors()
 
 
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here

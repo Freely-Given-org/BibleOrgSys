@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
+LastModifiedDate = '2019-09-26' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.97'
@@ -75,7 +75,7 @@ from USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MAR
 from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, \
-    InternalBibleIndex, \
+    InternalBibleCVIndex, \
     InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
 from BibleReferences import BibleAnchorReference
@@ -2025,7 +2025,7 @@ class InternalBibleBook:
         if self._indexedFlag: return # Can only do it once
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
-        self._CVIndex = InternalBibleIndex( self.workName, self.BBB )
+        self._CVIndex = InternalBibleCVIndex( self.workName, self.BBB )
         self._CVIndex.makeCVIndex( self._processedLines )
 
         #if self.BBB=='GEN':
