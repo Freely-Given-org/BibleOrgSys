@@ -217,6 +217,9 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
 
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )

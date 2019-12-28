@@ -65,7 +65,7 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own here
+inputFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _
@@ -80,7 +80,10 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 import os
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+import sys
+sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
+sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
 from UnknownBible import UnknownBible
 
@@ -122,10 +125,13 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
-        print(f"Output should be in {os.path.join(os.getcwd(), 'OutputFiles/')} folder.")
+        print(f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )

@@ -79,10 +79,11 @@ import os, shutil
 
 # Allow the system to find the BOS even when the app is down in its own folder
 import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-sys.path.append( '..' ) # Append the above folder to the path to search for the BOS (so it can also be run dirrect from the Apps folder)
-import BibleOrgSysGlobals
-from UnknownBible import UnknownBible
+sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
+sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
@@ -115,7 +116,7 @@ def main():
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
 
-        defaultOutputFolder = os.path.join( os.getcwd(), 'OutputFiles/', 'BOS_USX2_Export/' )
+        defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( f"\n{ShortProgName}: removing previous {defaultOutputFolder} folder…" )
@@ -135,6 +136,9 @@ def main():
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )

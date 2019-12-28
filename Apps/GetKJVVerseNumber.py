@@ -63,10 +63,12 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 
 # Allow the system to find the BOS even when the app is down in its own folder
 import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
+sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
-from BibleOrganisationalSystems import BibleOrganisationalSystem
-from BibleReferences import BibleSingleReference
+from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from Reference.BibleReferences import BibleSingleReference
 
 
 def main():
@@ -127,6 +129,9 @@ def main():
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )

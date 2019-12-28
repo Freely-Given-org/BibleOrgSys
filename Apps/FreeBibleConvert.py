@@ -39,11 +39,13 @@ ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), La
 debuggingThisModule = False
 
 
-import sys, os.path, logging
+import os.path, logging
 from datetime import datetime
 
+import sys
+sys.path.append( 'BibleOrgSys/' )
+
 # BibleOrgSys imports
-if __name__ == '__main__': sys.path.append( '../BibleOrgSys/' )
 import BibleOrgSysGlobals
 from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
@@ -51,13 +53,15 @@ from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
 
 ID_LINE = "Free Bible Version New Testament Version 2.1.1"
 
+BIBLES_FOLDERPATH = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+
 #INPUT_FILEPATH = '/home/robert/FBVNT2.1.1.LOExport.txt'
 #INPUT_FILEPATH = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
-INPUT_FILEPATH = '../../../../../Data/Work/Bibles/English translations/Free Bible/FBVNT2.1.1.txt'
+INPUT_FILEPATH = os.path.join( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/FBVNT2.1.1.txt' )
 
 # Subfolder USFM/ gets added to OUTPUT_FOLDERPATH for writing the individual USFM files
-OUTPUT_FOLDERPATH = 'OutputFiles/FreeBibleConversion/'
-#OUTPUT_FOLDERPATH = '../../../../../Data/Work/Bibles/English translations/Free Bible/'
+OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'FreeBibleConversion/' )
+#OUTPUT_FOLDERPATH = os.path.join( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/' )
 
 
 def splitAndWriteBooks( entireBibleText, folderpath ):
@@ -250,14 +254,14 @@ def main():
         # Write out entire file for checking
         if not os.path.exists( OUTPUT_FOLDERPATH):
             os.makedirs( OUTPUT_FOLDERPATH )
-        filepath = os.path.join( OUTPUT_FOLDERPATH, 'FBV.NT.usfm' )
+        filepath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 
     # Write out the USFM files
-    USFMFolderpath = os.path.join( OUTPUT_FOLDERPATH, 'USFM/' )
+    USFMFolderpath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'USFM/' )
     if not os.path.exists( USFMFolderpath):
         os.makedirs( USFMFolderpath )
     splitAndWriteBooks( entireText, USFMFolderpath )

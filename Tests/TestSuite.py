@@ -38,6 +38,8 @@ import sys, unittest
 sourceFolder = "."
 sys.path.append( sourceFolder )
 
+if __name__ == '__main__':
+    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests

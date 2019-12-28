@@ -2,9 +2,17 @@ __pycache__/
 *.pyc
 *.o
 
+.mypy_cache/
+
 Logs/
 DownloadedResources/
+ExtraStuff/
+Misc/
+ObjectCache/
 OutputFiles/
+DistributableResources/
+PrivateResources/
+TempTestData/
 
 *.bak
 *.bak2

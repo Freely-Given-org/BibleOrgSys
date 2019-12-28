@@ -63,7 +63,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.29</version>
-      <date>2018-12-12</date>
+      <date>2019-11-10</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -457,7 +457,7 @@ See the supplied ReadMe.txt for more details.
   </BibleOrganisationalSystem>
 
   <BibleOrganisationalSystem type="translation">
-    <referenceAbbreviation>GB</referenceAbbreviation>
+    <referenceAbbreviation>GrtB</referenceAbbreviation>
     <languageCode>eng</languageCode>
     <name>Great Bible</name>
     <name>Cromwell Bible</name>
@@ -648,7 +648,7 @@ See the supplied ReadMe.txt for more details.
   </BibleOrganisationalSystem>
 
   <BibleOrganisationalSystem type="translation">
-    <referenceAbbreviation>GENB-NT</referenceAbbreviation>
+    <referenceAbbreviation>GenB-NT</referenceAbbreviation>
     <languageCode>eng</languageCode>
     <name>Geneva Bible New Testament</name>
     <translator>William Whittingham</translator>
@@ -664,7 +664,7 @@ See the supplied ReadMe.txt for more details.
   </BibleOrganisationalSystem>
 
   <BibleOrganisationalSystem type="translation">
-    <referenceAbbreviation>GENB</referenceAbbreviation>
+    <referenceAbbreviation>GenB</referenceAbbreviation>
     <languageCode>eng</languageCode>
     <name>Geneva Bible</name>
     <comment>Known as "The Breeches Bible"</comment>
@@ -675,7 +675,7 @@ See the supplied ReadMe.txt for more details.
     <translator>Thomas Sampson</translator>
     <translator>Willian Cole</translator>
     <derivedFrom>TYN</derivedFrom>
-    <derivedFrom>GENB-NT</derivedFrom>
+    <derivedFrom>GenB-NT</derivedFrom>
     <publicationDate>1560</publicationDate>
     <comment>Produced in quarto size with Calvanistic notes</comment>
     <versificationSystem>KJV</versificationSystem>
@@ -689,11 +689,12 @@ See the supplied ReadMe.txt for more details.
   </BibleOrganisationalSystem>
 
   <BibleOrganisationalSystem type="translation">
-    <referenceAbbreviation>BB</referenceAbbreviation>
+    <referenceAbbreviation>BishB</referenceAbbreviation>
     <languageCode>eng</languageCode>
     <name>The Bishops' Bible</name>
     <translator>Nine bishops</translator>
-    <derivedFrom>GB</derivedFrom>
+    <derivedFrom>GrtB</derivedFrom>
+    <derivedFrom>GenB</derivedFrom>
     <publicationDate>1568</publicationDate>
     <comment>Last printed in 1606</comment>
     <versificationSystem>KJV</versificationSystem>
@@ -730,7 +731,7 @@ See the supplied ReadMe.txt for more details.
     <name>Authorized Version</name>
     <derivedFrom>BNTG-9</derivedFrom>
     <derivedFrom>TYN</derivedFrom>
-    <derivedFrom>BB</derivedFrom>
+    <derivedFrom>BishB</derivedFrom>
     <publicationDate>1611</publicationDate>
     <versificationSystem>KJV</versificationSystem>
     <punctuationSystem>English</punctuationSystem>

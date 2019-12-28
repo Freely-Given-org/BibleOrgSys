@@ -1111,8 +1111,8 @@
         "REV"
       ]
     },
-    "GB_translation": {
-      "referenceAbbreviation": "GB",
+    "GrtB_translation": {
+      "referenceAbbreviation": "GrtB",
       "type": "translation",
       "languageCode": "eng",
       "name": [
@@ -1436,8 +1436,8 @@
         "NTG"
       ]
     },
-    "GENB-NT_translation": {
-      "referenceAbbreviation": "GENB-NT",
+    "GenB-NT_translation": {
+      "referenceAbbreviation": "GenB-NT",
       "type": "translation",
       "languageCode": "eng",
       "name": [
@@ -1481,8 +1481,8 @@
         "REV"
       ]
     },
-    "GENB_translation": {
-      "referenceAbbreviation": "GENB",
+    "GenB_translation": {
+      "referenceAbbreviation": "GenB",
       "type": "translation",
       "languageCode": "eng",
       "name": [
@@ -1495,7 +1495,7 @@
       "booksNamesSystem": "eng_traditional",
       "derivedFrom": [
         "TYN",
-        "GENB-NT"
+        "GenB-NT"
       ],
       "includesBooks": [
         "GEN",
@@ -1581,8 +1581,8 @@
         "REV"
       ]
     },
-    "BB_translation": {
-      "referenceAbbreviation": "BB",
+    "BishB_translation": {
+      "referenceAbbreviation": "BishB",
       "type": "translation",
       "languageCode": "eng",
       "name": [
@@ -1594,7 +1594,8 @@
       "bookOrderSystem": "EuropeanBible",
       "booksNamesSystem": "eng_traditional",
       "derivedFrom": [
-        "GB"
+        "GrtB",
+        "GenB"
       ],
       "includesBooks": [
         "GEN",
@@ -1796,7 +1797,7 @@
       "derivedFrom": [
         "BNTG-9",
         "TYN",
-        "BB"
+        "BishB"
       ],
       "includesBooks": [
         "GEN",
@@ -8500,8 +8501,8 @@
     "MB": [
       "MB_translation"
     ],
-    "GB": [
-      "GB_translation"
+    "GrtB": [
+      "GrtB_translation"
     ],
     "SNTG-1": [
       "SNTG-1_edition"
@@ -8548,14 +8549,14 @@
     "BNTG-11": [
       "BNTG-11_edition"
     ],
-    "GENB-NT": [
-      "GENB-NT_translation"
+    "GenB-NT": [
+      "GenB-NT_translation"
     ],
-    "GENB": [
-      "GENB_translation"
+    "GenB": [
+      "GenB_translation"
     ],
-    "BB": [
-      "BB_translation"
+    "BishB": [
+      "BishB_translation"
     ],
     "DRB": [
       "DRB_translation"
@@ -9045,11 +9046,11 @@
     "MB_translation": [
       "MB_translation"
     ],
-    "GB": [
-      "GB_translation"
+    "GrtB": [
+      "GrtB_translation"
     ],
-    "GB_translation": [
-      "GB_translation"
+    "GrtB_translation": [
+      "GrtB_translation"
     ],
     "SNTG-1": [
       "SNTG-1_edition"
@@ -9141,23 +9142,23 @@
     "BNTG-11_edition": [
       "BNTG-11_edition"
     ],
-    "GENB-NT": [
-      "GENB-NT_translation"
+    "GenB-NT": [
+      "GenB-NT_translation"
     ],
-    "GENB-NT_translation": [
-      "GENB-NT_translation"
+    "GenB-NT_translation": [
+      "GenB-NT_translation"
     ],
-    "GENB": [
-      "GENB_translation"
+    "GenB": [
+      "GenB_translation"
     ],
-    "GENB_translation": [
-      "GENB_translation"
+    "GenB_translation": [
+      "GenB_translation"
     ],
-    "BB": [
-      "BB_translation"
+    "BishB": [
+      "BishB_translation"
     ],
-    "BB_translation": [
-      "BB_translation"
+    "BishB_translation": [
+      "BishB_translation"
     ],
     "DRB": [
       "DRB_translation"

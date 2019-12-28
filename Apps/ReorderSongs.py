@@ -60,14 +60,16 @@ debuggingThisModule = False
 
 import sys, os #, logging
 
-sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
+sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
 import SFMFile
 
 
 testFolder = 'Tests/DataFilesForTests/'
 testFile = 'Songs.sfm'
-outputFolder = 'OutputFiles/'
+outputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
 
 
 def main():
@@ -113,6 +115,9 @@ def main():
 #end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )

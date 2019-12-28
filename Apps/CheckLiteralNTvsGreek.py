@@ -67,11 +67,12 @@ import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
 import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-sys.path.append( '..' ) # Append the above folder to the path to search for the BOS (so it can also be run dirrect from the Apps folder)
+sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
+sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
-from VerseReferences import SimpleVerseKey
-from Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
+from Reference.VerseReferences import SimpleVerseKey
+from Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
 
 
@@ -153,6 +154,9 @@ def main():
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
