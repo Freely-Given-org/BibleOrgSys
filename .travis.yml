@@ -21,8 +21,8 @@ install:
   - pip install pipenv
   - pipenv install --dev --skip-lock
 
-#script:
-  #pipenv run pytest -v
+script:
+  pipenv run pytest -v
 
 #after_success:
   #pipenv run codecov

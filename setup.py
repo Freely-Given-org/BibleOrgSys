@@ -180,7 +180,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
 
-        "Operating System :: OS Independent",
+        'Operating System :: OS Independent',
     ],
 
     # Specify which Python versions you support. In contrast to the
