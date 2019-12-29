@@ -6,26 +6,27 @@ python:
   - 3.6
   - 3.7
   - 3.8
+  - nightly
 
 matrix:
   include:
   - python: 3.8
-    dist: xenial
+    dist: bionic
     sudo: true
 
 branches:
   except:
     - /^[0-9]+\.[0-9]+\.[0-9]+/
 
-install:
-  - pip install pipenv
-  - pipenv install --dev --skip-lock
+#install:
+#  - pip install pipenv
+#  - pipenv install --dev --skip-lock
 
 script:
-  pipenv run pytest -v
+  pytest -v
 
 #after_success:
-  #pipenv run codecov
+  #codecov
 
 deploy:
   provider: pypi
