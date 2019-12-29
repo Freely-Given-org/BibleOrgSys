@@ -18,7 +18,8 @@ branches:
   except:
     - /^[0-9]+\.[0-9]+\.[0-9]+/
 
-#install:
+install:
+   - pip install --upgrade pip
 #  - pip install pipenv
 #  - pipenv install --dev --skip-lock
 
@@ -30,9 +31,9 @@ script:
 
 deploy:
   provider: pypi
-  user: $TEST_PYPI_USER
-  password: $TEST_PYPI_PASS
-  server: https://test.pypi.org/legacy/
+  user: $PYPI_USER
+  password: $PYPI_PASS
+  server: https://upload.pypi.org/legacy/
   distributions: "sdist bdist_wheel"
   on:
     branch: restructure
