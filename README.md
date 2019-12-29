@@ -11,9 +11,9 @@ Python library for processing Bibles in various formats
     </tr>
     <tr>
         <td>Travis CI</td>
-        <td><img src='https://travis-ci.org/openscriptures/BibleOrgSys.svg?branch=master'></td>
+        <td><img src='https://travis-ci.org/openscriptures/BibleOrgSys.svg?branch=restructure'></td>
         <td>Coverage</td>
-        <td><img src='https://codecov.io/gh/openscriptures/BibleOrgSys/branch/master/graph/badge.svg'></td>
+        <td><img src='https://codecov.io/gh/openscriptures/BibleOrgSys/branch/restructure/graph/badge.svg'></td>
     </tr>
     <tr>
         <td>Wheel</td>
