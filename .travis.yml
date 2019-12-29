@@ -31,9 +31,8 @@ deploy:
   provider: pypi
   user: $PYPI_USER
   password: $PYPI_PASS
-  server: https://pypi.org/
-# distributions: "sdist bdist_wheel"
-  distributions: "sdist"
+  server: https://test.pypi.org/legacy/
+  distributions: "sdist bdist_wheel"
   on:
     branch: restructure
     condition: $TRAVIS_PYTHON_VERSION = "3.8"
