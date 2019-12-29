@@ -6,7 +6,7 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
-from setuptools import setup
+from setuptools import setup, find_packages
 from os import path
 
 here = path.abspath(path.dirname(__file__))
@@ -51,16 +51,16 @@ setup(
     #   py_modules=["my_module"],
     #
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    packages=['', 'Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
-      package_dir={'':'BibleOrgSys/',
-                   'Formats':'BibleOrgSys/Formats',
-                   'InputOutput':'BibleOrgSys/Formats',
-                   'Internals':'BibleOrgSys/Internals',
-                   'Misc':'BibleOrgSys/Misc',
-                   'Online':'BibleOrgSys/Online',
-                   'OriginalLanguages':'BibleOrgSys/OriginalLanguages',
-                   'Reference':'BibleOrgSys/Reference',
-                   },
+    package=find_packages(),
+    #packages=['Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
+      #package_dir={'Formats':'BibleOrgSys/Formats',
+                   #'InputOutput':'BibleOrgSys/Formats',
+                   #'Internals':'BibleOrgSys/Internals',
+                   #'Misc':'BibleOrgSys/Misc',
+                   #'Online':'BibleOrgSys/Online',
+                   #'OriginalLanguages':'BibleOrgSys/OriginalLanguages',
+                   #'Reference':'BibleOrgSys/Reference',
+                   #},
     data_files=[('DataFiles', [
                     'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
                     'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
