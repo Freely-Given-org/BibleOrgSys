@@ -82,7 +82,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-20' # by RJH
+LastModifiedDate = '2019-12-29' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.82'
@@ -704,7 +704,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10 ):
     """
     Compare the two utf-8 USFM files,
-        ignoring little things like \s vs \s1.
+        ignoring little things like \\s vs \\s1.
     """
     filepath1 = Path( folder1, filename1 ) if folder1 else filename1
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
