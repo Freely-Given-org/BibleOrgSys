@@ -51,7 +51,7 @@ setup(
     #   py_modules=["my_module"],
     #
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    package=find_packages(),
+    packages=find_packages(),
     #packages=['Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
       #package_dir={'Formats':'BibleOrgSys/Formats',
                    #'InputOutput':'BibleOrgSys/Formats',
