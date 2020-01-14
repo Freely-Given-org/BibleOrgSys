@@ -28,12 +28,12 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-23' # by RJH
-ShortProgName = "HebrewWLCBibleHandler"
-ProgName = "Hebrew WLC format handler"
-ProgVersion = '0.24'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2018-12-23' # by RJH
+shortProgramName = "HebrewWLCBibleHandler"
+programName = "Hebrew WLC format handler"
+programVersion = '0.24'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -45,7 +45,7 @@ import pickle
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 import OriginalLanguages.Hebrew as Hebrew
 from Internals.InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
@@ -713,14 +713,14 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
     from Reference.VerseReferences import SimpleVerseKey
     from Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     # Demonstrate the Hebrew WLC class
     standardTestReferences = ('GEN', '1', '1'), ('SA1','1','1'), ('DAN', '1', '5')
@@ -892,7 +892,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     if 0: # Update the glossing dictionary from the text file
@@ -906,5 +906,5 @@ if __name__ == '__main__':
     else: # normally
         demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of HebrewWLCBible.py

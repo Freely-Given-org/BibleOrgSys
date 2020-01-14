@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,21 +28,24 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "BibleBooksCodes"
-ProgName = "Bible Books Codes handler"
-ProgVersion = '0.81'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-06' # by RJH
+shortProgramName = "BibleBooksCodes"
+programName = "Bible Books Codes handler"
+programVersion = '0.81'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+from typing import Dict, List
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+
 from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -594,11 +597,11 @@ class BibleBooksCodes:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
@@ -629,7 +632,7 @@ def demo():
     for osisCode in myOSIS:
         print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
 
-    sections = {}
+    sections:Dict[str,List[str]] = {}
     for BBB in bbc:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []
@@ -643,10 +646,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleBooksCodes.py

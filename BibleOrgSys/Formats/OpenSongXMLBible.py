@@ -67,12 +67,12 @@ Sample:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "OpenSongBible"
-ProgName = "OpenSong XML Bible format handler"
-ProgVersion = '0.39'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "OpenSongBible"
+programName = "OpenSong XML Bible format handler"
+programVersion = '0.39'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -82,7 +82,7 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -470,7 +470,7 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectTypeString = 'OpenSong'
                 #thisBook.sourceFilepath = self.sourceFilepath
                 USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )
+                thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), programNameVersion ) )
                 thisBook.addLine( 'h', bookName )
                 thisBook.addLine( 'mt1', bookName )
                 for element in book:
@@ -552,14 +552,14 @@ class OpenSongXMLBible( Bible ):
 # end of OpenSongXMLBible class
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ) # These are very similar
-    testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/OpenSong Bibles/' )
+    testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/OpenSong Bibles/' )
     single1 = ( "KJV.xmm", )
     single2 = ( "BIBLIA warszawska", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "MKJV", \
@@ -621,10 +621,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of OpenSongXMLBible.py

@@ -28,21 +28,22 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-19' # by RJH
-ShortProgName = "ESFMBibleBook"
-ProgName = "ESFM Bible book handler"
-ProgVersion = '0.48'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-19' # by RJH
+shortProgramName = "ESFMBibleBook"
+programName = "ESFM Bible book handler"
+programVersion = '0.48'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from InputOutput.ESFMFile import ESFMFile
@@ -530,11 +531,11 @@ class ESFMBibleBook( BibleBook ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and processing some ESFM Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     def demoFile( name, filename, folder, BBB ):
@@ -561,19 +562,19 @@ def demo():
     from InputOutput import USFMFilenames
 
     if 1: # Test individual files
-        #name, testFolder, filename, BBB = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
-        #name, testFolder, filename, BBB = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, testFolder, filename, BBB = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, testFolder, filename, BBB = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
-        name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
-        #name, testFolder = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
+        name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, testFolder = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
@@ -587,10 +588,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ESFMBibleBook.py

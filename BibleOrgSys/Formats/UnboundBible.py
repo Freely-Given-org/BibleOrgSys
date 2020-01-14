@@ -86,12 +86,12 @@ and
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-19' # by RJH
-ShortProgName = "UnboundBible"
-ProgName = "Unbound Bible format handler"
-ProgVersion = '0.28'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-19' # by RJH
+shortProgramName = "UnboundBible"
+programName = "Unbound Bible format handler"
+programVersion = '0.28'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -101,7 +101,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
@@ -380,7 +380,7 @@ class UnboundBible( Bible ):
 def testUB( TUBfilename ):
     # Crudely demonstrate the Unbound Bible class
     from Reference import VerseReferences
-    testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../Data/Work/Bibles/Biola Unbound modules/' ) # Must be the same as below
+    testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../mnt/SSDs/Bibles/Biola Unbound modules/' ) # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class…") )
@@ -415,14 +415,14 @@ def testUB( TUBfilename ):
 # end of testUB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
-    BiblesPath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesPath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
 
 
@@ -486,12 +486,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of UnboundBible.py

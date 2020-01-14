@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# BibleOrganizationalSystemsTests.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
+# BibleOrganisationalSystemsTests.py
+#   Last modified: 2014-12-15 (also update programVersion below)
 #
-# Module testing BibleOrganizationalSystems.py
+# Module testing BibleOrganisationalSystems.py
 #
 # Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -24,30 +24,33 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing BibleOrganizationalSystemsConverter.py and BibleOrganizationalSystems.py.
+Module testing BibleOrganisationalSystemsConverter.py and BibleOrganisationalSystems.py.
 """
 
-ProgName = "Bible Organizational Systems tests"
-ProgVersion = '0.48'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "Bible Organizational Systems tests"
+programVersion = '0.48'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, os.path
+import os.path
 import unittest
-from collections import OrderedDict
+import sys
+
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import Reference.BibleOrganisationalSystemsConverter as BibleOrganisationalSystemsConverter
+import Reference.BibleOrganisationalSystems as BibleOrganisationalSystems
 
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, BibleOrganizationalSystemsConverter, BibleOrganizationalSystems
-
-
-class BibleOrganizationalSystemsConverterTests(unittest.TestCase):
-    """ Unit tests for the BibleOrganizationalSystemsConverter object. """
+class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
+    """ Unit tests for the BibleOrganisationalSystemsConverter object. """
 
     def setUp( self ):
-        # Create the BibleOrganizationalSystemsConverter object
-        self.bossc = BibleOrganizationalSystemsConverter.BibleOrganizationalSystemsConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+        # Create the BibleOrganisationalSystemsConverter object
+        self.bossc = BibleOrganisationalSystemsConverter.BibleOrganisationalSystemsConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_1010_str( self ):
         """ Test the __str__ function. """
@@ -88,15 +91,15 @@ class BibleOrganizationalSystemsConverterTests(unittest.TestCase):
         print( "Sorry, no C export yet :(" )
         #self.assertEqual( self.bossc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
-# end of BibleOrganizationalSystemsConverterTests class
+# end of BibleOrganisationalSystemsConverterTests class
 
 
-class BibleOrganizationalSystemsTests(unittest.TestCase):
-    """ Unit tests for the BibleOrganizationalSystems object. """
+class BibleOrganisationalSystemsTests(unittest.TestCase):
+    """ Unit tests for the BibleOrganisationalSystems object. """
 
     def setUp( self ):
-        # Create the BibleOrganizationalSystems object
-        self.boss = BibleOrganizationalSystems.BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        # Create the BibleOrganisationalSystems object
+        self.boss = BibleOrganisationalSystems.BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
     def test_2010_str( self ):
         """ Test the __str__ function. """
@@ -157,16 +160,16 @@ class BibleOrganizationalSystemsTests(unittest.TestCase):
     #        self.boss.checkOrganizationalSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
     #        self.boss.checkOrganizationalSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
     ## end of test_2060_checkOrganizationalSystem
-# end of BibleOrganizationalSystemsTests class
+# end of BibleOrganisationalSystemsTests class
 
 
-class BibleOrganizationalSystemTests(unittest.TestCase):
-    """ Unit tests for the BibleOrganizationalSystem object. """
+class BibleOrganisationalSystemTests(unittest.TestCase):
+    """ Unit tests for the BibleOrganisationalSystem object. """
 
     def setUp( self ):
-        # Create a BibleOrganizationalSystem object
+        # Create a BibleOrganisationalSystem object
         self.systemName = 'KJV-1638'
-        self.bos = BibleOrganizationalSystems.BibleOrganizationalSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
+        self.bos = BibleOrganisationalSystems.BibleOrganisationalSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
 
     def test_3010_str( self ):
         """ Test the __str__ function. """
@@ -281,7 +284,7 @@ class BibleOrganizationalSystemTests(unittest.TestCase):
         for badBBB in ('XYZ','Gen','MA6', ):
             self.assertRaises( KeyError, self.bos.getNumVersesList, badBBB )
     # end of test_3230_getNumVersesList
-# end of BibleOrganizationalSystemTests class
+# end of BibleOrganisationalSystemTests class
 
 
 if __name__ == '__main__':
@@ -289,10 +292,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
-# end of BibleOrganizationalSystemsTests.py
+# end of BibleOrganisationalSystemsTests.py

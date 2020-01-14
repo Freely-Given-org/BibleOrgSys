@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_LanguagesTests.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update programVersion below)
 #
 # Module testing ISO_639_3_Languages.py
 #
@@ -27,16 +27,22 @@
 Module testing ISO_639_3_Languages.py.
 """
 
-ProgName = "ISO-639-3 language code tests"
-ProgVersion = '0.85'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "ISO-639-3 language code tests"
+programVersion = '0.85'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
+import os.path
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, ISO_639_3_LanguagesConverter, ISO_639_3_Languages
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import Reference.ISO_639_3_LanguagesConverter as ISO_639_3_LanguagesConverter
+import Reference.ISO_639_3_Languages as ISO_639_3_Languages
 
 
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
@@ -224,10 +230,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of ISO_639_3_LanguagesTests.py

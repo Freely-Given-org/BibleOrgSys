@@ -48,12 +48,12 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "USFXBible"
-ProgName = "USFX XML Bible handler"
-ProgVersion = '0.33'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "USFXBible"
+programName = "USFX XML Bible handler"
+programVersion = '0.33'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -63,7 +63,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
@@ -990,11 +990,16 @@ class USFXXMLBible( Bible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0:
+        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
+        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
+            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
+            if latestPythonModificationDate != lastModifiedDate:
+                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/' )
@@ -1012,15 +1017,15 @@ def demo():
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB2", resultB2 )
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1:
         testData = (
-            ('GLW', os.path.join( BiblesFolderpath, '/USFX Bibles/Haiola USFX test versions/eng-glw_usfx/') ),
+                    ('GLW', BiblesFolderpath.joinpath( '/USFX Bibles/Haiola USFX test versions/eng-glw_usfx/') ),
                     ('ASV', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/') ),
-                    ('Tst', os.path.join( BiblesFolderpath, 'Formats/USFX/') ,),
-                    ('AGM', os.path.join( BiblesFolderpath, 'USFX Bibles/Haiola USFX test versions/agm_usfx/'),),
-                    ('HBO', os.path.join( BiblesFolderpath, 'USFX Bibles/Haiola USFX test versions/hbo_usfx/'),),
-                    ('ZIA', os.path.join( BiblesFolderpath, 'USFX Bibles/Haiola USFX test versions/zia_usfx/'),),
+                    ('Tst', BiblesFolderpath.joinpath( 'Formats/USFX/') ,),
+                    ('AGM', BiblesFolderpath.joinpath( 'USFX Bibles/Haiola USFX test versions/agm_usfx/'),),
+                    ('HBO', BiblesFolderpath.joinpath( 'USFX Bibles/Haiola USFX test versions/hbo_usfx/'),),
+                    ('ZIA', BiblesFolderpath.joinpath( 'USFX Bibles/Haiola USFX test versions/zia_usfx/'),),
                     ) # You can put your USFX test folder here
 
         for name, testFolder in testData:
@@ -1045,12 +1050,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of USFXXMLBible.py

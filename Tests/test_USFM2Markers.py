@@ -3,7 +3,7 @@
 #
 # USFMMarkersTests.py
 #
-# Module testing USFM3Markers.py
+# Module testing USFM2Markers.py
 #
 # Copyright (C) 2011-2018 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -23,20 +23,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing USFM3Markers.py.
+Module testing USFM2Markers.py.
 """
 
-LastModifiedDate = '2018-11-09' # by RJH
-ProgName = "USFM Markers tests"
-ProgVersion = '0.61'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+lastModifiedDate = '2018-11-09' # by RJH
+programName = "USFM2 Markers tests"
+programVersion = '0.61'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
+import os.path
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, USFM3MarkersConverter, USFM3Markers
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import Reference.USFM2MarkersConverter as USFM2MarkersConverter
+import Reference.USFM2Markers as USFM2Markers
 
 
 class USFMMarkersConverterTests( unittest.TestCase ):
@@ -44,7 +50,7 @@ class USFMMarkersConverterTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the USFMMarkersConvertor object
-        self.UMc = USFM3MarkersConverter.USFMMarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+        self.UMc = USFM2MarkersConverter.USFMMarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_1010_str( self ):
         """ Test the __str__ function. """
@@ -98,7 +104,7 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the USFMMarkers object
-        self.UMs = USFM3Markers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
+        self.UMs = USFM2Markers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
 
     def test_2010_str( self ):
         """ Test the __str__ function. """
@@ -549,10 +555,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of USFMMarkersTests.py

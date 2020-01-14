@@ -29,21 +29,24 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
-ShortProgName = "FreeBibleConverter"
-ProgName = "FreeBible Converter"
-ProgVersion = '0.09'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2018-12-02' # by RJH
+shortProgramName = "FreeBibleConverter"
+programName = "FreeBible Converter"
+programVersion = '0.09'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os.path, logging
+import os.path
+import logging
 from datetime import datetime
 
-import sys
-sys.path.append( 'BibleOrgSys/' )
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 
 # BibleOrgSys imports
 import BibleOrgSysGlobals
@@ -53,7 +56,7 @@ from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
 
 ID_LINE = "Free Bible Version New Testament Version 2.1.1"
 
-BIBLES_FOLDERPATH = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+BIBLES_FOLDERPATH = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
 
 #INPUT_FILEPATH = '/home/robert/FBVNT2.1.1.LOExport.txt'
 #INPUT_FILEPATH = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
@@ -101,11 +104,11 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
-def demo():
+def demo() -> None:
     """
     Demo program to handle command line parameters and run a few functions.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     sampleText = "This is a lot of nonsense"
     sampleText = noisyReplaceAll( sampleText, ' lot ', ' great, pig pile ' )
@@ -121,7 +124,7 @@ def main():
     Main program to handle command line parameters
         and then convert the FBV text file.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( "Loading {}…".format( INPUT_FILEPATH ) )
@@ -132,7 +135,7 @@ def main():
 
     # Preparation by inserting some lines at the beginning
     entireText = '\\id FRT -- {}\n'.format( ID_LINE )
-    entireText += '\\rem Converted by {!r}\n'.format( ProgNameVersionDate )
+    entireText += '\\rem Converted by {!r}\n'.format( programNameVersionDate )
     entireText += '\\rem Converted from \'{}\'\n'.format( INPUT_FILEPATH )
     entireText += '\\rem Converted {}\n'.format( datetime.now() )
     entireText += originalText
@@ -273,10 +276,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of FreeBibleConvert.py

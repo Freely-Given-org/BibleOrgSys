@@ -28,22 +28,24 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-13' # by RJH
-ShortProgName = "USFMFilenames"
-ProgName = "USFM Bible filenames handler"
-ProgVersion = '0.68'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-13' # by RJH
+shortProgramName = "USFMFilenames"
+programName = "USFM Bible filenames handler"
+programVersion = '0.68'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
-
+import os
+import logging
+from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+    
 import BibleOrgSysGlobals
 
 
@@ -57,7 +59,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -554,6 +556,7 @@ class USFMFilenames:
             The order of the filenames in the list has no meaning.
         """
         folderFilenames = os.listdir( self.givenFolderName )
+        #print( len(folderFilenames), folderFilenames )
         if self.lastTupleList is None: return None # Not sure what list they're after here
         #print( len(self.lastTupleList), self.lastTupleList )
         for BBB,actualFilename in self.lastTupleList:
@@ -604,16 +607,17 @@ class USFMFilenames:
 # end of class USFMFiles
 
 
-def demo():
+def demo() -> None:
     """ Demonstrate finding files in some USFM Bible folders. """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),
                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ),
-                   BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../AutoProcesses/Processed/'), BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../AutoProcesses/Processed/Test/'),
                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/' ),
+                   Path( '/srv/AutoProcesses/Processed/' ),
+                   Path( '/srv/AutoProcesses/Processed/Test/' ),
                    )
     for j, testFolder in enumerate( testFolders ):
         print( '\n{}'.format( j+1 ) )
@@ -641,10 +645,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of USFMFilenames.py

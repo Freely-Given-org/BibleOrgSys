@@ -37,22 +37,23 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-14' # by RJH
-ShortProgName = "DigitalBibleLibrary"
-ProgName = "Digital Bible Library (DBL) XML Bible handler"
-ProgVersion = '0.28'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-14' # by RJH
+shortProgramName = "DigitalBibleLibrary"
+programName = "Digital Bible Library (DBL) XML Bible handler"
+programVersion = '0.28'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging, multiprocessing
+import os
+import logging, multiprocessing
 from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible
 from Formats.USXXMLBibleBook import USXXMLBibleBook
@@ -1620,11 +1621,11 @@ def __processDBLBible( parametersTuple ): # for demo
 # end of __processDBLBible
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' )
 
@@ -1674,9 +1675,9 @@ def demo():
             DBL_Bible.load()
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # Open access Bibles from DBL
-        sampleFolder = os.path.join( BiblesFolderpath, 'DBL Bibles/DBL Open Access Bibles/' )
+        sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/DBL Open Access Bibles/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( sampleFolder ):
             somepath = os.path.join( sampleFolder, something )
@@ -1710,7 +1711,7 @@ def demo():
 
 
     if 1: # Older versions of bundles from Haiola
-        sampleFolder = os.path.join( BiblesFolderpath, 'DBL Bibles/Haiola DBL test versions/' )
+        sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/Haiola DBL test versions/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( sampleFolder ):
             somepath = os.path.join( sampleFolder, something )
@@ -1798,7 +1799,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
+    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( programName, programVersion ) )
     #       pass
 
 if __name__ == '__main__':
@@ -1806,10 +1807,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of DBLBible.py

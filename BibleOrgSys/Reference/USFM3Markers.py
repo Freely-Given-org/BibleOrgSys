@@ -35,21 +35,22 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-05' # by RJH
-ShortProgName = "USFM3Markers"
-ProgName = "USFM3 Markers handler"
-ProgVersion = '0.04'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-05' # by RJH
+shortProgramName = "USFM3Markers"
+programName = "USFM3 Markers handler"
+programVersion = '0.04'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -716,11 +717,11 @@ class USFM3Markers:
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstration program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the USFM3Markers object
     um = USFM3Markers().loadData() # Doesn't reload the XML unnecessarily :)
@@ -790,13 +791,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    import multiprocessing
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of USFM3Markers.py

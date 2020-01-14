@@ -77,12 +77,12 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-22' # by RJH
-ShortProgName = "BibleWriter"
-ProgName = "Bible writer"
-ProgVersion = '0.96'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-22' # by RJH
+shortProgramName = "BibleWriter"
+programName = "Bible writer"
+programVersion = '0.96'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -91,7 +91,8 @@ OSISSchemaLocation = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd'
 
 
 from typing import Dict, List, Tuple, Optional, Any
-import sys, os, shutil, logging
+import sys
+import os, shutil, logging
 from pathlib import Path
 from datetime import datetime
 import re, json, pickle
@@ -100,7 +101,7 @@ import subprocess, multiprocessing
 import signal
 
 if __name__ == '__main__':
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from InputOutput import ControlFiles
 from InputOutput.MLWriter import MLWriter
@@ -116,7 +117,7 @@ from Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
 
-logger = logging.getLogger(ShortProgName)
+logger = logging.getLogger(shortProgramName)
 
 
 
@@ -642,7 +643,7 @@ class BibleWriter( InternalBible ):
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if internalBibleBookData.contains( 'id', 1 ) is None:
-                bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), programVersion )
                 if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -660,7 +661,7 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                    #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), programVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
                     continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
@@ -808,7 +809,7 @@ class BibleWriter( InternalBible ):
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if internalBibleBookData.contains( 'id', 1 ) is None:
-                bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), programVersion )
                 bookUSFM += '\n\\usfm 3.0'
                 addedUSFMfield = True
                 if internalBibleBookData.contains( 'h', 8 ) is None:
@@ -828,7 +829,7 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                    #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), programVersion )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
                     continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp#',):
@@ -977,7 +978,7 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if 'id' not in initialMarkers:
                     #print( "Write ID" )
-                    myFile.write( '\\id {} -- BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), ProgVersion ) )
+                    myFile.write( '\\id {} -- BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), programVersion ) )
                 if 'ide' not in initialMarkers:
                     #print( "Write IDE" )
                     myFile.write( '\\ide UTF-8\n' )
@@ -2154,7 +2155,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
             writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
             writerObject.writeLineClose( 'a' )
-            writerObject.writeLineText( "This page automatically created {} by {} v{}".format( datetime.today().strftime("%d-%b-%Y"), ProgName, ProgVersion ) )
+            writerObject.writeLineText( "This page automatically created {} by {} v{}".format( datetime.today().strftime("%d-%b-%Y"), programName, programVersion ) )
             writerObject.writeLineClose( 'p' )
             writerObject.writeLineClose( 'footer' )
             writerObject.writeLineClose( 'body' )
@@ -3011,7 +3012,7 @@ class BibleWriter( InternalBible ):
             headerDict = {}
             headerDict['Data format version'] = BDDataFormatVersion
             headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
-            headerDict['Conversion program'] = ProgNameVersion
+            headerDict['Conversion program'] = programNameVersion
             workTitle = self.getSetting( 'WorkTitle' )
             headerDict['Version name'] = workTitle if workTitle else self.name
             workAbbreviation = self.getSetting( 'WorkAbbreviation' )
@@ -6933,7 +6934,7 @@ class BibleWriter( InternalBible ):
             # Of course, version should be the TEXT version not the PROGRAM version
             confText = confText.replace( '__ADJUSTED_PROJECT_NAME__', adjustedProjectName ).replace( '__PROJECT_NAME__', self.projectName ) \
                                 .replace( '__EMAIL__', emailAddress ) \
-                                .replace( '__NAME__', contactName ).replace( '__VERSION__', ProgVersion )
+                                .replace( '__NAME__', contactName ).replace( '__VERSION__', programVersion )
             confText = confText.replace('rawtext','ztext').replace('RawText','zText') if compressedFlag \
                                 else confText.replace('CompressType=ZIP\n','')
 
@@ -7511,8 +7512,8 @@ class BibleWriter( InternalBible ):
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwNT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwOT.start( noAutoXML=True ); xwNT.start( noAutoXML=True )
-        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
-        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
+        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(programVersion))] )
+        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(programVersion))] )
         xwOT.setSectionName( 'Main' ); xwNT.setSectionName( 'Main' )
         with open( os.path.join( lgFolder, 'ot.vss' ), 'wb' ) as ixOT, \
              open( os.path.join( lgFolder, 'nt.vss' ), 'wb' ) as ixNT:
@@ -9903,7 +9904,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toTeX( self, outputFolderpath:Optional[Path]=None ):
+    def toTeX( self, outputFolderpath:Optional[str]=None ) -> bool:
         """
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -10250,7 +10251,7 @@ class BibleWriter( InternalBible ):
         """
         allWord = _("all") if wantPhotoBible and wantODFs and wantPDFs else _("most")
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
+            print( "BibleWriterV{}.doAllExports: ".format(programVersion) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
@@ -10679,15 +10680,15 @@ class BibleWriter( InternalBible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
     from Formats.USFMBible import USFMBible
     from InputOutput.USFMFilenames import USFMFilenames
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
@@ -10750,17 +10751,17 @@ def demo():
                 #("ESFMTest1-LV", 'ESFM1', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/'),
                 #("ESFMTest2-RV", 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #("WEB", 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
-                ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/') ),
-                #("MS-BT", 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTBT/') ),
-                #("MS-ABT", 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTABT/') ),
+                ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                #("MS-BT", 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
+                #("MS-ABT", 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
                 #("WEB2", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #("WEB3", 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/'),
                 #("WEB4", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),
                 #("WEB5", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/') ),
                 #("WEB6", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2017-08-22 eng-web_usfm') ),
                 #("WEBLatest", 'WEB', BiblesFolderpath.joinpath( 'USFM Bibles/Haiola USFM test versions/eng-web_usfm/') ),
-                #('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/UnfoldingWordVersions/ULT/en_ult/') ),
-                #('UST','UST',BiblesFolderpath.joinpath( 'English translations/UnfoldingWordVersions/UST/en_ust/') ),
+                #('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/ULT/en_ult/') ),
+                #('UST','UST',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/UST/en_ust/') ),
                 #('UEB','UEB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/UEB/en_ueb/') ),
                 #('ULB','ULB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/ULB/en_ulb/') ),
                 #('UDB','UDB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/UDB/en_udb/') ),
@@ -10819,9 +10820,9 @@ def demo():
                 #('ESFMTest2', 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #('WEB', 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
                 #('OEB', 'OEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/'),
-                #('Matigsalug', 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/') ),
-                #('MS-BT', 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTBT/') ),
-                #('MS-ABT', 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTABT/') ),
+                #('Matigsalug', 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                #('MS-BT', 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
+                #('MS-ABT', 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),
@@ -10952,10 +10953,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
 # end of BibleWriter.py

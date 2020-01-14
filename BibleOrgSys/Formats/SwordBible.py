@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015-2019 Robert Hunt
+# Copyright (C) 2015-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,12 +40,12 @@ Note: The demo takes about 4 minutes with our Sword code,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "SwordBible"
-ProgName = "Sword Bible format handler"
-ProgVersion = '0.36'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-05' # by RJH
+shortProgramName = "SwordBible"
+programName = "Sword Bible format handler"
+programVersion = '0.36'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -56,7 +56,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible #, BibleBook
 from Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
@@ -527,17 +527,17 @@ def testSwB( SwFolderPath, SwModuleName=None ):
 # end of testSwB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
-    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
+    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
+    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
@@ -562,13 +562,13 @@ def demo():
                 for entryKey in SwBible.books[BBB]._CVIndex:
                     print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
-    if 1: # specified installed modules
-        good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ESV2001','ESV2011', 'ISV','NET','OEB',
+    if 1: # specified installed modules (Removed 'ESV2001','ESV2011', 'TS1998',)
+        good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ISV','NET','OEB',
                 'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
                 'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',
                 'MKJV','Montgomery','Murdock','NETfree','NETtext','NHEB','NHEBJE','NHEBME','Noyes',
                 'OEBcth','OrthJBC','RKJNT','RNKJV','RWebster','RecVer','Rotherham',
-                'SPE','TS1998','Twenty','Tyndale','UKJV','WEBBE','WEBME','Webster','Weymouth','Worsley',)
+                'SPE','Twenty','Tyndale','UKJV','WEBBE','WEBME','Webster','Weymouth','Worsley',)
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
@@ -605,10 +605,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of SwordBible.py

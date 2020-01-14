@@ -34,12 +34,12 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "EasyWorshipBible"
-ProgName = "EasyWorship Bible format handler"
-ProgVersion = '0.13'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-12' # by RJH
+shortProgramName = "EasyWorshipBible"
+programName = "EasyWorship Bible format handler"
+programVersion = '0.13'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -51,7 +51,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -666,9 +666,9 @@ class EasyWorshipBible( Bible ):
 def testEWB( TEWBfilename ):
     # Crudely demonstrate the EasyWorship Bible class
     from Reference import VerseReferences
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
-    testFolder = os.path.join( BiblesFolderpath, 'EasyWorship Bibles/' )
+    testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
     #TEWBfolder = os.path.join( testFolder, TEWBfilename+'/' )
     TEWBfolder = testFolder
@@ -709,16 +709,16 @@ def testEWB( TEWBfilename ):
 # end of testEWB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
-    testFolder = os.path.join( BiblesFolderpath, 'EasyWorship Bibles/' )
+    testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -841,12 +841,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of EasyWorshipBible.py

@@ -37,11 +37,11 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-05-02' # by RJH
-ShortProgName = "MLWriter"
-ProgName = "ML Writer"
-ProgVersion = '0.36'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+lastModifiedDate = '2018-05-02' # by RJH
+shortProgramName = "MLWriter"
+programName = "ML Writer"
+programVersion = '0.36'
+programNameVersion = f'{programName} v{programVersion}'
 
 debuggingThisModule = False
 
@@ -52,7 +52,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -565,11 +565,11 @@ class MLWriter:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     if 1: # Demo the writer object with XML
         outputFolder = "OutputFiles"
@@ -637,7 +637,7 @@ def demo():
         mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
         mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
         mlWr.writeLineClose( 'a' )
-        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( ProgName, ProgVersion, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( programName, programVersion, datetime.date.today().strftime("%d-%b-%Y") ) )
         mlWr.writeLineClose( 'p' )
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
@@ -651,10 +651,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of MLWriter.py

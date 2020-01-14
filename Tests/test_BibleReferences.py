@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferencesTests.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update programVersion below)
 #
 # Module testing BibleReferences.py
 #
@@ -27,26 +27,31 @@
 Module testing BibleReferences.py.
 """
 
-ProgName = "Bible References tests"
-ProgVersion = '0.25'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "Bible References tests"
+programVersion = '0.25'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
+import os.path
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
 import BibleOrgSysGlobals
-import BibleBooksCodes, BibleOrganizationalSystems
-import BibleReferences
+import Reference.BibleBooksCodes as BibleBooksCodes
+import Reference.BibleOrganisationalSystems as BibleOrganisationalSystems
+import Reference.BibleReferences as BibleReferences
 
 
 class BibleReferencesTests( unittest.TestCase ):
     """ Unit tests for the BibleReferences object. """
 
     def setUp( self ):
-        # Create the BibleOrganizationalSystems objects
-        self.BOS = BibleOrganizationalSystems.BibleOrganizationalSystem( "RSV" )
+        # Create the BibleOrganisationalSystems objects
+        self.BOS = BibleOrganisationalSystems.BibleOrganisationalSystem( "RSV" )
 
     def test_100_BibleSingleReference( self ):
         """ Test the BibleSingleReference function. """
@@ -292,10 +297,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleReferencesTests.py

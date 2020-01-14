@@ -28,21 +28,22 @@ Module for reading and parsing simple text control files.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-03-08' # by RJH
-ShortProgName = "ControlFiles"
-ProgName = "Control Files"
-ProgVersion = '0.06'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2017-03-08' # by RJH
+shortProgramName = "ControlFiles"
+programName = "Control Files"
+programVersion = '0.06'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -145,11 +146,11 @@ def booleanControl( controlName, controlDict=None ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 # end of demo
 
 if __name__ == '__main__':
@@ -157,10 +158,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ControlFiles.py

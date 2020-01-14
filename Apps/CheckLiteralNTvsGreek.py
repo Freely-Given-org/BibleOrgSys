@@ -56,19 +56,20 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-24' # by RJH
-ShortProgName = "CheckLiteralNTvsGreek"
-ProgName = "Check Literal NT vs Greek"
-ProgVersion = '0.02'
-ProgNameVersion = f'{ProgName} v{ProgVersion}'
-ProgNameVersionDate = f'{ProgNameVersion} {_("last modified")} {LastModifiedDate}'
+lastModifiedDate = '2019-02-24' # by RJH
+shortProgramName = "CheckLiteralNTvsGreek"
+programName = "Check Literal NT vs Greek"
+programVersion = '0.02'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
-sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 
 import BibleOrgSysGlobals
 from Reference.VerseReferences import SimpleVerseKey
@@ -87,7 +88,7 @@ def main():
         -v (verbose) is 4.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion, end='\n\n' )
+        print( programNameVersion, end='\n\n' )
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
@@ -158,11 +159,11 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
     # Do the BOS close-down stuff
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of CheckLiteralNTvsGreek.py

@@ -71,12 +71,12 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-13' # by RJH
-ShortProgName = "VPLBible"
-ProgName = "VPL Bible format handler"
-ProgVersion = '0.38'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-13' # by RJH
+shortProgramName = "VPLBible"
+programName = "VPL Bible format handler"
+programVersion = '0.38'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -86,7 +86,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -680,11 +680,11 @@ def testVPL( VPLfolder ):
 # end of testVPL
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -753,12 +753,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of VPLBible.py

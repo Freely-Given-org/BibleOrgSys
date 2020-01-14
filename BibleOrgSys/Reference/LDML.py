@@ -53,23 +53,25 @@ NOTE: This preliminary module currently parses a range of XML files
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-28' # by RJH
-ShortProgName = "LDML_Handler"
-ProgName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-ProgVersion = '0.13'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-28' # by RJH
+shortProgramName = "LDML_Handler"
+programName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
+programVersion = '0.13'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import sys, os, logging
+import sys
+import os
+import logging
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -90,7 +92,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -3850,11 +3852,11 @@ class LDMLFile:
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some LDML files.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     mainTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/SIL_NRSI/sldr/sldr/' )
     if 1: # test load all SIL LDML files (cloned from GitHub)
@@ -3890,10 +3892,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of LDML.py

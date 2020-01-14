@@ -27,21 +27,22 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-10-09' # by RJH
-ShortProgName = "BibleStylesheets"
-ProgName = "Bible stylesheet handler"
-ProgVersion = '0.16'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-10-09' # by RJH
+shortProgramName = "BibleStylesheets"
+programName = "Bible stylesheet handler"
+programVersion = '0.16'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 #from Misc.singleton import singleton
 from InputOutput import SFMFile
@@ -349,7 +350,7 @@ class BibleStylesheet():
         @rtype: string
         """
         result = "BibleStylesheet object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
@@ -455,7 +456,7 @@ class ParatextStylesheet():
         @rtype: string
         """
         result = "ParatextStylesheet object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
@@ -492,15 +493,15 @@ class ParatextStylesheet():
 
 
 
-def demo():
+def demo() -> None:
     """
     Short program to demonstrate/test the above class(es).
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     if 1: # Try the default one
         print( "\nTrying default Bible stylesheet…" )
-        #folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        #folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
         #print( ss )
@@ -518,7 +519,7 @@ def demo():
 
     if 1: # Try importing one
         print( "\nTrying Bible stylesheet import…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = BibleStylesheet()
         print( ss )
@@ -531,7 +532,7 @@ def demo():
 
     if 1: # Try a small one
         print( "\nTrying small PT stylesheet…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
         print( ss )
@@ -541,7 +542,7 @@ def demo():
 
     if 1: # Try a full one
         print( "\nTrying full PT stylesheet…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "usfm.sty"
         ss = ParatextStylesheet()
         ss.load( folder, filename )
@@ -552,13 +553,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    import multiprocessing
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleStylesheets.py

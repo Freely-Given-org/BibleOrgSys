@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenamesTests.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
 # Module testing USXFilenames.py
 #
-# Copyright (C) 2012-2014 Robert Hunt
+# Copyright (C) 2012-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,16 +26,22 @@
 Module testing USXFilenames.py.
 """
 
-ProgName = "USX Filenames tests"
-ProgVersion = '0.51'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+lastModifiedDate = '2019-12-29' # by RJH
+programName = "USX Filenames tests"
+programVersion = '0.51'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, os, unittest
+import os
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, USXFilenames
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import InputOutput.USXFilenames as USXFilenames
 
 
 class USXFilenamesTests1( unittest.TestCase ):
@@ -65,11 +70,11 @@ class USXFilenamesTests1( unittest.TestCase ):
         self.assertEqual( result, 'dddBBB' )
     # end of test_015_getFilenameTemplate
 
-    def test_020_getPossibleFilenames( self ):
-        """ Test the getPossibleFilenames function. """
-        results = self.UFns.getPossibleFilenames()
+    def test_020_getPossibleFilenameTuples( self ):
+        """ Test the getPossibleFilenameTuples function. """
+        results = self.UFns.getPossibleFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 66 )
+        self.assertEqual( len(results), 3 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -77,11 +82,11 @@ class USXFilenamesTests1( unittest.TestCase ):
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 008RUT.usx
-    # end of test_020_getPossibleFilenames
+    # end of test_020_getPossibleFilenameTuples
 
-    def test_030_getConfirmedFilenames( self ):
-        """ Test the getConfirmedFilenames function. """
-        results = self.UFns.getConfirmedFilenames()
+    def test_030_getConfirmedFilenameTuples( self ):
+        """ Test the getConfirmedFilenameTuples function. """
+        results = self.UFns.getConfirmedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
         self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
@@ -91,7 +96,7 @@ class USXFilenamesTests1( unittest.TestCase ):
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 08RUT.usx
-    # end of test_030_getConfirmedFilenames
+    # end of test_030_getConfirmedFilenameTuples
 
     def test_040_getUnusedFilenames( self ):
         """ Test the getUnusedFilenames function. """
@@ -152,11 +157,12 @@ class USXFilenamesTests2( unittest.TestCase ):
         self.assertEqual( result, 'dddBBB' )
     # end of test_015_getFilenameTemplate
 
-    def test_020_getPossibleFilenames( self ):
-        """ Test the getPossibleFilenames function. """
-        results = self.UFns.getPossibleFilenames()
+    def test_020_getPossibleFilenameTuples( self ):
+        """ Test the getPossibleFilenameTuples function. """
+        results = self.UFns.getPossibleFilenameTuples()
+        print("results", len(results), results)
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 66 )
+        self.assertEqual( len(results), 66 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -164,11 +170,11 @@ class USXFilenamesTests2( unittest.TestCase ):
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 008RUT.usx
-    # end of test_020_getPossibleFilenames
+    # end of test_020_getPossibleFilenameTuples
 
-    def test_030_getConfirmedFilenames( self ):
-        """ Test the getConfirmedFilenames function. """
-        results = self.UFns.getConfirmedFilenames()
+    def test_030_getConfirmedFilenameTuples( self ):
+        """ Test the getConfirmedFilenameTuples function. """
+        results = self.UFns.getConfirmedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
         self.assertEqual( len(results), 66 ) # Number of actual files found
         self.assertFalse( None in results )
@@ -178,7 +184,7 @@ class USXFilenamesTests2( unittest.TestCase ):
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 08RUT.usx
-    # end of test_030_getConfirmedFilenames
+    # end of test_030_getConfirmedFilenameTuples
 
     def test_040_getUnusedFilenames( self ):
         """ Test the getUnusedFilenames function. """
@@ -217,10 +223,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

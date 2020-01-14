@@ -26,19 +26,23 @@
 Module testing BibleBooksNamesConverter.py and BibleBooksNames.py.
 """
 
-LastModifiedDate = '2017-03-29' # by RJH
-ProgName = "Bible Books Names tests"
-ProgVersion = '0.32'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+lastModifiedDate = '2017-03-29' # by RJH
+programName = "Bible Books Names tests"
+programVersion = '0.32'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
-from collections import OrderedDict
+import os.path
+import unittest
+import sys
 
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, BibleBooksNamesConverter, BibleBooksNames
+import BibleOrgSysGlobals
+import Reference.BibleBooksNamesConverter as BibleBooksNamesConverter
+import Reference.BibleBooksNames as BibleBooksNames
 
 
 class BibleBooksNamesConverterTests( unittest.TestCase ):
@@ -265,10 +269,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksNamesTests.py

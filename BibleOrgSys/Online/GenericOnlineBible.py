@@ -27,12 +27,12 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-03-17' # by RJH
-ShortProgName = "GenericOnlineBible"
-ProgName = "Generic online Bible handler"
-ProgVersion = '0.02'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-03-17' # by RJH
+shortProgramName = "GenericOnlineBible"
+programName = "Generic online Bible handler"
+programVersion = '0.02'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -45,7 +45,8 @@ from collections import OrderedDict
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+    import re
+import logging # Append the containing folder to the path to search for the BOS
 import BibleOrgSysGlobals
 from Misc.singleton import singleton
 
@@ -198,13 +199,13 @@ class GenericOnlineBible:
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
     from Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
@@ -231,10 +232,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of GenericOnlineBible.py

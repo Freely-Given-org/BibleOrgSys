@@ -5,7 +5,7 @@
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,12 +32,12 @@ TODO: Check if we really need this class at all???
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
-ShortProgName = "BibleObjects"
-ProgName = "Bible object handler"
-ProgVersion = '0.14'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-105' # by RJH
+shortProgramName = "BibleObjects"
+programName = "Bible object handler"
+programVersion = '0.14'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -45,15 +45,17 @@ debuggingThisModule = False
 import logging
 
 if __name__ == '__main__':
+    import os.path
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
+
 import BibleOrgSysGlobals
 from Internals.InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter
 
 
 
-logger = logging.getLogger(ShortProgName)
+logger = logging.getLogger(shortProgramName)
 
 
 
@@ -127,7 +129,7 @@ class BibleBook ( InternalBibleBook ):
             This means that the index has to be updated if the data is updated.
     """
 
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject, BBB:str ) -> None:
         """
         Constructor: creates an empty Bible book.
         """
@@ -146,7 +148,7 @@ class BibleBook ( InternalBibleBook ):
         #self.textCodes = ( "ID", "RH1", "MT1", "MT2", "MS1", "MS2", "IOT", "IO1", "IO2", "IS1", "IS2", "InP", "SH1", "SH2", "SXR", "Pgr", "Chp", "Vrs", "Txt", "Qu1", "Qu2", "Qu3", "Qu4", "Blk", "Mar", "FNt", "XRf", "MR" )
     # end of __init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book.
 
@@ -193,7 +195,7 @@ class Bible( BibleWriter ):
         are based on this class.
     """
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: creates an empty Bible object.
         """
@@ -212,11 +214,11 @@ class Bible( BibleWriter ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(programName, programVersion ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest Bible…" )
@@ -227,7 +229,7 @@ def demo():
         ## Test a single folder containing a USFM Bible
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest USFM Bible…" )
         #from Formats.USFMBible import USFMBible
-        #name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()
@@ -243,10 +245,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of Bible.py

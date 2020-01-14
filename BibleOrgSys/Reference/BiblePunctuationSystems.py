@@ -28,19 +28,20 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-23' # by RJH
-ShortProgName = "BiblePunctuationSystems"
-ProgName = "Bible Punctuation Systems handler"
-ProgVersion = '0.44'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-23' # by RJH
+shortProgramName = "BiblePunctuationSystems"
+programName = "Bible Punctuation Systems handler"
+programVersion = '0.44'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 #from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -262,11 +263,11 @@ class BiblePunctuationSystem:
 # end of BiblePunctuationSystem class
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -286,10 +287,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BiblePunctuationSystems.py

@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,22 +31,24 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-18' # by RJH
-ShortProgName = "USFMBible"
-ProgName = "USFM Bible handler"
-ProgVersion = '0.78'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-01' # by RJH
+shortProgramName = "USFMBible"
+programName = "USFM Bible handler"
+programVersion = '0.78'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
-import re, multiprocessing
+import os
+import logging
+import re
+import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from InputOutput.USFMFilenames import USFMFilenames
 from Formats.USFMBibleBook import USFMBibleBook
@@ -680,11 +682,16 @@ class USFMBible( Bible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0:
+        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
+        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
+            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
+            if latestPythonModificationDate != lastModifiedDate:
+                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -721,10 +728,13 @@ def demo():
                     ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' ).resolve()
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
-                        ('ULT', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
-                        ('UST', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ust/en_ust/' ) ),
+                        ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/ULT/en_ult/' ) ),
+                        ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/UST/en_ust/' ) ),
+                        #('ULT', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
+                        #('UST', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ust/en_ust/' ) ),
                         #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/') ),
                         #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/') ),
                         #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/') ),
@@ -855,10 +865,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
 # end of USFMBible.py

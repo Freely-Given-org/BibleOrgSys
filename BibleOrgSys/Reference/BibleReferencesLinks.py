@@ -28,12 +28,12 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "BibleReferencesLinks"
-ProgName = "Bible References Links handler"
-ProgVersion = '0.40'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-19' # by RJH
+shortProgramName = "BibleReferencesLinks"
+programName = "Bible References Links handler"
+programVersion = '0.40'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -43,7 +43,7 @@ import pickle
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 from Misc.singleton import singleton
 import BibleOrgSysGlobals
 from Reference.VerseReferences import SimpleVerseKey
@@ -292,11 +292,11 @@ class BibleReferencesLinks:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
@@ -332,10 +332,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleReferencesLinks.py

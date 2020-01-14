@@ -51,12 +51,12 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "theWordBible"
-ProgName = "theWord Bible format handler"
-ProgVersion = '0.55'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-12' # by RJH
+shortProgramName = "theWordBible"
+programName = "theWord Bible format handler"
+programVersion = '0.55'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -66,7 +66,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
@@ -124,7 +124,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 # end of exp
 
@@ -1336,7 +1336,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
     Crudely demonstrate the theWord Bible class.
     """
     from Reference import VerseReferences
-    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/theWord modules/' ) # Must be the same as below
+    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class {}…").format( indexString) )
@@ -1374,11 +1374,11 @@ def testtWB( indexString, twBfolder, twBfilename ):
 # end of testtWB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # demo the functions
@@ -1390,7 +1390,7 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/theWord modules/' )
+        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
@@ -1429,7 +1429,7 @@ def demo():
         else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     if 1: # all discovered modules in the test folder
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/theWord modules/' )
+        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' )
         foundFolders, foundFiles = [], []
         if os.access( testFolder, os.R_OK ):
             for something in sorted( os.listdir( testFolder ) ):
@@ -1460,10 +1460,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of theWordBible.py

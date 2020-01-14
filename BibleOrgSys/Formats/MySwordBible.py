@@ -51,12 +51,12 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-07' # by RJH
-ShortProgName = "MySwordBible"
-ProgName = "MySword Bible format handler"
-ProgVersion = '0.36'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-07' # by RJH
+shortProgramName = "MySwordBible"
+programName = "MySword Bible format handler"
+programVersion = '0.36'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -67,7 +67,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -90,7 +90,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -678,7 +678,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     """
     #print( "tMSB", MySwBfolder )
     from Reference import VerseReferences
-    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/MySword modules/' ) # Must be the same as below
+    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MySword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class {}…").format( indexString) )
@@ -718,11 +718,11 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
 # end of testMySwB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -736,7 +736,7 @@ def demo():
 
 
     if 1: # individual modules in the test folder
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/MySword modules/' )
+        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MySword modules/' )
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
@@ -786,7 +786,7 @@ def demo():
                 #break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/MySword modules/' )
+        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MySword modules/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -814,10 +814,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of MySwordBible.py

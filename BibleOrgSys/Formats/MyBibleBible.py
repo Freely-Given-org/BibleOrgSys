@@ -5,7 +5,7 @@
 #
 # Module handling "MyBible" Bible module files
 #
-# Copyright (C) 2016-2019 Robert Hunt
+# Copyright (C) 2016-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -84,24 +84,28 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "MyBibleBible"
-ProgName = "MyBible Bible format handler"
-ProgVersion = '0.20'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-06' # by RJH
+shortProgramName = "MyBibleBible"
+programName = "MyBible Bible format handler"
+programVersion = '0.21'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import logging, os
-import sqlite3, re
+import logging
+import os
+import sqlite3
+import re
 import multiprocessing
 from random import randrange
+from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -234,7 +238,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -760,7 +764,7 @@ class MyBibleBible( Bible ):
 
 
 
-def createMyBibleModule( self, outputFolder, controlDict ):
+def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     """
     Create a SQLite3 database module for the Android program MyBible.
 
@@ -1089,7 +1093,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     # end of toMyBible.composeVerseLine
 
 
-    def writeMyBibleBook( sqlObject, BBB, nBBB, bkData, ourGlobals ):
+    def writeMyBibleBook( sqlObject, BBB:str, nBBB, bkData, ourGlobals ):
         """
         Writes a book to the MyBible sqlObject file.
         """
@@ -1139,8 +1143,12 @@ def createMyBibleModule( self, outputFolder, controlDict ):
                         # Stay one line behind (because paragraph indicators get appended to the previous line)
                         if ourGlobals['lastBCV'] is not None \
                         and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
-                            sqlObject.execute( 'INSERT INTO verses VALUES(?,?,?,?)', \
+                            try:
+                                sqlObject.execute( 'INSERT INTO verses VALUES(?,?,?,?)', \
                                 (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                            except Exception as e:
+                                logging.critical( f"MyBible: error using {ourGlobals}: {e}" )
+                                raise e # again
                             #lineCount += 1
                     ourGlobals['lastLine'] = composedLine
                 ourGlobals['lastBCV'] = (nBBB,C,V)
@@ -1186,6 +1194,7 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
 
+    # Try to find a somewhat-descriptive filename
     workAbbreviation = self.getSetting( 'workAbbreviation' )
     if 'MyBibleOutputFilename' in controlDict: filename = controlDict['MyBibleOutputFilename']
     elif workAbbreviation: filename = workAbbreviation
@@ -1194,13 +1203,12 @@ def createMyBibleModule( self, outputFolder, controlDict ):
     elif self.sourceFilename: filename = self.sourceFilename
     elif self.name: filename = self.name
     elif self.sourceFilename: filename = self.sourceFilename
-    else:
-        if BibleOrgSysGlobals.alreadyMultiprocessing:
-            filename = 'export{}'.format( randrange(99999) )
-            logging.warning( "writeMyBibleBook() used random filename {!r} but could still fail with multiprocessing".format( filename ) )
-        else: filename = 'export'
-
+    else: filename = 'export'
     filename = filename.replace( ' ', '_' )
+    if BibleOrgSysGlobals.alreadyMultiprocessing: # Need to ensure filenames are unique so we don't get a conflict
+        filename += f'_{randrange(9_999)}'
+        logging.warning( f"writeMyBibleBook() used random filename '{filename}' but could still fail with multiprocessing" )
+
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
@@ -1281,7 +1289,10 @@ def createMyBibleModule( self, outputFolder, controlDict ):
         bookColor, bookNumber, rusAbbrev, rusName, engAbbrev, engName = BOOK_TABLE[adjBBB]
         #cursor.execute( exeStr, (bookNumber, C, V, adjustedLine) )
         if writeMyBibleBook( cursor, BBB, bookNumber, bkData, mySettings ):
-            conn.commit() # save (commit) the changes
+            try: conn.commit() # save (commit) the changes
+            except Exception as e:
+                logging.critical( f"MyBible: error writing {filepath}: {e}" )
+                raise e # again
             handledBooks.append( BBB )
 
     # Now create the index to the verses
@@ -1314,13 +1325,15 @@ def createMyBibleModule( self, outputFolder, controlDict ):
 
 
 
-def testMyBB( indexString, MyBBfolder, MyBBfilename ):
+def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     """
     Crudely demonstrate the MyBible Bible class.
+
+    Used by demo() for multiprocessing, etc. so must be at the outer level.
     """
     #print( "tMSB", MyBBfolder )
     from Reference import VerseReferences
-    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/MyBible modules/' ) # Must be the same as below
+    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MyBible modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MyBible Bible class {}…").format( indexString) )
@@ -1351,7 +1364,8 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: raise
 
         #MyBB.loadBooks()
-        MyBB.doAllExports()
+        if __name__ == '__main__':
+            MyBB.doAllExports()
 
         if 0: # Now export the Bible and compare the round trip
             MyBB.toMyBible()
@@ -1365,14 +1379,15 @@ def testMyBB( indexString, MyBBfolder, MyBBfilename ):
 # end of testMyBB
 
 
-def exportMyBB( eIndexString, eFolder ):
+def exportMyBB( eIndexString:str, eFolder ) -> None:
     """
-    Used for multiprocessing, etc.
+    Used by demo() for multiprocessing, etc. so must be at the outer level.
     """
     from UnknownBible import UnknownBible
     uB = UnknownBible( eFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  {} result is: {}".format( eIndexString, result ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2:
+        print( "  {} result is: {}".format( eIndexString, result ) )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
     if isinstance( result, Bible ) and result.books:
         result.toMyBible()
@@ -1387,13 +1402,13 @@ def exportMyBB( eIndexString, eFolder ):
 # end of exportMyBB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
 
 
     if 1: # A: demo the file checking code
@@ -1407,13 +1422,13 @@ def demo():
 
 
     if 1: # B: individual modules in the test folder
-        testFolder = os.path.join( BiblesFolderpath, 'MyBible modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'MyBible modules/' )
         names = ('CSLU',)
-        for j, name in enumerate( names):
+        for j, name in enumerate( names, start=1 ):
             fullname = name + '.SQLite3'
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
-                indexString = 'B' + str( j+1 )
+                indexString = f'B{j}'
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
                 testMyBB( indexString, testFolder, fullname )
 
@@ -1421,11 +1436,11 @@ def demo():
     if 1: # C: individual modules in the output folder
         testFolder = "OutputFiles/BOS_MyBibleExport"
         names = ("Matigsalug",)
-        for j, name in enumerate( names):
+        for j, name in enumerate( names, start=1 ):
             fullname = name + '.SQLite3'
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
-                indexString = 'C' + str( j+1 )
+                indexString = f'C{j}'
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
                 testMyBB( indexString, testFolder, fullname )
 
@@ -1454,15 +1469,15 @@ def demo():
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
-            for j, someFile in enumerate( sorted( foundFiles ) ):
-                indexString = 'D' + str( j+1 )
+            for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
+                indexString = f'D{j}'
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
 
     if 1: # E: all discovered modules in the test folder
-        testFolder = os.path.join( BiblesFolderpath, 'MyBible modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'MyBible modules/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -1478,15 +1493,15 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
-            parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            parameters = [(f'E{j}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles),start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
-            for j, someFile in enumerate( sorted( foundFiles ) ):
-                indexString = 'E' + str( j+1 )
+            for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
+                indexString = f'E{j}'
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
@@ -1497,15 +1512,15 @@ def demo():
                     os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
-                    os.path.join( BiblesFolderpath, 'theWord modules/' ),
-                    os.path.join( BiblesFolderpath, 'Biola Unbound modules/' ),
-                    os.path.join( BiblesFolderpath, 'EasyWorship Bibles/' ),
-                    os.path.join( BiblesFolderpath, 'OpenSong Bibles/' ),
-                    os.path.join( BiblesFolderpath, 'Zefania modules/' ),
-                    os.path.join( BiblesFolderpath, 'YET modules/' ),
-                    os.path.join( BiblesFolderpath, 'MyBible modules/' ),
-                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'),
-                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../AutoProcesses/Processed/' ),
+                    BiblesFolderpath.joinpath( 'theWord modules/' ),
+                    BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
+                    BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),
+                    BiblesFolderpath.joinpath( 'OpenSong Bibles/' ),
+                    BiblesFolderpath.joinpath( 'Zefania modules/' ),
+                    BiblesFolderpath.joinpath( 'YET modules/' ),
+                    BiblesFolderpath.joinpath( 'MyBible modules/' ),
+                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                    Path( '/srv/AutoProcesses/Processed/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/' ),
@@ -1532,15 +1547,15 @@ def demo():
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
-            parameters = [('F'+str(j+1),testFolder) for j,testFolder in enumerate(testFolders)]
+            parameters = [(f'F{j}',testFolder) for j,testFolder in enumerate(testFolders,start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.starmap( exportMyBB, parameters ) # have the pool do our loads
                 assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
-            for j, testFolder in enumerate( testFolders ):
-                indexString = 'F{}'.format( j+1 )
+            for j, testFolder in enumerate( testFolders, start=1 ):
+                indexString = f'F{j}'
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\ntoMyBible {}/ Export MyBible module for {}…".format( indexString, testFolder ) )
                 exportMyBB( indexString, testFolder )
                 #uB = UnknownBible( testFolder )
@@ -1561,10 +1576,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of MyBibleBible.py

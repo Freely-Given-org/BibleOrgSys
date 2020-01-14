@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystemsTests.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
+#   Last modified: 2014-12-15 (also update programVersion below)
 #
 # Module testing BiblePunctuationSystems.py
 #
@@ -27,18 +27,22 @@
 Module testing BiblePunctuationSystemsConverter.py and BiblePunctuationSystems.py.
 """
 
-ProgName = "Bible Punctuation Systems tests"
-ProgVersion = '0.42'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "Bible Punctuation Systems tests"
+programVersion = '0.42'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
-from collections import OrderedDict
+import os.path
+import unittest
+import sys
 
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, BiblePunctuationSystemsConverter, BiblePunctuationSystems
+import BibleOrgSysGlobals
+import Reference.BiblePunctuationSystemsConverter as BiblePunctuationSystemsConverter
+import Reference.BiblePunctuationSystems as BiblePunctuationSystems
 
 
 class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
@@ -221,10 +225,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BiblePunctuationSystemsTests.py

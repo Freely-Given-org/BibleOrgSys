@@ -28,23 +28,24 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "BibleBookOrders"
-ProgName = "Bible Book Order Systems handler"
-ProgVersion = '0.90'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-19' # by RJH
+shortProgramName = "BibleBookOrders"
+programName = "Bible Book Order Systems handler"
+programVersion = '0.90'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
 
-import os, logging
+import os
+import logging
 #from Misc.singleton import singleton
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -59,7 +60,7 @@ import BibleOrgSysGlobals
     #try: nameBit, errorBit = messageString.split( ': ', 1 )
     #except ValueError: nameBit, errorBit = '', messageString
     #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        #nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 ## end of exp
 
@@ -244,7 +245,7 @@ class BibleBookOrderSystems:
             if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+thisSystemName + '.xml' )
+            outputFilepath = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/', "BibleBookOrder_"+thisSystemName + '.xml' )
             print( _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
@@ -375,11 +376,11 @@ class BibleBookOrderSystem:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the BibleBookOrders object
     bboss = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -418,10 +419,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleBookOrders.py

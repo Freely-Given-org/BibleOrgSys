@@ -48,23 +48,26 @@ Basically, read the file in, sort by the contents of \s and write it out with ne
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-09-27' # by RJH
-ShortProgName = "ReorderSongs"
-ProgName = "Reorder Songs"
-ProgVersion = '0.03'
-ProgNameVersion = '{} V{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2017-09-27' # by RJH
+shortProgramName = "ReorderSongs"
+programName = "Reorder Songs"
+programVersion = '0.03'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import sys, os #, logging
+import sys
+import os #, logging
 
-sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
-sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 
 import BibleOrgSysGlobals
-import SFMFile
+from InputOutput import SFMFile
 
 
 testFolder = 'Tests/DataFilesForTests/'
@@ -76,7 +79,7 @@ def main():
     """
     Reorder songs by title (\s line in song record -- assumed to always be the second line in the record).
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
@@ -111,7 +114,7 @@ def main():
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs written".format( k+1 ) )
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} finished.".format( ProgNameVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} finished.".format( programNameVersion ) )
 #end of main
 
 if __name__ == '__main__':
@@ -119,10 +122,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ReorderSongs.py

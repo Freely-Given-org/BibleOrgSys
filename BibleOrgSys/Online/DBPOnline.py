@@ -64,12 +64,12 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-20' # by RJH
-ShortProgName = "DigitalBiblePlatform"
-ProgName = "Digital Bible Platform online handler"
-ProgVersion = '0.22'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-20' # by RJH
+shortProgramName = "DigitalBiblePlatform"
+programName = "Digital Bible Platform online handler"
+programVersion = '0.22'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -82,7 +82,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Misc.singleton import singleton
 from Online.GenericOnlineBible import GenericOnlineBible
@@ -626,13 +626,13 @@ class DBPBible( GenericOnlineBible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
     from Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     if 1: # Test the DBPBibles class
         print()
@@ -717,10 +717,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of DBPOnline.py

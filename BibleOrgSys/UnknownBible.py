@@ -38,12 +38,12 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-23' # by RJH
-ShortProgName = "UnknownBible"
-ProgName = "Unknown Bible object handler"
-ProgVersion = '0.35'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-23' # by RJH
+shortProgramName = "UnknownBible"
+programName = "Unknown Bible object handler"
+programVersion = '0.35'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -53,7 +53,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Formats.ESFMBible import ESFMBibleFileCheck
 from Formats.PTX8Bible import PTX8BibleFileCheck
@@ -89,7 +89,7 @@ from Formats.VPLBible import VPLBibleFileCheck
 
 
 
-logger = logging.getLogger(ShortProgName)
+logger = logging.getLogger(shortProgramName)
 
 
 
@@ -855,11 +855,11 @@ class UnknownBible:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(programName, programVersion ) )
 
     # Now demo the class
     if 0: # Just test one folder
@@ -916,17 +916,17 @@ def demo():
             #errorDictionary = thisBible.getErrors()
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
-                    os.path.join( BiblesFolderpath, 'Biola Unbound modules/' ),
-                    os.path.join( BiblesFolderpath, 'EasyWorship Bibles/' ),
-                    os.path.join( BiblesFolderpath, 'OpenSong Bibles/' ),
-                    os.path.join( BiblesFolderpath, 'Zefania modules/' ),
-                    os.path.join( BiblesFolderpath, 'YET modules/' ),
-                    os.path.join( BiblesFolderpath, 'GoBible modules/' ),
-                    os.path.join( BiblesFolderpath, 'MyBible modules/' ),
-                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/' ),
-                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../AutoProcesses/Processed/' ),
+                    BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
+                    BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),
+                    BiblesFolderpath.joinpath( 'OpenSong Bibles/' ),
+                    BiblesFolderpath.joinpath( 'Zefania modules/' ),
+                    BiblesFolderpath.joinpath( 'YET modules/' ),
+                    BiblesFolderpath.joinpath( 'GoBible modules/' ),
+                    BiblesFolderpath.joinpath( 'MyBible modules/' ),
+                    BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ),
+                    Path( '/srv/AutoProcesses/Processed/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
@@ -1027,10 +1027,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of UnknownBible.py

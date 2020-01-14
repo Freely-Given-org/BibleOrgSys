@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2018-05-14 by RJH (also update ProgVersion below)
+#   Last modified: 2018-05-14 by RJH (also update programVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -27,16 +27,22 @@
 Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
-ProgName = "Bible Books Codes tests"
-ProgVersion = '0.72'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "Bible Books Codes tests"
+programVersion = '0.72'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
+import os.path
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, BibleBooksCodesConverter, BibleBooksCodes
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import Reference.BibleBooksCodesConverter as BibleBooksCodesConverter
+import Reference.BibleBooksCodes as BibleBooksCodes
 
 
 class BibleBooksCodesConverterTests( unittest.TestCase ):
@@ -657,10 +663,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksCodesTests.py

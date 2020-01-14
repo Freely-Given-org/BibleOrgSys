@@ -5,7 +5,7 @@
 #
 # Module handling Sword modules directly
 #
-# Copyright (C) 2012-2019 Robert Hunt
+# Copyright (C) 2012-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,23 +54,25 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "SwordModules"
-ProgName = "Sword module handler"
-ProgVersion = '0.49'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-05' # by RJH
+shortProgramName = "SwordModules"
+programName = "Sword module handler"
+programVersion = '0.49'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging, time
+import os
+import logging, time
 import multiprocessing
 import struct, zlib
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+
 import BibleOrgSysGlobals
 #from Misc.singleton import singleton
 from Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
@@ -564,6 +566,7 @@ class SwordModule():
                 assert blankCount == 0
                 # Now save the lexicon/dictionary data in an easily accessible format
                 for key, value in LDIndex.items():
+                    # print( f"key='{key}' value={value}" )
                     if isinstance( value, list ): # This key has two entries
                         for j, (blockNumber, blockChunkNumber) in enumerate(value):
                             try:
@@ -571,9 +574,9 @@ class SwordModule():
                             except IndexError:
                                 logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, len(LDStuffList), key ) )
                                 chunk = ''
-                            adjKey = "{} ({})".format( key, j+1 ) if key in self.swordData else key
+                            adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
-                                print( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, key ) )
+                                logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
                                 #print( j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             assert isinstance( chunk, str )
                             self.swordData[adjKey] = chunk
@@ -587,9 +590,12 @@ class SwordModule():
                         try:
                             chunk = LDStuffList[blockNumber][blockChunkNumber]
                             assert isinstance( chunk, str )
-                            assert key not in self.swordData
-                            self.swordData[key] = chunk.strip()
-                            #print( "   ", key, "->", chunk )
+                            adjKey = f'{key} ({j+1})' if key in self.swordData else key
+                            if adjKey in self.swordData:
+                                logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
+                                # print( j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                            self.swordData[adjKey] = chunk.strip()
+                            # print( "   ", adjKey, "->", chunk )
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
             else: # we're just loading the index, not the data
@@ -618,8 +624,11 @@ class SwordModule():
                         try:
                             stuff = dataIndex[blockNumber]
                             entry = (stuff[0], stuff[1], blockNumber, blockChunkNumber,)
-                            assert key not in self.swordIndex
-                            self.swordIndex[key] = entry
+                            adjKey = f'{key} ({j+1})' if key in self.swordData else key
+                            if adjKey in self.swordIndex:
+                                logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
+                                # print( j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                            self.swordIndex[adjKey] = entry
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
         self.expandLD()
@@ -2461,22 +2470,23 @@ class SwordModules:
 
 
 
-def demo():
+def demo() -> None:
     """
     Sword Modules
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     if 0:
         startTime = time.time()
 
     if 1: # test one module dictionary twice -- loaded into memory, and just indexed
         swordFolder = os.path.join( os.path.expanduser('~'), '.sword/')
-        moduleCode = 'webstersdict'
+        moduleCode = 'webster1913'
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        print( swMC )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
@@ -2499,7 +2509,8 @@ def demo():
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        print( swMC )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
@@ -2519,7 +2530,8 @@ def demo():
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        print( swMC )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( swMC )
 
         if 1:
             swM = SwordModule( swMC )
@@ -2545,7 +2557,8 @@ def demo():
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        print( swMC )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( swMC )
 
         swBM = SwordBibleModule( swMC )
         if not swBM.SwordModuleConfiguration.locked:
@@ -2563,7 +2576,7 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 2: print( '\n\n{}'.format( swMs ) )
         if BibleOrgSysGlobals.strictCheckingFlag: swMs.testAll()
 
-    if 0:
+    if 0 and BibleOrgSysGlobals.verbosityLevel > 0:
         endTime = time.time()
         elapsedTime = endTime - startTime
         print( "Elapsed time was", elapsedTime )
@@ -2573,10 +2586,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of SwordModules.py

@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012-2018 Robert Hunt
+# Copyright (C) 2012-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,21 +28,23 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-01-18' # by RJH
-ShortProgName = "USXBible"
-ProgName = "USX Bible filenames handler"
-ProgVersion = '0.54'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2020-01-06' # by RJH
+shortProgramName = "USXBible"
+programName = "USX Bible filenames handler"
+programVersion = '0.54'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+
 import BibleOrgSysGlobals
 
 
@@ -60,7 +62,7 @@ class USXFilenames:
     Class for creating and manipulating USX Filenames.
     """
 
-    def __init__( self, givenFolderName ):
+    def __init__( self, givenFolderName ) -> None:
         """
         Create the object by inspecting files in the given folder.
         """
@@ -141,12 +143,13 @@ class USXFilenames:
                         break
             if matched: break
         #print( matched )
-        if BibleOrgSysGlobals.verbosityLevel>2 and not matched: logging.info( _("Unable to recognize valid USX files in ") + self.givenFolderName )
+        if BibleOrgSysGlobals.verbosityLevel>2 and not matched:
+            logging.info( _("Unable to recognize valid USX files in ") + str(self.givenFolderName) )
         #print( "USXFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
     # end of USXFilenames.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of an object.
 
@@ -162,7 +165,7 @@ class USXFilenames:
     # end of USXFilenames.__str__
 
 
-    def getFilenameTemplate( self ):
+    def getFilenameTemplate( self ) -> str:
         """
         Returns a pattern/template for USX filenames where
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
@@ -173,7 +176,7 @@ class USXFilenames:
     # end of USXFilenames.getFilenameTemplate
 
 
-    def doListAppend( self, BBB, filename, givenList, caller ):
+    def doListAppend( self, BBB:str, filename, givenList, caller ) -> None:
         """
         Check that BBB and filename are not in the givenList,
                 then add them as a 2-tuple.
@@ -220,7 +223,7 @@ class USXFilenames:
     # end of USXFilenames.getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self, strictCheck=False ):
+    def getConfirmedFilenameTuples( self, strictCheck:bool=False ):
         """
         Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames.
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
@@ -249,19 +252,22 @@ class USXFilenames:
     # end of USXFilenames.getConfirmedFilenameTuples
 
 
-    def getPossibleFilenameTuples( self, strictCheck=False ):
+    def getPossibleFilenameTuples( self, strictCheck:bool=False ):
         """
         Return a list of filenames just derived from the list of files in the folder,
                 i.e., look only externally at the filenames.
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
         #print( "getPossibleFilenameTuples()" )
+        #print( "self.fileList", len(self.fileList), self.fileList )
         resultList = []
         for possibleFilename in self.fileList:
+            print( len(resultList), possibleFilename )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
+                #if BBB[0]=='E': print( USFMBookCode,USFMDigits,BBB )
                 ignore = False
                 for ending in filenameEndingsToIgnore:
                     if pFUpper.endswith( ending): ignore=True; break
@@ -271,15 +277,17 @@ class USXFilenames:
                         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                             firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
                             #print( "firstLinesGPFT", firstLines )
-                            if not firstLines or len(firstLines)<3: continue
+                            if not firstLines or len(firstLines)<3:
+                                continue
                             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                                if BibleOrgSysGlobals.verbosityLevel > 3: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 3:
+                                    print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        #print( "resultList", resultList )
+        #print( "resultList", len(resultList), resultList )
         return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getPossibleFilenameTuples
 
@@ -334,9 +342,11 @@ class USXFilenames:
 # end of class USXFiles
 
 
-def demo():
-    """ Demonstrate finding files in some USX Bible folders. """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+def demo() -> None:
+    """ 
+    Demonstrate finding files in some USX Bible folders. 
+    """
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),
@@ -357,10 +367,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of USXFilenames.py

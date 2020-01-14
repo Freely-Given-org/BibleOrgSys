@@ -28,12 +28,12 @@ Module handling ISO_639_3_Languages.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "ISOLanguages"
-ProgName = "ISO 639_3_Languages handler"
-ProgVersion = '0.85'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-19' # by RJH
+shortProgramName = "ISOLanguages"
+programName = "ISO 639_3_Languages handler"
+programVersion = '0.85'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -42,7 +42,7 @@ import os
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -157,11 +157,11 @@ class ISO_639_3_Languages:
 # end of ISO_639_3_Languages class
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
@@ -196,10 +196,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ISO_639_3_Languages.py

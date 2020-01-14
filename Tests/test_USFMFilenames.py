@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update programVersion below)
 #
 # Module testing USFMFilenames.py
 #
@@ -27,16 +27,21 @@
 Module testing USFMFilenames.py.
 """
 
-ProgName = "USFM Filenames tests"
-ProgVersion = '0.56'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "USFM Filenames tests"
+programVersion = '0.56'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, os, unittest
+import os
+import unittest
+import sys
 
-sourceFolder = "."
-sys.path.append( sourceFolder )
-import BibleOrgSysGlobals, USFMFilenames
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
+
+import BibleOrgSysGlobals
+import InputOutput.USFMFilenames as USFMFilenames
 
 
 class USFMFilenamesTests1( unittest.TestCase ):
@@ -287,7 +292,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getConfirmedFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 13 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -313,7 +318,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 14 ) # Number of actual files found
+        self.assertEqual( len(results), 4 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -339,7 +344,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesInt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 13 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -365,7 +370,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 13 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -398,10 +403,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

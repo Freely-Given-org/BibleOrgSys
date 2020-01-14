@@ -32,15 +32,17 @@ This app also demonstrates how little code is required to use the BOS
 # Allow the system to find the BOS even when the app is down in its own folder
 import os, sys
 
-sys.path.append( '.' ) # So we can run it from the folder above and still do these imports
-sys.path.append( 'BibleOrgSys/' ) # So we can run it from the folder above and still do these imports
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.UnknownBible import UnknownBible
 
 
-ProgName = "USFM to USX (minimal)"
-ProgVersion = '0.02'
+programName = "USFM to USX (minimal)"
+programVersion = '0.02'
 
 
 # You must specify where to find a Bible to read --
@@ -51,7 +53,7 @@ inputFolder = '/home/robert/Paratext8Projects/MBTV/'
 
 
 # Configure basic Bible Organisational System (BOS) set-up
-parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+parser = BibleOrgSysGlobals.setup( programName, programVersion )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
 # Do the actual Bible load and export work that we want
@@ -62,4 +64,4 @@ if loadedBible is not None:
     print(f"\nOutput should be in {os.path.join( os.getcwd(), BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )} folder.")
 
 # Do the BOS close-down stuff
-BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+BibleOrgSysGlobals.closedown( programName, programVersion )

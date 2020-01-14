@@ -1,7 +1,10 @@
 import unittest
-
+import os.path
 import sys
-sys.path.append( 'BibleOrgSys/' )
+
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
+if sourceFolder not in sys.path:
+    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
 
 import BibleOrgSysGlobals
 

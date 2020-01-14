@@ -64,12 +64,12 @@ or
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "ZefaniaBible"
-ProgName = "Zefania XML Bible format handler"
-ProgVersion = '0.36'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "ZefaniaBible"
+programName = "Zefania XML Bible format handler"
+programVersion = '0.36'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -79,7 +79,7 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from Bible import Bible, BibleBook
@@ -102,7 +102,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -733,29 +733,34 @@ class ZefaniaXMLBible( Bible ):
 # end of ZefaniaXMLBible class
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0:
+        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
+        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
+            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
+            if latestPythonModificationDate != lastModifiedDate:
+                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
-        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/Zefania modules/' )
+        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
         print( "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
         print( "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         print( "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # demo the file checking code
-        testFolder = os.path.join( BiblesFolderpath, 'Zefania modules/' )
-        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/Zefania modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
+        #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
         print( "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
         print( "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         print( "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     if 1:
-        testFolder = os.path.join( BiblesFolderpath, 'Zefania modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
         single = ( "kjv.xml", )
         good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
@@ -789,9 +794,9 @@ def demo():
                     try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
                     except KeyError: print( testFilename, reference, "doesn't exist" )
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1:
-        testFolder = os.path.join( BiblesFolderpath, 'Zefania modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         fileList = []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -830,10 +835,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ZefaniaXMLBible.py

@@ -28,21 +28,22 @@ Module for reading and parsing simple text control files.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2016-12-28' # by RJH
-ShortProgName = "TextFile"
-ProgName = "Text File"
-ProgVersion = '0.03'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2016-12-28' # by RJH
+shortProgramName = "TextFile"
+programName = "Text File"
+programVersion = '0.03'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os.path, logging
+import os.path
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -135,11 +136,11 @@ class TextFile:
 
 
 
-def demo():
+def demo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     #tf = TextFile( 'TextFile.py' ) # Read myself!
     #tf.replace( "TextFile", "ABRACADABRA" )
@@ -160,10 +161,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of TextFile.py

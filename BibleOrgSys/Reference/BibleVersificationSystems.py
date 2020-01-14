@@ -65,21 +65,22 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "BibleVersificationSystems"
-ProgName = "Bible Versification Systems handler"
-ProgVersion = '0.60'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-19' # by RJH
+shortProgramName = "BibleVersificationSystems"
+programName = "Bible Versification Systems handler"
+programVersion = '0.60'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 #from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -512,7 +513,7 @@ class BibleVersificationSystems:
             if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
-            outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "ScrapedFiles/", "BibleVersificationSystem_"+thisSystemName + '.xml' )
+            outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleVersificationSystem_"+thisSystemName + '.xml' )
             if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}…").format( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
@@ -913,11 +914,11 @@ class BibleVersificationSystem:
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     # Demo the BibleVersificationSystems object
     bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -963,10 +964,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleVersificationSystems.py

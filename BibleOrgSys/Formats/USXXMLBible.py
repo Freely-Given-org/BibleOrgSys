@@ -28,22 +28,23 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "USXXMLBibleHandler"
-ProgName = "USX XML Bible handler"
-ProgVersion = '0.38'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "USXXMLBibleHandler"
+programName = "USX XML Bible handler"
+programVersion = '0.38'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from InputOutput.USXFilenames import USXFilenames
 #from Formats.PTX7Bible import loadPTX7ProjectData
@@ -370,19 +371,19 @@ class USXXMLBible( Bible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     testData = (
                 ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
                 ('Test2',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2'),),
-                ('MatigsalugUSFM',BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'),), # USFM not USX !
-                ("Matigsalug3", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
-                ("Matigsalug4", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
-                ("Matigsalug5", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
+                ('MatigsalugUSFM',BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
+                ("Matigsalug3", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
+                ("Matigsalug4", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
+                ("Matigsalug5", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
                 ) # You can put your USX test folder here
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -416,11 +417,11 @@ def demo():
             else: print( "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
-        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
+        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( programName, programVersion ) )
         #       pass
 
     if 1:
-        USXSourceFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../SSD/Documents/USXResources/' ) # You can put your own folder here
+        USXSourceFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/Documents/USXResources/' ) # You can put your own folder here
         for j, something in enumerate( sorted( os.listdir( USXSourceFolder ) ) ):
             if something == '.git': assert j==0; continue
             #if something != 'TND': continue # Test this one only!!!
@@ -441,10 +442,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
 # end of USXXMLBible.py

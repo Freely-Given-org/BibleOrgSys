@@ -48,12 +48,12 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "e-SwordBible"
-ProgName = "e-Sword Bible format handler"
-ProgVersion = '0.40'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "e-SwordBible"
+programName = "e-Sword Bible format handler"
+programVersion = '0.40'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -64,7 +64,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -86,7 +86,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -146,7 +146,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, lastFilenameFound ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( programNameVersion, lastFilenameFound ) )
             eSB = ESwordBible( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: eSB.preload()
             if autoLoadBooks: eSB.load() # Load and process the database
@@ -186,7 +186,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( ProgNameVersion, foundProjects[0][1] ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}…".format( programNameVersion, foundProjects[0][1] ) )
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             eSB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoad or autoLoadBooks: eSB.preload()
@@ -1681,8 +1681,8 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
     Crudely demonstrate the e-Sword Bible class
     """
     from Reference import VerseReferences
-    #BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
-    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/e-Sword modules/' ) # Must be the same as below
+    #BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
+    #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/e-Sword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class {}…").format( indexString) )
@@ -1725,11 +1725,11 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
 # end of testeSwB
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -1753,9 +1753,9 @@ def demo():
             #halt
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # individual modules in the test folder
-        testFolder = os.path.join( BiblesFolderpath, 'e-Sword modules/' )
+        testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' )
         names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
         for j, name in enumerate( names):
             indexString = 'C' + str( j+1 )
@@ -1803,9 +1803,9 @@ def demo():
                 #testeSwB( indexString, testFolder, someFile )
                 ##break # only do the first one…temp
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # all discovered modules in the test folder
-        testFolder = os.path.join( BiblesFolderpath, 'e-Sword modules/' ) # Put your test folder here
+        testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' ) # Put your test folder here
 
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -1834,10 +1834,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ESwordBible.py

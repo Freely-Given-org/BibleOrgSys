@@ -37,17 +37,18 @@ More details are available from https://api-info.readthedocs.io/en/latest/dcs.ht
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-18' # by RJH
-ShortProgName = "Door43ContentService"
-ProgName = "Door43 Content Service online handler"
-ProgVersion = '0.04'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-18' # by RJH
+shortProgramName = "Door43ContentService"
+programName = "Door43 Content Service online handler"
+programVersion = '0.04'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 import urllib.request
 import json
 import tempfile, zipfile
@@ -55,7 +56,7 @@ from datetime import datetime
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Misc.singleton import singleton
 from Formats.USFMBible import USFMBible
@@ -464,13 +465,13 @@ class DCSBible( USFMBible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
     from Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion, end='\n\n' )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion, end='\n\n' )
 
     # Test the DCSBibles class (also used later)
     if BibleOrgSysGlobals.verbosityLevel > 0: print("\n\nA/ DCSBibles class test…")
@@ -552,10 +553,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of Door43ContentServiceOnline.py

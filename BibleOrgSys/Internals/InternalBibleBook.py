@@ -50,12 +50,12 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-16' # by RJH
-ShortProgName = "InternalBibleBook"
-ProgName = "Internal Bible book handler"
-ProgVersion = '0.97'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-31' # by RJH
+shortProgramName = "InternalBibleBook"
+programName = "Internal Bible book handler"
+programVersion = '0.97'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 BCV_VERSION = '1.0'
 
@@ -72,7 +72,7 @@ import unicodedata
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
@@ -114,7 +114,7 @@ def hasClosingPunctuation( text:str ) -> bool:
 # end of hasClosingPunctuation
 
 
-def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
+def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
                         -> List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]:
     """
     Cleans up the unfoldingWord alignment info first
@@ -122,26 +122,24 @@ def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,st
     Returns the cleaned-up list
     """
     import re
-    #makeDicts = False
-
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( f"Analysing {len(originalAlignments):,} alignments…" )
     #debuggingThisModule = True
 
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( f"cleanUWalignments( {BBB}, … )" )
+    if BibleOrgSysGlobals.verbosityLevel > 2:
+        print( f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
+    if BibleOrgSysGlobals.verbosityLevel > 3:
+        print( f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
     maxOriginalWords = maxTranslatedWords = 0
     cleanedAlignmentList:List[Tuple[str,str,str,str]] = []
-    #if makeDicts:
-        #oneToOneAlignmentDict:Dict[str,list] = {}
-        #oneToOneReverseAlignmentDict:Dict[str,list] = {}
     for j, (C,V, textString,wordsString) in enumerate( originalAlignments, start=1 ):
         if debuggingThisModule: print( f"{j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
 
-        assert textString
+        assert isinstance( C, str ) and C
+        assert isinstance( V, str ) and V
+
+        assert isinstance( textString, str ) and textString
         assert textString.startswith( 'x-strong="' )
         assert '\\w' not in textString
         assert 'x-strong="' in textString
@@ -151,7 +149,7 @@ def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,st
         assert 'x-occurrences="' in textString
         assert 'x-content="' in textString
 
-        assert wordsString
+        assert isinstance( wordsString, str ) and wordsString
         #print( f"wordsString1='{wordsString}'" )
         #assert not wordsString.startswith( ' ' )
         wordsString = wordsString.lstrip()
@@ -198,20 +196,18 @@ def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,st
         textList = []
         match =  textRE.search( textString )
         while match:
-            #print( "           text group0", match.group(0) )
-            #print( "           text group1", match.group(1) )
-            #print( "           text group2", match.group(2) )
-            #print( "           text group3", match.group(3) )
-            #print( "           text group4", match.group(4) )
-            #print( "           text group5", match.group(5) )
-            #print( "           text group6", match.group(6) )
             textList.append( (match.group(1),match.group(2),match.group(3),match.group(4),match.group(5),match.group(6)) )
+            for xx in range(1,7):
+                if not match.group(xx):
+                    logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {textString}" )
+                    assert xx == 2 # It's the lemma field that's empty
             #index = match.end()
             textString = f'{textString[:match.start()]}{textString[match.end():]}'
             match =  textRE.search( textString )
-        #print( f"{textString=!r}" )
-        assert not textString.replace( '|', '' )
-        assert len(textList) == textCount
+        #print( f"{abbreviation} {BBB} {C}:{V} textString={textString!r}" )
+        if textString.replace( '|', '' ):
+            logging.critical( f"Got an unexpected uW {abbreviation} alignment field at {BBB} {C}:{V} in {textString}" )
+        else: assert len(textList) == textCount
 
         wordsCount = wordsString.count( '\\w ' )
         if wordsCount > maxTranslatedWords: maxTranslatedWords = wordsCount
@@ -221,10 +217,7 @@ def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,st
         wordsList = []
         match =  wordRE.search( wordsString )
         while match:
-            #print( "           words group0", match.group(0) )
-            #print( "           words group1", match.group(1) )
-            #print( "           words group2", match.group(2) )
-            #print( "           words group3", match.group(3) )
+            for xx in range(1,4): assert match.group(xx)
             wordsList.append( (match.group(1),match.group(2),match.group(3)) )
             #index = match.end()
             wordsString = f'{wordsString[:match.start()]}{match.group(1)}{wordsString[match.end():]}'
@@ -233,32 +226,14 @@ def cleanUWalignments( BBB:str, originalAlignments:List[Tuple[str,str,str,str,st
 
         cleanedAlignmentList.append( (C,V, textList, wordsString,wordsList) )
 
-        #if makeDicts:
-            #if textCount==1 and wordsCount == 1:
-                #thisText, thisWord = textList[0], wordsList[0]
-                #if thisText not in oneToOneAlignmentDict:
-                    #oneToOneAlignmentDict[thisText] = []
-                #oneToOneAlignmentDict[thisText].append( (C,V,thisWord) )
-                #if thisWord not in oneToOneReverseAlignmentDict:
-                    #oneToOneReverseAlignmentDict[thisWord] = []
-                #oneToOneReverseAlignmentDict[thisWord].append( (C,V,thisText) )
-
-    if debuggingThisModule:
-        print( f"\n\nMaximum of {maxOriginalWords} original language words in one entry" )
-        print( f"Maximum of {maxTranslatedWords} translated words in one entry" )
-        print( f"\nHave {len(cleanedAlignmentList):,} alignment entries" )
-        for j, (C,V, textList, wordsString,wordsList) in enumerate( cleanedAlignmentList, start=1 ):
-            print( f"{j} {BBB} {C}:{V} {textList} '{wordsString}' {wordsList}" )
-            if j > 8: break
-        #if makeDicts:
-            #print( f"\nHave {len(oneToOneAlignmentDict):,} one to one alignments" )
-            #for j, (key,value) in enumerate( oneToOneAlignmentDict.items(), start=1 ):
-                #print( f"{j} {BBB} {key} = {value}" )
-                #if j > 8: break
-            #print( f"\nHave {len(oneToOneReverseAlignmentDict):,} one to one reverse alignments" )
-            #for j, (key,value) in enumerate( oneToOneReverseAlignmentDict.items(), start=1 ):
-                #print( f"{j} {BBB} {key} = {value}" )
-                #if j > 8: break
+    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+        print( f"\nHave {len(cleanedAlignmentList):,} alignment entries for {abbreviation} {BBB}" )
+        print( f"  Maximum of {maxOriginalWords} original language words in one {abbreviation} {BBB} entry" )
+        print( f"  Maximum of {maxTranslatedWords} translated words in one {abbreviation} {BBB} entry" )
+        if debuggingThisModule:
+            for j, (C,V, textList, wordsString,wordsList) in enumerate( cleanedAlignmentList, start=1 ):
+                print( f"{j} {BBB} {C}:{V} {textList} '{wordsString}' {wordsList}" )
+                if j > 8: break
 
     return cleanedAlignmentList
 # end of cleanUWalignments function
@@ -324,7 +299,7 @@ class InternalBibleBook:
         @rtype: string
         """
         result = self.objectNameString
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         if self.BBB: result += ('\n' if result else '') + "  " + self.BBB
         try:
             if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
@@ -4748,7 +4723,7 @@ class InternalBibleBook:
         if self.checkAddedUnitsFlag: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX …
             if typicalAddedUnitData is None: # Get our recommendations for added units
                 import pickle
-                folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+                folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
                 filepath = os.path.join( folder, "AddedUnitData.pickle" )
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Importing from {}…").format( filepath ) )
                 with open( filepath, 'rb' ) as pickleFile:
@@ -4890,11 +4865,11 @@ class InternalBibleBook:
 # end of class InternalBibleBook
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     print( "Since this is only designed to be a base class, it can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
@@ -4913,10 +4888,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of InternalBibleBook.py

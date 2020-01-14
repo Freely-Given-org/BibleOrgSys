@@ -38,12 +38,12 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "OSISBible"
-ProgName = "OSIS XML Bible format handler"
-ProgVersion = '0.65'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "OSISBible"
+programName = "OSIS XML Bible format handler"
+programVersion = '0.65'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -52,7 +52,7 @@ import logging, os, sys
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
@@ -80,7 +80,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -2344,7 +2344,7 @@ class OSISXMLBible( Bible ):
                                     ##print( lastUSFMResultList )
                                     #adjSFMResult = tuple( lastUSFMResultList )
                                 if lastLineTuple:
-                                    self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
+                                    self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( programName, programVersion ) )
                                     self.thisBook.addLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
                                     self.thisBook.addLine( 'mt1', lastLineTuple[1] ) # Change from s to mt1
                                 chapterMilestone = verseMilestone = ''
@@ -2865,7 +2865,7 @@ class OSISXMLBible( Bible ):
                 self.thisBook.objectNameString = 'OSIS XML Bible Book object'
                 self.thisBook.objectTypeString = 'OSIS'
                 self.haveBook = True
-            self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
+            self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( programName, programVersion ) )
             self.thisBook.addLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
         #elif mainDivType=='bookGroup':
             ## This is all the books lumped in together into one big div
@@ -3497,11 +3497,11 @@ class OSISXMLBible( Bible ):
 # end of OSISXMLBible class
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -3516,7 +3516,7 @@ def demo():
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
-                        BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/' ),
+                        BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ),
                         BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
                         BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
                         BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
@@ -3533,17 +3533,17 @@ def demo():
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "OSIS TestA3", result3 )
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # Test OSISXMLBible object
         testFilepaths = (
             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample
             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest2/' ), # Full KJV from Crosswire
-            os.path.join( BiblesFolderpath, 'Original languages/SBLGNT/sblgnt.osis/SBLGNT.osis.xml' ),
+            BiblesFolderpath.joinpath( 'Original languages/SBLGNT/sblgnt.osis/SBLGNT.osis.xml' ),
             BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/Ruth.xml' ),
             BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/Dan.xml' ),
             BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/' ), # Hebrew Ruth, Daniel, Bible
             BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/1Sam.xml' ),
-            os.path.join( BiblesFolderpath, 'Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml' ), # Entire Bible in one file 4.4MB
+            BiblesFolderpath.joinpath( 'Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml' ), # Entire Bible in one file 4.4MB
             '../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml',
             '../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml', # Single books
             '../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml', # Single books
@@ -3598,10 +3598,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of OSISXMLBible.py

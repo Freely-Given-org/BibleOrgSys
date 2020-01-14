@@ -27,7 +27,7 @@ Module handling global variables
     and some useful general functions.
 
 Contains functions:
-    setupLoggingToFile( ProgName, ProgVersion, loggingFolderPath=None )
+    setupLoggingToFile( programName, programVersion, loggingFolderPath=None )
     addConsoleLogging()
     addLogfile( projectName, folderName=None )
     removeLogfile( projectHandler )
@@ -66,7 +66,7 @@ Contains functions:
     pickleObject( theObject, filename, folderName=None )
     unpickleObject( filename, folderName=None )
 
-    setup( ProgName, ProgVersion, loggingFolder=None )
+    setup( programName, programVersion, loggingFolder=None )
 
     setVerbosity( verbosityLevelParameter )
     setDebugFlag( newValue=True )
@@ -75,19 +75,19 @@ Contains functions:
     addStandardOptionsAndProcess( parserObject )
     printAllGlobals( indent=None )
 
-    closedown( ProgName, ProgVersion )
+    closedown( programName, programVersion )
 
     demo()
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-29' # by RJH
-ShortProgName = "BOSGlobals"
-ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.82'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-29' # by RJH
+shortProgramName = "BOSGlobals"
+programName = "BibleOrgSys Globals"
+programVersion = '0.82'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 haltOnXMLWarning = False # Used for XML debugging
@@ -101,9 +101,9 @@ from pathlib import Path
 import pickle
 from datetime import datetime
 import unicodedata
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
-#pwd:Optional[Module]
+# pwd:Optional[Any] # Should be Module
 try: import pwd
 except ImportError:
     pwd = None
@@ -115,7 +115,7 @@ except ImportError:
 
 programStartTime = datetime.now()
 
-commandLineArguments = None
+commandLineArguments = Namespace()
 
 strictCheckingFlag = debugFlag = False
 maxProcesses = 1
@@ -209,16 +209,16 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( ShortProgName:str, ProgVersion:str, folderPath:Optional[Path]=None ) -> None:
+def setupLoggingToFile( shortProgramName:str, programVersion:str, folderPath:Optional[Path]=None ) -> None:
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setupLoggingToFile( {!r}, {!r}, {!r} )".format( ShortProgName, ProgVersion, folderPath ) )
+        print( "BibleOrgSysGlobals.setupLoggingToFile( {!r}, {!r}, {!r} )".format( shortProgramName, programVersion, folderPath ) )
 
-    filename = ShortProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
+    filename = shortProgramName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDERPATH # relative path
     filepath = Path( folderPath, filename )
 
@@ -248,12 +248,12 @@ def setupLoggingToFile( ShortProgName:str, ProgVersion:str, folderPath:Optional[
 # end of BibleOrgSysGlobals.setupLoggingToFile
 
 
-def addConsoleLogging( consoleLoggingLevel:Optional[Any]=None ) -> None:
+def addConsoleLogging( consoleLoggingLevel:Optional[int]=None ) -> None:
     """
     Adds a handler to also send ERROR and higher to console (depending on verbosity)
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
+        print( f"BibleOrgSysGlobals.addConsoleLogging( {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]} )" )
 
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
@@ -272,7 +272,7 @@ def addConsoleLogging( consoleLoggingLevel:Optional[Any]=None ) -> None:
 # end of BibleOrgSysGlobals.addConsoleLogging
 
 
-def addLogfile( projectName:str, folderName:Optional[Path]=None ) -> Tuple[Path,Any]:
+def addLogfile( projectName:str, folderName:Optional[Path]=None ) -> Tuple[Path,logging.FileHandler]:
     """
     Adds an extra project specific log file to the logger.
     """
@@ -376,7 +376,7 @@ def getLatestPythonModificationDate() -> str:
                 #print( f"  Checking '{filepath}' …" )
                 with open( filepath, 'rt', encoding='utf-8' ) as pythonFile:
                     for line in pythonFile:
-                        if line.startswith( 'LastModifiedDate = ' ):
+                        if line.startswith( 'lastModifiedDate = ' ):
                             #print( filepath, line )
                             #print( filepath )
                             lineBit = line[19:]
@@ -531,7 +531,7 @@ def backupAnyExistingFile( filenameOrFilepath:Union[Path,str], numBackups:int=1,
     """
     if debugFlag and debuggingThisModule:
         print( "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
-        assert not filenameOrFilepath.lower().endswith( '.bak' )
+        assert not str(filenameOrFilepath).lower().endswith( '.bak' )
 
     if extension[0] != '.': extension = '.' + extension
     for n in range( numBackups, 0, -1 ): # e.g., 4,3,2,1
@@ -1214,7 +1214,7 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
         print( "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
-    parser = ArgumentParser( description='{} v{} {} {}'.format( sShortProgName, sProgVersion, _("last modified"), LastModifiedDate ) )
+    parser = ArgumentParser( description='{} v{} {} {}'.format( sShortProgName, sProgVersion, _("last modified"), lastModifiedDate ) )
     parser.add_argument( '--version', action='version', version='v{}'.format( sProgVersion ) )
     return parser
 # end of BibleOrgSysGlobals.setup
@@ -1337,11 +1337,16 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
 
     # Determine multiprocessing strategy
     maxProcesses = os.cpu_count()
-    if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
+    if maxProcesses > 1:
+        # Don't use 1-3 processes
+        reservedProcesses = max( 1, maxProcesses*15//100 )
+        # print( "reservedProcesses", reservedProcesses )
+        maxProcesses = maxProcesses - reservedProcesses
+        # print( "maxProcesses", maxProcesses )
     if commandLineArguments.single: maxProcesses = 1
     if debugFlag or debuggingThisModule:
         if maxProcesses > 1:
-            print( "DEBUG/SINGLE MODE: Reducing maxProcesses from {} down to 1".format( maxProcesses ) )
+            print( f"DEBUG/SINGLE MODE: Reducing maxProcesses from {maxProcesses} down to 1" )
         maxProcesses = 1 # Limit to one process
         print( "commandLineArguments: {}".format( commandLineArguments ) )
 
@@ -1418,13 +1423,13 @@ def closedown( cProgName, cProgVersion ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demo program to handle command line parameters
         and then demonstrate some basic functions.
     """
     if verbosityLevel>0:
-        print( ProgNameVersionDate )
+        print( programNameVersionDate )
         print( "   BOS last updated: {}".format( getLatestPythonModificationDate() ) )
     if verbosityLevel>2: printAllGlobals()
 
@@ -1496,10 +1501,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = setup( ShortProgName, ProgVersion )
+    parser = setup( shortProgramName, programVersion )
     addStandardOptionsAndProcess( parser )
 
     demo()
 
-    closedown( ShortProgName, ProgVersion )
+    closedown( shortProgramName, programVersion )
 # end of BibleOrgSysGlobals.py

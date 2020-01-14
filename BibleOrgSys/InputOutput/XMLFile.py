@@ -27,11 +27,11 @@
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-22' # by RJH
-ShortProgName = "XMLFile"
-ProgName = "XML file handler"
-ProgVersion = "0.04"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+lastModifiedDate = '2019-12-22' # by RJH
+shortProgramName = "XMLFile"
+programName = "XML file handler"
+programVersion = '0.04'
+programNameVersion = f'{programName} v{programVersion}'
 
 debuggingThisModule = False
 
@@ -43,7 +43,7 @@ import urllib.request
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -99,7 +99,7 @@ class XMLFile():
         @rtype: string
         """
         result = "XML file object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         if self.sourceFilename: result += ('\n' if result else '') + "  Source filename: " + self.sourceFilename
         if self.sourceFolder:
             result += ('\n' if result else '') + f"  Source folder: {self.sourceFolder}"
@@ -174,11 +174,11 @@ class XMLFile():
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     AutoProcessesFolder = "../../"
     osisSchemaHTTP = 'http://ebible.org/osisCore.2.1.1.xsd'
@@ -200,7 +200,7 @@ def demo():
     # end of doTest
 
     if 1: # Test some OpenSong Bibles
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles//OpenSong Bibles/' )
+        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles//OpenSong Bibles/' )
         single = ( "KJV.xmm", )
         good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
             "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
@@ -213,7 +213,7 @@ def demo():
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
+        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )
@@ -229,10 +229,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of XMLFile.py

@@ -31,12 +31,12 @@ and https://github.com/DavidHaslam/GoBibleCore.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-14' # by RJH
-ShortProgName = "GoBible"
-ProgName = "Go Bible format handler"
-ProgVersion = '0.04'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-14' # by RJH
+shortProgramName = "GoBible"
+programName = "Go Bible format handler"
+programVersion = '0.04'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -48,7 +48,7 @@ from shutil import rmtree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -640,17 +640,17 @@ def testGoBible( GoBibleFile ):
 # end of testGoBible
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Bibles/' )
+    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     testFolders =  (
-        os.path.join( BiblesFolderpath, 'GoBible modules/Haiola GoBible test versions/' ),
-        os.path.join( BiblesFolderpath, 'GoBible modules/' ),
+        BiblesFolderpath.joinpath( 'GoBible modules/Haiola GoBible test versions/' ),
+        BiblesFolderpath.joinpath( 'GoBible modules/' ),
         )
 
 
@@ -706,12 +706,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of GoBible.py

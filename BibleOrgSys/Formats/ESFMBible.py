@@ -35,22 +35,23 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-04' # by RJH
-ShortProgName = "ESFMBible"
-ProgName = "ESFM Bible handler"
-ProgVersion = '0.61'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-02-04' # by RJH
+shortProgramName = "ESFMBible"
+programName = "ESFM Bible handler"
+programVersion = '0.61'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import os, logging
+import os
+import logging
 import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from InputOutput.USFMFilenames import USFMFilenames
 from Formats.PTX7Bible import loadPTX7ProjectData
@@ -72,7 +73,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 # end of t
 
@@ -568,11 +569,11 @@ class ESFMBible( Bible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
 
     if 1: # Load and process some of our test versions
@@ -587,16 +588,16 @@ def demo():
                 ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Export/"),
                 ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Reexport/"),
             # Actual ESFM Bibles
-                ("Matigsalug", "MBTV", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/MBTV/'),),
+                ("Matigsalug", "MBTV", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'),),
                 ("ESFM Test 1", "OET-LV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/')),
                 ("ESFM Test 2", "OET-RV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/')),
-                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/Matigsalug/Bible/OET-LV/'),),
-                ("Open English Translation—Base Version", 'OET-BV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV'),),
-                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV'),),
-                ("Open English Translation—Readers' Version", 'OET-RV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV'),),
-                ("Open English Translation—Colloquial Version", 'OET-CV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV'),),
-                ("Open English Translation—Study Version", 'OET-SV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV'),),
-                ("Open English Translation—Extended Version", 'OET-EV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV'),),
+                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/OET-LV/'),),
+                ("Open English Translation—Base Version", 'OET-BV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV'),),
+                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV'),),
+                ("Open English Translation—Readers' Version", 'OET-RV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV'),),
+                ("Open English Translation—Colloquial Version", 'OET-CV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV'),),
+                ("Open English Translation—Study Version", 'OET-SV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV'),),
+                ("Open English Translation—Extended Version", 'OET-EV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV'),),
                 ):
             count += 1
             if os.access( testFolder, os.R_OK ):
@@ -685,12 +686,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ESFMBible.py

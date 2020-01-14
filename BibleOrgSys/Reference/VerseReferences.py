@@ -5,7 +5,7 @@
 #
 # Class handling internal BOS Bible verse references
 #
-# Copyright (C) 2013-2018 Robert Hunt
+# Copyright (C) 2013-2019 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -69,22 +69,24 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
-ShortProgName = "VerseReferences"
-ProgName = "Bible verse reference handler"
-ProgVersion = '0.39'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-29' # by RJH
+shortProgramName = "VerseReferences"
+programName = "Bible verse reference handler"
+programVersion = '0.39'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-import re, logging
+import re
+import logging
 
 
 if __name__ == '__main__':
+    import os.path
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -167,21 +169,21 @@ OSIS_V_RE = re.compile( '([1-9][0-9]?|[1][0-9][0-9])' ) #  Verse numbers 1..199
 OSIS_S_RE = re.compile( '([a-f]?)' )
 # Derived REs
 OSIS_VS_RE = '{}(?:!{})?'.format( OSIS_V_RE, OSIS_S_RE )
-OSIS_CVS_RE = '{}\.{}'.format( OSIS_C_RE, OSIS_VS_RE )
+OSIS_CVS_RE = r'{}\.{}'.format( OSIS_C_RE, OSIS_VS_RE )
 OSIS_BCVS_RE = '{}_{}'.format( OSIS_BOOK_RE, OSIS_CVS_RE )
 # The following all include beginning and end markers, i.e., only match entire strings
 OSIS_BCVS1_RE = re.compile( '^{}$'.format( OSIS_BCVS_RE ) )
-OSIS_BCVS2_RE = re.compile( '^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE ) )
+OSIS_BCVS2_RE = re.compile( r'^{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE ) )
 OSIS_BCVS2C_RE = re.compile( '^{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE ) )
-OSIS_BCVS3_RE = re.compile( '^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS3_RE = re.compile( r'^{}\.{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
 OSIS_BCVS3C_RE = re.compile( '^{};{};{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE, OSIS_CVS_RE ) )
 OSIS_CHAPTER_RE = re.compile( '^{}_{}$'.format( OSIS_BOOK_RE, OSIS_C_RE ) )
 OSIS_BCVS_RANGE_RE = re.compile( '^{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE ) )
 OSIS_CHAPTER_RANGE_RE = re.compile( '^{}–{}$'.format( OSIS_BCVS_RE, OSIS_CVS_RE ) )
 # Special cases
-OSIS_BCVS_RANGE_PLUS_RE = re.compile( '^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
-OSIS_BCVS_PLUS_RANGE_RE = re.compile( '^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
-OSIS_BCVS_PLUS_RANGE_PLUS_RE = re.compile( '^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS_RANGE_PLUS_RE = re.compile( r'^{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS_PLUS_RANGE_RE = re.compile( r'^{}\.{}-{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
+OSIS_BCVS_PLUS_RANGE_PLUS_RE = re.compile( r'^{}\.{}-{}\.{}$'.format( OSIS_BCVS_RE, OSIS_VS_RE, OSIS_VS_RE, OSIS_VS_RE ) )
 
 
 
@@ -1717,11 +1719,11 @@ class FlexibleVersesKey():
 
 
 
-def demo():
+def demo() -> None:
     """
     Short program to demonstrate/test the above class(es).
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     badStrings = ( 'Gn_1:1', '2KI_3:17', 'MAL_1234:1', 'MAT_1:1234', 'MRK_3:6:!ab', 'LUK_2:2!1234', )
 
@@ -1800,13 +1802,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    import multiprocessing
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of VerseReferences.py

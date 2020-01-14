@@ -35,12 +35,12 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2017-10-19' # by RJH
-ShortProgName = "ESFMFile"
-ProgName = "ESFM File loader"
-ProgVersion = '0.86'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2017-10-19' # by RJH
+shortProgramName = "ESFMFile"
+programName = "ESFM File loader"
+programVersion = '0.86'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -48,7 +48,8 @@ debuggingThisModule = False
 import logging, sys
 
 if __name__ == '__main__':
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    import os.path
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 
 
@@ -116,7 +117,7 @@ class ESFMFile:
         @rtype: string
         """
         result = "ESFM File Object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
@@ -210,11 +211,11 @@ class ESFMFile:
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and processing some UTF-8 ESFM files.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
@@ -234,10 +235,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of ESFMFile.py

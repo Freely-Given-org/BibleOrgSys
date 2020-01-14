@@ -57,12 +57,12 @@ BibleOrganisationalSystem class:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-09-19' # by RJH
-ShortProgName = "BibleOrganisationalSystems"
-ProgName = "Bible Organisation Systems handler"
-ProgVersion = '0.34'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-09-19' # by RJH
+shortProgramName = "BibleOrganisationalSystems"
+programName = "Bible Organisation Systems handler"
+programVersion = '0.34'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -71,7 +71,7 @@ import logging, os
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 #from Misc.singleton import singleton
 from Reference.BibleOrganisationalSystemsConverter import BibleOrganisationalSystemsConverter, allowedTypes
@@ -577,11 +577,11 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
 
 
-def demo():
+def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     if 1: # Demo the BibleOrganisationalSystems object
         if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -625,13 +625,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    import multiprocessing
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of BibleOrganisationalSystems.py

@@ -47,12 +47,12 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-12-23' # by RJH
-ShortProgName = "PickledBible"
-ProgName = "Pickle Bible handler"
-ProgVersion = '0.15'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-12-23' # by RJH
+shortProgramName = "PickledBible"
+programName = "Pickle Bible handler"
+programVersion = '0.15'
+programNameVersion = f'{shortProgramName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -66,7 +66,7 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( '.' ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import Bible
 from Internals.InternalBibleBook import InternalBibleBook
@@ -288,13 +288,13 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
             return False
 
     # Now pickle the version object
-    from Internals.InternalBible import ProgNameVersionDate as IBProgVersion
-    from Internals.InternalBibleBook import ProgNameVersionDate as IBBProgVersion
-    from Internals.InternalBibleInternals import ProgNameVersionDate as IBIProgVersion
+    from Internals.InternalBible import programNameVersionDate as IBProgVersion
+    from Internals.InternalBibleBook import programNameVersionDate as IBBProgVersion
+    from Internals.InternalBibleInternals import programNameVersionDate as IBIProgVersion
     filepath = os.path.join( outputFolder, VERSION_FILENAME )
     createdFilenames.append( VERSION_FILENAME )
     with open( filepath, 'wb' ) as pickleOutputFile:
-        for something in ( ProgNameVersionDate, dataLevel, datetime.now().isoformat(' '),
+        for something in ( programNameVersionDate, dataLevel, datetime.now().isoformat(' '),
                             IBProgVersion, IBBProgVersion, IBIProgVersion,
                             BibleObject.getAName(), BibleObject.getBookList(),
                             metadataDict ):
@@ -540,7 +540,7 @@ class PickledBible( Bible ):
 
         result = self.objectNameString
         indent = 2
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
         if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
         if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
         result += ('\n' if result else '') + ' '*indent + _("Packaged: {}").format( self.pickleVersionData['WrittenDateTime'].split( ' ', 1)[0] )
@@ -740,11 +740,11 @@ class PickledBible( Bible ):
 
 
 
-def demo():
+def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     testFolders = (
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/' ),
@@ -948,10 +948,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ShortProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ShortProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
 # end of PickledBible.py
