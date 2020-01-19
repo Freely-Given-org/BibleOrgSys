@@ -5,14 +5,16 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
 
+lastModifiedDate = '2020-01-14' # by RJH
+
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup
 from os import path
 
-here = path.abspath(path.dirname(__file__))
+this_folderpath = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-#with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+#with open(path.join(this_folderpath, 'README.md'), encoding='utf-8') as f:
 #    long_description = f.read()
 
 
@@ -51,16 +53,17 @@ setup(
     #   py_modules=["my_module"],
     #
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    packages=find_packages(),
-    #packages=['Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
-      #package_dir={'Formats':'BibleOrgSys/Formats',
-                   #'InputOutput':'BibleOrgSys/Formats',
-                   #'Internals':'BibleOrgSys/Internals',
-                   #'Misc':'BibleOrgSys/Misc',
-                   #'Online':'BibleOrgSys/Online',
-                   #'OriginalLanguages':'BibleOrgSys/OriginalLanguages',
-                   #'Reference':'BibleOrgSys/Reference',
-                   #},
+    # packages=find_packages(),
+    packages=['','Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
+      package_dir={'':'BibleOrgSys',
+                   'Formats':'BibleOrgSys/Formats',
+                   'InputOutput':'BibleOrgSys/Formats',
+                   'Internals':'BibleOrgSys/Internals',
+                   'Misc':'BibleOrgSys/Misc',
+                   'Online':'BibleOrgSys/Online',
+                   'OriginalLanguages':'BibleOrgSys/OriginalLanguages',
+                   'Reference':'BibleOrgSys/Reference',
+                   },
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.
