@@ -32,7 +32,7 @@ TODO: Check if we really need this class at all???
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-105' # by RJH
+lastModifiedDate = '2020-01-22' # by RJH
 shortProgramName = "BibleObjects"
 programName = "Bible object handler"
 programVersion = '0.14'
@@ -47,8 +47,7 @@ import logging
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
-
+    sys.path.append( os.path.dirname(__file__) ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Internals.InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter

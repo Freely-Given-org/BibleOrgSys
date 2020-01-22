@@ -53,7 +53,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
+    sys.path.append( os.path.dirname(__file__) ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Formats.ESFMBible import ESFMBibleFileCheck
 from Formats.PTX8Bible import PTX8BibleFileCheck
