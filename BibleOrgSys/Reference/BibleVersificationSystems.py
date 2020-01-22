@@ -5,7 +5,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -65,7 +65,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
+lastModifiedDate = '2020-01-22' # by RJH
 shortProgramName = "BibleVersificationSystems"
 programName = "Bible Versification Systems handler"
 programVersion = '0.60'
@@ -899,7 +899,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.convertToReferenceVersification
 
 
-    def convertfromReferenceVersification( self, refBBB, refC, refV, refS=None ):
+    def convertFromReferenceVersification( self, refBBB, refC, refV, refS=None ):
         """
         Convert the given reference in the reference versification system
             to this versification.
