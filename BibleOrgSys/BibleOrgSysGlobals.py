@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -82,10 +82,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-29' # by RJH
+lastModifiedDate = '2020-01-22' # by RJH
 shortProgramName = "BOSGlobals"
 programName = "BibleOrgSys Globals"
-programVersion = '0.82'
+programVersion = '0.83'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -93,7 +93,7 @@ debuggingThisModule = False
 haltOnXMLWarning = False # Used for XML debugging
 
 
-from typing import List, Tuple, Optional, Union, Any
+from typing import List, Tuple, Optional, Union
 import sys
 import logging
 import os.path
@@ -102,6 +102,7 @@ import pickle
 from datetime import datetime
 import unicodedata
 from argparse import ArgumentParser, Namespace
+import configparser
 
 # pwd:Optional[Any] # Should be Module
 try: import pwd
@@ -126,29 +127,6 @@ verbosityString = 'Normal'
 # TODO: Should be https as soon as supported by the site
 DISTRIBUTABLE_RESOURCES_URL = 'http://Freely-Given.org/Software/BibleOrganisationalSystem/DistributableResources/'
 
-BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containing this file
-#print( f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
-
-BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
-#print( f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
-BOS_DATA_FILES_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'DataFiles/' ) # Relative path
-BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' ) # Relative path
-BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' ) # Relative path
-
-
-##########################################################################################################
-#
-# These folder paths might need to be adjusted by user programs!
-
-BOS_WRITEABLE_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH
-DEFAULT_LOG_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' ) # Relative path
-DEFAULT_CACHE_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' ) # Relative path
-DEFAULT_OUTPUT_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' ) # Relative path
-DOWNLOADED_RESOURCES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' ) # Relative path
-
-# Resources like original language lexicons should be based from this folder
-PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
-#print( f"PARALLEL_RESOURCES_BASE_FOLDERPATH = {PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
 
 ##########################################################################################################
 
@@ -177,12 +155,104 @@ if debuggingThisModule:
     assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
     assert len(MATCHING_OPENING_CHARACTERS) == len(MATCHING_CLOSING_CHARACTERS)
     assert len(MATCHING_OPENING_CHARACTERS) + len(MATCHING_CLOSING_CHARACTERS) == len(MATCHING_CHARACTERS)
-    for char in OPENING_SPEECH_CHARACTERS: assert char in LEADING_WORD_PUNCT_CHARS
-    for char in CLOSING_SPEECH_CHARACTERS: assert char in TRAILING_WORD_PUNCT_CHARS
+    for o_char in OPENING_SPEECH_CHARACTERS: assert o_char in LEADING_WORD_PUNCT_CHARS
+    for c_char in CLOSING_SPEECH_CHARACTERS: assert c_char in TRAILING_WORD_PUNCT_CHARS
 
     ##import unicodedata
     #BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
     #BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
+
+
+##########################################################################################################
+#
+# Readable folder paths (Writeable ones are further down)
+
+BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containing this file
+#print( f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
+
+BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
+#print( f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
+BOS_DATA_FILES_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'DataFiles/' ) # Relative path
+BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' ) # Relative path
+BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' ) # Relative path
+
+
+##########################################################################################################
+#
+
+def findHomeFolderPath() -> Optional[Path]:
+    """
+    Attempt to find the path to the user's home folder and return it.
+    """
+    possibleHomeFolders = ( os.path.expanduser('~'), os.getcwd(), os.curdir, os.pardir )
+    if debugFlag and debuggingThisModule:
+        print( f"Possible home folders = {possibleHomeFolders}" )
+    for folder in possibleHomeFolders:
+        thisPath = Path( folder )
+        if thisPath.is_dir and os.access( folder, os.W_OK ):
+            return thisPath
+# end of BibleOrgSysGlobals.findHomeFolderPath
+
+
+##########################################################################################################
+#
+# These writeable folder paths might need to be adjusted by user programs!
+
+APP_NAME = 'BibleOrgSys'
+SETTINGS_VERSION = '1.00'
+BOS_HOME_FOLDERPATH = findHomeFolderPath().joinpath( f'{APP_NAME}/' )
+if not BOS_HOME_FOLDERPATH.exists():
+    os.mkdir( BOS_HOME_FOLDERPATH )
+
+BOS_SETTINGS_FOLDERPATH = BOS_HOME_FOLDERPATH.joinpath( 'BOSSettings/' )
+if not BOS_SETTINGS_FOLDERPATH.exists():
+    os.mkdir( BOS_SETTINGS_FOLDERPATH )
+BOS_SETTINGS_FILEPATH = BOS_SETTINGS_FOLDERPATH.joinpath( 'BibleOrgSys.ini' )
+settingsData = configparser.ConfigParser()
+settingsData.optionxform = lambda option: option # Force true case matches for options (default is all lower case)
+settingsData['Default'] = { 'OutputBaseFolder':f'{BOS_HOME_FOLDERPATH}/' }
+# print( "settingsData Default OutputFolder", settingsData['Default']['OutputFolder'] )
+if BOS_SETTINGS_FILEPATH.is_file():
+    settingsData.read( BOS_SETTINGS_FILEPATH )
+else: # we don't seem to have a pre-existing settings file -- save our default one
+    print( f"Writing default {APP_NAME} settings file v{SETTINGS_VERSION} to {BOS_SETTINGS_FILEPATH}")
+    with open( BOS_SETTINGS_FILEPATH, 'wt', encoding='utf-8' ) as settingsFile: # It may or may not have previously existed
+        # Put a (comment) heading in the file first
+        settingsFile.write( '# ' + _("{} settings file v{}").format( APP_NAME, SETTINGS_VERSION ) + '\n' )
+        settingsFile.write( '# ' + _("Originally saved {} as {}") \
+            .format( datetime.now().strftime('%Y-%m-%d %H:%M:%S'), BOS_SETTINGS_FILEPATH ) + '\n\n' )
+
+        settingsData.write( settingsFile )
+if debugFlag and debuggingThisModule:
+    for section in settingsData:
+        print( f"  Settings.load: s.d main section = {section}" )
+
+# BOS_WRITEABLE_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH
+BOS_WRITEABLE_BASE_FOLDERPATH = Path( settingsData['Default']['OutputBaseFolder'] )
+# print( f"BOS_WRITEABLE_BASE_FOLDERPATH = {BOS_WRITEABLE_BASE_FOLDERPATH}")
+
+DEFAULT_LOG_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' ) # Relative path
+DEFAULT_CACHE_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' ) # Relative path
+DEFAULT_OUTPUT_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' ) # Relative path
+DOWNLOADED_RESOURCES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' ) # Relative path
+
+# Resources like original language lexicons should be based from this folder
+PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
+#print( f"PARALLEL_RESOURCES_BASE_FOLDERPATH = {PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
+
+
+##########################################################################################################
+
+
+def findUsername() -> str:
+    """
+    Attempt to find the current user name and return it.
+    """
+    if pwd:
+        return pwd.getpwuid(os.geteuid()).pw_name
+    else:
+        return getpass.getuser()
+# end of BibleOrgSysGlobals.findUsername
 
 
 ##########################################################################################################
@@ -209,16 +279,16 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( shortProgramName:str, programVersion:str, folderPath:Optional[Path]=None ) -> None:
+def setupLoggingToFile( shortProgramNameParameter:str, programVersionParameter:str, folderPath:Optional[Path]=None ) -> None:
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setupLoggingToFile( {!r}, {!r}, {!r} )".format( shortProgramName, programVersion, folderPath ) )
+        print( f"BibleOrgSysGlobals.setupLoggingToFile( {shortProgramNameParameter!r}, {programVersionParameter!r}, {folderPath!r} )" )
 
-    filename = shortProgramName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
+    filename = shortProgramNameParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDERPATH # relative path
     filepath = Path( folderPath, filename )
 
@@ -315,34 +385,6 @@ def removeLogfile( projectHandler ) -> None:
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of BibleOrgSysGlobals.removeLogfile
-
-
-##########################################################################################################
-#
-
-def findHomeFolderPath() -> Optional[Path]:
-    """
-    Attempt to find the path to the user's home folder and return it.
-    """
-    possibleHomeFolders = ( os.path.expanduser('~'), os.getcwd(), os.curdir, os.pardir )
-    if debugFlag and debuggingThisModule:
-        print( "possible home folders", possibleHomeFolders )
-    for folder in possibleHomeFolders:
-        thisPath = Path( folder )
-        if thisPath.is_dir and os.access( folder, os.W_OK ):
-            return thisPath
-# end of BibleOrgSysGlobals.findHomeFolderPath
-
-
-def findUsername() -> str:
-    """
-    Attempt to find the current user name and return it.
-    """
-    if pwd:
-        return pwd.getpwuid(os.geteuid()).pw_name
-    else:
-        return getpass.getuser()
-# end of BibleOrgSysGlobals.findUsername
 
 
 ##########################################################################################################
@@ -646,10 +688,10 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompare: File1 {!r} is unreadable".format( filepath1 ) )
+        logging.error( f"fileCompare: File1 {filepath1!r} is unreadable" )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompare: File2 {!r} is unreadable".format( filepath2 ) )
+        logging.error( f"fileCompare: File2 {filepath2!r} is unreadable" )
         return None
 
     # Read the files into lists
@@ -715,10 +757,10 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompare: File1 {!r} is unreadable".format( filepath1 ) )
+        logging.error( f"fileCompare: File1 {filepath1!r} is unreadable" )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompare: File2 {!r} is unreadable".format( filepath2 ) )
+        logging.error( f"fileCompare: File2 {filepath2!r} is unreadable" )
         return None
 
     # Read the files into lists
@@ -796,10 +838,10 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompareXML: File1 {!r} is unreadable".format( filepath1 ) )
+        logging.error( f"fileCompareXML: File1 {filepath1!r} is unreadable" )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompareXML: File2 {!r} is unreadable".format( filepath2 ) )
+        logging.error( f"fileCompareXML: File2 {filepath2!r} is unreadable" )
         return None
 
     # Load the files
@@ -1247,7 +1289,7 @@ def setVerbosity( verbosityLevelParameter ):
         elif verbosityLevelParameter == 'Verbose':
             verbosityString = verbosityLevelParameter
             verbosityLevel = 4
-        else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
+        else: logging.error( f"Invalid '{verbosityLevelParameter}' verbosity parameter" )
     else: # assume it's an integer
         if verbosityLevelParameter == 0:
             verbosityLevel = verbosityLevelParameter
@@ -1296,7 +1338,7 @@ def setStrictCheckingFlag( newValue=True ):
 
 # Some global variables
 BibleBooksCodes:Optional[List[str]] = None
-USFM2Markers:Optional[List[str]] = None
+USFMMarkers:Optional[List[str]] = None
 USFMParagraphMarkers:Optional[List[str]] = None
 internal_SFMs_to_remove:Optional[List[str]] = None
 
@@ -1429,8 +1471,11 @@ def demo() -> None:
         and then demonstrate some basic functions.
     """
     if verbosityLevel>0:
-        print( programNameVersionDate )
-        print( "   BOS last updated: {}".format( getLatestPythonModificationDate() ) )
+        print( programNameVersionDate if verbosityLevel > 1 else programNameVersion )
+        if __name__ == '__main__' and verbosityLevel > 1:
+            latestPythonModificationDate = getLatestPythonModificationDate()
+            if latestPythonModificationDate != lastModifiedDate:
+                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
