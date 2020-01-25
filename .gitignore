@@ -2,21 +2,22 @@ __pycache__/
 *.pyc
 *.o
 
-.mypy_cache/
-
 myVEnv/
 
-Logs/
-DownloadedResources/
 ExtraStuff/
 Misc/
-ObjectCache/
-OutputFiles/
-DistributableResources/
-PrivateResources/
 TempTestData/
 
 *.bak
 *.bak2
 *.bak3
 *.bak4
+
+# Ignore various tools folders and files
+.mypy_cache/
+.kdev4/
+.scannerwork/
+.vscode/
+BibleOrgSys.egg-info/
+BibleOrgSys.kdev4
+sonar-project.properties
