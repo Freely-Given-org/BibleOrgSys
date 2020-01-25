@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-06' # by RJH
+lastModifiedDate = '2020-01-23' # by RJH
 shortProgramName = "BibleBooksCodes"
 programName = "Bible Books Codes handler"
 programVersion = '0.81'
@@ -45,7 +45,6 @@ import logging
 if __name__ == '__main__':
     import sys
     sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-
 from Misc.singleton import singleton
 import BibleOrgSysGlobals
 
@@ -70,25 +69,45 @@ class BibleBooksCodes:
 
 
     def loadData( self, XMLFilepath=None ):
-        """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
+        """
+        Loads the JSON or pickle or XML data file (in that order unless the parameter is given)
+            and imports it to dictionary format (if not done already).
+        """
         if not self.__DataDicts: # We need to load them once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             standardXMLFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' )
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBooksCodes_Tables.pickle' )
-            if XMLFilepath is None \
-            and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
-            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-            else: # We have to load the XML (much slower)
-                from Reference.BibleBooksCodesConverter import BibleBooksCodesConverter
-                if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
-                bbcc = BibleBooksCodesConverter()
-                bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-                self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            if XMLFilepath is None:
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBooksCodes_Tables.json' )
+                if os.access( standardJsonFilepath, os.R_OK ) \
+                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
+                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
+                    import json
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading json file {standardJsonFilepath}…" )
+                    with open( standardJsonFilepath, 'rb') as JsonFile:
+                        self.__DataDicts = json.load( JsonFile )
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBooksCodes JSON file can't be loaded!" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBooksCodes_Tables.pickle' )
+                if os.access( standardPickleFilepath, os.R_OK ) \
+                and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
+                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading pickle file {standardPickleFilepath}…" )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBooksCodes Pickle file can't be loaded!" )
+            # else: # We have to load the XML (much slower)
+            from Reference.BibleBooksCodesConverter import BibleBooksCodesConverter
+            if XMLFilepath is not None:
+                logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
+            bbcc = BibleBooksCodesConverter()
+            bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
+            self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
     # end of BibleBooksCodes.loadData
 
