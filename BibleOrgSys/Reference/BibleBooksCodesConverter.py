@@ -82,27 +82,27 @@ class BibleBooksCodesConverter:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        self._filenameBase = "BibleBooksCodes"
+        self._filenameBase = 'BibleBooksCodes'
 
         # These fields are used for parsing the XML
-        self._treeTag = "BibleBooksCodes"
-        self._headerTag = "header"
-        self._mainElementTag = "BibleBookCodes"
+        self._treeTag = 'BibleBooksCodes'
+        self._headerTag = 'header'
+        self._mainElementTag = 'BibleBookCodes'
 
         # These fields are used for automatically checking/validating the XML
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber",
-                                    "typicalSection" )
-        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation",
-                                    "CCELNumber", "USFMAbbreviation", "USFMNumber", "USXNumber", "UnboundCode",
-                                    "BibleditNumber", "NETBibleAbbreviation", "DrupalBibleAbbreviation",
-                                    "BibleWorksAbbreviation", "ByzantineAbbreviation",
-                                    "possibleAlternativeAbbreviations", "possibleAlternativeBooks" )
-        self._uniqueElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber" ) + \
-                    ( "USXNumber", "UnboundCode", "BibleditNumber", "NETBibleAbbreviation", "DrupalBibleAbbreviation",
-                      "BibleWorksAbbreviation", "ByzantineAbbreviation" )
+        self._compulsoryElements = ( 'nameEnglish', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber',
+                                    'typicalSection' )
+        self._optionalElements = ( 'expectedChapters', 'SBLAbbreviation', 'OSISAbbreviation', 'SwordAbbreviation',
+                                    'CCELNumber', 'USFMAbbreviation', 'USFMNumber', 'USXNumber', 'UnboundCode',
+                                    'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
+                                    'BibleWorksAbbreviation', 'ByzantineAbbreviation',
+                                    'possibleAlternativeAbbreviations', 'possibleAlternativeBooks' )
+        self._uniqueElements = ( 'nameEnglish', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber' ) + \
+                    ( 'USXNumber', 'UnboundCode', 'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
+                      'BibleWorksAbbreviation', 'ByzantineAbbreviation' )
 
         # These are fields that we will fill later
         self._XMLheader, self._XMLtree = None, None
@@ -112,7 +112,7 @@ class BibleBooksCodesConverter:
 
 
     def loadAndValidate( self, XMLFilepath=None ):
-        """
+        """"
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
         """

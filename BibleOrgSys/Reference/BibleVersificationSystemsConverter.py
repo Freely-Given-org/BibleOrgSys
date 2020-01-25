@@ -426,7 +426,7 @@ class BibleVersificationSystemsConverter:
             theFile.write( '  "{}": {{\n    # Key is{}\n    # Fields are:{}\n'.format( systemName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
                 theFile.write( '   {}:{},\n'.format( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "  }}, # end of{} ({} entries)\n\n".format( systemName, len(theDict) ) )
+            theFile.write( "  }}, # end of {} ({} entries)\n\n".format( systemName, len(theDict) ) )
         # end of exportPythonDict
 
 
@@ -487,7 +487,7 @@ class BibleVersificationSystemsConverter:
             #if self.__dateString: myFile.write( "#  Date:{}\n#\n".format( self.__dateString ) )
             #myFile.write( "#  {}{} loaded from the original XML file.\n#\n\n".format( len(self.__XMLtree), self.__treeTag ) )
             json.dump( self.__DataDict, myFile, indent=2 )
-            #myFile.write( "\n\n# end of{}".format( os.path.basename(filepath) ) )
+            #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of BibleVersificationSystemsConverter.exportDataToJSON
 
 
@@ -623,7 +623,7 @@ class BibleVersificationSystemsConverter:
             writeStructure( myHFile, "table", "{}* systemName;{}Entry* systemCVCounts;{}Entry* systemOmittedVerses;".format(CHAR,N2,N4) ) # I'm not sure if I need one or two asterisks on those last two
                                                                                                         # They're supposed to be pointers to an array of structures
             myHFile.write( "#endif //{}\n\n".format( ifdefName ) )
-            myHFile.write( "// end of{}".format( os.path.basename(hFilepath) ) )
+            myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
 
             #myHFile.write( "static struct {struct char*, void*, void*} versificationSystemNames[{}] = {\n  // Fields are systemName, systemVersification, systemOmittedVerses\n".format( len(versificationSystemDict) ) )
 
@@ -649,7 +649,7 @@ class BibleVersificationSystemsConverter:
             for systemName in self.__DataDict: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  { "{}",{},{} },\n'.format( systemName, systemName+"CVDict", systemName+"OmittedVersesDict" ) )
             myCFile.write( "}; //{} entries\n\n".format( len(self.__DataDict) ) )
-            myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
+            myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of BibleVersificationSystemsConverter.exportDataToC
 # end of BibleVersificationSystemsConverter class
 

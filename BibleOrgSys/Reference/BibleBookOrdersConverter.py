@@ -339,7 +339,7 @@ class BibleBookOrdersConverter:
             theFile.write( '  "{}": {{\n    # Key is{}\n    # Fields are:{}\n'.format( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
                 theFile.write( '   {}:{},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "  }}, # end of{} ({} entries)\n\n".format( dictName, len(theDict) ) )
+            theFile.write( "  }}, # end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
 
@@ -370,7 +370,7 @@ class BibleBookOrdersConverter:
                 bookDataDict, idDataDict = self.__DataDicts[systemName]
                 exportPythonDict( myFile, idDataDict, systemName, "id", "referenceAbbreviation" )
             myFile.write( "}} # end of idDataDict ({} systems)\n".format( len(self.__DataDicts) ) )
-            myFile.write( "# end of{}".format( os.path.basename(filepath) ) )
+            myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -469,7 +469,7 @@ class BibleBookOrdersConverter:
             writeStructure( myHFile, "table", "{}* systemName;{}Entry* byReference;{}Entry* byBook;".format(CHAR,N1,N2) ) # I'm not sure if I need one or two asterisks on those last two
                                                                                                         # They're supposed to be pointers to an array of structures
             myHFile.write( "#endif //{}\n\n".format( ifdefName ) )
-            myHFile.write( "// end of{}".format( os.path.basename(hFilepath) ) )
+            myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
 
             for systemName in self.__DataDicts: # Now write out the actual data into the .c file
                 bookDataDict, idDataDict = self.__DataDicts[systemName]
@@ -482,7 +482,7 @@ class BibleBookOrdersConverter:
             for systemName in self.__DataDicts: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  {{ "{}",{},{} }},\n'.format( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
             myCFile.write( "}}; //{} entries\n\n".format( len(self.__DataDicts) ) )
-            myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
+            myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 
     #def obsoleteCheckBookOrderSystem( self, systemName, bookOrderSchemeToCheck ):
