@@ -4,8 +4,8 @@ __pycache__/
 
 myVEnv/
 
+Extras/
 ExtraStuff/
-Misc/
 TempTestData/
 
 *.bak
