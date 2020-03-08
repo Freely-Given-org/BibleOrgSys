@@ -5,7 +5,7 @@
 #
 # Module handling USFM3Markers.xml to produce C and Python data tables
 #
-# Copyright (C) 2011-2018 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling USFM3Markers.xml and to export to JSON, C, and Python data table
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-19' # by RJH
+lastModifiedDate = '2020-02-24' # by RJH
 shortProgramName = "USFM3MarkersConverter"
 programName = "USFM3 Markers converter"
-programVersion = '0.03'
+programVersion = '0.04'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -316,15 +316,30 @@ class USFM3MarkersConverter:
                                         'description':description, 'nameEnglish':nameEnglish }
             combinedMarkerDict[marker] = marker
             if highestNumberSuffix != 'None': # We have some extra work to do
-                conversionDict[marker] = marker + '1'
+                if marker.endswith('-s') or marker.endswith('-e'):
+                    assert marker in ('qt-s','qt-e') # Only ones we know of so far
+                    # Numberical suffix can't just be appended to the end of these
+                    conversionDict[marker] = f'{marker[:-2]}1{marker[-2:]}'
+                else: # not a milestone start/end marker
+                    conversionDict[marker] = marker + '1'
                 for suffix in range(1,int(highestNumberSuffix)+1): # These are the suffix digits that we allow
-                    numberedMarker = marker + str(suffix)
+                    if marker.endswith('-s') or marker.endswith('-e'):
+                        # Numberical suffix can't just be appended to the end of these
+                        numberedMarker = f'{marker[:-2]}{suffix}{marker[-2:]}'
+                        # print( f"Marker '{marker}' led to '{numberedMarker}'" )
+                    else: # not a milestone start/end marker
+                        numberedMarker = marker + str(suffix)
                     backConversionDict[numberedMarker] = marker
                     numberedMarkerList.append( numberedMarker )
                     combinedMarkerDict[numberedMarker] = marker
-                    if marker in newlineMarkersList: numberedNewlineMarkersList.append( numberedMarker ); combinedNewlineMarkersList.append( numberedMarker )
-                    else: numberedInternalMarkersList.append( numberedMarker ); combinedInternalMarkersList.append( numberedMarker )
-                    if deprecatedFlag: deprecatedMarkersList.append( numberedMarker )
+                    if marker in newlineMarkersList:
+                        numberedNewlineMarkersList.append( numberedMarker )
+                        combinedNewlineMarkersList.append( numberedMarker )
+                    else: 
+                        numberedInternalMarkersList.append( numberedMarker )
+                        combinedInternalMarkersList.append( numberedMarker )
+                    if deprecatedFlag: 
+                        deprecatedMarkersList.append( numberedMarker )
             else: # it's not numberable
                 numberedMarkerList.append( marker )
                 if marker in newlineMarkersList: numberedNewlineMarkersList.append( marker )

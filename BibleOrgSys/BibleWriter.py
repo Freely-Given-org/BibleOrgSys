@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-22' # by RJH
+lastModifiedDate = '2020-02-18' # by RJH
 shortProgramName = "BibleWriter"
 programName = "Bible writer"
 programVersion = '0.96'
@@ -4129,8 +4129,8 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
-                #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
+                getMarkerContentType = BibleOrgSysGlobals.USFMMarkers.getMarkerContentType( marker )
+                #print( BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
@@ -4188,7 +4188,7 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
+                elif getMarkerContentType == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4196,7 +4196,7 @@ class BibleWriter( InternalBible ):
                     if adjText:
                         logger.error( "toUSX2XML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
-                elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
+                elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4206,9 +4206,9 @@ class BibleWriter( InternalBible ):
                         xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX2(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
-                    #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
-                    if markerShouldHaveContent != 'A':
-                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
+                    #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    if getMarkerContentType != 'A':
+                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4580,8 +4580,8 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSX3XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logger.warning( _("toUSX3XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        print( ALL_CHAR_MARKERS )
-                                        halt
+                                        print( "ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
+                                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logger.warning( _("toUSX3XML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
@@ -4668,8 +4668,8 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
-                #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
+                getMarkerContentType = BibleOrgSysGlobals.USFMMarkers.getMarkerContentType( marker )
+                #print( BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
@@ -4725,7 +4725,7 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
-                elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
+                elif getMarkerContentType == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4733,7 +4733,7 @@ class BibleWriter( InternalBible ):
                     if adjText:
                         logger.error( "toUSX3XML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
-                elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
+                elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4743,9 +4743,9 @@ class BibleWriter( InternalBible ):
                         xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX3(adjText), ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
-                    #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
-                    if markerShouldHaveContent != 'A':
-                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
+                    #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    if getMarkerContentType != 'A':
+                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -5137,8 +5137,8 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
-                #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
+                getMarkerContentType = BibleOrgSysGlobals.USFMMarkers.getMarkerContentType( marker )
+                #print( BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
@@ -5192,7 +5192,7 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
+                elif getMarkerContentType == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
@@ -5200,7 +5200,7 @@ class BibleWriter( InternalBible ):
                     if adjText:
                         logger.error( "toUSFXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( marker )
-                elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
+                elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
@@ -5210,9 +5210,9 @@ class BibleWriter( InternalBible ):
                         xw.writeLineOpenText( originalMarker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
-                    #assert markerShouldHaveContent == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
-                    if markerShouldHaveContent != 'A':
-                        logger.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
+                    #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    if getMarkerContentType != 'A':
+                        logger.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
@@ -10760,8 +10760,8 @@ def demo() -> None:
                 #("WEB5", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/') ),
                 #("WEB6", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2017-08-22 eng-web_usfm') ),
                 #("WEBLatest", 'WEB', BiblesFolderpath.joinpath( 'USFM Bibles/Haiola USFM test versions/eng-web_usfm/') ),
-                #('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/ULT/en_ult/') ),
-                #('UST','UST',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/UST/en_ust/') ),
+                #('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/') ),
+                #('UST','UST',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/') ),
                 #('UEB','UEB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/UEB/en_ueb/') ),
                 #('ULB','ULB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/ULB/en_ulb/') ),
                 #('UDB','UDB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/UDB/en_udb/') ),

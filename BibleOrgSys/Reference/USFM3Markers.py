@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2019 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,10 +35,10 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-05' # by RJH
+lastModifiedDate = '2020-03-03' # by RJH
 shortProgramName = "USFM3Markers"
 programName = "USFM3 Markers handler"
-programVersion = '0.04'
+programVersion = '0.06'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -398,25 +398,29 @@ class USFM3Markers:
         return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['printedFlag']
 
 
-    def markerShouldBeClosed( self, marker ):
-        """ Return 'N', 'S', 'A' for "never", "sometimes", "always".
-            Returns False for an invalid marker. """
+    def getMarkerClosureType( self, marker ):
+        """
+        Return 'N', 'O', 'A', 'S' for "never", "optional", "always", "self".
+
+        Raises KeyError for an invalid marker.
+        """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
         closed = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['closed']
         #if closed is None: return 'N'
         if closed == "No": return 'N'
         if closed == "Always": return 'A'
-        if closed == "Optional": return 'S'
+        if closed == "Optional": return 'O'
+        if closed == "Self": return 'S'
         print( 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
-    # end of USFM3Markers.markerShouldBeClosed
+    # end of USFM3Markers.getMarkerClosureType
 
 
-    def markerShouldHaveContent( self, marker ):
+    def getMarkerContentType( self, marker ):
         """
         Return "N", "S", "A" for "never", "sometimes", "always".
 
-        Returns False for an invalid marker.
+        Raises KeyError for an invalid marker.
         """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
         hasContent = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["hasContent"]
@@ -426,7 +430,7 @@ class USFM3Markers:
         if hasContent == "Sometimes": return "S"
         print( 'mshc {}'.format( hasContent ))
         raise KeyError # Should be something better here
-    # end of USFM3Markers.markerShouldHaveContent
+    # end of USFM3Markers.getMarkerContentType
 
 
     def toRawMarker( self, marker ):
@@ -514,7 +518,8 @@ class USFM3Markers:
                     nestedMarker = '\\+'+marker if includeBackslash else '+'+marker
                     result.append( nestedMarker )
                 if includeEndMarkers:
-                    assert self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row"
+                    assert self.getMarkerClosureType( marker ) in ('A','S') \
+                        or self.markerOccursIn(marker)=="Table row"
                     result.append( adjMarker + '*' )
                     if includeNestedMarkers: result.append( nestedMarker + '*' )
                 if expandNumberableMarkers and self.isNumberableMarker( marker ):
@@ -626,16 +631,37 @@ class USFM3Markers:
         secondResult = []  # A list of 6-tuples containing ( 1, 2, 3, 4, 5, 7 ) above
         cx = []
         for j, (m, ix, x, mx) in enumerate(firstResult):
-            if self.isNewlineMarker( m ): cx = [] #; print( "rst", cx )
+            if self.isNewlineMarker( m ):
+                if cx:
+                    if debuggingThisModule:
+                        print( f"ABOUT1 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                cx = [] #; print( "rst", cx )
             elif x==' ' or x=='': # Open marker in line or at end of line
+                if cx \
+                and cx[0] not in ('f','fr','fq') and m not in ('fr','fq','ft'):
+                    if debuggingThisModule:
+                        print( f"ABOUT2 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 cx = [m] #; print( "set", cx )
             elif x=='+': cx.append( m ) #; print( "add", m, cx )
-            elif x=='-': cx.pop() #; print( "del", m, cx )
-            elif x=='*': cx = [] #; print( "clr", cx )
+            elif x=='-':
+                if cx: cx.pop() #; print( "del", m, cx )
+                else:
+                    if debuggingThisModule:
+                        print( f"ABOUT TO POP {cx} after {j} {m} {ix} {x} {mx}" )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            elif x=='*':
+                if len(cx) != 1 \
+                or (cx[0]!=m and m!='ff' and cx[0] not in ('ft',) ):
+                    if debuggingThisModule:
+                        print( f"ABOUT3 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                cx = [] #; print( "clr", cx )
             else:
                 print( "USFM3Markers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
                       '\n', j, repr(m), ix, repr(x), mx, cx )
-                if BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             if j>= rLen-1: tx = text[ix+len(mx):]
             else: tx=text[ix+len(mx):firstResult[j+1][1]]
             #print( 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )

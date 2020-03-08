@@ -82,7 +82,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-22' # by RJH
+lastModifiedDate = '2020-03-03' # by RJH
 shortProgramName = "BOSGlobals"
 programName = "BibleOrgSys Globals"
 programVersion = '0.83'
@@ -146,7 +146,7 @@ MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>
 LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '–—' # en-dash and em-dash
-TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>%…—"""
+TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>%…—।""" # Last one is from Hindi: DEVANAGARI DANDA / purna viram
 TRAILING_WORD_END_CHARS = ' ' + TRAILING_WORD_PUNCT_CHARS
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 MAX_NESTED_QUOTE_LEVELS = 5

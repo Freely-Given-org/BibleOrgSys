@@ -5,7 +5,7 @@
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-05-02' # by RJH
+lastModifiedDate = '2020-02-19' # by RJH
 shortProgramName = "MLWriter"
 programName = "ML Writer"
 programVersion = '0.36'
@@ -537,7 +537,8 @@ class MLWriter:
         if self._outputType == 'XML':
             import subprocess # for running xmllint
             # Not sure if this will work on most Linux systems -- certainly won't work on other operating systems
-            parameters = [ '/usr/bin/xmllint', '--noout', '--relaxng' if '.rng' in schemaFilepath else '--schema', schemaFilepath, self._outputFilePath ]
+            schemaFilepath = str(schemaFilepath) # In case it's a Path object
+            parameters = [ '/usr/bin/xmllint', '--noout', '--relaxng' if '.rng' in schemaFilepath else '--schema', schemaFilepath, str(self._outputFilePath) ]
             try:
                 checkProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()

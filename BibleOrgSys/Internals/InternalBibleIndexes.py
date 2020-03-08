@@ -498,7 +498,7 @@ class InternalBibleCVIndex:
                             logging.critical( "makeCVIndex found a nesting error for {} {} around {}:{}".format( self.workName, self.BBB, C, V ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             assert contextMarkerList.count( originalMarker ) == 1
-                    try: # Remove first open occurence of the marker just closed (e.g., s1 can occur after c and still be open)
+                    try: # Remove first open occurrence of the marker just closed (e.g., s1 can occur after c and still be open)
                         if debuggingThisModule:
                             print( "    makeCVIndex: Removing {} from contextMarkerList at {} {}:{}".format( marker, self.BBB, C, V ) )
                         contextMarkerList.remove( originalMarker )
@@ -1221,7 +1221,7 @@ class InternalBibleSectionIndex:
                             logging.critical( "makeSectionIndex found a nesting error for {} {} around {}:{}".format( self.workName, self.BBB, C, V ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             assert contextMarkerList.count( originalMarker ) == 1
-                    try: # Remove first open occurence of the marker just closed (e.g., s1 can occur after c and still be open)
+                    try: # Remove first open occurrence of the marker just closed (e.g., s1 can occur after c and still be open)
                         if debuggingThisModule:
                             print( "    makeSectionIndex: Removing {} from contextMarkerList at {} {}:{}".format( marker, self.BBB, C, V ) )
                         contextMarkerList.remove( originalMarker )

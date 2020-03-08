@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-22' # by RJH
+lastModifiedDate = '2020-03-04' # by RJH
 shortProgramName = "USFMBibleBook"
 programName = "USFM Bible book handler"
 programVersion = '0.53'
@@ -94,8 +94,13 @@ class USFMBibleBook( BibleBook ):
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
+
+            Note: for uwAligned data, calls will look something like this:
+                    doaddLine( 'p~', '\w Simon|x-occurrence="1" x-occurrences="1"\w*' )
+                    doaddLine( 'p~', '\w of|x-occurrence="1" x-occurrences="2"\w* \w Cyrene|x-occurrence="1" x-occurrences="1"\w* (\w the|x-occurrence="1" x-occurrences="2"\w*' )
             """
-            #print( "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+            if debuggingThisModule:
+                print( f"doaddLine( '{originalMarker}', '{originalText}' )" )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
@@ -124,7 +129,7 @@ class USFMBibleBook( BibleBook ):
 
         MAX_EXPECTED_NESTING_LEVELS = 20 # Don't allow unlimited nesting
 
-        def handleUWAlignment( marker:str, text:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
+        def handleUWAlignment( givenMarker:str, givenText:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
             """
             Extracts all of the uW alignment information.
 
@@ -132,9 +137,10 @@ class USFMBibleBook( BibleBook ):
 
             Returns a new marker and text with uW alignment markers removed.
             """
+            # if self.BBB == 'JOS' and C=='2': halt
             if debuggingThisModule:
                 print( f"{self.BBB} {C}:{V}" )
-                print( f"handleUWAlignment( {marker}={text!r}\n            lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
+                print( f"handleUWAlignment( {givenMarker}={givenText!r}\n            lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
             if variables['text']:
                 assert variables['text'].startswith( 'x-strong="' )
                 assert variables['text'].endswith( '"' )
@@ -143,11 +149,49 @@ class USFMBibleBook( BibleBook ):
                 if not BibleOrgSysGlobals.strictCheckingFlag:
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
+                # print( f"words={variables['words']}=")
+                # print( f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                # print( f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
+                if variables['words'].endswith( '"\\w**' ):
+                    print( "Drop final double asterisk!!!! (for Hindi IRV ???)")
+                    variables['words'] = variables['words'][:-1]
                 assert variables['words'].endswith( '"\\w*' ) \
+                or ((variables['words'][-1] in '-\u200c' # Zero-width non-joiner (for Kannada IEV)
+                or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
+                    and variables['words'][-5:-1] == '"\\w*' ) \
                 or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
-                    and variables['words'][-5:-1] == '"\\w*' )
+                    and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
+                    and variables['words'][-6:-2] == '"\\w*' )
                 assert 'zaln' not in variables['words']
             if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
+
+
+            def saveAlignment( C:str, V:str, textStr:str, wordsStr:str ) -> None:
+                """
+                """
+                if debuggingThisModule: 
+                    print( f"  saveAlignment( {C}:{V}, '{textStr}', '{wordsStr}' ) for {self.BBB}…" )
+
+                for j,entry in enumerate( reversed( variables['saved'] ) ):
+                    oldC, oldV, oldTextStr, oldWordsStr = entry
+                    # print( f"Got {self.BBB} {oldC}:{oldV}, {oldTextStr}, {oldWordsStr}")
+                    if oldV != V or oldC != C: break
+                    # print( f"Same {self.BBB} verse {C}:{V} @ -{j}!" )
+                    if oldTextStr == textStr:
+                        ix = len(variables['saved']) - j - 1
+                        # print( f"Same {self.BBB} {C}:{V} original word @ {ix}!" )
+                        # print( "Check:", variables['saved'][ix] )
+                        discard = variables['saved'].pop( ix ) # Remove old entry from list
+                        assert discard == entry
+                        # print( f"Combined {self.BBB} {C}:{V} will be: '{oldWordsStr} … {wordsStr}'" )
+                        # Append non-contiguous join to oldWordsStr and insert where we deleted
+                        #   We use a joiner ' … ' that can easily be detected
+                        variables['saved'].insert( ix, (C,V, textStr, f'{oldWordsStr} … {wordsStr}') )
+                        return
+
+                # if not appended: # Just add a normal new entry
+                variables['saved'].append( (C,V, textStr, wordsStr) )
+            # end of saveAlignment helper function
 
 
             def findInternalStarts( marker:str, text:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
@@ -160,7 +204,8 @@ class USFMBibleBook( BibleBook ):
 
                 Returns a new marker and text with uW start alignment markers removed.
                 """
-                if debuggingThisModule: print( f"  findInternalStarts( {marker!r}, {text!r}, lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
+                if debuggingThisModule: 
+                    print( f"  findInternalStarts( {marker!r}, {text!r}, lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
                 assert marker not in ('zaln-s','zaln-e')
 
                 for numFound in range( 99 ):
@@ -176,7 +221,8 @@ class USFMBibleBook( BibleBook ):
                         # Usually this happens around punctuation such as Hebrew maqqef (where spaces aren't wanted)
                         # We have to process the end first
                         assert variables['level'] > 0
-                        if debuggingThisModule: print( f"        Found {variables['level']} end markers inside line" )
+                        if debuggingThisModule: 
+                            print( f"        Found {variables['level']} end markers inside line" )
                         assert variables['text']
                         if marker == 'SWAPPED': assert not variables['words']
                         variables['words'] += text[:ixAlignmentEnd] if marker=='SWAPPED' \
@@ -184,13 +230,16 @@ class USFMBibleBook( BibleBook ):
                         assert variables['words']
                         #print( "words1", variables['words'] )
                         assert '\\w*\\w' not in variables['words']
-                        variables['saved'].append( (C,V, variables['text'], variables['words']) )
+                        saveAlignment( C, V, variables['text'], variables['words'] )
+                        # variables['saved'].append( (C,V, variables['text'], variables['words']) )
                         text = text[:ixAlignmentEnd] + text[ixAlignmentEnd+9*lookForCount:]
                         variables['text'] = variables['words'] = ''
                         variables['level'] = 0
-                        if debuggingThisModule: print( f"      Decreased level to {variables['level']}" )
+                        if debuggingThisModule: 
+                            print( f"      Decreased level to {variables['level']}" )
                         assert variables['level'] >= 0
-                        if debuggingThisModule: print( f"      Now got rest='{text}'" )
+                        if debuggingThisModule: 
+                            print( f"      Now got rest1='{text}' rest1" )
                         continue
                     assert 'zaln-e' not in text[:ixAlignmentStart] # Make sure our nesting isn't confused
                     ixAlignmentStartEnding = text.find( '\\*' ) # Even start marker should be closed
@@ -204,99 +253,39 @@ class USFMBibleBook( BibleBook ):
                         variables['level'] += 1
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
-                        if debuggingThisModule: print( f"      Increased level to {variables['level']}" )
+                        if debuggingThisModule: 
+                            print( f"      Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                                 + text[ixAlignmentStart+10:ixAlignmentStartEnding]
-                        if debuggingThisModule: print( f"      Now got alignmentText='{variables['text']}'" )
+                        if debuggingThisModule: 
+                            print( f"      Now got alignmentText='{variables['text']}'" )
                         text = text[:ixAlignmentStart] + text[ixAlignmentStartEnding+2:]
-                        if debuggingThisModule: print( f"      Now got rest='{text}'" )
+                        if debuggingThisModule: 
+                            print( f"      Now got rest2='{text}' rest2" )
 
                 #if variables['level'] > 0:
                     #variables['words'] += f'{marker} {text}'
 
-                if debuggingThisModule: print( f"    findInternalStarts returning {marker!r}, {text!r} with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
+                if debuggingThisModule: 
+                    print( f"    findInternalStarts returning {marker!r}, {text!r} with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
                 assert 'zaln-s' not in text
                 return marker, text
             # end of findInternalStarts function
 
 
             # handleUWAlignment function main code
+            marker, text = givenMarker, givenText
             if marker == 'zaln-s':
                 assert not variables['text']
                 assert text.startswith('| ')
                 # Put marker into line then we can use the same function for inline milestone starts
                 marker, text = findInternalStarts( 'SWAPPED', f'\\{marker} {text}', variables )
-
-                ##assert 'zaln-e' not in text # NOT TRUE
-                #if self.containerBibleObject:
-                    #ixEnd1 = text.find( '\\*' )
-                    #if ixEnd1 == -1: # Wasn't self-closing
-                        #loadErrors.append( _("{} {}:{} Unclosed '\\{}' Door43 custom alignment marker at beginning of line (with no text)") \
-                                        #.format( self.BBB, C, V, marker ) )
-                        #logging.warning( _("Unclosed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
-                                        #.format( marker, self.BBB, C, V ) )
-                    #else: # self-closing was ok
-                        #variables['level'] += 1
-                        #if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
-                        #variables['text'], text = text[2:ixEnd1], text[ixEnd1+2:]
-                        #if debuggingThisModule:
-                            #print( f"Got alignmentText='{variables['text']}'" )
-                            #print( f"Got rest='{text}'" )
-                        #marker = 'p~'
-                        #marker, text = findInternalStarts( marker, text, variables ) # Could be more
-                        ##ixEnd2 = text.find( '\\zaln-e\\*' )
-                        ##if ixEnd2 == -1: # No end alignment marker
-                            ##variables['alignmentWords'] += text
-                        ##else: # Got self-closed alignment end marker
-                            ##variables['alignmentWords'] += text[:ixEnd2]
-                            ##variables['alignments'][variables['alignmentText']] = variables['alignmentWords']
-                            ##variables['alignmentText'], variables['alignmentWords'] = None, ''
-                            ##text = text[:ixEnd2] + text[ixEnd2+9:]
-                            ##assert 'zaln' not in text
-                #else:
-                    #loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom alignment marker at beginning of line (with no text)") \
-                                    #.format( self.BBB, C, V, marker ) )
-                    #logging.warning( _("Removed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
-                                    #.format( marker, self.BBB, C, V ) )
-                    #marker = '' # so it gets deleted
-
             elif marker == 'zaln-e': # unexpected
                 logging.critical( "Didn't expect zaln-e marker at beginning of line" )
                 halt
 
             # Could be v, w, etc. -- now look inside the text
             marker, text = findInternalStarts( marker, text, variables ) # Could be more
-
-                #ixStart1 = text.find( '\\zaln-s | ' )
-                #if ixStart1 == -1:
-                    #if text.find('zaln-s') > 0:
-                        #logging.error( f"Found unexpected 'zaln-s' in {self.BBB} {C}:{V} {marker}='{text}'" )
-                #else: # Found it
-                    #assert ixStart1 < 8 # Should be near the start of the line
-                    #assert not variables['text']
-                    #ixEnd1 = text.find( '\\*' )
-                    #if ixEnd1 == -1: # Wasn't self-closing
-                        #loadErrors.append( _("{} {}:{} Unclosed '\\{}' Door43 custom alignment marker at beginning of line (with no text)") \
-                                        #.format( self.BBB, C, V, marker ) )
-                        #logging.warning( _("Unclosed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
-                                        #.format( marker, self.BBB, C, V ) )
-                    #else: # self-closing was ok
-                        #variables['text'], text = text[ixStart1+10:ixEnd1], text[ixEnd1+2:]
-                        #print( f"Got1 alignmentText='{variables['text']}'" )
-                        #print( f"Got1 rest='{text}'" )
-
-                #if variables['alignmentText']:
-                    #ixEnd4 = text.find( '\\zaln-e\\*' )
-                    #if ixEnd4 == -1: # No end alignment marker
-                        #variables['alignmentWords'] += f'\{marker} {text}' if marker=='w' else text
-                        #print( f"NoEnd1 alignmentWords='{variables['alignmentWords']}'" )
-                    #else: # Found alignment end marker
-                        #variables['alignmentWords'] += f'\{marker} {text[:ixEnd4]}' if marker=='w' else text[:ixEnd4]
-                        #variables['alignments'][variables['alignmentText']] = variables['alignmentWords']
-                        #print( f"GotEnd1 alignmentWords='{variables['alignmentWords']}'" )
-                        #variables['alignmentText'], variables['alignmentWords'] = None, ''
-                        #text = text[:ixEnd4] + text[ixEnd4+9:]
-                        #assert 'zaln' not in text
 
             # Look for any self-closed end-alignment milestones
             if variables['level'] > 0:
@@ -313,9 +302,9 @@ class USFMBibleBook( BibleBook ):
                     assert variables['words']
                     #print( "words2", variables['words'] )
                     #assert '\\w*\\w' not in variables['words']
-                    variables['saved'].append( (C,V, variables['text'], variables['words']) )
-                    text = text[:ixEndMarkers]
-                    assert not text[ixEndMarkers+len(endMarkers):] # End markers expected at the end of the line
+                    saveAlignment( C, V, variables['text'], variables['words'] )
+                    # variables['saved'].append( (C,V, variables['text'], variables['words']) )
+                    text = text[:ixEndMarkers] + text[ixEndMarkers+len(endMarkers):] # Could be punctuation or more on the end
                     variables['text'] = variables['words'] = ''
                     variables['level'] = 0
                     if debuggingThisModule: print( "      Reset level to zero" )
@@ -334,6 +323,7 @@ class USFMBibleBook( BibleBook ):
                     #assert '\\w*\\w' not in variables['words']
 
             if debuggingThisModule: print( f"Got near end1 with {marker}='{text}'" )
+            # print( "rawLines", self._rawLines[-4:] )
             assert 'zaln' not in text # because we have no open levels
             if marker == 'SWAPPED': # then we need to supply a remaining marker
                 if debuggingThisModule: print( f"Got near end2 with {marker}='{text}'" )
@@ -343,6 +333,8 @@ class USFMBibleBook( BibleBook ):
             assert 'zaln' not in variables['text']
             assert '\\w' not in variables['text']
             assert 'zaln' not in variables['words']
+            if givenText and givenText[-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
+                assert text[-1] == givenText[-1]
             return marker, text
         # end of handleUWAlignment
 
@@ -372,18 +364,22 @@ class USFMBibleBook( BibleBook ):
 
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
-        lastMarker = lastText = ''
-        loadErrors = []
+        lastMarker = lastText = None
+        loadErrors:List[str] = []
         #print( "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
+        global debuggingThisModule
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
+            # if self.BBB == 'EZR':
+            #     if C == '5': debuggingThisModule = True
+            #     if C == '6': halt
             if debuggingThisModule and gotUWAligning:
-                print( f"\n\nAlignment level = {alignmentVariables['level']} (Max = {alignmentVariables['maxLevel']})" )
+                print( f"\n\n{self.workName} Alignment level = {alignmentVariables['level']} (Max so far = {alignmentVariables['maxLevel']})" )
                 print( f"Alignment text = {alignmentVariables['text']!r}" )
                 print( f"Alignment words = {alignmentVariables['words']!r}" )
                 #print( f"Alignments ({len(alignmentVariables['saved'])}) = {alignmentVariables['saved']}" )
                 print( f"Num saved alignments = {len(alignmentVariables['saved']):,}" )
 
-            #print( f"\nAfter {self.BBB} {C}:{V} \\{marker} {text!r}" )
+                print( f"\nAfter {self.BBB} {C}:{V} with \\{lastMarker} '{lastText}' HAVE \\{marker} '{text}'" )
 
             if marker == 's5': # it's a Door43 translatable section, i.e., chunking marker
                 # We remove these
@@ -409,6 +405,32 @@ class USFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with no text)") \
                                         .format( self.BBB, C, V, marker ) )
                     logging.warning( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
+                                        .format( marker, self.BBB, C, V ) )
+                    continue # so it just gets ignored, effectively deleted
+            elif marker == 'ts\\*': # it's a Door43 translatable section, i.e., self-closed chunking marker
+                # We remove these
+                if text:
+                    if text.strip():
+                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (WITH text)") \
+                                            .format( self.BBB, C, V, marker ) )
+                        logging.critical( _("Removed '\\{}' Door43 chunking marker after {} {} {}:{} at beginning of line (WITH text)") \
+                                            .format( marker, self.workName, self.BBB, C, V ) )
+                        text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
+                        if text.startswith( '\\v ' ):
+                            marker, text = 'v', text[3:] # Drop \ts\\* and adjust marker
+                        else:
+                            print( f"ts\\* text='{text}'" )
+                            halt
+                    else: # was just whitespace
+                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with following whitespace)") \
+                                            .format( self.BBB, C, V, marker ) )
+                        logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with following whitespace)") \
+                                            .format( marker, self.BBB, C, V ) )
+                        continue # so it just gets ignored, effectively deleted
+                else: # have \\ts\\* field without text!
+                    loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with no text)") \
+                                        .format( self.BBB, C, V, marker ) )
+                    logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with no text)") \
                                         .format( marker, self.BBB, C, V ) )
                     continue # so it just gets ignored, effectively deleted
 
@@ -438,10 +460,12 @@ class USFMBibleBook( BibleBook ):
 
             # Now load the actual Bible book data
             if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                if lastMarker: doaddLine( lastMarker, lastText )
+                if lastMarker:
+                    # print("Add1")
+                    doaddLine( lastMarker, lastText )
+                    lastMarker = lastText = None
                 if gotUWAligning:
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
-                lastMarker, lastText = marker, text
             elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors:
@@ -453,10 +477,15 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
                     self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if gotUWAligning:
+                    # print("HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
-                if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
-                lastText +=  '\\' + marker + ' ' + text
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                    # print("HERE2", lastMarker, lastText, "now", marker, text)
+                    if marker=='w' and lastMarker in ('v', 'p~'):
+                        # print( f"HereXX with {lastMarker} now {marker}" )
+                        if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
+                        lastText +=  '\\' + marker + ' ' + text
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                        marker = text = None # Seems to make no difference
             elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -470,16 +499,19 @@ class USFMBibleBook( BibleBook ):
                 lastText +=  '\\' + marker + ' ' + text
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
+                # if lastMarker:
+                #     print("Add2", marker)
+                #     doaddLine( lastMarker, lastText )
+                #     lastMarker = lastText = None
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 alignment marker (should be self-closed)
                     gotUWAligning = True
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
-                #elif self.containerBibleObject.uWaligned and marker == 'zaln-e': # it's a Door43 end-alignment marker (should be self-closed)
-                    #print( f"etext='{text}'" )
-                    #loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom alignment marker at beginning of line (with no text)") \
-                                        #.format( self.BBB, C, V, marker ) )
-                    #logging.warning( _("Removed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
-                                        #.format( marker, self.BBB, C, V ) )
-                    #marker = '' # so it gets deleted
+                    if marker=='p~' and lastMarker in ('v', 'p~'):
+                        # print( f"HereYY with {lastMarker} now {marker}" )
+                        if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
+                        lastText +=  text
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                        marker = text = None # Seems to make no difference
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {!r}") \
@@ -504,15 +536,16 @@ class USFMBibleBook( BibleBook ):
                         logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)") \
                                             .format( marker, self.BBB, C, V ) )
                     self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
+                    # TODO: Should the following code be disabled by the 'strict' flag????
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker.startswith( tryMarker ): # Let's try changing it
-                            if lastMarker: doaddLine( lastMarker, lastText )
-                            #if marker=='s5' and not text:
-                                ## Door43 projects use empty s5 fields as chunking markers
-                                #lastMarker, lastText = 's', '---'
-                            #else:
+                            if lastMarker:
+                                # print("Add3") 
+                                doaddLine( lastMarker, lastText )
+                                lastMarker = lastText = None
+                            # print( f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
                             # Move the extra appendage to the marker into the actual text
-                            lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
+                            marker, text = tryMarker, marker[len(tryMarker):] + ' ' + text
                             if text:
                                 loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
                                 logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
@@ -521,12 +554,17 @@ class USFMBibleBook( BibleBook ):
                                 logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of otherwise empty line").format( marker, tryMarker, self.BBB, C, V ) )
                             break
                     # Otherwise, don't bother processing this line -- it'll just cause more problems later on
-        if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
+            if marker and not lastMarker:
+                lastMarker, lastText = marker, text
 
         if not originalBook.lines: # There were no lines!!!
+            assert not marker and not text and not lastMarker and not lastText
             loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             logging.error( _("USFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
-            lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
+            marker, text = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
+
+        if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
+        if marker: doaddLine( marker, text ) # Process the final line
 
         if gotUWAligning or alignmentVariables['saved']:
             assert alignmentVariables['level'] == 0

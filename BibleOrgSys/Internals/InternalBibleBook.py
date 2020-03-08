@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-31' # by RJH
+lastModifiedDate = '2020-03-04' # by RJH
 shortProgramName = "InternalBibleBook"
 programName = "Internal Bible book handler"
 programVersion = '0.97'
@@ -192,7 +192,8 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         if textCount > maxOriginalWords: maxOriginalWords = textCount
         #if textCount > 1 and debuggingThisModule:
             #print( f"  This one has {textCount} original language words" )
-        textRE = re.compile( r'x-strong="(.+?)" x-lemma="(.*?)" x-morph="(.+?)" x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})" x-content="(.+?)"' )
+        # Allow for x-strong, x-lemma and x-morph to be empty (originally it was just x-lemma)
+        textRE = re.compile( r'x-strong="(.*?)" x-lemma="(.*?)" x-morph="(.*?)" x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})" x-content="(.+?)"' )
         textList = []
         match =  textRE.search( textString )
         while match:
@@ -200,7 +201,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
             for xx in range(1,7):
                 if not match.group(xx):
                     logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {textString}" )
-                    assert xx == 2 # It's the lemma field that's empty
+                    # assert xx == 2 # It's the lemma field that's empty
             #index = match.end()
             textString = f'{textString[:match.start()]}{textString[match.end():]}'
             match =  textRE.search( textString )
@@ -403,8 +404,9 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
 
         if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-            logging.critical( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
-            if BibleOrgSysGlobals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
+            logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
+            if marker != 'w': # This can happen with unfoldingWord aligned Bibles
+                if BibleOrgSysGlobals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
 
         if text is None:
             logging.critical( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
@@ -599,11 +601,11 @@ class InternalBibleBook:
                 extraText: the text of the note
                 cleanExtraText: extraText without character formatting as well
 
-        NOTE: You must NOT strip adjText any more AFTER calling this (or the note insert indices will be incorrect!
+        NOTE: You must NOT strip adjText any more AFTER calling this (or the note insert indices will be incorrect)!
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
-                print( "InternalBibleBook.processLineFix( {}:{}, {}, {!r} ) for {} ({})".format( C,V, originalMarker, text, self.BBB, self.objectTypeString ) )
+                print( f"\n\nInternalBibleBook.processLineFix( {C}:{V}, {originalMarker}, '{text}' ) for {self.BBB} ({self.objectTypeString})" )
             assert originalMarker and isinstance( originalMarker, str )
             assert isinstance( text, str )
         lineLocation = '{} {}:{}'.format( self.BBB, C, V )
@@ -683,7 +685,7 @@ class InternalBibleBook:
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.
         if '|' in adjText: # Mostly won't happen
-            #print( "\nW adjText @ {} {}:{} = {}".format( self.BBB, C, V, adjText ) )
+            # print( f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
             ixW = adjText.find( '\\w ' )
             if not BibleOrgSysGlobals.strictCheckingFlag:
                 if ixW == -1:
@@ -1200,9 +1202,9 @@ class InternalBibleBook:
                             #print( "Removing {!r} from {!r}".format( tryMarker, cleanText ) )
                             cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
                             tryCloseMarker = '\\'+possibleCharacterMarker+'*'
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
+                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( possibleCharacterMarker )
                             if shouldBeClosed == 'A' \
-                            or shouldBeClosed == 'S' and tryCloseMarker in cleanText:
+                            or shouldBeClosed == 'O' and tryCloseMarker in cleanText:
                                 #print( "Removing {!r} from {!r}".format( tryCloseMarker, cleanText ) )
                                 cleanText = cleanText.replace( tryCloseMarker, '', 1 ) # Remove it
                     if not '\\' in cleanText: break # no point in looping further
@@ -1244,6 +1246,10 @@ class InternalBibleBook:
                 assert extraType in BOS_EXTRA_TYPES
                 assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
 
+        if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
+        if 'afterMoses' in adjText or 'andthe' in adjText: halt
+        # print( f"{self.BBB} Returning '{adjText}' '{cleanText}'" )
+        # if self.BBB == 'JOS' and C == '2': halt
         return adjText, cleanText, extras
     # end of InternalBibleBook.processLines.processLineFix
 
@@ -2012,7 +2018,7 @@ class InternalBibleBook:
             # From here on, we use adjText (not text)
 
             #print( "marker {!r} text {!r}, adjText {!r}".format( adjMarker, text, adjText ) )
-            if not adjText and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
+            if not adjText and not extras and ( BibleOrgSysGlobals.USFMMarkers.getMarkerContentType(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
                 #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
                 if self.objectTypeString in ('USFM2','USFM3','USX',):
@@ -3385,7 +3391,7 @@ class InternalBibleBook:
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
             # Check for markers that shouldn't be empty
-            if markerEmpty and not extras and ( BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
+            if markerEmpty and not extras and ( BibleOrgSysGlobals.USFMMarkers.getMarkerContentType(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
                 #if self.objectTypeString in ('USFM','USX',):
                     #if self.sahtCount != -1:
                         #self.sahtCount += 1
@@ -3459,7 +3465,7 @@ class InternalBibleBook:
 
             # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v+)
             if marker != lastModifiedMarker: modifiedMarkerList.append( marker )
-            else: # same marker in a row -- we append a sign to the saved marker to indicate multiple occurences
+            else: # same marker in a row -- we append a sign to the saved marker to indicate multiple occurrences
                 oldMarker = modifiedMarkerList.pop()
                 assert oldMarker == marker or oldMarker == marker+'*'
                 modifiedMarkerList.append( marker+'*' ) # Save the marker with the sign
@@ -3539,7 +3545,7 @@ class InternalBibleBook:
                             newlineMarkerErrors.append( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
                             #print( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
 
-            markerShouldHaveContent = BibleOrgSysGlobals.USFMMarkers.markerShouldHaveContent( marker )
+            getMarkerContentType = BibleOrgSysGlobals.USFMMarkers.getMarkerContentType( marker )
             if text:
                 # Check the internal SFMs
                 if '\\' in text:
@@ -3564,19 +3570,19 @@ class InternalBibleBook:
                         internalMarkerCounts[internalMarker] = 1 if internalMarker not in internalMarkerCounts else (internalMarkerCounts[internalMarker] + 1)
                         if internalMarker and internalMarker[-1] == '*':
                             closedMarkerText = internalMarker[:-1]
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
+                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( closedMarkerText )
                             if shouldBeClosed == 'N': internalMarkerErrors.append( lineLocationSpace + _("Marker {} cannot be closed").format( closedMarkerText ) )
                             elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                             elif closedMarkerText in hierarchy: internalMarkerErrors.append( lineLocationSpace + _("Internal markers appear to overlap: {}").format( internalTextMarkers ) )
                             else: internalMarkerErrors.append( lineLocationSpace + _("Unexpected internal closing marker: {} in {}").format( internalMarker, internalTextMarkers ) )
                         else: # it's not a closing marker
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( internalMarker )
+                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( internalMarker )
                             if shouldBeClosed == 'N': continue # N for never
                             else: hierarchy.append( internalMarker ) # but what if it's optional ????????????????????????????????
                     if hierarchy: # it should be empty
                         internalMarkerErrors.append( lineLocationSpace + _("These markers {} appear not to be closed in {}").format( hierarchy, internalTextMarkers ) )
 
-                if markerShouldHaveContent == 'N': # Never
+                if getMarkerContentType == 'N': # Never
                     newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} should not have content: {!r}").format( marker, text ) )
                     logging.warning( _("Marker {!r} should not have content after {} {}:{} with: {!r}").format( marker, self.BBB, C, V, text ) )
                     self.addPriorityError( 83, C, V, _("Marker {} shouldn't have content").format( marker ) )
@@ -3606,9 +3612,9 @@ class InternalBibleBook:
                                 if not BibleOrgSysGlobals.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
                                 openList.append( insideMarker ) # Now have multiple entries in the openList
                 if len(openList) == 1: # only one marker left open
-                    closedFlag = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( openList[0] )
+                    closedFlag = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( openList[0] )
                     if closedFlag != 'A': # always
-                        if closedFlag == 'S': # sometimes
+                        if closedFlag == 'O': # optional
                             internalMarkerErrors.append( lineLocationSpace + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
                             logging.info( _("Marker(s) {} don't appear to be (optionally) closed after {} {}:{} in {}: {}").format( openList, self.BBB, C, V, marker, text ) )
                             self.addPriorityError( 26, C, V, _("Marker(s) {} isn't closed").format( openList ) )
@@ -3620,7 +3626,7 @@ class InternalBibleBook:
                     if len(openList) == 1: text += '\\' + openList[-1] + '*' # Try closing the last one for them
             # The following is handled above
             #else: # There's no text
-                #if markerShouldHaveContent == 'A': # Always
+                #if getMarkerContentType == 'A': # Always
                     #newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} has no content").format( marker ) )
                     #logging.warning( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
@@ -3673,22 +3679,22 @@ class InternalBibleBook:
                             noteMarkerCounts[extraMarker] = 1 if extraMarker not in noteMarkerCounts else (noteMarkerCounts[extraMarker] + 1)
                             if extraMarker and extraMarker[-1] == '*':
                                 closedMarkerText = extraMarker[:-1]
-                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
+                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( closedMarkerText )
                                 #print( "here with", extraType, extraText, thisExtraMarkers, hierarchy, closedMarkerText, shouldBeClosed )
                                 if shouldBeClosed == 'N': noteMarkerErrors.append( lineLocationSpace + _("Marker {} is not closeable").format( closedMarkerText ) )
                                 elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                                 elif closedMarkerText in hierarchy: noteMarkerErrors.append( lineLocationSpace + _("Internal {} markers appear to overlap: {}").format( extraName, thisExtraMarkers ) )
                                 else: noteMarkerErrors.append( lineLocationSpace + _("Unexpected {} closing marker: {} in {}").format( extraName, extraMarker, thisExtraMarkers ) )
                             else: # it's not a closing marker -- for extras, it probably automatically closes the previous marker
-                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( extraMarker )
+                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( extraMarker )
                                 if shouldBeClosed == 'N': continue # N for never
                                 elif hierarchy: # Maybe the previous one is automatically closed by this one
                                     previousMarker = hierarchy[-1]
-                                    previousShouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( previousMarker )
-                                    if previousShouldBeClosed == 'S': # S for sometimes
+                                    previousShouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( previousMarker )
+                                    if previousShouldBeClosed == 'O': # O for optional
                                         hierarchy.pop() # That they are not overlapped, but rather that the previous one is automatically closed by this one
                                 hierarchy.append( extraMarker )
-                        if len(hierarchy)==1 and BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
+                        if len(hierarchy)==1 and BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
                             hierarchy.pop()
                         if hierarchy: # it should be empty
                             #print( "here with remaining", extraType, extraText, thisExtraMarkers, hierarchy )

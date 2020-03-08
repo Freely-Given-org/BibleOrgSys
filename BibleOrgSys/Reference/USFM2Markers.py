@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2019 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,10 +36,10 @@ Contains the singleton class: USFM2Markers
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
+lastModifiedDate = '2020-02-24' # by RJH
 shortProgramName = "USFM2Markers"
 programName = "USFM2 Markers handler"
-programVersion = '0.74'
+programVersion = '0.75'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -405,25 +405,28 @@ class USFM2Markers:
         return self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['printedFlag']
 
 
-    def markerShouldBeClosed( self, marker ):
-        """ Return 'N', 'S', 'A' for "never", "sometimes", "always".
-            Returns False for an invalid marker. """
+    def getMarkerClosureType( self, marker ):
+        """
+        Return 'N', 'O', 'A' for "never", "optional", "always".
+
+        Raises KeyError for an invalid marker.
+        """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
         closed = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]['closed']
         #if closed is None: return 'N'
         if closed == "No": return 'N'
         if closed == "Always": return 'A'
-        if closed == "Optional": return 'S'
+        if closed == "Optional": return 'O'
         print( 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
-    # end of USFM2Markers.markerShouldBeClosed
+    # end of USFM2Markers.getMarkerClosureType
 
 
-    def markerShouldHaveContent( self, marker ):
+    def getMarkerContentType( self, marker ):
         """
         Return "N", "S", "A" for "never", "sometimes", "always".
 
-        Returns False for an invalid marker.
+        Raises KeyError for an invalid marker.
         """
         if marker not in self.__DataDict['combinedMarkerDict']: return False
         hasContent = self.__DataDict['rawMarkerDict'][self.toRawMarker(marker)]["hasContent"]
@@ -433,7 +436,7 @@ class USFM2Markers:
         if hasContent == "Sometimes": return "S"
         print( 'mshc {}'.format( hasContent ))
         raise KeyError # Should be something better here
-    # end of USFM2Markers.markerShouldHaveContent
+    # end of USFM2Markers.getMarkerContentType
 
 
     def toRawMarker( self, marker ):
@@ -521,7 +524,7 @@ class USFM2Markers:
                     nestedMarker = '\\+'+marker if includeBackslash else '+'+marker
                     result.append( nestedMarker )
                 if includeEndMarkers:
-                    assert self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row"
+                    assert self.getMarkerClosureType( marker )=='A' or self.markerOccursIn(marker)=="Table row"
                     result.append( adjMarker + '*' )
                     if includeNestedMarkers: result.append( nestedMarker + '*' )
                 if expandNumberableMarkers and self.isNumberableMarker( marker ):

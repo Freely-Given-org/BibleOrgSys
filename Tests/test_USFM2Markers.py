@@ -5,7 +5,7 @@
 #
 # Module testing USFM2Markers.py
 #
-# Copyright (C) 2011-2018 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -26,9 +26,9 @@
 Module testing USFM2Markers.py.
 """
 
-lastModifiedDate = '2018-11-09' # by RJH
+lastModifiedDate = '2020-02-24' # by RJH
 programName = "USFM2 Markers tests"
-programVersion = '0.61'
+programVersion = '0.62'
 programNameVersion = f'{programName} v{programVersion}'
 
 
@@ -232,33 +232,33 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isPrinted(badMarker) )
     # end of test_2090_isPrinted
 
-    def test_2100_markerShouldBeClosed( self ):
-        """ Test the markerShouldBeClosed function. """
+    def test_2100_getMarkerClosureType( self ):
+        """ Test the getMarkerClosureType function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
-            self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) in ('A','S',) )
+            self.assertTrue( self.UMs.getMarkerClosureType(simpleMarker) in ('A','O',) )
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertTrue( self.UMs.markerShouldBeClosed(numberedMarker) == 'N' )
+            self.assertTrue( self.UMs.getMarkerClosureType(numberedMarker) == 'N' )
         for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'periph', ):
-            self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) == 'N' )
+            self.assertTrue( self.UMs.getMarkerClosureType(simpleMarker) == 'N' )
         for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
-            self.assertFalse( self.UMs.markerShouldBeClosed(badMarker) )
-    # end of test_2100_markerShouldBeClosed
+            self.assertFalse( self.UMs.getMarkerClosureType(badMarker) )
+    # end of test_2100_getMarkerClosureType
 
-    def test_2105_markerShouldHaveContent( self ):
-        """ Test the markerShouldHaveContent function. """
+    def test_2105_getMarkerContentType( self ):
+        """ Test the getMarkerContentType function. """
         for simpleMarker in ( 'c', 'v', 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
-            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'A' )
+            self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'A' )
         for simpleMarker in ( 'p', ):
-            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'S' )
+            self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'S' )
         for numberedMarker in ( 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertTrue( self.UMs.markerShouldHaveContent(numberedMarker) == 'A' )
+            self.assertTrue( self.UMs.getMarkerContentType(numberedMarker) == 'A' )
         for numberedMarker in ( 'q1', 'q2', 'q3', ):
-            self.assertTrue( self.UMs.markerShouldHaveContent(numberedMarker) == 'S' )
+            self.assertTrue( self.UMs.getMarkerContentType(numberedMarker) == 'S' )
         for simpleMarker in ( 'b', 'nb', 'pb', 'esb', 'ib', ):
-            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'N' )
+            self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'N' )
         for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
-            self.assertFalse( self.UMs.markerShouldHaveContent(badMarker) )
-    # end of test_2105_markerShouldHaveContent
+            self.assertFalse( self.UMs.getMarkerContentType(badMarker) )
+    # end of test_2105_getMarkerContentType
 
     def test_2110_toRawMarker( self ):
         """ Test the toRawMarker function. """

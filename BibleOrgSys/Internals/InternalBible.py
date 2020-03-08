@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-05' # by RJH
+lastModifiedDate = '2020-03-04' # by RJH
 shortProgramName = "InternalBible"
 programName = "Internal Bible handler"
 programVersion = '0.83'
@@ -66,7 +66,7 @@ programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifi
 debuggingThisModule = False
 
 
-from typing import Optional
+from typing import Dict, List, Tuple, Optional
 import os
 import sys
 import logging
@@ -156,6 +156,8 @@ class InternalBible:
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
+            if 'uWaligned' in self.__dict__ and self.uWaligned:
+                result += ('\n' if result else '') + ' '*indent + _("Contains translation alignments: True")
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for fieldName in ( 'Status', 'Font', 'Copyright', 'Licence', ):
                 fieldContents = self.getSetting( fieldName )
@@ -2247,6 +2249,8 @@ class InternalBible:
                 elif marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker
                 elif marker == 'c#': pass # Ignore print chapter number
+                elif marker == 'cl': pass # Ignore cl markers AFTER the '\c 1' marker (the text for the individual chapter/psalm heading)
+                elif marker == 'v=': pass # Ignore the verse number (not to be printed) that the next field(s) (usually a section heading) logically belong together with
                 elif marker == 'd': verseText += '¦' + cleanText + '¦'
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
@@ -2262,7 +2266,7 @@ class InternalBible:
                     if not firstWord: verseText += ' '
                     verseText += cleanText
                     firstWord = False
-                else: logging.warning( "InternalBible.getVerseText Unknown marker {}={!r}".format( marker, cleanText ) )
+                else: logging.warning( f"InternalBible.getVerseText Unknown marker '{marker}'='{cleanText}'" )
             return verseText
     # end of InternalBible.getVerseText
 
@@ -2494,36 +2498,103 @@ class InternalBible:
     # end of InternalBible.writeBOSBCVFiles
 
 
-    def analyseUWalignments( self ):
+    def analyseUWalignments( self ) -> None:
         """
+        Aggregate all the alignments from each book.
+
         The cleaned aligments are
             List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]
             i.e., list entries of 5-tuples of C,V,originalWordsList,translatedWordsString,translatedWordsList.
+
+        Also produces some other interesting dicts and lists
+            and saves them as json files for analysis by other programs
+            and also saves some as text files for direct viewing.
         """
         from Internals.InternalBibleBook import cleanUWalignments
         #debuggingThisModule = True
 
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( f"analyseUWalignments() for {self.abbreviation}" )
 
+        OK_ORIGINAL_WORDS_COUNT = 3
+        OK_TRANSLATED_WORDS_COUNT = 5
+
         alignedBookCount = 0
-        aggregatedAlignmentsList = []
+        alignedBookList:List[str] = []
+        alignedOTBookList:List[str] = []
+        alignedDCBookList:List[str] = []
+        alignedNTBookList:List[str] = []
+        aggregatedAlignmentsList:List[Tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsOTList:List[Tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsDCList:List[Tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
+        largeAlignmentsList:List[Tuple[str,str,str,list,str,list]] = []
+        alignmentDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = {}
+        alignmentOTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = {}
+        alignmentDCDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = {}
+        alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = {}
         for BBB,bookObject in self.books.items():
             if 'uWalignments' in bookObject.__dict__:
                 if debuggingThisModule: print( f"Cleaning alignments for {BBB} and aggregating…" )
+                alignedBookList.append( BBB )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    alignedOTBookList.append( BBB )
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    alignedNTBookList.append( BBB )
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    alignedDCBookList.append( BBB )
                 alignedBookCount += 1
+
                 for C,V,originalWordsList,translatedWordsString,translatedWordsList \
                                     in cleanUWalignments( self.abbreviation, BBB, bookObject.uWalignments):
                     aggregatedAlignmentsList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
+                    # Best to leave these decisions to the analysis software!
+                    # if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
+                    # or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
+                    #     largeAlignmentsList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
+                    
+                    ref = f'{BBB}_{C}:{V}' # Must be a str for json (can't be a tuple)
+                    if ref not in alignmentDict: alignmentDict[ref] = []
+                    alignmentDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+
+                    if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                        thisList, thisDict = aggregatedAlignmentsOTList, alignmentOTDict
+                    elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                        thisList, thisDict = aggregatedAlignmentsNTList, alignmentNTDict
+                    elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                        thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
+                    thisList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
+                    if ref not in thisDict: thisDict[ref] = []
+                    thisDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+
+
 
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} books…" )
-        origFormToTransOccurencesDict:Dict[str,list] = {}
-        originalLemmaToTransOccurencesDict:Dict[str,list] = {}
-        origFormToTransAlignmentsDict:Dict[str,list] = {}
+            print( f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
+        originalFormToTransOccurrencesDict:Dict[str,dict] = {}
+        originalFormToTransOccurrencesOTDict:Dict[str,dict] = {}
+        originalFormToTransOccurrencesDCDict:Dict[str,dict] = {}
+        originalFormToTransOccurrencesNTDict:Dict[str,dict] = {}
+        originalLemmaToTransOccurrencesDict:Dict[str,dict] = {}
+        originalLemmaToTransOccurrencesOTDict:Dict[str,dict] = {}
+        originalLemmaToTransOccurrencesDCDict:Dict[str,dict] = {}
+        originalLemmaToTransOccurrencesNTDict:Dict[str,dict] = {}
+        originalFormToTransAlignmentsDict:Dict[str,list] = {}
+        originalFormToTransAlignmentsOTDict:Dict[str,list] = {}
+        originalFormToTransAlignmentsDCDict:Dict[str,list] = {}
+        originalFormToTransAlignmentsNTDict:Dict[str,list] = {}
         originalLemmaToTransAlignmentsDict:Dict[str,list] = {}
+        originalLemmaToTransAlignmentsOTDict:Dict[str,list] = {}
+        originalLemmaToTransAlignmentsDCDict:Dict[str,list] = {}
+        originalLemmaToTransAlignmentsNTDict:Dict[str,list] = {}
         origStrongsToTransAlignmentsDict:Dict[str,list] = {}
+        origStrongsToTransAlignmentsOTDict:Dict[str,list] = {}
+        origStrongsToTransAlignmentsDCDict:Dict[str,list] = {}
+        origStrongsToTransAlignmentsNTDict:Dict[str,list] = {}
         oneToOneTransToOriginalAlignmentsDict:Dict[str,list] = {}
+        oneToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = {}
+        oneToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = {}
+        oneToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = {}
         maxOriginalWords = maxTranslatedWords = 0
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
             # print( f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
@@ -2540,35 +2611,91 @@ class InternalBible:
             maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
             maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
+            # For counting occurrences (not alignments), remove ellipsis (non-continguous words joiner)
+            cleanedTranslatedWordsString = translatedWordsString.replace( ' … ', ' ' )
+
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
                 thisOrigStrongs, thisoriginalLemma, thisoriginalWord = thisOrigEntry[0], thisOrigEntry[1], thisOrigEntry[5]
 
-                if thisoriginalWord not in origFormToTransOccurencesDict:
-                    origFormToTransOccurencesDict[thisoriginalWord] = {translatedWordsString:1}
-                elif translatedWordsString in origFormToTransOccurencesDict[thisoriginalWord]:
-                    origFormToTransOccurencesDict[thisoriginalWord][translatedWordsString] += 1
+                if thisoriginalWord not in originalFormToTransOccurrencesDict:
+                    originalFormToTransOccurrencesDict[thisoriginalWord] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in originalFormToTransOccurrencesDict[thisoriginalWord]:
+                    originalFormToTransOccurrencesDict[thisoriginalWord][cleanedTranslatedWordsString] += 1
                 else:
-                    origFormToTransOccurencesDict[thisoriginalWord][translatedWordsString] = 1
-
-                if thisoriginalLemma not in originalLemmaToTransOccurencesDict:
-                    originalLemmaToTransOccurencesDict[thisoriginalLemma] = {translatedWordsString:1}
-                elif translatedWordsString in originalLemmaToTransOccurencesDict[thisoriginalLemma]:
-                    originalLemmaToTransOccurencesDict[thisoriginalLemma][translatedWordsString] += 1
+                    originalFormToTransOccurrencesDict[thisoriginalWord][cleanedTranslatedWordsString] = 1
+                assert isinstance( originalFormToTransOccurrencesDict[thisoriginalWord], dict )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = originalFormToTransOccurrencesOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = originalFormToTransOccurrencesNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = originalFormToTransOccurrencesDCDict
+                if thisoriginalWord not in thisDict:
+                    thisDict[thisoriginalWord] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in thisDict[thisoriginalWord]:
+                    thisDict[thisoriginalWord][cleanedTranslatedWordsString] += 1
                 else:
-                    originalLemmaToTransOccurencesDict[thisoriginalLemma][translatedWordsString] = 1
+                    thisDict[thisoriginalWord][cleanedTranslatedWordsString] = 1
 
-                if thisoriginalWord not in origFormToTransAlignmentsDict:
-                    origFormToTransAlignmentsDict[thisoriginalWord] = []
-                origFormToTransAlignmentsDict[thisoriginalWord].append( (BBB,C,V,translatedWordsString) )
+                if thisoriginalLemma not in originalLemmaToTransOccurrencesDict:
+                    originalLemmaToTransOccurrencesDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in originalLemmaToTransOccurrencesDict[thisoriginalLemma]:
+                    originalLemmaToTransOccurrencesDict[thisoriginalLemma][cleanedTranslatedWordsString] += 1
+                else:
+                    originalLemmaToTransOccurrencesDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
+                assert isinstance( originalLemmaToTransOccurrencesDict[thisoriginalLemma], dict )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = originalLemmaToTransOccurrencesOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = originalLemmaToTransOccurrencesNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = originalLemmaToTransOccurrencesDCDict
+                if thisoriginalLemma not in thisDict:
+                    thisDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in thisDict[thisoriginalLemma]:
+                    thisDict[thisoriginalLemma][cleanedTranslatedWordsString] += 1
+                else:
+                    thisDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
+
+                if thisoriginalWord not in originalFormToTransAlignmentsDict:
+                    originalFormToTransAlignmentsDict[thisoriginalWord] = []
+                originalFormToTransAlignmentsDict[thisoriginalWord].append( (BBB,C,V,translatedWordsString) )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = originalFormToTransAlignmentsOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = originalFormToTransAlignmentsNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = originalFormToTransAlignmentsDCDict
+                if thisoriginalWord not in thisDict:
+                    thisDict[thisoriginalWord] = []
+                thisDict[thisoriginalWord].append( (BBB,C,V,translatedWordsString) )
 
                 if thisoriginalLemma not in originalLemmaToTransAlignmentsDict:
                     originalLemmaToTransAlignmentsDict[thisoriginalLemma] = []
                 originalLemmaToTransAlignmentsDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = originalLemmaToTransAlignmentsOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = originalLemmaToTransAlignmentsNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = originalLemmaToTransAlignmentsDCDict
+                if thisoriginalLemma not in thisDict:
+                    thisDict[thisoriginalLemma] = []
+                thisDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
 
                 if thisOrigStrongs not in origStrongsToTransAlignmentsDict:
                     origStrongsToTransAlignmentsDict[thisOrigStrongs] = []
                 origStrongsToTransAlignmentsDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = origStrongsToTransAlignmentsOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = origStrongsToTransAlignmentsNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = origStrongsToTransAlignmentsDCDict
+                if thisOrigStrongs not in thisDict:
+                    thisDict[thisOrigStrongs] = []
+                thisDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
 
             if len(translatedWordsList) == 1:
                 thistranslatedWordEntry = translatedWordsList[0]
@@ -2577,39 +2704,60 @@ class InternalBible:
                 if thistranslatedWord not in oneToOneTransToOriginalAlignmentsDict:
                     oneToOneTransToOriginalAlignmentsDict[thistranslatedWord] = []
                 oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
+                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    thisDict = oneToOneTransToOriginalAlignmentsOTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisDict = oneToOneTransToOriginalAlignmentsNTDict
+                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisDict = oneToOneTransToOriginalAlignmentsDCDict
+                if thistranslatedWord not in thisDict:
+                    thisDict[thistranslatedWord] = []
+                thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
 
         # TODO: Find/count multi-word forms!!!
 
         if debuggingThisModule:
             max_each = 6
-            print( f"\nHave {len(origFormToTransOccurencesDict):,} form occurences" )
-            for j, (key,value) in enumerate( origFormToTransOccurencesDict.items(), start=1 ):
+            print( f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
+            for j, (key,value) in enumerate( originalFormToTransOccurrencesDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, dict )
                 if j > max_each: break
-            print( f"\nHave {len(originalLemmaToTransOccurencesDict):,} lemma occurences" )
-            for j, (key,value) in enumerate( originalLemmaToTransOccurencesDict.items(), start=1 ):
+            print( f"\nHave {len(originalLemmaToTransOccurrencesDict):,} lemma occurrences" )
+            for j, (key,value) in enumerate( originalLemmaToTransOccurrencesDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, dict )
                 if j > max_each: break
-            print( f"\nHave {len(origFormToTransAlignmentsDict):,} form alignments" )
-            for j, (key,value) in enumerate( origFormToTransAlignmentsDict.items(), start=1 ):
+            print( f"\nHave {len(originalFormToTransAlignmentsDict):,} form alignments" )
+            for j, (key,value) in enumerate( originalFormToTransAlignmentsDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, list )
                 if j > max_each: break
             print( f"\nHave {len(originalLemmaToTransAlignmentsDict):,} lemma alignments" )
             for j, (key,value) in enumerate( originalLemmaToTransAlignmentsDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, list )
                 if j > max_each: break
             print( f"\nHave {len(origStrongsToTransAlignmentsDict):,} Strongs alignments" )
             for j, (key,value) in enumerate( origStrongsToTransAlignmentsDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, list )
                 if j > max_each: break
             print( f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
             for j, (key,value) in enumerate( oneToOneTransToOriginalAlignmentsDict.items(), start=1 ):
                 print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                assert isinstance( key, str )
+                assert isinstance( value, list )
                 if j > max_each: break
 
         self.uWalignments = {}
-        self.uWalignments['origFormToTransOccurencesDict'] = origFormToTransOccurencesDict
-        self.uWalignments['origFormToTransAlignmentsDict'] = origFormToTransAlignmentsDict
+        self.uWalignments['originalFormToTransOccurrencesDict'] = originalFormToTransOccurrencesDict
+        self.uWalignments['originalFormToTransAlignmentsDict'] = originalFormToTransAlignmentsDict
         self.uWalignments['originalLemmaToTransAlignmentsDict'] = originalLemmaToTransAlignmentsDict
         self.uWalignments['origStrongsToTransAlignmentsDict'] = origStrongsToTransAlignmentsDict
         self.uWalignments['oneToOneTransToOriginalAlignmentsDict'] = oneToOneTransToOriginalAlignmentsDict
@@ -2619,25 +2767,56 @@ class InternalBible:
         outputFolderPath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
         try: os.makedirs( outputFolderPath )
         except FileExistsError: pass
-        for dataObject, objectName in ( (aggregatedAlignmentsList, 'aggregatedAlignmentsList'),
-                                        (origFormToTransOccurencesDict, 'origFormToTransOccurencesDict'),
-                                        (originalLemmaToTransOccurencesDict, 'originalLemmaToTransOccurencesDict'),
-                                        (origFormToTransAlignmentsDict, 'origFormToTransAlignmentsDict'),
-                                        (originalLemmaToTransAlignmentsDict, 'originalLemmaToTransAlignmentsDict'),
-                                        (origStrongsToTransAlignmentsDict, 'origStrongsToTransAlignmentsDict'),
-                                        (oneToOneTransToOriginalAlignmentsDict, 'oneToOneTransToOriginalAlignmentsDict'),
-                                        ):
+        for dataObject, objectName in ( 
+                (alignedBookList, 'alignedBookList'),
+                    (alignedOTBookList, 'alignedOTBookList'),
+                    (alignedDCBookList, 'alignedDCBookList'),
+                    (alignedNTBookList, 'alignedNTBookList'),
+                (aggregatedAlignmentsList, 'aggregatedAlignmentsList'),
+                    (aggregatedAlignmentsOTList, 'aggregatedAlignmentsOTList'),
+                    (aggregatedAlignmentsDCList, 'aggregatedAlignmentsDCList'),
+                    (aggregatedAlignmentsNTList, 'aggregatedAlignmentsNTList'),
+                (alignmentDict, 'alignmentDict'),
+                    (alignmentOTDict, 'alignmentOTDict'),
+                    (alignmentDCDict, 'alignmentDCDict'),
+                    (alignmentNTDict, 'alignmentNTDict'),
+                (originalFormToTransOccurrencesDict, 'originalFormToTransOccurrencesDict'),
+                    (originalFormToTransOccurrencesOTDict, 'originalFormToTransOccurrencesOTDict'),
+                    (originalFormToTransOccurrencesDCDict, 'originalFormToTransOccurrencesDCDict'),
+                    (originalFormToTransOccurrencesNTDict, 'originalFormToTransOccurrencesNTDict'),
+                (originalLemmaToTransOccurrencesDict, 'originalLemmaToTransOccurrencesDict'),
+                    (originalLemmaToTransOccurrencesOTDict, 'originalLemmaToTransOccurrencesOTDict'),
+                    (originalLemmaToTransOccurrencesDCDict, 'originalLemmaToTransOccurrencesDCDict'),
+                    (originalLemmaToTransOccurrencesNTDict, 'originalLemmaToTransOccurrencesNTDict'),
+                (originalFormToTransAlignmentsDict, 'originalFormToTransAlignmentsDict'),
+                    (originalFormToTransAlignmentsOTDict, 'originalFormToTransAlignmentsOTDict'),
+                    (originalFormToTransAlignmentsDCDict, 'originalFormToTransAlignmentsDCDict'),
+                    (originalFormToTransAlignmentsNTDict, 'originalFormToTransAlignmentsNTDict'),
+                (originalLemmaToTransAlignmentsDict, 'originalLemmaToTransAlignmentsDict'),
+                    (originalLemmaToTransAlignmentsOTDict, 'originalLemmaToTransAlignmentsOTDict'),
+                    (originalLemmaToTransAlignmentsDCDict, 'originalLemmaToTransAlignmentsDCDict'),
+                    (originalLemmaToTransAlignmentsNTDict, 'originalLemmaToTransAlignmentsNTDict'),
+                (origStrongsToTransAlignmentsDict, 'originalStrongsToTransAlignmentsDict'),
+                    (origStrongsToTransAlignmentsOTDict, 'originalStrongsToTransAlignmentsOTDict'),
+                    (origStrongsToTransAlignmentsDCDict, 'originalStrongsToTransAlignmentsDCDict'),
+                    (origStrongsToTransAlignmentsNTDict, 'originalStrongsToTransAlignmentsNTDict'),
+                (oneToOneTransToOriginalAlignmentsDict, 'oneToOneTransToOriginalAlignmentsDict'),
+                    (oneToOneTransToOriginalAlignmentsOTDict, 'oneToOneTransToOriginalAlignmentsOTDict'),
+                    (oneToOneTransToOriginalAlignmentsDCDict, 'oneToOneTransToOriginalAlignmentsDCDict'),
+                    (oneToOneTransToOriginalAlignmentsNTDict, 'oneToOneTransToOriginalAlignmentsNTDict'),
+                ):
             assert isinstance( dataObject, (dict,list) )
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}-{objectName}.json' ), 'wt' ) as xf:
-                json.dump( dataObject, xf )
+            if dataObject: # Don't write blank files
+                with open( outputFolderPath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
+                    json.dump( dataObject, xf )
 
         # Save some text files for manually looking through
-        with open( outputFolderPath.joinpath( f'{self.abbreviation}-TransOccurrences.byForm.txt' ), 'wt' ) as xf:
-            for originalWord in sorted(origFormToTransOccurencesDict, key=lambda theWord: theWord.lower()):
+        with open( outputFolderPath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
+            for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
                 assert isinstance( originalWord, str )
                 assert originalWord
-                translations = origFormToTransOccurencesDict[originalWord]
-                #print( "translations", translations ) # dict of word: numOccurences
+                translations = originalFormToTransOccurrencesDict[originalWord]
+                #print( "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
@@ -2645,7 +2824,7 @@ class InternalBible:
                     #print( "translation", translation, "tCount", tCount )
                     #print( f"For '{originalWord}', have {translation}: {tCount}" )
                     if tCount == 1: # Let's find the reference
-                        refList = origFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
+                        refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
                         #print( "refList1", refList )
                         assert isinstance( refList, list )
                         for ref in refList:
@@ -2657,15 +2836,15 @@ class InternalBible:
                                 #print( f"Now '{originalWord}', have {translations}" )
                                 break
                 xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
-        #print( "keys", originalLemmaToTransOccurencesDict.keys() )
-        #print( "\n", sorted(originalLemmaToTransOccurencesDict, key=lambda theLemma: theLemma.lower()) )
-        #print( "blank", originalLemmaToTransOccurencesDict[''] )
-        with open( outputFolderPath.joinpath( f'{self.abbreviation}-TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
-            for originalLemma in sorted(originalLemmaToTransOccurencesDict, key=lambda theLemma: theLemma.lower()):
+        #print( "keys", originalLemmaToTransOccurrencesDict.keys() )
+        #print( "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
+        #print( "blank", originalLemmaToTransOccurrencesDict[''] )
+        with open( outputFolderPath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
+            for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
-                translations = originalLemmaToTransOccurencesDict[originalLemma]
-                #print( "translations", translations ) # dict of word: numOccurences
+                translations = originalLemmaToTransOccurrencesDict[originalLemma]
+                #print( "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
@@ -2686,9 +2865,7 @@ class InternalBible:
                                 break
                 xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
         if self.abbreviation == 'ULT':
-            OK_ORIGINAL_WORDS_COUNT = 3
-            OK_TRANSLATED_WORDS_COUNT = 5
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}-LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
+            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
                 fromList, toList = [], []
                 for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
                     if len(originalWordsList) == 1:
@@ -2707,10 +2884,10 @@ class InternalBible:
                     if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
                     or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
                         xf.write( outputString )
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}-LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
+            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
                 for count,outputString in sorted( fromList, reverse=True ):
                     xf.write( outputString )
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}-LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
+            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
                 for count,outputString in sorted( toList, reverse=True ):
                     xf.write( outputString )
 

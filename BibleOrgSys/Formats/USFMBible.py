@@ -31,7 +31,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-01' # by RJH
+lastModifiedDate = '2020-02-17' # by RJH
 shortProgramName = "USFMBible"
 programName = "USFM Bible handler"
 programVersion = '0.78'
@@ -731,8 +731,8 @@ def demo() -> None:
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' ).resolve()
     if 1: # Load and process some of our test versions
         for j,(name, encoding, testFolder) in enumerate( (
-                        ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/ULT/en_ult/' ) ),
-                        ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/UST/en_ust/' ) ),
+                        ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/' ) ),
+                        ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/' ) ),
                         #('ULT', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
                         #('UST', 'utf-8', BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ust/en_ust/' ) ),
                         #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/') ),
@@ -768,9 +768,11 @@ def demo() -> None:
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
-                if 1:
+                if 0:
                     from Reference.VerseReferences import SimpleVerseKey
                     from Internals.InternalBibleInternals import InternalBibleEntry
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        print("Displaying text from some given references…")
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )
                         shortText = svk.getShortText()
