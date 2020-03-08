@@ -5,7 +5,7 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
 
-lastModifiedDate = '2020-01-14' # by RJH
+lastModifiedDate = '2020-03-08' # by RJH
 
 # Always prefer setuptools over distutils
 from setuptools import setup

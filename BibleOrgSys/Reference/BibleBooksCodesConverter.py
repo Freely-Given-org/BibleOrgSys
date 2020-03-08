@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-02' # by RJH
+lastModifiedDate = '2020-03-08' # by RJH
 shortProgramName = "BibleBooksCodesConverter"
 programName = "Bible Books Codes converter"
-programVersion = '0.79'
+programVersion = '0.80'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -673,8 +673,8 @@ class BibleBooksCodesConverter:
             if self.programVersion: myFile.write( "#  Version: {}\n".format( self.programVersion ) )
             if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
             myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
-            mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
-            dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"),
+            mostEntries = "0=referenceNumber (integer 1..999), 1=referenceAbbreviation/BBB (3-uppercase characters)"
+            dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..999)","specified"),
                     "referenceAbbreviationDict":("referenceAbbreviation","specified"),
                     "sequenceList":("referenceAbbreviation/BBB (3-uppercase characters)",""),
                     "CCELDict":("CCELNumberString", mostEntries),
@@ -716,6 +716,7 @@ class BibleBooksCodesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+            # WARNING: The following code converts int referenceNumber keys from int to str !!!
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of BibleBooksCodesConverter.exportDataToJSON
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2018-05-14 by RJH (also update programVersion below)
+#   Last modified: 2020-03-08 by RJH (also update programVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -69,16 +69,16 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 17 )
-        for dictName in ("referenceNumberDict","referenceAbbreviationDict","sequenceList",
-                        "SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict",
-                        "USFMAbbreviationDict","USFMNumberDict","USXNumberDict","UnboundCodeDict",
-                        "BibleditNumberDict","NETBibleAbbreviationDict","DrupalBibleAbbreviationDict",
-                        "ByzantineAbbreviationDict","EnglishNameDict",
-                        "allAbbreviationsDict",):
+        self.assertEqual( len(result), 18 )
+        for dictName in ('referenceNumberDict','referenceAbbreviationDict','sequenceList',
+                        'SBLAbbreviationDict','OSISAbbreviationDict','SwordAbbreviationDict','CCELDict',
+                        'USFMAbbreviationDict','USFMNumberDict','USXNumberDict','UnboundCodeDict',
+                        'BibleditNumberDict','NETBibleAbbreviationDict','DrupalBibleAbbreviationDict','BibleWorksAbbreviationDict',
+                        'ByzantineAbbreviationDict','EnglishNameDict',
+                        'allAbbreviationsDict',):
             self.assertTrue( dictName in result )
             self.assertGreater( len(result[dictName]), 20 )
-            self.assertLess( len(result[dictName]), 350 )
+            self.assertLess( len(result[dictName]), 420 )
     # end of test_1030_importDataToPython
 
     def test_1040_pickle( self ):
@@ -86,20 +86,20 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         self.assertEqual( self.bbcsc.pickle(), None ) # Basically just make sure that it runs
     # end of test_1040_pickle
 
-    def test_1050_exportDataToPython( self ):
-        """ Test the exportDataToPython function. """
-        self.assertEqual( self.bbcsc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_1050_importDataToPython
+    # def test_1050_exportDataToPython( self ):
+    #     """ Test the exportDataToPython function. """
+    #     self.assertEqual( self.bbcsc.exportDataToPython(), None ) # Basically just make sure that it runs
+    # # end of test_1050_importDataToPython
 
     def test_1060_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bbcsc.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToJSON
 
-    def test_1070_exportDataToC( self ):
-        """ Test the exportDataToC function. """
-        self.assertEqual( self.bbcsc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_1070_exportDataToC
+    # def test_1070_exportDataToC( self ):
+    #     """ Test the exportDataToC function. """
+    #     self.assertEqual( self.bbcsc.exportDataToC(), None ) # Basically just make sure that it runs
+    # # end of test_1070_exportDataToC
 # end of BibleBooksCodesConverterTests class
 
 
@@ -133,7 +133,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, -1 )
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 0 )
         self.assertRaises( KeyError, self.bbc.getBBBFromReferenceNumber, 455 )
-        self.assertRaises( KeyError, self.bbc.getBBBFromReferenceNumber, 999 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 1000 )
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 1234 )
     # end of test_2030_getBBBFromReferenceNumber
 
@@ -159,9 +159,10 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getReferenceNumber function. """
         for BBB in self.bbc.getAllReferenceAbbreviations():
             RefN = self.bbc.getReferenceNumber( BBB )
+            assert isinstance( RefN, int )
             if RefN is not None:
                 self.assertGreater( RefN, 0 )
-                self.assertLess( RefN, 900 )
+                self.assertLess( RefN, 1000 )
         self.assertEqual( self.bbc.getReferenceNumber('GEN'), 1 )
         self.assertEqual( self.bbc.getReferenceNumber('MAL'), 39 )
         self.assertEqual( self.bbc.getReferenceNumber('MAT'), 40 )
@@ -424,7 +425,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getBBBFromText('Gen'), 'GEN' )
         self.assertEqual( self.bbc.getBBBFromText('1Co'), 'CO1' )
         self.assertEqual( self.bbc.getBBBFromText('Rev'), 'REV' )
-        for badCode in ('XYZ','Abc',':)','WXYZ','Genesis',):
+        for badCode in ('XYZ','Abc',':)','WXYZ',):
             self.assertEqual( self.bbc.getBBBFromText( badCode ), None )
     # end of test_2220_getBBBFromText
 

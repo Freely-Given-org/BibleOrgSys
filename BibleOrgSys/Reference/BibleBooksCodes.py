@@ -28,10 +28,10 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-23' # by RJH
+lastModifiedDate = '2020-03-08' # by RJH
 shortProgramName = "BibleBooksCodes"
 programName = "Bible Books Codes handler"
-programVersion = '0.81'
+programVersion = '0.82'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
@@ -86,6 +86,9 @@ class BibleBooksCodes:
                         print( f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
+                    # NOTE: We have to convert str referenceNumber keys back to ints
+                    self.__DataDicts['referenceNumberDict'] = { int(key):value \
+                                for key,value in self.__DataDicts['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
                     print( "BibleBooksCodes JSON file can't be loaded!" )
@@ -121,7 +124,7 @@ class BibleBooksCodes:
         """
         indent = 2
         result = "BibleBooksCodes object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts["referenceAbbreviationDict"]) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts['referenceAbbreviationDict']) )
         return result
     # end of BibleBooksCodes.__str__
 
@@ -130,25 +133,25 @@ class BibleBooksCodes:
         """
         Return the number of available codes.
         """
-        assert len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"])
-        return len(self.__DataDicts["referenceAbbreviationDict"])
+        assert len(self.__DataDicts['referenceAbbreviationDict']) == len(self.__DataDicts['referenceNumberDict'])
+        return len(self.__DataDicts['referenceAbbreviationDict'])
     # end of BibleBooksCodes.__len__
 
 
     def __contains__( self, BBB ):
         """ Returns True or False. """
-        return BBB in self.__DataDicts["referenceAbbreviationDict"]
+        return BBB in self.__DataDicts['referenceAbbreviationDict']
 
 
     def __iter__( self ):
         """ Yields the next BBB. """
-        for BBB in self.__DataDicts["referenceAbbreviationDict"]:
+        for BBB in self.__DataDicts['referenceAbbreviationDict']:
             yield BBB
 
 
     def isValidBBB( self, BBB ):
         """ Returns True or False. """
-        return BBB in self.__DataDicts["referenceAbbreviationDict"]
+        return BBB in self.__DataDicts['referenceAbbreviationDict']
 
 
     def getBBBFromReferenceNumber( self, referenceNumber ):
@@ -160,19 +163,23 @@ class BibleBooksCodes:
         """
         if isinstance( referenceNumber, str ): referenceNumber = int( referenceNumber ) # Convert str to int if necessary
         if not 1 <= referenceNumber <= 999: raise ValueError
-        return self.__DataDicts["referenceNumberDict"][referenceNumber]["referenceAbbreviation"]
+        print( referenceNumber, repr(referenceNumber))
+        print( self.__DataDicts['referenceNumberDict'])
+        print(self.__DataDicts['referenceNumberDict'][referenceNumber])
+        print(self.__DataDicts['referenceNumberDict'][referenceNumber]['referenceAbbreviation'])
+        return self.__DataDicts['referenceNumberDict'][referenceNumber]['referenceAbbreviation']
     # end of BibleBooksCodes.getBBBFromReferenceNumber
 
 
     def getAllReferenceAbbreviations( self ):
         """ Returns a list of all possible BBB codes. """
-        return [BBB for BBB in self.__DataDicts["referenceAbbreviationDict"]]
-        #return self.__DataDicts["referenceAbbreviationDict"].keys() # Why didn't this work?
+        return [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']]
+        #return self.__DataDicts['referenceAbbreviationDict'].keys() # Why didn't this work?
 
 
     def getReferenceNumber( self, BBB ):
         """ Return the referenceNumber 1..999 for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["referenceNumber"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
 
     def getSequenceList( self, myList=None ):
@@ -181,7 +188,7 @@ class BibleBooksCodes:
             If you supply a list of books, it puts your actual book codes into the default order.
                 Your list can simply be a list of BBB strings, or a list of tuples with the BBB as the first entry in the tuple.
         """
-        if myList is None: return self.__DataDicts["sequenceList"]
+        if myList is None: return self.__DataDicts['sequenceList']
         # They must have given us their list of books
         assert isinstance( myList, list )
         if not myList: return [] # Return an empty list if that's what they gave
@@ -189,7 +196,7 @@ class BibleBooksCodes:
             BBB = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
             assert self.isValidBBB( BBB ) # Check the supplied list
         resultList = []
-        for BBB1 in self.__DataDicts["sequenceList"]:
+        for BBB1 in self.__DataDicts['sequenceList']:
             for something in myList:
                 BBB2 = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
                 if BBB2 == BBB1:
@@ -206,37 +213,37 @@ class BibleBooksCodes:
         """
         Return the full dictionary for the given book (code).
         """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]
 
 
     def getCCELNumber( self, BBB ):
         """ Return the CCEL number string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["CCELNumberString"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['CCELNumberString']
 
 
     def getSBLAbbreviation( self, BBB ):
         """ Return the SBL abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["SBLAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['SBLAbbreviation']
 
 
     def getOSISAbbreviation( self, BBB ):
         """ Return the OSIS abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["OSISAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['OSISAbbreviation']
 
 
     def getSwordAbbreviation( self, BBB ):
         """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["SwordAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['SwordAbbreviation']
 
 
     def getUSFMAbbreviation( self, BBB ):
         """ Return the USFM abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMAbbreviation"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
     def getUSFMNumber( self, BBB ):
         """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMNumberString"]
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMNumberString']
 
 
     def getUSXNumber( self, BBB ):
@@ -297,8 +304,8 @@ class BibleBooksCodes:
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
         assert len(USFMAbbreviation) == 3
-        #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
-        result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
+        #print( USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
+        result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
         if strict: logging.warning( "getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
@@ -308,7 +315,7 @@ class BibleBooksCodes:
         """
         Return the reference abbreviation string for the given Unbound Bible book code string.
         """
-        return self.__DataDicts["UnboundCodeDict"][UnboundBibleCode.upper()][1]
+        return self.__DataDicts['UnboundCodeDict'][UnboundBibleCode.upper()][1]
     # end of BibleBooksCodes.getBBBFromUnboundBibleCode
 
 
@@ -316,7 +323,7 @@ class BibleBooksCodes:
         """
         Return the reference abbreviation string for the given DrupalBible book code string.
         """
-        return self.__DataDicts["DrupalBibleAbbreviationDict"][DrupalBibleCode.upper()][1]
+        return self.__DataDicts['DrupalBibleAbbreviationDict'][DrupalBibleCode.upper()][1]
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
 
@@ -362,14 +369,14 @@ class BibleBooksCodes:
         Why is it a list?
             Because some books have alternate possible numbers of chapters depending on the Biblical tradition.
         """
-        #if BBB not in self.__DataDicts["referenceAbbreviationDict"] \
-        #or "numExpectedChapters" not in self.__DataDicts["referenceAbbreviationDict"][BBB] \
-        #or self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is None:
-        if "numExpectedChapters" not in self.__DataDicts["referenceAbbreviationDict"][BBB] \
-        or self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is None:
+        #if BBB not in self.__DataDicts['referenceAbbreviationDict'] \
+        #or "numExpectedChapters" not in self.__DataDicts['referenceAbbreviationDict'][BBB] \
+        #or self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is None:
+        if "numExpectedChapters" not in self.__DataDicts['referenceAbbreviationDict'][BBB] \
+        or self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is None:
             return []
 
-        eC = self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"]
+        eC = self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters']
         if eC: return [v for v in eC.split(',')]
     # end of BibleBooksCodes.getExpectedChaptersList
 
@@ -392,9 +399,9 @@ class BibleBooksCodes:
         Makes up and returns a list of single chapter book codes.
         """
         results = []
-        for BBB in self.__DataDicts["referenceAbbreviationDict"]:
-            if self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is not None \
-            and self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1':
+        for BBB in self.__DataDicts['referenceAbbreviationDict']:
+            if self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is not None \
+            and self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] == '1':
                 results.append( BBB )
         return results
     # end of BibleBooksCodes.getSingleChapterBooksList
@@ -402,7 +409,7 @@ class BibleBooksCodes:
 
     def isSingleChapterBook( self, BBB ):
         """ Returns True or False if the number of chapters for the book is only one. """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1'
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] == '1'
 
 
     def getOSISSingleChapterBooksList( self ):
@@ -419,7 +426,7 @@ class BibleBooksCodes:
         """
         Return a list of all available OSIS book codes (in no particular order).
         """
-        return [bk for bk in self.__DataDicts["OSISAbbreviationDict"]]
+        return [bk for bk in self.__DataDicts['OSISAbbreviationDict']]
     #end of BibleBooksCodes.getAllOSISBooksCodes
 
 
@@ -428,8 +435,8 @@ class BibleBooksCodes:
         Return a list of all available USFM book codes.
         """
         result = []
-        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            pA = values["USFMAbbreviation"]
+        for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
+            pA = values['USFMAbbreviation']
             if pA is not None:
                 if toUpper: pA = pA.upper()
                 if pA not in result: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
@@ -445,9 +452,9 @@ class BibleBooksCodes:
         The list contains tuples of: USFMAbbreviation, USFMNumber, referenceAbbreviation
         """
         found, result = [], []
-        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            pA = values["USFMAbbreviation"]
-            pN = values["USFMNumberString"]
+        for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
+            pA = values['USFMAbbreviation']
+            pN = values['USFMNumberString']
             if pA is not None and pN is not None:
                 if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
                     result.append( (pA, pN, BBB,) )
@@ -463,9 +470,9 @@ class BibleBooksCodes:
         The list contains tuples of: USFMAbbreviation, USXNumber, referenceAbbreviation
         """
         found, result = [], []
-        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            pA = values["USFMAbbreviation"]
-            pN = values["USXNumberString"]
+        for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
+            pA = values['USFMAbbreviation']
+            pN = values['USXNumberString']
             if pA is not None and pN is not None:
                 if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
                     result.append( (pA, pN, BBB,) )
@@ -481,8 +488,8 @@ class BibleBooksCodes:
         #The list contains tuples of: UnboundCode, referenceAbbreviation
         #"""
         #result = []
-        #for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            #uBC = values["UnboundCodeString"]
+        #for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
+            #uBC = values['UnboundCodeString']
             #if uBC is not None:
                 #result.append( (uBC, BBB,) )
         #return result
@@ -496,9 +503,9 @@ class BibleBooksCodes:
         The list contains tuples of: USFMAbbreviation, BibleditNumber, referenceAbbreviation
         """
         found, result = [], []
-        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            pA = values["USFMAbbreviation"]
-            pN = values["BibleditNumberString"]
+        for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
+            pA = values['USFMAbbreviation']
+            pN = values['BibleditNumberString']
             if pA is not None and pN is not None:
                 if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
                     result.append( (pA, pN, BBB,) )
@@ -513,7 +520,7 @@ class BibleBooksCodes:
 
         Returns None (rather than an empty list) if there's none.
         """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]['possibleAlternativeBooks']
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['possibleAlternativeBooks']
     # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
 
 
@@ -524,7 +531,7 @@ class BibleBooksCodes:
 
         Returns None (rather than an empty list) if there's none.
         """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]['typicalSection']
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['typicalSection']
     # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
 
 
@@ -557,7 +564,7 @@ class BibleBooksCodes:
             They are not intended to be used for a proper international human interface.
             The first one in the list is supposed to be the more common.
         """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"].split('/',1)[0].strip()
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['nameEnglish'].split('/',1)[0].strip()
     # end of BibleBooksCodes.getEnglishName_NR
 
     def getEnglishNameList_NR( self, BBB ): # NR = not recommended (because not completely general/international)
@@ -568,7 +575,7 @@ class BibleBooksCodes:
             They are not intended to be used for a proper international human interface.
             The first one in the list is supposed to be the more common.
         """
-        names = self.__DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"]
+        names = self.__DataDicts['referenceAbbreviationDict'][BBB]['nameEnglish']
         return [name.strip() for name in names.split('/')]
     # end of BibleBooksCodes.getEnglishNameList_NR
 
@@ -607,7 +614,7 @@ class BibleBooksCodes:
              open( os.path.join( outputFolder, "BOS_Books_Codes.html" ), 'wt', encoding='utf-8' ) as htmlFile:
                 txtFile.write( "NUM BBB English name\n" )
                 htmlFile.write( '<html><body><table border="1">\n<tr><th>NUM</th><th>BBB</th><th>English name</th></tr>\n' )
-                for BBB in self.__DataDicts["referenceAbbreviationDict"]:
+                for BBB in self.__DataDicts['referenceAbbreviationDict']:
                     txtFile.write( "{:3} {} {}\n".format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
                     htmlFile.write( '<tr><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
                 htmlFile.write( "</table></body></html>\n" )
