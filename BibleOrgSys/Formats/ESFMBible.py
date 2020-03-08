@@ -592,12 +592,12 @@ def demo() -> None:
                 ("ESFM Test 1", "OET-LV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/')),
                 ("ESFM Test 2", "OET-RV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/')),
                 ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/OET-LV/'),),
-                ("Open English Translation—Base Version", 'OET-BV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV'),),
-                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV'),),
-                ("Open English Translation—Readers' Version", 'OET-RV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV'),),
-                ("Open English Translation—Colloquial Version", 'OET-CV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV'),),
-                ("Open English Translation—Study Version", 'OET-SV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV'),),
-                ("Open English Translation—Extended Version", 'OET-EV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV'),),
+                ("Open English Translation—Base Version", 'OET-BV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV'),),
+                ("Open English Translation—Literal Version", 'OET-LV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV'),),
+                ("Open English Translation—Readers' Version", 'OET-RV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV'),),
+                ("Open English Translation—Colloquial Version", 'OET-CV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV'),),
+                ("Open English Translation—Study Version", 'OET-SV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV'),),
+                ("Open English Translation—Extended Version", 'OET-EV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV'),),
                 ):
             count += 1
             if os.access( testFolder, os.R_OK ):

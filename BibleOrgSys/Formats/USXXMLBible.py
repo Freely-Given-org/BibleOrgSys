@@ -381,9 +381,9 @@ def demo() -> None:
                 ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
                 ('Test2',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2'),),
                 ('MatigsalugUSFM',BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
-                ("Matigsalug3", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
-                ("Matigsalug4", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
-                ("Matigsalug5", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
+                ("Matigsalug3", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
+                ("Matigsalug4", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
+                ("Matigsalug5", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
                 ) # You can put your USX test folder here
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder

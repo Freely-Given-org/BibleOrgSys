@@ -676,9 +676,9 @@ def demo() -> None:
 
     from InputOutput import USXFilenames, USFMFilenames
     from Formats import USFMBibleBook
-    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
-    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
-    name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
+    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
+    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
+    name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning USX  {} from {}…").format( name, testFolder ) )

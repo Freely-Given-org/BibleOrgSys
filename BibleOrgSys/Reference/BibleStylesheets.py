@@ -310,7 +310,7 @@ class BibleStylesheet():
     # end of BibleStylesheet.load
 
 
-    def importParatextStylesheet( self, folder, filename, encoding='utf-8' ):
+    def importParatextStylesheet( self, folder, filename:str, encoding:str='utf-8' ) -> None:
         """
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet…".format( filename ) )
@@ -401,7 +401,7 @@ class ParatextStylesheet():
     """
     Class to load a Paratext stylesheet into a dictionary.
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         self.sourceFolder = self.filename = self.encoding = None
         self.filepath = self.name = None
         self.recordsDB = self.dataDict = None
@@ -409,7 +409,7 @@ class ParatextStylesheet():
     # end of ParatextStylesheet.__init__
 
 
-    def load( self, sourceFolder, filename, encoding='utf-8' ):
+    def load( self, sourceFolder, filename:str, encoding='utf-8' ):
         self.sourceFolder = sourceFolder
         self.filename = filename
         self.encoding = encoding
@@ -501,7 +501,7 @@ def demo() -> None:
 
     if 1: # Try the default one
         print( "\nTrying default Bible stylesheet…" )
-        #folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        #folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
         #print( ss )
@@ -519,7 +519,7 @@ def demo() -> None:
 
     if 1: # Try importing one
         print( "\nTrying Bible stylesheet import…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = BibleStylesheet()
         print( ss )
@@ -532,7 +532,7 @@ def demo() -> None:
 
     if 1: # Try a small one
         print( "\nTrying small PT stylesheet…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
         print( ss )
@@ -542,7 +542,7 @@ def demo() -> None:
 
     if 1: # Try a full one
         print( "\nTrying full PT stylesheet…" )
-        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
+        folder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "usfm.sty"
         ss = ParatextStylesheet()
         ss.load( folder, filename )

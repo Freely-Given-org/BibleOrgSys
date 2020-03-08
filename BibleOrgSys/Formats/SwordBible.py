@@ -536,8 +536,8 @@ def demo() -> None:
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
-    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/HDs/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
+    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/WebsitesFreely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
+    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/WebsitesFreely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
