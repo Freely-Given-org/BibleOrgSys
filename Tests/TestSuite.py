@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update programVersion below)
 #
 # Suite for testing BibleOrgSys
 #
@@ -27,31 +27,36 @@
 Suite testing BibleOrgSys.
 """
 
-ProgName = "Bible Organisational System test suite"
-ProgVersion = '0.13'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+programName = "Bible Organisational System test suite"
+programVersion = '0.13'
+programNameVersion = f'{programName} v{programVersion}'
 
 
-import sys, unittest
+import os.path
+import sys
+import unittest
 
 
-sourceFolder = "."
+sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
 sys.path.append( sourceFolder )
 
+if __name__ == '__main__':
+    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
-import BibleBooksCodesTests, BibleBookOrdersTests
+import BibleBooksCodesTests
+import BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
-import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganizationalSystemsTests
+import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganisationalSystemsTests
 import BibleReferencesTests
 import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 
 # Handle command line parameters (for compatibility)
 # Configure basic set-up
-parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+parser = BibleOrgSysGlobals.setup( programName, programVersion )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
+if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
 
 # Create the test suite
@@ -79,9 +84,9 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificatio
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemTests ) )
 
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemsConverterTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemsTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganisationalSystemsTests.BibleOrganisationalSystemsConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganisationalSystemsTests.BibleOrganisationalSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganisationalSystemsTests.BibleOrganisationalSystemTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleReferencesTests.BibleReferencesTests ) )
 

@@ -1,0 +1,36 @@
+dist: bionic
+language: python
+
+#cache: pip
+
+python:
+  - 3.6
+  - 3.7
+  - 3.8
+  - nightly
+  - pypy3
+
+#branches:
+#  except:
+#    - /^[0-9]+\.[0-9]+\.[0-9]+/
+
+install:
+   - pip install --upgrade pip
+#  - pip install pipenv
+#  - pipenv install --dev --skip-lock
+
+script:
+  pytest -v
+
+#after_success:
+  #codecov
+
+deploy:
+  provider: pypi
+  user: $PYPI_USER
+  password: $PYPI_PASS
+  server: https://upload.pypi.org/legacy/
+  distributions: "sdist bdist_wheel"
+  on:
+    branch: master
+    condition: $TRAVIS_PYTHON_VERSION = "3.8"

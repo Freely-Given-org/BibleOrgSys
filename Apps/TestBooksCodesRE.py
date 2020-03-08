@@ -28,12 +28,12 @@ Module which tests the regular expression for Bible Books Codes.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "TestBooksCodesRE"
-ProgName = "TestBooksCodes Regular Expressions"
-ProgVersion = '0.20'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-05-12' # by RJH
+shortProgramName = "TestBooksCodesRE"
+programName = "TestBooksCodes Regular Expressions"
+programVersion = '0.20'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
@@ -41,8 +41,11 @@ debuggingThisModule = False
 import sys, re
 
 # Allow the app to run from either the BOS folder or in this Apps subfolder
-sys.path.append( '.' )
-sys.path.append( '..' )
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
 
 
@@ -126,11 +129,14 @@ def main():
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of TestBooksCodesRE.py

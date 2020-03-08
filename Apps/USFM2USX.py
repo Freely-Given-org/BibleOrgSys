@@ -68,21 +68,23 @@ defaultInputFolder = 'Tests/DataFilesForTests/zTemp/'
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-01-29' # by RJH
-ShortProgName = "USFM2USX"
-ProgName = "USFM to USX"
-ProgVersion = '0.02'
-ProgNameVersion = f'{ProgName} v{ProgVersion}'
-ProgNameVersionDate = f'{ProgNameVersion} {_("last modified")} {LastModifiedDate}'
+lastModifiedDate = '2019-01-29' # by RJH
+shortProgramName = "USFM2USX"
+programName = "USFM to USX"
+programVersion = '0.02'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 import os, shutil
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-sys.path.append( '..' ) # Append the above folder to the path to search for the BOS (so it can also be run dirrect from the Apps folder)
-import BibleOrgSysGlobals
-from UnknownBible import UnknownBible
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
@@ -102,8 +104,8 @@ def main():
     inputFileOrFolder = defaultInputFolder
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion )
-        print( f"\n{ShortProgName}: processing input folder {inputFileOrFolder!r} …" )
+        print( programNameVersion )
+        print( f"\n{shortProgramName}: processing input folder {inputFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFileOrFolder ) # Tell it the folder to start looking in
@@ -115,14 +117,14 @@ def main():
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
 
-        defaultOutputFolder = os.path.join( os.getcwd(), 'OutputFiles/', 'BOS_USX2_Export/' )
+        defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( f"\n{ShortProgName}: removing previous {defaultOutputFolder} folder…" )
+                print( f"\n{shortProgramName}: removing previous {defaultOutputFolder} folder…" )
                 shutil.rmtree( defaultOutputFolder )
 
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( f"\n{ShortProgName}: starting export…" )
+            print( f"\n{shortProgramName}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
@@ -131,16 +133,19 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
-        print(f"\n{ShortProgName}: output should be in {defaultOutputFolder} folder.")
+        print(f"\n{shortProgramName}: output should be in {defaultOutputFolder} folder.")
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
     # Do the BOS close-down stuff
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of USFM2USX.py

@@ -54,19 +54,22 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
-ShortProgName = "GetKJVVerseNumber"
-ProgName = "Get KJV Verse Number"
-ProgVersion = '0.10'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2018-12-12' # by RJH
+shortProgramName = "GetKJVVerseNumber"
+programName = "Get KJV Verse Number"
+programVersion = '0.10'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
-from BibleOrganisationalSystems import BibleOrganisationalSystem
-from BibleReferences import BibleSingleReference
+from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from Reference.BibleReferences import BibleSingleReference
 
 
 def main():
@@ -83,7 +86,7 @@ def main():
         -v (verbose) is 4.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion )
+        print( programNameVersion )
 
     ourBibleOrganisationalSystem = BibleOrganisationalSystem( "GENERIC-KJV-66-ENG" )
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
@@ -127,11 +130,14 @@ def main():
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of GetKJVVerseNumber.py

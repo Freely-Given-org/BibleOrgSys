@@ -65,22 +65,26 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own here
+inputFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-01-29' # by RJH
-ShortProgName = "MakePhotoBible"
-ProgName = "Make PhotoBible"
-ProgVersion = '0.23'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+lastModifiedDate = '2019-01-29' # by RJH
+shortProgramName = "MakePhotoBible"
+programName = "Make PhotoBible"
+programVersion = '0.23'
+programNameVersion = f'{programName} v{programVersion}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 import os
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
+if __name__ == '__main__':
+    import sys
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+
 import BibleOrgSysGlobals
 from UnknownBible import UnknownBible
 
@@ -100,8 +104,8 @@ def main():
         -v (verbose) is 4.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion )
-        print( "\n{}: processing input folder {!r} …".format( ShortProgName, inputFolder ) )
+        print( programNameVersion )
+        print( "\n{}: processing input folder {!r} …".format( shortProgramName, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
@@ -113,7 +117,7 @@ def main():
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{}: starting export (may take up to 60 minutes)…".format( ShortProgName ) )
+            print( "\n{}: starting export (may take up to 60 minutes)…".format( shortProgramName ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -122,15 +126,18 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
-        print(f"Output should be in {os.path.join(os.getcwd(), 'OutputFiles/')} folder.")
+        print(f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( programName, programVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( programName, programVersion )
 # end of MakePhotoBible.py
