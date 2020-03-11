@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM2 Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM2 Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-19' # by RJH
+lastModifiedDate = '2020-03-11' # by RJH
 shortProgramName = "USFM2BibleBook"
 programName = "USFM2 Bible book handler"
 programVersion = '0.53'
@@ -208,7 +208,7 @@ class USFM2BibleBook( BibleBook ):
                 if marker == 's5' and not text: # it's a Door43 translatable section marker
                     loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with no text)") \
                                         .format( self.BBB, C, V, marker ) )
-                    logging.critical( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
+                    logging.error( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
                                         .format( marker, self.BBB, C, V ) )
                     marker = '' # so it gets deleted
                 elif marker and marker[0] == 'z': # it's a custom marker

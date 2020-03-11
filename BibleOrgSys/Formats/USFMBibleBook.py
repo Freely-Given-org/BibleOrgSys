@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-04' # by RJH
+lastModifiedDate = '2020-03-11' # by RJH
 shortProgramName = "USFMBibleBook"
 programName = "USFM Bible book handler"
 programVersion = '0.53'
@@ -387,7 +387,7 @@ class USFMBibleBook( BibleBook ):
                     if text.strip():
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (WITH text)") \
                                             .format( self.BBB, C, V, marker ) )
-                        logging.critical( _("Removed '\\{}' Door43 custom marker after {} {} {}:{} at beginning of line (WITH text)") \
+                        logging.error( _("Removed '\\{}' Door43 custom marker after {} {} {}:{} at beginning of line (WITH text)") \
                                             .format( marker, self.workName, self.BBB, C, V ) )
                         text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
                         if text.startswith( '\\v ' ):
@@ -413,7 +413,7 @@ class USFMBibleBook( BibleBook ):
                     if text.strip():
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (WITH text)") \
                                             .format( self.BBB, C, V, marker ) )
-                        logging.critical( _("Removed '\\{}' Door43 chunking marker after {} {} {}:{} at beginning of line (WITH text)") \
+                        logging.error( _("Removed '\\{}' Door43 chunking marker after {} {} {}:{} at beginning of line (WITH text)") \
                                             .format( marker, self.workName, self.BBB, C, V ) )
                         text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
                         if text.startswith( '\\v ' ):
