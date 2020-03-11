@@ -28,17 +28,17 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-08' # by RJH
+lastModifiedDate = '2020-03-11' # by RJH
 shortProgramName = "BibleBooksCodes"
 programName = "Bible Books Codes handler"
-programVersion = '0.82'
+programVersion = '0.83'
 programNameVersion = f'{shortProgramName} v{programVersion}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
 
 debuggingThisModule = False
 
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import os
 import logging
 
@@ -550,6 +550,53 @@ class BibleBooksCodes:
         return True
     # end of BibleBooksCodes.continuesThroughChapters
 
+
+    def BCVReferenceToInt( self, BCVReferenceTuple ) -> int:
+        """
+        Convert a BCV or BCVS reference to an integer
+            especially so that references can be sorted.
+        """
+        try:
+            BBB, C, V = BCVReferenceTuple
+            S = ''
+        except:
+            BBB, C, V, S = BCVReferenceTuple
+            print( BCVReferenceTuple ); halt # Need to finish handling BCVReferenceTuple
+        result = self.getReferenceNumber( BBB )
+
+        try:
+            intC = int( C )
+        except ValueError:
+            print( repr(C) ); halt # Need to finish handling C
+        result = result * 100 + intC
+
+        try:
+            intV = int( V )
+        except ValueError:
+            print( repr(V) ); halt # Need to finish handling V
+        result = result * 150 + intV
+
+        try:
+            intS = {'a':0, 'b':1}[S.lower()] if S else 0
+        except ValueError:
+            print( repr(S) ); halt # Need to finish handling S
+        result = result * 10 + intS
+
+        return result
+    # end of BibleBooksCodes.BCVReferenceToInt
+
+
+    def sortBCVReferences( self, referencesList ) -> List[Tuple[str,str,str]]:
+        """
+        Sort an iterable containing 3-tuples of BBB,C,V
+            or 4-tuples of BBB,C,V,S
+        """
+        # print( f"sortBCVReferences( ({len(referencesList)}) {referencesList} )" )
+        sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
+        # print( f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
+        # assert len(sortedList) == len(referencesList)
+        return sortedList
+    # end of BibleBooksCodes.sortBCVReferences
 
 
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
