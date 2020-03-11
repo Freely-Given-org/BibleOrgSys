@@ -56,7 +56,7 @@ The calling class then fills
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-04' # by RJH
+lastModifiedDate = '2020-03-11' # by RJH
 shortProgramName = "InternalBible"
 programName = "Internal Bible handler"
 programVersion = '0.83'
@@ -2516,9 +2516,10 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( f"analyseUWalignments() for {self.abbreviation}" )
 
-        OK_ORIGINAL_WORDS_COUNT = 3
-        OK_TRANSLATED_WORDS_COUNT = 5
+        # OK_ORIGINAL_WORDS_COUNT = 3
+        # OK_TRANSLATED_WORDS_COUNT = 5
 
+        # Firstly, aggregate the alignment data from all of the separate books
         alignedBookCount = 0
         alignedBookList:List[str] = []
         alignedOTBookList:List[str] = []
@@ -2568,7 +2569,33 @@ class InternalBible:
                     thisDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
 
+        # Preliminary pass to go through the alignment data for the whole Bible
+        #   and make a list of all single translated words.
+        # Used later to determine which words don't need to be capitalised (works for English at least).
+        maxOriginalWords = maxTranslatedWords = 0
+        singleTranslatedWordsSet = set()
+        for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
+            # print( f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
+            # if len(originalWordsList) == 0: print( f"tWS='{translatedWordsString}'")
+            assert isinstance( BBB, str ) and len(BBB)==3
+            assert isinstance( C, str ) and C
+            assert isinstance( V, str ) and V
+            assert isinstance( originalWordsList, list )
+            if not originalWordsList:
+                logging.critical( f"{self.abbreviation} {BBB} {C}:{V} is missing original words around '{translatedWordsString}'" )
+            assert isinstance( translatedWordsString, str ) and translatedWordsString
+            assert isinstance( translatedWordsList, list ) and translatedWordsList
 
+            maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
+            maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
+
+            if len(translatedWordsList) == 1:
+                singleTranslatedWordsSet.add( translatedWordsString )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+            print( f"Have {len(singleTranslatedWordsSet):,} unique single translated words")
+
+
+        # Second pass to go through the alignment data for the whole Bible
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
         originalFormToTransOccurrencesDict:Dict[str,dict] = {}
@@ -2595,21 +2622,20 @@ class InternalBible:
         oneToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = {}
         oneToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = {}
         oneToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = {}
-        maxOriginalWords = maxTranslatedWords = 0
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
             # print( f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
             # if len(originalWordsList) == 0: print( f"tWS='{translatedWordsString}'")
-            assert isinstance( BBB, str ) and len(BBB)==3
-            assert isinstance( C, str ) and C
-            assert isinstance( V, str ) and V
-            assert isinstance( originalWordsList, list )
-            if not originalWordsList:
-                logging.critical( f"{self.abbreviation} {BBB} {C}:{V} is missing original words around '{translatedWordsString}'" )
-            assert isinstance( translatedWordsString, str ) and translatedWordsString
-            assert isinstance( translatedWordsList, list ) and translatedWordsList
+            # assert isinstance( BBB, str ) and len(BBB)==3
+            # assert isinstance( C, str ) and C
+            # assert isinstance( V, str ) and V
+            # assert isinstance( originalWordsList, list )
+            # if not originalWordsList:
+            #     logging.critical( f"{self.abbreviation} {BBB} {C}:{V} is missing original words around '{translatedWordsString}'" )
+            # assert isinstance( translatedWordsString, str ) and translatedWordsString
+            # assert isinstance( translatedWordsList, list ) and translatedWordsList
 
-            maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
-            maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
+            # maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
+            # maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
             # For counting occurrences (not alignments), remove ellipsis (non-continguous words joiner)
             cleanedTranslatedWordsString = translatedWordsString.replace( ' … ', ' ' )
@@ -2700,6 +2726,32 @@ class InternalBible:
             if len(translatedWordsList) == 1:
                 thistranslatedWordEntry = translatedWordsList[0]
                 thistranslatedWord = thistranslatedWordEntry[0]
+                thistranslatedWordLower = thistranslatedWord.lower()
+                if thistranslatedWordLower!=thistranslatedWord:
+                    # Lowercase form of word differs from the present case
+                    #   -- it could be a proper name or it might have just started a sentence
+                    if thistranslatedWordLower in singleTranslatedWordsSet \
+                    or thistranslatedWord in ('Accompanying','Alas','Amen',
+                                'Beyond','Chase','Dismiss'): # special cases -- Grrrh!!!
+                        # TODO: Maybe could use an English dictionary here ???
+                        # Then maybe this word was only capitalised because it started a sentence???
+                        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+                            print( f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
+                        combinedMorphString = ' + '.join( (x[2] for x in originalWordsList) )
+                        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+                            print( f"    combinedMorphString='{combinedMorphString}'")
+                        if ',Np' not in combinedMorphString \
+                        and thistranslatedWord not in ('God','Lord','Father',): # special words which might intentionally occur in both cases
+                            # Not a Hebrew proper noun -- don't have anything similar for Greek unfortunately
+                            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
+                                print( f"    Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
+                            thistranslatedWord = thistranslatedWordLower
+                        else:
+                            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+                                print( f"    Not converting exception '{thistranslatedWord}'")
+                    else:
+                        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+                            print( f"    Not converting '{thistranslatedWord}'")
 
                 if thistranslatedWord not in oneToOneTransToOriginalAlignmentsDict:
                     oneToOneTransToOriginalAlignmentsDict[thistranslatedWord] = []
@@ -2864,32 +2916,34 @@ class InternalBible:
                                 #print( f"Now '{originalLemma}', have {translations}" )
                                 break
                 xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
-        if self.abbreviation == 'ULT':
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
-                fromList, toList = [], []
-                for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
-                    if len(originalWordsList) == 1:
-                        originalWordsCountStr = ''
-                        originalWordsStr = originalWordsList[0]
-                    else:
-                        originalWordsCountStr = f' ({len(originalWordsList)} words)'
-                        originalWordsStr = f"'{' '.join( (entry[5] for entry in originalWordsList) )}'"
-                    outputString = f"{BBB} {C}:{V} '{translatedWordsString}'" \
-                                    f" ({len(translatedWordsList)} word{'' if len(translatedWordsList)==1 else 's'})" \
-                                    f" from{originalWordsCountStr} {originalWordsStr}\n"
-                    if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT:
-                        fromList.append( (len(originalWordsList),outputString) )
-                    if len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
-                        toList.append( (len(translatedWordsList),outputString) )
-                    if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
-                    or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
-                        xf.write( outputString )
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
-                for count,outputString in sorted( fromList, reverse=True ):
-                    xf.write( outputString )
-            with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
-                for count,outputString in sorted( toList, reverse=True ):
-                    xf.write( outputString )
+
+        # Best to make these decisions in the analysis -- not here                
+        # if self.abbreviation == 'ULT':
+        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
+        #         fromList, toList = [], []
+        #         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
+        #             if len(originalWordsList) == 1:
+        #                 originalWordsCountStr = ''
+        #                 originalWordsStr = originalWordsList[0]
+        #             else:
+        #                 originalWordsCountStr = f' ({len(originalWordsList)} words)'
+        #                 originalWordsStr = f"'{' '.join( (entry[5] for entry in originalWordsList) )}'"
+        #             outputString = f"{BBB} {C}:{V} '{translatedWordsString}'" \
+        #                             f" ({len(translatedWordsList)} word{'' if len(translatedWordsList)==1 else 's'})" \
+        #                             f" from{originalWordsCountStr} {originalWordsStr}\n"
+        #             if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT:
+        #                 fromList.append( (len(originalWordsList),outputString) )
+        #             if len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
+        #                 toList.append( (len(translatedWordsList),outputString) )
+        #             if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
+        #             or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
+        #                 xf.write( outputString )
+        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
+        #         for count,outputString in sorted( fromList, reverse=True ):
+        #             xf.write( outputString )
+        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
+        #         for count,outputString in sorted( toList, reverse=True ):
+        #             xf.write( outputString )
 
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
             print( f"Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}" )
