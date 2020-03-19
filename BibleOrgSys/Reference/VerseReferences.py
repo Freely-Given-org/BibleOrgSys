@@ -105,7 +105,7 @@ import BibleOrgSysGlobals
 #
 #       |       Alternation, or "or" operator
 #
-#       (?:...) Non-capturing group (matched substring can't be retrieved)
+#       (?:…) Non-capturing group (matched substring can't be retrieved)
 #
 #       All metacharacters (which must be escaped to search for literals): . ^ $ * + ? { } [ ] \ | ( )
 #

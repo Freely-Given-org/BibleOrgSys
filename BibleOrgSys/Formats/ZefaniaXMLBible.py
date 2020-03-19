@@ -5,7 +5,7 @@
 #
 # Module handling Zefania XML Bibles
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,7 +64,7 @@ or
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
+lastModifiedDate = '2020-03-15' # by RJH
 shortProgramName = "ZefaniaBible"
 programName = "Zefania XML Bible format handler"
 programVersion = '0.36'
@@ -89,22 +89,6 @@ filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'TXT', 'USFM', 'USFX', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 
@@ -275,7 +259,7 @@ class ZefaniaXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "ZefaniaXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            logging.warning( "ZefaniaXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -538,6 +522,7 @@ class ZefaniaXMLBible( Bible ):
             elif element.tag == ZefaniaXMLBible.captionTag: # Used in Psalms
                 location = "caption in {} {}".format( BBB, chapterNumber )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
+                # TODO: Seems we can have xref subelements here !!!
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
                 # Handle caption attributes
                 vRef = None
@@ -606,7 +591,8 @@ class ZefaniaXMLBible( Bible ):
                 #thisBook.addLine( 'ST=', nText )
                 if nTail:
                     if '\n' in nTail:
-                        print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                            print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
                     thisBook.addLine( 'v~', nTail )
                 for sub2element in subelement:
@@ -747,17 +733,19 @@ def demo() -> None:
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        print( "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        print( "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        print( "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
+            print( "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+            print( "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # demo the file checking code
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        print( "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        print( "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        print( "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
+            print( "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+            print( "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     if 1:
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
@@ -777,7 +765,8 @@ def demo() -> None:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
-            print( zb ) # Just print a summary
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( zb ) # Just print a summary
             #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from Reference import VerseReferences
@@ -790,9 +779,10 @@ def demo() -> None:
                     if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #print( svk, ob.getVerseDataList( reference ) )
-                    try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-                    except KeyError: print( testFilename, reference, "doesn't exist" )
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        #print( svk, ob.getVerseDataList( reference ) )
+                        try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+                        except KeyError: print( testFilename, reference, "doesn't exist" )
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1:
@@ -811,8 +801,9 @@ def demo() -> None:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
-            print( zb ) # Just print a summary
-            #print( zb.books['JDE']._processedLines )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                print( zb ) # Just print a summary
+                #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \

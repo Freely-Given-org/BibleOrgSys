@@ -40,7 +40,7 @@ Note: The demo takes about 4 minutes with our Sword code,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-05' # by RJH
+lastModifiedDate = '2020-03-13' # by RJH
 shortProgramName = "SwordBible"
 programName = "Sword Bible format handler"
 programVersion = '0.36'
@@ -536,8 +536,8 @@ def demo() -> None:
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/WebsitesFreely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
-    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/WebsitesFreely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
+    MSTestFolderOld = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
+    MSTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../srv/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' ).resolve()
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )

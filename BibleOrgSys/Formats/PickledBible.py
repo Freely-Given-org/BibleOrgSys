@@ -238,7 +238,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
                             or dataLevel not in (1,2):
                                 if debuggingThisModule:
                                     print( "  Book attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
-                                #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '...' )
+                                #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
                                 pickle.dump( attributeName, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                                 pickle.dump( attributeValue, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                             elif debuggingThisModule:
@@ -277,7 +277,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
                     or dataLevel not in (1,2):
                         if debuggingThisModule:
                             print( "  Bible attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
-                        #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '...' )
+                        #print( "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
                         pickle.dump( attributeName, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                         pickle.dump( attributeValue, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                     elif debuggingThisModule:
@@ -346,7 +346,7 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
             or isinstance( attributeValue, (str,bool,Path,InternalBibleCVIndex,InternalBibleSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
-        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
+        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
         setattr( BibleObject, attributeName, attributeValue )
         loadedCount += 1
     return loadedCount
@@ -373,7 +373,7 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
             or isinstance( attributeValue, (str,bool,Path,InternalBibleCVIndex,InternalBibleSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
-        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '...' ) )
+        #print( "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
         if not selected or (attributeName in selected):
             if debuggingThisModule: print( "Adding {}={}".format( attributeName, attributeValue ) )
             resultDict[attributeName] = attributeValue

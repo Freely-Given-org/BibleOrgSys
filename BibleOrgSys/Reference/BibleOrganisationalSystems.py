@@ -468,7 +468,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         if self.containsBook( BBB ): return BBB
         # else
-        # temp .... needs a try/except
+        # temp …. needs a try/except
         return BibleOrgSysGlobals.BibleBooksCodes.getPossibleAlternativeBooksCodes( BBB )[0]
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 

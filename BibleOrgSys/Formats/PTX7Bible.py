@@ -1937,8 +1937,8 @@ def demo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
                 #DBErrors = PTX_Bible.getErrors()
                 # print( DBErrors )
-                #print( PTX_Bible.getVersification () )
-                #print( PTX_Bible.getAddedUnits () )
+                #print( PTX_Bible.getVersification() )
+                #print( PTX_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
@@ -1958,8 +1958,8 @@ def demo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
                 #DBErrors = PTX_Bible.getErrors()
                 # print( DBErrors )
-                #print( PTX_Bible.getVersification () )
-                #print( PTX_Bible.getAddedUnits () )
+                #print( PTX_Bible.getVersification() )
+                #print( PTX_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )

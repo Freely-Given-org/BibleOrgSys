@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-19' # by RJH
+lastModifiedDate = '2020-03-13' # by RJH
 shortProgramName = "ESFMBibleBook"
 programName = "ESFM Bible book handler"
 programVersion = '0.48'
@@ -462,7 +462,7 @@ class ESFMBibleBook( BibleBook ):
                 if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
             elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
+            or (marker and marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
@@ -547,9 +547,9 @@ def demo() -> None:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( EBB )
         EBB.validateMarkers()
-        EBBVersification = EBB.getVersification ()
+        EBBVersification = EBB.getVersification()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( EBBVersification )
-        UBBAddedUnits = EBB.getAddedUnits ()
+        UBBAddedUnits = EBB.getAddedUnits()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBAddedUnits )
         discoveryDict = EBB._discover()
         #print( "discoveryDict", discoveryDict )

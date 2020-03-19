@@ -2533,7 +2533,7 @@ class LDMLFile:
                             draft = fType = alt = None
                             for attrib,value in sub2element.items():
                                 #print( "hereF8", attrib, value )
-                                if attrib=='type': fType = value # assert fType in ('day','day-narrow','day-short','dayperiod','era','fri','fri-narrow','fri-short','hour',...)
+                                if attrib=='type': fType = value # assert fType in ('day','day-narrow','day-short','dayperiod','era','fri','fri-narrow','fri-short','hour',…)
                                 #elif attrib=='alt': alt = value
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
@@ -3029,7 +3029,7 @@ class LDMLFile:
                     clType = clDraft = None
                     for attrib,value in subelement.items():
                         #print( "hereCI7", attrib, value )
-                        if attrib=='type': clType = value # assert clType in ('animal','arrows','body','flag') ...
+                        if attrib=='type': clType = value # assert clType in ('animal','arrows','body','flag') …
                         elif attrib=='draft': clDraft = value; assert clDraft in DRAFT_VALUES
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
@@ -3041,7 +3041,7 @@ class LDMLFile:
                     clpType = clpCount = clpDraft = None
                     for attrib,value in subelement.items():
                         #print( "hereCLP7", attrib, value )
-                        if attrib=='type': clpType = value # assert clpType in ('all','compatibility','enclosed','extended') ...
+                        if attrib=='type': clpType = value # assert clpType in ('all','compatibility','enclosed','extended') …
                         elif attrib=='count': clpCount = value; assert clpCount in ('zero','one','two','other','few','many')
                         elif attrib=='draft': clpDraft = value; assert clpDraft in DRAFT_VALUES
                         else:

@@ -13,9 +13,7 @@ parts:
     plugin: python
     python-version: python3
     source: .
-#    stage-packages:
-#      - python-six
 
 apps:
   usfm2usx:
-    command: /project/Apps/USFM2USX.py
+    command: python3 Apps/USFM2USX.py

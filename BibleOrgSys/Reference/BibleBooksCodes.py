@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-11' # by RJH
+lastModifiedDate = '2020-03-15' # by RJH
 shortProgramName = "BibleBooksCodes"
 programName = "Bible Books Codes handler"
 programVersion = '0.83'
@@ -163,10 +163,6 @@ class BibleBooksCodes:
         """
         if isinstance( referenceNumber, str ): referenceNumber = int( referenceNumber ) # Convert str to int if necessary
         if not 1 <= referenceNumber <= 999: raise ValueError
-        print( referenceNumber, repr(referenceNumber))
-        print( self.__DataDicts['referenceNumberDict'])
-        print(self.__DataDicts['referenceNumberDict'][referenceNumber])
-        print(self.__DataDicts['referenceNumberDict'][referenceNumber]['referenceAbbreviation'])
         return self.__DataDicts['referenceNumberDict'][referenceNumber]['referenceAbbreviation']
     # end of BibleBooksCodes.getBBBFromReferenceNumber
 

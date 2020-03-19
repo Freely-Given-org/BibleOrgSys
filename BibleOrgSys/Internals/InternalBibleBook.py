@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-04' # by RJH
+lastModifiedDate = '2020-03-18' # by RJH
 shortProgramName = "InternalBibleBook"
 programName = "Internal Bible book handler"
 programVersion = '0.97'
@@ -180,7 +180,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         if wordsString.startswith( '\\q '): wordsString = wordsString[3:] # Handle a bug in ULT Acts 4:25
 
         #print( f"wordsString2='{wordsString}'" )
-        # Note the following code fails with two leading punct chars at Rev 16:15 ("\wLook ...
+        # Note the following code fails with two leading punct chars at Rev 16:15 ("\wLook …
         if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
             assert wordsString.startswith( '\\w ' ) \
                 or ( wordsString[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—'
@@ -1246,8 +1246,8 @@ class InternalBibleBook:
                 assert extraType in BOS_EXTRA_TYPES
                 assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
 
-        if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
-        if 'afterMoses' in adjText or 'andthe' in adjText: halt
+        # if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
+        # if 'afterMoses' in adjText or 'andthe' in adjText: halt
         # print( f"{self.BBB} Returning '{adjText}' '{cleanText}'" )
         # if self.BBB == 'JOS' and C == '2': halt
         return adjText, cleanText, extras
@@ -1792,7 +1792,7 @@ class InternalBibleBook:
             elif marker == 'v': V = text
 
             if marker in fieldsPreceded:
-                #print( "  Looking ahead after {} {}:{} {!r} field...".format( self.BBB, C, V, marker ) )
+                #print( "  Looking ahead after {} {}:{} {!r} field…".format( self.BBB, C, V, marker ) )
                 for k in range( 1, 5 ): # Number of lines to look ahead
                     if j+k <= lastJ:
                         nextDataEntry = self._processedLines[j+k]
@@ -2061,7 +2061,7 @@ class InternalBibleBook:
             try:
                 adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
-                logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
+                logging.error( f"processLine-check: unknown {self.objectTypeString} originalMarker = {originalMarker}" )
                 adjustedMarker = originalMarker # temp……
 
             def splitCNumber( inputString ):
@@ -3115,16 +3115,18 @@ class InternalBibleBook:
                         reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
                 level = int( marker[1] ) # 1, 2, etc.
                 qReferences.append( (reference,level,) )
-            elif marker in ('s1','s2','s3','s4', 'qa'):
+            elif marker in ('s1','s2','s3','s4', 'd','r', 'qa'):
+                # \d is Psalm description, \r is section reference, \qa is Acrostic Heading
                 if text and text[-1].isspace(): print( self.BBB, chapterNumberStr, verseNumberStr, marker, "'"+text+"'" )
                 reference = (chapterNumberStr,verseNumberStr,)
-                level = int( marker[1] ) # 1, 2, etc.
+                # if marker == 'qa': level = 1
+                # else: level = int( marker[1] ) # 1, 2, etc.
                 #levelReference = (level,reference,)
                 adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
                 #print( self.BBB, reference, levelReference, marker, text )
                 #assert levelReference not in sectionHeadingReferences # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
                 #sectionHeadingReferences.append( levelReference ) # Just for checking
-                sectionHeadings.append( (reference,level,adjText,) ) # This is the real data
+                sectionHeadings.append( (reference,marker,adjText,) ) # This is the real data
             elif marker == 'r':
                 reference = (chapterNumberStr,verseNumberStr,)
                 if BibleOrgSysGlobals.debugFlag: assert reference not in sectionReferenceReferences # Shouldn't be any cases of two lots of section references within one verse boundary
@@ -3151,8 +3153,7 @@ class InternalBibleBook:
 
     def doCheckAddedUnits( self, typicalAddedUnitData, severe=False ):
         """
-        Get the units added to the text of the book including paragraph breaks, section headings, and section references.
-        Note that all chapter and verse values are returned as strings not integers.
+        Checkthe units added to the text of the book including paragraph breaks, section headings, and section references.
         """
         typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences, typicalWordsOfJesus = typicalAddedUnitData
         paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus = self.getAddedUnits() # For this object
@@ -4731,7 +4732,8 @@ class InternalBibleBook:
                 import pickle
                 folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
                 filepath = os.path.join( folder, "AddedUnitData.pickle" )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Importing from {}…").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( _("Importing from {}…").format( filepath ) )
                 with open( filepath, 'rb' ) as pickleFile:
                     typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             self.doCheckAddedUnits( typicalAddedUnitData )

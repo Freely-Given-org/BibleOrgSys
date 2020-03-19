@@ -1037,8 +1037,8 @@ def demo() -> None:
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getErrors()
                 # print( UsfxBErrors )
-                #print( UsfxB.getVersification () )
-                #print( UsfxB.getAddedUnits () )
+                #print( UsfxB.getVersification() )
+                #print( UsfxB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )

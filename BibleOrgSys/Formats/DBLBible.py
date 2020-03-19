@@ -1791,8 +1791,8 @@ def demo() -> None:
                 DB.loadBooks()
                 #DBErrors = DB.getErrors()
                 # print( DBErrors )
-                #print( DB.getVersification () )
-                #print( DB.getAddedUnits () )
+                #print( DB.getVersification() )
+                #print( DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )

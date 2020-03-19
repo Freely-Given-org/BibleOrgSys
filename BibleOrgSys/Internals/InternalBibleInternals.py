@@ -166,7 +166,7 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
 
     Returns a dictionary of attributes.
 
-    TODO: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
+    TODO: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )" )
@@ -262,7 +262,7 @@ def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList
 
     Returns a dictionary of attributes.
 
-    NOTE: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
+    NOTE: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
@@ -684,7 +684,7 @@ class InternalBibleEntry:
                     offset += len(extraText ) + 2*lenUSFM + 4
                 # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
                 #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
-                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w ...\w* fields
+                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w …\w* fields
                 result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
 
             if result != self.adjustedText:

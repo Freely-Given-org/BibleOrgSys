@@ -157,7 +157,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     import zipfile
 
     # It seems 7-9 give the correct two header bytes
-    ZLIB_COMPRESSION_LEVEL = 9 #  -1=default(=6), 0=none, 1=fastest...9=highest compression level
+    ZLIB_COMPRESSION_LEVEL = 9 #  -1=default(=6), 0=none, 1=fastest…9=highest compression level
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running createEasyWorshipBible…" )
     if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
@@ -234,7 +234,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
             elif marker == 'p~':
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
-                                        #     \c 1 \v 1 \p These events happened...
+                                        #     \c 1 \v 1 \p These events happened…
                 textBuffer += ' {}'.format( text ) # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )

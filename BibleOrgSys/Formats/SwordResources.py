@@ -1390,7 +1390,7 @@ class SwordInterface():
 
 
         elif SwordType=='OurCode':
-            # module is already loaded above in getModule call WRONG...........
+            # module is already loaded above in getModule call WRONG………..
             #print( "moduleConfig =", module.SwordModuleConfiguration )
             BibleObject.books = module.books
     # end of SwordInterface.loadBook

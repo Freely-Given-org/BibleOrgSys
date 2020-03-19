@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-11' # by RJH
+lastModifiedDate = '2020-03-13' # by RJH
 shortProgramName = "USFMBibleBook"
 programName = "USFM Bible book handler"
 programVersion = '0.53'
@@ -289,7 +289,7 @@ class USFMBibleBook( BibleBook ):
 
             # Look for any self-closed end-alignment milestones
             if variables['level'] > 0:
-                if debuggingThisModule: print( f"      Looking for {variables['level']} end markers..." )
+                if debuggingThisModule: print( f"      Looking for {variables['level']} end markers…" )
                 endMarkers = '\\zaln-e\\*' * variables['level']
                 ixEndMarkers = text.find( endMarkers )
                 assert ixEndMarkers != 0 # Not expected at the beginning of a line
@@ -558,7 +558,7 @@ class USFMBibleBook( BibleBook ):
                 lastMarker, lastText = marker, text
 
         if not originalBook.lines: # There were no lines!!!
-            assert not marker and not text and not lastMarker and not lastText
+            assert not lastMarker and not lastText
             loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             logging.error( _("USFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             marker, text = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
@@ -603,9 +603,9 @@ def demo() -> None:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( UBB )
         UBB.validateMarkers()
-        UBBVersification = UBB.getVersification ()
+        UBBVersification = UBB.getVersification()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBVersification )
-        UBBAddedUnits = UBB.getAddedUnits ()
+        UBBAddedUnits = UBB.getAddedUnits()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBAddedUnits )
         discoveryDict = UBB._discover()
         #print( "discoveryDict", discoveryDict )

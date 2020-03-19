@@ -54,10 +54,10 @@ setup(
     #
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     # packages=find_packages(),
-    packages=['','Formats', 'InputOutput', 'Internals', 'Misc', 'Online', 'OriginalLanguages', 'Reference'],
-      package_dir={'':'BibleOrgSys',
+    packages=['BibleOrgSys'],
+      package_dir={'BibleOrgSys':'BibleOrgSys',
                    'Formats':'BibleOrgSys/Formats',
-                   'InputOutput':'BibleOrgSys/Formats',
+                   'InputOutput':'BibleOrgSys/InputOutput',
                    'Internals':'BibleOrgSys/Internals',
                    'Misc':'BibleOrgSys/Misc',
                    'Online':'BibleOrgSys/Online',
@@ -77,7 +77,9 @@ setup(
     #
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
     # data_files=[('my_data', ['data/data_file'])],  # Optional
-    data_files=[('DataFiles', [
+    data_files=[
+                ('Apps', ['Apps/USFM2USX.py']),
+                ('DataFiles', [
                     'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
                     'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
                     'DataFiles/iso_639_3.xml', 'DataFiles/iso_639_3.rnc',

@@ -3090,8 +3090,8 @@ def demo() -> None:
 
                 #DBErrors = PTX8_Bible.getErrors()
                 # print( DBErrors )
-                #print( PTX8_Bible.getVersification () )
-                #print( PTX8_Bible.getAddedUnits () )
+                #print( PTX8_Bible.getVersification() )
+                #print( PTX8_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
@@ -3155,8 +3155,8 @@ def demo() -> None:
                                     if BibleOrgSysGlobals.strictCheckingFlag: PTX8_Bible.check()
                                     #DBErrors = PTX8_Bible.getErrors()
                                     # print( DBErrors )
-                                    #print( PTX8_Bible.getVersification () )
-                                    #print( PTX8_Bible.getAddedUnits () )
+                                    #print( PTX8_Bible.getVersification() )
+                                    #print( PTX8_Bible.getAddedUnits() )
                                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                                         ##print( "Looking for", ref )
                                         #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )

@@ -1185,7 +1185,7 @@ class BibleWriter( InternalBible ):
         # Main code for toText()
         # Write the plain text files
         for BBB,bookObject in self.books.items():
-            # NOTE: We currently write ALL books, even though some books (e.g., FRT,GLS,XXA,... may end up blank)
+            # NOTE: We currently write ALL books, even though some books (e.g., FRT,GLS,XXA,… may end up blank)
             writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolderpath, withBOMFlag=True )
             writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolder2, withBOMFlag=False )
 

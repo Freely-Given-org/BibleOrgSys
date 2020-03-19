@@ -740,8 +740,8 @@ def demo() -> None:
                         hB.check()
                         #UBErrors = UB.getErrors()
                         # print( UBErrors )
-                    #print( UB.getVersification () )
-                    #print( UB.getAddedUnits () )
+                    #print( UB.getVersification() )
+                    #print( UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##print( "Looking for", ref )
                         #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )

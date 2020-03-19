@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2019 Robert Hunt
+# Copyright (C) 2012-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-19' # by RJH
+lastModifiedDate = '2020-03-18' # by RJH
 shortProgramName = "USXXMLBibleBookHandler"
 programName = "USX XML Bible book handler"
 programVersion = '0.26'
@@ -45,22 +45,6 @@ if __name__ == '__main__':
     sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
 import BibleOrgSysGlobals
 from Bible import BibleBook
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
 
 
 sortedNLMarkers = None
@@ -91,7 +75,7 @@ class USXXMLBibleBook( BibleBook ):
         Load a single source USX XML file and extract the information.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
+            print( "load( {}, {}, {} )".format( filename, folder, encoding ) )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors = []
@@ -445,8 +429,8 @@ class USXXMLBibleBook( BibleBook ):
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
-            loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
+            logging.critical( "Loader parse error in xml file {}: {} {}".format( filename, sys.exc_info()[0], err ) )
+            loadErrors.append( "Loader parse error in xml file {}: {} {}".format( filename, sys.exc_info()[0], err ) )
             self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -561,7 +545,7 @@ class USXXMLBibleBook( BibleBook ):
                                     loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, C, V, USFMMarker, tryMarker, text ) )
                                     logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
                                     paragraphText = element.text if element.text and element.text.strip() else ''
-                                    if version is None: paragraphText = element.rstrip() # Don't need to strip extra spaces in v2
+                                    if version is None: paragraphText = element.text.rstrip() # Don't need to strip extra spaces in v2
                                     #print( "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
                                     self.addLine( tryMarker, paragraphText )
                                     fixed = True
@@ -701,9 +685,9 @@ def demo() -> None:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBB )
                 UxBB.validateMarkers()
-                UxBBVersification = UxBB.getVersification ()
+                UxBBVersification = UxBB.getVersification()
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBVersification )
-                UxBBAddedUnits = UxBB.getAddedUnits ()
+                UxBBAddedUnits = UxBB.getAddedUnits()
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBAddedUnits )
                 UxBB.check()
                 UxBBErrors = UxBB.getErrors()
