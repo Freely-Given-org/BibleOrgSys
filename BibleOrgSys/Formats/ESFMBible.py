@@ -35,12 +35,12 @@ Creates a semantic dictionary with keys:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "ESFMBible"
-programName = "ESFM Bible handler"
-programVersion = '0.61'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "ESFMBible"
+PROGRAM_NAME = "ESFM Bible handler"
+PROGRAM_VERSION = '0.61'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -51,13 +51,15 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USFMFilenames import USFMFilenames
-from Formats.PTX7Bible import loadPTX7ProjectData
-from InputOutput.ESFMFile import ESFMFile
-from Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
-from Bible import Bible
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
+from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
+from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
+from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
+from BibleOrgSys.Bible import Bible
 
 
 
@@ -73,7 +75,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 # end of t
 
@@ -121,7 +123,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         return False
 
     # Check that there's a USFM Bible here first
-    from Formats.USFMBible import USFMBibleFileCheck
+    from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
     if not USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
         return False
 
@@ -620,7 +622,7 @@ def demo() -> None:
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
     if 0: # Test a whole folder full of folders of ESFM Bibles
@@ -645,7 +647,7 @@ def demo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         ESFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromESFM( ESFM_BBB )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromESFM( ESFM_BBB )
                         #print( ESFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -675,10 +677,10 @@ def demo() -> None:
                             EsfmBErrors = EsfmB.getErrors()
                             #print( EsfmBErrors )
                         if BibleOrgSysGlobals.commandLineArguments.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+                    else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: print( "\n{} total ESFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
+        else: print( f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 #end of demo
 
 if __name__ == '__main__':
@@ -686,12 +688,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESFMBible.py

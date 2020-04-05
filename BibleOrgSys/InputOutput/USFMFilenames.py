@@ -28,12 +28,12 @@ Module for creating and manipulating USFM filenames.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-13' # by RJH
-shortProgramName = "USFMFilenames"
-programName = "USFM Bible filenames handler"
-programVersion = '0.68'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-13' # by RJH
+SHORT_PROGRAM_NAME = "USFMFilenames"
+PROGRAM_NAME = "USFM Bible filenames handler"
+PROGRAM_VERSION = '0.68'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -44,24 +44,10 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-    
-import BibleOrgSysGlobals
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -127,10 +113,10 @@ class USFMFilenames:
             return
 
         # Get the data tables that we need for proper checking
-        self._USFMBooksCodes = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes()
+        self._USFMBooksCodes = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
-        self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
+        self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
         self.lastTupleList = None
@@ -288,7 +274,7 @@ class USFMFilenames:
         """
         Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
         """
-        #print( exp("getUSFMIDFromFile( {} {} {} {} )").format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        #print( "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
@@ -324,7 +310,7 @@ class USFMFilenames:
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.warning( exp("getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}").format( filepath ) ) # Could be binary or a different encoding
+                logging.warning( "getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}".format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -335,7 +321,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( exp("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "getUSFMIDsFromFiles( {} )".format( repr(givenFolder) ) )
 
         # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
@@ -356,7 +342,7 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert filepath not in self._fileDictionary
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self._BBBDictionary: logging.error( "{}Oops, already found {!r} in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
@@ -423,7 +409,7 @@ class USFMFilenames:
                             break
             elif self.pattern == "dd-OEBName":
                 for AltFilename in ALTERNATE_FILENAMES:
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
                     resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
                 for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
@@ -436,7 +422,7 @@ class USFMFilenames:
                         if filename[ix]=='*' and self.pattern[ix]!='*':
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                     self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
-        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of getDerivedFilenameTuples
 
 
@@ -459,7 +445,7 @@ class USFMFilenames:
                     if USFMId is None:
                         logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', BBB, derivedFilename ) )
                         continue # so it doesn't get added
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                     if BBB != BBB:
                         logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
                         continue # so it doesn't get added
@@ -488,9 +474,9 @@ class USFMFilenames:
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
@@ -510,7 +496,7 @@ class USFMFilenames:
                 #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
-        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
@@ -638,17 +624,17 @@ def demo() -> None:
             result = UFns.getMaximumPossibleFilenameTuples( strictCheck=True ); print( "\nMaxPoss (strict):", len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
             result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFMFilenames.py

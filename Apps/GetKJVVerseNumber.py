@@ -54,22 +54,21 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-12' # by RJH
-shortProgramName = "GetKJVVerseNumber"
-programName = "Get KJV Verse Number"
-programVersion = '0.10'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
+PROGRAM_NAME = "Get KJV Verse Number"
+PROGRAM_VERSION = '0.10'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
-import BibleOrgSysGlobals
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Reference.BibleReferences import BibleSingleReference
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Reference.BibleReferences import BibleSingleReference
 
 
 def main():
@@ -134,10 +133,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GetKJVVerseNumber.py

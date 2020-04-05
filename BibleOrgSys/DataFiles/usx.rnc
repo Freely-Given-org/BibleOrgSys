@@ -1,0 +1,798 @@
+# usx.rnc
+# This is a compact syntax Relax NG Schema for USX (extension .rnc).
+# DBL bundle version = 1.2
+
+namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
+
+# Removed USXV for now. See end of document for removed code
+start = USX
+USX =
+    element usx {
+        attribute version { "2.0" },
+        attribute xsi:noNamespaceSchemaLocation { text }?,
+        
+        Book,
+        HeaderPara*,
+        TitlePara+,
+        IntroPara*,
+        TitleParaIntroEnd*,
+        ChapterLabelBookWide?,
+        Chapter,
+        # Chapter is used to separate intro from scripture text. All books will have chapter including the single chapter books: OBA, PHM, 2JN, 3JN, JUD
+        (Chapter | Para | Table | Footnote | CrossReference)*
+    }
+Book =
+    element book {
+        (BookIdAttr,
+         # e.g. code="GEN"
+         attribute style { "id" },
+         text?)
+        # Brief description of project
+    }
+HeaderPara =
+    element para {
+        attribute style {
+            ("ide"
+             | # File encoding information
+               "h"
+             | # Running header text for a book
+               "h1"
+             | # Running header text
+               "h2"
+             | # Running header text, left side of page
+               "h3"
+             | # Running header text, right side of page
+               "toc1"
+             | # Long table of contents text
+               "toc2"
+             | # Short table of contents text
+               "toc3"
+             | # Book Abbreviation
+               "rem")
+            # Remark
+        },
+        text?
+    }
+TitlePara =
+    element para {
+        attribute style {
+            ("mt"
+             | # The main title of the book (if single level)
+               "mt1"
+             | # The main title of the book (if multiple levels)
+               "mt2"
+             | # A secondary title usually occurring before the main title
+               "mt3"
+             | # !! A tertiary title occurring after the main title  was: A secondary title occurring after the main title
+               "mt4"
+             | # !! I have not seen a use case for this   was: A small secondary title sometimes occuring within parentheses
+               "imt"
+             | # Introduction major title, level 1 (if single level)
+               "imt1"
+             | # Introduction major title, level 1 (if multiple levels)
+               "imt2"
+             |  # Introduction major title, level 2
+               "rem")
+            # Remark
+        },
+        (Footnote | CrossReference | Char | text)*
+    }
+IntroPara =
+    element para {
+        attribute style {
+            ("imt"
+             | # Introduction major title, level 1 (if single level)
+               "imt1"
+             | # Introduction major title, level 1 (if multiple levels)
+               "imt2"
+             | # Introduction major title, level 2
+               "imt3"
+             | # Introduction major title, level 3
+               "imt4"
+             | # Introduction major title, level 4 (usually within parenthesis)
+               "ib"
+             | # Introduction blank line
+               "ie"
+             | # Introduction ending marker
+               "ili"
+             | # A list entry, level 1 (if single level)
+               "ili1"
+             | # A list entry, level 1 (if multiple levels)
+               "ili2"
+             | # A list entry, level 2
+               "im"
+             | # Introduction prose paragraph, with no first line indent (may occur after poetry)
+               "imi"
+             | # Introduction prose paragraph text, indented, with no first line indent
+               "imq"
+             | # Introduction prose paragraph, quote from the body text, with no first line indent
+               "io"
+             | # Introduction outline text, level 1 (if single level)
+               "io1"
+             | # Introduction outline text, level 1 (if multiple levels)
+               "io2"
+             | # Introduction outline text, level 2
+               "io3"
+             | # Introduction outline text, level 3
+               "io4"
+             | # Introduction outline text, level 4
+               "iot "
+             | # Introduction outline title
+               "ip"
+             | # Introduction prose paragraph
+               "ipi"
+             | # Introduction prose paragraph, indented, with first line indent
+               "ipq"
+             | # Introduction prose paragraph, quote from the body text
+               "ipr"
+             | # Introduction prose paragraph, right aligned
+               "iq"
+             | # Introduction poetry text, level 1 (if single level)
+               "iq1"
+             | # Introduction poetry text, level 1 (if multiple levels)
+               "iq2"
+             | # Introduction poetry text, level 2
+               "iq3"
+             | # Introduction poetry text, level 3
+               "is"
+             | # Introduction section heading, level 1 (if single level)
+               "is1 "
+             | # Introduction section heading, level 1 (if multiple levels)
+               "is2"
+             | # Introduction section heading, level 2
+               "imte"
+             | # Introduction major title at introduction end, level 1 (if single level)
+               "imte1"
+             | # Introduction major title at introduction end, level 1 (if multiple levels)
+               "imte2"
+             | # Introduction major title at introduction end, level 2
+               "iex"
+             | # Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament)
+               "rem")
+            # Remark 
+        },
+        (Footnote | Char | IntroChar | Figure | text)*
+    } | Table
+TitleParaIntroEnd =
+    element para {
+        attribute style {
+            ("mt"
+             | # The main title of the book (if single level)
+               "mt1"
+             | # The main title of the book (if multiple levels)
+               "mt2"
+             | # A secondary title usually occurring before the main title
+               "mt3"
+             | # !! A tertiary title occurring after the main title  was: A secondary title occurring after the main title
+               "mt4"
+             | # !! I have not seen a use case for this   was: A small secondary title sometimes occuring within parentheses
+               "imt"
+             | # Introduction major title, level 1 (if single level)
+               "imt1"
+             | # Introduction major title, level 1 (if multiple levels)
+               "imt2")
+               # Introduction major title, level 2
+        },
+        (Footnote | CrossReference | Char | text)*
+    }
+paraStyle =
+    attribute style {
+        ("restore"
+         | # Comment about when text was restored
+           "b"
+         | # Poetry text stanza break (e.g. stanza break)
+           "cls"
+         | # Closure of an Epistle
+           "iex"
+         | # Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament)
+           "lit"
+         | # For a comment or note inserted for liturgical use
+           "m"
+         | #  Paragraph text, with no first line indent (may occur after poetry) aka: Paragraph Continuation
+           "mi"
+         | # Paragraph text, indented, with no first line indent; often used for discourse
+           "nb"
+         | # Paragraph text, with no break from previous paragraph text (at chapter boundary)
+           "p"
+         | # Paragraph text, with first line indent
+           "pb"
+         | # Page Break used for new reader portions and children's bibles where content is controlled by the page
+           "pc"
+         | # Paragraph text, centered (for Inscription)
+           "pi"
+         | # Paragraph text, level 1 indent (if single level), with first line indent; often used for discourse
+           "pi1"
+         | # Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse
+           "pi2"
+         | # Paragraph text, level 2 indent, with first line indent; often used for discourse
+           "pi3"
+         | # Paragraph text, level 3 indent, with first line indent; often used for discourse
+           "pmo"
+         | # Embedded text opening
+           "pm"
+         | # Embedded text paragraph
+           "pmc"
+         | # Embedded text closing
+           "pmr"
+         | # Embedded text refrain (e.g. Then all the people shall say, "Amen!")
+           "q"
+         | # Poetry text, level 1 indent (if single level)
+           "q1"
+         | # Poetry text, level 1 indent (if multiple levels)
+           "q2"
+         | # Poetry text, level 2 indent
+           "q3"
+         | # Poetry text, level 3 indent
+           "q4"
+         | # Poetry text, level 4 indent
+           "qa"
+         | # Poetry text, Acrostic marker/heading
+           "qc"
+         | # Poetry text, centered
+           "qm"
+         | # Poetry text, embedded, level 1 indent (if single level)
+           "qm1"
+         | # Poetry text, embedded, level 1 indent (if multiple levels)
+           "qm2"
+         | # Poetry text, embedded, level 2 indent
+           "qm3"
+         | # Poetry text, embedded, level 3 indent
+           "qr"
+         | # Poetry text, Right Aligned
+           "d"
+         | # A Hebrew text heading, to provide description (e.g. Psalms)
+           "ms"
+         | # A major section division heading, level 1 (if single level)
+           "ms1"
+         | # A major section division heading, level 1 (if multiple levels)
+           "ms2"
+         | # A major section division heading, level 2
+           "ms3"
+         | # A major section division heading, level 3
+           "mr"
+         | # A major section division references range heading
+           "r"
+         | # Parallel reference(s)
+           "s"
+         | # A section heading, level 1 (if single level)
+           "s1"
+         | # A section heading, level 1 (if multiple levels)
+           "s2"
+         | # A section heading, level 2 (e.g. Proverbs 22-24)
+           "s3"
+         | # A section heading, level 3 (e.g. Genesis "The First Day")
+           "s4"
+         | # A section heading, level 4
+           "sp"
+         | # A heading, to identify the speaker (e.g. Job)
+           "sr"
+         | # A section division references range heading
+           "li"
+         | # A list entry, level 1 (if single level)
+           "li1"
+         | # A list entry, level 1 (if multiple levels)
+           "li2"
+         | # A list entry, level 2
+           "li3"
+         | # A list entry, level 3
+           "li4"
+         | # A list entry, level 4
+           "cp"
+         | # Published chapter number
+           "cl"
+         | # Chapter label used for translations that add a word such as "Chapter"
+           "cd"
+         | # Chapter Description (Publishing option D, e.g. in Russian Bibles)
+           "mte"
+         | # The main title of the book repeated at the end of the book, level 1 (if single level)
+           "mte1"
+         | # The main title of the book repeat /ed at the end of the book, level 1 (if multiple levels)
+           "mte2"
+         | # A secondary title occurring before or after the 'ending' main title
+           "periph"
+         | # Periheral content division marker which should be followed by an additional division argument/title.
+           "p"
+         | # Front or back matter text paragraph, level 1
+           "p1"
+         | # Front or back matter text paragraph, level 1 (if multiple levels)
+           "p2"
+         | # Front or back matter text paragraph, level 2 (if multiple levels)
+           "k1"
+         | # Concordance main entry text or keyword, level 1
+           "k2"
+         | # Concordance main entry text or keyword, level 2
+           "rem")
+           # Remark
+    }
+Reference =
+    element reference {
+        attribute usxRef { text },
+        text?
+    }
+Table = 
+    element table {
+        element row {
+            attribute style {
+                ("tr") # Table row
+            },
+            (Verse | TableContent)+
+        }+
+    }
+TableContent =
+    element cell {
+        attribute style {
+            (
+             ## These ought to only be allowed in <row style="tr">
+			   "th"
+             | # A table heading, any column
+               "tc"
+             | # A table cell item, any column
+			   "thr"
+             | # A table heading, any column, right aligned
+               "tcr"
+             | # A table cell item, any column, right aligned
+			   "thc"
+             | # A table heading, any column, center aligned
+               "tcc"
+             | # A table cell item, any column, center aligned
+               "th1"
+             | # A table heading, column 1
+               "tc1"
+             | # A table cell item, column 1
+               "thr1"
+             | # A table heading, column 1, right aligned
+               "tcr1"
+             | # A table cell item, column 1, right aligned
+               "th2"
+             | # A table heading, column 2
+               "tc2"
+             | # A table cell item, column 2
+               "thr2"
+             | # A table heading, column 2, right aligned
+               "tcr2"
+             | # A table cell item, column 2, right aligned
+               "th3"
+             | # A table heading, column 3
+               "tc3"
+             | # A table cell item, column 3
+               "thr3"
+             | # A table heading, column 3, right aligned
+               "tcr3"
+             | # A table cell item, column 3, right aligned
+               "th4"
+             | # A table heading, column 4
+               "tc4"
+             | # A table cell item, column 4
+               "thr4"
+             | # A table heading, column 4, right aligned
+               "tcr4"
+             | # A table cell item, column 4, right aligned
+               "th5"
+             | # A table heading, column 5
+               "tc5"
+             | # A table cell item, column 5
+               "thr5"
+             | # A table heading, column 5, right aligned
+               "tcr5"
+             | # A table cell item, column 5, right aligned
+               "rem")
+            # Remark
+        },
+        attribute align { "start" | "center" | "end" },
+        # Represent "left", "center", and "right" respectively in LTR, and "right", "center", "left" in RTL texts.
+        (Footnote | CrossReference | Char | Figure | Verse | text)*
+    }
+Para =
+    element para {
+        paraStyle, (Reference | Footnote | CrossReference | Char | Figure | Verse | Break | text)+
+    }
+Char =
+    element char {
+         attribute style {
+             ("va"
+              | # Second (alternate) verse number (for coding dual numeration in Psalms; see also NRSV Exo 22.1-4)
+                "vp"
+              | # Published verse marker - this is a verse marking that would be used in the published text
+                "ca"
+              | # Second (alternate) chapter number
+                "qac"
+              | # Poetry text, Acrostic markup of the first character of a line of acrostic poetry
+                "qs"
+              | # Poetry text, Selah
+                "add"
+              | # For a translational addition to the text
+                "addpn"
+              | # For chinese words to be dot underline & underline
+                "bk"
+              | # For the quoted name of a book
+                "dc"
+              | # Deuterocanonical/LXX additions or insertions in the Protocanonical text
+                "efm"
+              | # Reference to caller of previous footnote in a study Bible
+                "fm"
+              | # Reference to caller of previous footnote
+                "k"
+              | # For a keyword
+                "nd"
+              | # For name of deity
+                "ndx"
+              | # A subject index text item
+                "ord"
+              | # For the text portion of an ordinal number
+                "pn"
+              | # For a proper name
+                "pro"
+              | # For indicating pronunciation in CJK texts
+                "qt"
+              | # For Old Testament quoted text appearing in the New Testament
+                "rq"
+              | # A cross-reference indicating the source text for the preceding quotation.
+                "sig"
+              | # For the signature of the author of an Epistle
+                "sls"
+              | # To represent where the original text is in a secondary language or from an alternate text source
+                "tl"
+              | # For transliterated words
+                "w"
+              | # A wordlist text item
+                "wg"
+              | # A Greek Wordlist text item
+                "wh"
+              | # A Hebrew wordlist text item
+                "wj"
+              | # For marking the words of Jesus
+                "no"
+              | # A character style, use normal text
+                "it"
+              | # A character style, use italic text
+                "bd"
+              | # A character style, use bold text
+                "bdit"
+              | # A character style, use bold + italic text
+                "em"
+              | # A character style, use emphasized text style
+                "sc")
+                # A character style, for small capitalization text
+         },
+         attribute closed { xsd:boolean }?,
+         # Present to allow roundtripping to USFM, not needed for publishing
+         text,
+         (Reference | Char | Footnote | Break | text)*
+         # Nested character <char> markup
+    }
+IntroChar =
+    element char {
+        attribute style {
+            ("ior"
+             | # Introduction references range for outline entry; for marking references separately
+               "iqt")
+            # For quoted scripture text appearing in the introduction
+            
+        },
+      attribute closed { xsd:boolean }?,
+           # Present to allow roundtripping to USFM, not needed for publishing
+        text?
+    }
+Chapter =
+    element chapter {
+        # Start of new chapter
+        attribute number { xsd:integer }&
+        attribute style { "c" }&
+        attribute altnumber { xsd:string { minLength = "1" pattern = "[0-9]+\w?(\x{200F}?[\-,][0-9]+\w?)*" } }?&
+        attribute pubnumber { xsd:string { minLength = "1" } }?&
+        empty
+    }
+    # e.g. <chapter number="1" style="c" altnumber="2" pubnumber="A" />
+    
+ChapterLabelBookWide =
+    element para {
+        # A chapter label specified once prior to chpater 1; text to be used for all chapter headings in the current book 
+        attribute style { "cl" },
+        text
+    }
+Verse =
+    element verse {
+        attribute number { xsd:string { minLength = "1" pattern = "[0-9]+\w?(\x{200F}?[\-,][0-9]+\w?)*" } }&
+        attribute style { "v" }&
+        attribute altnumber { xsd:string { minLength = "1" pattern = "[0-9]+\w?(\x{200F}?[\-,:][0-9]+\w?)*" } }?&
+        attribute pubnumber { xsd:string { minLength = "1" } }?&
+        empty
+    }
+    # e.g. <verse number="1" style="v" altnumber="2" pubnumber="B" />
+Footnote =
+    element note {
+        attribute style { "f" | "fe" },
+        attribute caller { text },
+        (FootnoteChar | text )+
+    }
+FootnoteChar =
+    element char {
+        attribute style {
+            ("fr"
+             | # The origin reference for the footnote
+               "sc"
+             | # used for abbreviations
+               "ft"
+             | # Footnote text, Protocanon
+               "fk"
+             | # A footnote keyword
+               "fq"
+             | # A footnote scripture quote or alternate rendering
+               "fqa"
+             | # A footnote alternate rendering for a portion of scripture text
+               "fl"
+             | # A footnote label text item, for marking or "labelling" the type or alternate translation being provided in the note.
+               "fp"
+             | # A Footnote additional paragraph marker
+               "fv"
+             | # A verse number within the footnote text
+               "fdc")
+            # Footnote text, applies to Deuterocanon only
+            
+        },
+       attribute closed { xsd:boolean }?,
+          # Present to allow roundtripping to USFM, not needed for publishing
+       (text | Char)+
+    }
+CrossReference =
+    element note {
+        attribute style { "x" },
+        attribute caller { text },
+        (CrossReferenceChar | text)+
+    }
+CrossReferenceChar =
+    element char {
+        attribute style {
+            ("xo"
+             | # The cross reference origin reference
+               "xt"
+             | # The cross reference target reference(s), protocanon only
+               "xk"
+             | # A cross reference keyword
+               "xq"
+             | # A cross-reference quotation from the scripture text
+               "xot"
+             | # Cross-reference target reference(s), Old Testament only
+               "xnt"
+             | # Cross-reference target reference(s), New Testament only
+               "xdc")
+            # Cross-reference target reference(s), Deuterocanon only
+            
+        },
+     attribute closed { xsd:boolean }?,
+     (text | Char)+
+    }
+Figure =
+    element figure {
+        (attribute style { text },
+         attribute desc { text },
+         attribute file { text },
+         attribute size { text },
+         attribute loc { text },
+         attribute copy { text },
+         attribute ref { text },
+         text?)
+        # Caption
+        
+    }
+Break = 
+    element optbreak { empty }
+BookIdAttr =
+    attribute code { bookCode     
+    }
+bookCode = (
+           "GEN" # Genesis
+         | "EXO" # Exodus
+         | "LEV" # Leviticus
+         | "NUM" # Numbers
+         | "DEU" # Deuteronomy
+         | "JOS" # Joshua
+         | "JDG" # Judges
+         | "RUT" # Ruth
+         | "1SA" # 1 Samuel
+         | "2SA" # 2 Samuel
+         | "1KI" # 1 Kings
+         | "2KI" # 2 Kings
+         | "1CH" # 1 Chronicles
+         | "2CH" # 2 Chronicles
+         | "EZR" # Ezra
+         | "NEH" # Nehemiah
+         | "EST" # Esther (Hebrew)
+         | "JOB" # Job
+         | "PSA" # Psalms
+         | "PRO" # Proverbs
+         | "ECC" # Ecclesiastes
+         | "SNG" # Song of Songs
+         | "ISA" # Isaiah
+         | "JER" # Jeremiah
+         | "LAM" # Lamentations
+         | "EZK" # Ezekiel
+         | "DAN" # Daniel (Hebrew)
+         | "HOS" # Hosea
+         | "JOL" # Joel
+         | "AMO" # Amos
+         | "OBA" # Obadiah
+         | "JON" # Jonah
+         | "MIC" # Micah
+         | "NAM" # Nahum
+         | "HAB" # Habakkuk
+         | "ZEP" # Zephaniah
+         | "HAG" # Haggai
+         | "ZEC" # Zechariah
+         | "MAL" # Malachi
+         | "MAT" # Matthew
+         | "MRK" # Mark
+         | "LUK" # Luke
+         | "JHN" # John
+         | "ACT" # Acts
+         | "ROM" # Romans
+         | "1CO" # 1 Corinthians
+         | "2CO" # 2 Corinthians
+         | "GAL" # Galatians
+         | "EPH" # Ephesians
+         | "PHP" # Philippians
+         | "COL" # Colossians
+         | "1TH" # 1 Thessalonians
+         | "2TH" # 2 Thessalonians
+         | "1TI" # 1 Timothy
+         | "2TI" # 2 Timothy
+         | "TIT" # Titus
+         | "PHM" # Philemon
+         | "HEB" # Hebrews
+         | "JAS" # James
+         | "1PE" # 1 Peter
+         | "2PE" # 2 Peter
+         | "1JN" # 1 John
+         | "2JN" # 2 John
+         | "3JN" # 3 John
+         | "JUD" # Jude
+         | "REV" # Revelation
+         | "TOB" # Tobit
+         | "JDT" # Judith
+         | "ESG" # Esther Greek
+         | "WIS" # Wisdom of Solomon
+         | "SIR" # Sirach (Ecclesiasticus)
+         | "BAR" # Baruch
+         | "LJE" # Letter of Jeremiah
+         | "S3Y" # Song of 3 Young Men
+         | "SUS" # Susanna
+         | "BEL" # Bel and the Dragon
+         | "1MA" # 1 Maccabees
+         | "2MA" # 2 Maccabees
+         | "3MA" # 3 Maccabees
+         | "4MA" # 4 Maccabees
+         | "1ES" # 1 Esdras (Greek)
+         | "2ES" # 2 Esdras (Latin)
+         | "MAN" # Prayer of Manasseh
+         | "PS2" # Psalm 151
+         | "ODA" # Odes
+         | "PSS" # Psalms of Solomon
+         | "EZA" # Apocalypse of Ezra
+         | "5EZ" # 5 Ezra
+         | "6EZ" # 6 Ezra
+         | "DAG" # Daniel Greek
+         | "PS3" # Psalms 152-155
+         | "2BA" # 2 Baruch (Apocalypse)
+         | "LBA" # Letter of Baruch
+         | "JUB" # Jubilees
+         | "ENO" # Enoch
+         | "1MQ" # 1 Meqabyan
+         | "2MQ" # 2 Meqabyan
+         | "3MQ" # 3 Meqabyan
+         | "REP" # Reproof
+         | "4BA" # 4 Baruch
+         | "LAO" # Laodiceans
+           # Non scripture text Id's
+         | "XXA" # Extra A, e.g. a hymnal
+         | "XXB" # Extra B
+         | "XXC" # Extra C
+         | "XXD" # Extra D
+         | "XXE" # Extra E
+         | "XXF" # Extra F
+         | "XXG" # Extra G
+         | "FRT" # Front Matter
+         | "BAK" # Back Matter
+         | "OTH" # Other Matter
+         | "INT" # Introduction
+         | "CNC" # Concordance
+         | "GLO" # Glossary
+         | "TDX" # Topical Index
+         | "NDX") # Names Index
+    
+#start = USX | USXV
+#USXV =
+#    element usxv {
+#        attribute xsi:noNamespaceSchemaLocation { text }?,
+#        
+#        ## our test data has this. Ignore. 
+#        BookForVerseStyle+
+#    }
+#BookForVerseStyle =
+#    element book {
+#        BookIdAttr,
+#        # e.g. id="GEN"
+#        attribute style { "id" },
+#        text?,
+#        # Brief description of project
+#        Heading?,
+#        Title,
+#        Intro?,
+#        Body
+#    }
+#Heading = element heading { HeaderPara+ }
+#Title = element title { TitlePara+ }
+#Intro = element intro { IntroPara* }
+#Body = element body { ChapterForVerseStyle+ }
+
+# !! I think following might be obsolete now jaa. See ParaStart and ParaEnd      
+#ParaForVerseStyle =
+#    element para {
+#        attribute style {
+#            ("no_break_verse_paragraph"
+#             | # No break verse paragraph
+#               "breaking_verse_paragraph")
+#            # Breaking verse paragraph
+#            
+#        },
+#        (Para | Footnote | CrossReference | Char | Figure | Verse | text)*
+#    }
+#ChapterForVerseStyle =
+#    element c {
+#        # Start of new chapter
+#        attribute book { bookCode },
+#        attribute chapter { xsd:integer },
+#        attribute number { xsd:integer },
+#        VerseForVerseStyle+
+#    }
+#VerseForVerseStyle =
+#    element v {
+#        attribute book { bookCode },
+#        attribute chapter { xsd:integer },
+#        attribute verse { text },
+#        attribute verseStart { xsd:integer }?,
+#        attribute verseEnd { xsd:integer }?,
+#        attribute number { text },
+#        (ParaStart
+#         | ParaEnd
+#         | Para
+#         | Footnote
+#         | CrossReference
+#         | Char
+#         | Figure
+#         | Chapter
+#         | Verse
+#         | text)*
+#    }
+#ParaStart =
+#    element paraStart {
+#        # ForVerseStyle   milestone
+#        paraStyle
+#    }
+#ParaEnd =
+#    element paraEnd {
+#        # ForVerseStyle   milestone
+#        paraStyle
+#    }
+
+# ==========
+# Known requested additions to para styles - jaa
+# psa - Set_Apart_Paragraph e.g. DEU 28:3-6; JOS 15:2-12a
+# psa_conclusion - Set_Apart_Paragraph_Conclusion e.g. EXO 6:25b
+# psa_continuation - Set_Apart_Paragraph_Continuation e.g. NUM 7:13-17, 19-23, etc. JOS 13:2-5
+# psa_introduction - Set_Apart_Paragraph_Introduction e.g. EXO 6:14
+# p_letter_closing - Letter_Closing_Paragraph; Biblica: pClosing
+# p_letter_opening - Letter_Opening_Paragraph e.g. ROM 1:1-6, 7a, 7b; Biblica pOpening
+# s_variant - Section_Head_Variant e.g. JHN 8; MRK 16 (sometimes a line above and italic)
+# s_variant_tail - Section_Tail_Variant e.g. JHN 8 (formatted with line)
+# p_variant - Paragraph_Variant e.g. JHN 8; MRK 16 (often in italic)
+# p_introduction - Paragraph_Introduction e.g. GEN 5:1, 6:9; JER 48:1a; 49:1a;	Biblica: pIntroduction; An introduction statement (paragraph) related to the following text. Usually rendered with a line space preceding and following. pm
+# p_conclusion - Paragraph_Conclusion e.g., EZK 7:27f; 23:34d; 24:14; Biblica; pConclusion; A paragraph containing a summary (or conclusion) statement related to the preceding text. Usually rendered with line space preceding and following. pm
+# qr_refrain - Refrain e.g. PSA 136:1-3 (NIV) - His love endures forever; DEU 27:16-21 (NIV) - Then all the people shall say, "Amen!" (In NIV this is Embedded_Text_Refrain)
+# qr_attribution - Attribution e.g. ACT 7:49-50 (NIV) - says the Lord (Acts 7:49, 1 Corinthians 14:21, 2 Corinthians 6:17, 18); declares the Lord (Hebrews 8:9, 2 Kings 19:33, Isaiah 14:22); More examples are found in Isaiah, Jeremiah, Ezekiel, Hosea, Amos, Obadiah, Zephaniah, and Zechariah.
+# qr_selah - Selah e.g. PSA and HAB only
+# cl1 - Citation Line1 e.g. MRK 1.1-4 (NET)
+# cl2 - Citation Line2 e.g. MRK 1.1-4 (NET)
+# abbreviation - Abbreviation (character style) e.g., JUD 1.9,14 (in footnote) a.d. or  b.c.e to display in small caps. When rendering in HTML a mouse over event may show full text of abbreviation.
+# label - Label (inline section head) e.g. EZR 10:18-24 (TEV)

@@ -28,12 +28,12 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
-shortProgramName = "BibleReferencesLinks"
-programName = "Bible References Links handler"
-programVersion = '0.40'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-09-19' # by RJH
+SHORT_PROGRAM_NAME = "BibleReferencesLinks"
+PROGRAM_NAME = "Bible References Links handler"
+PROGRAM_VERSION = '0.40'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -43,10 +43,12 @@ import pickle
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-from Misc.singleton import singleton
-import BibleOrgSysGlobals
-from Reference.VerseReferences import SimpleVerseKey
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
 
@@ -187,31 +189,31 @@ class BibleReferencesLinks:
     ## end of BibleReferencesLinks.__init__
 
 
-    #def loadData( self, XMLFilepath=None ):
+    #def loadData( self, XMLFileOrFilepath=None ):
         #""" Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         #if not self.__DataList: # We need to load them once -- don't do this unnecessarily
             ## See if we can load from the pickle file (faster than loading from the XML)
-            #standardXMLFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleReferencesLinks.xml" )
+            #standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleReferencesLinks.xml" )
             #standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleReferencesLinks_Tables.pickle" )
             ##print( os.access( standardPickleFilepath, os.R_OK ) )
-            ##print( os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime )
+            ##print( os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
             ##print( os.stat(standardPickleFilepath).st_ctime )
-            ##print( os.stat(standardXMLFilepath).st_ctime )
-            ##print( os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime )
-            #if XMLFilepath is None \
+            ##print( os.stat(standardXMLFileOrFilepath).st_ctime )
+            ##print( os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime )
+            #if XMLFileOrFilepath is None \
             #and os.access( standardPickleFilepath, os.R_OK ) \
-            #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
-            #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
+            #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+            #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             #else: # We have to load the XML (much slower)
-                #from Reference.BibleReferencesLinksConverter import BibleReferencesLinksConverter
-                #if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
+                #from BibleOrgSys.Reference.BibleReferencesLinksConverter import BibleReferencesLinksConverter
+                #if XMLFileOrFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
                 #bbcc = BibleReferencesLinksConverter()
-                #bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
+                #bbcc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
                 #self.__DataList, self.__DataDict = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
         #self.__DataList = None # Get rid of this as we don't need it
         #return self # So this command can be chained after the object creation
@@ -332,10 +334,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleReferencesLinks.py

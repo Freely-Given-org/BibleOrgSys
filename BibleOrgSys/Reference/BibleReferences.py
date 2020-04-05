@@ -82,12 +82,12 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-12' # by RJH
-shortProgramName = "BibleReferences"
-programName = "Bible References handler"
-programVersion = '0.35'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "BibleReferences"
+PROGRAM_NAME = "Bible References handler"
+PROGRAM_VERSION = '0.35'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -97,9 +97,11 @@ import logging
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 # This is a hack because it's language dependant :-(
@@ -1259,9 +1261,9 @@ class BibleReferenceList( BibleReferenceBase ):
         """
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
-        OSISList = BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes()
-        #self.getBBBFromText = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation(s)
-        self.getBBBFromText = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation
+        OSISList = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes()
+        #self.getBBBFromText = lambda s: BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation(s)
+        self.getBBBFromText = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
@@ -1306,8 +1308,8 @@ class BibleReferenceList( BibleReferenceBase ):
             if result: result += self.punctuationDict['bookSeparator'] + ' ' # The separator between multiple references
             if len(refOrRefRange) == 2: # it must be a range (start and end tuples)
                 (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = refOrRefRange
-                Bk1 = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB1 )
-                Bk2 = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB2 )
+                Bk1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB1 )
+                Bk2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB2 )
                 if V1 and V2: result += "{}.{}.{}-{}.{}.{}".format(Bk1,C1,V1,Bk2,C2,V2)
                 elif not V1 and not V2: result += "{}.{}-{}.{}".format(Bk1,C1,Bk2,C2)
                 elif V2: result += "{}.{}.1-{}.{}.{}".format(Bk1,C1,Bk2,C2,V2)
@@ -1315,7 +1317,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange
-                Bk = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+                Bk = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
                 if V: result += "{}.{}.{}".format(Bk,C,V)
                 else: result += "{}.{}".format(Bk,C)
                 lastBk, lastC, lastV = Bk, C, V
@@ -1450,8 +1452,8 @@ class BibleAnchorReference:
         self.suffixString = '' if suffixString is None else suffixString
         self.homeTuple = (self.BBB,self.chapterString,self.verseString,self.suffixString,)
 
-        assert BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB )
-        self.isSingleChapterBook = BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
+        assert BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB )
+        self.isSingleChapterBook = BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getSingleChapterBooksList()
         self.allowedVerseSuffixes = ( 'a', 'b', 'c', 'd', 'e', )
         self.allowedCVSeparators = ( ':', '.', )
         self.allowedVerseSeparators = ( ',', '-', )
@@ -2033,10 +2035,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleReferences.py

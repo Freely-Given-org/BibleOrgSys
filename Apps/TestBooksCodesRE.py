@@ -28,12 +28,12 @@ Module which tests the regular expression for Bible Books Codes.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-12' # by RJH
-shortProgramName = "TestBooksCodesRE"
-programName = "TestBooksCodes Regular Expressions"
-programVersion = '0.20'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+SHORT_PROGRAM_NAME = "TestBooksCodesRE"
+PROGRAM_NAME = "TestBooksCodes Regular Expressions"
+PROGRAM_VERSION = '0.20'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -43,10 +43,9 @@ import sys, re
 # Allow the app to run from either the BOS folder or in this Apps subfolder
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
-import BibleOrgSysGlobals
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 # Regular expressions to be searched for
@@ -69,7 +68,7 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 def doBBB():
     print( "\ndoBBB" )
     L0, L1, L2 = {}, {}, {}
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
         #print( BBB )
         if BBB[0] in L0: L0[BBB[0]] += 1
         else: L0[BBB[0]] = 1
@@ -82,7 +81,7 @@ def doBBB():
     print( ' ', sorted(L2) )
 
     # Now test the RE on the books codes
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
         #print( BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
@@ -95,9 +94,9 @@ def doOSIS():
     print( "\ndoOSIS" )
     minL, maxL = 999, 0
     L = {}
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
         #print( BBB )
-        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+        OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
         #print( OB )
         lOB = len( OB )
@@ -112,9 +111,9 @@ def doOSIS():
     print( ' ', minL, maxL )
 
     # Now test the RE on the books codes
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
         #print( BBB )
-        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+        OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:
@@ -133,10 +132,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of TestBooksCodesRE.py

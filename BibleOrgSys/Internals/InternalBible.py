@@ -56,12 +56,12 @@ The calling class then fills
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-16' # by RJH
-shortProgramName = "InternalBible"
-programName = "Internal Bible handler"
-programVersion = '0.83'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-23' # by RJH
+SHORT_PROGRAM_NAME = "InternalBible"
+PROGRAM_NAME = "Internal Bible handler"
+PROGRAM_VERSION = '0.83'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -76,11 +76,13 @@ import re
 import multiprocessing
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
-from Internals.InternalBibleBook import BCV_VERSION
-from Reference.VerseReferences import SimpleVerseKey
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
+from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
@@ -147,7 +149,7 @@ class InternalBible:
 
         result = self.objectNameString
         indent = 2
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
         if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
         if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
@@ -850,7 +852,7 @@ class InternalBible:
 
         The assumedBookName defaults to the long book name from \toc1 field.
         """
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
         except (KeyError, AttributeError): return None
@@ -861,7 +863,7 @@ class InternalBible:
         """
         Gets the long table of contents book name for the given book reference code.
         """
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         try: return self.books[BBB].longTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getLongTOCName
@@ -869,7 +871,7 @@ class InternalBible:
 
     def getShortTOCName( self, BBB ):
         """Gets the short table of contents book name for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         try: return self.books[BBB].shortTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getShortTOCName
@@ -877,7 +879,7 @@ class InternalBible:
 
     def getBooknameAbbreviation( self, BBB ):
         """Gets the book abbreviation for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.BibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         try: return self.books[BBB].booknameAbbreviation
         except (KeyError, AttributeError): return None
     # end of InternalBible.getBooknameAbbreviation
@@ -967,7 +969,7 @@ class InternalBible:
             Return None if unsuccessful.
         """
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
-        result = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( referenceString )
+        result = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -1215,15 +1217,15 @@ class InternalBible:
         for BBB in self.discoveryResults:
             #print( "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
-            if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+            if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
                 if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'], aggregateResults['OTBookCodes'] = 1, [BBB]
                 else: aggregateResults['OTBookCount'] += 1; aggregateResults['OTBookCodes'].append( BBB )
-            elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                 isNT = True
                 if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'], aggregateResults['NTBookCodes'] = 1, [BBB]
                 else: aggregateResults['NTBookCount'] += 1; aggregateResults['NTBookCodes'].append( BBB )
-            elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                 isDC = True
                 if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'], aggregateResults['DCBookCodes'] = 1, [BBB]
                 else: aggregateResults['DCBookCount'] += 1; aggregateResults['DCBookCodes'].append( BBB )
@@ -1487,7 +1489,7 @@ class InternalBible:
         Returns a dictionary of result flags.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "InternalBible-V{}.doExtensiveChecks: ".format(programVersion) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+            print( "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
@@ -1864,7 +1866,7 @@ class InternalBible:
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", ListPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
@@ -1909,7 +1911,7 @@ class InternalBible:
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
@@ -1920,7 +1922,7 @@ class InternalBible:
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
@@ -1930,7 +1932,7 @@ class InternalBible:
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", BBBPart ).replace( "__EXTRAS__", '' ) \
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                                #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                     webPageFilename = "{}.html".format( BBB )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
@@ -2061,7 +2063,7 @@ class InternalBible:
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", categoryPart ).replace( "__EXTRAS__", '' ) \
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                                #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                     webPageFilename = "{}.html".format( category )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
@@ -2094,7 +2096,7 @@ class InternalBible:
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
                         .replace( "__MAIN_PART__", BBBIndexPart ).replace( "__EXTRAS__", '' ) \
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "BBBIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
@@ -2108,7 +2110,7 @@ class InternalBible:
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
                         .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "categoryIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
@@ -2121,7 +2123,7 @@ class InternalBible:
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle ) \
                         .replace( "__MAIN_PART__", indexPart ).replace( "__EXTRAS__", '' ) \
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
-                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                        #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
             if BibleOrgSysGlobals.verbosityLevel>3: print( "Writing error checks web index page at {}".format( webPagePath ) )
@@ -2143,7 +2145,7 @@ class InternalBible:
             assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             #print( "getNumChapters", self, self.books[BBB].getNumChapters() )
@@ -2161,7 +2163,7 @@ class InternalBible:
             print( _("getNumVerses( {}, {!r} )").format( BBB, C ) )
             assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             if isinstance( C, int ): # Just double-check the parameter
@@ -2341,7 +2343,7 @@ class InternalBible:
         ourMarkerList = []
         if optionsDict['markerList']:
             for marker in optionsDict['markerList']:
-                ourMarkerList.append( BibleOrgSysGlobals.USFMMarkers.toStandardMarker( marker ) )
+                ourMarkerList.append( BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( marker ) )
 
         ourFindText = optionsDict['findText']
         # Save the search history (with the 'regex:' text still prefixed if applicable)
@@ -2511,14 +2513,11 @@ class InternalBible:
             and saves them as json files for analysis by other programs
             and also saves some as text files for direct viewing.
         """
-        from Internals.InternalBibleBook import cleanUWalignments
-        #debuggingThisModule = True
+        from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             print( f"analyseUWalignments() for {self.abbreviation}" )
-
-        # OK_ORIGINAL_WORDS_COUNT = 3
-        # OK_TRANSLATED_WORDS_COUNT = 5
+        assert self.uWaligned
 
         # Firstly, aggregate the alignment data from all of the separate books
         alignedBookCount = 0
@@ -2539,11 +2538,11 @@ class InternalBible:
             if 'uWalignments' in bookObject.__dict__:
                 if debuggingThisModule: print( f"Cleaning alignments for {BBB} and aggregating…" )
                 alignedBookList.append( BBB )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     alignedOTBookList.append( BBB )
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     alignedNTBookList.append( BBB )
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     alignedDCBookList.append( BBB )
                 alignedBookCount += 1
 
@@ -2559,11 +2558,11 @@ class InternalBible:
                     # if ref not in alignmentDict: alignmentDict[ref] = []
                     alignmentDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
-                    if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                         thisList, thisDict = aggregatedAlignmentsOTList, alignmentOTDict
-                    elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                         thisList, thisDict = aggregatedAlignmentsNTList, alignmentNTDict
-                    elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                         thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
                     thisList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
                     # if ref not in thisDict: thisDict[ref] = []
@@ -2571,8 +2570,8 @@ class InternalBible:
 
 
         # Preliminary pass to go through the alignment data for the whole Bible
-        #   and make a list of all single translated words.
-        # Used later to determine which words don't need to be capitalised (works for English at least).
+        #   and make a set of all single translated words.
+        # Used later to determine which words don't need to be capitalised (sort of works for English at least).
         maxOriginalWords = maxTranslatedWords = 0
         singleTranslatedWordsSet = set()
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
@@ -2644,26 +2643,27 @@ class InternalBible:
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
                 thisOrigStrongs, thisoriginalLemma, thisoriginalWord = thisOrigEntry[0], thisOrigEntry[1], thisOrigEntry[5]
+                thisOriginalWordPlusLemma = f'{thisoriginalWord}~~{thisoriginalLemma}'
 
-                if thisoriginalWord not in originalFormToTransOccurrencesDict:
-                    originalFormToTransOccurrencesDict[thisoriginalWord] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in originalFormToTransOccurrencesDict[thisoriginalWord]:
-                    originalFormToTransOccurrencesDict[thisoriginalWord][cleanedTranslatedWordsString] += 1
+                if thisOriginalWordPlusLemma not in originalFormToTransOccurrencesDict:
+                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma]:
+                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] += 1
                 else:
-                    originalFormToTransOccurrencesDict[thisoriginalWord][cleanedTranslatedWordsString] = 1
-                assert isinstance( originalFormToTransOccurrencesDict[thisoriginalWord], dict )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] = 1
+                assert isinstance( originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma], dict )
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = originalFormToTransOccurrencesOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = originalFormToTransOccurrencesNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = originalFormToTransOccurrencesDCDict
-                if thisoriginalWord not in thisDict:
-                    thisDict[thisoriginalWord] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in thisDict[thisoriginalWord]:
-                    thisDict[thisoriginalWord][cleanedTranslatedWordsString] += 1
+                if thisOriginalWordPlusLemma not in thisDict:
+                    thisDict[thisOriginalWordPlusLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in thisDict[thisOriginalWordPlusLemma]:
+                    thisDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] += 1
                 else:
-                    thisDict[thisoriginalWord][cleanedTranslatedWordsString] = 1
+                    thisDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] = 1
 
                 if thisoriginalLemma not in originalLemmaToTransOccurrencesDict:
                     originalLemmaToTransOccurrencesDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
@@ -2672,11 +2672,11 @@ class InternalBible:
                 else:
                     originalLemmaToTransOccurrencesDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
                 assert isinstance( originalLemmaToTransOccurrencesDict[thisoriginalLemma], dict )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = originalLemmaToTransOccurrencesOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = originalLemmaToTransOccurrencesNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = originalLemmaToTransOccurrencesDCDict
                 if thisoriginalLemma not in thisDict:
                     thisDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
@@ -2685,44 +2685,36 @@ class InternalBible:
                 else:
                     thisDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
 
-                # if thisoriginalWord not in originalFormToTransAlignmentsDict:
-                #     originalFormToTransAlignmentsDict[thisoriginalWord] = []
-                originalFormToTransAlignmentsDict[thisoriginalWord].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                originalFormToTransAlignmentsDict[thisOriginalWordPlusLemma].append( (BBB,C,V,translatedWordsString) )
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = originalFormToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = originalFormToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = originalFormToTransAlignmentsDCDict
-                # if thisoriginalWord not in thisDict:
-                #     thisDict[thisoriginalWord] = []
-                thisDict[thisoriginalWord].append( (BBB,C,V,translatedWordsString) )
+                thisDict[thisOriginalWordPlusLemma].append( (BBB,C,V,translatedWordsString) )
 
-                # if thisoriginalLemma not in originalLemmaToTransAlignmentsDict:
-                #     originalLemmaToTransAlignmentsDict[thisoriginalLemma] = []
                 originalLemmaToTransAlignmentsDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = originalLemmaToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = originalLemmaToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = originalLemmaToTransAlignmentsDCDict
-                # if thisoriginalLemma not in thisDict:
-                #     thisDict[thisoriginalLemma] = []
                 thisDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
 
-                # if thisOrigStrongs not in origStrongsToTransAlignmentsDict:
-                #     origStrongsToTransAlignmentsDict[thisOrigStrongs] = []
                 origStrongsToTransAlignmentsDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = origStrongsToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = origStrongsToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = origStrongsToTransAlignmentsDCDict
-                # if thisOrigStrongs not in thisDict:
-                #     thisDict[thisOrigStrongs] = []
                 thisDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
+
+            else: # len(originalWordsList) > 1:
+                # TODO: Find/count multi-word forms!!!
+                pass
 
             if len(translatedWordsList) == 1:
                 thistranslatedWordEntry = translatedWordsList[0]
@@ -2732,7 +2724,8 @@ class InternalBible:
                     # Lowercase form of word differs from the present case
                     #   -- it could be a proper name or it might have just started a sentence
                     if thistranslatedWordLower in singleTranslatedWordsSet \
-                    or thistranslatedWord in ('Accompanying','Alas','Amen',
+                    or thistranslatedWord in ( # words that didn't appear in uncapitalised form in the text
+                                'Accompanying','Alas','Amen',
                                 'Beyond','Chase','Dismiss'): # special cases -- Grrrh!!!
                         # TODO: Maybe could use an English dictionary here ???
                         # Then maybe this word was only capitalised because it started a sentence???
@@ -2754,22 +2747,20 @@ class InternalBible:
                         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
                             print( f"    Not converting '{thistranslatedWord}'")
 
-                # if thistranslatedWord not in oneToOneTransToOriginalAlignmentsDict:
-                #     oneToOneTransToOriginalAlignmentsDict[thistranslatedWord] = []
                 oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
-                if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     thisDict = oneToOneTransToOriginalAlignmentsOTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                     thisDict = oneToOneTransToOriginalAlignmentsNTDict
-                elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                     thisDict = oneToOneTransToOriginalAlignmentsDCDict
-                # if thistranslatedWord not in thisDict:
-                #     thisDict[thistranslatedWord] = []
                 thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
 
-        # TODO: Find/count multi-word forms!!!
+            else: # len(translatedWordsList) > 1:
+                # TODO: Find/count multi-word forms!!!
+                pass
 
-        if debuggingThisModule:
+        if debuggingThisModule and BibleOrgSysGlobals.debugFlag:
             max_each = 6
             print( f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
             for j, (key,value) in enumerate( originalFormToTransOccurrencesDict.items(), start=1 ):
@@ -2964,7 +2955,7 @@ def demo() -> None:
         print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != lastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     # Since this is only designed to be a base class, it can't actually do much at all
@@ -2973,8 +2964,8 @@ def demo() -> None:
     if BibleOrgSysGlobals.verbosityLevel > 0: print( IB )
 
     # But we'll load a USFM Bible so we can test some other functions
-    from UnknownBible import UnknownBible
-    from Bible import Bible
+    from BibleOrgSys.UnknownBible import UnknownBible
+    from BibleOrgSys.Bible import Bible
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' )
     uB = UnknownBible( testFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
@@ -3018,10 +3009,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of InternalBible.py

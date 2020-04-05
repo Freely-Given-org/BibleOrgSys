@@ -27,11 +27,11 @@
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-22' # by RJH
-shortProgramName = "XMLFile"
-programName = "XML file handler"
-programVersion = '0.04'
-programNameVersion = f'{programName} v{programVersion}'
+LAST_MODIFIED_DATE = '2019-12-22' # by RJH
+SHORT_PROGRAM_NAME = "XMLFile"
+PROGRAM_NAME = "XML file handler"
+PROGRAM_VERSION = '0.04'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
@@ -43,8 +43,10 @@ import urllib.request
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
@@ -99,7 +101,7 @@ class XMLFile():
         @rtype: string
         """
         result = "XML file object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.sourceFilename: result += ('\n' if result else '') + "  Source filename: " + self.sourceFilename
         if self.sourceFolder:
             result += ('\n' if result else '') + f"  Source folder: {self.sourceFolder}"
@@ -229,10 +231,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of XMLFile.py

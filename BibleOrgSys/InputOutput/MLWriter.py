@@ -37,11 +37,11 @@ TODO: Add writeAutoDTD
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-02-19' # by RJH
-shortProgramName = "MLWriter"
-programName = "ML Writer"
-programVersion = '0.36'
-programNameVersion = f'{programName} v{programVersion}'
+LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+SHORT_PROGRAM_NAME = "MLWriter"
+PROGRAM_NAME = "ML Writer"
+PROGRAM_VERSION = '0.37'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
@@ -52,8 +52,10 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
@@ -226,7 +228,7 @@ class MLWriter:
         if self._suppressFollowingIndent: self._suppressFollowingIndent = False; return ''
         if self._humanReadable == "None": return ''
         if self._humanReadable in ("All", "NLSpace"): return ' '*len(self._openStack)*self._indentPerLevel
-        # Else, we'll assume that it's set to "Header"
+        # Else, we'll assume that it's set to 'header'
         if self._sectionName == 'Main': return ''
         return ' '*len(self._openStack)*self._indentPerLevel # for header
     # end of MLWriter._SP
@@ -239,7 +241,7 @@ class MLWriter:
         if self._humanReadable == "None": result = ''
         elif self._humanReadable == "All":  result = self._nl
         elif self._humanReadable == "NLSpace":  result = ' '
-        # Else, we'll assume that it's set to "Header"
+        # Else, we'll assume that it's set to 'header'
         elif self._sectionName == 'Main': result = '' # (not header)
         else: result= self._nl # for header
 
@@ -573,18 +575,18 @@ def demo() -> None:
     if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     if 1: # Demo the writer object with XML
-        outputFolder = "OutputFiles"
-        outputFilename = "test.xml"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+        outputFilename = 'test.xml'
+        if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #schema = "http://someURL.net/myOwn.xsd"
         schema = "~/imaginary.xsd"
-        mlWr = MLWriter( outputFilename, outputFolder )
+        mlWr = MLWriter( outputFilename, outputFolderpath )
         mlWr.setHumanReadable( 'All' )
         mlWr.start()
         mlWr.setSectionName( 'Header' )
         mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
         mlWr.writeLineOpen( 'header' )
-        mlWr.writeLineOpenClose( "title", "myTitle" )
+        mlWr.writeLineOpenClose( 'title', "myTitle" )
         mlWr.writeLineClose( 'header' )
         mlWr.setSectionName( 'Main' )
         mlWr.writeLineOpen( 'body' )
@@ -594,8 +596,8 @@ def demo() -> None:
         print( mlWr ) # Just print a summary
         print( mlWr.validate( schema ) )
 
-        from InputOutput.XMLFile import XMLFile
-        xf = XMLFile( outputFilename, outputFolder )
+        from BibleOrgSys.InputOutput.XMLFile import XMLFile
+        xf = XMLFile( outputFilename, outputFolderpath )
         try:
             xf.validateByLoading()
             xf.validateWithLint()
@@ -606,11 +608,11 @@ def demo() -> None:
 
     if 1: # Demo the writer object with HTML5
         import datetime
-        outputFolder = "OutputFiles"
-        outputFilename = "test.html"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+        outputFilename = 'test.html'
+        if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
         schema = ""
-        mlWr = MLWriter( outputFilename, outputFolder, 'HTML' )
+        mlWr = MLWriter( outputFilename, outputFolderpath, 'HTML' )
         mlWr.setHumanReadable( 'All' )
         mlWr.start()
         mlWr.setSectionName( 'Header' )
@@ -638,7 +640,7 @@ def demo() -> None:
         mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
         mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
         mlWr.writeLineClose( 'a' )
-        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( programName, programVersion, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( PROGRAM_NAME, PROGRAM_VERSION, datetime.date.today().strftime("%d-%b-%Y") ) )
         mlWr.writeLineClose( 'p' )
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
@@ -652,10 +654,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MLWriter.py

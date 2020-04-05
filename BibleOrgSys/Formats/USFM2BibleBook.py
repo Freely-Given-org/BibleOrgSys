@@ -28,12 +28,12 @@ Module for defining and manipulating USFM2 Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-11' # by RJH
-shortProgramName = "USFM2BibleBook"
-programName = "USFM2 Bible book handler"
-programVersion = '0.53'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-11' # by RJH
+SHORT_PROGRAM_NAME = "USFM2BibleBook"
+PROGRAM_NAME = "USFM2 Bible book handler"
+PROGRAM_VERSION = '0.53'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -43,12 +43,14 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USFMFile import USFMFile
-from Bible import BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USFMFile import USFMFile
+from BibleOrgSys.Bible import BibleBook
 
-from Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
+from BibleOrgSys.Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
 USFM2Markers = USFM2Markers().loadData()
 
 
@@ -141,7 +143,7 @@ class USFM2BibleBook( BibleBook ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         originalBook = USFMFile()
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
@@ -294,7 +296,7 @@ def demo() -> None:
     # end of demoFile
 
 
-    from InputOutput import USFMFilenames
+    from BibleOrgSys.InputOutput import USFMFilenames
 
     if 1: # Test individual files -- choose one of these or add your own
         name, encoding, testFolder, filename, BBB = "USFM2Test", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/'), '70-MATeng-amp.usfm', 'MAT' # You can put your test file here
@@ -324,10 +326,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM2BibleBook.py

@@ -27,12 +27,12 @@
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-03-17' # by RJH
-shortProgramName = "GenericOnlineBible"
-programName = "Generic online Bible handler"
-programVersion = '0.02'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-03-17' # by RJH
+SHORT_PROGRAM_NAME = "GenericOnlineBible"
+PROGRAM_NAME = "Generic online Bible handler"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -47,8 +47,8 @@ if __name__ == '__main__':
     import sys
     import re
 import logging # Append the containing folder to the path to search for the BOS
-import BibleOrgSysGlobals
-from Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Misc.singleton import singleton
 
 
 MAX_CACHED_VERSES = 100 # Per Bible version in use
@@ -203,7 +203,7 @@ def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
-    from Reference.VerseReferences import SimpleVerseKey
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
@@ -232,10 +232,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GenericOnlineBible.py

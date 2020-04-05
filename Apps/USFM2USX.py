@@ -68,21 +68,20 @@ defaultInputFolder = 'Tests/DataFilesForTests/zTemp/'
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-01-29' # by RJH
-shortProgramName = "USFM2USX"
-programName = "USFM to USX"
-programVersion = '0.02'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-01-29' # by RJH
+SHORT_PROGRAM_NAME = "USFM2USX"
+PROGRAM_NAME = "USFM to USX"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 import os, shutil
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.UnknownBible import UnknownBible
 
@@ -105,7 +104,7 @@ def main():
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( programNameVersion )
-        print( f"\n{shortProgramName}: processing input folder {inputFileOrFolder!r} …" )
+        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {inputFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFileOrFolder ) # Tell it the folder to start looking in
@@ -120,11 +119,11 @@ def main():
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( f"\n{shortProgramName}: removing previous {defaultOutputFolder} folder…" )
+                print( f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
                 shutil.rmtree( defaultOutputFolder )
 
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( f"\n{shortProgramName}: starting export…" )
+            print( f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
@@ -133,7 +132,7 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
-        print(f"\n{shortProgramName}: output should be in {defaultOutputFolder} folder.")
+        print(f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder} folder.")
 # end of main
 
 if __name__ == '__main__':
@@ -141,11 +140,11 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
     # Do the BOS close-down stuff
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM2USX.py

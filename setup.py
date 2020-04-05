@@ -1,75 +1,144 @@
-"""A setuptools based setup module.
+"""
+A setuptools based setup module.
 
 See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
+VERSION = '0.0.6'
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH -- when setup.py was modified below
 
-lastModifiedDate = '2020-03-08' # by RJH
+INCLUDE_DATA_SOURCE_FILES = False
+INCLUDE_DERIVED_DATA_PICKLE_FILES = True
+# INCLUDE_DERIVED_DATA_JSON_FILES = False
 
-# Always prefer setuptools over distutils
-from setuptools import setup
-from os import path
 
-this_folderpath = path.abspath(path.dirname(__file__))
+from setuptools import setup # Always prefer setuptools over distutils
+# from os import path
+
+# this_folderpath = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
 #with open(path.join(this_folderpath, 'README.md'), encoding='utf-8') as f:
 #    long_description = f.read()
 
 
-# Arguments marked as "Required" below must be included for upload to PyPI.
-# Fields marked as "Optional" may be commented out.
+package_data_list = []
+if INCLUDE_DATA_SOURCE_FILES:
+    package_data_list += [
+                'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
+                'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
+                'DataFiles/iso_639_3.xml', 'DataFiles/iso_639_3.rnc',
+                'DataFiles/USFM2Markers.xml', 'DataFiles/USFM2Markers.rnc',
+                'DataFiles/USFM3Markers.xml', 'DataFiles/USFM3Markers.rnc',
+
+                'DataFiles/BookNames/BibleBooksNames.rnc',
+                'DataFiles/BookNames/BibleBooksNames_deu_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_dut_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_eng_deuterocanon.xml',
+                'DataFiles/BookNames/BibleBooksNames_eng_extensive.xml',
+                'DataFiles/BookNames/BibleBooksNames_eng_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_fra_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_mbt.xml',
+                'DataFiles/BookNames/BibleBooksNames_por_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_rus_traditional.xml',
+                'DataFiles/BookNames/BibleBooksNames_spa_traditional.xml',
+
+                'DataFiles/BookOrders/BibleBookOrder.rnc',
+                'DataFiles/BookOrders/BibleBookOrder_ALL.xml',
+                'DataFiles/BookOrders/BibleBookOrder_ArmenianNewTestament.xml',
+                'DataFiles/BookOrders/BibleBookOrder_EthiopianProtestantBible.xml',
+                'DataFiles/BookOrders/BibleBookOrder_EuropeanBible.xml',
+                'DataFiles/BookOrders/BibleBookOrder_GutenbergNewTestament.xml',
+                'DataFiles/BookOrders/BibleBookOrder_HebrewLetteris.xml',
+                'DataFiles/BookOrders/BibleBookOrder_HebrewStuttgart.xml',
+                'DataFiles/BookOrders/BibleBookOrder_KJVwithApocrypha.xml',
+                'DataFiles/BookOrders/BibleBookOrder_Leningradensis.xml',
+                'DataFiles/BookOrders/BibleBookOrder_LutheranBible.xml',
+                'DataFiles/BookOrders/BibleBookOrder_MasoreticText.xml',
+                'DataFiles/BookOrders/BibleBookOrder_ModernJewish.xml',
+                'DataFiles/BookOrders/BibleBookOrder_NRSVwithApocrypha.xml',
+                'DataFiles/BookOrders/BibleBookOrder_Septuagint.xml',
+                'DataFiles/BookOrders/BibleBookOrder_SynodalBible.xml',
+                'DataFiles/BookOrders/BibleBookOrder_SyriacNewTestament.xml',
+                'DataFiles/BookOrders/BibleBookOrder_VulgateBible.xml',
+                
+                'DataFiles/PunctuationSystems/BiblePunctuationSystem.rnc',
+                'DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml',
+                'DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml',
+                'DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml',
+                
+                'DataFiles/VersificationSystems/BibleVersificationSystem.rnc',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_BibMaxRef.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_CatholicEsther16.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Catholic.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Cebuano_BUGV.xml',
+                '/DataFiles/VersificationSystems/BibleVersificationSystem_DutchTraditional.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_GNT92.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_GNTUK.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_KJV.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Luther.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_NIV84.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_NLT96.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_NRS89.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_NRSV.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Original.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Rahlfs.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_REB89.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_RSV52.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_RussianCanonical.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_RussianOrthodox.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Septuagint.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Spanish.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Synodal.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Syriac.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate1.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate2.xml',
+                'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate.xml',
+                ]
+if INCLUDE_DERIVED_DATA_PICKLE_FILES:
+    package_data_list += [
+                'DataFiles/DerivedFiles/iso_639_3_Languages_Tables.pickle',
+                'DataFiles/DerivedFiles/USFM2Markers_Tables.pickle',
+                'DataFiles/DerivedFiles/USFM3Markers_Tables.pickle',
+
+                'DataFiles/DerivedFiles/BibleBooksCodes_Tables.pickle',
+                'DataFiles/DerivedFiles/BibleBooksNames_Tables.pickle',
+                'DataFiles/DerivedFiles/BibleBookOrders_Tables.pickle',
+                'DataFiles/DerivedFiles/BiblePunctuationSystems_Tables.pickle',
+                'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.pickle',
+                'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.pickle',
+                ]
+if INCLUDE_DERIVED_DATA_JSON_FILES:
+    package_data_list += [
+                'DataFiles/DerivedFiles/iso_639_3_Languages_Tables.json',
+                'DataFiles/DerivedFiles/USFM2Markers_Tables.json',
+                'DataFiles/DerivedFiles/USFM3Markers_Tables.json',
+
+                'DataFiles/DerivedFiles/BibleBooksCodes_Tables.json',
+                'DataFiles/DerivedFiles/BibleBooksNames_Tables.json',
+                'DataFiles/DerivedFiles/BibleBookOrders_Tables.json',
+                'DataFiles/DerivedFiles/BiblePunctuationSystems_Tables.json',
+                'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.json',
+                'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.json',
+                ]
+
 
 setup(
-    # This is the name of your project. The first time you publish this
-    # package, this name will be registered for you. It will determine how
-    # users can install this project, e.g.:
-    #
-    # $ pip install sampleproject
-    #
-    # And where it will live on PyPI: https://pypi.org/project/sampleproject/
-    #
-    # There are some restrictions on what makes a valid project name
-    # specification here:
-    # https://packaging.python.org/specifications/core-metadata/#name
     name='BibleOrgSys',
+    version=VERSION,
 
-    # Versions should comply with PEP 440:
-    # https://www.python.org/dev/peps/pep-0440/
-    #
-    # For a discussion on single-sourcing the version across setup.py and the
-    # project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.2',
-
-    # You can just specify package directories manually here if your project is
-    # simple. Or you can use find_packages().
-    #
-    # Alternatively, if you just want to distribute a single Python file, use
-    # the `py_modules` argument instead as follows, which will expect a file
-    # called `my_module.py` to exist:
-    #
-    #   py_modules=["my_module"],
-    #
-    #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    # packages=find_packages(),
-    packages=['BibleOrgSys'],
-      package_dir={'BibleOrgSys':'BibleOrgSys',
-                   'Formats':'BibleOrgSys/Formats',
-                   'InputOutput':'BibleOrgSys/InputOutput',
-                   'Internals':'BibleOrgSys/Internals',
-                   'Misc':'BibleOrgSys/Misc',
-                   'Online':'BibleOrgSys/Online',
-                   'OriginalLanguages':'BibleOrgSys/OriginalLanguages',
-                   'Reference':'BibleOrgSys/Reference',
-                   },
-
-    # If there are data files included in your packages that need to be
-    # installed, specify them here.
-    # package_data={  # Optional
-    #     'sample': ['package_data.dat'],
-    # },
+    packages=['BibleOrgSys',
+            'BibleOrgSys.InputOutput', 
+            'BibleOrgSys.Internals', 
+            'BibleOrgSys.Formats',
+            'BibleOrgSys.Misc', 
+            'BibleOrgSys.Online', 
+            'BibleOrgSys.OriginalLanguages', 
+            'BibleOrgSys.Reference', 
+            ],
+    package_dir ={ 'BibleOrgSys': 'BibleOrgSys' },
+    package_data={ 'BibleOrgSys': package_data_list },
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:
@@ -77,84 +146,6 @@ setup(
     #
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
     # data_files=[('my_data', ['data/data_file'])],  # Optional
-    data_files=[
-                ('Apps', ['Apps/USFM2USX.py']),
-                ('DataFiles', [
-                    'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
-                    'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
-                    'DataFiles/iso_639_3.xml', 'DataFiles/iso_639_3.rnc',
-                    'DataFiles/USFM2Markers.xml', 'DataFiles/USFM2Markers.rnc',
-                    'DataFiles/USFM3Markers.xml', 'DataFiles/USFM3Markers.rnc',
-                    ]),
-                ('DataFiles/BookNames', [
-                    'DataFiles/BookNames/BibleBooksNames.rnc',
-                    'DataFiles/BookNames/BibleBooksNames_deu_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_dut_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_eng_deuterocanon.xml',
-                    'DataFiles/BookNames/BibleBooksNames_eng_extensive.xml',
-                    'DataFiles/BookNames/BibleBooksNames_eng_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_fra_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_mbt.xml',
-                    'DataFiles/BookNames/BibleBooksNames_por_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_rus_traditional.xml',
-                    'DataFiles/BookNames/BibleBooksNames_spa_traditional.xml',
-                    ]),
-                ('DataFiles/BookOrders', [
-                    'DataFiles/BookOrders/BibleBookOrder.rnc',
-                    'DataFiles/BookOrders/BibleBookOrder_ALL.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_ArmenianNewTestament.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_EthiopianProtestantBible.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_EuropeanBible.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_GutenbergNewTestament.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_HebrewLetteris.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_HebrewStuttgart.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_KJVwithApocrypha.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_Leningradensis.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_LutheranBible.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_MasoreticText.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_ModernJewish.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_NRSVwithApocrypha.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_Septuagint.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_SynodalBible.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_SyriacNewTestament.xml',
-                    'DataFiles/BookOrders/BibleBookOrder_VulgateBible.xml',
-                    ]),
-                ('DataFiles/PunctuationSystems', [
-                    'DataFiles/PunctuationSystems/BiblePunctuationSystem.rnc',
-                    'DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml',
-                    'DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml',
-                    'DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml',
-                    ]),
-                ('DataFiles/VersificationSystems', [
-                    'DataFiles/VersificationSystems/BibleVersificationSystem.rnc',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_BibMaxRef.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_CatholicEsther16.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Catholic.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Cebuano_BUGV.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_DutchTraditional.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_GNT92.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_GNTUK.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_KJV.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Luther.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_NIV84.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_NLT96.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_NRS89.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_NRSV.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Original.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Rahlfs.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_REB89.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_RSV52.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_RussianCanonical.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_RussianOrthodox.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Septuagint.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Spanish.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Synodal.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Syriac.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate1.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate2.xml',
-                    'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate.xml',
-                    ]),
-                ],
 
     # metadata to display on PyPI
     # This should be your name or the name of the organization which owns the project.
@@ -175,7 +166,32 @@ setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description="A system for importing and extracting various chapter/verse texts.",
+    long_description="""
+A system for importing and extracting various book/chapter/verse (BCV) texts,
+including Bibles of course, but also other related BCV materials like Bible commentaries.
+
+NOTE: This packaging is still being tested following massive restructuring,
+and is not necessarily fully functional until it is marked as v0.1.0 or higher.
+We also have hopes to improve documentation before v0.2.0.
+
+A future package of apps that use the BOS is also planned for release.
+After that point, we also hope to release a Snap version.
+
+This software has been developed in small chunks of spare time since 2010
+(so it's not necessarily well-thought out, and definitely not polished).
+However, it has been tested on hundreds of Bible filesets,
+including USFM, OSIS, USX, USFX, and other import formats.
+
+No attempt at all has been made at memory or speed optimisations
+and this is not planned until after the release of v1.0.0.
+
+This software forms the basis of the online Bible Drop Box service
+hosted at http://Freely-Given.org/Software/BibleDropBox/.
+
+This package will not reach v1.0.0 until versification mapping is added.
+
+The API will not become fixed/stable until the v1.0.0 release.
+""",
 #    long_description=long_description,
 
     # Denotes that our long_description is in Markdown; valid values are
@@ -233,7 +249,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -246,7 +262,6 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         # These classifiers are *not* checked by 'pip install'. See instead
         # 'python_requires' below.
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
 
@@ -258,8 +273,7 @@ setup(
     # and refuse to install the project if the version does not match. If you
     # do not support Python 2, you can simplify this to '>=3.5' or similar, see
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    #python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4',
-    python_requires='>=3.6',
+    python_requires='>=3.7',
 
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
@@ -295,4 +309,3 @@ setup(
     #     ],
     # },
 )
-

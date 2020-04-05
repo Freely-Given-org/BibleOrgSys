@@ -64,12 +64,12 @@ or
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-15' # by RJH
-shortProgramName = "ZefaniaBible"
-programName = "Zefania XML Bible format handler"
-programVersion = '0.36'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-15' # by RJH
+SHORT_PROGRAM_NAME = "ZefaniaBible"
+PROGRAM_NAME = "Zefania XML Bible format handler"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -79,10 +79,12 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -355,7 +357,7 @@ class ZefaniaXMLBible( Bible ):
 
         # TODO: We probably need to rationalise some of the self.xxx stores
         for element in self.header:
-            #print( "header", element.tag )
+            #print( 'header', element.tag )
             if element.tag == 'title':
                 sublocation = "title in {}".format( location )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -470,7 +472,7 @@ class ZefaniaXMLBible( Bible ):
                 bookShortName = value
             else: logging.error( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
-            try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             except (KeyError, ValueError):
                 logging.critical( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
                                                                         .format( bookNumber, bookName, bookShortName ) )
@@ -727,7 +729,7 @@ def demo() -> None:
         print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != lastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     if 1: # demo the file checking code
@@ -769,7 +771,7 @@ def demo() -> None:
                 print( zb ) # Just print a summary
             #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
-                from Reference import VerseReferences
+                from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                     ('OT','DAN','1','21'),
                                     ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -805,7 +807,7 @@ def demo() -> None:
                 print( zb ) # Just print a summary
                 #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
-                from Reference import VerseReferences
+                from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                     ('OT','DAN','1','21'),
                                     ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -826,10 +828,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ZefaniaXMLBible.py

@@ -28,12 +28,12 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-13' # by RJH
-shortProgramName = "USFMBibleBook"
-programName = "USFM Bible book handler"
-programVersion = '0.53'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-13' # by RJH
+SHORT_PROGRAM_NAME = "USFMBibleBook"
+PROGRAM_NAME = "USFM Bible book handler"
+PROGRAM_VERSION = '0.53'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -44,11 +44,13 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USFMFile import USFMFile
-from Bible import BibleBook
-from Internals.InternalBibleBook import cleanUWalignments
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USFMFile import USFMFile
+from BibleOrgSys.Bible import BibleBook
+from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
 
 sortedNLMarkers = None
@@ -70,7 +72,7 @@ class USFMBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
     # end of USFMBibleBook.__init__
 
 
@@ -103,14 +105,14 @@ class USFMBibleBook( BibleBook ):
                 print( f"doaddLine( '{originalMarker}', '{originalText}' )" )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
-                markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
                         logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
-                    elif BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker) \
+                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker) \
                     or insideMarker == 'zaln-e': # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
@@ -354,7 +356,7 @@ class USFMBibleBook( BibleBook ):
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -459,15 +461,15 @@ class USFMBibleBook( BibleBook ):
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+            if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                 if lastMarker:
                     # print("Add1")
                     doaddLine( lastMarker, lastText )
                     lastMarker = lastText = None
                 if gotUWAligning:
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
-            elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
+            elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
+            or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors:
                     if text:
                         loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
@@ -486,8 +488,8 @@ class USFMBibleBook( BibleBook ):
                         lastText +=  '\\' + marker + ' ' + text
                         if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
                         marker = text = None # Seems to make no difference
-            elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+            elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
+            or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
@@ -615,7 +617,7 @@ def demo() -> None:
     # end of demoFile
 
 
-    from InputOutput import USFMFilenames
+    from BibleOrgSys.InputOutput import USFMFilenames
 
     if 1: # Test individual files -- choose one of these or add your own
         name, encoding, testFolder, filename, BBB = "USFM3Test", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/'), '81-COLeng-amp.usfm', 'COL' # You can put your test file here
@@ -655,10 +657,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFMBibleBook.py

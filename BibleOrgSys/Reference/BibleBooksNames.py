@@ -28,12 +28,12 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
-shortProgramName = "BibleBooksNames"
-programName = "Bible Books Names Systems handler"
-programVersion = '0.40'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-09-19' # by RJH
+SHORT_PROGRAM_NAME = "BibleBooksNames"
+PROGRAM_NAME = "Bible Books Names Systems handler"
+PROGRAM_VERSION = '0.40'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -42,9 +42,11 @@ import logging, os
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-from Misc.singleton import singleton
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -231,10 +233,10 @@ class BibleBooksNamesSystems:
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
-                    XMLfilepath = os.path.join( standardXMLFolder, filename )
+                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKSNAMES_"):
-                        if pickle8 <= os.stat( XMLfilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLfilepath ).st_ctime: # The pickle file is older
+                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
                             picklesGood = False; break
             if picklesGood:
                 import pickle
@@ -243,7 +245,7 @@ class BibleBooksNamesSystems:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__ExpandedDicts = pickle.load( pickleFile )
             else: # We have to load the XML (much slower)
-                from Reference.BibleBooksNamesConverter import BibleBooksNamesConverter
+                from BibleOrgSys.Reference.Converters.BibleBooksNamesConverter import BibleBooksNamesConverter
                 if XMLFolder is not None:
                     logging.warning( _("Bible books names are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bbnsc = BibleBooksNamesConverter()
@@ -354,7 +356,7 @@ class BibleBooksNamesSystems:
         """
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ):
+                if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
                     logging.error( _("Invalid {!r} in booklist requested for {} books names system").format( BBB, systemName ) )
 
         if systemName in self.__DataDicts:
@@ -510,7 +512,7 @@ class BibleBooksNamesSystem:
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             print( "Possibility list is", myList )
 
-        return BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( bookNameOrAbbreviation )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
 
 
@@ -594,11 +596,11 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     parser.add_argument("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBooksNames.py

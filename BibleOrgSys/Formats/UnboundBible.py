@@ -86,12 +86,12 @@ and
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-19' # by RJH
-shortProgramName = "UnboundBible"
-programName = "Unbound Bible format handler"
-programVersion = '0.28'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-19' # by RJH
+SHORT_PROGRAM_NAME = "UnboundBible"
+PROGRAM_NAME = "Unbound Bible format handler"
+PROGRAM_VERSION = '0.28'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -101,9 +101,11 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -335,7 +337,7 @@ class UnboundBible( Bible ):
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.stashBook( thisBook )
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'Unbound Bible Book object'
                     thisBook.objectTypeString = 'Unbound'
@@ -379,7 +381,7 @@ class UnboundBible( Bible ):
 
 def testUB( TUBfilename ):
     # Crudely demonstrate the Unbound Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../mnt/SSDs/Bibles/Biola Unbound modules/' ) # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
@@ -486,12 +488,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of UnboundBible.py

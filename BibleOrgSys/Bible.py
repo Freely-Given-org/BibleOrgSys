@@ -32,12 +32,12 @@ TODO: Check if we really need this class at all???
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-22' # by RJH
-shortProgramName = "BibleObjects"
-programName = "Bible object handler"
-programVersion = '0.14'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-22' # by RJH
+SHORT_PROGRAM_NAME = "BibleObjects"
+PROGRAM_NAME = "Bible object handler"
+PROGRAM_VERSION = '0.14'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -47,14 +47,16 @@ import logging
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.dirname(__file__) ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Internals.InternalBibleBook import InternalBibleBook
-from BibleWriter import BibleWriter
+    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
+from BibleOrgSys.BibleWriter import BibleWriter
 
 
 
-logger = logging.getLogger(shortProgramName)
+logger = logging.getLogger(SHORT_PROGRAM_NAME)
 
 
 
@@ -217,7 +219,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(programName, programVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(PROGRAM_NAME, PROGRAM_VERSION ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest Bible…" )
@@ -227,7 +229,7 @@ def demo() -> None:
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest USFM Bible…" )
-        #from Formats.USFMBible import USFMBible
+        #from BibleOrgSys.Formats.USFMBible import USFMBible
         #name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
@@ -236,7 +238,7 @@ def demo() -> None:
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
             #UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        #else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+        #else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -244,10 +246,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of Bible.py

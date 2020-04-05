@@ -37,12 +37,12 @@ TODO: Needs internationalisation _("around strings")
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-02' # by RJH
+LAST_MODIFIED_DATE = '2018-12-02' # by RJH
 ShortProgName = "USFMBookCompare"
 ProgName = "USFM book file comparator"
 ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
 debuggingThisModule = False
 
@@ -54,10 +54,12 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-from InputOutput.USFMFile import USFMFile
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
 
 

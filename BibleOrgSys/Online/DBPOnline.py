@@ -64,12 +64,12 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-20' # by RJH
-shortProgramName = "DigitalBiblePlatform"
-programName = "Digital Bible Platform online handler"
-programVersion = '0.22'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-20' # by RJH
+SHORT_PROGRAM_NAME = "DigitalBiblePlatform"
+PROGRAM_NAME = "Digital Bible Platform online handler"
+PROGRAM_VERSION = '0.22'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -82,10 +82,12 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Misc.singleton import singleton
-from Online.GenericOnlineBible import GenericOnlineBible
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.Online.GenericOnlineBible import GenericOnlineBible
 
 
 URL_BASE = 'http://dbt.io/'
@@ -533,7 +535,7 @@ class DBPBible( GenericOnlineBible ):
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
                 #print( "OSIS", OSISCode )
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( OSISCode )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
                 #print( "BBB", BBB )
                 #print( bookDict )
@@ -630,7 +632,7 @@ def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
-    from Reference.VerseReferences import SimpleVerseKey
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
@@ -717,10 +719,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of DBPOnline.py

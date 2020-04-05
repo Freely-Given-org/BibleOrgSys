@@ -28,12 +28,12 @@ Module for defining and manipulating ESFM Bible books.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-13' # by RJH
-shortProgramName = "ESFMBibleBook"
-programName = "ESFM Bible book handler"
-programVersion = '0.48'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-13' # by RJH
+SHORT_PROGRAM_NAME = "ESFMBibleBook"
+PROGRAM_NAME = "ESFM Bible book handler"
+PROGRAM_VERSION = '0.48'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -43,11 +43,13 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
-from InputOutput.ESFMFile import ESFMFile
-from Bible import BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
+from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
+from BibleOrgSys.Bible import BibleBook
 
 
 ESFM_SEMANTIC_TAGS = 'AGLOPQTS' # S is put last coz it must be the last tag if there are multiple tags
@@ -71,7 +73,7 @@ class ESFMBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
     # end of __init__
 
 
@@ -382,21 +384,21 @@ class ESFMBibleBook( BibleBook ):
                 #print( "ESFM doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
 
             marker, text = originalMarker, originalText.replace( '~', ' ' )
-            marker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
+            marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
             if marker != originalMarker:
                 loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                 logging.error( _("ESFM doesn't allow the unnumbered marker after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                 self.addPriorityError( 90, C, V, _("ESFM doesn't allow unnumbered markers") )
 
             if '\\' in text: # Check markers inside the lines
-                markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
                         logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
-                    elif BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
                             logging.error( _("NewLine marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
@@ -405,7 +407,7 @@ class ESFMBibleBook( BibleBook ):
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                         #print( "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
-                        marker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
+                        marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                         if marker != insideMarker:
                             loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker within line \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
                             logging.error( _("ESFM doesn't allow the unnumbered marker within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
@@ -431,7 +433,7 @@ class ESFMBibleBook( BibleBook ):
         # Main code for ESFMBibleBook.load
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -443,7 +445,11 @@ class ESFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+            # print( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+            if not marker:
+                logging.critical( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+                if debuggingThisModule: halt
+                continue
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and originalText: C, V = originalText.split()[0], '0'
@@ -458,11 +464,11 @@ class ESFMBibleBook( BibleBook ):
                 text = originalText
             else:
                 text = ESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM
-            if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+            if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
-            elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
-            or (marker and marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
+            elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
+            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
@@ -473,8 +479,8 @@ class ESFMBibleBook( BibleBook ):
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
                 if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
-            elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+            elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
+            or marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
@@ -559,7 +565,7 @@ def demo() -> None:
     # end of demoFile
 
 
-    from InputOutput import USFMFilenames
+    from BibleOrgSys.InputOutput import USFMFilenames
 
     if 1: # Test individual files
         #name, testFolder, filename, BBB = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
@@ -570,7 +576,7 @@ def demo() -> None:
         #name, testFolder, filename, BBB = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 1: # Test a whole folder full of files
         name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
@@ -580,7 +586,7 @@ def demo() -> None:
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -588,10 +594,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESFMBibleBook.py

@@ -31,12 +31,12 @@ and https://github.com/DavidHaslam/GoBibleCore.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-14' # by RJH
-shortProgramName = "GoBible"
-programName = "Go Bible format handler"
-programVersion = '0.04'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-14' # by RJH
+SHORT_PROGRAM_NAME = "GoBible"
+PROGRAM_NAME = "Go Bible format handler"
+PROGRAM_VERSION = '0.04'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -48,10 +48,12 @@ from shutil import rmtree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 GOBIBLE_FILENAME_END = '.jar'
@@ -253,7 +255,7 @@ class GoBible( Bible ):
                     numBookFolders += 1
                     bookCode = folderName[:-4]
                     # Code below doesn't work -- foldernames vary
-                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( bookCode )
+                    #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bookCode )
                     #self.discoveredBookList.append( BBB )
                     continue
                 unexpectedFolders.append( folderName )
@@ -355,16 +357,16 @@ class GoBible( Bible ):
 
         self.BibleOrgSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66' )
         if numBooks == 66:
-            self.bookList = [BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(1,66+1)]
+            self.bookList = [BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(1,66+1)]
         elif numBooks == 27:
-            self.bookList = [BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(40,66+1)]
+            self.bookList = [BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(40,66+1)]
         else:
             logging.warning( f"GoBible.preload found {numBooks} books -- trying to figure out book codes" )
             self.bookList = []
             for n in range( numBooks ):
                 #print( f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
-                BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( self.bookNames[n] )
-                BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( self.filenameBases[n] )
+                BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.bookNames[n] )
+                BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.filenameBases[n] )
                 #print( f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
                 if BBB1 and (BBB2==BBB1 or BBB2 is None): BBB = BBB1
                 elif BBB2 and BBB1 is None: BBB = BBB2
@@ -372,7 +374,7 @@ class GoBible( Bible ):
                     logging.error( f"GoBible.preload choosing '{self.bookNames[n]}'->{BBB1} over '{self.filenameBases[n]}'->{BBB2}" )
                     BBB = BBB1
                 else:
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber(n)
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(n)
                     logging.error( f"GoBible.preload unable to discover book code from '{self.bookNames[n]}'->{BBB1} or '{self.filenameBases[n]}'->{BBB2}: assuming {BBB}" )
                 self.bookList.append( BBB )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -606,7 +608,7 @@ class GoBibleBook( BibleBook ):
 
 def testGoBible( GoBibleFile ):
     # Crudely demonstrate the Go Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Go Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test file is {!r}".format( GoBibleFile ) )
@@ -706,12 +708,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GoBible.py

@@ -41,12 +41,12 @@ TODO: Check if PTX7Bible object should be based on USFM2Bible.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "Paratext7Bible"
-programName = "Paratext-7 Bible handler"
-programVersion = '0.31'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "Paratext7Bible"
+PROGRAM_NAME = "Paratext-7 Bible handler"
+PROGRAM_VERSION = '0.31'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -58,11 +58,13 @@ import multiprocessing
 from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible
-from InputOutput.USFMFilenames import USFMFilenames
-from Formats.USFM2BibleBook import USFM2BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible
+from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
+from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 
 
 
@@ -85,7 +87,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -122,7 +124,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         return False
 
     # Check that there's a USFM Bible here first
-    from Formats.USFM2Bible import USFM2BibleFileCheck
+    from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
     if not USFM2BibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
         if debuggingThisModule: print ("  PTX7 returningA3", False )
         return False
@@ -472,7 +474,7 @@ def loadPTXVersifications( BibleObject ):
                 if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     assert line[7] == ' '
                     USFMBookCode = line[4:7]
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     C,V = line[8:].split( ':', 1 )
                     #print( "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -485,7 +487,7 @@ def loadPTXVersifications( BibleObject ):
                 elif line[0] == '-': # It's an excluded verse line -- similar to above
                     assert line[4] == ' '
                     USFMBookCode = line[1:4]
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     C,V = line[5:].split( ':', 1 )
                     #print( "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -497,8 +499,8 @@ def loadPTXVersifications( BibleObject ):
                     left, right = line.split( ' = ', 1 )
                     #print( "left", repr(left), 'right', repr(right) )
                     USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
-                    BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
+                    BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
+                    BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
                     if 'Mappings' not in PTXVersifications[versificationName]:
                         PTXVersifications[versificationName]['Mappings'] = {}
                     PTXVersifications[versificationName]['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
@@ -508,7 +510,7 @@ def loadPTXVersifications( BibleObject ):
                     USFMBookCode = line[:3]
                     #if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     try:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         if 'VerseCounts' not in PTXVersifications[versificationName]:
                             PTXVersifications[versificationName]['VerseCounts'] = {}
                         PTXVersifications[versificationName]['VerseCounts'][BBB] = {}
@@ -737,7 +739,7 @@ class PTX7Bible( Bible ):
                         else: logging.error( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, treeLocation ) )
                     #print( bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
-                    try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bnCode )
+                    try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bnCode )
                     except:
                         logging.warning( "loadPTXBooksNames can't find BOS code for PTX7 {!r} book".format( bnCode ) )
                         BBB = bnCode # temporarily use their code
@@ -1966,7 +1968,7 @@ def demo() -> None:
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( programName, programVersion ) )
+    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
 
 if __name__ == '__main__':
@@ -1974,10 +1976,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of PTX7Bible.py

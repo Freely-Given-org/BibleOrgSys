@@ -38,12 +38,12 @@ NOTE: We could use multiprocessing in loadBooks()
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "OSISBible"
-programName = "OSIS XML Bible format handler"
-programVersion = '0.65'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "OSISBible"
+PROGRAM_NAME = "OSIS XML Bible format handler"
+PROGRAM_VERSION = '0.65'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -52,11 +52,13 @@ import logging, os, sys
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.ISO_639_3_Languages import ISO_639_3_Languages
-from Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
+from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA') # Must be UPPERCASE
@@ -80,7 +82,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -130,7 +132,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-                for osisBkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes():
+                for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
                     # osisBkCodes are all UPPERCASE
                     #print( 'obc', osisBkCode, upperFilename )
                     if osisBkCode in somethingUpper:
@@ -184,7 +186,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 if ignore: continue
                 if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                     foundSubfiles.append( something )
-                    for osisBkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes():
+                    for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
                         # osisBkCodes are all UPPERCASE
                         #print( 'obc', osisBkCode, upperFilename )
                         if osisBkCode in somethingUpper:
@@ -316,7 +318,7 @@ class OSISXMLBible( Bible ):
                         self.possibleFilenames.append( filename )
                         foundBBB = None
                         upperFilename = filename.upper()
-                        for osisBkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes():
+                        for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
                             # osisBkCodes are all UPPERCASE
                             #print( 'obc', osisBkCode, upperFilename )
                             if osisBkCode in upperFilename:
@@ -324,17 +326,17 @@ class OSISXMLBible( Bible ):
                                 if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
                                 if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
                                 assert not foundBBB # Don't expect duplicates
-                                foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
+                                foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
                                 #print( "  FoundBBB1 = {!r}".format( foundBBB ) )
                         if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-                            for bkCode in BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+                            for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
                                 # returned bkCodes are all UPPERCASE
                                 #print( 'bc', bkCode, upperFilename )
                                 if bkCode in upperFilename:
                                     #print( 'OSISXMLBible.__init__ ' + _("found {!r} in {!r}").format( bkCode, upperFilename ) )
                                     if foundBBB: # already -- don't expect doubles
                                         logging.warning( 'OSISXMLBible.__init__: ' + _("Found a second possible book abbreviation for {} in {}").format( foundBBB, filename ) )
-                                    foundBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
+                                    foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
                                     #print( "  FoundBBB2 = {!r}".format( foundBBB ) )
                         if foundBBB:
                             if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
@@ -348,7 +350,7 @@ class OSISXMLBible( Bible ):
             assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
                     or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
             newCorrectlyOrderedList = []
-            for BBB in BibleOrgSysGlobals.BibleBooksCodes: # ordered by reference number
+            for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes: # ordered by reference number
                 #print( BBB )
                 if BBB in BBBList:
                     ix = BBBList.index( BBB )
@@ -1648,7 +1650,7 @@ class OSISXMLBible( Bible ):
         Check/validate the given OSIS header record.
         """
         if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS header…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
-        headerlocation = "header"
+        headerlocation = 'header'
         BibleOrgSysGlobals.checkXMLNoText( header, headerlocation, '2s90', loadErrors )
         BibleOrgSysGlobals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
         BibleOrgSysGlobals.checkXMLNoTail( header, headerlocation, '0k6l', loadErrors )
@@ -2302,7 +2304,7 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
                         cmBBB = None
                         try:
-                            cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( bits[0] )
+                            cmBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bits[0] )
                         except KeyError:
                             logging.critical( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
                             loadErrors.append( _("{!r} is not a valid OSIS book identifier in chapter milestone {}").format( bits[0], OSISChapterID ) )
@@ -2344,15 +2346,15 @@ class OSISXMLBible( Bible ):
                                     ##print( lastUSFMResultList )
                                     #adjSFMResult = tuple( lastUSFMResultList )
                                 if lastLineTuple:
-                                    self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( programName, programVersion ) )
+                                    self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( PROGRAM_NAME, PROGRAM_VERSION ) )
                                     self.thisBook.addLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
                                     self.thisBook.addLine( 'mt1', lastLineTuple[1] ) # Change from s to mt1
                                 chapterMilestone = verseMilestone = ''
                                 foundH = False
                             BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
                             #print( "23f4 BBB is", BBB )
-                            USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                            USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                            USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
                             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}…").format( BBB ) )
                             self.thisBook = BibleBook( self, BBB )
                             self.thisBook.objectNameString = 'OSIS XML Bible Book object'
@@ -2847,7 +2849,7 @@ class OSISXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( mainDivOsisID )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( mainDivOsisID )
             except KeyError:
                 logging.critical( _("{!r} is not a valid OSIS book identifier in mainDiv").format( mainDivOsisID ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -2859,13 +2861,13 @@ class OSISXMLBible( Bible ):
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "Multiple alternatives for OSIS {!r}: {} (Choosing the first one)".format( mainDivOsisID, BBB ) )
                     BBB = BBB[0]
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
-                USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
                 self.thisBook = BibleBook( self, BBB )
                 self.thisBook.objectNameString = 'OSIS XML Bible Book object'
                 self.thisBook.objectTypeString = 'OSIS'
                 self.haveBook = True
-            self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( programName, programVersion ) )
+            self.thisBook.addLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( PROGRAM_NAME, PROGRAM_VERSION ) )
             self.thisBook.addLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
         #elif mainDivType=='bookGroup':
             ## This is all the books lumped in together into one big div
@@ -3201,7 +3203,7 @@ class OSISXMLBible( Bible ):
                     #print( "cm", chapterMilestone )
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
-                        newBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( OSISBookID )
+                        newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( OSISBookID )
                     except KeyError:
                         logging.critical( _("{!r} is not a valid OSIS book identifier").format( OSISBookID ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -3210,8 +3212,8 @@ class OSISXMLBible( Bible ):
                         newBBB = newBBB[0]
                     if newBBB != BBB:
                         BBB = newBBB
-                        USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                        USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                        USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                        USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
                         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix
@@ -3563,7 +3565,7 @@ def demo() -> None:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( oB ) # Just print a summary
 
             if 1: # Test verse lookup
-                from Reference import VerseReferences
+                from BibleOrgSys.Reference import VerseReferences
                 for referenceTuple in (
                                     ('OT','GEN','1','1'), ('OT','GEN','1','3'),
                                     ('OT','RUT','1','1'), ('OT','RUT','3','3'),
@@ -3598,10 +3600,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of OSISXMLBible.py

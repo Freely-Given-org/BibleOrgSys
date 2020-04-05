@@ -1,19 +1,33 @@
 __pycache__/
 *.pyc
 *.o
+*.snap
+*.off
+
+*.bak
+*.bak1
+*.bak2
+*.bak3
+*.bak4
+*.bak5
+*.bak6
+*.bak7
+*.bak8
+*.bak9
 
 build/
 dist/
 myVEnv/
+snap/
 
 Extras/
 ExtraStuff/
-TempTestData/
+NotIncluded/
+PrivateResources/
 
-*.bak
-*.bak2
-*.bak3
-*.bak4
+TempTestData/
+DataFilesForTests/
+DerivedFiles.sav/
 
 # Ignore various tools folders and files
 .mypy_cache/

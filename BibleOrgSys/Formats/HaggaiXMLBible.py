@@ -59,12 +59,12 @@ Module reading and loading Haggai XML Bibles:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "HaggaiBible"
-programName = "Haggai XML Bible format handler"
-programVersion = '0.33'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "HaggaiBible"
+PROGRAM_NAME = "Haggai XML Bible format handler"
+PROGRAM_VERSION = '0.33'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -73,10 +73,12 @@ import logging, os, sys
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -338,7 +340,7 @@ class HaggaiXMLBible( Bible ):
 
         # TODO: We probably need to rationalise some of the self.xxx stores
         for element in self.header:
-            #print( "header", element.tag )
+            #print( 'header', element.tag )
             if element.tag == 'title':
                 sublocation = "title in {}".format( location )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -461,7 +463,7 @@ class HaggaiXMLBible( Bible ):
                 bookShortName = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
-            try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             except KeyError:
                 logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
                                                                         .format( bookNumber, bookName, bookShortName ) )
@@ -746,7 +748,7 @@ def demo() -> None:
                         ##print( "Looking for", ref )
                         #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
-                        from Reference import VerseReferences
+                        from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                             ('OT','DAN','1','21'),
                                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -765,7 +767,7 @@ def demo() -> None:
                         hB.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total Haggai Bibles processed.".format( count ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -773,10 +775,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of HaggaiXMLBible.py

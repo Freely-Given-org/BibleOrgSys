@@ -35,12 +35,12 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-02-24' # by RJH
-shortProgramName = "ESFMFile"
-programName = "ESFM File loader"
-programVersion = '0.87'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+SHORT_PROGRAM_NAME = "ESFMFile"
+PROGRAM_NAME = "ESFM File loader"
+PROGRAM_VERSION = '0.87'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -49,9 +49,11 @@ import logging, sys
 
 if __name__ == '__main__':
     import os.path
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USFMFile import splitMarkerFromText
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USFMFile import splitMarkerFromText
 
 
 
@@ -78,7 +80,7 @@ class ESFMFile:
         @rtype: string
         """
         result = "ESFM File Object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
@@ -173,10 +175,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESFMFile.py

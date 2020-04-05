@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferencesTests.py
-#   Last modified: 2014-12-15 by RJH (also update programVersion below)
+#   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)
 #
 # Module testing BibleReferences.py
 #
@@ -27,23 +27,22 @@
 Module testing BibleReferences.py.
 """
 
-programName = "Bible References tests"
-programVersion = '0.25'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "Bible References tests"
+PROGRAM_VERSION = '0.25'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import Reference.BibleBooksCodes as BibleBooksCodes
-import Reference.BibleOrganisationalSystems as BibleOrganisationalSystems
-import Reference.BibleReferences as BibleReferences
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference import BibleBooksCodes
+from BibleOrgSys.Reference import BibleOrganisationalSystems
+from BibleOrgSys.Reference import BibleReferences
 
 
 class BibleReferencesTests( unittest.TestCase ):
@@ -297,7 +296,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

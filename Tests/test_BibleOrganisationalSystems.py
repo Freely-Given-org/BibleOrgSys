@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganisationalSystemsTests.py
-#   Last modified: 2014-12-15 (also update programVersion below)
+#   Last modified: 2014-12-15 (also update PROGRAM_VERSION below)
 #
 # Module testing BibleOrganisationalSystems.py
 #
@@ -27,22 +27,21 @@
 Module testing BibleOrganisationalSystemsConverter.py and BibleOrganisationalSystems.py.
 """
 
-programName = "Bible Organizational Systems tests"
-programVersion = '0.48'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "Bible Organizational Systems tests"
+PROGRAM_VERSION = '0.48'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import Reference.BibleOrganisationalSystemsConverter as BibleOrganisationalSystemsConverter
-import Reference.BibleOrganisationalSystems as BibleOrganisationalSystems
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.Converters import BibleOrganisationalSystemsConverter
+from BibleOrgSys.Reference import BibleOrganisationalSystems
 
 
 class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
@@ -292,7 +291,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

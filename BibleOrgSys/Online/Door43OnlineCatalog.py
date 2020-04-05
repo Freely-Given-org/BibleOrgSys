@@ -39,12 +39,12 @@ More details are available from https://api-info.readthedocs.io/en/latest/index.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-07-15' # by RJH
-shortProgramName = "Door43OnlineCatalog"
-programName = "Door43 Online Catalog online handler"
-programVersion = '0.08'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-07-15' # by RJH
+SHORT_PROGRAM_NAME = "Door43OnlineCatalog"
+PROGRAM_NAME = "Door43 Online Catalog online handler"
+PROGRAM_VERSION = '0.08'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     import sys
     import re
 import logging # Append the containing folder to the path to search for the BOS
-import BibleOrgSysGlobals
-from Misc.singleton import singleton
-from Formats.USFMBible import USFMBible
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
 URL_BASE = 'https://api.door43.org'
@@ -484,7 +484,7 @@ def demo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
-    from Reference.VerseReferences import SimpleVerseKey
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion, end='\n\n' )
 
@@ -611,10 +611,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of Door43OnlineCatalog.py

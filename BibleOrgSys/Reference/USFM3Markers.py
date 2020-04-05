@@ -35,12 +35,12 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-03' # by RJH
-shortProgramName = "USFM3Markers"
-programName = "USFM3 Markers handler"
-programVersion = '0.06'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+SHORT_PROGRAM_NAME = "USFM3Markers"
+PROGRAM_NAME = "USFM3 Markers handler"
+PROGRAM_VERSION = '0.06'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -50,9 +50,11 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-from Misc.singleton import singleton
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 # STATIC USFM TABLES
@@ -288,27 +290,34 @@ class USFM3Markers:
     # end of USFM3Markers.__init__
 
 
-    def loadData( self, XMLFilepath=None ):
+    def loadData( self, XMLFileOrFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDict: # We need to load them once -- don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            standardXMLFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'USFM3Markers.xml' )
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "USFM3Markers_Tables.pickle" )
-            if XMLFilepath is None \
-            and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
-            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-            else: # We have to load the XML (much slower)
-                from Reference.USFM3MarkersConverter import USFM3MarkersConverter
-                if XMLFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
-                umc = USFM3MarkersConverter()
-                umc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-                self.__DataDict = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        return self
+            if XMLFileOrFilepath is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'USFM3Markers.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "USFM3Markers_Tables.pickle" )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # and os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+            # else: # We have to load the XML (much slower)
+            from BibleOrgSys.Reference.Converters.USFM3MarkersConverter import USFM3MarkersConverter
+            if XMLFileOrFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+            umc = USFM3MarkersConverter()
+            umc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            self.__DataDict = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        return self # So this command can be chained after the object creation
     # end of USFM3Markers.loadData
 
 
@@ -821,10 +830,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM3Markers.py

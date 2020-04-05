@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_LanguagesTests.py
-#   Last modified: 2014-12-15 by RJH (also update programVersion below)
+#   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)
 #
 # Module testing ISO_639_3_Languages.py
 #
@@ -27,22 +27,21 @@
 Module testing ISO_639_3_Languages.py.
 """
 
-programName = "ISO-639-3 language code tests"
-programVersion = '0.85'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "ISO-639-3 language code tests"
+PROGRAM_VERSION = '0.85'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import Reference.ISO_639_3_LanguagesConverter as ISO_639_3_LanguagesConverter
-import Reference.ISO_639_3_Languages as ISO_639_3_Languages
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.Converters import ISO_639_3_LanguagesConverter
+from BibleOrgSys.Reference import ISO_639_3_Languages
 
 
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
@@ -54,7 +53,7 @@ class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
 
     def test_1010_len( self ):
         """ Test the __len__ function. """
-        self.assertTrue( 8000 < len(self.isoLgC) < 10000 ) # The number of loaded systems
+        self.assertTrue( 7_800 < len(self.isoLgC) < 8_000 ) # The number of loaded systems
     # end of test_1010_len
 
     def test_1020_importDataToPython( self ):
@@ -186,7 +185,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( result, str ) )
                 self.assertTrue( len(result) == 3 )
         self.assertEqual( self.isoLgs.getPart2Code( 'eng' ), 'eng' )
-        self.assertEqual( self.isoLgs.getPart2Code( 'deu' ), 'ger' )
+        self.assertEqual( self.isoLgs.getPart2Code( 'deu' ), 'deu' ) # Was 'ger'
         self.assertEqual( self.isoLgs.getPart2Code( 'mqk' ), None )
         self.assertEqual( self.isoLgs.getPart2Code( 'zzj' ), None )
         self.assertEqual( self.isoLgs.getPart2Code( 'akk' ), 'akk' )
@@ -230,7 +229,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

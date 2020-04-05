@@ -37,12 +37,12 @@ Functions for replace and regex replace which explain what they did.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-02-09' # by RJH
+LAST_MODIFIED_DATE = '2018-02-09' # by RJH
 ShortProgName = "NoisyReplaceFunctions"
 ProgName = "Noisy Replace Functions"
 ProgVersion = '0.07'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
 debuggingThisModule = False
 
@@ -54,8 +54,10 @@ import re
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 

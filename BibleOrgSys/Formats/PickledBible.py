@@ -47,12 +47,12 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-23' # by RJH
-shortProgramName = "PickledBible"
-programName = "Pickle Bible handler"
-programVersion = '0.15'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-23' # by RJH
+SHORT_PROGRAM_NAME = "PickledBible"
+PROGRAM_NAME = "Pickle Bible handler"
+PROGRAM_VERSION = '0.15'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -66,12 +66,14 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible
-from Internals.InternalBibleBook import InternalBibleBook
-from Internals.InternalBibleInternals import InternalBibleEntryList
-from Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
+from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
 
 
 
@@ -288,9 +290,9 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
             return False
 
     # Now pickle the version object
-    from Internals.InternalBible import programNameVersionDate as IBProgVersion
-    from Internals.InternalBibleBook import programNameVersionDate as IBBProgVersion
-    from Internals.InternalBibleInternals import programNameVersionDate as IBIProgVersion
+    from BibleOrgSys.Internals.InternalBible import programNameVersionDate as IBProgVersion
+    from BibleOrgSys.Internals.InternalBibleBook import programNameVersionDate as IBBProgVersion
+    from BibleOrgSys.Internals.InternalBibleInternals import programNameVersionDate as IBIProgVersion
     filepath = os.path.join( outputFolder, VERSION_FILENAME )
     createdFilenames.append( VERSION_FILENAME )
     with open( filepath, 'wb' ) as pickleOutputFile:
@@ -540,7 +542,7 @@ class PickledBible( Bible ):
 
         result = self.objectNameString
         indent = 2
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
         if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
         result += ('\n' if result else '') + ' '*indent + _("Packaged: {}").format( self.pickleVersionData['WrittenDateTime'].split( ' ', 1)[0] )
@@ -830,8 +832,8 @@ def demo() -> None:
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
                 if 1:
-                    from Reference.VerseReferences import SimpleVerseKey
-                    from Internals.InternalBibleInternals import InternalBibleEntry
+                    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )
                         shortText = svk.getShortText()
@@ -948,10 +950,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
+    BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of PickledBible.py

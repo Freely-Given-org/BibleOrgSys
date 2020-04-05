@@ -40,12 +40,12 @@ Note: The demo takes about 4 minutes with our Sword code,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-13' # by RJH
-shortProgramName = "SwordBible"
-programName = "Sword Bible format handler"
-programVersion = '0.36'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-13' # by RJH
+SHORT_PROGRAM_NAME = "SwordBible"
+PROGRAM_NAME = "Sword Bible format handler"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -56,12 +56,14 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible #, BibleBook
-from Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible #, BibleBook
+from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
                       # Normally it wouldn't be a problem, but we adjust SwordType in DemoTests to test both modes
-#from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+#from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
  # Must be lowercase
@@ -432,7 +434,7 @@ class SwordBible( Bible ):
                 #vkBits = verseKeyText.split()
                 #assert len(vkBits) == 2
                 #osisBBB = vkBits[0]
-                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
+                #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 #if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 #vkBits = vkBits[1].split( ':' )
                 #assert len(vkBits) == 2
@@ -486,7 +488,7 @@ def testSwB( SwFolderPath, SwModuleName=None ):
     """
     Crudely demonstrate and test the Sword Bible class
     """
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Sword Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( SwFolderPath, SwModuleName ) )
@@ -605,10 +607,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordBible.py

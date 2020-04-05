@@ -51,12 +51,12 @@ e.g.,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-12' # by RJH
-shortProgramName = "theWordBible"
-programName = "theWord Bible format handler"
-programVersion = '0.55'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+SHORT_PROGRAM_NAME = "theWordBible"
+PROGRAM_NAME = "theWord Bible format handler"
+PROGRAM_VERSION = '0.55'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -66,13 +66,15 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
-from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
-from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 BOS = None
@@ -124,7 +126,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 # end of exp
 
@@ -756,7 +758,7 @@ def handleRTFLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -773,7 +775,7 @@ def handleRTFLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                         print( "marker", marker )
                         print( "leftovers", repr(leftovers) )
                         assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r')
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         bookObject.addLine( marker, bits[1] )
                     elif not writtenV:
                         bookObject.addLine( 'v', '{} {}'.format( V, segment ) )
@@ -1335,7 +1337,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
     """
     Crudely demonstrate the theWord Bible class.
     """
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
@@ -1426,7 +1428,7 @@ def demo() -> None:
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one……temp
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1: # all discovered modules in the test folder
         testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' )
@@ -1453,17 +1455,17 @@ def demo() -> None:
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one…temp
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of theWordBible.py

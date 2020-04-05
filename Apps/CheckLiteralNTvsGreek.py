@@ -56,24 +56,23 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-24' # by RJH
-shortProgramName = "CheckLiteralNTvsGreek"
-programName = "Check Literal NT vs Greek"
-programVersion = '0.02'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-24' # by RJH
+SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
+PROGRAM_NAME = "Check Literal NT vs Greek"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
-import BibleOrgSysGlobals
-from Reference.VerseReferences import SimpleVerseKey
-from Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
 
 
@@ -159,11 +158,11 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
     # Do the BOS close-down stuff
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CheckLiteralNTvsGreek.py

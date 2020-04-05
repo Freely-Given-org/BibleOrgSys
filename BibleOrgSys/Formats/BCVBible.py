@@ -28,12 +28,12 @@ Module for defining and manipulating complete or partial BCV Bibles.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-09' # by RJH
-shortProgramName = "BCVBible"
-programName = "BCV Bible handler"
-programVersion = '0.22'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-09' # by RJH
+SHORT_PROGRAM_NAME = "BCVBible"
+PROGRAM_NAME = "BCV Bible handler"
+PROGRAM_VERSION = '0.22'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -44,10 +44,12 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -68,7 +70,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -123,7 +125,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                if folderName not in BibleOrgSysGlobals.BibleBooksCodes:
+                if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                     print( "BCVBibleFileCheck: Suprised to find folder:", folderName )
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("BCVBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
@@ -162,7 +164,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    if folderName not in BibleOrgSysGlobals.BibleBooksCodes:
+                    if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         print( "BCVBibleFileCheckSuprised to find folder:", folderName )
     if numFound:
         if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("BCVBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
@@ -308,7 +310,7 @@ class BCVBible( Bible ):
                 #for something in bl[1:-1].split( ',' ):
                     #if something[0]==' ': something = something[1:]
                     #if something[0]=="'" and something[-1]=="'": something = something[1:-1]
-                    #if something in BibleOrgSysGlobals.BibleBooksCodes:
+                    #if something in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         #self.givenBookList.append( something )
                     #else: print( exp("ERROR: Unexpected {!r} booklist entry in metadata file").format( something ) )
                 #del self.suppliedMetadata['BCV']['BookList']
@@ -675,7 +677,7 @@ def demo() -> None:
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 #end of demo
 
 if __name__ == '__main__':
@@ -683,10 +685,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BCVBible.py
