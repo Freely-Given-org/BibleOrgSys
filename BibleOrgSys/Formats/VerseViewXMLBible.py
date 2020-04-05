@@ -59,12 +59,12 @@ Module reading and loading VerseView XML Bibles:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "VerseViewBible"
-programName = "VerseView XML Bible format handler"
-programVersion = '0.17'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "VerseViewBible"
+PROGRAM_NAME = "VerseView XML Bible format handler"
+PROGRAM_VERSION = '0.17'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -74,10 +74,12 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -351,7 +353,7 @@ class VerseViewXMLBible( Bible ):
             adjustedBookName = BibleOrgSysGlobals.removeAccents( bookName )
             if adjustedBookName != bookName:
                 BBB = self.genericBOS.getBBBFromText( adjustedBookName )
-        BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+        BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
         if BBB2 != BBB: # Just double check using the book number
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "Assuming that book {} {!r} is {} (not {})".format( bookNumber, bookName, BBB2, BBB ) )
@@ -565,13 +567,13 @@ def demo() -> None:
                         vvB.check()
                         #UBErrors = UB.getErrors()
                         # print( UBErrors )
-                    #print( UB.getVersification () )
-                    #print( UB.getAddedUnits () )
+                    #print( UB.getVersification() )
+                    #print( UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##print( "Looking for", ref )
                         #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
-                        from Reference import VerseReferences
+                        from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                             ('OT','DAN','1','21'),
                                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -590,7 +592,7 @@ def demo() -> None:
                         #vvB.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total VerseView Bibles processed.".format( count ) )
-        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -598,10 +600,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of VerseViewXMLBible.py

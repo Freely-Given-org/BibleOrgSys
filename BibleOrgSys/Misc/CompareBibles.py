@@ -77,12 +77,12 @@ REGEX stuff:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2020-01-04' # by RJH
+LAST_MODIFIED_DATE = '2020-01-04' # by RJH
 ShortProgName = "CompareBibles"
 ProgName = "Bible compare analyzer"
 ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
 debuggingThisModule = False
 
@@ -95,9 +95,11 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible
 
 
 
@@ -1052,13 +1054,13 @@ def demo():
     """
     Demonstration program to handle command line parameters and then run what they want.
     """
-    from Formats.USFMBible import USFMBible
+    from BibleOrgSys.Formats.USFMBible import USFMBible
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( ProgNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else ProgNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     # Load a USFM Bible and BT
@@ -1167,13 +1169,13 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    from UnknownBible import UnknownBible
+    from BibleOrgSys.UnknownBible import UnknownBible
 
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( ProgNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else ProgNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
     #if BibleOrgSysGlobals.print( BibleOrgSysGlobals.commandLineArguments )
 

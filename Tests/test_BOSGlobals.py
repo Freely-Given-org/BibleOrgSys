@@ -2,11 +2,10 @@ import unittest
 import os.path
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
 
 class BOSGlobalsTestCase(unittest.TestCase):
 

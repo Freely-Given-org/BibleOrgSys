@@ -37,12 +37,12 @@ Limitations:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-12' # by RJH
-shortProgramName = "PDBBible"
-programName = "PDB Bible format handler"
-programVersion = '0.67'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+SHORT_PROGRAM_NAME = "PDBBible"
+PROGRAM_NAME = "PDB Bible format handler"
+PROGRAM_VERSION = '0.67'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -54,9 +54,11 @@ from binascii import hexlify
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
@@ -73,7 +75,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -710,17 +712,17 @@ class PalmDBBible( Bible ):
                 BBB = None
                 if bookNumber % 10 == 0:
                     if bookNumber <= 160:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber / 10 )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber / 10 )
                     elif bookNumber == 170: BBB = 'TOB'
                     elif bookNumber == 180: BBB = 'JDT'
                     elif bookNumber == 190: BBB = 'EST'
                     elif 220 <= bookNumber <= 260:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-40) / 10 )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-40) / 10 )
                     elif 290 <= bookNumber <= 310:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-60) / 10 )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-60) / 10 )
                     elif bookNumber == 320: BBB = 'BAR'
                     elif 330 <= bookNumber <= 730:
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-70) / 10 )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-70) / 10 )
                 elif bookNumber == 315: BBB = 'LJE'
                 #BBB = convertBNtoBBB[bookNumber]
                 #shortNameUpper = shortName.upper()
@@ -860,7 +862,7 @@ class PalmDBBible( Bible ):
 
 def testPB( TUBfilename ):
     # Crudely demonstrate the PDB Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #TUBfolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/PalmBiblePlus/' ) # Must be the same as below
     TUBfolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' )
 
@@ -947,12 +949,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of PalmDBBible.py

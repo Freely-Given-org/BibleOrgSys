@@ -27,12 +27,12 @@
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-10-09' # by RJH
-shortProgramName = "BibleStylesheets"
-programName = "Bible stylesheet handler"
-programVersion = '0.16'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-10-09' # by RJH
+SHORT_PROGRAM_NAME = "BibleStylesheets"
+PROGRAM_NAME = "Bible stylesheet handler"
+PROGRAM_VERSION = '0.16'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -42,10 +42,12 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-from InputOutput import SFMFile
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.InputOutput import SFMFile
 
 
 
@@ -297,7 +299,7 @@ class BibleStylesheet():
     def validate( self ):
         """
         """
-        from Internals.InternalBibleInternals import BOS_ALL_ADDED_MARKERS
+        from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( exp("validate"), USFMMarker, styleData )
@@ -306,7 +308,7 @@ class BibleStylesheet():
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
             #print( USFMMarker )
-            assert USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
+            assert USFMMarker in BibleOrgSysGlobals.loadedUSFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
     # end of BibleStylesheet.load
 
 
@@ -318,7 +320,7 @@ class BibleStylesheet():
         self.name = PTSS.name
         self.filepath = PTSS.filepath
         self.dataDict = {}
-        for marker in BibleOrgSysGlobals.USFMMarkers:
+        for marker in BibleOrgSysGlobals.loadedUSFMMarkers:
             #print( marker )
             try: PTFormatting = PTSS.getDict( marker )
             except KeyError: PTFormatting = None # Just ignore the error
@@ -350,7 +352,7 @@ class BibleStylesheet():
         @rtype: string
         """
         result = "BibleStylesheet object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
@@ -433,7 +435,7 @@ class ParatextStylesheet():
     def validate( self ):
         for USFMMarker in self.dataDict:
             #print( USFMMarker )
-            if USFMMarker not in BibleOrgSysGlobals.USFMMarkers:
+            if USFMMarker not in BibleOrgSysGlobals.loadedUSFMMarkers:
                 logging.warning( "ParatextStylesheet validate: found unexpected {!r} marker".format( USFMMarker ) )
     # end of ParatextStylesheet.load
 
@@ -456,7 +458,7 @@ class ParatextStylesheet():
         @rtype: string
         """
         result = "ParatextStylesheet object"
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
@@ -557,10 +559,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleStylesheets.py

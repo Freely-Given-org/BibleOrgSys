@@ -60,17 +60,17 @@ BibleVersificationSystem class:
     isValidBCVRef( self, referenceTuple, referenceString=None, extended=False )
     expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
     convertToReferenceVersification( self, BBB, C, V, S=None )
-    convertfrom ReferenceVersification( self, refBBB, refC, refV, refS=None )
+    convertfrom BibleOrgSys.ReferenceVersification( self, refBBB, refC, refV, refS=None )
 """
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-22' # by RJH
-shortProgramName = "BibleVersificationSystems"
-programName = "Bible Versification Systems handler"
-programVersion = '0.60'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-22' # by RJH
+SHORT_PROGRAM_NAME = "BibleVersificationSystems"
+PROGRAM_NAME = "Bible Versification Systems handler"
+PROGRAM_VERSION = '0.60'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -80,9 +80,8 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-#from Misc.singleton import singleton
-import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -118,10 +117,10 @@ class BibleVersificationSystems:
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
-                    XMLfilepath = os.path.join( standardXMLFolder, filename )
+                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEVERSIFICATIONSYSTEM_"):
-                        if pickle8 <= os.stat( XMLfilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLfilepath ).st_ctime: # The pickle file is older
+                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
                             picklesGood = False; break
             if picklesGood:
                 import pickle
@@ -129,7 +128,7 @@ class BibleVersificationSystems:
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
-                from Reference.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
+                from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
                 if XMLFolder is not None: logging.warning( _("Bible versification systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bvsc = BibleVersificationSystemsConverter()
                 bvsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
@@ -523,7 +522,7 @@ class BibleVersificationSystems:
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
-                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
+                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
                     myFile.write( "    <referenceAbbreviation>{}</referenceAbbreviation>\n".format( BBB ) )
                     myFile.write( "    <numChapters>{}</numChapters>\n".format( len(versificationSchemeToCheck[BBB]) ) )
                     for c,numV in versificationSchemeToCheck[BBB]:
@@ -647,7 +646,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else return None
@@ -660,7 +659,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else return None
@@ -677,7 +676,7 @@ class BibleVersificationSystem:
             print( "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
             assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
             C = str( C )
@@ -906,7 +905,7 @@ class BibleVersificationSystem:
 
         Returns a new BBB, C, V, S.
         """
-        logging.debug( "converfrom ReferenceVersification does nothing yet!" )
+        logging.debug( "converfrom BibleOrgSys.ReferenceVersification does nothing yet!" )
         BBB, C, V, S = refBBB, refC, refV, refS
         return BBB, C, V, S
     # end of BibleVersificationSystem.convertfromReferenceVersification
@@ -964,10 +963,10 @@ def demo() -> None:
 
 if __name__ == '__main__':
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleVersificationSystems.py

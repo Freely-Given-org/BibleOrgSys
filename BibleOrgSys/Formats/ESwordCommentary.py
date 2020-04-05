@@ -48,12 +48,12 @@ e.g.,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-12' # by RJH
-shortProgramName = "e-SwordCommentary"
-programName = "e-Sword Commentary format handler"
-programVersion = '0.07'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "e-SwordCommentary"
+PROGRAM_NAME = "e-Sword Commentary format handler"
+PROGRAM_VERSION = '0.07'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -64,11 +64,13 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Formats.ESwordBible import handleESwordLine
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Formats.ESwordBible import handleESwordLine
 
 
 
@@ -231,7 +233,7 @@ class ESwordCommentary( Bible ):
             #BBBn, C, V, text = row # First three are integers, the last is a string
             ##print( repr(BBBn), repr(C), repr(V), repr(text) )
             #if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
-            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
+            #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn )
             #if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 #logging.error( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -283,7 +285,7 @@ class ESwordCommentary( Bible ):
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
         #del rows
         #BBB1 = None
-        #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+        #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
 
         #testament = BBB = None
@@ -384,11 +386,11 @@ class ESwordCommentary( Bible ):
             BBBn1 = bookRows[0][0]
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
                 print( '  First book number is {}'.format( BBBn1 ) )
-            if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+            if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
             bookCommentary = {}
             for bkNum,line in bookRows:
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
                 BBBList.append( BBB )
                 #print( "Bk={} BBB={} Line: {!r}…".format( bkNum, BBB, line[:120] ) )
                 bookCommentary[BBB] = line
@@ -402,7 +404,7 @@ class ESwordCommentary( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( '{} chapter rows found'.format( len(chapterRows) ) )
         for bkNum,chNum,line in chapterRows:
-            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -421,7 +423,7 @@ class ESwordCommentary( Bible ):
             print( '{} verse rows found'.format( len(verseRows) ) )
         for bkNum,chBegin,chEnd,vBegin,vEnd,line in verseRows:
             #print( bkNum,chBegin,chEnd,vBegin,vEnd )
-            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -502,7 +504,7 @@ class ESwordCommentary( Bible ):
         thisBook.objectTypeString = 'e-Sword-Commentary'
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
 
         ourGlobals = {}
         #continued = ourGlobals['haveParagraph'] = False
@@ -619,9 +621,9 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-    from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
-    from Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+    from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
     def adjustLine( BBB, C, V, originalLine ):
         """
@@ -923,7 +925,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         bkData = self.books[BBB] if BBB in self.books else None
         #print( bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None
@@ -1113,7 +1115,7 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
     """
     Crudely demonstrate the e-Sword Bible commentary class
     """
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/e-Sword modules/' ) # Must be the same as below
 
@@ -1275,10 +1277,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESwordCommentary.py

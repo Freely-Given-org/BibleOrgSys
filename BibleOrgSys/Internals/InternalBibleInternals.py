@@ -66,12 +66,12 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-12' # by RJH
-shortProgramName = "BibleInternals"
-programName = "Bible internals handler"
-programVersion = '0.78'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-12' # by RJH
+SHORT_PROGRAM_NAME = "BibleInternals"
+PROGRAM_NAME = "Bible internals handler"
+PROGRAM_VERSION = '0.78'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
@@ -84,9 +84,11 @@ import re
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 #from BibleReferences import BibleAnchorReference
 
@@ -166,7 +168,7 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
 
     Returns a dictionary of attributes.
 
-    TODO: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
+    TODO: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )" )
@@ -262,7 +264,7 @@ def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList
 
     Returns a dictionary of attributes.
 
-    NOTE: No error messages added yet ................... XXXXXXXXXXXXXXXXXXXXXXX
+    NOTE: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         print( "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
@@ -572,8 +574,8 @@ class InternalBibleEntry:
                 assert extras is None or isinstance( extras, InternalBibleExtraList )
                 assert isinstance( originalText, str )
                 assert '\n' not in originalText and '\r' not in originalText
-                #assert marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
-                if marker not in BibleOrgSysGlobals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
+                #assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
+                if marker not in BibleOrgSysGlobals.loadedUSFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle {!r} marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
@@ -684,7 +686,7 @@ class InternalBibleEntry:
                     offset += len(extraText ) + 2*lenUSFM + 4
                 # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
                 #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
-                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w ...\w* fields
+                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w …\w* fields
                 result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
 
             if result != self.adjustedText:
@@ -837,7 +839,7 @@ def demo() -> None:
     global debuggingThisModule
     if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
         import os
-        from Formats.USFMBible import USFMBible
+        from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
                 ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
@@ -856,7 +858,7 @@ def demo() -> None:
                     bookObject._SectionIndex = InternalBibleSectionIndex( bookObject )
                     bookObject._SectionIndex.makeSectionIndex()
                     if BBB=='GEN': halt
-            else: logger.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 
@@ -865,10 +867,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of InternalBibleInternals.py

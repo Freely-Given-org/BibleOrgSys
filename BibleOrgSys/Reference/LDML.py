@@ -53,12 +53,12 @@ NOTE: This preliminary module currently parses a range of XML files
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-28' # by RJH
-shortProgramName = "LDML_Handler"
-programName = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-programVersion = '0.13'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-28' # by RJH
+SHORT_PROGRAM_NAME = "LDML_Handler"
+PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
+PROGRAM_VERSION = '0.13'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -71,8 +71,10 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -92,7 +94,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -2533,7 +2535,7 @@ class LDMLFile:
                             draft = fType = alt = None
                             for attrib,value in sub2element.items():
                                 #print( "hereF8", attrib, value )
-                                if attrib=='type': fType = value # assert fType in ('day','day-narrow','day-short','dayperiod','era','fri','fri-narrow','fri-short','hour',...)
+                                if attrib=='type': fType = value # assert fType in ('day','day-narrow','day-short','dayperiod','era','fri','fri-narrow','fri-short','hour',…)
                                 #elif attrib=='alt': alt = value
                                 else:
                                     logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2elementLocation ) )
@@ -3029,7 +3031,7 @@ class LDMLFile:
                     clType = clDraft = None
                     for attrib,value in subelement.items():
                         #print( "hereCI7", attrib, value )
-                        if attrib=='type': clType = value # assert clType in ('animal','arrows','body','flag') ...
+                        if attrib=='type': clType = value # assert clType in ('animal','arrows','body','flag') …
                         elif attrib=='draft': clDraft = value; assert clDraft in DRAFT_VALUES
                         else:
                             logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, subelementLocation ) )
@@ -3041,7 +3043,7 @@ class LDMLFile:
                     clpType = clpCount = clpDraft = None
                     for attrib,value in subelement.items():
                         #print( "hereCLP7", attrib, value )
-                        if attrib=='type': clpType = value # assert clpType in ('all','compatibility','enclosed','extended') ...
+                        if attrib=='type': clpType = value # assert clpType in ('all','compatibility','enclosed','extended') …
                         elif attrib=='count': clpCount = value; assert clpCount in ('zero','one','two','other','few','many')
                         elif attrib=='draft': clpDraft = value; assert clpDraft in DRAFT_VALUES
                         else:
@@ -3892,10 +3894,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of LDML.py

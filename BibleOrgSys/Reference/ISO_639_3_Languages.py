@@ -5,7 +5,7 @@
 #
 # Module handling ISO_639_3
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,12 +28,12 @@ Module handling ISO_639_3_Languages.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
-shortProgramName = "ISOLanguages"
-programName = "ISO 639_3_Languages handler"
-programVersion = '0.85'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+SHORT_PROGRAM_NAME = "ISOLanguages"
+PROGRAM_NAME = "ISO 639_3_Languages handler"
+PROGRAM_VERSION = '0.85'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -42,9 +42,11 @@ import os
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-from Misc.singleton import singleton
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 @singleton # Can only ever have one instance
@@ -77,27 +79,33 @@ class ISO_639_3_Languages:
         return result
     # end of ISO_639_3_Languages.__str__
 
-    def loadData( self, XMLFilepath=None ):
+    def loadData( self, XMLFileOrFilepath=None ):
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         if not self.__IDDict and not self.__NameDict: # Don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            standardXMLFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3.xml" )
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "iso_639_3_Languages_Tables.pickle" )
-            if XMLFilepath is None \
-            and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
-            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-            else: # We have to load the XML
-                from Reference.ISO_639_3_LanguagesConverter import ISO_639_3_LanguagesConverter
-                self._lgC = ISO_639_3_LanguagesConverter()
-                self._lgC.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-                self.__IDDict, self.__NameDict = self._lgC.importDataToPython() # Get the various dictionaries organised for quick lookup
-                del self._lgC # Now the converter class (that handles the XML) is no longer needed
-        return self
+            if XMLFileOrFilepath is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3.xml" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "iso_639_3_Languages_Tables.pickle" )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # and os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+            # else: # We have to load the XML
+            from BibleOrgSys.Reference.Converters.ISO_639_3_LanguagesConverter import ISO_639_3_LanguagesConverter
+            lgC = ISO_639_3_LanguagesConverter()
+            lgC.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            self.__IDDict, self.__NameDict = lgC.importDataToPython() # Get the various dictionaries organised for quick lookup
+        return self # So this command can be chained after the object creation
     # end of ISO_639_3_Languages.loadData
 
     def __len__( self ):
@@ -196,10 +204,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ISO_639_3_Languages.py

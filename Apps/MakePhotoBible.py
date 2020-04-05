@@ -70,23 +70,22 @@ inputFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-01-29' # by RJH
-shortProgramName = "MakePhotoBible"
-programName = "Make PhotoBible"
-programVersion = '0.23'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-01-29' # by RJH
+SHORT_PROGRAM_NAME = "MakePhotoBible"
+PROGRAM_NAME = "Make PhotoBible"
+PROGRAM_VERSION = '0.23'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 import os
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
-import BibleOrgSysGlobals
-from UnknownBible import UnknownBible
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
@@ -105,7 +104,7 @@ def main():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( programNameVersion )
-        print( "\n{}: processing input folder {!r} …".format( shortProgramName, inputFolder ) )
+        print( "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
@@ -117,7 +116,7 @@ def main():
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{}: starting export (may take up to 60 minutes)…".format( shortProgramName ) )
+            print( "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -134,10 +133,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MakePhotoBible.py

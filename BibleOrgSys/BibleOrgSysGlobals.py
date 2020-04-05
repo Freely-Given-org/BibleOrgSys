@@ -27,7 +27,7 @@ Module handling global variables
     and some useful general functions.
 
 Contains functions:
-    setupLoggingToFile( programName, programVersion, loggingFolderPath=None )
+    setupLoggingToFile( PROGRAM_NAME, PROGRAM_VERSION, loggingFolderPath=None )
     addConsoleLogging()
     addLogfile( projectName, folderName=None )
     removeLogfile( projectHandler )
@@ -66,7 +66,7 @@ Contains functions:
     pickleObject( theObject, filename, folderName=None )
     unpickleObject( filename, folderName=None )
 
-    setup( programName, programVersion, loggingFolder=None )
+    setup( PROGRAM_NAME, PROGRAM_VERSION, loggingFolder=None )
 
     setVerbosity( verbosityLevelParameter )
     setDebugFlag( newValue=True )
@@ -75,19 +75,18 @@ Contains functions:
     addStandardOptionsAndProcess( parserObject )
     printAllGlobals( indent=None )
 
-    closedown( programName, programVersion )
+    closedown( PROGRAM_NAME, PROGRAM_VERSION )
 
     demo()
 """
-
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-03' # by RJH
-shortProgramName = "BOSGlobals"
-programName = "BibleOrgSys Globals"
-programVersion = '0.83'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+SHORT_PROGRAM_NAME = "BOSGlobals"
+PROGRAM_NAME = "BibleOrgSys Globals"
+PROGRAM_VERSION = '0.83'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 haltOnXMLWarning = False # Used for XML debugging
@@ -166,13 +165,12 @@ if debuggingThisModule:
 ##########################################################################################################
 #
 # Readable folder paths (Writeable ones are further down)
-
 BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containing this file
 #print( f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
+BOS_DATA_FILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DataFiles/' ) # Relative path
 
 BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
 #print( f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
-BOS_DATA_FILES_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'DataFiles/' ) # Relative path
 BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' ) # Relative path
 BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' ) # Relative path
 
@@ -231,10 +229,11 @@ if debugFlag and debuggingThisModule:
 BOS_WRITEABLE_BASE_FOLDERPATH = Path( settingsData['Default']['OutputBaseFolder'] )
 # print( f"BOS_WRITEABLE_BASE_FOLDERPATH = {BOS_WRITEABLE_BASE_FOLDERPATH}")
 
-DEFAULT_LOG_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' ) # Relative path
-DEFAULT_CACHE_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' ) # Relative path
-DEFAULT_OUTPUT_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' ) # Relative path
-DOWNLOADED_RESOURCES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' ) # Relative path
+DEFAULT_LOG_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' )
+DEFAULT_CACHE_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' )
+DEFAULT_OUTPUT_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' )
+DEFAULT_DERIVED_DATAFILES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DerivedDataFiles/' )
+DOWNLOADED_RESOURCES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' )
 
 # Resources like original language lexicons should be based from this folder
 PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
@@ -279,16 +278,16 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( shortProgramNameParameter:str, programVersionParameter:str, folderPath:Optional[Path]=None ) -> None:
+def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter:str, folderPath:Optional[Path]=None ) -> None:
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( f"BibleOrgSysGlobals.setupLoggingToFile( {shortProgramNameParameter!r}, {programVersionParameter!r}, {folderPath!r} )" )
+        print( f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderPath!r} )" )
 
-    filename = shortProgramNameParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
+    filename = SHORT_PROGRAM_NAMEParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderPath is None: folderPath = DEFAULT_LOG_FOLDERPATH # relative path
     filepath = Path( folderPath, filename )
 
@@ -410,18 +409,19 @@ def getLatestPythonModificationDate() -> str:
                        startFolderpath.joinpath( 'Misc/'),
                        ):
         #print( f"folderpath = '{folderpath}'" )
+        searchString = 'LAST_MODIFIED_DATE = '
         for filename in os.listdir( folderpath ):
-            #print( f"filename = '{filename}'" )
+            # print( f"filename = '{filename}'" )
             filepath = folderpath.joinpath( filename )
             #print( f"filepath = '{filepath}'" )
             if filepath.is_file() and filepath.name.endswith( '.py' ):
                 #print( f"  Checking '{filepath}' …" )
                 with open( filepath, 'rt', encoding='utf-8' ) as pythonFile:
                     for line in pythonFile:
-                        if line.startswith( 'lastModifiedDate = ' ):
-                            #print( filepath, line )
+                        if line.startswith( searchString ):
+                            # print( filepath, line )
                             #print( filepath )
-                            lineBit = line[19:]
+                            lineBit = line[len(searchString):]
                             if '#' in lineBit: lineBit = lineBit.split('#',1)[0]
                             if lineBit[-1]=='\n': lineBit = lineBit[:-1] # Removing trailing newline character
                             lineBit = lineBit.replace("'",'').replace('"','').strip()
@@ -1235,7 +1235,7 @@ def unpickleObject( filename, folderName=None ):
 #
 # Default program setup routine
 
-def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
+def setup( shortProgName:str, progVersion:str, lastModDate:str, loggingFolderPath=None ) -> ArgumentParser:
     """
     Does the initial set-up for our scripts / programs.
 
@@ -1246,9 +1246,9 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setup( {!r}, {!r}, {!r} )".format( sShortProgName, sProgVersion, loggingFolderPath ) )
-    setupLoggingToFile( sShortProgName, sProgVersion, folderPath=loggingFolderPath )
-    logging.info( f"{sShortProgName} v{sProgVersion} started at {programStartTime.strftime('%H:%M')}" )
+        print( f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderPath!r} )" )
+    setupLoggingToFile( shortProgName, progVersion, folderPath=loggingFolderPath )
+    logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
 
     if verbosityLevel > 2:
         print( "  This program comes with ABSOLUTELY NO WARRANTY." )
@@ -1256,8 +1256,8 @@ def setup( sShortProgName, sProgVersion, loggingFolderPath=None ):
         print( "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
-    parser = ArgumentParser( description='{} v{} {} {}'.format( sShortProgName, sProgVersion, _("last modified"), lastModifiedDate ) )
-    parser.add_argument( '--version', action='version', version='v{}'.format( sProgVersion ) )
+    parser = ArgumentParser( description='{} v{} {} {}'.format( shortProgName, progVersion, _("last modified"), lastModDate ) )
+    parser.add_argument( '--version', action='version', version='v{}'.format( progVersion ) )
     return parser
 # end of BibleOrgSysGlobals.setup
 
@@ -1337,8 +1337,8 @@ def setStrictCheckingFlag( newValue=True ):
 
 
 # Some global variables
-BibleBooksCodes:Optional[List[str]] = None
-USFMMarkers:Optional[List[str]] = None
+loadedBibleBooksCodes:Optional[List[str]] = None
+loadedUSFMMarkers:Optional[List[str]] = None
 USFMParagraphMarkers:Optional[List[str]] = None
 internal_SFMs_to_remove:Optional[List[str]] = None
 
@@ -1393,10 +1393,11 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
         print( "commandLineArguments: {}".format( commandLineArguments ) )
 
     # Load Bible data sets that are globally useful
-    global BibleBooksCodes, USFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
-    from Reference.BibleBooksCodes import BibleBooksCodes
-    BibleBooksCodes = BibleBooksCodes().loadData()
-    #from Reference.USFM2Markers import USFM2Markers
+    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
+    from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
+    loadedBibleBooksCodes = BibleBooksCodes().loadData()
+    assert loadedBibleBooksCodes # Why didn't this load ???
+    #from BibleOrgSys.Reference.USFM2Markers import USFM2Markers
     #USFM2Markers = USFM2Markers().loadData()
     #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
     #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
@@ -1411,13 +1412,14 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
     #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
     #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
-    from Reference.USFM3Markers import USFM3Markers
-    USFMMarkers = USFM3Markers().loadData()
-    USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
+    loadedUSFMMarkers = USFM3Markers().loadData()
+    assert loadedUSFMMarkers # Why didn't this load ???
+    USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    assert USFMParagraphMarkers # Why didn't this work ???
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    internal_SFMs_to_remove = USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
-    internal_SFMd_to_remove = sorted( internal_SFMs_to_remove, key=len, reverse=True ) # List longest first
-
+    internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
@@ -1474,7 +1476,7 @@ def demo() -> None:
         print( programNameVersionDate if verbosityLevel > 1 else programNameVersion )
         if __name__ == '__main__' and verbosityLevel > 1:
             latestPythonModificationDate = getLatestPythonModificationDate()
-            if latestPythonModificationDate != lastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
     if verbosityLevel>2: printAllGlobals()
 
@@ -1524,9 +1526,9 @@ def demo() -> None:
 setVerbosity( verbosityString )
 #if 0 and __name__ != '__main__':
     ## Load Bible data sets that are globally useful
-    #from Reference.BibleBooksCodes import BibleBooksCodes
+    #from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
     #BibleBooksCodes = BibleBooksCodes().loadData()
-    #from Reference.USFM3Markers import USFM3Markers
+    #from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
     #USFMMarkers = USFM3Markers().loadData()
     #USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
     ##print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
@@ -1546,10 +1548,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = setup( shortProgramName, programVersion )
+    parser = setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
     addStandardOptionsAndProcess( parser )
 
     demo()
 
-    closedown( shortProgramName, programVersion )
+    closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleOrgSysGlobals.py

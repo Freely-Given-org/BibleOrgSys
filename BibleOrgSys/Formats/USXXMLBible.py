@@ -28,12 +28,12 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "USXXMLBibleHandler"
-programName = "USX XML Bible handler"
-programVersion = '0.38'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
+PROGRAM_NAME = "USX XML Bible handler"
+PROGRAM_VERSION = '0.38'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -44,12 +44,14 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USXFilenames import USXFilenames
-#from Formats.PTX7Bible import loadPTX7ProjectData
-from Formats.USXXMLBibleBook import USXXMLBibleBook
-from Bible import Bible
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
+#from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
+from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
+from BibleOrgSys.Bible import Bible
 
 
 
@@ -341,7 +343,7 @@ class USXXMLBible( Bible ):
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
-                                #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
+                                #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
                                 #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                                 #isUSX = True
                             #break # We only look at the first line
@@ -409,15 +411,15 @@ def demo() -> None:
                 if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UBErrors = UB.getErrors()
                 # print( UBErrors )
-                #print( UB.getVersification () )
-                #print( UB.getAddedUnits () )
+                #print( UB.getVersification() )
+                #print( UB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
             else: print( "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
-        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( programName, programVersion ) )
+        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
         #       pass
 
     if 1:
@@ -442,10 +444,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
+    BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of USXXMLBible.py

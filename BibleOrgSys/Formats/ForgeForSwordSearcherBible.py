@@ -52,12 +52,12 @@ Formatting includes:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "ForgeForSwordSearcherBible"
-programName = "Forge for SwordSearcher Bible format handler"
-programVersion = '0.37'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "ForgeForSwordSearcherBible"
+PROGRAM_NAME = "Forge for SwordSearcher Bible format handler"
+PROGRAM_VERSION = '0.37'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -67,10 +67,12 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 BOS66 = BOS81 = BOSx = None
@@ -90,7 +92,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -481,7 +483,7 @@ class ForgeForSwordSearcherBible( Bible ):
 
 def testForge4SS( F4SSFolder ):
     # Crudely demonstrate the Forge for SwordSearcher Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Forge for SwordSearcher Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( F4SSFolder ) )
@@ -588,12 +590,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ForgeForSwordSearcherBible.py

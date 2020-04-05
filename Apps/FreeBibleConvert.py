@@ -29,12 +29,12 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 
 from gettext import gettext as _
 
-lastModifiedDate = '2018-12-02' # by RJH
-shortProgramName = "FreeBibleConverter"
-programName = "FreeBible Converter"
-programVersion = '0.09'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2018-12-02' # by RJH
+SHORT_PROGRAM_NAME = "FreeBibleConverter"
+PROGRAM_NAME = "FreeBible Converter"
+PROGRAM_VERSION = '0.09'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -45,12 +45,11 @@ from datetime import datetime
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 # BibleOrgSys imports
-import BibleOrgSysGlobals
-from NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
 
 
@@ -84,7 +83,7 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         assert splitText[3] == ' '
         bookID = splitText[:3]
         # print( "  Got book id", repr(bookID) )
-        assert bookID in BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
+        assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
 
         # Last chance to fix things up (e.g., by bookID)
@@ -276,10 +275,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of FreeBibleConvert.py

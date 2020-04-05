@@ -71,12 +71,12 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-05-13' # by RJH
-shortProgramName = "VPLBible"
-programName = "VPL Bible format handler"
-programVersion = '0.38'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-05-13' # by RJH
+SHORT_PROGRAM_NAME = "VPLBible"
+PROGRAM_NAME = "VPL Bible format handler"
+PROGRAM_VERSION = '0.38'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -86,10 +86,12 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 BOS66 = BOS81 = BOSx = None
@@ -441,7 +443,7 @@ class VPLBible( Bible ):
                             BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                            if not BBB: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromText( bookCodeText )  # Try to guess
+                            if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB:
                             logging.critical( "VPL Bible: Unable to determine book code from text {!r} after {!r}={}".format( bookCodeText, lastBookCodeText, lastBBB ) )
                             halt
@@ -494,7 +496,7 @@ class VPLBible( Bible ):
                         bnDict = { 67:'TOB', 68:'JDT', 69:'ESG', 70:'WIS', 71:'SIR', 72:'BAR', 73:'LJE', 74:'PAZ', 75:'SUS',
                                 76:'BEL', 77:'MA1', 78:'MA2', 79:'MA3', 80:'MA4', 81:'ES1', 82:'ES2', 83:'MAN', 84:'PS2',
                                 85:'PSS', 86:'ODE', }
-                        if 1 <= bookCodeText <= 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookCodeText )
+                        if 1 <= bookCodeText <= 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookCodeText )
                         else: BBB = bnDict[bookCodeText]
 
                 #elif vplType == 4:
@@ -646,7 +648,7 @@ class VPLBible( Bible ):
 
 def testVPL( VPLfolder ):
     # Crudely demonstrate the VPL Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class…") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( VPLfolder ) )
@@ -753,12 +755,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of VPLBible.py

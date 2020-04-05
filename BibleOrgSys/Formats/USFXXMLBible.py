@@ -48,12 +48,12 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "USFXBible"
-programName = "USFX XML Bible handler"
-programVersion = '0.33'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "USFXBible"
+PROGRAM_NAME = "USFX XML Bible handler"
+PROGRAM_VERSION = '0.33'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -63,9 +63,11 @@ from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 
@@ -357,7 +359,7 @@ class USFXXMLBible( Bible ):
                         #if line.startswith( '\\id ' ):
                             #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
-                            #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
+                            #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
                             #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                             #isUSFX = True
                         #break # We only look at the first line
@@ -398,7 +400,7 @@ class USFXXMLBible( Bible ):
             else:
                 logging.warning( "bce3 Unprocessed {} attribute ({}) in {}".format( attrib, value, mainLocation ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( bookCode )
+        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bookCode )
         mainLocation = "{} USFX {} book".format( self.name, BBB )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )
@@ -998,7 +1000,7 @@ def demo() -> None:
         print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != lastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -1037,12 +1039,12 @@ def demo() -> None:
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getErrors()
                 # print( UsfxBErrors )
-                #print( UsfxB.getVersification () )
-                #print( UsfxB.getAddedUnits () )
+                #print( UsfxB.getVersification() )
+                #print( UsfxB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )
-            else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -1050,12 +1052,12 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFXXMLBible.py

@@ -28,12 +28,12 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
-shortProgramName = "BibleBookOrders"
-programName = "Bible Book Order Systems handler"
-programVersion = '0.90'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-09-19' # by RJH
+SHORT_PROGRAM_NAME = "BibleBookOrders"
+PROGRAM_NAME = "Bible Book Order Systems handler"
+PROGRAM_VERSION = '0.90'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -41,12 +41,14 @@ debuggingThisModule = False
 
 import os
 import logging
-#from Misc.singleton import singleton
+#from BibleOrgSys.Misc.singleton import singleton
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -60,7 +62,7 @@ import BibleOrgSysGlobals
     #try: nameBit, errorBit = messageString.split( ': ', 1 )
     #except ValueError: nameBit, errorBit = '', messageString
     #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        #nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 ## end of exp
 
@@ -97,10 +99,10 @@ class BibleBookOrderSystems:
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
-                    XMLfilepath = os.path.join( standardXMLFolder, filename )
+                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
-                        if pickle8 <= os.stat( XMLfilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLfilepath ).st_ctime: # The pickle file is older
+                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
                             picklesGood = False; break
             if picklesGood:
                 import pickle
@@ -109,7 +111,7 @@ class BibleBookOrderSystems:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__DataLists = pickle.load( pickleFile )
             else: # We have to load the XML (much slower)
-                from Reference.BibleBookOrdersConverter import BibleBookOrdersConverter
+                from BibleOrgSys.Reference.Converters.BibleBookOrdersConverter import BibleBookOrdersConverter
                 if XMLFolder is not None: logging.warning( _("Bible book orders are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bboc = BibleBookOrdersConverter()
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
@@ -192,7 +194,7 @@ class BibleBookOrderSystems:
         assert self.__DataLists
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not BibleOrgSysGlobals.BibleBooksCodes.isValidBBB( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
+            if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
@@ -419,10 +421,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBookOrders.py

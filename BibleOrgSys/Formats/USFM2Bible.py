@@ -31,12 +31,12 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-13' # by RJH
-shortProgramName = "USFM2Bible"
-programName = "USFM2 Bible handler"
-programVersion = '0.77'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-13' # by RJH
+SHORT_PROGRAM_NAME = "USFM2Bible"
+PROGRAM_NAME = "USFM2 Bible handler"
+PROGRAM_VERSION = '0.77'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -48,11 +48,13 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from InputOutput.USFMFilenames import USFMFilenames
-from Formats.USFM2BibleBook import USFM2BibleBook
-from Bible import Bible
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
+from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
+from BibleOrgSys.Bible import Bible
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -71,7 +73,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -594,7 +596,7 @@ class USFM2Bible( Bible ):
             #if len(ssfFilepathList) > 1:
                 #logging.error( exp("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             #if len(ssfFilepathList) >= 1: # Seems we found the right one
-                #from Formats.PTX7Bible import loadPTX7ProjectData
+                #from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
                 #PTXSettingsDict = loadPTX7ProjectData( self, ssfFilepathList[0] )
                 #if PTXSettingsDict:
                     #if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -793,8 +795,8 @@ def demo() -> None:
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
                 if 1:
-                    from Reference.VerseReferences import SimpleVerseKey
-                    from Internals.InternalBibleInternals import InternalBibleEntry
+                    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )
                         shortText = svk.getShortText()
@@ -818,7 +820,7 @@ def demo() -> None:
                                 if originalText and originalText!=cleanText:
                                     print( ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
             elif BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+                print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
     if 0: # Test a whole folder full of folders of USFM2 Bibles
@@ -847,7 +849,7 @@ def demo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
                         #print( USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -878,21 +880,21 @@ def demo() -> None:
                             #print( UsfmBErrors )
                         if BibleOrgSysGlobals.commandLineArguments.export:
                             UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+                    else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: print( "\n{} total USFM2 (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
         elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
+            print( f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 #end of demo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
+    BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM2Bible.py

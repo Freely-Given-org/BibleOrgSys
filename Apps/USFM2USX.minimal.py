@@ -34,15 +34,14 @@ import os, sys
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.append( os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.UnknownBible import UnknownBible
 
 
-programName = "USFM to USX (minimal)"
-programVersion = '0.02'
+PROGRAM_NAME = "USFM to USX (minimal)"
+PROGRAM_VERSION = '0.02'
 
 
 # You must specify where to find a Bible to read --
@@ -53,7 +52,7 @@ inputFolder = '/home/robert/Paratext8Projects/MBTV/'
 
 
 # Configure basic Bible Organisational System (BOS) set-up
-parser = BibleOrgSysGlobals.setup( programName, programVersion )
+parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
 # Do the actual Bible load and export work that we want
@@ -64,4 +63,4 @@ if loadedBible is not None:
     print(f"\nOutput should be in {os.path.join( os.getcwd(), BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )} folder.")
 
 # Do the BOS close-down stuff
-BibleOrgSysGlobals.closedown( programName, programVersion )
+BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )

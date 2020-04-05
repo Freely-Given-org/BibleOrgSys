@@ -67,12 +67,12 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-13' # by RJH
-shortProgramName = "BibleIndexes"
-programName = "Bible indexes handler"
-programVersion = '0.77'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-13' # by RJH
+SHORT_PROGRAM_NAME = "BibleIndexes"
+PROGRAM_NAME = "Bible indexes handler"
+PROGRAM_VERSION = '0.77'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
@@ -85,10 +85,12 @@ import re
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS
-from Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS
+from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
@@ -906,8 +908,8 @@ class InternalBibleSectionIndex:
         haveSectionHeadingsForBook = self.BibleObject.discoveryResults[self.BBB]['haveSectionHeadings']
         if debuggingThisModule: print( f"\nhaveSectionHeadingsForBook {self.BBB}={haveSectionHeadingsForBook}" ) #, self.discoveryResults[BBB] )
         needToSaveByChapter = not haveSectionHeadingsForBook \
-                                or not BibleOrgSysGlobals.BibleBooksCodes.continuesThroughChapters(self.BBB)
-        if debuggingThisModule: print( f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.BibleBooksCodes.continuesThroughChapters(self.BBB)}" )
+                                or not BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)
+        if debuggingThisModule: print( f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)}" )
         bookName = self.bookObject.getAssumedBookNames()[0]
         if debuggingThisModule: print( f"Got '{bookName}' for {self.BBB}" )
 
@@ -1474,7 +1476,7 @@ def demo() -> None:
     global debuggingThisModule
     if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
         import os
-        from Formats.USFMBible import USFMBible
+        from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
                 ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
@@ -1496,7 +1498,7 @@ def demo() -> None:
                         #bookObject._SectionIndex.makeSectionIndex()
                         bookObject.makeSectionIndex()
                         #if BBB=='PSA': halt
-            else: logger.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+            else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of demo
 
 
@@ -1505,10 +1507,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of InternalBibleIndexes.py

@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2019 Robert Hunt
+# Copyright (C) 2012-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,12 +28,12 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-19' # by RJH
-shortProgramName = "USXXMLBibleBookHandler"
-programName = "USX XML Bible book handler"
-programVersion = '0.26'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-18' # by RJH
+SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
+PROGRAM_NAME = "USX XML Bible book handler"
+PROGRAM_VERSION = '0.26'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -42,25 +42,11 @@ import logging, os, sys
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import BibleBook
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import BibleBook
 
 
 sortedNLMarkers = None
@@ -81,7 +67,7 @@ class USXXMLBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
         #self.BBB = BBB
     # end of USXXMLBibleBook.__init__
 
@@ -91,7 +77,7 @@ class USXXMLBibleBook( BibleBook ):
         Load a single source USX XML file and extract the information.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("load( {}, {}, {} )").format( filename, folder, encoding ) )
+            print( "load( {}, {}, {} )".format( filename, folder, encoding ) )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors = []
@@ -154,7 +140,7 @@ class USXXMLBibleBook( BibleBook ):
                 if attrib=='style':
                     charStyle = value # This is basically the USFM character marker name
                     #print( "  charStyle", charStyle )
-                    assert not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle )
+                    assert not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( charStyle )
                 elif attrib == 'closed':
                     assert value == 'false'
                     charClosed = False
@@ -439,14 +425,14 @@ class USXXMLBibleBook( BibleBook ):
         #lastMarker = None
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}…").format( filename, folder ) )
         elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
-        self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
+        self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
-            loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( filename, sys.exc_info()[0], err ) )
+            logging.critical( "Loader parse error in xml file {}: {} {}".format( filename, sys.exc_info()[0], err ) )
+            loadErrors.append( "Loader parse error in xml file {}: {} {}".format( filename, sys.exc_info()[0], err ) )
             self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( filename, err ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -520,9 +506,9 @@ class USXXMLBibleBook( BibleBook ):
                     if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( USFMMarker ):
                         loadParagraph( element, location )
-                    elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
+                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:
@@ -561,7 +547,7 @@ class USXXMLBibleBook( BibleBook ):
                                     loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, C, V, USFMMarker, tryMarker, text ) )
                                     logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
                                     paragraphText = element.text if element.text and element.text.strip() else ''
-                                    if version is None: paragraphText = element.rstrip() # Don't need to strip extra spaces in v2
+                                    if version is None: paragraphText = element.text.rstrip() # Don't need to strip extra spaces in v2
                                     #print( "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
                                     self.addLine( tryMarker, paragraphText )
                                     fixed = True
@@ -674,8 +660,8 @@ def demo() -> None:
         if len(someString)<maxLen: return someString
         return someString[:int(maxLen/2)]+'…'+someString[-int(maxLen/2):]
 
-    from InputOutput import USXFilenames, USFMFilenames
-    from Formats import USFMBibleBook
+    from BibleOrgSys.InputOutput import USXFilenames, USFMFilenames
+    from BibleOrgSys.Formats import USFMBibleBook
     #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
     #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
     name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
@@ -701,9 +687,9 @@ def demo() -> None:
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBB )
                 UxBB.validateMarkers()
-                UxBBVersification = UxBB.getVersification ()
+                UxBBVersification = UxBB.getVersification()
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBVersification )
-                UxBBAddedUnits = UxBB.getAddedUnits ()
+                UxBBAddedUnits = UxBB.getAddedUnits()
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBAddedUnits )
                 UxBB.check()
                 UxBBErrors = UxBB.getErrors()
@@ -782,10 +768,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( shortProgramName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( shortProgramName, programVersion )
+    BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of USXXMLBibleBook.py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2014-12-15 by RJH (also update programVersion below)
+#   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)
 #
 # Module testing USFMFilenames.py
 #
@@ -27,21 +27,20 @@
 Module testing USFMFilenames.py.
 """
 
-programName = "USFM Filenames tests"
-programVersion = '0.56'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "USFM Filenames tests"
+PROGRAM_VERSION = '0.56'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import InputOutput.USFMFilenames as USFMFilenames
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput import USFMFilenames
 
 
 class USFMFilenamesTests1( unittest.TestCase ):
@@ -51,7 +50,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -228,7 +227,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -403,7 +402,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

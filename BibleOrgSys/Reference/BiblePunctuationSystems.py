@@ -28,12 +28,12 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-23' # by RJH
-shortProgramName = "BiblePunctuationSystems"
-programName = "Bible Punctuation Systems handler"
-programVersion = '0.44'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-23' # by RJH
+SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
+PROGRAM_NAME = "Bible Punctuation Systems handler"
+PROGRAM_VERSION = '0.44'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 
 import os
@@ -41,9 +41,8 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-#from Misc.singleton import singleton
-import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 #@singleton # Can only ever have one instance
@@ -73,10 +72,10 @@ class BiblePunctuationSystems:
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
-                    XMLfilepath = os.path.join( standardXMLFolder, filename )
+                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
-                        if pickle8 <= os.stat( XMLfilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLfilepath ).st_ctime: # The pickle file is older
+                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
                             picklesGood = False; break
             if picklesGood:
                 import pickle
@@ -84,7 +83,7 @@ class BiblePunctuationSystems:
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
-                from Reference.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
+                from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
                 if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bpsc = BiblePunctuationSystemsConverter()
                 bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
@@ -287,10 +286,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BiblePunctuationSystems.py

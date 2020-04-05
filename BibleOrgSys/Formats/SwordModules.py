@@ -54,12 +54,12 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-05' # by RJH
-shortProgramName = "SwordModules"
-programName = "Sword module handler"
-programVersion = '0.49'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-05' # by RJH
+SHORT_PROGRAM_NAME = "SwordModules"
+PROGRAM_NAME = "Sword module handler"
+PROGRAM_VERSION = '0.49'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -71,15 +71,16 @@ import struct, zlib
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-from Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Bible import Bible, BibleBook
-from Reference.VerseReferences import SimpleVerseKey
-from Online.SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Online.SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
                                     TECHNICAL_SWORD_CONF_FIELD_NAMES, DEFAULT_SWORD_CONF_ENCODING
 
 
@@ -1687,7 +1688,7 @@ class SwordModule():
         """
         Does preprocessing on the raw data from the module.
         """
-        from Formats.SwordResources import filterOSISVerseLine, filterGBFVerseLine, filterTHMLVerseLine
+        from BibleOrgSys.Formats.SwordResources import filterOSISVerseLine, filterGBFVerseLine, filterTHMLVerseLine
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #print( "SwordModule.filterToUSFM( {} )".format( rawData ) )
@@ -1936,7 +1937,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
@@ -2000,7 +2001,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
@@ -2043,7 +2044,7 @@ class SwordBibleModule( SwordModule, Bible ):
         """
         result = "SwordBibleModule object"
         result += '\n' + SwordModule.__str__( self )
-        #from Internals.InternalBible import __str__ as IB__str__
+        #from BibleOrgSys.Internals.InternalBible import __str__ as IB__str__
         #result += '\n' + IB__str__( self )
         return result
     # end of SwordBibleModule.__str__
@@ -2586,10 +2587,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordModules.py

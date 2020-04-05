@@ -34,12 +34,12 @@ Currently only uses FTP.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-22' # by RJH
-shortProgramName = "SwordInstallManager"
-programName = "Sword download handler"
-programVersion = '0.12'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-22' # by RJH
+SHORT_PROGRAM_NAME = "SwordInstallManager"
+PROGRAM_NAME = "Sword download handler"
+PROGRAM_VERSION = '0.12'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -55,11 +55,13 @@ import shutil
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-#from Reference.VerseReferences import SimpleVerseKey
-#from Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+#from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+#from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
 
@@ -96,7 +98,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -606,7 +608,7 @@ def demo() -> None:
     """
     Sword Manager demo
     """
-    from Formats import SwordModules
+    from BibleOrgSys.Formats import SwordModules
     if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
 
     im = SwordInstallManager()
@@ -703,10 +705,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordInstallManager.py

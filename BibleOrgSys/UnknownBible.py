@@ -38,12 +38,12 @@ Currently aware of the following Bible types:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-23' # by RJH
-shortProgramName = "UnknownBible"
-programName = "Unknown Bible object handler"
-programVersion = '0.35'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-23' # by RJH
+SHORT_PROGRAM_NAME = "UnknownBible"
+PROGRAM_NAME = "Unknown Bible object handler"
+PROGRAM_VERSION = '0.35'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -53,43 +53,45 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.dirname(__file__) ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Formats.ESFMBible import ESFMBibleFileCheck
-from Formats.PTX8Bible import PTX8BibleFileCheck
-from Formats.PTX7Bible import PTX7BibleFileCheck
-from Formats.USFMBible import USFMBibleFileCheck
-from Formats.USFM2Bible import USFM2BibleFileCheck
-from Formats.DBLBible import DBLBibleFileCheck
-from Formats.USXXMLBible import USXXMLBibleFileCheck
-from Formats.USFXXMLBible import USFXXMLBibleFileCheck
-from Formats.OpenSongXMLBible import OpenSongXMLBibleFileCheck
-from Formats.OSISXMLBible import OSISXMLBibleFileCheck
-from Formats.ZefaniaXMLBible import ZefaniaXMLBibleFileCheck
-from Formats.HaggaiXMLBible import HaggaiXMLBibleFileCheck
-from Formats.VerseViewXMLBible import VerseViewXMLBibleFileCheck
-from Formats.UnboundBible import UnboundBibleFileCheck
-from Formats.DrupalBible import DrupalBibleFileCheck
-from Formats.YETBible import YETBibleFileCheck
-from Formats.theWordBible import theWordBibleFileCheck
-from Formats.MySwordBible import MySwordBibleFileCheck
-from Formats.ESwordBible import ESwordBibleFileCheck
-from Formats.ESwordCommentary import ESwordCommentaryFileCheck
-from Formats.MyBibleBible import MyBibleBibleFileCheck
-from Formats.PalmDBBible import PalmDBBibleFileCheck
-from Formats.GoBible import GoBibleFileCheck
-from Formats.PickledBible import PickledBibleFileCheck
-from Formats.PierceOnlineBible import PierceOnlineBibleFileCheck
-from Formats.EasyWorshipBible import EasyWorshipBibleFileCheck
-from Formats.SwordBible import SwordBibleFileCheck
-from Formats.CSVBible import CSVBibleFileCheck
-from Formats.ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck
-from Formats.VPLBible import VPLBibleFileCheck
-#from Formats.SwordResources import SwordInterface # What about these?
+    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Formats.ESFMBible import ESFMBibleFileCheck
+from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
+from BibleOrgSys.Formats.PTX7Bible import PTX7BibleFileCheck
+from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
+from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
+from BibleOrgSys.Formats.DBLBible import DBLBibleFileCheck
+from BibleOrgSys.Formats.USXXMLBible import USXXMLBibleFileCheck
+from BibleOrgSys.Formats.USFXXMLBible import USFXXMLBibleFileCheck
+from BibleOrgSys.Formats.OpenSongXMLBible import OpenSongXMLBibleFileCheck
+from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBibleFileCheck
+from BibleOrgSys.Formats.ZefaniaXMLBible import ZefaniaXMLBibleFileCheck
+from BibleOrgSys.Formats.HaggaiXMLBible import HaggaiXMLBibleFileCheck
+from BibleOrgSys.Formats.VerseViewXMLBible import VerseViewXMLBibleFileCheck
+from BibleOrgSys.Formats.UnboundBible import UnboundBibleFileCheck
+from BibleOrgSys.Formats.DrupalBible import DrupalBibleFileCheck
+from BibleOrgSys.Formats.YETBible import YETBibleFileCheck
+from BibleOrgSys.Formats.theWordBible import theWordBibleFileCheck
+from BibleOrgSys.Formats.MySwordBible import MySwordBibleFileCheck
+from BibleOrgSys.Formats.ESwordBible import ESwordBibleFileCheck
+from BibleOrgSys.Formats.ESwordCommentary import ESwordCommentaryFileCheck
+from BibleOrgSys.Formats.MyBibleBible import MyBibleBibleFileCheck
+from BibleOrgSys.Formats.PalmDBBible import PalmDBBibleFileCheck
+from BibleOrgSys.Formats.GoBible import GoBibleFileCheck
+from BibleOrgSys.Formats.PickledBible import PickledBibleFileCheck
+from BibleOrgSys.Formats.PierceOnlineBible import PierceOnlineBibleFileCheck
+from BibleOrgSys.Formats.EasyWorshipBible import EasyWorshipBibleFileCheck
+from BibleOrgSys.Formats.SwordBible import SwordBibleFileCheck
+from BibleOrgSys.Formats.CSVBible import CSVBibleFileCheck
+from BibleOrgSys.Formats.ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck
+from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
+#from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
 
 
-logger = logging.getLogger(shortProgramName)
+logger = logging.getLogger(SHORT_PROGRAM_NAME)
 
 
 
@@ -859,7 +861,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(programName, programVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(PROGRAM_NAME, PROGRAM_VERSION ) )
 
     # Now demo the class
     if 0: # Just test one folder
@@ -903,7 +905,7 @@ def demo() -> None:
                     print( "  A2 result5 is: {}".format( result5 ) )
                     print( "  A2 result6 is: {}".format( result6 ) )
 
-        #from Bible import Bible
+        #from BibleOrgSys.Bible import Bible
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
@@ -1027,10 +1029,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of UnknownBible.py

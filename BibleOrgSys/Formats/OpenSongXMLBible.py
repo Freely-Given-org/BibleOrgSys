@@ -67,12 +67,12 @@ Sample:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "OpenSongBible"
-programName = "OpenSong XML Bible format handler"
-programVersion = '0.39'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "OpenSongBible"
+PROGRAM_NAME = "OpenSong XML Bible format handler"
+PROGRAM_VERSION = '0.39'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -82,15 +82,17 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Reference.BibleBooksNames import BibleBooksNamesSystems
-from Bible import Bible, BibleBook
-from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InputOutput.MLWriter import MLWriter
+from BibleOrgSys.InputOutput.MLWriter import MLWriter
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -234,8 +236,8 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     def writeOpenSongBook( writerObject, BBB, bkData ):
         """Writes a book to the OpenSong XML writerObject."""
-        #print( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
-        OSISAbbrev = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+        #print( 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
+        OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OSISAbbrev:
             logging.warning( "toOpenSong: Can't write {} OpenSong book because no OSIS code available".format( BBB ) )
             unhandledBooks.append( BBB )
@@ -469,7 +471,7 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectNameString = 'OpenSong XML Bible Book object'
                 thisBook.objectTypeString = 'OpenSong'
                 #thisBook.sourceFilepath = self.sourceFilepath
-                USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
                 thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), programNameVersion ) )
                 thisBook.addLine( 'h', bookName )
                 thisBook.addLine( 'mt1', bookName )
@@ -601,7 +603,7 @@ def demo() -> None:
             if BibleOrgSysGlobals.verbosityLevel > 0: print( xb ) # Just print a summary
             #print( xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
-                from Reference import VerseReferences
+                from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                     ('OT','DAN','1','21'),
                                     ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -621,10 +623,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of OpenSongXMLBible.py

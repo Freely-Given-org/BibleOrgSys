@@ -68,12 +68,12 @@ Seems that a YES Bible file is a binary version of a YET text Bible file.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "YETBible"
-programName = "YET Bible format handler"
-programVersion = '0.10'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "YETBible"
+PROGRAM_NAME = "YET Bible format handler"
+PROGRAM_VERSION = '0.10'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -83,9 +83,11 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
@@ -287,7 +289,7 @@ class YETBible( Bible ):
                     continue
                 elif bits[0] == 'book_name':
                     assert 3 <= len(bits) <= 4
-                    thisBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bits[1] )
+                    thisBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bits[1] )
                     if len(bits) == 3:
                         bookNameDict[thisBBB] = bits[2], ''
                     elif len(bits) == 4:
@@ -300,7 +302,7 @@ class YETBible( Bible ):
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     #print( "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
@@ -318,7 +320,7 @@ class YETBible( Bible ):
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     headingString = encodedHeadingString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     #print( repr(encodedHeadingString), repr(headingString) )
                     assert '@' not in headingString
@@ -339,7 +341,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                         assert indexNumberString.isdigit()
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     noteString = re.sub( r'@<ta(.+?)@>', r'', noteString ) # Get rid of these encoded BCV references for now
                     noteString = re.sub( r'@<to(.+?)@>', r'', noteString ) # Get rid of these OSIS BCV references for now
@@ -356,7 +358,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                         assert indexNumberString.isdigit()
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
@@ -437,7 +439,7 @@ class YETBible( Bible ):
 
 def testYB( TUBfilename ):
     # Crudely demonstrate the YET Bible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     TUBfolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/YET modules/' ) # Must be the same as below
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class…") )
@@ -530,10 +532,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of YETBible.py

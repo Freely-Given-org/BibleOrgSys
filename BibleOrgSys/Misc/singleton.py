@@ -8,7 +8,7 @@
 #
 # Can be used as a Python decorator in order to force a class to only ever have one instance
 #
-#       from Misc.singleton import singleton
+#       from BibleOrgSys.Misc.singleton import singleton
 #
 #       @singleton
 #       class MyClass:

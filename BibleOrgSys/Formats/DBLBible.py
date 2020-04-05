@@ -37,12 +37,12 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-12-14' # by RJH
-shortProgramName = "DigitalBibleLibrary"
-programName = "Digital Bible Library (DBL) XML Bible handler"
-programVersion = '0.28'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-12-14' # by RJH
+SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
+PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
+PROGRAM_VERSION = '0.28'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -53,12 +53,14 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible
-from Formats.USXXMLBibleBook import USXXMLBibleBook
-from Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
-from Formats.PTX8Bible import getFlagFromAttribute
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
+from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
+from BibleOrgSys.Formats.PTX8Bible import getFlagFromAttribute
 
 
 
@@ -1181,7 +1183,7 @@ class DBLBible( Bible ):
             if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
                 for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                     #print( "USFMBookCode", USFMBookCode )
-                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     bookList.append( BBB )
                     self.availableBBBs.add( BBB )
             else: logging.error( "loadDBLMetadata: No books in contents (maybe has divisions?) {}".format( self.sourceFilepath ) ) # need to add code if so
@@ -1191,7 +1193,7 @@ class DBLBible( Bible ):
                 if 'CanonicalContent' in pubDict:
                     for USFMBookCode in pubDict['CanonicalContent']:
                         #print( "USFMBookCode", USFMBookCode )
-                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         bookList.append( BBB )
                         self.availableBBBs.add( BBB )
                     if 'Structure' in pubDict:
@@ -1416,7 +1418,7 @@ class DBLBible( Bible ):
                 #if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     #assert line[7] == ' '
                     #USFMBookCode = line[4:7]
-                    #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     #C,V = line[8:].split( ':', 1 )
                     ##print( "CV", repr(C), repr(V) )
                     #if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -1428,8 +1430,8 @@ class DBLBible( Bible ):
                     #left, right = line.split( ' = ', 1 )
                     ##print( "left", repr(left), 'right', repr(right) )
                     #USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    #BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
-                    #BBB2 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
+                    #BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
+                    #BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
                     #DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
                     ##print( DBLVersification['Mappings'] )
                 #else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
@@ -1437,7 +1439,7 @@ class DBLBible( Bible ):
                     #USFMBookCode = line[:3]
                     ##if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     #try:
-                        #BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                        #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         #DBLVersification['VerseCounts'][BBB] = {}
                         #for CVBit in line[4:].split():
                             ##print( "CVBit", repr(CVBit) )
@@ -1556,7 +1558,7 @@ class DBLBible( Bible ):
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         if 'OurBookList' in self.suppliedMetadata['DBL']:
             for BBB in self.suppliedMetadata['DBL']['OurBookList']:
-                filename = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
+                filename = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
                 if debuggingThisModule: print( "About to load {} from {} …".format( BBB, filename ) )
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )
@@ -1575,7 +1577,7 @@ class DBLBible( Bible ):
             #print( "bookListKey", bookListKey )
             for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                 #print( "USFMBookCode", USFMBookCode )
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                 filename = USFMBookCode + '.usx'
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )
@@ -1791,15 +1793,15 @@ def demo() -> None:
                 DB.loadBooks()
                 #DBErrors = DB.getErrors()
                 # print( DBErrors )
-                #print( DB.getVersification () )
-                #print( DB.getAddedUnits () )
+                #print( DB.getVersification() )
+                #print( DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##print( "Looking for", ref )
                     #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( programName, programVersion ) )
+    #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
 
 if __name__ == '__main__':
@@ -1807,10 +1809,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of DBLBible.py

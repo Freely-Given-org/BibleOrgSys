@@ -74,12 +74,12 @@ Limitations:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "DrupalBible"
-programName = "DrupalBible Bible format handler"
-programVersion = '0.13'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "DrupalBible"
+PROGRAM_NAME = "DrupalBible Bible format handler"
+PROGRAM_VERSION = '0.13'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -89,9 +89,11 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
@@ -276,7 +278,7 @@ class DrupalBible( Bible ):
                         bits = line.split( '|' )
                         bookCode, bookFullName, bookShortName, numChapters = bits
                         assert bookShortName == bookCode
-                        BBBresult = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                        BBBresult = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                         BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                         bookDetails[BBB] = bookFullName, bookShortName, numChapters
 
@@ -285,7 +287,7 @@ class DrupalBible( Bible ):
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
                     if lineMark: print( repr(lineMark) ); halt
-                    BBBresult = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                    BBBresult = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                     BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
                         if lastBBB is not None:
@@ -313,7 +315,7 @@ class DrupalBible( Bible ):
 
 def testDB( TUBfilename ):
     # Crudely demonstrate the DrupalBible class
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     TUBfolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/') # Must be the same as below
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class…") )
@@ -406,10 +408,10 @@ if __name__ == '__main__':
 
     # Configure basic Bible Organisational System (BOS) set-up
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of DrupalBible.py

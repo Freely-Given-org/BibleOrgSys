@@ -51,12 +51,12 @@ e.g.,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-07' # by RJH
-shortProgramName = "MySwordBible"
-programName = "MySword Bible format handler"
-programVersion = '0.36'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-09-07' # by RJH
+SHORT_PROGRAM_NAME = "MySwordBible"
+PROGRAM_NAME = "MySword Bible format handler"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -67,11 +67,13 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
-from Formats.theWordBible import handleRTFLine
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Formats.theWordBible import handleRTFLine
 
 
 
@@ -90,7 +92,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -296,7 +298,7 @@ class MySwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
 
         bookCount = 0
@@ -354,7 +356,7 @@ class MySwordBible( Bible ):
 
                     verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
-                    nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+                    nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
                     #thisBook.addLine( 'c', str(C) )
                 else: # next chapter only
@@ -409,7 +411,7 @@ class MySwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
 
         #bookCount = 0
@@ -477,8 +479,8 @@ def createMySwordModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import tarfile
-    from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
-    from Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
 
     def writeMSBook( sqlObject, BBB, ourGlobals ):
         """
@@ -488,7 +490,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
         bkData = self.books[BBB] if BBB in self.books else None
         #print( bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None
@@ -677,7 +679,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     Crudely demonstrate the MySword Bible class.
     """
     #print( "tMSB", MySwBfolder )
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MySword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
@@ -814,10 +816,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MySwordBible.py

@@ -50,12 +50,12 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-03-04' # by RJH
-shortProgramName = "InternalBibleBook"
-programName = "Internal Bible book handler"
-programVersion = '0.97'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-03-18' # by RJH
+SHORT_PROGRAM_NAME = "InternalBibleBook"
+PROGRAM_NAME = "Internal Bible book handler"
+PROGRAM_VERSION = '0.97'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 BCV_VERSION = '1.0'
 
@@ -72,17 +72,19 @@ import unicodedata
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
-from Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, \
     InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
-from Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
-from Reference.BibleReferences import BibleAnchorReference
+from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
+from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
 
@@ -180,7 +182,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         if wordsString.startswith( '\\q '): wordsString = wordsString[3:] # Handle a bug in ULT Acts 4:25
 
         #print( f"wordsString2='{wordsString}'" )
-        # Note the following code fails with two leading punct chars at Rev 16:15 ("\wLook ...
+        # Note the following code fails with two leading punct chars at Rev 16:15 ("\wLook …
         if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
             assert wordsString.startswith( '\\w ' ) \
                 or ( wordsString[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—'
@@ -266,9 +268,9 @@ class InternalBibleBook:
             self.containerBibleObject = parameter1
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
-        if BibleOrgSysGlobals.debugFlag: assert self.BBB in BibleOrgSysGlobals.BibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
 
-        self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( self.BBB )
+        self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( self.BBB )
 
         self._rawLines = [] # Contains 2-tuples (marker,text) which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedCVFlag = self._indexedSectionsFlag = False
@@ -300,7 +302,7 @@ class InternalBibleBook:
         @rtype: string
         """
         result = self.objectNameString
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + programVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.BBB: result += ('\n' if result else '') + "  " + self.BBB
         try:
             if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
@@ -391,7 +393,7 @@ class InternalBibleBook:
                 assert isinstance( text, str )
                 assert '\n' not in text and '\r' not in text
 
-        if not ( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
+        if not ( marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
             logging.critical( "InternalBibleBook.addLine marker for {} not in USFM/BOS lists: {}={!r}" \
                                                         .format( self.objectTypeString, marker, text ) )
             if marker in self.badMarkers:
@@ -401,9 +403,9 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
+        if BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
 
-        if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+        if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
             logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
             if marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 if BibleOrgSysGlobals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
@@ -499,7 +501,7 @@ class InternalBibleBook:
             if ourText.endswith( '\\q4 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
             if ourText.endswith( '\\NL**' ): ourText = ourText[:-5] # Don't need nl at end of ourText
 
-            for marker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True ):
+            for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True ):
                 if '\\{}'.format(marker) in ourText:
                     ourText = ourText.replace( '\\{} \\{} '.format(marker,marker),'\\{} '.format(marker) ) # Remove double start markers
                     ourText = ourText.replace( '\\{} \\NL**'.format(marker), '\\NL**\\{} '.format(marker) ) # Put character start markers after NL
@@ -507,7 +509,7 @@ class InternalBibleBook:
                     ourText = ourText.replace( '\\NL**\\{}*'.format(marker), '\\{}*\\NL**'.format(marker) ) # Put character end markers before NL
                     ourText = ourText.replace( '\\p\\{}*'.format(marker), '\\{}*\\p'.format(marker) ) # Put character end markers before NL
 
-            for marker in BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList( 'Combined' ):
+            for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList( 'Combined' ):
                 if '\\{}'.format(marker) in ourText:
                     #ourText = ourText.replace( ' \\{}'.format(marker), '\\{}'.format(marker) ) # Delete useless spaces at ends of lines
                     ourText = ourText.replace( '\\{} \\p'.format(marker), '\\p' ) # Delete useless markers
@@ -541,7 +543,7 @@ class InternalBibleBook:
                     marker = bits[0][1:]
                     if len(bits) == 1:
                         #if bits[0] in ('\\p','\\b'):
-                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                        if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
                             self.addLine( marker, '' )
                         else:
@@ -561,7 +563,7 @@ class InternalBibleBook:
                             assert marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
                                             's1','s2','s3','s4', 'qa', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', ) \
                                 or marker in ( 'f','x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) # These ones are character markers which can start a new line
-                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                        if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             self.addLine( marker, bits[1] )
                         elif not writtenV:
                             self.addLine( 'v', '{} {}'.format( V, segment ) )
@@ -1182,7 +1184,7 @@ class InternalBibleBook:
                 print( "\nFrom:", C, V, text )
                 print( " Still have angle brackets left in:", cleanText )
         else: # not Sword
-            #print( BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList() )
+            #print( BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList() )
             cleanText = adjText \
                             .replace( '&amp;', '&' ) \
                             .replace( '&#39;', "'" ) \
@@ -1190,9 +1192,9 @@ class InternalBibleBook:
                             .replace( '&gt;',  '>' ) \
                             .replace( '&quot;', '"' ) # Undo any replacements above
             if '\\' in cleanText: # we will first remove known USFM character formatting markers
-                for possibleCharacterMarker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList():
+                for possibleCharacterMarker in BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList():
                     tryMarkers = []
-                    if BibleOrgSysGlobals.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNumberableMarker( possibleCharacterMarker ):
                         for d in ('1','2','3','4','5'):
                             tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
                     tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
@@ -1202,7 +1204,7 @@ class InternalBibleBook:
                             #print( "Removing {!r} from {!r}".format( tryMarker, cleanText ) )
                             cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
                             tryCloseMarker = '\\'+possibleCharacterMarker+'*'
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( possibleCharacterMarker )
+                            shouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( possibleCharacterMarker )
                             if shouldBeClosed == 'A' \
                             or shouldBeClosed == 'O' and tryCloseMarker in cleanText:
                                 #print( "Removing {!r} from {!r}".format( tryCloseMarker, cleanText ) )
@@ -1246,8 +1248,8 @@ class InternalBibleBook:
                 assert extraType in BOS_EXTRA_TYPES
                 assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
 
-        if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
-        if 'afterMoses' in adjText or 'andthe' in adjText: halt
+        # if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
+        # if 'afterMoses' in adjText or 'andthe' in adjText: halt
         # print( f"{self.BBB} Returning '{adjText}' '{cleanText}'" )
         # if self.BBB == 'JOS' and C == '2': halt
         return adjText, cleanText, extras
@@ -1659,7 +1661,7 @@ class InternalBibleBook:
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             # Check the results of this function
             #if 1: # Display indented markers
-                #from Internals.InternalBibleInternals import BOS_NESTING_MARKERS
+                #from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
                 ##markerList:List[str] = []
                 #indentLevel = maxNestingLevel = 0
                 #for j in range( len(newLines) ):
@@ -1681,7 +1683,7 @@ class InternalBibleBook:
             # Find overlapping nesting (that's not necessarily an error, but could be)
             # Reorder if we need to
             # TODO: Try to get it right first time so doesn't need correcting!!!
-            from Internals.InternalBibleInternals import BOS_NESTING_MARKERS
+            from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
             indentLevel = maxNestingLevel = 0
             markerContext:List[str] = []
             newLines2:List[InternalBibleEntry] = []
@@ -1792,7 +1794,7 @@ class InternalBibleBook:
             elif marker == 'v': V = text
 
             if marker in fieldsPreceded:
-                #print( "  Looking ahead after {} {}:{} {!r} field...".format( self.BBB, C, V, marker ) )
+                #print( "  Looking ahead after {} {}:{} {!r} field…".format( self.BBB, C, V, marker ) )
                 for k in range( 1, 5 ): # Number of lines to look ahead
                     if j+k <= lastJ:
                         nextDataEntry = self._processedLines[j+k]
@@ -1809,7 +1811,7 @@ class InternalBibleBook:
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             # Check the results of this function
             if 0: # Display indented markers
-                from Internals.InternalBibleInternals import BOS_NESTING_MARKERS
+                from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
                 #markerList:List[str] = []
                 indentLevel = 0
                 for j in range( len(newLines) ):
@@ -2018,7 +2020,7 @@ class InternalBibleBook:
             # From here on, we use adjText (not text)
 
             #print( "marker {!r} text {!r}, adjText {!r}".format( adjMarker, text, adjText ) )
-            if not adjText and not extras and ( BibleOrgSysGlobals.USFMMarkers.getMarkerContentType(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
+            if not adjText and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
                 #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
                 if self.objectTypeString in ('USFM2','USFM3','USX',):
@@ -2059,9 +2061,9 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
-                logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
+                logging.error( f"processLine-check: unknown {self.objectTypeString} originalMarker = {originalMarker}" )
                 adjustedMarker = originalMarker # temp……
 
             def splitCNumber( inputString ):
@@ -2295,10 +2297,10 @@ class InternalBibleBook:
             lineLocationSpace = lineLocation + ' '
 
             if self.objectTypeString in ('USFM2','USFM3'):
-                markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             fixErrors.append( lineLocationSpace + _("Marker {!r} shouldn't appear within line in \\{}: {!r}").format( insideMarker, originalMarker, text ) )
                             logging.error( "InternalBibleBook.processLine: " + _("Marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, originalMarker, text ) ) # Only log the first error in the line
@@ -2308,7 +2310,7 @@ class InternalBibleBook:
                         adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, thisText, fixErrors )
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras, originalText) )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        adjMarker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
+                        adjMarker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:]
             elif self.objectTypeString == 'SwordBibleModule':
@@ -2411,7 +2413,7 @@ class InternalBibleBook:
         haveWaitingC = False
         for marker,text in self._rawLines:
             #print( "\nQQQ" )
-            if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from Formats.USX files
+            if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from BibleOrgSys.Formats.USX files
             processLine( marker, text ) # Saves its results in self._processedLines
         del self.pntsCount, self.nfvnCount, self.owfvnCount, self.rtsCount, self.sahtCount, self.fwmifCount, self.fswncCount
 
@@ -2554,26 +2556,26 @@ class InternalBibleBook:
                 validationErrors.append( lineLocationSpace + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
-            #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
+            #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker[1:] ) ) \
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp#',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp#',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( lineLocationSpace + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )
-            if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( marker ):
+            if BibleOrgSysGlobals.loadedUSFMMarkers.isDeprecatedMarker( marker ):
                 validationErrors.append( lineLocationSpace + _("Deprecated {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Deprecated {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 90, C, V, _("Newline marker {!r} is deprecated in USFM standard").format( marker ) )
-            markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+            markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:{!r}".format(marker,text)); print( markerList )
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
-                if BibleOrgSysGlobals.USFMMarkers.isDeprecatedMarker( insideMarker ):
+                if BibleOrgSysGlobals.loadedUSFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( lineLocationSpace + _("Deprecated {!r} internal marker in Bible book (Text is {!r})").format( insideMarker, text ) )
                     logging.warning( _("Deprecated {!r} internal marker in Bible book after {} {}:{} (Text is {!r})").format( insideMarker, self.BBB, C, V, text ) )
                     self.addPriorityError( 89, C, V, _("Internal marker {!r} is deprecated in USFM standard").format( insideMarker ) )
             ix = 0
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check newline markers
-                if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker):
+                if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( lineLocationSpace + _("Marker {!r} must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker {!r} must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.BBB, C, V, marker, text ) )
                     self.addPriorityError( 90, C, V, _("Newline marker {!r} should be at start of line").format( insideMarker ) )
@@ -2593,7 +2595,7 @@ class InternalBibleBook:
             assert self._processedLines
         if BibleOrgSysGlobals.debugFlag:
             assert fieldName and isinstance( fieldName, str )
-        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( fieldName )
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
@@ -2673,7 +2675,7 @@ class InternalBibleBook:
             self.chapterLabel = clField
 
         if not results: # no helpful fields in file -- just use an English name
-            results.append( BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR( self.BBB ) )
+            results.append( BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR( self.BBB ) )
         self.assumedBookName = results[0]
         #print( "Got assumedBookName of", repr(self.assumedBookName) )
 
@@ -3115,16 +3117,18 @@ class InternalBibleBook:
                         reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
                 level = int( marker[1] ) # 1, 2, etc.
                 qReferences.append( (reference,level,) )
-            elif marker in ('s1','s2','s3','s4', 'qa'):
+            elif marker in ('s1','s2','s3','s4', 'd','r', 'qa'):
+                # \d is Psalm description, \r is section reference, \qa is Acrostic Heading
                 if text and text[-1].isspace(): print( self.BBB, chapterNumberStr, verseNumberStr, marker, "'"+text+"'" )
                 reference = (chapterNumberStr,verseNumberStr,)
-                level = int( marker[1] ) # 1, 2, etc.
+                # if marker == 'qa': level = 1
+                # else: level = int( marker[1] ) # 1, 2, etc.
                 #levelReference = (level,reference,)
                 adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
                 #print( self.BBB, reference, levelReference, marker, text )
                 #assert levelReference not in sectionHeadingReferences # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
                 #sectionHeadingReferences.append( levelReference ) # Just for checking
-                sectionHeadings.append( (reference,level,adjText,) ) # This is the real data
+                sectionHeadings.append( (reference,marker,adjText,) ) # This is the real data
             elif marker == 'r':
                 reference = (chapterNumberStr,verseNumberStr,)
                 if BibleOrgSysGlobals.debugFlag: assert reference not in sectionReferenceReferences # Shouldn't be any cases of two lots of section references within one verse boundary
@@ -3151,8 +3155,7 @@ class InternalBibleBook:
 
     def doCheckAddedUnits( self, typicalAddedUnitData, severe=False ):
         """
-        Get the units added to the text of the book including paragraph breaks, section headings, and section references.
-        Note that all chapter and verse values are returned as strings not integers.
+        Checkthe units added to the text of the book including paragraph breaks, section headings, and section references.
         """
         typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences, typicalWordsOfJesus = typicalAddedUnitData
         paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus = self.getAddedUnits() # For this object
@@ -3342,8 +3345,8 @@ class InternalBibleBook:
         """
         Runs a number of comprehensive checks on the USFM codes in this Bible book.
         """
-        allAvailableNewlineMarkers = BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList( 'Numbered' )
-        allAvailableCharacterMarkers = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
+        allAvailableNewlineMarkers = BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList( 'Numbered' )
+        allAvailableCharacterMarkers = BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
         logger = None
         MEDIUM_EMPTY_FIELD_PRIORITY, HIGH_EMPTY_FIELD_PRIORITY = 87, 97
@@ -3391,7 +3394,7 @@ class InternalBibleBook:
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
             # Check for markers that shouldn't be empty
-            if markerEmpty and not extras and ( BibleOrgSysGlobals.USFMMarkers.getMarkerContentType(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
+            if markerEmpty and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
                 #if self.objectTypeString in ('USFM','USX',):
                     #if self.sahtCount != -1:
                         #self.sahtCount += 1
@@ -3434,7 +3437,7 @@ class InternalBibleBook:
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
-            try: newSection = BibleOrgSysGlobals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
+            try: newSection = BibleOrgSysGlobals.loadedUSFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
             except KeyError: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for {!r}".format( marker ) )
             if newSection != section: # Check changes into new sections
                 #print( "{} {}:{} {} takes us from {} to {}".format( self.BBB, C, V, marker, section, newSection ) )
@@ -3545,7 +3548,7 @@ class InternalBibleBook:
                             newlineMarkerErrors.append( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
                             #print( lineLocationSpace + _("{!r} with text not normally used following {!r} with text").format( marker, lastMarker ) )
 
-            getMarkerContentType = BibleOrgSysGlobals.USFMMarkers.getMarkerContentType( marker )
+            getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
             if text:
                 # Check the internal SFMs
                 if '\\' in text:
@@ -3570,13 +3573,13 @@ class InternalBibleBook:
                         internalMarkerCounts[internalMarker] = 1 if internalMarker not in internalMarkerCounts else (internalMarkerCounts[internalMarker] + 1)
                         if internalMarker and internalMarker[-1] == '*':
                             closedMarkerText = internalMarker[:-1]
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( closedMarkerText )
+                            shouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( closedMarkerText )
                             if shouldBeClosed == 'N': internalMarkerErrors.append( lineLocationSpace + _("Marker {} cannot be closed").format( closedMarkerText ) )
                             elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                             elif closedMarkerText in hierarchy: internalMarkerErrors.append( lineLocationSpace + _("Internal markers appear to overlap: {}").format( internalTextMarkers ) )
                             else: internalMarkerErrors.append( lineLocationSpace + _("Unexpected internal closing marker: {} in {}").format( internalMarker, internalTextMarkers ) )
                         else: # it's not a closing marker
-                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( internalMarker )
+                            shouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( internalMarker )
                             if shouldBeClosed == 'N': continue # N for never
                             else: hierarchy.append( internalMarker ) # but what if it's optional ????????????????????????????????
                     if hierarchy: # it should be empty
@@ -3586,11 +3589,11 @@ class InternalBibleBook:
                     newlineMarkerErrors.append( lineLocationSpace + _("Marker {!r} should not have content: {!r}").format( marker, text ) )
                     logging.warning( _("Marker {!r} should not have content after {} {}:{} with: {!r}").format( marker, self.BBB, C, V, text ) )
                     self.addPriorityError( 83, C, V, _("Marker {} shouldn't have content").format( marker ) )
-                markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
+                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:{!r}".format(self.BBB, C, V, marker, text)); print( markerList )
                 openList = []
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
-                    if not BibleOrgSysGlobals.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
+                    if not BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
                         internalMarkerErrors.append( lineLocationSpace + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
                         logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.BBB, C, V, marker, text ) )
                         self.addPriorityError( 66, C, V, _("Non-internal {} marker").format( insideMarker, ) )
@@ -3609,10 +3612,10 @@ class InternalBibleBook:
                                     logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.BBB, C, V, marker, text ) )
                                     self.addPriorityError( 66, C, V, _("Wrong {}* closing marker for {}").format( insideMarker, openList[-1] ) )
                             else: # it's not an asterisk so appears to be another marker
-                                if not BibleOrgSysGlobals.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
+                                if not BibleOrgSysGlobals.loadedUSFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
                                 openList.append( insideMarker ) # Now have multiple entries in the openList
                 if len(openList) == 1: # only one marker left open
-                    closedFlag = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( openList[0] )
+                    closedFlag = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( openList[0] )
                     if closedFlag != 'A': # always
                         if closedFlag == 'O': # optional
                             internalMarkerErrors.append( lineLocationSpace + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
@@ -3679,22 +3682,22 @@ class InternalBibleBook:
                             noteMarkerCounts[extraMarker] = 1 if extraMarker not in noteMarkerCounts else (noteMarkerCounts[extraMarker] + 1)
                             if extraMarker and extraMarker[-1] == '*':
                                 closedMarkerText = extraMarker[:-1]
-                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( closedMarkerText )
+                                shouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( closedMarkerText )
                                 #print( "here with", extraType, extraText, thisExtraMarkers, hierarchy, closedMarkerText, shouldBeClosed )
                                 if shouldBeClosed == 'N': noteMarkerErrors.append( lineLocationSpace + _("Marker {} is not closeable").format( closedMarkerText ) )
                                 elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                                 elif closedMarkerText in hierarchy: noteMarkerErrors.append( lineLocationSpace + _("Internal {} markers appear to overlap: {}").format( extraName, thisExtraMarkers ) )
                                 else: noteMarkerErrors.append( lineLocationSpace + _("Unexpected {} closing marker: {} in {}").format( extraName, extraMarker, thisExtraMarkers ) )
                             else: # it's not a closing marker -- for extras, it probably automatically closes the previous marker
-                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( extraMarker )
+                                shouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( extraMarker )
                                 if shouldBeClosed == 'N': continue # N for never
                                 elif hierarchy: # Maybe the previous one is automatically closed by this one
                                     previousMarker = hierarchy[-1]
-                                    previousShouldBeClosed = BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType( previousMarker )
+                                    previousShouldBeClosed = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType( previousMarker )
                                     if previousShouldBeClosed == 'O': # O for optional
                                         hierarchy.pop() # That they are not overlapped, but rather that the previous one is automatically closed by this one
                                 hierarchy.append( extraMarker )
-                        if len(hierarchy)==1 and BibleOrgSysGlobals.USFMMarkers.getMarkerClosureType(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
+                        if len(hierarchy)==1 and BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerClosureType(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
                             hierarchy.pop()
                         if hierarchy: # it should be empty
                             #print( "here with remaining", extraType, extraText, thisExtraMarkers, hierarchy )
@@ -3702,7 +3705,7 @@ class InternalBibleBook:
                     adjExtraMarkers = thisExtraMarkers
                     for uninterestingMarker in allAvailableCharacterMarkers: # Remove character formatting markers so we can check the footnote/xref hierarchy
                         while uninterestingMarker in adjExtraMarkers: adjExtraMarkers.remove( uninterestingMarker )
-                    if adjExtraMarkers and adjExtraMarkers not in BibleOrgSysGlobals.USFMMarkers.getTypicalNoteSets( extraType ):
+                    if adjExtraMarkers and adjExtraMarkers not in BibleOrgSysGlobals.loadedUSFMMarkers.getTypicalNoteSets( extraType ):
                         #print( "Got", extraType, extraText, thisExtraMarkers )
                         if thisExtraMarkers: noteMarkerErrors.append( lineLocationSpace + _("Unusual {} marker set: {} in {}").format( extraName, thisExtraMarkers, extraText ) )
                         else: noteMarkerErrors.append( lineLocationSpace + _("Missing {} formatting in {}").format( extraName, extraText ) )
@@ -3802,7 +3805,7 @@ class InternalBibleBook:
                 characterErrors.append( lineLocationSpace + _("Trailing space in {!r}").format( adjText ) )
                 self.addPriorityError( 5, C, V, _("Trailing space in text line") )
                 #print( lineLocationSpace + _("Trailing space in {} {!r}").format( marker, adjText ) )
-            if BibleOrgSysGlobals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
+            if BibleOrgSysGlobals.loadedUSFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
 
@@ -4201,7 +4204,7 @@ class InternalBibleBook:
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
 
-            if text and BibleOrgSysGlobals.USFMMarkers.isPrinted(marker): # process this main text
+            if text and BibleOrgSysGlobals.loadedUSFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
             extras = entry.getExtras()
@@ -4438,7 +4441,7 @@ class InternalBibleBook:
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
-        allAvailableCharacterMarkers = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
+        allAvailableCharacterMarkers = BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True )
 
         footnoteList, xrefList = [], []
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
@@ -4731,7 +4734,8 @@ class InternalBibleBook:
                 import pickle
                 folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
                 filepath = os.path.join( folder, "AddedUnitData.pickle" )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Importing from {}…").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( _("Importing from {}…").format( filepath ) )
                 with open( filepath, 'rb' ) as pickleFile:
                     typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             self.doCheckAddedUnits( typicalAddedUnitData )
@@ -4894,10 +4898,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of InternalBibleBook.py

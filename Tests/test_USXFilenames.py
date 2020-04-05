@@ -26,22 +26,21 @@
 Module testing USXFilenames.py.
 """
 
-lastModifiedDate = '2019-12-29' # by RJH
-programName = "USX Filenames tests"
-programVersion = '0.51'
-programNameVersion = f'{programName} v{programVersion}'
+LAST_MODIFIED_DATE = '2019-12-29' # by RJH
+PROGRAM_NAME = "USX Filenames tests"
+PROGRAM_VERSION = '0.51'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import InputOutput.USXFilenames as USXFilenames
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.InputOutput import USXFilenames
 
 
 class USXFilenamesTests1( unittest.TestCase ):
@@ -51,7 +50,7 @@ class USXFilenamesTests1( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USXTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -138,7 +137,7 @@ class USXFilenamesTests2( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USXTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -223,7 +222,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

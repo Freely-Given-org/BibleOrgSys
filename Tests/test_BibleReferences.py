@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferencesTests.py
-#   Last modified: 2014-12-15 by RJH (also update programVersion below)
+#   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)
 #
 # Module testing BibleReferences.py
 #
@@ -27,23 +27,22 @@
 Module testing BibleReferences.py.
 """
 
-programName = "Bible References tests"
-programVersion = '0.25'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "Bible References tests"
+PROGRAM_VERSION = '0.25'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import Reference.BibleBooksCodes as BibleBooksCodes
-import Reference.BibleOrganisationalSystems as BibleOrganisationalSystems
-import Reference.BibleReferences as BibleReferences
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference import BibleBooksCodes
+from BibleOrgSys.Reference import BibleOrganisationalSystems
+from BibleOrgSys.Reference import BibleReferences
 
 
 class BibleReferencesTests( unittest.TestCase ):
@@ -62,7 +61,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #print( "\nSingle Reference (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #print( "Processing {!r} reference string...".format( goodRef ) )
+            #print( "Processing {!r} reference string…".format( goodRef ) )
             result = BSR.parseReferenceString( goodRef )
             #print( goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -79,7 +78,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[5]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #print( "Processing {!r} reference string...".format( badRef ) )
+            #print( "Processing {!r} reference string…".format( badRef ) )
             result = BSR.parseReferenceString( badRef )
             #print( badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -94,7 +93,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[5], str ) ) # Verse suffix
             #self.assertTrue( 0 <= len(result[5]) <= 1 )
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #print( "Processing {!r} reference string...".format( goodRefs ) )
+            #print( "Processing {!r} reference string…".format( goodRefs ) )
             result = BSR.parseReferenceString( goodRefs )
             #print( goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -119,7 +118,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #print( "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #print( "Processing {!r} reference string...".format( goodRef ) )
+            #print( "Processing {!r} reference string…".format( goodRef ) )
             result = BSRs.parseReferenceString( goodRef )
             #print( goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -139,7 +138,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #print( "Processing {!r} reference string...".format( badRef ) )
+            #print( "Processing {!r} reference string…".format( badRef ) )
             result = BSRs.parseReferenceString( badRef )
             #print( badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -149,7 +148,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #print( "Processing {!r} reference string...".format( goodRefs ) )
+            #print( "Processing {!r} reference string…".format( goodRefs ) )
             result = BSRs.parseReferenceString( goodRefs )
             #print( goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -168,7 +167,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3-14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2-9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a-7b,8"):
-            #print( "Processing {!r} reference string...".format( badRefs ) )
+            #print( "Processing {!r} reference string…".format( badRefs ) )
             result = BSRs.parseReferenceString( badRefs )
             #print( badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -197,7 +196,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #print( "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #print( "Processing {!r} reference string...".format( goodRef ) )
+            #print( "Processing {!r} reference string…".format( goodRef ) )
             result = BRL.parseReferenceString( goodRef )
             #print( goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -217,7 +216,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #print( "Processing {!r} reference string...".format( badRef ) )
+            #print( "Processing {!r} reference string…".format( badRef ) )
             result = BRL.parseReferenceString( badRef )
             #print( badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -227,7 +226,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #print( "Processing {!r} reference string...".format( goodRefs ) )
+            #print( "Processing {!r} reference string…".format( goodRefs ) )
             result = BRL.parseReferenceString( goodRefs )
             #print( goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -246,7 +245,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3 to 14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2=9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a:7b,8"):
-            #print( "Processing {!r} reference string...".format( badRefs ) )
+            #print( "Processing {!r} reference string…".format( badRefs ) )
             result = BRL.parseReferenceString( badRefs )
             #print( badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -297,7 +296,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

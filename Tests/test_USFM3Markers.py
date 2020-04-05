@@ -26,23 +26,22 @@
 Module testing USFM3Markers.py.
 """
 
-lastModifiedDate = '2020-02-24' # by RJH
-programName = "USFM3 Markers tests"
-programVersion = '0.62'
-programNameVersion = f'{programName} v{programVersion}'
+LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+PROGRAM_NAME = "USFM3 Markers tests"
+PROGRAM_VERSION = '0.62'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
 import unittest
 import sys
 
-sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-if sourceFolder not in sys.path:
-    sys.path.append( sourceFolder ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-import Reference.USFM3MarkersConverter as USFM3MarkersConverter
-import Reference.USFM3Markers as USFM3Markers
+BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
+if BOSTopFolderpath not in sys.path:
+    sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Reference.Converters import USFM3MarkersConverter
+from BibleOrgSys.Reference import USFM3Markers
 
 
 class USFMMarkersConverterTests( unittest.TestCase ):
@@ -555,7 +554,7 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

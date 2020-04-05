@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2014-12-15 by RJH (also update programVersion below)
+#   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)
 #
 # Suite for testing BibleOrgSys
 #
@@ -27,9 +27,9 @@
 Suite testing BibleOrgSys.
 """
 
-programName = "Bible Organisational System test suite"
-programVersion = '0.13'
-programNameVersion = f'{programName} v{programVersion}'
+PROGRAM_NAME = "Bible Organisational System test suite"
+PROGRAM_VERSION = '0.13'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
@@ -38,22 +38,22 @@ import unittest
 
 
 sourceFolder = os.path.join( os.path.dirname(__file__), '../BibleOrgSys/' )
-sys.path.append( sourceFolder )
+sys.path.insert( 0, sourceFolder )
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-import BibleBooksCodesTests
-import BibleBookOrdersTests
+    sys.path.insert( 0, os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys import BibleBooksCodesTests
+from BibleOrgSys import BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
-import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganisationalSystemsTests
-import BibleReferencesTests
+from BibleOrgSys import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganisationalSystemsTests
+from BibleOrgSys import BibleReferencesTests
 import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 
 # Handle command line parameters (for compatibility)
 # Configure basic set-up
-parser = BibleOrgSysGlobals.setup( programName, programVersion )
+parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
 if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )

@@ -34,12 +34,12 @@ This is the interface module used to give a unified interface to either:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-12' # by RJH
-shortProgramName = "SwordResources"
-programName = "Sword resource handler"
-programVersion = '0.30'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-12' # by RJH
+SHORT_PROGRAM_NAME = "SwordResources"
+PROGRAM_NAME = "Sword resource handler"
+PROGRAM_VERSION = '0.30'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -51,16 +51,17 @@ import re
 if __name__ == '__main__':
     import os.path
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-from Reference.VerseReferences import SimpleVerseKey
-from Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-
-logger = logging.getLogger(shortProgramName)
+logger = logging.getLogger(SHORT_PROGRAM_NAME)
 
 
 
@@ -78,12 +79,12 @@ try:
     SWORD_ENCODINGS = { Sword.ENC_UNKNOWN:'Unknown', Sword.ENC_LATIN1:'Latin1',
                     Sword.ENC_UTF8:'UTF8', Sword.ENC_SCSU:'SCSU', Sword.ENC_UTF16:'UTF16',
                     Sword.ENC_RTF:'RTF', Sword.ENC_HTML:'HTML' }
-    from Bible import BibleBook
-    try: from Formats import SwordModules #anyway, even if only used for testing
+    from BibleOrgSys.Bible import BibleBook
+    try: from BibleOrgSys.Formats import SwordModules #anyway, even if only used for testing
     except ImportError: pass # doesn't really matter
 except (ImportError, ModuleNotFoundError): # Sword library (dll and python bindings) seem to be not available
     try:
-        from Formats import SwordModules # Not as good/reliable/efficient/well-tested/up-to-date as the real Sword library, but better than nothing
+        from BibleOrgSys.Formats import SwordModules # Not as good/reliable/efficient/well-tested/up-to-date as the real Sword library, but better than nothing
         SwordType = 'OurCode'
     except ImportError:
         logger.critical( _("You don't appear to have any way installed to read Sword modules.") )
@@ -1362,7 +1363,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1390,7 +1391,7 @@ class SwordInterface():
 
 
         elif SwordType=='OurCode':
-            # module is already loaded above in getModule call WRONG...........
+            # module is already loaded above in getModule call WRONG………..
             #print( "moduleConfig =", module.SwordModuleConfiguration )
             BibleObject.books = module.books
     # end of SwordInterface.loadBook
@@ -1475,7 +1476,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1531,7 +1532,7 @@ class SwordInterface():
             #print( "Cached", BCV )
             #return self.keyCache[BCV]
         if SwordType == 'CrosswireLibrary':
-            B = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+            B = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
             refString = "{} {}:{}".format( B, C, V )
             #print( 'refString', refString )
             verseKey = Sword.VerseKey( refString )
@@ -1724,7 +1725,7 @@ def demo() -> None:
         print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
         if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
             latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != lastModifiedDate:
+            if latestPythonModificationDate != LAST_MODIFIED_DATE:
                 print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( " using", SwordType )
 
@@ -2049,10 +2050,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordResources.py

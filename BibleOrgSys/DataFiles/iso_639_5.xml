@@ -1,0 +1,7619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+This file gives a list of all languages in the ISO 639-5
+standard, and is used to provide translations via gettext
+
+Copyright © 2014 Pander <pander@opentaal.org>
+
+    This file is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This file is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this file; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+Source: <http://www.loc.gov/standards/iso639-5/>
+-->
+
+<!DOCTYPE iso_639_5_entries [
+	<!ELEMENT iso_639_5_entries (iso_639_5_entry+)>
+	<!ELEMENT iso_639_5_entry EMPTY>
+	<!ATTLIST iso_639_5_entry
+		id		CDATA	#REQUIRED
+		parents		CDATA	#IMPLIED
+		name		CDATA	#REQUIRED
+	>
+]>
+
+<iso_639_5_entries>
+	<iso_639_5_entry
+		id="aav"
+		name="Austro-Asiatic languages" />
+	<iso_639_5_entry
+		id="afa"
+		name="Afro-Asiatic languages" />
+	<iso_639_5_entry
+		id="art"
+		name="Artificial languages" />
+	<iso_639_5_entry
+		id="aus"
+		name="Australian languages" />
+	<iso_639_5_entry
+		id="cai"
+		name="Central American Indian languages" />
+	<iso_639_5_entry
+		id="cau"
+		name="Caucasian languages" />
+	<iso_639_5_entry
+		id="crp"
+		name="Creoles and pidgins" />
+	<iso_639_5_entry
+		id="day"
+		name="Land Dayak languages" />
+	<iso_639_5_entry
+		id="dra"
+		name="Dravidian languages" />
+	<iso_639_5_entry
+		id="esx"
+		name="Eskimo-Aleut languages" />
+	<iso_639_5_entry
+		id="euq"
+		name="Basque (family)" />
+	<iso_639_5_entry
+		id="hmx"
+		name="Hmong-Mien languages" />
+	<iso_639_5_entry
+		id="ine"
+		name="Indo-European languages" />
+	<iso_639_5_entry
+		id="jpx"
+		name="Japanese (family)" />
+	<iso_639_5_entry
+		id="khi"
+		name="Khoisan languages" />
+	<iso_639_5_entry
+		id="map"
+		name="Austronesian languages" />
+	<iso_639_5_entry
+		id="nai"
+		name="North American Indian languages" />
+	<iso_639_5_entry
+		id="nic"
+		name="Niger-Kordofanian languages" />
+	<iso_639_5_entry
+		id="paa"
+		name="Papuan languages" />
+	<iso_639_5_entry
+		id="sai"
+		name="South American Indian languages" />
+	<iso_639_5_entry
+		id="sgn"
+		name="sign languages" />
+	<iso_639_5_entry
+		id="sh00001800"
+		parents="sh85134235"
+		name="Ik language" />
+	<iso_639_5_entry
+		id="sh00002632"
+		parents="sh93003187"
+		name="Yamphu language" />
+	<iso_639_5_entry
+		id="sh00003103"
+		parents="aus"
+		name="Kitja language" />
+	<iso_639_5_entry
+		id="sh00003130"
+		parents="sh85069794"
+		name="Tengger dialect" />
+	<iso_639_5_entry
+		id="sh00003985"
+		parents="sh85117046"
+		name="Mator language" />
+	<iso_639_5_entry
+		id="sh00004044"
+		parents="sh85067921"
+		name="Gurani language" />
+	<iso_639_5_entry
+		id="sh00005128"
+		parents="sh85100756"
+		name="Koronadal Blaan language" />
+	<iso_639_5_entry
+		id="sh00005131"
+		parents="paa"
+		name="Sawi language" />
+	<iso_639_5_entry
+		id="sh00005327"
+		parents="aus"
+		name="Amarag language" />
+	<iso_639_5_entry
+		id="sh00005428"
+		parents="sh2003010425"
+		name="Wirangu language" />
+	<iso_639_5_entry
+		id="sh00005429"
+		parents="aus"
+		name="Kurung language" />
+	<iso_639_5_entry
+		id="sh00005430"
+		parents="sh00005429"
+		name="Wathawurrung dialect" />
+	<iso_639_5_entry
+		id="sh00005431"
+		parents="sh00005429"
+		name="Kolakngat dialect" />
+	<iso_639_5_entry
+		id="sh00005446"
+		parents="aus"
+		name="Yabula Yabula language" />
+	<iso_639_5_entry
+		id="sh00005847"
+		parents="sh85080100"
+		name="Lamaholot language" />
+	<iso_639_5_entry
+		id="sh00007002"
+		parents="sh85041185"
+		name="North Efate language" />
+	<iso_639_5_entry
+		id="sh00007003"
+		parents="sh85083372"
+		name="Namakura language" />
+	<iso_639_5_entry
+		id="sh00007004"
+		parents="sh85041185"
+		name="South Efate language" />
+	<iso_639_5_entry
+		id="sh00007215"
+		parents="sh85104690"
+		name="Pileni language" />
+	<iso_639_5_entry
+		id="sh00007228"
+		parents="sh85083372"
+		name="Nyalayu language" />
+	<iso_639_5_entry
+		id="sh00007475"
+		parents="sh85083372"
+		name="Akei language" />
+	<iso_639_5_entry
+		id="sh00007497"
+		parents="sh85071340"
+		name="Tugen dialect" />
+	<iso_639_5_entry
+		id="sh00008517"
+		parents="aus"
+		name="Yorta Yorta language" />
+	<iso_639_5_entry
+		id="sh00009196"
+		parents="sh85135233"
+		name="Pumi language" />
+	<iso_639_5_entry
+		id="sh00009401"
+		parents="paa"
+		name="Waris language" />
+	<iso_639_5_entry
+		id="sh2001003556"
+		parents="sh2003010425"
+		name="Nhanda language" />
+	<iso_639_5_entry
+		id="sh2001003586"
+		parents="sh85048346"
+		name="Gwahatike language" />
+	<iso_639_5_entry
+		id="sh2001004346"
+		parents="sh85083372"
+		name="Wampar language" />
+	<iso_639_5_entry
+		id="sh2001004534"
+		parents="sh2003009018"
+		name="Anmatyerre language" />
+	<iso_639_5_entry
+		id="sh2001004720"
+		parents="sh85083372"
+		name="Ura language (Vanuatu)" />
+	<iso_639_5_entry
+		id="sh2001004751"
+		parents="sh2003007067"
+		name="Biri language (Australia)" />
+	<iso_639_5_entry
+		id="sh2001005806"
+		parents="sh85035400"
+		name="Khvarshi language" />
+	<iso_639_5_entry
+		id="sh2001005807"
+		parents="paa"
+		name="Mende language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh2001005810"
+		parents="sh85083372"
+		name="Bariai language" />
+	<iso_639_5_entry
+		id="sh2001005811"
+		parents="sh85083372"
+		name="Tami language" />
+	<iso_639_5_entry
+		id="sh2001007065"
+		parents="sh85068863"
+		name="Umbrian language" />
+	<iso_639_5_entry
+		id="sh2001007071"
+		parents="sh85068863"
+		name="Oscan language" />
+	<iso_639_5_entry
+		id="sh2001007851"
+		parents="sh85071346"
+		name="Upper Tanudan Kalinga language" />
+	<iso_639_5_entry
+		id="sh2001008087"
+		parents="sh2003009018"
+		name="Yanyuwa language" />
+	<iso_639_5_entry
+		id="sh2001009555"
+		parents="aus"
+		name="Koongurrukuñ language" />
+	<iso_639_5_entry
+		id="sh2001009653"
+		parents="sh85100756"
+		name="Dupaninan Agta language" />
+	<iso_639_5_entry
+		id="sh2002001680"
+		parents="sh2003005565"
+		name="Gagadu language" />
+	<iso_639_5_entry
+		id="sh2002001717"
+		parents="sh85054365"
+		name="Cimbrian language" />
+	<iso_639_5_entry
+		id="sh2002001963"
+		parents="sh85080066"
+		name="Baba Malay language" />
+	<iso_639_5_entry
+		id="sh2002001995"
+		parents="sh85065767,sh85069794"
+		name="Peranakan Indonesian language" />
+	<iso_639_5_entry
+		id="sh2002002069"
+		parents="sh96001090"
+		name="Nyulnyul language" />
+	<iso_639_5_entry
+		id="sh2002002075"
+		parents="sh89004880"
+		name="Bunaba language" />
+	<iso_639_5_entry
+		id="sh2002004215"
+		parents="paa"
+		name="Urim language" />
+	<iso_639_5_entry
+		id="sh2002004298"
+		parents="sh85138864"
+		name="Karakhanid language" />
+	<iso_639_5_entry
+		id="sh2002004828"
+		parents="sh85083372"
+		name="Molima language" />
+	<iso_639_5_entry
+		id="sh2002004936"
+		parents="sh85015562"
+		name="Furu language" />
+	<iso_639_5_entry
+		id="sh2002005317"
+		parents="sh85083372"
+		name="Wuvulu language" />
+	<iso_639_5_entry
+		id="sh2002005507"
+		parents="paa"
+		name="Foi language" />
+	<iso_639_5_entry
+		id="sh2002005878"
+		parents="paa"
+		name="Edolo language" />
+	<iso_639_5_entry
+		id="sh2002005879"
+		parents="sh85083372"
+		name="Kuni language" />
+	<iso_639_5_entry
+		id="sh2002005882"
+		parents="sh85083372"
+		name="Kurti language" />
+	<iso_639_5_entry
+		id="sh2002005884"
+		parents="paa"
+		name="Uare language" />
+	<iso_639_5_entry
+		id="sh2002005885"
+		parents="sh85048346"
+		name="Kovai language" />
+	<iso_639_5_entry
+		id="sh2002006282"
+		parents="sh85083372"
+		name="Aulua language" />
+	<iso_639_5_entry
+		id="sh2002006549"
+		parents="sh85132011"
+		name="Thao language" />
+	<iso_639_5_entry
+		id="sh2002006641"
+		parents="paa"
+		name="Saweru language" />
+	<iso_639_5_entry
+		id="sh2002007163"
+		parents="sh85132011"
+		name="Saisiyat language" />
+	<iso_639_5_entry
+		id="sh2002007295"
+		parents="aus"
+		name="Limilngan language" />
+	<iso_639_5_entry
+		id="sh2002007409"
+		parents="sh85080100"
+		name="Kutai language" />
+	<iso_639_5_entry
+		id="sh2002007609"
+		parents="paa"
+		name="Bilua language" />
+	<iso_639_5_entry
+		id="sh2002007618"
+		parents="sh85083372"
+		name="Bieria language" />
+	<iso_639_5_entry
+		id="sh2002007623"
+		parents="sh85083372"
+		name="Bauro language" />
+	<iso_639_5_entry
+		id="sh2002007782"
+		parents="sh2002007788"
+		name="Awabakal language" />
+	<iso_639_5_entry
+		id="sh2002007788"
+		parents="sh2003009018"
+		name="Yuin-Kuric languages" />
+	<iso_639_5_entry
+		id="sh2002009431"
+		parents="sh85083372"
+		name="Maisin language" />
+	<iso_639_5_entry
+		id="sh2002009530"
+		parents="sh85082408"
+		name="Ngawun language" />
+	<iso_639_5_entry
+		id="sh2002009710"
+		parents="sh85024301"
+		name="Hokkien dialects" />
+	<iso_639_5_entry
+		id="sh2002009736"
+		parents="sh85083372"
+		name="Banoni language" />
+	<iso_639_5_entry
+		id="sh2002009965"
+		parents="sh93003394"
+		name="Pasir dialect (Lawangan)" />
+	<iso_639_5_entry
+		id="sh2002009968"
+		parents="sh85054438"
+		name="Limburgish language" />
+	<iso_639_5_entry
+		id="sh2002009975"
+		parents="sh85125039"
+		name="Koyraboro Senni dialect" />
+	<iso_639_5_entry
+		id="sh2002011158"
+		parents="sh2004005133"
+		name="Anguthimri language" />
+	<iso_639_5_entry
+		id="sh2002011317"
+		parents="sh85083372"
+		name="Marovo language" />
+	<iso_639_5_entry
+		id="sh2002011318"
+		parents="paa"
+		name="Kyaka language" />
+	<iso_639_5_entry
+		id="sh2002012352"
+		parents="sh2003007067"
+		name="Margany language" />
+	<iso_639_5_entry
+		id="sh2002012353"
+		parents="sh2003009018"
+		name="Warumungu language" />
+	<iso_639_5_entry
+		id="sh2002012367"
+		parents="sh2003009018"
+		name="Wotjobaluk language" />
+	<iso_639_5_entry
+		id="sh2002012368"
+		parents="sh2003009018"
+		name="Yolngu languages" />
+	<iso_639_5_entry
+		id="sh2002012369"
+		parents="sh2003005565"
+		name="Kunbarlang language" />
+	<iso_639_5_entry
+		id="sh2003000164"
+		parents="paa"
+		name="Kerewo language" />
+	<iso_639_5_entry
+		id="sh2003000165"
+		parents="sh85083372"
+		name="Kwamera language" />
+	<iso_639_5_entry
+		id="sh2003000166"
+		parents="sh85083372"
+		name="Keopara language" />
+	<iso_639_5_entry
+		id="sh2003000167"
+		parents="sh85083372"
+		name="Araki language" />
+	<iso_639_5_entry
+		id="sh2003000168"
+		parents="sh85083372"
+		name="Baki language (Vanuatu)" />
+	<iso_639_5_entry
+		id="sh2003000169"
+		parents="sh85083372"
+		name="Lakona language" />
+	<iso_639_5_entry
+		id="sh2003000170"
+		parents="sh85083372"
+		name="Labo language" />
+	<iso_639_5_entry
+		id="sh2003000201"
+		parents="sh85083372"
+		name="Fagani language" />
+	<iso_639_5_entry
+		id="sh2003000206"
+		parents="sh85083372"
+		name="Hahon language" />
+	<iso_639_5_entry
+		id="sh2003000211"
+		parents="sh85132011"
+		name="Kavalan language" />
+	<iso_639_5_entry
+		id="sh2003000216"
+		parents="sh85104690"
+		name="Emae language" />
+	<iso_639_5_entry
+		id="sh2003000221"
+		parents="sh2003000226"
+		name="Djapu dialect" />
+	<iso_639_5_entry
+		id="sh2003000226"
+		parents="sh2002012368"
+		name="Dhuwal language" />
+	<iso_639_5_entry
+		id="sh2003003113"
+		parents="sh85080023"
+		name="Taimoro dialect" />
+	<iso_639_5_entry
+		id="sh2003003132"
+		parents="sh85083372"
+		name="Kitava language" />
+	<iso_639_5_entry
+		id="sh2003003142"
+		parents="sh85117471"
+		name="Kaba language (Central Sudanic)" />
+	<iso_639_5_entry
+		id="sh2003003301"
+		parents="sh85083372"
+		name="Longgu language" />
+	<iso_639_5_entry
+		id="sh2003003426"
+		parents="sh85048346"
+		name="Yopno language" />
+	<iso_639_5_entry
+		id="sh2003003431"
+		parents="sh85083372"
+		name="Notsi language" />
+	<iso_639_5_entry
+		id="sh2003003432"
+		parents="paa"
+		name="Bimin language" />
+	<iso_639_5_entry
+		id="sh2003003457"
+		parents="sh85083372"
+		name="Malfaxal language" />
+	<iso_639_5_entry
+		id="sh2003003596"
+		parents="sh85135233"
+		name="Tamu language" />
+	<iso_639_5_entry
+		id="sh2003004884"
+		parents="sh85080100"
+		name="Waima'a language" />
+	<iso_639_5_entry
+		id="sh2003005414"
+		parents="sh85054438"
+		name="Luxembourgish language" />
+	<iso_639_5_entry
+		id="sh2003005534"
+		parents="sh2003009018"
+		name="Dhauwurd wurrung language" />
+	<iso_639_5_entry
+		id="sh2003005555"
+		parents="sh2002007788"
+		name="Yaygir language" />
+	<iso_639_5_entry
+		id="sh2003005560"
+		parents="sh2003005565"
+		name="Jawoyn language" />
+	<iso_639_5_entry
+		id="sh2003005565"
+		parents="aus"
+		name="Gunwingguan languages" />
+	<iso_639_5_entry
+		id="sh2003005574"
+		parents="sh2003009018"
+		name="Pitta Pitta language" />
+	<iso_639_5_entry
+		id="sh2003005579"
+		parents="sh2003009018"
+		name="Waka-Kabic languages" />
+	<iso_639_5_entry
+		id="sh2003005643"
+		parents="sh2004005133"
+		name="Uradhi languages" />
+	<iso_639_5_entry
+		id="sh2003005652"
+		parents="sh85071484"
+		name="Beary dialect" />
+	<iso_639_5_entry
+		id="sh2003005680"
+		parents="sh2004003281"
+		name="Begak dialect" />
+	<iso_639_5_entry
+		id="sh2003005696"
+		parents="paa"
+		name="Lamma language" />
+	<iso_639_5_entry
+		id="sh2003005924"
+		parents="sh2003005579"
+		name="Darumbal language" />
+	<iso_639_5_entry
+		id="sh2003006063"
+		parents="paa"
+		name="Yaqay language" />
+	<iso_639_5_entry
+		id="sh2003006094"
+		parents="sh85080100"
+		name="Kaidipang language" />
+	<iso_639_5_entry
+		id="sh2003006099"
+		parents="sh93003187"
+		name="Wambule language" />
+	<iso_639_5_entry
+		id="sh2003006250"
+		parents="paa"
+		name="Lavukaleve language" />
+	<iso_639_5_entry
+		id="sh2003006550"
+		parents="sh85083372"
+		name="Arop-Lokep language" />
+	<iso_639_5_entry
+		id="sh2003006895"
+		parents="sh85084873"
+		name="Proto-Micronesian languages" />
+	<iso_639_5_entry
+		id="sh2003006896"
+		parents="paa"
+		name="Warapu language" />
+	<iso_639_5_entry
+		id="sh2003007057"
+		parents="sh2003009018"
+		name="Djabwurrung language" />
+	<iso_639_5_entry
+		id="sh2003007061"
+		parents="sh2003010425"
+		name="Ngumbin languages" />
+	<iso_639_5_entry
+		id="sh2003007062"
+		parents="sh85035544"
+		name="Ami language (Australia)" />
+	<iso_639_5_entry
+		id="sh2003007066"
+		parents="sh2003009018"
+		name="Wemba Wemba language" />
+	<iso_639_5_entry
+		id="sh2003007067"
+		parents="sh2003009018"
+		name="Mari languages (Australia)" />
+	<iso_639_5_entry
+		id="sh2003007071"
+		parents="sh2003007067"
+		name="Gunya language" />
+	<iso_639_5_entry
+		id="sh2003007076"
+		parents="sh2003007061"
+		name="Gurindji language" />
+	<iso_639_5_entry
+		id="sh2003008958"
+		parents="sh2003010410"
+		name="Lamalama language" />
+	<iso_639_5_entry
+		id="sh2003009018"
+		parents="aus"
+		name="Pama-Nyungan languages" />
+	<iso_639_5_entry
+		id="sh2003009028"
+		parents="sh85080100"
+		name="Moklen language" />
+	<iso_639_5_entry
+		id="sh2003009157"
+		parents="sh85083372"
+		name="Hoava language" />
+	<iso_639_5_entry
+		id="sh2003010163"
+		parents="sh2003010173"
+		name="Ngaliwuru language" />
+	<iso_639_5_entry
+		id="sh2003010173"
+		parents="aus"
+		name="Jaminjungan languages" />
+	<iso_639_5_entry
+		id="sh2003010178"
+		parents="sh2003010173"
+		name="Jaminjung language" />
+	<iso_639_5_entry
+		id="sh2003010188"
+		parents="sh2003007061"
+		name="Mudburra language" />
+	<iso_639_5_entry
+		id="sh2003010192"
+		parents="aus"
+		name="Larrakiyan languages" />
+	<iso_639_5_entry
+		id="sh2003010193"
+		parents="sh2003010192"
+		name="Larrakia language" />
+	<iso_639_5_entry
+		id="sh2003010198"
+		parents="sh2003005565"
+		name="Ndjebbana language" />
+	<iso_639_5_entry
+		id="sh2003010300"
+		parents="sh85083372"
+		name="Hote language" />
+	<iso_639_5_entry
+		id="sh2003010405"
+		parents="sh2003010410"
+		name="Central Paman languages" />
+	<iso_639_5_entry
+		id="sh2003010410"
+		parents="sh2003009018"
+		name="Paman languages" />
+	<iso_639_5_entry
+		id="sh2003010420"
+		parents="sh2003005565"
+		name="Rembarrnga language" />
+	<iso_639_5_entry
+		id="sh2003010425"
+		parents="sh2003009018"
+		name="South-West languages (Australia)" />
+	<iso_639_5_entry
+		id="sh2003010435"
+		parents="sh85057928"
+		name="Oykangand language" />
+	<iso_639_5_entry
+		id="sh2003010440"
+		parents="sh2003007061"
+		name="Ngarinyman language" />
+	<iso_639_5_entry
+		id="sh2003010445"
+		parents="sh88004649"
+		name="Barngarla language" />
+	<iso_639_5_entry
+		id="sh2003011111"
+		parents="sh85011364"
+		name="Curonian language" />
+	<iso_639_5_entry
+		id="sh2004001818"
+		parents="sh85067921"
+		name="Zaza language" />
+	<iso_639_5_entry
+		id="sh2004003277"
+		parents="sh85080100"
+		name="Penesak language" />
+	<iso_639_5_entry
+		id="sh2004003281"
+		parents="sh85080100"
+		name="Ida'an language" />
+	<iso_639_5_entry
+		id="sh2004003295"
+		parents="sh85074670"
+		name="Northern Sami dialect" />
+	<iso_639_5_entry
+		id="sh2004004976"
+		parents="sh85083372"
+		name="Raja Ampat languages" />
+	<iso_639_5_entry
+		id="sh2004004977"
+		parents="paa"
+		name="Warembori language" />
+	<iso_639_5_entry
+		id="sh2004004979"
+		parents="sh85135233"
+		name="Proto-Tibeto-Burman language" />
+	<iso_639_5_entry
+		id="sh2004005038"
+		parents="sh85083372"
+		name="Motlav language" />
+	<iso_639_5_entry
+		id="sh2004005039"
+		parents="paa"
+		name="Skou language" />
+	<iso_639_5_entry
+		id="sh2004005133"
+		parents="sh2003010410"
+		name="Northern Paman languages" />
+	<iso_639_5_entry
+		id="sh2004005416"
+		parents="sh96001090"
+		name="Nyikina language" />
+	<iso_639_5_entry
+		id="sh2004005417"
+		parents="sh2003009018"
+		name="Kuurn kopan noot language" />
+	<iso_639_5_entry
+		id="sh2004005426"
+		parents="sh2003009018"
+		name="Wiradhuric languages" />
+	<iso_639_5_entry
+		id="sh2004006628"
+		parents="sh93003187"
+		name="Western Meohang language" />
+	<iso_639_5_entry
+		id="sh2004006853"
+		parents="sh85078170"
+		name="Kaduo language" />
+	<iso_639_5_entry
+		id="sh2004006854"
+		parents="sh85135233"
+		name="Geman Deng language" />
+	<iso_639_5_entry
+		id="sh2004006932"
+		parents="sh85080066"
+		name="Mantang dialect" />
+	<iso_639_5_entry
+		id="sh2004007039"
+		parents="sh85122195"
+		name="Lambau dialect" />
+	<iso_639_5_entry
+		id="sh2004007040"
+		parents="paa"
+		name="Yongkom language" />
+	<iso_639_5_entry
+		id="sh2004007041"
+		parents="paa"
+		name="Pinai-Hagahai language" />
+	<iso_639_5_entry
+		id="sh2004007043"
+		parents="sh85083372"
+		name="Koluawawa language" />
+	<iso_639_5_entry
+		id="sh2004007542"
+		parents="sh2004005426"
+		name="Wiradjuri language" />
+	<iso_639_5_entry
+		id="sh2004007547"
+		parents="sh2003005579"
+		name="Wakawaka language" />
+	<iso_639_5_entry
+		id="sh2004008907"
+		parents="sh85138865"
+		name="Chulym language" />
+	<iso_639_5_entry
+		id="sh2004008908"
+		parents="sh85080633"
+		name="Sygvinskiĭ dialect" />
+	<iso_639_5_entry
+		id="sh2004008909"
+		parents="sh85072863"
+		name="Nizhneinʹvenskiĭ dialect" />
+	<iso_639_5_entry
+		id="sh2004009499"
+		parents="sh85132011"
+		name="Pazeh language" />
+	<iso_639_5_entry
+		id="sh2004009507"
+		parents="sh2004007547"
+		name="Duungidjawu dialect" />
+	<iso_639_5_entry
+		id="sh2004009522"
+		parents="sh85080100"
+		name="Kiput language" />
+	<iso_639_5_entry
+		id="sh2004009642"
+		parents="sh2004009648"
+		name="Karajarri language" />
+	<iso_639_5_entry
+		id="sh2004009644"
+		parents="sh2004009646"
+		name="Kokoberra language" />
+	<iso_639_5_entry
+		id="sh2004009645"
+		parents="sh2002012368"
+		name="Dhangu languages" />
+	<iso_639_5_entry
+		id="sh2004009646"
+		parents="sh2003010410"
+		name="Coastal Paman languages" />
+	<iso_639_5_entry
+		id="sh2004009648"
+		parents="sh2003010425"
+		name="Marngu languages" />
+	<iso_639_5_entry
+		id="sh2004009943"
+		parents="sh2004009645"
+		name="Galpu language" />
+	<iso_639_5_entry
+		id="sh2004010246"
+		parents="sh85080100"
+		name="Bekati' language" />
+	<iso_639_5_entry
+		id="sh2004010357"
+		parents="sh2003010425"
+		name="Kanyara languages" />
+	<iso_639_5_entry
+		id="sh2004010704"
+		parents="sh85080100"
+		name="Benakat language" />
+	<iso_639_5_entry
+		id="sh2004014786"
+		parents="sh85089672"
+		name="Endo language" />
+	<iso_639_5_entry
+		id="sh2005001034"
+		parents="khi"
+		name="Kxoe language" />
+	<iso_639_5_entry
+		id="sh2005001876"
+		parents="paa"
+		name="Inanwatan language" />
+	<iso_639_5_entry
+		id="sh2005001989"
+		parents="paa"
+		name="Kasua language" />
+	<iso_639_5_entry
+		id="sh2005002050"
+		parents="sh93003187"
+		name="Jero language" />
+	<iso_639_5_entry
+		id="sh2005002408"
+		parents="paa"
+		name="Krisa language" />
+	<iso_639_5_entry
+		id="sh2005002496"
+		parents="sh85132011"
+		name="Favorlang language" />
+	<iso_639_5_entry
+		id="sh2005002586"
+		parents="sh2003010425"
+		name="Yinhawangka language" />
+	<iso_639_5_entry
+		id="sh2005002599"
+		parents="sh2003010425"
+		name="Warnman language" />
+	<iso_639_5_entry
+		id="sh2005002603"
+		parents="sh2003010425"
+		name="Ngarla language" />
+	<iso_639_5_entry
+		id="sh2005002869"
+		parents="sh85035400"
+		name="Caucasian Albanian language" />
+	<iso_639_5_entry
+		id="sh2005002886"
+		parents="paa"
+		name="Mpur language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh2005002953"
+		parents="sh2003009018"
+		name="Yandruwandha language" />
+	<iso_639_5_entry
+		id="sh2005003312"
+		parents="sh85086827"
+		name="Khamnigan language (Mongolian)" />
+	<iso_639_5_entry
+		id="sh2005003817"
+		parents="sh89006654"
+		name="Krimchak language" />
+	<iso_639_5_entry
+		id="sh2005004601"
+		parents="sh85125039"
+		name="Tondi Songway Kiini dialect" />
+	<iso_639_5_entry
+		id="sh2005005349"
+		parents="sh85083372"
+		name="Saliba language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh2005006427"
+		parents="sh85135224"
+		name="Kyirong dialect" />
+	<iso_639_5_entry
+		id="sh2005006658"
+		parents="sh99013640"
+		name="Didinga language" />
+	<iso_639_5_entry
+		id="sh2005006783"
+		parents="sh85135233"
+		name="Thami language" />
+	<iso_639_5_entry
+		id="sh2005008220"
+		parents="sh85115036"
+		name="Boyash dialect" />
+	<iso_639_5_entry
+		id="sh2006000493"
+		parents="sh85083372"
+		name="Seimat language" />
+	<iso_639_5_entry
+		id="sh2006000603"
+		parents="sh85080100"
+		name="Timugon language" />
+	<iso_639_5_entry
+		id="sh2006001848"
+		parents="sh85067921"
+		name="Māzandarānī language" />
+	<iso_639_5_entry
+		id="sh2006001857"
+		parents="sh85135233"
+		name="Tujia language" />
+	<iso_639_5_entry
+		id="sh2006002663"
+		parents="sh85083372"
+		name="Bwatoo language" />
+	<iso_639_5_entry
+		id="sh2006003016"
+		parents="sh85086827"
+		name="Darkhat language" />
+	<iso_639_5_entry
+		id="sh2006003708"
+		parents="sh85135224"
+		name="Helambu Sherpa language" />
+	<iso_639_5_entry
+		id="sh2006003887"
+		parents="tai"
+		name="Cao Lan language" />
+	<iso_639_5_entry
+		id="sh2006004830"
+		parents="paa"
+		name="Yale language" />
+	<iso_639_5_entry
+		id="sh2006004832"
+		parents="paa"
+		name="Zia language" />
+	<iso_639_5_entry
+		id="sh2006005092"
+		parents="sh2003005565"
+		name="Nakara language" />
+	<iso_639_5_entry
+		id="sh2006005094"
+		parents="sh2003009018"
+		name="Yalarnnga language" />
+	<iso_639_5_entry
+		id="sh2006005861"
+		parents="sh85083372"
+		name="Muduapa language" />
+	<iso_639_5_entry
+		id="sh2006005946"
+		parents="sh85083372"
+		name="Numbami language" />
+	<iso_639_5_entry
+		id="sh2006005954"
+		parents="sh85083372"
+		name="Tutuba language" />
+	<iso_639_5_entry
+		id="sh2006006749"
+		parents="sh85083372"
+		name="Merei language" />
+	<iso_639_5_entry
+		id="sh2006007337"
+		parents="sh85089490"
+		name="Khiamniungan language" />
+	<iso_639_5_entry
+		id="sh2006008142"
+		parents="sh85083372"
+		name="Apma language" />
+	<iso_639_5_entry
+		id="sh2006008547"
+		parents="sh85135233"
+		name="Baram language" />
+	<iso_639_5_entry
+		id="sh2006008569"
+		parents="sh85072140"
+		name="Kyzyl dialect" />
+	<iso_639_5_entry
+		id="sh2007000116"
+		parents="paa"
+		name="Ayiwo language" />
+	<iso_639_5_entry
+		id="sh2007000117"
+		parents="sh85083372"
+		name="Galeya language" />
+	<iso_639_5_entry
+		id="sh2007000118"
+		parents="sh85080100"
+		name="Kelabit language" />
+	<iso_639_5_entry
+		id="sh2007000407"
+		parents="sh85083372"
+		name="Naman language (Vanuatu)" />
+	<iso_639_5_entry
+		id="sh2007000540"
+		parents="sh85011488"
+		name="Yugambeh-Bundjalung dialects" />
+	<iso_639_5_entry
+		id="sh2007000544"
+		parents="sh85083372"
+		name="Avava language" />
+	<iso_639_5_entry
+		id="sh2007000669"
+		parents="sh85067921"
+		name="Laki language (Iran)" />
+	<iso_639_5_entry
+		id="sh2007000698"
+		parents="sh85052008"
+		name="East Frisian dialect" />
+	<iso_639_5_entry
+		id="sh2007000704"
+		parents="sh85052008"
+		name="North Frisian dialect" />
+	<iso_639_5_entry
+		id="sh2007000789"
+		parents="sh85135233"
+		name="Singpho language" />
+	<iso_639_5_entry
+		id="sh2007000820"
+		parents="dra"
+		name="Maria language (India)" />
+	<iso_639_5_entry
+		id="sh2007000867"
+		parents="sh85035544"
+		name="Marri Amu language" />
+	<iso_639_5_entry
+		id="sh2007001184"
+		parents="sh85035544"
+		name="Marringarr language" />
+	<iso_639_5_entry
+		id="sh2007001228"
+		parents="sh2003009018"
+		name="Wulguru language" />
+	<iso_639_5_entry
+		id="sh2007002730"
+		parents="aus"
+		name="Narangga language" />
+	<iso_639_5_entry
+		id="sh2007003533"
+		parents="sh85004990"
+		name="Tenyidie dialect" />
+	<iso_639_5_entry
+		id="sh2007003961"
+		parents="sh87000038"
+		name="Unde Kaili language" />
+	<iso_639_5_entry
+		id="sh2007005695"
+		parents="sh2012004586"
+		name="Belait language" />
+	<iso_639_5_entry
+		id="sh2007006292"
+		parents="paa"
+		name="Ese language" />
+	<iso_639_5_entry
+		id="sh2007006303"
+		parents="sh85083372"
+		name="Wogeo language" />
+	<iso_639_5_entry
+		id="sh2007006945"
+		parents="sh85083372"
+		name="Tape language" />
+	<iso_639_5_entry
+		id="sh2007006946"
+		parents="sh85083372"
+		name="Nese language" />
+	<iso_639_5_entry
+		id="sh2007006954"
+		parents="sh85146252"
+		name="Putijarra language" />
+	<iso_639_5_entry
+		id="sh2007007015"
+		parents="sh85083372,paa"
+		name="Kazukuru language" />
+	<iso_639_5_entry
+		id="sh2007007017"
+		parents="sh85080100"
+		name="Upper Baram Kenyah language" />
+	<iso_639_5_entry
+		id="sh2007008482"
+		parents="sh99013640"
+		name="Majang language" />
+	<iso_639_5_entry
+		id="sh2007008483"
+		parents="ssa"
+		name="Berta language" />
+	<iso_639_5_entry
+		id="sh2007010162"
+		parents="sh85080100"
+		name="Mualang language" />
+	<iso_639_5_entry
+		id="sh2007010752"
+		parents="sh85135233"
+		name="Xiandao language" />
+	<iso_639_5_entry
+		id="sh2007010852"
+		parents="sh85117129"
+		name="Kung-Ekoka language" />
+	<iso_639_5_entry
+		id="sh2008000350"
+		parents="sh85104690"
+		name="Takuu language" />
+	<iso_639_5_entry
+		id="sh2008000712"
+		parents="sh91003032"
+		name="Omi language" />
+	<iso_639_5_entry
+		id="sh2008000738"
+		parents="paa"
+		name="Abui language" />
+	<iso_639_5_entry
+		id="sh2008000750"
+		parents="sh85084873"
+		name="Satawalese language" />
+	<iso_639_5_entry
+		id="sh2008000834"
+		parents="sh85135233"
+		name="Zakhring language" />
+	<iso_639_5_entry
+		id="sh2008001077"
+		parents="sh85080100"
+		name="Asilulu language" />
+	<iso_639_5_entry
+		id="sh2008001248"
+		parents="sh85067921"
+		name="Sivandi language" />
+	<iso_639_5_entry
+		id="sh2008001545"
+		parents="dra"
+		name="Kisan language (Dravidian)" />
+	<iso_639_5_entry
+		id="sh2008001568"
+		parents="sh85073981"
+		name="Lahu Bakeo dialect" />
+	<iso_639_5_entry
+		id="sh2008001571"
+		parents="sh00005847"
+		name="Lewoingu dialect" />
+	<iso_639_5_entry
+		id="sh2008002014"
+		parents="sh85080423"
+		name="Wutun language" />
+	<iso_639_5_entry
+		id="sh2008002279"
+		parents="sh85083372"
+		name="Siar-Lak language" />
+	<iso_639_5_entry
+		id="sh2008002540"
+		parents="sh85083372"
+		name="Hano language" />
+	<iso_639_5_entry
+		id="sh2008002610"
+		parents="sh93003187"
+		name="Yakha language" />
+	<iso_639_5_entry
+		id="sh2008002689"
+		parents="khi"
+		name="Khomani language" />
+	<iso_639_5_entry
+		id="sh2008002901"
+		parents="sh85080100"
+		name="Taman language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh2008003560"
+		parents="sh85114953"
+		name="Aragonese language" />
+	<iso_639_5_entry
+		id="sh2008003640"
+		parents="sh85135233"
+		name="Baima language" />
+	<iso_639_5_entry
+		id="sh2008004328"
+		parents="sh85067921"
+		name="Natanzi language" />
+	<iso_639_5_entry
+		id="sh2008005166"
+		parents="sh85135233"
+		name="Lashi language" />
+	<iso_639_5_entry
+		id="sh2008005194"
+		parents="sh85133667"
+		name="Konda-Reddi dialect" />
+	<iso_639_5_entry
+		id="sh2008005693"
+		parents="sh89006981"
+		name="Tindi language" />
+	<iso_639_5_entry
+		id="sh2008006478"
+		parents="sh85083372"
+		name="Kokota language" />
+	<iso_639_5_entry
+		id="sh2008007711"
+		parents="ssa"
+		name="Eastern Sudanic languages" />
+	<iso_639_5_entry
+		id="sh2008007712"
+		parents="sh2008007711"
+		name="Proto-Eastern Sudanic language" />
+	<iso_639_5_entry
+		id="sh2008007713"
+		parents="sh85015562"
+		name="Jur Modo language" />
+	<iso_639_5_entry
+		id="sh2008008051"
+		parents="sh85105344,sh85126261"
+		name="Portuñol dialects" />
+	<iso_639_5_entry
+		id="sh2008009200"
+		parents="sh85114953"
+		name="Corsican language" />
+	<iso_639_5_entry
+		id="sh2008009359"
+		parents="sh85080100"
+		name="Lundayeh language" />
+	<iso_639_5_entry
+		id="sh2008009793"
+		parents="aus"
+		name="Malgana language" />
+	<iso_639_5_entry
+		id="sh2008009831"
+		parents="paa"
+		name="Gresi language" />
+	<iso_639_5_entry
+		id="sh2008028002"
+		parents="sh85081799"
+		name="Duri language" />
+	<iso_639_5_entry
+		id="sh2008028014"
+		parents="sh85014404"
+		name="Romblomanon language" />
+	<iso_639_5_entry
+		id="sh2008028018"
+		parents="sh2008028020"
+		name="Gamkonora language" />
+	<iso_639_5_entry
+		id="sh2008028020"
+		parents="sh85058499"
+		name="Sahu languages" />
+	<iso_639_5_entry
+		id="sh2008030083"
+		parents="sh93003187"
+		name="Sampang language" />
+	<iso_639_5_entry
+		id="sh2008030157"
+		parents="sh85135224"
+		name="Khams Tibetan language" />
+	<iso_639_5_entry
+		id="sh2008030185"
+		parents="sh85065695"
+		name="Vanzari language" />
+	<iso_639_5_entry
+		id="sh2008030186"
+		parents="sh85065695"
+		name="Madari language" />
+	<iso_639_5_entry
+		id="sh2008030188"
+		parents="sh85065695"
+		name="Bhantu language" />
+	<iso_639_5_entry
+		id="sh2008030190"
+		parents="sh85065695"
+		name="Chamthi language" />
+	<iso_639_5_entry
+		id="sh2008030194"
+		parents="sh85065695"
+		name="Nayki language" />
+	<iso_639_5_entry
+		id="sh2009000449"
+		parents="sh2009000875"
+		name="Proto Mirndi language" />
+	<iso_639_5_entry
+		id="sh2009000875"
+		parents="aus"
+		name="Mirndi languages" />
+	<iso_639_5_entry
+		id="sh2009000967"
+		parents="sh2009000968"
+		name="Wik-Ngathan language" />
+	<iso_639_5_entry
+		id="sh2009000968"
+		parents="sh2003010410"
+		name="Middle Paman languages" />
+	<iso_639_5_entry
+		id="sh2009003681"
+		parents="sh85135233"
+		name="Wayu language" />
+	<iso_639_5_entry
+		id="sh2009004748"
+		parents="sh85080100"
+		name="Rungus language" />
+	<iso_639_5_entry
+		id="sh2009005071"
+		parents="sh85132011"
+		name="Puyuma language" />
+	<iso_639_5_entry
+		id="sh2009005072"
+		parents="paa"
+		name="Kelon language" />
+	<iso_639_5_entry
+		id="sh2009005588"
+		parents="sh85086824"
+		name="Dariganga dialect" />
+	<iso_639_5_entry
+		id="sh2009005911"
+		parents="sh85044985"
+		name="Võro dialect" />
+	<iso_639_5_entry
+		id="sh2009006676"
+		parents="sh85092722"
+		name="Trøndersk dialects" />
+	<iso_639_5_entry
+		id="sh2009007064"
+		parents="sh85080100"
+		name="Tagal Murut language" />
+	<iso_639_5_entry
+		id="sh2009007157"
+		parents="sh85138336"
+		name="Saaroa language" />
+	<iso_639_5_entry
+		id="sh2009007184"
+		parents="sh85075013"
+		name="Latgalian dialect" />
+	<iso_639_5_entry
+		id="sh2009008165"
+		parents="sh85091962"
+		name="Adhola language" />
+	<iso_639_5_entry
+		id="sh2009008405"
+		parents="sh85083372"
+		name="Mandara language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh2009008433"
+		parents="sh85073386"
+		name="Menya language" />
+	<iso_639_5_entry
+		id="sh2009008462"
+		parents="sh85048346"
+		name="Nek language" />
+	<iso_639_5_entry
+		id="sh2009008514"
+		parents="sh85048346"
+		name="Migabac language" />
+	<iso_639_5_entry
+		id="sh2009008805"
+		parents="sh86003330"
+		name="Kwini language" />
+	<iso_639_5_entry
+		id="sh2009009021"
+		parents="sh85051829"
+		name="Judeo-French language" />
+	<iso_639_5_entry
+		id="sh2009009630"
+		parents="sh96001090"
+		name="Yawuru language" />
+	<iso_639_5_entry
+		id="sh2009009631"
+		parents="sh85083372"
+		name="Lamenu language" />
+	<iso_639_5_entry
+		id="sh2009009633"
+		parents="sh85083372"
+		name="Lewo language" />
+	<iso_639_5_entry
+		id="sh2009011102"
+		parents="sh86003330"
+		name="Wunambal language" />
+	<iso_639_5_entry
+		id="sh2009015512"
+		parents="sh85080100"
+		name="Pendau language" />
+	<iso_639_5_entry
+		id="sh2009030050"
+		parents="dra"
+		name="Manda language (Dravidian)" />
+	<iso_639_5_entry
+		id="sh2010000007"
+		parents="sh85135233"
+		name="Tshangla language" />
+	<iso_639_5_entry
+		id="sh2010000089"
+		parents="sh85048346"
+		name="Mape language" />
+	<iso_639_5_entry
+		id="sh2010000090"
+		parents="sh85048346"
+		name="Iyo language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh2010000569"
+		parents="sh2008007711"
+		name="Daju languages" />
+	<iso_639_5_entry
+		id="sh2010001961"
+		parents="sh91003032"
+		name="Aringa language" />
+	<iso_639_5_entry
+		id="sh2010003575"
+		parents="sh85092937"
+		name="Dilling language" />
+	<iso_639_5_entry
+		id="sh2010004587"
+		parents="paa"
+		name="Tewa language (Papuan)" />
+	<iso_639_5_entry
+		id="sh2010005380"
+		parents="sh93003187"
+		name="Belhariya language" />
+	<iso_639_5_entry
+		id="sh2010007352"
+		parents="sh85115036"
+		name="Megleno-Romanian language" />
+	<iso_639_5_entry
+		id="sh2010008930"
+		parents="sh85003864"
+		name="Tubalar dialect" />
+	<iso_639_5_entry
+		id="sh2010009239"
+		parents="sh85067921"
+		name="Parachi language" />
+	<iso_639_5_entry
+		id="sh2010011434"
+		parents="sh2003009018"
+		name="Peek whuurung language" />
+	<iso_639_5_entry
+		id="sh2010011954"
+		parents="sh85138883"
+		name="Karamanli dialect" />
+	<iso_639_5_entry
+		id="sh2010012192"
+		parents="tai"
+		name="Northeastern Thai language" />
+	<iso_639_5_entry
+		id="sh2010012867"
+		parents="sh85094425"
+		name="Zakhchin dialect" />
+	<iso_639_5_entry
+		id="sh2010013651"
+		parents="map"
+		name="Titan language" />
+	<iso_639_5_entry
+		id="sh2010015117"
+		parents="sit"
+		name="Rgyalrong language" />
+	<iso_639_5_entry
+		id="sh2011000101"
+		parents="sh85100070"
+		name="Zargari (Secret language)" />
+	<iso_639_5_entry
+		id="sh2011000726"
+		parents="sh85071365,sh85094425"
+		name="Dȯrvȯd dialect" />
+	<iso_639_5_entry
+		id="sh2011000898"
+		parents="sh85080100"
+		name="Kimaragang language" />
+	<iso_639_5_entry
+		id="sh2011001031"
+		parents="sh85083372"
+		name="Unua language" />
+	<iso_639_5_entry
+		id="sh2011002599"
+		parents="sh85083372"
+		name="Mavea language" />
+	<iso_639_5_entry
+		id="sh2011002764"
+		parents="sh85118883,sh85092437"
+		name="Shetland dialect" />
+	<iso_639_5_entry
+		id="sh2011003141"
+		parents="sh2010000569"
+		name="Dar Daju Daju language" />
+	<iso_639_5_entry
+		id="sh2011003393"
+		parents="map"
+		name="Central Melanau language" />
+	<iso_639_5_entry
+		id="sh2011003573"
+		parents="sh85132011"
+		name="Siraya language" />
+	<iso_639_5_entry
+		id="sh2011003975"
+		parents="sh85078170"
+		name="Pyen language" />
+	<iso_639_5_entry
+		id="sh2011004361"
+		parents="ssa"
+		name="Maban languages" />
+	<iso_639_5_entry
+		id="sh2011004362"
+		parents="ssa"
+		name="Gumuz language" />
+	<iso_639_5_entry
+		id="sh2011004542"
+		parents="paa"
+		name="Odoodee language" />
+	<iso_639_5_entry
+		id="sh2011004592"
+		parents="sh85068863"
+		name="Sabellian languages" />
+	<iso_639_5_entry
+		id="sh2011004603"
+		parents="sh2003009018"
+		name="Warungu language" />
+	<iso_639_5_entry
+		id="sh2011005050"
+		parents="sh85139000"
+		name="Dukhan dialect" />
+	<iso_639_5_entry
+		id="sh2011005491"
+		parents="map"
+		name="Alor language (Austronesian)" />
+	<iso_639_5_entry
+		id="sh2012000140"
+		parents="map"
+		name="Malo language (Vanuatu)" />
+	<iso_639_5_entry
+		id="sh2012000595"
+		parents="sh85104690"
+		name="Marino language" />
+	<iso_639_5_entry
+		id="sh2012000982"
+		parents="sh85080100"
+		name="Dusner language" />
+	<iso_639_5_entry
+		id="sh2012002161"
+		parents="sh85048346"
+		name="Awara language" />
+	<iso_639_5_entry
+		id="sh2012003597"
+		parents="sh2012004586,sh85080100"
+		name="Kedayan dialect" />
+	<iso_639_5_entry
+		id="sh2012003627"
+		parents="sh85080100"
+		name="Rongga language" />
+	<iso_639_5_entry
+		id="sh2012004065"
+		parents="sh85146252"
+		name="Wangkajunga language" />
+	<iso_639_5_entry
+		id="sh2012004116"
+		parents="sh2011004361"
+		name="Masalit language" />
+	<iso_639_5_entry
+		id="sh2012004156"
+		parents="sh85035400"
+		name="Kryts language" />
+	<iso_639_5_entry
+		id="sh2012004207"
+		parents="sh85117471"
+		name="Sara Kaba Náà language" />
+	<iso_639_5_entry
+		id="sh2012004213"
+		parents="sh2012004214"
+		name="Miisiirii dialect" />
+	<iso_639_5_entry
+		id="sh2012004214"
+		parents="sh2008007711"
+		name="Tama language (Chad and Sudan)" />
+	<iso_639_5_entry
+		id="sh2012004496"
+		parents="paa"
+		name="Wipi language" />
+	<iso_639_5_entry
+		id="sh2012004586"
+		parents="sh85080100"
+		name="Brunei language" />
+	<iso_639_5_entry
+		id="sh2013000050"
+		parents="sh85071533"
+		name="Manga dialect (Niger and Nigeria)" />
+	<iso_639_5_entry
+		id="sh2013000179"
+		parents="paa"
+		name="Doromu-Koki language" />
+	<iso_639_5_entry
+		id="sh2013000231"
+		parents="sh85058499"
+		name="Pagu language" />
+	<iso_639_5_entry
+		id="sh2013001154"
+		parents="sh85100756"
+		name="Kalamian languages" />
+	<iso_639_5_entry
+		id="sh2013001185"
+		parents="sh85068806"
+		name="Abruzzese dialect" />
+	<iso_639_5_entry
+		id="sh2013002788"
+		parents="sh2011004362"
+		name="Mandura dialect" />
+	<iso_639_5_entry
+		id="sh2013002825"
+		parents="paa"
+		name="Bitur language" />
+	<iso_639_5_entry
+		id="sh85000043"
+		parents="sh85116985"
+		name="Abaknon language" />
+	<iso_639_5_entry
+		id="sh85000058"
+		parents="paa"
+		name="Abau language" />
+	<iso_639_5_entry
+		id="sh85000059"
+		parents="cau,sh85000174"
+		name="Abazin language" />
+	<iso_639_5_entry
+		id="sh85000169"
+		parents="cau,sh85000174"
+		name="Abkhaz language" />
+	<iso_639_5_entry
+		id="sh85000174"
+		parents="cau"
+		name="Abkhazo-Adyghian languages" />
+	<iso_639_5_entry
+		id="sh85000189"
+		parents="sh85135233"
+		name="Abor language" />
+	<iso_639_5_entry
+		id="sh85000273"
+		parents="sh85090485"
+		name="Abulas language" />
+	<iso_639_5_entry
+		id="sh85000504"
+		parents="sh85080100"
+		name="Achinese language" />
+	<iso_639_5_entry
+		id="sh85000564"
+		parents="sh85091962"
+		name="Acholi language" />
+	<iso_639_5_entry
+		id="sh85000945"
+		parents="sh88004649"
+		name="Adnyamathanha language" />
+	<iso_639_5_entry
+		id="sh85001214"
+		parents="sh85026050"
+		name="Adygei language" />
+	<iso_639_5_entry
+		id="sh85001219"
+		parents="sh85054242"
+		name="Adzhar dialect" />
+	<iso_639_5_entry
+		id="sh85001765"
+		parents="sh85054438"
+		name="Afrikaans language" />
+	<iso_639_5_entry
+		id="sh85002045"
+		parents="sh85052696,paa"
+		name="Agarabe language" />
+	<iso_639_5_entry
+		id="sh85002509"
+		parents="sh85100756"
+		name="Agta language" />
+	<iso_639_5_entry
+		id="sh85002517"
+		parents="sh85035400"
+		name="Agul language" />
+	<iso_639_5_entry
+		id="sh85002533"
+		parents="tai"
+		name="Ahom language" />
+	<iso_639_5_entry
+		id="sh85003029"
+		parents="sh85015562"
+		name="Aja language (South Sudan)" />
+	<iso_639_5_entry
+		id="sh85003030"
+		parents="sh85083372"
+		name="Ajie language" />
+	<iso_639_5_entry
+		id="sh85003062"
+		parents="sh89006981"
+		name="Akhwakh language" />
+	<iso_639_5_entry
+		id="sh85003069"
+		parents="sh85022814"
+		name="Akka dialect" />
+	<iso_639_5_entry
+		id="sh85003127"
+		parents="paa"
+		name="Alamblak language" />
+	<iso_639_5_entry
+		id="sh85003134"
+		parents="sh85100756"
+		name="Alangan language" />
+	<iso_639_5_entry
+		id="sh85003174"
+		parents="sh2003005565"
+		name="Alawa language" />
+	<iso_639_5_entry
+		id="sh85003198"
+		parents="ine"
+		name="Albanian language" />
+	<iso_639_5_entry
+		id="sh85003864"
+		parents="sh85138865"
+		name="Altai language" />
+	<iso_639_5_entry
+		id="sh85004053"
+		parents="sh85091962"
+		name="Alur language" />
+	<iso_639_5_entry
+		id="sh85004076"
+		parents="sh2003009018"
+		name="Alyawarra language" />
+	<iso_639_5_entry
+		id="sh85004085"
+		parents="paa"
+		name="Ama language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh85004164"
+		parents="sh85080100"
+		name="Amboinese languages" />
+	<iso_639_5_entry
+		id="sh85004170"
+		parents="sh85083372"
+		name="Ambrym language" />
+	<iso_639_5_entry
+		id="sh85004206"
+		parents="paa"
+		name="Amele language" />
+	<iso_639_5_entry
+		id="sh85004457"
+		parents="sh85132011"
+		name="Amis language" />
+	<iso_639_5_entry
+		id="sh85004588"
+		parents="sh85073386"
+		name="Ampale language" />
+	<iso_639_5_entry
+		id="sh85004830"
+		parents="ine"
+		name="Anatolian languages" />
+	<iso_639_5_entry
+		id="sh85004937"
+		parents="sh85083372"
+		name="Aneityum language" />
+	<iso_639_5_entry
+		id="sh85004939"
+		parents="paa"
+		name="Anem language" />
+	<iso_639_5_entry
+		id="sh85004982"
+		parents="sh85083372"
+		name="Anesu language" />
+	<iso_639_5_entry
+		id="sh85004989"
+		parents="paa"
+		name="Angal Heneng language" />
+	<iso_639_5_entry
+		id="sh85004990"
+		parents="sh85089490"
+		name="Angami language" />
+	<iso_639_5_entry
+		id="sh85005015"
+		parents="paa"
+		name="Anggor language" />
+	<iso_639_5_entry
+		id="sh85005079"
+		parents="sh85051829"
+		name="Anglo-Norman dialect" />
+	<iso_639_5_entry
+		id="sh85005482"
+		parents="sh85080023"
+		name="Antaisaka dialect" />
+	<iso_639_5_entry
+		id="sh85005486"
+		parents="sh85080023"
+		name="Antandroy dialect" />
+	<iso_639_5_entry
+		id="sh85005812"
+		parents="sh85091962"
+		name="Anuak language" />
+	<iso_639_5_entry
+		id="sh85005833"
+		parents="sh85104690"
+		name="Anuta language" />
+	<iso_639_5_entry
+		id="sh85005850"
+		parents="sh85089490"
+		name="Ao language" />
+	<iso_639_5_entry
+		id="sh85005853"
+		parents="paa"
+		name="Aomie language" />
+	<iso_639_5_entry
+		id="sh85005930"
+		parents="sh85135233"
+		name="Apatani language" />
+	<iso_639_5_entry
+		id="sh85006396"
+		parents="sh85083372"
+		name="Xaragure language" />
+	<iso_639_5_entry
+		id="sh85006413"
+		parents="sh2003009018"
+		name="Western Arrernte language" />
+	<iso_639_5_entry
+		id="sh85006426"
+		parents="paa"
+		name="Mountain Arapesh language" />
+	<iso_639_5_entry
+		id="sh85006540"
+		parents="sh85035400"
+		name="Archi language" />
+	<iso_639_5_entry
+		id="sh85006992"
+		parents="sh85083372"
+		name="Areare language" />
+	<iso_639_5_entry
+		id="sh85007285"
+		parents="ine"
+		name="Armenian language" />
+	<iso_639_5_entry
+		id="sh85007388"
+		parents="sh85115036"
+		name="Aromanian dialect" />
+	<iso_639_5_entry
+		id="sh85007408"
+		parents="sh85083372"
+		name="Arosi language" />
+	<iso_639_5_entry
+		id="sh85008510"
+		parents="paa"
+		name="Asaro language" />
+	<iso_639_5_entry
+		id="sh85008668"
+		parents="paa"
+		name="Asmat language" />
+	<iso_639_5_entry
+		id="sh85009086"
+		parents="sh85083372"
+		name="Atchin language" />
+	<iso_639_5_entry
+		id="sh85009369"
+		parents="sh85083372"
+		name="Adzera language" />
+	<iso_639_5_entry
+		id="sh85009375"
+		parents="sh85100756"
+		name="Atta language" />
+	<iso_639_5_entry
+		id="sh85009433"
+		parents="paa"
+		name="Au language" />
+	<iso_639_5_entry
+		id="sh85010486"
+		parents="paa"
+		name="Auyana language" />
+	<iso_639_5_entry
+		id="sh85010497"
+		parents="sh85035400"
+		name="Avaric language" />
+	<iso_639_5_entry
+		id="sh85010527"
+		parents="sh85067921"
+		name="Avestan language" />
+	<iso_639_5_entry
+		id="sh85010567"
+		parents="paa"
+		name="Awa language (Eastern Highlands Province, Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh85010640"
+		parents="sh85138864,sh85138868"
+		name="Azerbaijani language" />
+	<iso_639_5_entry
+		id="sh85010890"
+		parents="sh85071484"
+		name="Badaga dialect" />
+	<iso_639_5_entry
+		id="sh85010925"
+		parents="sh85097275"
+		name="Badzhuv dialect" />
+	<iso_639_5_entry
+		id="sh85010966"
+		parents="sh85015562"
+		name="Bagirmi language" />
+	<iso_639_5_entry
+		id="sh85010969"
+		parents="sh85100756"
+		name="Bagobo language" />
+	<iso_639_5_entry
+		id="sh85010986"
+		parents="sh89006981"
+		name="Bagulal language" />
+	<iso_639_5_entry
+		id="sh85011008"
+		parents="paa"
+		name="Bahinemo language" />
+	<iso_639_5_entry
+		id="sh85011009"
+		parents="sh93003187"
+		name="Bahing dialect" />
+	<iso_639_5_entry
+		id="sh85011039"
+		parents="paa"
+		name="Baining language" />
+	<iso_639_5_entry
+		id="sh85011052"
+		parents="sh85116985"
+		name="Bajau language" />
+	<iso_639_5_entry
+		id="sh85011063"
+		parents="sh85015562"
+		name="Baka language (Congo (Democratic Republic) and South Sudan)" />
+	<iso_639_5_entry
+		id="sh85011086"
+		parents="sh85067921"
+		name="Bakhtiari language" />
+	<iso_639_5_entry
+		id="sh85011134"
+		parents="sh85064216"
+		name="Balangao language" />
+	<iso_639_5_entry
+		id="sh85011166"
+		parents="sh91003032"
+		name="Lese language" />
+	<iso_639_5_entry
+		id="sh85011177"
+		parents="sh85080100"
+		name="Balinese language" />
+	<iso_639_5_entry
+		id="sh85011358"
+		parents="sh85135233"
+		name="Balti language" />
+	<iso_639_5_entry
+		id="sh85011363"
+		parents="sh89005213"
+		name="Baltic-Finnic languages" />
+	<iso_639_5_entry
+		id="sh85011364"
+		parents="ine"
+		name="Baltic languages" />
+	<iso_639_5_entry
+		id="sh85011384"
+		parents="sh85123361,sh85011364"
+		name="Balto-Slavic linguistic unity" />
+	<iso_639_5_entry
+		id="sh85011389"
+		parents="sh85067921"
+		name="Baluchi language" />
+	<iso_639_5_entry
+		id="sh85011404"
+		parents="sh85083372"
+		name="Bambatana language" />
+	<iso_639_5_entry
+		id="sh85011428"
+		parents="sh85072600"
+		name="Bamu River language" />
+	<iso_639_5_entry
+		id="sh85011488"
+		parents="sh2003009018"
+		name="Bandjalang language" />
+	<iso_639_5_entry
+		id="sh85011543"
+		parents="sh85080100"
+		name="Banjarese language" />
+	<iso_639_5_entry
+		id="sh85011766"
+		parents="sh85080023"
+		name="Bara dialect (Madagascar)" />
+	<iso_639_5_entry
+		id="sh85011767"
+		parents="sh85015220"
+		name="Bodo language" />
+	<iso_639_5_entry
+		id="sh85011771"
+		parents="paa"
+		name="Barai language" />
+	<iso_639_5_entry
+		id="sh85011820"
+		parents="sh96001090"
+		name="Bardi language" />
+	<iso_639_5_entry
+		id="sh85011825"
+		parents="sh95010211"
+		name="Bareë dialect" />
+	<iso_639_5_entry
+		id="sh85011834"
+		parents="sh85091962"
+		name="Bari language (Nilotic)" />
+	<iso_639_5_entry
+		id="sh85011835"
+		parents="sh2008007711"
+		name="Nara language" />
+	<iso_639_5_entry
+		id="sh85011978"
+		parents="sh85122160"
+		name="Bartang dialect" />
+	<iso_639_5_entry
+		id="sh85011998"
+		parents="sh85073386"
+		name="Baruya language" />
+	<iso_639_5_entry
+		id="sh85012064"
+		parents="sh90000034"
+		name="Bashgali language" />
+	<iso_639_5_entry
+		id="sh85012068"
+		parents="sh85138866"
+		name="Bashkir language" />
+	<iso_639_5_entry
+		id="sh85012070"
+		parents="sh85012068"
+		name="Kuvakan dialect" />
+	<iso_639_5_entry
+		id="sh85012080"
+		parents="sh85043413"
+		name="Basic English" />
+	<iso_639_5_entry
+		id="sh85012311"
+		parents="sh85080100"
+		name="Batak language" />
+	<iso_639_5_entry
+		id="sh85012314"
+		parents="sh85100756"
+		name="Ivatan language" />
+	<iso_639_5_entry
+		id="sh85012399"
+		parents="sh85089567"
+		name="Bats language" />
+	<iso_639_5_entry
+		id="sh85012441"
+		parents="sh85040270"
+		name="Bau-Jagoi dialect" />
+	<iso_639_5_entry
+		id="sh85012688"
+		parents="sh85074607,sh85053374,sh85107831"
+		name="Béarnais dialect" />
+	<iso_639_5_entry
+		id="sh85013101"
+		parents="paa"
+		name="Benabena language" />
+	<iso_639_5_entry
+		id="sh85013476"
+		parents="sh85080023"
+		name="Betsileo dialect" />
+	<iso_639_5_entry
+		id="sh85013562"
+		parents="sh85080100"
+		name="Biak language" />
+	<iso_639_5_entry
+		id="sh85013566"
+		parents="paa"
+		name="Biangai language" />
+	<iso_639_5_entry
+		id="sh85013568"
+		parents="sh85040270"
+		name="Biatah dialect" />
+	<iso_639_5_entry
+		id="sh85013921"
+		parents="sh2003007067"
+		name="Bidjara language" />
+	<iso_639_5_entry
+		id="sh85013963"
+		parents="sh85083372"
+		name="Big Nambas language" />
+	<iso_639_5_entry
+		id="sh85013996"
+		parents="sh85100756"
+		name="Bikol language" />
+	<iso_639_5_entry
+		id="sh85014001"
+		parents="sh85100756"
+		name="Bilaan language" />
+	<iso_639_5_entry
+		id="sh85014075"
+		parents="sh85080100"
+		name="Bimanese language" />
+	<iso_639_5_entry
+		id="sh85014080"
+		parents="paa"
+		name="Binandere language" />
+	<iso_639_5_entry
+		id="sh85014116"
+		parents="paa"
+		name="Binumarien language" />
+	<iso_639_5_entry
+		id="sh85014358"
+		parents="sh85015562"
+		name="Birri language (Central African Republic)" />
+	<iso_639_5_entry
+		id="sh85014404"
+		parents="sh85100756"
+		name="Bisayan languages" />
+	<iso_639_5_entry
+		id="sh85014417"
+		parents="sh85080564"
+		name="Bishnupuriya dialect" />
+	<iso_639_5_entry
+		id="sh85015220"
+		parents="sh85135233"
+		name="Bodo languages" />
+	<iso_639_5_entry
+		id="sh85015339"
+		parents="sh85090485"
+		name="Boiken language" />
+	<iso_639_5_entry
+		id="sh85015355"
+		parents="sh85135233"
+		name="Bokar language" />
+	<iso_639_5_entry
+		id="sh85015562"
+		parents="sh91003032"
+		name="Bongo-Bagirmi languages" />
+	<iso_639_5_entry
+		id="sh85015563"
+		parents="sh85015562"
+		name="Bongo language" />
+	<iso_639_5_entry
+		id="sh85015564"
+		parents="paa"
+		name="Bongu language" />
+	<iso_639_5_entry
+		id="sh85015595"
+		parents="sh85064216"
+		name="Bontoc language" />
+	<iso_639_5_entry
+		id="sh85015793"
+		parents="sh85038075"
+		name="Bor dialect (Dinka)" />
+	<iso_639_5_entry
+		id="sh85015895"
+		parents="paa"
+		name="Bosavi language" />
+	<iso_639_5_entry
+		id="sh85016310"
+		parents="dra"
+		name="Brahui language" />
+	<iso_639_5_entry
+		id="sh85016753"
+		parents="sh85017387"
+		name="Breton language" />
+	<iso_639_5_entry
+		id="sh85017387"
+		parents="sh85021721"
+		name="Brythonic languages" />
+	<iso_639_5_entry
+		id="sh85017394"
+		parents="sh85083372"
+		name="Buang language" />
+	<iso_639_5_entry
+		id="sh85017614"
+		parents="sh85035400"
+		name="Budukh language" />
+	<iso_639_5_entry
+		id="sh85017675"
+		parents="sh85080100"
+		name="Bugis language" />
+	<iso_639_5_entry
+		id="sh85017684"
+		parents="sh85083372"
+		name="Bugotu language" />
+	<iso_639_5_entry
+		id="sh85017823"
+		parents="paa"
+		name="Buin language" />
+	<iso_639_5_entry
+		id="sh85017824"
+		parents="sh85080100"
+		name="Bukar Sadong language" />
+	<iso_639_5_entry
+		id="sh85017827"
+		parents="sh85080606"
+		name="Binukid Manobo language" />
+	<iso_639_5_entry
+		id="sh85017921"
+		parents="sh85138864"
+		name="Bulgaro-Turkic language" />
+	<iso_639_5_entry
+		id="sh85017986"
+		parents="paa"
+		name="Bunak language" />
+	<iso_639_5_entry
+		id="sh85018020"
+		parents="sh85132011"
+		name="Bunun language" />
+	<iso_639_5_entry
+		id="sh85018050"
+		parents="sh2003005565"
+		name="Burarra language" />
+	<iso_639_5_entry
+		id="sh85018133"
+		parents="sh85135233"
+		name="Burmese language" />
+	<iso_639_5_entry
+		id="sh85018423"
+		parents="sh85083372"
+		name="Bwaidoga language" />
+	<iso_639_5_entry
+		id="sh85018722"
+		parents="sh85051829"
+		name="Cajun French dialect" />
+	<iso_639_5_entry
+		id="sh85019040"
+		parents="sh85014404"
+		name="Caluyanun language" />
+	<iso_639_5_entry
+		id="sh85019272"
+		parents="sh85083372"
+		name="Camuhi language" />
+	<iso_639_5_entry
+		id="sh85019816"
+		parents="sh85024301"
+		name="Cantonese dialects" />
+	<iso_639_5_entry
+		id="sh85020782"
+		parents="sh85114953"
+		name="Catalan language" />
+	<iso_639_5_entry
+		id="sh85021584"
+		parents="sh85014404"
+		name="Cebuano language" />
+	<iso_639_5_entry
+		id="sh85021721"
+		parents="ine"
+		name="Celtic languages" />
+	<iso_639_5_entry
+		id="sh85022321"
+		parents="sh85138867,sh85138864"
+		name="Chagatai language" />
+	<iso_639_5_entry
+		id="sh85022360"
+		parents="sh85089490"
+		name="Chakhesang language" />
+	<iso_639_5_entry
+		id="sh85022401"
+		parents="sh85022442"
+		name="Cham language" />
+	<iso_639_5_entry
+		id="sh85022415"
+		parents="sh89006981"
+		name="Chamalal language" />
+	<iso_639_5_entry
+		id="sh85022418"
+		parents="sh85135233"
+		name="Chamba Lahuḷi dialect" />
+	<iso_639_5_entry
+		id="sh85022442"
+		parents="sh85080100"
+		name="Chamic languages" />
+	<iso_639_5_entry
+		id="sh85022445"
+		parents="sh85084873,sh85080100"
+		name="Chamorro language" />
+	<iso_639_5_entry
+		id="sh85022505"
+		parents="sh85089490"
+		name="Chang language" />
+	<iso_639_5_entry
+		id="sh85022814"
+		parents="cau,sh85089567"
+		name="Chechen language" />
+	<iso_639_5_entry
+		id="sh85023061"
+		parents="sh85135233"
+		name="Chepang language" />
+	<iso_639_5_entry
+		id="sh85023957"
+		parents="paa"
+		name="Chimbu language" />
+	<iso_639_5_entry
+		id="sh85024301"
+		parents="sit"
+		name="Chinese language" />
+	<iso_639_5_entry
+		id="sh85025462"
+		parents="tai"
+		name="Zhuang language" />
+	<iso_639_5_entry
+		id="sh85025464"
+		parents="paa"
+		name="Chuave language" />
+	<iso_639_5_entry
+		id="sh85025887"
+		parents="sh85015220"
+		name="Deori language" />
+	<iso_639_5_entry
+		id="sh85025890"
+		parents="sh85017921,sh85138864"
+		name="Chuvash language" />
+	<iso_639_5_entry
+		id="sh85026050"
+		parents="sh85000174"
+		name="Circassian languages" />
+	<iso_639_5_entry
+		id="sh85032849"
+		parents="sh85017387"
+		name="Cornish language" />
+	<iso_639_5_entry
+		id="sh85034019"
+		parents="sh89006654"
+		name="Crimean Tatar language" />
+	<iso_639_5_entry
+		id="sh85034809"
+		parents="sh85141298"
+		name="Cuneiform inscriptions, Urartian" />
+	<iso_639_5_entry
+		id="sh85035020"
+		parents="sh85014404"
+		name="Cuyunon language" />
+	<iso_639_5_entry
+		id="sh85035355"
+		parents="sh85134998"
+		name="Dacian language" />
+	<iso_639_5_entry
+		id="sh85035387"
+		parents="sh85135233"
+		name="Dafla language" />
+	<iso_639_5_entry
+		id="sh85035389"
+		parents="paa"
+		name="Daga language" />
+	<iso_639_5_entry
+		id="sh85035400"
+		parents="sh88006803"
+		name="Dagestanian languages" />
+	<iso_639_5_entry
+		id="sh85035409"
+		parents="sh85086827"
+		name="Dagur language" />
+	<iso_639_5_entry
+		id="sh85035532"
+		parents="sh85114953"
+		name="Dalmatian language (Romance)" />
+	<iso_639_5_entry
+		id="sh85035544"
+		parents="aus"
+		name="Daly languages" />
+	<iso_639_5_entry
+		id="sh85035717"
+		parents="paa"
+		name="Dani language" />
+	<iso_639_5_entry
+		id="sh85035731"
+		parents="sh85117963"
+		name="Danish language" />
+	<iso_639_5_entry
+		id="sh85035755"
+		parents="sh85135233"
+		name="Dänjong-kä language" />
+	<iso_639_5_entry
+		id="sh85035792"
+		parents="sh2004010357,sh98005277"
+		name="Tharrkari language" />
+	<iso_639_5_entry
+		id="sh85035793"
+		parents="sh85035400"
+		name="Dargwa language" />
+	<iso_639_5_entry
+		id="sh85035797"
+		parents="sh85067921"
+		name="Dari language" />
+	<iso_639_5_entry
+		id="sh85035800"
+		parents="paa"
+		name="Daribi language" />
+	<iso_639_5_entry
+		id="sh85035809"
+		parents="sh2003009018"
+		name="Darling River dialects" />
+	<iso_639_5_entry
+		id="sh85035985"
+		parents="ssa"
+		name="Dazaga language" />
+	<iso_639_5_entry
+		id="sh85036489"
+		parents="sh85083372"
+		name="Dehu language" />
+	<iso_639_5_entry
+		id="sh85036693"
+		parents="sh85125039"
+		name="Dendi language" />
+	<iso_639_5_entry
+		id="sh85037433"
+		parents="sh2002007788"
+		name="Dharawal language" />
+	<iso_639_5_entry
+		id="sh85037445"
+		parents="sh85135233"
+		name="Dhimal language" />
+	<iso_639_5_entry
+		id="sh85037452"
+		parents="sh2002007788"
+		name="Dhurga language" />
+	<iso_639_5_entry
+		id="sh85037644"
+		parents="sh85080606"
+		name="Dibabawon language" />
+	<iso_639_5_entry
+		id="sh85037757"
+		parents="sh85035400"
+		name="Dido language" />
+	<iso_639_5_entry
+		id="sh85038029"
+		parents="sh85015220"
+		name="Dimasa language" />
+	<iso_639_5_entry
+		id="sh85038075"
+		parents="sh85091962"
+		name="Dinka language" />
+	<iso_639_5_entry
+		id="sh85038660"
+		parents="sh2003009018"
+		name="Diyari language" />
+	<iso_639_5_entry
+		id="sh85038661"
+		parents="sh2003007061"
+		name="Djaru language" />
+	<iso_639_5_entry
+		id="sh85038665"
+		parents="sh2002012368"
+		name="Djinang language" />
+	<iso_639_5_entry
+		id="sh85038666"
+		parents="aus"
+		name="Djingili language" />
+	<iso_639_5_entry
+		id="sh85038667"
+		parents="sh2003009018"
+		name="Djirbal language" />
+	<iso_639_5_entry
+		id="sh85038696"
+		parents="sh85083372"
+		name="Dobu language" />
+	<iso_639_5_entry
+		id="sh85038898"
+		parents="paa"
+		name="Dom dialects" />
+	<iso_639_5_entry
+		id="sh85039941"
+		parents="sh85100756"
+		name="Dumagat language (Casiguran)" />
+	<iso_639_5_entry
+		id="sh85039942"
+		parents="sh85100756"
+		name="Dumagat language (Umirey)" />
+	<iso_639_5_entry
+		id="sh85039947"
+		parents="sh85083372"
+		name="Dumbea language" />
+	<iso_639_5_entry
+		id="sh85039977"
+		parents="sh85024301"
+		name="Dungan language" />
+	<iso_639_5_entry
+		id="sh85040089"
+		parents="sh85080100"
+		name="Dusun language" />
+	<iso_639_5_entry
+		id="sh85040106"
+		parents="sh85054438"
+		name="Dutch language" />
+	<iso_639_5_entry
+		id="sh85040270"
+		parents="sh85080100"
+		name="Dayak language" />
+	<iso_639_5_entry
+		id="sh85040360"
+		parents="sh85135233"
+		name="Dzongkha language" />
+	<iso_639_5_entry
+		id="sh85040572"
+		parents="sh85083372"
+		name="East Makian language" />
+	<iso_639_5_entry
+		id="sh85040628"
+		parents="sh85086827"
+		name="Eastern Yugur language" />
+	<iso_639_5_entry
+		id="sh85041185"
+		parents="sh85083372"
+		name="Efate language" />
+	<iso_639_5_entry
+		id="sh85041420"
+		parents="sh92005189"
+		name="Eipo language" />
+	<iso_639_5_entry
+		id="sh85043155"
+		parents="sh85117046"
+		name="Enets language" />
+	<iso_639_5_entry
+		id="sh85043161"
+		parents="paa"
+		name="Enga language" />
+	<iso_639_5_entry
+		id="sh85043175"
+		parents="sh85080100"
+		name="Enggano language" />
+	<iso_639_5_entry
+		id="sh85043413"
+		parents="sh85054438"
+		name="English language" />
+	<iso_639_5_entry
+		id="sh85044269"
+		parents="sh85067921"
+		name="Ephthalite language" />
+	<iso_639_5_entry
+		id="sh85044665"
+		parents="sh85083372"
+		name="Eromanga language" />
+	<iso_639_5_entry
+		id="sh85044763"
+		parents="sh85087237"
+		name="Erzya dialect" />
+	<iso_639_5_entry
+		id="sh85044985"
+		parents="sh85011363"
+		name="Estonian language" />
+	<iso_639_5_entry
+		id="sh85044987"
+		parents="sh85044985"
+		name="Seto dialect" />
+	<iso_639_5_entry
+		id="sh85045963"
+		parents="sh85138632"
+		name="Even language" />
+	<iso_639_5_entry
+		id="sh85045974"
+		parents="sh85138632"
+		name="Evenki language" />
+	<iso_639_5_entry
+		id="sh85046722"
+		parents="sh85080087"
+		name="Ezhava dialect" />
+	<iso_639_5_entry
+		id="sh85046938"
+		parents="paa"
+		name="Faiwol language" />
+	<iso_639_5_entry
+		id="sh85046963"
+		parents="sh85068863"
+		name="Faliscan language" />
+	<iso_639_5_entry
+		id="sh85047334"
+		parents="sh85117963"
+		name="Faroese language" />
+	<iso_639_5_entry
+		id="sh85047429"
+		parents="paa"
+		name="Fasu language" />
+	<iso_639_5_entry
+		id="sh85048183"
+		parents="sh85083372"
+		name="Fijian language" />
+	<iso_639_5_entry
+		id="sh85048346"
+		parents="paa"
+		name="Finisterre-Huon languages" />
+	<iso_639_5_entry
+		id="sh85048412"
+		parents="sh85011363"
+		name="Finnish language" />
+	<iso_639_5_entry
+		id="sh85048431"
+		parents="urj"
+		name="Finno-Ugric languages" />
+	<iso_639_5_entry
+		id="sh85048918"
+		parents="sh85083372"
+		name="Kwara'ae language" />
+	<iso_639_5_entry
+		id="sh85049251"
+		parents="sh85083372"
+		name="Florida language" />
+	<iso_639_5_entry
+		id="sh85050483"
+		parents="paa"
+		name="Fore language" />
+	<iso_639_5_entry
+		id="sh85051553"
+		parents="sh85074607,sh85107831"
+		name="Franco-Provençal dialects" />
+	<iso_639_5_entry
+		id="sh85051829"
+		parents="sh85114953"
+		name="French language" />
+	<iso_639_5_entry
+		id="sh85052008"
+		parents="sh85054438"
+		name="Frisian language" />
+	<iso_639_5_entry
+		id="sh85052039"
+		parents="sh85110829"
+		name="Friulian dialect" />
+	<iso_639_5_entry
+		id="sh85052493"
+		parents="ssa"
+		name="Fur language" />
+	<iso_639_5_entry
+		id="sh85052605"
+		parents="sh85104690"
+		name="Futuna-Aniwa language" />
+	<iso_639_5_entry
+		id="sh85052622"
+		parents="paa"
+		name="Fuyuge language" />
+	<iso_639_5_entry
+		id="sh85052633"
+		parents="khi"
+		name="G//ana language" />
+	<iso_639_5_entry
+		id="sh85052641"
+		parents="khi"
+		name="G/wi language" />
+	<iso_639_5_entry
+		id="sh85052677"
+		parents="sh85100756"
+		name="Gaddang language" />
+	<iso_639_5_entry
+		id="sh85052696"
+		parents="paa"
+		name="Gadsup language" />
+	<iso_639_5_entry
+		id="sh85052703"
+		parents="sh85055678"
+		name="Scottish Gaelic language" />
+	<iso_639_5_entry
+		id="sh85052718"
+		parents="sh85138868"
+		name="Gagauz language" />
+	<iso_639_5_entry
+		id="sh85052732"
+		parents="paa"
+		name="Gahuku language" />
+	<iso_639_5_entry
+		id="sh85052774"
+		parents="sh85058499"
+		name="Galela language" />
+	<iso_639_5_entry
+		id="sh85052814"
+		parents="sh85114953"
+		name="Galician language" />
+	<iso_639_5_entry
+		id="sh85052858"
+		parents="sh85068806"
+		name="Gallo-Italian dialects" />
+	<iso_639_5_entry
+		id="sh85052862"
+		parents="sh85135233"
+		name="Gallong language" />
+	<iso_639_5_entry
+		id="sh85052896"
+		parents="sh85117471"
+		name="Gambai dialect" />
+	<iso_639_5_entry
+		id="sh85053028"
+		parents="sh85135233"
+		name="Gangte language" />
+	<iso_639_5_entry
+		id="sh85053057"
+		parents="aus"
+		name="Garawa language" />
+	<iso_639_5_entry
+		id="sh85053189"
+		parents="sh85015220,sh85135233"
+		name="Garo language" />
+	<iso_639_5_entry
+		id="sh85053374"
+		parents="sh85074607,sh85107831"
+		name="Gascon dialect" />
+	<iso_639_5_entry
+		id="sh85053576"
+		parents="paa"
+		name="Umbu-Ungu language" />
+	<iso_639_5_entry
+		id="sh85053584"
+		parents="sh85080100"
+		name="Gayo language" />
+	<iso_639_5_entry
+		id="sh85053651"
+		parents="sh85083372"
+		name="Gedaged language" />
+	<iso_639_5_entry
+		id="sh85054242"
+		parents="cau,sh85071678"
+		name="Georgian language" />
+	<iso_639_5_entry
+		id="sh85054365"
+		parents="sh85054438"
+		name="German language" />
+	<iso_639_5_entry
+		id="sh85054438"
+		parents="ine"
+		name="Germanic languages" />
+	<iso_639_5_entry
+		id="sh85054873"
+		parents="sh85011488"
+		name="Gidabal dialect" />
+	<iso_639_5_entry
+		id="sh85054927"
+		parents="sh85067921"
+		name="Gilaki language" />
+	<iso_639_5_entry
+		id="sh85054929"
+		parents="sh85084873"
+		name="Gilbertese language" />
+	<iso_639_5_entry
+		id="sh85054967"
+		parents="paa"
+		name="Gimi language" />
+	<iso_639_5_entry
+		id="sh85054990"
+		parents="sh85035400"
+		name="Ginukh language" />
+	<iso_639_5_entry
+		id="sh85055605"
+		parents="sh89006981"
+		name="Godoberi language" />
+	<iso_639_5_entry
+		id="sh85055674"
+		parents="paa"
+		name="Gogodala language" />
+	<iso_639_5_entry
+		id="sh85055678"
+		parents="sh85021721"
+		name="Goidelic languages" />
+	<iso_639_5_entry
+		id="sh85055822"
+		parents="sh85081087,sh85038898"
+		name="Golin dialect" />
+	<iso_639_5_entry
+		id="sh85055843"
+		parents="dra"
+		name="Gondi language" />
+	<iso_639_5_entry
+		id="sh85055968"
+		parents="sh85080100"
+		name="Gorontalo language" />
+	<iso_639_5_entry
+		id="sh85055993"
+		parents="sh85054438"
+		name="Gothic language" />
+	<iso_639_5_entry
+		id="sh85057151"
+		parents="ine"
+		name="Greek language" />
+	<iso_639_5_entry
+		id="sh85057705"
+		parents="sh2003010425"
+		name="Gugada dialect" />
+	<iso_639_5_entry
+		id="sh85057706"
+		parents="sh2003009018"
+		name="Kuku-Yalanji language" />
+	<iso_639_5_entry
+		id="sh85057708"
+		parents="paa"
+		name="Guhu-Samane language" />
+	<iso_639_5_entry
+		id="sh85057905"
+		parents="sh2002012368"
+		name="Gumatj language" />
+	<iso_639_5_entry
+		id="sh85057906"
+		parents="sh2003009018"
+		name="Kumbainggar language" />
+	<iso_639_5_entry
+		id="sh85057928"
+		parents="sh2003010405"
+		name="Kunjen dialects" />
+	<iso_639_5_entry
+		id="sh85057929"
+		parents="sh2003007067"
+		name="Gungabula language" />
+	<iso_639_5_entry
+		id="sh85057953"
+		parents="sh2003005565"
+		name="Gunwinggu language" />
+	<iso_639_5_entry
+		id="sh85057954"
+		parents="sh2002012368"
+		name="Gupapuyngu language" />
+	<iso_639_5_entry
+		id="sh85057963"
+		parents="sh85054242"
+		name="Gurian dialect" />
+	<iso_639_5_entry
+		id="sh85057977"
+		parents="sh85135233"
+		name="Gurung language" />
+	<iso_639_5_entry
+		id="sh85058390"
+		parents="sh85024301"
+		name="Hakka dialects" />
+	<iso_639_5_entry
+		id="sh85058434"
+		parents="sh85083372"
+		name="Halia language" />
+	<iso_639_5_entry
+		id="sh85058499"
+		parents="paa"
+		name="Halmaheran languages" />
+	<iso_639_5_entry
+		id="sh85058781"
+		parents="sh85080533,sh85100756"
+		name="Hanunóo language" />
+	<iso_639_5_entry
+		id="sh85058983"
+		parents="sh85022442"
+		name="Haroi language" />
+	<iso_639_5_entry
+		id="sh85059289"
+		parents="sh85004830"
+		name="Hattic language" />
+	<iso_639_5_entry
+		id="sh85059372"
+		parents="sh85104690"
+		name="Hawaiian language" />
+	<iso_639_5_entry
+		id="sh85059437"
+		parents="sh85067921"
+		name="Hazaragi language" />
+	<iso_639_5_entry
+		id="sh85059465"
+		parents="sh85073444"
+		name="Hazili dialect" />
+	<iso_639_5_entry
+		id="sh85060316"
+		parents="sh85066590"
+		name="Heraclean tablets" />
+	<iso_639_5_entry
+		id="sh85060811"
+		parents="sh85014404"
+		name="Hiligaynon language" />
+	<iso_639_5_entry
+		id="sh85061012"
+		parents="sh85087704,sh85083372"
+		name="Hiri Motu language" />
+	<iso_639_5_entry
+		id="sh85061276"
+		parents="sh85004830"
+		name="Hittite language" />
+	<iso_639_5_entry
+		id="sh85062701"
+		parents="sh85024301"
+		name="Xiang dialects" />
+	<iso_639_5_entry
+		id="sh85062719"
+		parents="sh85148903"
+		name="Hua dialect (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh85062823"
+		parents="sh85083372"
+		name="Hula language" />
+	<iso_639_5_entry
+		id="sh85062828"
+		parents="paa"
+		name="Huli language" />
+	<iso_639_5_entry
+		id="sh85062997"
+		parents="sh85048431"
+		name="Hungarian language" />
+	<iso_639_5_entry
+		id="sh85063189"
+		parents="sh85004830"
+		name="Hurrian language" />
+	<iso_639_5_entry
+		id="sh85063876"
+		parents="sh85083372"
+		name="Iai language" />
+	<iso_639_5_entry
+		id="sh85063883"
+		parents="sh85083372"
+		name="Iamalele language" />
+	<iso_639_5_entry
+		id="sh85063892"
+		parents="sh85090485"
+		name="Iatmul language" />
+	<iso_639_5_entry
+		id="sh85063901"
+		parents="sh85080100"
+		name="Iban language" />
+	<iso_639_5_entry
+		id="sh85063904"
+		parents="sh85100756"
+		name="Ibanag language" />
+	<iso_639_5_entry
+		id="sh85064029"
+		parents="sh85117963"
+		name="Icelandic language" />
+	<iso_639_5_entry
+		id="sh85064185"
+		parents="sh85135233"
+		name="Idu language" />
+	<iso_639_5_entry
+		id="sh85064193"
+		parents="sh85064216"
+		name="Ifugao language" />
+	<iso_639_5_entry
+		id="sh85064216"
+		parents="sh85100756"
+		name="Central Cordilleran languages" />
+	<iso_639_5_entry
+		id="sh85064421"
+		parents="ine"
+		name="Illyrian languages" />
+	<iso_639_5_entry
+		id="sh85064428"
+		parents="sh85100756"
+		name="Iloko language" />
+	<iso_639_5_entry
+		id="sh85064432"
+		parents="sh85100756"
+		name="Ilongot language" />
+	<iso_639_5_entry
+		id="sh85065695"
+		parents="sh85065708"
+		name="Indo-Aryan languages" />
+	<iso_639_5_entry
+		id="sh85065708"
+		parents="ine"
+		name="Indo-Iranian languages" />
+	<iso_639_5_entry
+		id="sh85065767"
+		parents="sh85080100"
+		name="Indonesian language" />
+	<iso_639_5_entry
+		id="sh85066342"
+		parents="sh2008007711"
+		name="Ingassana language" />
+	<iso_639_5_entry
+		id="sh85066360"
+		parents="sh85011363"
+		name="Ingrian language" />
+	<iso_639_5_entry
+		id="sh85066365"
+		parents="sh85089567,cau"
+		name="Ingush language" />
+	<iso_639_5_entry
+		id="sh85066584"
+		parents="sh85066609,sh85066610"
+		name="Inscriptions, Cypro-Minoan" />
+	<iso_639_5_entry
+		id="sh85066590"
+		parents="sh85057151"
+		name="Inscriptions, Greek" />
+	<iso_639_5_entry
+		id="sh85066606"
+		parents="sh85074944"
+		name="Inscriptions, Latin" />
+	<iso_639_5_entry
+		id="sh85066609"
+		parents="sh85066590"
+		name="Inscriptions, Linear A" />
+	<iso_639_5_entry
+		id="sh85066610"
+		parents="sh85066590"
+		name="Inscriptions, Linear B" />
+	<iso_639_5_entry
+		id="sh85067921"
+		parents="sh85065708"
+		name="Iranian languages" />
+	<iso_639_5_entry
+		id="sh85068101"
+		parents="sh85055678"
+		name="Irish language" />
+	<iso_639_5_entry
+		id="sh85068317"
+		parents="dra"
+		name="Irula language" />
+	<iso_639_5_entry
+		id="sh85068371"
+		parents="sh85097275"
+		name="Ishkashmi dialect" />
+	<iso_639_5_entry
+		id="sh85068375"
+		parents="sh85064216"
+		name="Isinay language" />
+	<iso_639_5_entry
+		id="sh85068628"
+		parents="sh85100756"
+		name="Isneg language" />
+	<iso_639_5_entry
+		id="sh85068765"
+		parents="sh85115036"
+		name="Istro-Romanian dialect" />
+	<iso_639_5_entry
+		id="sh85068806"
+		parents="sh85114953"
+		name="Italian language" />
+	<iso_639_5_entry
+		id="sh85068810"
+		parents="sh85068806"
+		name="Judeo-Italian language" />
+	<iso_639_5_entry
+		id="sh85068863"
+		parents="ine"
+		name="Italic languages and dialects" />
+	<iso_639_5_entry
+		id="sh85069053"
+		parents="sh85100756"
+		name="Itawis language" />
+	<iso_639_5_entry
+		id="sh85069131"
+		parents="aus"
+		name="Iwaidja language" />
+	<iso_639_5_entry
+		id="sh85069133"
+		parents="paa"
+		name="Iwam language" />
+	<iso_639_5_entry
+		id="sh85069168"
+		parents="sh85083372"
+		name="Yabim language" />
+	<iso_639_5_entry
+		id="sh85069303"
+		parents="sh85116985"
+		name="Jama Mapun language" />
+	<iso_639_5_entry
+		id="sh85069751"
+		parents="sh85022442"
+		name="Jarai language" />
+	<iso_639_5_entry
+		id="sh85069761"
+		parents="sh85086827"
+		name="Jarut language" />
+	<iso_639_5_entry
+		id="sh85069794"
+		parents="sh85080100"
+		name="Javanese language" />
+	<iso_639_5_entry
+		id="sh85070544"
+		parents="sh2003010425"
+		name="Yindjibarndi language" />
+	<iso_639_5_entry
+		id="sh85070550"
+		parents="sh85135233"
+		name="Jirel language" />
+	<iso_639_5_entry
+		id="sh85070816"
+		parents="sh85080397,sh85138632"
+		name="Jurchen language" />
+	<iso_639_5_entry
+		id="sh85070980"
+		parents="sh2007000540,sh85011488"
+		name="Yugambeh dialect" />
+	<iso_639_5_entry
+		id="sh85071214"
+		parents="sh85026050"
+		name="Kabardian language" />
+	<iso_639_5_entry
+		id="sh85071223"
+		parents="sh85089490"
+		name="Kabui language" />
+	<iso_639_5_entry
+		id="sh85071242"
+		parents="sh85135233"
+		name="Kachin language" />
+	<iso_639_5_entry
+		id="sh85071263"
+		parents="sh85135224"
+		name="Kagate dialect" />
+	<iso_639_5_entry
+		id="sh85071265"
+		parents="sh85080606"
+		name="Kagayanen language" />
+	<iso_639_5_entry
+		id="sh85071286"
+		parents="sh85135233"
+		name="Kaike language" />
+	<iso_639_5_entry
+		id="sh85071327"
+		parents="sh2013001154"
+		name="Calamian Tagbanwa language" />
+	<iso_639_5_entry
+		id="sh85071340"
+		parents="sh85089672"
+		name="Kalenjin language" />
+	<iso_639_5_entry
+		id="sh85071346"
+		parents="sh85064216"
+		name="Kalinga languages" />
+	<iso_639_5_entry
+		id="sh85071353"
+		parents="sh2003009018"
+		name="Kalkatungu language" />
+	<iso_639_5_entry
+		id="sh85071355"
+		parents="sh85132190"
+		name="Kallan dialect" />
+	<iso_639_5_entry
+		id="sh85071365"
+		parents="sh85086827"
+		name="Kalmyk language" />
+	<iso_639_5_entry
+		id="sh85071386"
+		parents="paa"
+		name="Kamano language" />
+	<iso_639_5_entry
+		id="sh85071389"
+		parents="sh85117046"
+		name="Kamassin language" />
+	<iso_639_5_entry
+		id="sh85071393"
+		parents="sh85130410"
+		name="Kambera dialect" />
+	<iso_639_5_entry
+		id="sh85071425"
+		parents="sh85133667"
+		name="Kamma dialect" />
+	<iso_639_5_entry
+		id="sh85071428"
+		parents="paa"
+		name="Kamoro language" />
+	<iso_639_5_entry
+		id="sh85071435"
+		parents="paa"
+		name="Kamtuk language" />
+	<iso_639_5_entry
+		id="sh85071438"
+		parents="sh85024301"
+		name="Gan dialects (China)" />
+	<iso_639_5_entry
+		id="sh85071449"
+		parents="sh85135233"
+		name="Kanauri language" />
+	<iso_639_5_entry
+		id="sh85071472"
+		parents="paa"
+		name="Kanite language" />
+	<iso_639_5_entry
+		id="sh85071475"
+		parents="sh85064216"
+		name="Kankanay language" />
+	<iso_639_5_entry
+		id="sh85071484"
+		parents="dra"
+		name="Kannada language" />
+	<iso_639_5_entry
+		id="sh85071486"
+		parents="sh85071484"
+		name="Gauda dialect" />
+	<iso_639_5_entry
+		id="sh85071487"
+		parents="sh85071484"
+		name="Havyaka dialect" />
+	<iso_639_5_entry
+		id="sh85071533"
+		parents="ssa"
+		name="Kanuri language" />
+	<iso_639_5_entry
+		id="sh85071552"
+		parents="sh85073386"
+		name="Hamtai language" />
+	<iso_639_5_entry
+		id="sh85071554"
+		parents="paa"
+		name="Kapauku language" />
+	<iso_639_5_entry
+		id="sh85071556"
+		parents="sh85084873"
+		name="Kapingamarangi language" />
+	<iso_639_5_entry
+		id="sh85071561"
+		parents="sh85083372"
+		name="Kapone language" />
+	<iso_639_5_entry
+		id="sh85071573"
+		parents="sh85138864,sh85138866"
+		name="Kara-Kalpak language" />
+	<iso_639_5_entry
+		id="sh85071578"
+		parents="sh85015562"
+		name="Kara language (Central African Republic and South Sudan)" />
+	<iso_639_5_entry
+		id="sh85071582"
+		parents="sh89006654"
+		name="Karachay-Balkar language" />
+	<iso_639_5_entry
+		id="sh85071587"
+		parents="sh89006654"
+		name="Karaim language" />
+	<iso_639_5_entry
+		id="sh85071598"
+		parents="sh85134134,sh85091962"
+		name="Karamojong language" />
+	<iso_639_5_entry
+		id="sh85071610"
+		parents="sh89006981"
+		name="Karata language" />
+	<iso_639_5_entry
+		id="sh85071627"
+		parents="sh85011363"
+		name="Karelian language" />
+	<iso_639_5_entry
+		id="sh85071634"
+		parents="sh85135233"
+		name="Karen languages" />
+	<iso_639_5_entry
+		id="sh85071661"
+		parents="sh85012311"
+		name="Karo-Batak dialect" />
+	<iso_639_5_entry
+		id="sh85071678"
+		parents="cau"
+		name="Kartvelian languages" />
+	<iso_639_5_entry
+		id="sh85071689"
+		parents="sh85132190"
+		name="Kasaba dialect" />
+	<iso_639_5_entry
+		id="sh85071739"
+		parents="sh85048346"
+		name="Kâte language" />
+	<iso_639_5_entry
+		id="sh85071751"
+		parents="sh2002007788"
+		name="Kattang language" />
+	<iso_639_5_entry
+		id="sh85071766"
+		parents="aus"
+		name="Kaurna language" />
+	<iso_639_5_entry
+		id="sh85071771"
+		parents="sh85135233"
+		name="Akha language" />
+	<iso_639_5_entry
+		id="sh85071792"
+		parents="sh85080100"
+		name="Kawi language" />
+	<iso_639_5_entry
+		id="sh85071802"
+		parents="sh85080100"
+		name="Kayan language (Borneo)" />
+	<iso_639_5_entry
+		id="sh85071814"
+		parents="sh85138866"
+		name="Kazakh language" />
+	<iso_639_5_entry
+		id="sh85071903"
+		parents="sh85080100"
+		name="Kemak language" />
+	<iso_639_5_entry
+		id="sh85071926"
+		parents="sh85117471,sh85015562"
+		name="Kenga language" />
+	<iso_639_5_entry
+		id="sh85071989"
+		parents="sh85092937"
+		name="Dongola-Kenuz dialect" />
+	<iso_639_5_entry
+		id="sh85072053"
+		parents="sh85080100"
+		name="Kerinci language" />
+	<iso_639_5_entry
+		id="sh85072109"
+		parents="paa"
+		name="Kewa language" />
+	<iso_639_5_entry
+		id="sh85072140"
+		parents="sh85138864,sh85138865"
+		name="Khakass language" />
+	<iso_639_5_entry
+		id="sh85072146"
+		parents="sh85138864"
+		name="Khalaj language" />
+	<iso_639_5_entry
+		id="sh85072147"
+		parents="sh93003187"
+		name="Khaling language" />
+	<iso_639_5_entry
+		id="sh85072148"
+		parents="sh85086824"
+		name="Khalkha dialect" />
+	<iso_639_5_entry
+		id="sh85072151"
+		parents="sh85117129"
+		name="Kham language" />
+	<iso_639_5_entry
+		id="sh85072152"
+		parents="sh85135233"
+		name="Kham language (Nepal)" />
+	<iso_639_5_entry
+		id="sh85072154"
+		parents="tai"
+		name="Khamti language" />
+	<iso_639_5_entry
+		id="sh85072162"
+		parents="sh85093616"
+		name="Khanty language" />
+	<iso_639_5_entry
+		id="sh85072188"
+		parents="sh85007285"
+		name="Khayasa language" />
+	<iso_639_5_entry
+		id="sh85072195"
+		parents="sh85089490"
+		name="Khezha language" />
+	<iso_639_5_entry
+		id="sh85072199"
+		parents="sh85035400"
+		name="Khinalugh language" />
+	<iso_639_5_entry
+		id="sh85072214"
+		parents="khi"
+		name="Khoikhoi language" />
+	<iso_639_5_entry
+		id="sh85072223"
+		parents="sh85097275"
+		name="Khuf dialect" />
+	<iso_639_5_entry
+		id="sh85072226"
+		parents="tai"
+		name="Khün language" />
+	<iso_639_5_entry
+		id="sh85072498"
+		parents="sh89006654"
+		name="Kipchak language" />
+	<iso_639_5_entry
+		id="sh85072501"
+		parents="sh85089671"
+		name="Kipsikis dialect" />
+	<iso_639_5_entry
+		id="sh85072516"
+		parents="sh85138866"
+		name="Kyrgyz language" />
+	<iso_639_5_entry
+		id="sh85072526"
+		parents="sh85083372"
+		name="Kiriwinian language" />
+	<iso_639_5_entry
+		id="sh85072600"
+		parents="paa"
+		name="Kiwai languages" />
+	<iso_639_5_entry
+		id="sh85072760"
+		parents="paa"
+		name="Kobon language" />
+	<iso_639_5_entry
+		id="sh85072773"
+		parents="dra"
+		name="Kodagu language" />
+	<iso_639_5_entry
+		id="sh85072787"
+		parents="aus"
+		name="Kogai language" />
+	<iso_639_5_entry
+		id="sh85072798"
+		parents="sh85072140"
+		name="Koibalian dialect" />
+	<iso_639_5_entry
+		id="sh85072824"
+		parents="dra"
+		name="Kolami language" />
+	<iso_639_5_entry
+		id="sh85072857"
+		parents="sh85048346"
+		name="Komba language" />
+	<iso_639_5_entry
+		id="sh85072861"
+		parents="sh85099990"
+		name="Komi language" />
+	<iso_639_5_entry
+		id="sh85072863"
+		parents="sh85072861"
+		name="Komi-Permyak dialect" />
+	<iso_639_5_entry
+		id="sh85072868"
+		parents="sh85072861"
+		name="Komi-Yazʾva dialect" />
+	<iso_639_5_entry
+		id="sh85072890"
+		parents="dra"
+		name="Konda language" />
+	<iso_639_5_entry
+		id="sh85072891"
+		parents="sh85079988"
+		name="Kondjo dialect" />
+	<iso_639_5_entry
+		id="sh85072932"
+		parents="sh85089490"
+		name="Konyak language" />
+	<iso_639_5_entry
+		id="sh85072950"
+		parents="sh85138534,dra"
+		name="Koraga language" />
+	<iso_639_5_entry
+		id="sh85072998"
+		parents="khi"
+		name="Korana language" />
+	<iso_639_5_entry
+		id="sh85073002"
+		parents="paa"
+		name="Korape language" />
+	<iso_639_5_entry
+		id="sh85073088"
+		parents="tut"
+		name="Korean language" />
+	<iso_639_5_entry
+		id="sh85073168"
+		parents="sh85010486"
+		name="Kosena dialect" />
+	<iso_639_5_entry
+		id="sh85073192"
+		parents="dra"
+		name="Kota language (India)" />
+	<iso_639_5_entry
+		id="sh85073212"
+		parents="dra"
+		name="Koya language" />
+	<iso_639_5_entry
+		id="sh85073272"
+		parents="sh91003032"
+		name="Gbaya language (Central Sudanic)" />
+	<iso_639_5_entry
+		id="sh85073344"
+		parents="sh85083372"
+		name="Tolai language" />
+	<iso_639_5_entry
+		id="sh85073348"
+		parents="sh85035793"
+		name="Kubachi dialect" />
+	<iso_639_5_entry
+		id="sh85073375"
+		parents="dra"
+		name="Kui language (Dravidian)" />
+	<iso_639_5_entry
+		id="sh85073386"
+		parents="paa"
+		name="Angan languages" />
+	<iso_639_5_entry
+		id="sh85073409"
+		parents="sh93003187"
+		name="Kulung language (Kiranti)" />
+	<iso_639_5_entry
+		id="sh85073430"
+		parents="sh89006654"
+		name="Kumyk language" />
+	<iso_639_5_entry
+		id="sh85073435"
+		parents="ssa"
+		name="Kunama language" />
+	<iso_639_5_entry
+		id="sh85073444"
+		parents="paa"
+		name="Kunimaipa language" />
+	<iso_639_5_entry
+		id="sh85073463"
+		parents="sh85067921"
+		name="Kurdish language" />
+	<iso_639_5_entry
+		id="sh85073488"
+		parents="dra"
+		name="Kurukh language" />
+	<iso_639_5_entry
+		id="sh85073496"
+		parents="sh85084873"
+		name="Kosraean language" />
+	<iso_639_5_entry
+		id="sh85073503"
+		parents="sh85135233"
+		name="Kusunda language" />
+	<iso_639_5_entry
+		id="sh85073521"
+		parents="dra"
+		name="Kuvi language" />
+	<iso_639_5_entry
+		id="sh85073536"
+		parents="sh85083372"
+		name="Kwaio language" />
+	<iso_639_5_entry
+		id="sh85073553"
+		parents="paa"
+		name="Kwerba language" />
+	<iso_639_5_entry
+		id="sh85073880"
+		parents="sh85135224"
+		name="Ladakhi language" />
+	<iso_639_5_entry
+		id="sh85073893"
+		parents="sh85126261"
+		name="Ladino language" />
+	<iso_639_5_entry
+		id="sh85073981"
+		parents="sh85078170"
+		name="Lahu language" />
+	<iso_639_5_entry
+		id="sh85073994"
+		parents="sh85035400"
+		name="Lak language" />
+	<iso_639_5_entry
+		id="sh85074149"
+		parents="sh85135233"
+		name="Lakher language" />
+	<iso_639_5_entry
+		id="sh85074270"
+		parents="sh85080100"
+		name="Lampung language" />
+	<iso_639_5_entry
+		id="sh85074505"
+		parents="sh85091962"
+		name="Lango language (Uganda)" />
+	<iso_639_5_entry
+		id="sh85074607"
+		parents="sh85114953"
+		name="Occitan language" />
+	<iso_639_5_entry
+		id="sh85074644"
+		parents="tai"
+		name="Lao language" />
+	<iso_639_5_entry
+		id="sh85074670"
+		parents="sh89005213"
+		name="Sami language" />
+	<iso_639_5_entry
+		id="sh85074944"
+		parents="sh85068863"
+		name="Latin language" />
+	<iso_639_5_entry
+		id="sh85074998"
+		parents="sh85091962"
+		name="Lotuko language" />
+	<iso_639_5_entry
+		id="sh85075013"
+		parents="sh85011364"
+		name="Latvian language" />
+	<iso_639_5_entry
+		id="sh85075410"
+		parents="sh85071678"
+		name="Laz language" />
+	<iso_639_5_entry
+		id="sh85075971"
+		parents="sh85132320"
+		name="Lenakel dialect" />
+	<iso_639_5_entry
+		id="sh85076258"
+		parents="sh85104690"
+		name="Leuangiua language" />
+	<iso_639_5_entry
+		id="sh85076373"
+		parents="sh85035400"
+		name="Lezgian language" />
+	<iso_639_5_entry
+		id="sh85076381"
+		parents="sh85135233"
+		name="Lhomi language" />
+	<iso_639_5_entry
+		id="sh85076382"
+		parents="sh85089490"
+		name="Lhota language" />
+	<iso_639_5_entry
+		id="sh85077000"
+		parents="sh93003187"
+		name="Limbu language" />
+	<iso_639_5_entry
+		id="sh85077471"
+		parents="sh85078170"
+		name="Lisu language" />
+	<iso_639_5_entry
+		id="sh85077647"
+		parents="sh85011364"
+		name="Lithuanian language" />
+	<iso_639_5_entry
+		id="sh85077822"
+		parents="sh85011363"
+		name="Livonian language" />
+	<iso_639_5_entry
+		id="sh85077829"
+		parents="sh85135233,sh85089490"
+		name="Liangmai Naga language" />
+	<iso_639_5_entry
+		id="sh85078094"
+		parents="sh91003032"
+		name="Lugbara language" />
+	<iso_639_5_entry
+		id="sh85078169"
+		parents="sh85078170"
+		name="Yi language" />
+	<iso_639_5_entry
+		id="sh85078170"
+		parents="sh85135233"
+		name="Loloish languages" />
+	<iso_639_5_entry
+		id="sh85078314"
+		parents="sh85004170"
+		name="Lonwolwol dialect" />
+	<iso_639_5_entry
+		id="sh85078636"
+		parents="sh85054438"
+		name="Low German language" />
+	<iso_639_5_entry
+		id="sh85078752"
+		parents="sh85071627"
+		name="Ludic dialect" />
+	<iso_639_5_entry
+		id="sh85078850"
+		parents="sh85008510"
+		name="Lunambe dialect" />
+	<iso_639_5_entry
+		id="sh85078929"
+		parents="sh85091962"
+		name="Luo language (Kenya and Tanzania)" />
+	<iso_639_5_entry
+		id="sh85078962"
+		parents="sh85083372"
+		name="Lusi language" />
+	<iso_639_5_entry
+		id="sh85079044"
+		parents="sh85004830"
+		name="Luwian language" />
+	<iso_639_5_entry
+		id="sh85079066"
+		parents="sh85091962"
+		name="Lwo language (South Sudan)" />
+	<iso_639_5_entry
+		id="sh85079082"
+		parents="sh85004830"
+		name="Lycian language" />
+	<iso_639_5_entry
+		id="sh85079103"
+		parents="sh85004830"
+		name="Lydian language" />
+	<iso_639_5_entry
+		id="sh85079224"
+		parents="sh85080100"
+		name="Maanyan language" />
+	<iso_639_5_entry
+		id="sh85079229"
+		parents="sh2011004361"
+		name="Maba language" />
+	<iso_639_5_entry
+		id="sh85079231"
+		parents="sh85091962"
+		name="Maban language" />
+	<iso_639_5_entry
+		id="sh85079236"
+		parents="sh2003009018"
+		name="Kala Lagaw Ya language" />
+	<iso_639_5_entry
+		id="sh85079237"
+		parents="paa"
+		name="Mabuso languages" />
+	<iso_639_5_entry
+		id="sh85079285"
+		parents="ine"
+		name="Macedonian language (Ancient)" />
+	<iso_639_5_entry
+		id="sh85079527"
+		parents="sh91003032"
+		name="Maʾdi language (Uganda and South Sudan)" />
+	<iso_639_5_entry
+		id="sh85079555"
+		parents="sh85080100"
+		name="Madurese language" />
+	<iso_639_5_entry
+		id="sh85079573"
+		parents="sh85135233"
+		name="Magar language" />
+	<iso_639_5_entry
+		id="sh85079603"
+		parents="paa"
+		name="Magi language (Southern Highlands Province, Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh85079631"
+		parents="sh85100756"
+		name="Magindanao language" />
+	<iso_639_5_entry
+		id="sh85079894"
+		parents="paa"
+		name="Mailu language" />
+	<iso_639_5_entry
+		id="sh85079963"
+		parents="sh86004587"
+		name="Majingai dialect" />
+	<iso_639_5_entry
+		id="sh85079988"
+		parents="sh85080100"
+		name="Makasar language" />
+	<iso_639_5_entry
+		id="sh85080023"
+		parents="sh85080100"
+		name="Malagasy language" />
+	<iso_639_5_entry
+		id="sh85080066"
+		parents="sh85080100"
+		name="Malay language" />
+	<iso_639_5_entry
+		id="sh85080087"
+		parents="dra"
+		name="Malayalam language" />
+	<iso_639_5_entry
+		id="sh85080100"
+		parents="map"
+		name="Malayan languages" />
+	<iso_639_5_entry
+		id="sh85080225"
+		parents="dra"
+		name="Malto language" />
+	<iso_639_5_entry
+		id="sh85080228"
+		parents="sh85083372"
+		name="To'abaita language" />
+	<iso_639_5_entry
+		id="sh85080247"
+		parents="sh85100756"
+		name="Mamanwa language" />
+	<iso_639_5_entry
+		id="sh85080290"
+		parents="sh91003032"
+		name="Mamvu language" />
+	<iso_639_5_entry
+		id="sh85080369"
+		parents="sh85083372"
+		name="Manam language" />
+	<iso_639_5_entry
+		id="sh85080370"
+		parents="sh85090485"
+		name="Manambu language" />
+	<iso_639_5_entry
+		id="sh85080397"
+		parents="tut,sh85138632"
+		name="Manchu language" />
+	<iso_639_5_entry
+		id="sh85080408"
+		parents="sh85012311"
+		name="Mandailing dialect" />
+	<iso_639_5_entry
+		id="sh85080419"
+		parents="sh85080100"
+		name="Mandar language" />
+	<iso_639_5_entry
+		id="sh85080423"
+		parents="sh85024301"
+		name="Mandarin dialects" />
+	<iso_639_5_entry
+		id="sh85080432"
+		parents="sh85083372"
+		name="Mandegusu language" />
+	<iso_639_5_entry
+		id="sh85080476"
+		parents="sh85104690"
+		name="Mangaian language" />
+	<iso_639_5_entry
+		id="sh85080512"
+		parents="sh85104690"
+		name="Mangareva language" />
+	<iso_639_5_entry
+		id="sh85080514"
+		parents="sh91003032"
+		name="Mangbetu language" />
+	<iso_639_5_entry
+		id="sh85080517"
+		parents="sh85080100"
+		name="Manggarai language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh85080533"
+		parents="sh85100756"
+		name="Mangyan language" />
+	<iso_639_5_entry
+		id="sh85080564"
+		parents="sh85135233"
+		name="Manipuri language" />
+	<iso_639_5_entry
+		id="sh85080606"
+		parents="sh85100756"
+		name="Manobo languages" />
+	<iso_639_5_entry
+		id="sh85080630"
+		parents="sh85100756"
+		name="Mansaka language" />
+	<iso_639_5_entry
+		id="sh85080633"
+		parents="sh85093616"
+		name="Mansi language" />
+	<iso_639_5_entry
+		id="sh85080718"
+		parents="sh85057151"
+		name="Manuscripts, Greek" />
+	<iso_639_5_entry
+		id="sh85080734"
+		parents="sh85074944"
+		name="Manuscripts, Latin" />
+	<iso_639_5_entry
+		id="sh85080783"
+		parents="sh85080606"
+		name="Manuvu language" />
+	<iso_639_5_entry
+		id="sh85080787"
+		parents="sh85055678"
+		name="Manx language" />
+	<iso_639_5_entry
+		id="sh85080809"
+		parents="sh85089490"
+		name="Mao Naga language" />
+	<iso_639_5_entry
+		id="sh85080812"
+		parents="sh85104690"
+		name="Maori language" />
+	<iso_639_5_entry
+		id="sh85080884"
+		parents="sh2003005565"
+		name="Mara language (Australia)" />
+	<iso_639_5_entry
+		id="sh85080896"
+		parents="sh85089490"
+		name="Maram language" />
+	<iso_639_5_entry
+		id="sh85080902"
+		parents="sh85035544"
+		name="Maranunggu language" />
+	<iso_639_5_entry
+		id="sh85081070"
+		parents="sh89005213"
+		name="Mari language" />
+	<iso_639_5_entry
+		id="sh85081087"
+		parents="sh85038898"
+		name="Marigl dialect" />
+	<iso_639_5_entry
+		id="sh85081112"
+		parents="paa"
+		name="Marindinese language" />
+	<iso_639_5_entry
+		id="sh85081291"
+		parents="paa"
+		name="Maring language" />
+	<iso_639_5_entry
+		id="sh85081409"
+		parents="sh85104690"
+		name="Marquesan language" />
+	<iso_639_5_entry
+		id="sh85081584"
+		parents="sh85084873,sh85093922,map"
+		name="Marshallese language" />
+	<iso_639_5_entry
+		id="sh85081788"
+		parents="sh85091962"
+		name="Maasai language" />
+	<iso_639_5_entry
+		id="sh85081792"
+		parents="sh85014404"
+		name="Masbateno language" />
+	<iso_639_5_entry
+		id="sh85081799"
+		parents="sh85080100"
+		name="Masenrempulu languages" />
+	<iso_639_5_entry
+		id="sh85082295"
+		parents="aus"
+		name="Maung language" />
+	<iso_639_5_entry
+		id="sh85082408"
+		parents="sh2003010410"
+		name="Mayapic languages" />
+	<iso_639_5_entry
+		id="sh85082465"
+		parents="sh85117471"
+		name="Mbai language (Moissala)" />
+	<iso_639_5_entry
+		id="sh85082832"
+		parents="sh85067921"
+		name="Median language" />
+	<iso_639_5_entry
+		id="sh85083242"
+		parents="paa"
+		name="Medlpa language" />
+	<iso_639_5_entry
+		id="sh85083317"
+		parents="sh85035793"
+		name="Megeb dialect" />
+	<iso_639_5_entry
+		id="sh85083372"
+		parents="sh85107759,sh85093922"
+		name="Melanesian languages" />
+	<iso_639_5_entry
+		id="sh85083402"
+		parents="sh85104690"
+		name="Mele-Fila language" />
+	<iso_639_5_entry
+		id="sh85083406"
+		parents="sh85100756"
+		name="Melebuganon language" />
+	<iso_639_5_entry
+		id="sh85083721"
+		parents="sh85080100"
+		name="Mentawai language" />
+	<iso_639_5_entry
+		id="sh85083973"
+		parents="ine"
+		name="Messapic language" />
+	<iso_639_5_entry
+		id="sh85084657"
+		parents="paa"
+		name="Mian language" />
+	<iso_639_5_entry
+		id="sh85084873"
+		parents="sh85107759,sh85093922"
+		name="Micronesian languages" />
+	<iso_639_5_entry
+		id="sh85085090"
+		parents="sh85089490"
+		name="Mikir language" />
+	<iso_639_5_entry
+		id="sh85085108"
+		parents="sh85000189"
+		name="Milang language" />
+	<iso_639_5_entry
+		id="sh85085463"
+		parents="sh85135233"
+		name="Bai language (China)" />
+	<iso_639_5_entry
+		id="sh85085475"
+		parents="sh85080100"
+		name="Minangkabau language" />
+	<iso_639_5_entry
+		id="sh85085637"
+		parents="sh85071678"
+		name="Mingrelian language" />
+	<iso_639_5_entry
+		id="sh85085948"
+		parents="sh85105344,sh85126261"
+		name="Mirandese dialect" />
+	<iso_639_5_entry
+		id="sh85085988"
+		parents="sh85132743"
+		name="Mishar dialect" />
+	<iso_639_5_entry
+		id="sh85085993"
+		parents="sh85135233"
+		name="Mishmi language" />
+	<iso_639_5_entry
+		id="sh85085996"
+		parents="sh85083372"
+		name="Misima language" />
+	<iso_639_5_entry
+		id="sh85085997"
+		parents="sh85083372"
+		name="Misima-Panayati language" />
+	<iso_639_5_entry
+		id="sh85086485"
+		parents="sh85086827"
+		name="Moghol language" />
+	<iso_639_5_entry
+		id="sh85086533"
+		parents="sh94005377"
+		name="Mokilese language" />
+	<iso_639_5_entry
+		id="sh85086534"
+		parents="sh85132278"
+		name="Moklum dialect" />
+	<iso_639_5_entry
+		id="sh85086537"
+		parents="sh85087237"
+		name="Moksha dialect" />
+	<iso_639_5_entry
+		id="sh85086551"
+		parents="sh85115036"
+		name="Moldovan dialect" />
+	<iso_639_5_entry
+		id="sh85086824"
+		parents="sh85086827"
+		name="Mongolian language" />
+	<iso_639_5_entry
+		id="sh85086827"
+		parents="tut"
+		name="Mongolian languages" />
+	<iso_639_5_entry
+		id="sh85086840"
+		parents="sh85086827"
+		name="Mongour language" />
+	<iso_639_5_entry
+		id="sh85086885"
+		parents="sh85083372"
+		name="Mono-Alu language" />
+	<iso_639_5_entry
+		id="sh85086986"
+		parents="sh85135233"
+		name="Monpa language" />
+	<iso_639_5_entry
+		id="sh85087085"
+		parents="paa"
+		name="Monumbo language" />
+	<iso_639_5_entry
+		id="sh85087237"
+		parents="sh89005213"
+		name="Mordvin language" />
+	<iso_639_5_entry
+		id="sh85087267"
+		parents="sh85080100"
+		name="Mori language" />
+	<iso_639_5_entry
+		id="sh85087406"
+		parents="sh85084873"
+		name="Mortlockese language" />
+	<iso_639_5_entry
+		id="sh85087413"
+		parents="sh91003032"
+		name="Moru language" />
+	<iso_639_5_entry
+		id="sh85087466"
+		parents="sh85078170"
+		name="Naxi language" />
+	<iso_639_5_entry
+		id="sh85087501"
+		parents="sh85083372"
+		name="Mota language" />
+	<iso_639_5_entry
+		id="sh85087704"
+		parents="sh85083372"
+		name="Motu language" />
+	<iso_639_5_entry
+		id="sh85087781"
+		parents="paa"
+		name="Mountain Koiari language" />
+	<iso_639_5_entry
+		id="sh85088260"
+		parents="sh85132190"
+		name="Muduva dialect" />
+	<iso_639_5_entry
+		id="sh85088293"
+		parents="sh85083372"
+		name="Mukawa language" />
+	<iso_639_5_entry
+		id="sh85088299"
+		parents="sh85073463"
+		name="Mukri dialect" />
+	<iso_639_5_entry
+		id="sh85088335"
+		parents="sh85035544"
+		name="Malak Malak language" />
+	<iso_639_5_entry
+		id="sh85088505"
+		parents="sh85097275"
+		name="Munji language" />
+	<iso_639_5_entry
+		id="sh85088633"
+		parents="sh85035544"
+		name="Murrinhpatha language" />
+	<iso_639_5_entry
+		id="sh85088636"
+		parents="sh99013640"
+		name="Murle language" />
+	<iso_639_5_entry
+		id="sh85088652"
+		parents="aus"
+		name="Murundi language" />
+	<iso_639_5_entry
+		id="sh85088654"
+		parents="sh85080100"
+		name="Murut language" />
+	<iso_639_5_entry
+		id="sh85089155"
+		parents="sh85083372"
+		name="Muyuw language" />
+	<iso_639_5_entry
+		id="sh85089321"
+		parents="sh85004830"
+		name="Mysian language" />
+	<iso_639_5_entry
+		id="sh85089474"
+		parents="sh85048346"
+		name="Nabak language" />
+	<iso_639_5_entry
+		id="sh85089475"
+		parents="sh85064216"
+		name="Ibaloi language" />
+	<iso_639_5_entry
+		id="sh85089490"
+		parents="sh85135233"
+		name="Naga languages" />
+	<iso_639_5_entry
+		id="sh85089491"
+		parents="sh85089490"
+		name="Naga Pidgin" />
+	<iso_639_5_entry
+		id="sh85089559"
+		parents="sh85083372"
+		name="Nakanai language" />
+	<iso_639_5_entry
+		id="sh85089567"
+		parents="sh88006803"
+		name="Nakh languages" />
+	<iso_639_5_entry
+		id="sh85089577"
+		parents="sh85135233"
+		name="Nam language" />
+	<iso_639_5_entry
+		id="sh85089581"
+		parents="khi"
+		name="Nama language" />
+	<iso_639_5_entry
+		id="sh85089661"
+		parents="sh85138632"
+		name="Nanai language" />
+	<iso_639_5_entry
+		id="sh85089671"
+		parents="sh85089672,sh85071340"
+		name="Nandi language" />
+	<iso_639_5_entry
+		id="sh85089672"
+		parents="sh85091962"
+		name="Nandi languages" />
+	<iso_639_5_entry
+		id="sh85089786"
+		parents="sh85080100"
+		name="Napu language" />
+	<iso_639_5_entry
+		id="sh85089789"
+		parents="paa"
+		name="Narak language" />
+	<iso_639_5_entry
+		id="sh85089865"
+		parents="sh2003009018"
+		name="Narrinyeri language" />
+	<iso_639_5_entry
+		id="sh85089892"
+		parents="paa"
+		name="Nasioi language" />
+	<iso_639_5_entry
+		id="sh85090323"
+		parents="sh85084873"
+		name="Nauruan language" />
+	<iso_639_5_entry
+		id="sh85090485"
+		parents="paa"
+		name="Ndu languages" />
+	<iso_639_5_entry
+		id="sh85090719"
+		parents="sh85083372"
+		name="Nemi language" />
+	<iso_639_5_entry
+		id="sh85090731"
+		parents="sh85083372"
+		name="Kumak language" />
+	<iso_639_5_entry
+		id="sh85090732"
+		parents="sh85117046"
+		name="Nenets language" />
+	<iso_639_5_entry
+		id="sh85090733"
+		parents="sh85083372"
+		name="Nengone language" />
+	<iso_639_5_entry
+		id="sh85091532"
+		parents="sh85135233"
+		name="Newari language" />
+	<iso_639_5_entry
+		id="sh85091657"
+		parents="sh85146252"
+		name="Ngaanyatjarra language" />
+	<iso_639_5_entry
+		id="sh85091658"
+		parents="sh85080100"
+		name="Ngada language" />
+	<iso_639_5_entry
+		id="sh85091661"
+		parents="sh85080100"
+		name="Ngaju language" />
+	<iso_639_5_entry
+		id="sh85091662"
+		parents="sh2003010425"
+		name="Ngadju language (Australia)" />
+	<iso_639_5_entry
+		id="sh85091664"
+		parents="sh2003005565"
+		name="Ngalakan language" />
+	<iso_639_5_entry
+		id="sh85091666"
+		parents="sh85117046"
+		name="Nganasan language" />
+	<iso_639_5_entry
+		id="sh85091668"
+		parents="sh2003005565"
+		name="Ngandi language" />
+	<iso_639_5_entry
+		id="sh85091670"
+		parents="sh86003330"
+		name="Ngarinyin language" />
+	<iso_639_5_entry
+		id="sh85091671"
+		parents="sh2003010425"
+		name="Ngarluma language" />
+	<iso_639_5_entry
+		id="sh85091681"
+		parents="aus"
+		name="Nggerikudi language" />
+	<iso_639_5_entry
+		id="sh85091690"
+		parents="sh85083372"
+		name="Nguna language" />
+	<iso_639_5_entry
+		id="sh85091709"
+		parents="sh85080100"
+		name="Nias language" />
+	<iso_639_5_entry
+		id="sh85091929"
+		parents="paa"
+		name="Nii language" />
+	<iso_639_5_entry
+		id="sh85091957"
+		parents="ssa,sh85091962"
+		name="Nilo-Hamitic languages" />
+	<iso_639_5_entry
+		id="sh85091962"
+		parents="sh2008007711"
+		name="Nilotic languages" />
+	<iso_639_5_entry
+		id="sh85091970"
+		parents="paa"
+		name="Nimboran language" />
+	<iso_639_5_entry
+		id="sh85092100"
+		parents="sh85104690"
+		name="Niuean language" />
+	<iso_639_5_entry
+		id="sh85092159"
+		parents="sh85089490"
+		name="Nocte language" />
+	<iso_639_5_entry
+		id="sh85092174"
+		parents="sh85138866"
+		name="Nogai language" />
+	<iso_639_5_entry
+		id="sh85092176"
+		parents="sh85083372"
+		name="Nogugu language" />
+	<iso_639_5_entry
+		id="sh85092437"
+		parents="sh85117963"
+		name="Norn language" />
+	<iso_639_5_entry
+		id="sh85092542"
+		parents="sh85138865"
+		name="Northern Altai language" />
+	<iso_639_5_entry
+		id="sh85092567"
+		parents="sh85024301"
+		name="Northern Min dialects" />
+	<iso_639_5_entry
+		id="sh85092574"
+		parents="tai"
+		name="Northern Thai language" />
+	<iso_639_5_entry
+		id="sh85092722"
+		parents="sh85117963"
+		name="Norwegian language" />
+	<iso_639_5_entry
+		id="sh85092723"
+		parents="sh85117963"
+		name="Norwegian language (Nynorsk)" />
+	<iso_639_5_entry
+		id="sh85092825"
+		parents="paa"
+		name="Notu language" />
+	<iso_639_5_entry
+		id="sh85092937"
+		parents="sh2008007711"
+		name="Nubian languages" />
+	<iso_639_5_entry
+		id="sh85093181"
+		parents="sh85091962"
+		name="Nuer language" />
+	<iso_639_5_entry
+		id="sh85093183"
+		parents="sh85080100"
+		name="Numfor language" />
+	<iso_639_5_entry
+		id="sh85093190"
+		parents="sh85104690"
+		name="Nukuoro language" />
+	<iso_639_5_entry
+		id="sh85093279"
+		parents="sh85135233"
+		name="Nung language" />
+	<iso_639_5_entry
+		id="sh85093282"
+		parents="sh2003005565"
+		name="Nunggubuyu language" />
+	<iso_639_5_entry
+		id="sh85093495"
+		parents="sh2004009648"
+		name="Nyangumarta language" />
+	<iso_639_5_entry
+		id="sh85093550"
+		parents="sh2003010425"
+		name="Nyunga dialects" />
+	<iso_639_5_entry
+		id="sh85093616"
+		parents="sh85048431"
+		name="Ob-Ugric languages" />
+	<iso_639_5_entry
+		id="sh85093922"
+		parents="map"
+		name="Oceanic languages" />
+	<iso_639_5_entry
+		id="sh85094235"
+		parents="sh85080066"
+		name="Ogan dialect" />
+	<iso_639_5_entry
+		id="sh85094247"
+		parents="sh85138868,sh85138864"
+		name="Oghuz language" />
+	<iso_639_5_entry
+		id="sh85094425"
+		parents="sh85086827"
+		name="Oirat language" />
+	<iso_639_5_entry
+		id="sh85094489"
+		parents="paa"
+		name="Oksapmin language" />
+	<iso_639_5_entry
+		id="sh85094550"
+		parents="sh85117963"
+		name="Old Norse language" />
+	<iso_639_5_entry
+		id="sh85094559"
+		parents="sh85067921"
+		name="Old Persian language" />
+	<iso_639_5_entry
+		id="sh85094570"
+		parents="sh85138865"
+		name="Old Turkic language" />
+	<iso_639_5_entry
+		id="sh85094637"
+		parents="paa"
+		name="Olo language" />
+	<iso_639_5_entry
+		id="sh85094638"
+		parents="sh85071627"
+		name="Olonets dialect" />
+	<iso_639_5_entry
+		id="sh85095408"
+		parents="sh85086824"
+		name="Ordos dialect" />
+	<iso_639_5_entry
+		id="sh85095733"
+		parents="sh85138632"
+		name="Oroch language" />
+	<iso_639_5_entry
+		id="sh85095736"
+		parents="sh85138632"
+		name="Oroqen language" />
+	<iso_639_5_entry
+		id="sh85095741"
+		parents="sh85138632"
+		name="Orok language" />
+	<iso_639_5_entry
+		id="sh85095742"
+		parents="paa"
+		name="Orokaiva language" />
+	<iso_639_5_entry
+		id="sh85095743"
+		parents="sh88005445"
+		name="Orokolo language" />
+	<iso_639_5_entry
+		id="sh85095945"
+		parents="sh85067921"
+		name="Ossetic language" />
+	<iso_639_5_entry
+		id="sh85096409"
+		parents="sh85083372"
+		name="Paama language" />
+	<iso_639_5_entry
+		id="sh85096544"
+		parents="sh85038075"
+		name="Padang dialect" />
+	<iso_639_5_entry
+		id="sh85096605"
+		parents="sh85091532"
+		name="Pahri dialect" />
+	<iso_639_5_entry
+		id="sh85096611"
+		parents="sh85083372"
+		name="Paici language" />
+	<iso_639_5_entry
+		id="sh85096908"
+		parents="sh85083372"
+		name="Pala language" />
+	<iso_639_5_entry
+		id="sh85096957"
+		parents="sh85004830"
+		name="Palaic language" />
+	<iso_639_5_entry
+		id="sh85096982"
+		parents="sh85080100"
+		name="Palauan language" />
+	<iso_639_5_entry
+		id="sh85096986"
+		parents="sh85100756"
+		name="Palawanic languages" />
+	<iso_639_5_entry
+		id="sh85096987"
+		parents="sh85096986"
+		name="Palawano language" />
+	<iso_639_5_entry
+		id="sh85097195"
+		parents="sh85065695"
+		name="Pali language" />
+	<iso_639_5_entry
+		id="sh85097275"
+		parents="sh85067921"
+		name="Pamir languages" />
+	<iso_639_5_entry
+		id="sh85097283"
+		parents="sh85100756"
+		name="Pampanga language" />
+	<iso_639_5_entry
+		id="sh85097359"
+		parents="sh85083372"
+		name="Panayati language" />
+	<iso_639_5_entry
+		id="sh85097431"
+		parents="sh85100756"
+		name="Pangasinan language" />
+	<iso_639_5_entry
+		id="sh85097521"
+		parents="sh85086827"
+		name="Bonan language" />
+	<iso_639_5_entry
+		id="sh85098027"
+		parents="sh85091962"
+		name="Päri language (South Sudan)" />
+	<iso_639_5_entry
+		id="sh85098093"
+		parents="dra"
+		name="Parji language" />
+	<iso_639_5_entry
+		id="sh85098666"
+		parents="sh85083372"
+		name="Patep language" />
+	<iso_639_5_entry
+		id="sh85098882"
+		parents="paa"
+		name="Pawaian language" />
+	<iso_639_5_entry
+		id="sh85099395"
+		parents="dra"
+		name="Pengo language" />
+	<iso_639_5_entry
+		id="sh85099990"
+		parents="sh89005213"
+		name="Permic languages" />
+	<iso_639_5_entry
+		id="sh85100070"
+		parents="sh85067921"
+		name="Persian language" />
+	<iso_639_5_entry
+		id="sh85100313"
+		parents="sh85083372"
+		name="Petats language" />
+	<iso_639_5_entry
+		id="sh85100756"
+		parents="sh85080100"
+		name="Philippine languages" />
+	<iso_639_5_entry
+		id="sh85101048"
+		parents="sh85089490"
+		name="Phom language" />
+	<iso_639_5_entry
+		id="sh85101444"
+		parents="ine,sh85004830"
+		name="Phrygian language" />
+	<iso_639_5_entry
+		id="sh85101462"
+		parents="tai"
+		name="Phu Thai language" />
+	<iso_639_5_entry
+		id="sh85102281"
+		parents="sh85146252"
+		name="Pintupi dialect" />
+	<iso_639_5_entry
+		id="sh85102504"
+		parents="sh2003010425"
+		name="Pitjantjatjara language" />
+	<iso_639_5_entry
+		id="sh85103647"
+		parents="sh85089490"
+		name="Pochury language" />
+	<iso_639_5_entry
+		id="sh85104690"
+		parents="sh85107759,sh85093922"
+		name="Polynesian languages" />
+	<iso_639_5_entry
+		id="sh85104776"
+		parents="sh94005377"
+		name="Pohnpeian language" />
+	<iso_639_5_entry
+		id="sh85105054"
+		parents="sh85083372"
+		name="Port Sandwich language" />
+	<iso_639_5_entry
+		id="sh85105344"
+		parents="sh85114953"
+		name="Portuguese language" />
+	<iso_639_5_entry
+		id="sh85107743"
+		parents="map,tai"
+		name="Proto-Austro-Thai language" />
+	<iso_639_5_entry
+		id="sh85107744"
+		parents="map"
+		name="Proto-Austronesian language" />
+	<iso_639_5_entry
+		id="sh85107747"
+		parents="sh85021721"
+		name="Proto-Celtic language" />
+	<iso_639_5_entry
+		id="sh85107749"
+		parents="sh85026050"
+		name="Proto-Circassian language" />
+	<iso_639_5_entry
+		id="sh85107752"
+		parents="ine"
+		name="Proto-Indo-European language" />
+	<iso_639_5_entry
+		id="sh85107753"
+		parents="sh85135233"
+		name="Proto-Lolo-Burmese language" />
+	<iso_639_5_entry
+		id="sh85107754"
+		parents="sh85078170"
+		name="Proto-Loloish language" />
+	<iso_639_5_entry
+		id="sh85107755"
+		parents="sh85080100"
+		name="Proto-Malayan language" />
+	<iso_639_5_entry
+		id="sh85107757"
+		parents="sh85086827"
+		name="Proto-Mongolian language" />
+	<iso_639_5_entry
+		id="sh85107759"
+		parents="sh85107744,map"
+		name="Proto-Oceanic language" />
+	<iso_639_5_entry
+		id="sh85107760"
+		parents="sh85096986"
+		name="Proto-Palawanic language" />
+	<iso_639_5_entry
+		id="sh85107761"
+		parents="sh85107759,sh85104690"
+		name="Proto-Polynesian language" />
+	<iso_639_5_entry
+		id="sh85107767"
+		parents="tai"
+		name="Proto-Tai language" />
+	<iso_639_5_entry
+		id="sh85107831"
+		parents="sh85114953"
+		name="Provençal language" />
+	<iso_639_5_entry
+		id="sh85108100"
+		parents="sh85011364"
+		name="Prussian language" />
+	<iso_639_5_entry
+		id="sh85108601"
+		parents="tai"
+		name="Bouyei language" />
+	<iso_639_5_entry
+		id="sh85109048"
+		parents="sh85084873"
+		name="Puluwat language" />
+	<iso_639_5_entry
+		id="sh85109158"
+		parents="paa"
+		name="Purari language" />
+	<iso_639_5_entry
+		id="sh85109230"
+		parents="sh85067921"
+		name="Pushto language" />
+	<iso_639_5_entry
+		id="sh85109262"
+		parents="sh85071634"
+		name="Pwo Karen language" />
+	<iso_639_5_entry
+		id="sh85110213"
+		parents="sh85015220"
+		name="Rabha language" />
+	<iso_639_5_entry
+		id="sh85110329"
+		parents="sh85022442"
+		name="Rade language" />
+	<iso_639_5_entry
+		id="sh85110829"
+		parents="sh85114953"
+		name="Raeto-Romance language" />
+	<iso_639_5_entry
+		id="sh85110858"
+		parents="paa"
+		name="Rai Coast languages" />
+	<iso_639_5_entry
+		id="sh85111393"
+		parents="paa"
+		name="Rao language" />
+	<iso_639_5_entry
+		id="sh85111401"
+		parents="sh85104690"
+		name="Rapanui language" />
+	<iso_639_5_entry
+		id="sh85111471"
+		parents="sh85104690"
+		name="Rarotongan language" />
+	<iso_639_5_entry
+		id="sh85112851"
+		parents="sh85089490"
+		name="Rengma language" />
+	<iso_639_5_entry
+		id="sh85112857"
+		parents="sh85104690"
+		name="Rennellese language" />
+	<iso_639_5_entry
+		id="sh85114208"
+		parents="sh2002012368"
+		name="Ritharrngu language" />
+	<iso_639_5_entry
+		id="sh85114953"
+		parents="sh85068863"
+		name="Romance languages" />
+	<iso_639_5_entry
+		id="sh85115036"
+		parents="sh85114953"
+		name="Romanian language" />
+	<iso_639_5_entry
+		id="sh85115308"
+		parents="sh85071223"
+		name="Rongmei dialect" />
+	<iso_639_5_entry
+		id="sh85115394"
+		parents="sh85083372"
+		name="Roro language (New Guinea)" />
+	<iso_639_5_entry
+		id="sh85115453"
+		parents="sh85097275"
+		name="Roshan dialect" />
+	<iso_639_5_entry
+		id="sh85115504"
+		parents="paa"
+		name="Rotokas language" />
+	<iso_639_5_entry
+		id="sh85115516"
+		parents="sh85080100"
+		name="Roti language" />
+	<iso_639_5_entry
+		id="sh85115520"
+		parents="sh85083372"
+		name="Rotuman language" />
+	<iso_639_5_entry
+		id="sh85115558"
+		parents="sh85083372"
+		name="Roviana language" />
+	<iso_639_5_entry
+		id="sh85115798"
+		parents="sh85132011"
+		name="Rukai languages" />
+	<iso_639_5_entry
+		id="sh85116103"
+		parents="sh85035400"
+		name="Rutul language" />
+	<iso_639_5_entry
+		id="sh85116157"
+		parents="sh85083372"
+		name="Saa language" />
+	<iso_639_5_entry
+		id="sh85116194"
+		parents="paa"
+		name="Saberi language" />
+	<iso_639_5_entry
+		id="sh85116645"
+		parents="sh85132190"
+		name="Saiva Vellala dialect" />
+	<iso_639_5_entry
+		id="sh85116653"
+		parents="sh85080023"
+		name="Sakalava dialect" />
+	<iso_639_5_entry
+		id="sh85116659"
+		parents="sh85083372"
+		name="Sakau language" />
+	<iso_639_5_entry
+		id="sh85116698"
+		parents="sh85138867"
+		name="Salar language" />
+	<iso_639_5_entry
+		id="sh85116985"
+		parents="sh85100756"
+		name="Sama languages" />
+	<iso_639_5_entry
+		id="sh85117005"
+		parents="sh85014404"
+		name="Waray language" />
+	<iso_639_5_entry
+		id="sh85117010"
+		parents="sh85100756"
+		name="Sambali language" />
+	<iso_639_5_entry
+		id="sh85117030"
+		parents="paa"
+		name="Samo language (Western Province, Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh85117034"
+		parents="sh85104690"
+		name="Samoan language" />
+	<iso_639_5_entry
+		id="sh85117046"
+		parents="urj"
+		name="Samoyedic languages" />
+	<iso_639_5_entry
+		id="sh85117129"
+		parents="khi"
+		name="San languages" />
+	<iso_639_5_entry
+		id="sh85117218"
+		parents="khi"
+		name="Sandawe language" />
+	<iso_639_5_entry
+		id="sh85117264"
+		parents="sh85080100"
+		name="Sangil language" />
+	<iso_639_5_entry
+		id="sh85117267"
+		parents="sh85089490"
+		name="Sangtam language" />
+	<iso_639_5_entry
+		id="sh85117331"
+		parents="sh85065695"
+		name="Sanskrit language" />
+	<iso_639_5_entry
+		id="sh85117471"
+		parents="sh85015562"
+		name="Sara languages" />
+	<iso_639_5_entry
+		id="sh85117551"
+		parents="sh85114953"
+		name="Sardinian language" />
+	<iso_639_5_entry
+		id="sh85117566"
+		parents="sh85097275"
+		name="Sarikoli dialect" />
+	<iso_639_5_entry
+		id="sh85117594"
+		parents="sh85141661"
+		name="Sart dialect" />
+	<iso_639_5_entry
+		id="sh85117607"
+		parents="sh85080100"
+		name="Sasak language" />
+	<iso_639_5_entry
+		id="sh85117963"
+		parents="sh85054438"
+		name="Scandinavian languages" />
+	<iso_639_5_entry
+		id="sh85118883"
+		parents="sh85054438"
+		name="Scots language" />
+	<iso_639_5_entry
+		id="sh85119706"
+		parents="sh85048346"
+		name="Selepet language" />
+	<iso_639_5_entry
+		id="sh85119814"
+		parents="sh85117046"
+		name="Selkup language" />
+	<iso_639_5_entry
+		id="sh85119863"
+		parents="sh85089490"
+		name="Sema language" />
+	<iso_639_5_entry
+		id="sh85119885"
+		parents="sh85080066"
+		name="Semendo dialect" />
+	<iso_639_5_entry
+		id="sh85120060"
+		parents="paa"
+		name="Sentani language" />
+	<iso_639_5_entry
+		id="sh85120159"
+		parents="sh85080100"
+		name="Serawai language" />
+	<iso_639_5_entry
+		id="sh85120762"
+		parents="sh85071634"
+		name="Sgaw Karen language" />
+	<iso_639_5_entry
+		id="sh85121100"
+		parents="tai"
+		name="Shan language" />
+	<iso_639_5_entry
+		id="sh85121313"
+		parents="sh85068101"
+		name="Shelta" />
+	<iso_639_5_entry
+		id="sh85121374"
+		parents="sh85135224"
+		name="Sherpa language" />
+	<iso_639_5_entry
+		id="sh85121441"
+		parents="sh85091962"
+		name="Shilluk language" />
+	<iso_639_5_entry
+		id="sh85121786"
+		parents="sh85138864,sh85138865"
+		name="Shor language" />
+	<iso_639_5_entry
+		id="sh85122160"
+		parents="sh85097275"
+		name="Shughni language" />
+	<iso_639_5_entry
+		id="sh85122195"
+		parents="paa"
+		name="Siane language" />
+	<iso_639_5_entry
+		id="sh85122384"
+		parents="sh85080100"
+		name="Sigi language" />
+	<iso_639_5_entry
+		id="sh85122711"
+		parents="sh85012311"
+		name="Simelungun dialect" />
+	<iso_639_5_entry
+		id="sh85122717"
+		parents="sh85080100"
+		name="Simeulue language" />
+	<iso_639_5_entry
+		id="sh85122756"
+		parents="sh85089490"
+		name="Simte language" />
+	<iso_639_5_entry
+		id="sh85122986"
+		parents="paa"
+		name="Siroi language" />
+	<iso_639_5_entry
+		id="sh85123000"
+		parents="sh85083372"
+		name="Sissano language" />
+	<iso_639_5_entry
+		id="sh85123061"
+		parents="paa"
+		name="Siwai language" />
+	<iso_639_5_entry
+		id="sh85123074"
+		parents="sh85135233"
+		name="Siyin language" />
+	<iso_639_5_entry
+		id="sh85123361"
+		parents="ine"
+		name="Slavic languages" />
+	<iso_639_5_entry
+		id="sh85123835"
+		parents="sh85080100"
+		name="Sobojo language" />
+	<iso_639_5_entry
+		id="sh85124662"
+		parents="sh85071484"
+		name="Soliga dialect" />
+	<iso_639_5_entry
+		id="sh85124716"
+		parents="sh85138632,sh85045974"
+		name="Solon dialect" />
+	<iso_639_5_entry
+		id="sh85125039"
+		parents="ssa"
+		name="Songhai language" />
+	<iso_639_5_entry
+		id="sh85125270"
+		parents="sh85084873"
+		name="Sonsorol-Tobi language" />
+	<iso_639_5_entry
+		id="sh85125337"
+		parents="sh85073409"
+		name="Sotang Kura dialect" />
+	<iso_639_5_entry
+		id="sh85125622"
+		parents="sh85024301"
+		name="Southern Min dialects" />
+	<iso_639_5_entry
+		id="sh85125668"
+		parents="tai"
+		name="Southern Thai language" />
+	<iso_639_5_entry
+		id="sh85126261"
+		parents="sh85114953"
+		name="Spanish language" />
+	<iso_639_5_entry
+		id="sh85128241"
+		parents="sh85066590"
+		name="Stoichedon inscriptions" />
+	<iso_639_5_entry
+		id="sh85129399"
+		parents="sh85083372"
+		name="Suau language" />
+	<iso_639_5_entry
+		id="sh85129402"
+		parents="sh85100756"
+		name="Subanun language" />
+	<iso_639_5_entry
+		id="sh85129627"
+		parents="paa"
+		name="Suena language" />
+	<iso_639_5_entry
+		id="sh85130302"
+		parents="sh85089672,sh85071340"
+		name="Suk language" />
+	<iso_639_5_entry
+		id="sh85130400"
+		parents="sh85014404"
+		name="Sulu language" />
+	<iso_639_5_entry
+		id="sh85130410"
+		parents="sh85080100"
+		name="Sumba language" />
+	<iso_639_5_entry
+		id="sh85130508"
+		parents="sh85080100"
+		name="Sundanese language" />
+	<iso_639_5_entry
+		id="sh85130567"
+		parents="sh93003187"
+		name="Sunwar language" />
+	<iso_639_5_entry
+		id="sh85130933"
+		parents="sh85071678"
+		name="Svan language" />
+	<iso_639_5_entry
+		id="sh85131135"
+		parents="sh85117963"
+		name="Swedish language" />
+	<iso_639_5_entry
+		id="sh85131779"
+		parents="sh85035400"
+		name="Tabasaran language" />
+	<iso_639_5_entry
+		id="sh85131896"
+		parents="sh85100756"
+		name="Tagakaolo language" />
+	<iso_639_5_entry
+		id="sh85131901"
+		parents="sh85100756"
+		name="Tagalog language" />
+	<iso_639_5_entry
+		id="sh85131908"
+		parents="sh85096986"
+		name="Tagbanua language" />
+	<iso_639_5_entry
+		id="sh85131922"
+		parents="sh85104690"
+		name="Tahitian language" />
+	<iso_639_5_entry
+		id="sh85131965"
+		parents="paa"
+		name="Tairora language" />
+	<iso_639_5_entry
+		id="sh85132011"
+		parents="map"
+		name="Taiwan languages" />
+	<iso_639_5_entry
+		id="sh85132023"
+		parents="sh85067921"
+		name="Tajik language" />
+	<iso_639_5_entry
+		id="sh85132150"
+		parents="sh85067921"
+		name="Talysh language" />
+	<iso_639_5_entry
+		id="sh85132160"
+		parents="sh85135233"
+		name="Tamang language" />
+	<iso_639_5_entry
+		id="sh85132190"
+		parents="dra"
+		name="Tamil language" />
+	<iso_639_5_entry
+		id="sh85132260"
+		parents="sh85083372"
+		name="Tanga language (Tanga Islands)" />
+	<iso_639_5_entry
+		id="sh85132270"
+		parents="sh85089490"
+		name="Tangkhul language" />
+	<iso_639_5_entry
+		id="sh85132278"
+		parents="sh85089490"
+		name="Tangsa language" />
+	<iso_639_5_entry
+		id="sh85132282"
+		parents="sh85135233"
+		name="Tangut language" />
+	<iso_639_5_entry
+		id="sh85132320"
+		parents="sh85083372"
+		name="Tanna language" />
+	<iso_639_5_entry
+		id="sh85132405"
+		parents="cau"
+		name="Tapanta dialect" />
+	<iso_639_5_entry
+		id="sh85132467"
+		parents="sh85135233"
+		name="Digaro language" />
+	<iso_639_5_entry
+		id="sh85132727"
+		parents="aus"
+		name="Tasmanian languages" />
+	<iso_639_5_entry
+		id="sh85132738"
+		parents="sh85067921"
+		name="Tat language" />
+	<iso_639_5_entry
+		id="sh85132743"
+		parents="sh85138866"
+		name="Tatar language" />
+	<iso_639_5_entry
+		id="sh85132794"
+		parents="sh85014404"
+		name="Tausug language" />
+	<iso_639_5_entry
+		id="sh85132903"
+		parents="tai"
+		name="Tày Nùng language" />
+	<iso_639_5_entry
+		id="sh85132906"
+		parents="sh85132011"
+		name="Atayal language" />
+	<iso_639_5_entry
+		id="sh85132918"
+		parents="sh85014404,sh85100756"
+		name="Tboli language" />
+	<iso_639_5_entry
+		id="sh85133196"
+		parents="ssa"
+		name="Tedaga language" />
+	<iso_639_5_entry
+		id="sh85133667"
+		parents="dra"
+		name="Telugu language" />
+	<iso_639_5_entry
+		id="sh85133669"
+		parents="sh85133667"
+		name="Merolu dialect" />
+	<iso_639_5_entry
+		id="sh85133956"
+		parents="sh85083372"
+		name="Teop language" />
+	<iso_639_5_entry
+		id="sh85134134"
+		parents="sh85091962"
+		name="Teso language" />
+	<iso_639_5_entry
+		id="sh85134232"
+		parents="sh85080100"
+		name="Tetum language" />
+	<iso_639_5_entry
+		id="sh85134235"
+		parents="sh2008007711"
+		name="Teuso languages" />
+	<iso_639_5_entry
+		id="sh85134422"
+		parents="sh85135233"
+		name="Thādo language" />
+	<iso_639_5_entry
+		id="sh85134429"
+		parents="tai"
+		name="Thai language" />
+	<iso_639_5_entry
+		id="sh85134461"
+		parents="sh85135233"
+		name="Thakali language" />
+	<iso_639_5_entry
+		id="sh85134495"
+		parents="sh2002007788"
+		name="Dhungutti language" />
+	<iso_639_5_entry
+		id="sh85134920"
+		parents="tai"
+		name="Tho language" />
+	<iso_639_5_entry
+		id="sh85134998"
+		parents="ine"
+		name="Thracian language" />
+	<iso_639_5_entry
+		id="sh85135106"
+		parents="sh93003187"
+		name="Thulung language" />
+	<iso_639_5_entry
+		id="sh85135224"
+		parents="sh85135233"
+		name="Tibetan language" />
+	<iso_639_5_entry
+		id="sh85135233"
+		parents="sit"
+		name="Tibeto-Burman languages" />
+	<iso_639_5_entry
+		id="sh85135285"
+		parents="sh85080100"
+		name="Tidong dialects" />
+	<iso_639_5_entry
+		id="sh85135306"
+		parents="paa"
+		name="Tifal language" />
+	<iso_639_5_entry
+		id="sh85135308"
+		parents="sh85083372"
+		name="Tigak language" />
+	<iso_639_5_entry
+		id="sh85135464"
+		parents="sh85080100"
+		name="Timor language" />
+	<iso_639_5_entry
+		id="sh85135520"
+		parents="sh85064216"
+		name="Tinggian language" />
+	<iso_639_5_entry
+		id="sh85135558"
+		parents="sh85015220"
+		name="Kok Borok language" />
+	<iso_639_5_entry
+		id="sh85135578"
+		parents="sh85100756"
+		name="Tiruray language" />
+	<iso_639_5_entry
+		id="sh85135672"
+		parents="aus"
+		name="Tiwi language (Australia)" />
+	<iso_639_5_entry
+		id="sh85135700"
+		parents="sh88005445"
+		name="Toaripi language" />
+	<iso_639_5_entry
+		id="sh85135705"
+		parents="sh85080100,sh85012311"
+		name="Toba-Batak dialect" />
+	<iso_639_5_entry
+		id="sh85135754"
+		parents="sh85058499"
+		name="Tobelo language" />
+	<iso_639_5_entry
+		id="sh85135774"
+		parents="dra"
+		name="Toda language (India)" />
+	<iso_639_5_entry
+		id="sh85135787"
+		parents="sh85138865"
+		name="Tofa language (Irkutskai︠a︡ oblastʹ, Russia)" />
+	<iso_639_5_entry
+		id="sh85135845"
+		parents="ine"
+		name="Tokharian language" />
+	<iso_639_5_entry
+		id="sh85135968"
+		parents="sh85080100"
+		name="Tondano language" />
+	<iso_639_5_entry
+		id="sh85135982"
+		parents="sh85104690"
+		name="Tongan language" />
+	<iso_639_5_entry
+		id="sh85136093"
+		parents="sh85091962"
+		name="Toposa language" />
+	<iso_639_5_entry
+		id="sh85136114"
+		parents="sh85071365"
+		name="Torgut dialect" />
+	<iso_639_5_entry
+		id="sh85136211"
+		parents="sh85135233"
+		name="Tosu language" />
+	<iso_639_5_entry
+		id="sh85138170"
+		parents="sh85084873"
+		name="Chuukese language" />
+	<iso_639_5_entry
+		id="sh85138307"
+		parents="sh85035400"
+		name="Tsakhur language" />
+	<iso_639_5_entry
+		id="sh85138323"
+		parents="sh85080023"
+		name="Tsimihety dialect" />
+	<iso_639_5_entry
+		id="sh85138335"
+		parents="sh85138336"
+		name="Tsou language" />
+	<iso_639_5_entry
+		id="sh85138336"
+		parents="sh85132011"
+		name="Tsouic languages" />
+	<iso_639_5_entry
+		id="sh85138364"
+		parents="sh85104690"
+		name="Tuamotuan language" />
+	<iso_639_5_entry
+		id="sh85138461"
+		parents="sh85083372"
+		name="Tubetube language" />
+	<iso_639_5_entry
+		id="sh85138534"
+		parents="dra"
+		name="Tulu language" />
+	<iso_639_5_entry
+		id="sh85138538"
+		parents="sh85135233"
+		name="Tulung language" />
+	<iso_639_5_entry
+		id="sh85138597"
+		parents="sh85086827"
+		name="Dongxiang language" />
+	<iso_639_5_entry
+		id="sh85138632"
+		parents="tut"
+		name="Tungus-Manchu languages" />
+	<iso_639_5_entry
+		id="sh85138782"
+		parents="sh85091962"
+		name="Turkana language" />
+	<iso_639_5_entry
+		id="sh85138864"
+		parents="tut"
+		name="Turkic languages" />
+	<iso_639_5_entry
+		id="sh85138865"
+		parents="sh85138864"
+		name="Turkic languages, Northeast" />
+	<iso_639_5_entry
+		id="sh85138866"
+		parents="sh85138864"
+		name="Turkic languages, Northwest" />
+	<iso_639_5_entry
+		id="sh85138867"
+		parents="sh85138864"
+		name="Turkic languages, Southeast" />
+	<iso_639_5_entry
+		id="sh85138868"
+		parents="sh85138864"
+		name="Turkic languages, Southwest" />
+	<iso_639_5_entry
+		id="sh85138883"
+		parents="sh85138864,sh85138868"
+		name="Turkish language" />
+	<iso_639_5_entry
+		id="sh85138907"
+		parents="sh85138868,sh85138864"
+		name="Turkmen language" />
+	<iso_639_5_entry
+		id="sh85138999"
+		parents="sh85104690"
+		name="Tuvaluan language" />
+	<iso_639_5_entry
+		id="sh85139000"
+		parents="sh85138865"
+		name="Tuvinian language" />
+	<iso_639_5_entry
+		id="sh85139236"
+		parents="sh85083372"
+		name="Ubir language" />
+	<iso_639_5_entry
+		id="sh85139238"
+		parents="sh85000174,cau"
+		name="Ubykh language" />
+	<iso_639_5_entry
+		id="sh85139253"
+		parents="sh85138632"
+		name="Udekhe language" />
+	<iso_639_5_entry
+		id="sh85139254"
+		parents="sh85035400"
+		name="Udi language" />
+	<iso_639_5_entry
+		id="sh85139255"
+		parents="sh85099990"
+		name="Udmurt language" />
+	<iso_639_5_entry
+		id="sh85139266"
+		parents="ssa"
+		name="Uduk language" />
+	<iso_639_5_entry
+		id="sh85139267"
+		parents="sh85104690"
+		name="East Uvean language" />
+	<iso_639_5_entry
+		id="sh85139320"
+		parents="sh85138867"
+		name="Uighur language" />
+	<iso_639_5_entry
+		id="sh85139425"
+		parents="sh85083372"
+		name="Ulawa language" />
+	<iso_639_5_entry
+		id="sh85139435"
+		parents="sh85084873"
+		name="Ulithi language" />
+	<iso_639_5_entry
+		id="sh85139514"
+		parents="sh87000038"
+		name="Uma language" />
+	<iso_639_5_entry
+		id="sh85141298"
+		parents="sh85004830"
+		name="Urartian language" />
+	<iso_639_5_entry
+		id="sh85141429"
+		parents="sh85083372"
+		name="Uripiv language" />
+	<iso_639_5_entry
+		id="sh85141573"
+		parents="paa"
+		name="Usarufa language" />
+	<iso_639_5_entry
+		id="sh85141661"
+		parents="sh85138867"
+		name="Uzbek language" />
+	<iso_639_5_entry
+		id="sh85141916"
+		parents="paa"
+		name="Valman language" />
+	<iso_639_5_entry
+		id="sh85142417"
+		parents="sh85083372"
+		name="Vaturanga language" />
+	<iso_639_5_entry
+		id="sh85142421"
+		parents="sh85051553"
+		name="Vaudois dialect" />
+	<iso_639_5_entry
+		id="sh85142475"
+		parents="sh85065695"
+		name="Vedic language" />
+	<iso_639_5_entry
+		id="sh85142530"
+		parents="sh85035532"
+		name="Vegliote dialect" />
+	<iso_639_5_entry
+		id="sh85142644"
+		parents="ine"
+		name="Venetic language" />
+	<iso_639_5_entry
+		id="sh85142784"
+		parents="sh85011363"
+		name="Veps language" />
+	<iso_639_5_entry
+		id="sh85144417"
+		parents="sh85011363"
+		name="Votic language" />
+	<iso_639_5_entry
+		id="sh85144515"
+		parents="paa"
+		name="Waffa language" />
+	<iso_639_5_entry
+		id="sh85144812"
+		parents="paa"
+		name="Wahgi dialect" />
+	<iso_639_5_entry
+		id="sh85144855"
+		parents="sh85067921"
+		name="Wakhi language" />
+	<iso_639_5_entry
+		id="sh85144860"
+		parents="sh2003010425"
+		name="Warlpiri language" />
+	<iso_639_5_entry
+		id="sh85144966"
+		parents="sh2003007061"
+		name="Walmajarri language" />
+	<iso_639_5_entry
+		id="sh85145075"
+		parents="sh85089490"
+		name="Wancho language" />
+	<iso_639_5_entry
+		id="sh85145078"
+		parents="sh2003005565"
+		name="Wandarang language" />
+	<iso_639_5_entry
+		id="sh85145084"
+		parents="sh85109230"
+		name="Wanetsi dialect" />
+	<iso_639_5_entry
+		id="sh85145096"
+		parents="sh2003009018"
+		name="Wangkumara (Galali) dialect" />
+	<iso_639_5_entry
+		id="sh85145102"
+		parents="sh85048346"
+		name="Wantoat language" />
+	<iso_639_5_entry
+		id="sh85145396"
+		parents="paa"
+		name="Washkuk language" />
+	<iso_639_5_entry
+		id="sh85145401"
+		parents="paa"
+		name="Waskia language" />
+	<iso_639_5_entry
+		id="sh85145893"
+		parents="sh85083372"
+		name="Wedau language" />
+	<iso_639_5_entry
+		id="sh85146070"
+		parents="sh85017387"
+		name="Welsh language" />
+	<iso_639_5_entry
+		id="sh85146115"
+		parents="paa"
+		name="Were language" />
+	<iso_639_5_entry
+		id="sh85146212"
+		parents="sh85058499"
+		name="West Makian language" />
+	<iso_639_5_entry
+		id="sh85146252"
+		parents="sh2003010425"
+		name="Western Desert languages" />
+	<iso_639_5_entry
+		id="sh85146336"
+		parents="sh85130410"
+		name="Wewewa dialect" />
+	<iso_639_5_entry
+		id="sh85146520"
+		parents="tai"
+		name="White Tai language" />
+	<iso_639_5_entry
+		id="sh85146646"
+		parents="sh2003010410"
+		name="Wik-Mungkan language" />
+	<iso_639_5_entry
+		id="sh85147087"
+		parents="paa"
+		name="Wiru language" />
+	<iso_639_5_entry
+		id="sh85147210"
+		parents="paa"
+		name="Woisika language" />
+	<iso_639_5_entry
+		id="sh85147211"
+		parents="sh85004588"
+		name="Wojokeso dialect" />
+	<iso_639_5_entry
+		id="sh85147216"
+		parents="sh85084873"
+		name="Woleaian language" />
+	<iso_639_5_entry
+		id="sh85147243"
+		parents="sh85080100"
+		name="Wolio language" />
+	<iso_639_5_entry
+		id="sh85147779"
+		parents="sh2003009018"
+		name="Wongaibon language" />
+	<iso_639_5_entry
+		id="sh85148559"
+		parents="sh86003330"
+		name="Worora language" />
+	<iso_639_5_entry
+		id="sh85148669"
+		parents="sh85024301"
+		name="Wu dialects" />
+	<iso_639_5_entry
+		id="sh85148840"
+		parents="sh85117129"
+		name="!Xõ language" />
+	<iso_639_5_entry
+		id="sh85148843"
+		parents="sh85117129"
+		name="Ju/'hoan language" />
+	<iso_639_5_entry
+		id="sh85148884"
+		parents="paa"
+		name="Yabiyufa language" />
+	<iso_639_5_entry
+		id="sh85148903"
+		parents="paa"
+		name="Yagaria language" />
+	<iso_639_5_entry
+		id="sh85148905"
+		parents="sh85067921"
+		name="Yaghnobi language" />
+	<iso_639_5_entry
+		id="sh85148918"
+		parents="sh85116985"
+		name="Yakan language" />
+	<iso_639_5_entry
+		id="sh85148937"
+		parents="sh85138865"
+		name="Yakut language" />
+	<iso_639_5_entry
+		id="sh85148974"
+		parents="sh85100756"
+		name="Yami language" />
+	<iso_639_5_entry
+		id="sh85148990"
+		parents="sh85015339"
+		name="Yangoru dialect" />
+	<iso_639_5_entry
+		id="sh85149012"
+		parents="sh85084873"
+		name="Yapese language" />
+	<iso_639_5_entry
+		id="sh85149018"
+		parents="paa"
+		name="Yareba language" />
+	<iso_639_5_entry
+		id="sh85149051"
+		parents="sh85097275"
+		name="Yazghulami language" />
+	<iso_639_5_entry
+		id="sh85149107"
+		parents="sh85138865"
+		name="Yellow Uighur language" />
+	<iso_639_5_entry
+		id="sh85149133"
+		parents="paa"
+		name="Yessan-Mayo language" />
+	<iso_639_5_entry
+		id="sh85149156"
+		parents="sh2003009018"
+		name="Yidiny language" />
+	<iso_639_5_entry
+		id="sh85149159"
+		parents="sh85089490"
+		name="Yimchungru language" />
+	<iso_639_5_entry
+		id="sh85149417"
+		parents="aus"
+		name="Yualyai language" />
+	<iso_639_5_entry
+		id="sh85149435"
+		parents="sh85135845,sh85067921"
+		name="Yuezhi language" />
+	<iso_639_5_entry
+		id="sh85149490"
+		parents="paa"
+		name="Yui language" />
+	<iso_639_5_entry
+		id="sh85149494"
+		parents="urj"
+		name="Yukaghir language" />
+	<iso_639_5_entry
+		id="sh85149504"
+		parents="sh85015562"
+		name="Yulu language" />
+	<iso_639_5_entry
+		id="sh85149641"
+		parents="sh85135233"
+		name="Zhangzhung language" />
+	<iso_639_5_entry
+		id="sh85149678"
+		parents="sh85125039"
+		name="Zarma dialect" />
+	<iso_639_5_entry
+		id="sh85149692"
+		parents="sh85097275"
+		name="Zebaki dialect" />
+	<iso_639_5_entry
+		id="sh85149714"
+		parents="sh85089490"
+		name="Zeliang language" />
+	<iso_639_5_entry
+		id="sh85150030"
+		parents="sh85122756"
+		name="Zou dialect" />
+	<iso_639_5_entry
+		id="sh86000177"
+		parents="sh85138865"
+		name="Dolgan language" />
+	<iso_639_5_entry
+		id="sh86001021"
+		parents="sh85126261"
+		name="Bable dialect" />
+	<iso_639_5_entry
+		id="sh86002415"
+		parents="tai"
+		name="Black Tai language" />
+	<iso_639_5_entry
+		id="sh86003330"
+		parents="aus"
+		name="Wororan languages" />
+	<iso_639_5_entry
+		id="sh86003727"
+		parents="sh85138632"
+		name="Olcha language" />
+	<iso_639_5_entry
+		id="sh86003945"
+		parents="paa"
+		name="Berik language" />
+	<iso_639_5_entry
+		id="sh86004211"
+		parents="sh85138632"
+		name="Negidal language" />
+	<iso_639_5_entry
+		id="sh86004221"
+		parents="sh86004223"
+		name="Pattani dialect (India)" />
+	<iso_639_5_entry
+		id="sh86004223"
+		parents="sh85135233"
+		name="Lahuli language" />
+	<iso_639_5_entry
+		id="sh86004279"
+		parents="paa"
+		name="Tabla language" />
+	<iso_639_5_entry
+		id="sh86004312"
+		parents="sh85080100"
+		name="Wandamen language" />
+	<iso_639_5_entry
+		id="sh86004487"
+		parents="paa"
+		name="Usan language" />
+	<iso_639_5_entry
+		id="sh86004582"
+		parents="sh85085993"
+		name="Miju dialect" />
+	<iso_639_5_entry
+		id="sh86004586"
+		parents="sh86004587"
+		name="Ngama dialect" />
+	<iso_639_5_entry
+		id="sh86004587"
+		parents="sh85117471"
+		name="Sara language" />
+	<iso_639_5_entry
+		id="sh86004912"
+		parents="sh85135233"
+		name="Miji language" />
+	<iso_639_5_entry
+		id="sh86005099"
+		parents="sh85086824"
+		name="Chahar dialect" />
+	<iso_639_5_entry
+		id="sh86005147"
+		parents="sh85138866"
+		name="Greek Tatar language" />
+	<iso_639_5_entry
+		id="sh86005267"
+		parents="sh85080100"
+		name="Rejang language (Sumatra, Indonesia)" />
+	<iso_639_5_entry
+		id="sh86005679"
+		parents="tai"
+		name="Tai Nüa language" />
+	<iso_639_5_entry
+		id="sh86006784"
+		parents="sh85116985"
+		name="Sama Sibutu language" />
+	<iso_639_5_entry
+		id="sh86006786"
+		parents="sh85080100"
+		name="Tolaki language" />
+	<iso_639_5_entry
+		id="sh86006787"
+		parents="sh85080100"
+		name="Suwawa language" />
+	<iso_639_5_entry
+		id="sh86006808"
+		parents="sh85080100"
+		name="Barangas language" />
+	<iso_639_5_entry
+		id="sh86007445"
+		parents="paa"
+		name="Bauzi language" />
+	<iso_639_5_entry
+		id="sh86007514"
+		parents="sh85080100"
+		name="Talaud language" />
+	<iso_639_5_entry
+		id="sh86007738"
+		parents="sh85138632"
+		name="Sibo language" />
+	<iso_639_5_entry
+		id="sh86007780"
+		parents="sh85129402"
+		name="Central Subanen dialect" />
+	<iso_639_5_entry
+		id="sh86007781"
+		parents="sh85129402"
+		name="Southern Subanen dialect" />
+	<iso_639_5_entry
+		id="sh86007782"
+		parents="sh85129402"
+		name="Western Subanon dialect" />
+	<iso_639_5_entry
+		id="sh86007831"
+		parents="sh85057151"
+		name="Attic Greek dialect" />
+	<iso_639_5_entry
+		id="sh86007872"
+		parents="sh85080100"
+		name="Sumbawa language" />
+	<iso_639_5_entry
+		id="sh86008121"
+		parents="paa"
+		name="Chambri language" />
+	<iso_639_5_entry
+		id="sh86008212"
+		parents="sh86004279"
+		name="Tepera dialect" />
+	<iso_639_5_entry
+		id="sh86008213"
+		parents="sh85058499"
+		name="Ternate language" />
+	<iso_639_5_entry
+		id="sh87000035"
+		parents="dra"
+		name="Gadaba language (Dravidian)" />
+	<iso_639_5_entry
+		id="sh87000037"
+		parents="sh87000038"
+		name="Kaili language" />
+	<iso_639_5_entry
+		id="sh87000038"
+		parents="sh85080100"
+		name="Toraja languages" />
+	<iso_639_5_entry
+		id="sh87000093"
+		parents="sh85100756"
+		name="Sulod language" />
+	<iso_639_5_entry
+		id="sh87000234"
+		parents="sh85080100"
+		name="Sokop language" />
+	<iso_639_5_entry
+		id="sh87000267"
+		parents="sh85067921"
+		name="Ormuri language" />
+	<iso_639_5_entry
+		id="sh87000287"
+		parents="sh85000189"
+		name="Padam language" />
+	<iso_639_5_entry
+		id="sh87000318"
+		parents="sh85100756,sh85117010"
+		name="Bolinao dialect" />
+	<iso_639_5_entry
+		id="sh87000355"
+		parents="sh85080066"
+		name="Urak Lawoiʾ language" />
+	<iso_639_5_entry
+		id="sh87000375"
+		parents="sh85079224"
+		name="Dusun Deyah dialect" />
+	<iso_639_5_entry
+		id="sh87000399"
+		parents="sh85116985"
+		name="Balangingì dialect" />
+	<iso_639_5_entry
+		id="sh87000507"
+		parents="sh85117010"
+		name="Botolan Sambal dialect" />
+	<iso_639_5_entry
+		id="sh87000521"
+		parents="sh85080100"
+		name="Katingan language" />
+	<iso_639_5_entry
+		id="sh87000522"
+		parents="sh85100756"
+		name="Kinaray-a language" />
+	<iso_639_5_entry
+		id="sh87000528"
+		parents="sh85080100"
+		name="Sangen language" />
+	<iso_639_5_entry
+		id="sh87000561"
+		parents="sh87000038"
+		name="Toraja language" />
+	<iso_639_5_entry
+		id="sh87000662"
+		parents="sh85080066"
+		name="Musi dialect" />
+	<iso_639_5_entry
+		id="sh87000703"
+		parents="sh85085475"
+		name="Kubuang Tigo Baleh dialect" />
+	<iso_639_5_entry
+		id="sh87000798"
+		parents="sh85080066"
+		name="Pattani dialect (Thailand)" />
+	<iso_639_5_entry
+		id="sh87000954"
+		parents="sh85064193"
+		name="Batad Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh87000976"
+		parents="sh85080100"
+		name="Toraja Sa'dan language" />
+	<iso_639_5_entry
+		id="sh87001050"
+		parents="sh85080066"
+		name="Deli dialect" />
+	<iso_639_5_entry
+		id="sh87001060"
+		parents="sh85066606"
+		name="Fasti consulares" />
+	<iso_639_5_entry
+		id="sh87001067"
+		parents="sh85080066"
+		name="Pasir dialect" />
+	<iso_639_5_entry
+		id="sh87001266"
+		parents="sh85080066"
+		name="Besemah dialect" />
+	<iso_639_5_entry
+		id="sh87001276"
+		parents="sh85074270"
+		name="Komering dialect" />
+	<iso_639_5_entry
+		id="sh87001414"
+		parents="sh85080066"
+		name="Siladang dialect" />
+	<iso_639_5_entry
+		id="sh87001425"
+		parents="sh85080066"
+		name="Lembak Bilide dialect" />
+	<iso_639_5_entry
+		id="sh87001682"
+		parents="sh85080100"
+		name="Sawu language" />
+	<iso_639_5_entry
+		id="sh87001708"
+		parents="sh85135233"
+		name="Tagin language" />
+	<iso_639_5_entry
+		id="sh87001722"
+		parents="sh85132011"
+		name="Sedik language" />
+	<iso_639_5_entry
+		id="sh87001847"
+		parents="sh85080100"
+		name="Bolaang Mongondow language" />
+	<iso_639_5_entry
+		id="sh87001878"
+		parents="sh85054242"
+		name="Imeretian dialect" />
+	<iso_639_5_entry
+		id="sh87002309"
+		parents="sh85080100"
+		name="Yamdena language" />
+	<iso_639_5_entry
+		id="sh87002384"
+		parents="sh87000954"
+		name="Ayangan Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh87002436"
+		parents="sh2004009645"
+		name="Wanʾguri language" />
+	<iso_639_5_entry
+		id="sh87002571"
+		parents="sh85135233"
+		name="Achang language" />
+	<iso_639_5_entry
+		id="sh87002872"
+		parents="sh85086827"
+		name="Khitan language" />
+	<iso_639_5_entry
+		id="sh87003107"
+		parents="sh85069794"
+		name="Osing dialect" />
+	<iso_639_5_entry
+		id="sh87003128"
+		parents="sh85110829"
+		name="Ladin dialect" />
+	<iso_639_5_entry
+		id="sh87003178"
+		parents="sh85080100"
+		name="Balaesang language" />
+	<iso_639_5_entry
+		id="sh87003179"
+		parents="sh85080100"
+		name="Kubu language" />
+	<iso_639_5_entry
+		id="sh87003436"
+		parents="sh85091661"
+		name="Bakumpai dialect" />
+	<iso_639_5_entry
+		id="sh87003621"
+		parents="sh85080066"
+		name="Rawas dialect" />
+	<iso_639_5_entry
+		id="sh87003846"
+		parents="sh85012311"
+		name="Dairi Pakpak dialect" />
+	<iso_639_5_entry
+		id="sh87003848"
+		parents="sh85080100"
+		name="Atinggola language" />
+	<iso_639_5_entry
+		id="sh87003881"
+		parents="sh2007000820"
+		name="Abujhmaria dialect" />
+	<iso_639_5_entry
+		id="sh87003999"
+		parents="sh85071661"
+		name="Alas dialect" />
+	<iso_639_5_entry
+		id="sh87004150"
+		parents="sh85080100"
+		name="Buol language" />
+	<iso_639_5_entry
+		id="sh87004493"
+		parents="sh85080100"
+		name="Muna language" />
+	<iso_639_5_entry
+		id="sh87005171"
+		parents="sh85057151"
+		name="Doric Greek dialect" />
+	<iso_639_5_entry
+		id="sh87005172"
+		parents="sh85057151"
+		name="Ionic Greek dialect" />
+	<iso_639_5_entry
+		id="sh87005173"
+		parents="sh85057151"
+		name="Aeolic Greek dialect" />
+	<iso_639_5_entry
+		id="sh87005872"
+		parents="sh85132023"
+		name="Judeo-Tajik language" />
+	<iso_639_5_entry
+		id="sh87006513"
+		parents="sh85080100"
+		name="Tombulu language" />
+	<iso_639_5_entry
+		id="sh87007005"
+		parents="sh85078170"
+		name="Hani language" />
+	<iso_639_5_entry
+		id="sh87007198"
+		parents="paa"
+		name="Duna language" />
+	<iso_639_5_entry
+		id="sh87007200"
+		parents="paa"
+		name="Kalam language" />
+	<iso_639_5_entry
+		id="sh87007463"
+		parents="sh85048346"
+		name="Burum language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh87007472"
+		parents="paa"
+		name="Halopa language" />
+	<iso_639_5_entry
+		id="sh87007478"
+		parents="sh85073344"
+		name="Ramoaaina language" />
+	<iso_639_5_entry
+		id="sh87007479"
+		parents="sh85090485"
+		name="Sawos language" />
+	<iso_639_5_entry
+		id="sh87007602"
+		parents="sh85091962"
+		name="Bor language (Lwo)" />
+	<iso_639_5_entry
+		id="sh87007603"
+		parents="sh85083372"
+		name="Bunama language" />
+	<iso_639_5_entry
+		id="sh87007613"
+		parents="sh85083372"
+		name="Kurada language" />
+	<iso_639_5_entry
+		id="sh87007666"
+		parents="sh89006981"
+		name="Botlikh language" />
+	<iso_639_5_entry
+		id="sh87007985"
+		parents="sh85083372"
+		name="Kaiwa language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh87007987"
+		parents="sh85083372"
+		name="Tinputz language" />
+	<iso_639_5_entry
+		id="sh88000330"
+		parents="sh85078170"
+		name="Chino language" />
+	<iso_639_5_entry
+		id="sh88000337"
+		parents="sh85132011"
+		name="Paiwan language" />
+	<iso_639_5_entry
+		id="sh88000622"
+		parents="sh2003005565"
+		name="Anindilyakwa language" />
+	<iso_639_5_entry
+		id="sh88000623"
+		parents="sh85014404"
+		name="Banton language" />
+	<iso_639_5_entry
+		id="sh88000629"
+		parents="sh85083372"
+		name="Tavara language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh88000696"
+		parents="sh85135224"
+		name="Lopa language" />
+	<iso_639_5_entry
+		id="sh88000725"
+		parents="sh85104690"
+		name="Tokelauan language" />
+	<iso_639_5_entry
+		id="sh88001332"
+		parents="sh85071484"
+		name="Jenukuruba dialect" />
+	<iso_639_5_entry
+		id="sh88001431"
+		parents="sh85135224"
+		name="Amdo dialect" />
+	<iso_639_5_entry
+		id="sh88001812"
+		parents="sh85104690"
+		name="Tikopia language" />
+	<iso_639_5_entry
+		id="sh88001958"
+		parents="sh85138867"
+		name="Western Yugur language" />
+	<iso_639_5_entry
+		id="sh88003813"
+		parents="sh88003814"
+		name="Northern Roglai dialect" />
+	<iso_639_5_entry
+		id="sh88003814"
+		parents="sh85022442"
+		name="Roglai language" />
+	<iso_639_5_entry
+		id="sh88004018"
+		parents="khi"
+		name="Nharo language" />
+	<iso_639_5_entry
+		id="sh88004649"
+		parents="sh2003010425"
+		name="Yura languages" />
+	<iso_639_5_entry
+		id="sh88005094"
+		parents="sh85015595"
+		name="Central Bontoc dialect" />
+	<iso_639_5_entry
+		id="sh88005110"
+		parents="sh85015595"
+		name="Southern Bontoc dialect" />
+	<iso_639_5_entry
+		id="sh88005176"
+		parents="sh85015595"
+		name="Eastern Bontoc dialect" />
+	<iso_639_5_entry
+		id="sh88005185"
+		parents="sh85092937"
+		name="Mahas-Fiyadikka language" />
+	<iso_639_5_entry
+		id="sh88005445"
+		parents="paa"
+		name="Toaripi languages" />
+	<iso_639_5_entry
+		id="sh88005503"
+		parents="sh85117010"
+		name="Tina Sambal dialect" />
+	<iso_639_5_entry
+		id="sh88006271"
+		parents="sh85071346"
+		name="Southern Kalinga language" />
+	<iso_639_5_entry
+		id="sh88006677"
+		parents="sh85080100"
+		name="Kayu Agung language" />
+	<iso_639_5_entry
+		id="sh88006803"
+		parents="cau"
+		name="Nakho-Dagestanian languages" />
+	<iso_639_5_entry
+		id="sh88006810"
+		parents="sh85064193"
+		name="Eastern Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh88006898"
+		parents="sh88006899"
+		name="Tuwali dialect" />
+	<iso_639_5_entry
+		id="sh88006899"
+		parents="sh85064193"
+		name="Kiangan Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh88007010"
+		parents="sh2003010410"
+		name="Kuuku Ya'u language" />
+	<iso_639_5_entry
+		id="sh88007043"
+		parents="sh2003010410"
+		name="Umpila language" />
+	<iso_639_5_entry
+		id="sh88007669"
+		parents="sh85080606"
+		name="Agusan Manobo language" />
+	<iso_639_5_entry
+		id="sh88007670"
+		parents="sh85080606"
+		name="Ata Manobo language" />
+	<iso_639_5_entry
+		id="sh88007671"
+		parents="sh85080606"
+		name="Cotabato Manobo language" />
+	<iso_639_5_entry
+		id="sh88007672"
+		parents="sh85080606"
+		name="Ilianen Manobo language" />
+	<iso_639_5_entry
+		id="sh88007673"
+		parents="sh85080606"
+		name="MatigSalug language" />
+	<iso_639_5_entry
+		id="sh88007674"
+		parents="sh85080606"
+		name="Sarangani Manobo language" />
+	<iso_639_5_entry
+		id="sh88007675"
+		parents="sh85080606"
+		name="Western Bukidnon Manobo language" />
+	<iso_639_5_entry
+		id="sh88007703"
+		parents="sh2003005565"
+		name="Mangarayi language" />
+	<iso_639_5_entry
+		id="sh89001103"
+		parents="sh85080066"
+		name="Ulu Terengganu dialect" />
+	<iso_639_5_entry
+		id="sh89001516"
+		parents="sh85100756"
+		name="Proto-Philippine language" />
+	<iso_639_5_entry
+		id="sh89003354"
+		parents="sh2008028020"
+		name="Sahu language" />
+	<iso_639_5_entry
+		id="sh89004001"
+		parents="sh85015895"
+		name="Kaluli language" />
+	<iso_639_5_entry
+		id="sh89004481"
+		parents="sh85062997"
+		name="Székely dialect" />
+	<iso_639_5_entry
+		id="sh89004656"
+		parents="sh85091962"
+		name="Samburu language" />
+	<iso_639_5_entry
+		id="sh89004858"
+		parents="sh85074670"
+		name="Inari Sami dialect" />
+	<iso_639_5_entry
+		id="sh89004879"
+		parents="sh89004880"
+		name="Gunian language" />
+	<iso_639_5_entry
+		id="sh89004880"
+		parents="aus"
+		name="Bunaban languages" />
+	<iso_639_5_entry
+		id="sh89005040"
+		parents="sh85132190"
+		name="Yerukala dialect" />
+	<iso_639_5_entry
+		id="sh89005213"
+		parents="sh85048431"
+		name="Finnic languages" />
+	<iso_639_5_entry
+		id="sh89005769"
+		parents="sh85071802"
+		name="Mendalam Kayan dialect" />
+	<iso_639_5_entry
+		id="sh89006211"
+		parents="sh85072162"
+		name="Southern Khanty dialect" />
+	<iso_639_5_entry
+		id="sh89006363"
+		parents="sh89005213"
+		name="Merya language" />
+	<iso_639_5_entry
+		id="sh89006379"
+		parents="sh85074670"
+		name="Kildin Sami dialect" />
+	<iso_639_5_entry
+		id="sh89006381"
+		parents="sh85074670"
+		name="Southern Sami dialect" />
+	<iso_639_5_entry
+		id="sh89006430"
+		parents="sh85090732"
+		name="Forest Nenets dialect" />
+	<iso_639_5_entry
+		id="sh89006527"
+		parents="sh85092542"
+		name="Kumandin dialect" />
+	<iso_639_5_entry
+		id="sh89006579"
+		parents="sh85130933"
+		name="Lashkh dialect" />
+	<iso_639_5_entry
+		id="sh89006654"
+		parents="sh85138866"
+		name="Kuman languages" />
+	<iso_639_5_entry
+		id="sh89006659"
+		parents="sh85014075"
+		name="Komodo dialect" />
+	<iso_639_5_entry
+		id="sh89006661"
+		parents="sh85083372"
+		name="Sobei language" />
+	<iso_639_5_entry
+		id="sh89006670"
+		parents="paa"
+		name="Orya language" />
+	<iso_639_5_entry
+		id="sh89006817"
+		parents="sh89006654"
+		name="Armeno-Kipchak language" />
+	<iso_639_5_entry
+		id="sh89006867"
+		parents="sh85092542"
+		name="Chalkandu dialect" />
+	<iso_639_5_entry
+		id="sh89006981"
+		parents="sh85035400"
+		name="Andi languages" />
+	<iso_639_5_entry
+		id="sh90000034"
+		parents="sh85065708"
+		name="Nuristani languages" />
+	<iso_639_5_entry
+		id="sh90000035"
+		parents="dra"
+		name="Alu Kurumba language" />
+	<iso_639_5_entry
+		id="sh90000305"
+		parents="sh85104690"
+		name="Talise language" />
+	<iso_639_5_entry
+		id="sh90001065"
+		parents="sh85080100"
+		name="Berawan language" />
+	<iso_639_5_entry
+		id="sh90002090"
+		parents="sh85080066"
+		name="Enim dialect" />
+	<iso_639_5_entry
+		id="sh90002122"
+		parents="paa"
+		name="Ketengban language" />
+	<iso_639_5_entry
+		id="sh90002823"
+		parents="sh85100756"
+		name="Filipino language" />
+	<iso_639_5_entry
+		id="sh90002897"
+		parents="sh85080100"
+		name="Sangir language (Indonesia and Philippines)" />
+	<iso_639_5_entry
+		id="sh90003765"
+		parents="sh85080066"
+		name="Meratus dialect" />
+	<iso_639_5_entry
+		id="sh90003983"
+		parents="dra"
+		name="Proto-Dravidian language" />
+	<iso_639_5_entry
+		id="sh90004221"
+		parents="sh85080066"
+		name="Bonai dialect" />
+	<iso_639_5_entry
+		id="sh90004283"
+		parents="paa"
+		name="Tauya language" />
+	<iso_639_5_entry
+		id="sh90004360"
+		parents="sh85072162"
+		name="Northern Khanty dialect" />
+	<iso_639_5_entry
+		id="sh90004399"
+		parents="sh86007514"
+		name="Nenusa-Miangas dialect" />
+	<iso_639_5_entry
+		id="sh90004586"
+		parents="sh85138867"
+		name="Khorezmian Turkic language" />
+	<iso_639_5_entry
+		id="sh90004607"
+		parents="sh85003864"
+		name="Teleut dialect" />
+	<iso_639_5_entry
+		id="sh90004650"
+		parents="sh85135224"
+		name="Lopa language (Nepal)" />
+	<iso_639_5_entry
+		id="sh90004680"
+		parents="sh90002897"
+		name="Bune Bonda dialect" />
+	<iso_639_5_entry
+		id="sh90004794"
+		parents="sh85100756"
+		name="Kalagan language" />
+	<iso_639_5_entry
+		id="sh90004933"
+		parents="sh85080023"
+		name="Masikoro dialect" />
+	<iso_639_5_entry
+		id="sh90005015"
+		parents="sh85080100"
+		name="Kedang language" />
+	<iso_639_5_entry
+		id="sh90005077"
+		parents="sh85080087"
+		name="Moplah dialect" />
+	<iso_639_5_entry
+		id="sh90005384"
+		parents="sh85135233"
+		name="Rang Pas language" />
+	<iso_639_5_entry
+		id="sh90005920"
+		parents="sh85080023"
+		name="Betsimisaraka dialect" />
+	<iso_639_5_entry
+		id="sh91000530"
+		parents="sh85071346"
+		name="Lower Tanudan Kalinga language" />
+	<iso_639_5_entry
+		id="sh91000533"
+		parents="sh85064193"
+		name="Amganad Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh91000563"
+		parents="urj"
+		name="Proto-Uralic language" />
+	<iso_639_5_entry
+		id="sh91000920"
+		parents="sh85017827"
+		name="Higaonon dialect" />
+	<iso_639_5_entry
+		id="sh91001597"
+		parents="sh85071475"
+		name="Northern Kankanay dialect" />
+	<iso_639_5_entry
+		id="sh91001634"
+		parents="sh85084873"
+		name="Carolinian language" />
+	<iso_639_5_entry
+		id="sh91002254"
+		parents="paa"
+		name="Yimas language" />
+	<iso_639_5_entry
+		id="sh91002680"
+		parents="paa"
+		name="Blagar language" />
+	<iso_639_5_entry
+		id="sh91002689"
+		parents="sh85080100"
+		name="Tawoyan language" />
+	<iso_639_5_entry
+		id="sh91002707"
+		parents="sh85080100"
+		name="Tamuan language" />
+	<iso_639_5_entry
+		id="sh91002728"
+		parents="sh85116985"
+		name="Pangutaran Sama language" />
+	<iso_639_5_entry
+		id="sh91002765"
+		parents="sh87000038"
+		name="Daa language" />
+	<iso_639_5_entry
+		id="sh91002836"
+		parents="sh85010640"
+		name="Afshar dialect" />
+	<iso_639_5_entry
+		id="sh91003032"
+		parents="ssa"
+		name="Central Sudanic languages" />
+	<iso_639_5_entry
+		id="sh91003035"
+		parents="sh85071634"
+		name="Kayah language" />
+	<iso_639_5_entry
+		id="sh91003333"
+		parents="sh85083372"
+		name="Tagula language" />
+	<iso_639_5_entry
+		id="sh91003699"
+		parents="paa"
+		name="Aneme Wake language" />
+	<iso_639_5_entry
+		id="sh91004188"
+		parents="sh85132278"
+		name="Lungchang dialect" />
+	<iso_639_5_entry
+		id="sh91004245"
+		parents="sh2003010410"
+		name="Yir-Yoront language" />
+	<iso_639_5_entry
+		id="sh91004273"
+		parents="sh85080100"
+		name="Fordata language" />
+	<iso_639_5_entry
+		id="sh91004504"
+		parents="sh85080100"
+		name="Sawai language" />
+	<iso_639_5_entry
+		id="sh91004820"
+		parents="sh85132278"
+		name="Yogli dialect" />
+	<iso_639_5_entry
+		id="sh91004842"
+		parents="sh85135224"
+		name="Sherdukpen language" />
+	<iso_639_5_entry
+		id="sh91004875"
+		parents="sh2011004361"
+		name="Runga language" />
+	<iso_639_5_entry
+		id="sh91005756"
+		parents="sh85055843"
+		name="Māḍiyā-Goṇḍī dialect" />
+	<iso_639_5_entry
+		id="sh91006071"
+		parents="sh85083372"
+		name="Lavongai language" />
+	<iso_639_5_entry
+		id="sh91006080"
+		parents="tai"
+		name="Lü language" />
+	<iso_639_5_entry
+		id="sh92000179"
+		parents="sh91003032"
+		name="Logo language" />
+	<iso_639_5_entry
+		id="sh92000635"
+		parents="sh85080100"
+		name="Roma language" />
+	<iso_639_5_entry
+		id="sh92000636"
+		parents="sh87004493"
+		name="Mawasangka dialect" />
+	<iso_639_5_entry
+		id="sh92000977"
+		parents="sh85080100"
+		name="Yawa language" />
+	<iso_639_5_entry
+		id="sh92001345"
+		parents="sh85080066"
+		name="Lintang dialect" />
+	<iso_639_5_entry
+		id="sh92001382"
+		parents="sh85080100"
+		name="Sikka language" />
+	<iso_639_5_entry
+		id="sh92001499"
+		parents="paa"
+		name="Folopa language" />
+	<iso_639_5_entry
+		id="sh92001589"
+		parents="sh85080100"
+		name="Tamiang language" />
+	<iso_639_5_entry
+		id="sh92001622"
+		parents="sh85080100"
+		name="Bayan language" />
+	<iso_639_5_entry
+		id="sh92002105"
+		parents="sh85080100"
+		name="Dampelasa language" />
+	<iso_639_5_entry
+		id="sh92002285"
+		parents="sh85135233"
+		name="Purik language" />
+	<iso_639_5_entry
+		id="sh92003201"
+		parents="ssa"
+		name="Kanembu language" />
+	<iso_639_5_entry
+		id="sh92003203"
+		parents="sh92003201"
+		name="Ngalduku dialect" />
+	<iso_639_5_entry
+		id="sh92003270"
+		parents="sh92003273"
+		name="Binongko dialect" />
+	<iso_639_5_entry
+		id="sh92003273"
+		parents="sh85080100"
+		name="Tukangbesi language" />
+	<iso_639_5_entry
+		id="sh92003336"
+		parents="tai"
+		name="Saek language" />
+	<iso_639_5_entry
+		id="sh92004082"
+		parents="ssa"
+		name="Zaghawa language" />
+	<iso_639_5_entry
+		id="sh92004537"
+		parents="sh85048346"
+		name="Timbe language" />
+	<iso_639_5_entry
+		id="sh92004544"
+		parents="paa"
+		name="Bisorio language" />
+	<iso_639_5_entry
+		id="sh92004546"
+		parents="paa"
+		name="Yele language" />
+	<iso_639_5_entry
+		id="sh92004555"
+		parents="sh85083372"
+		name="Saposa language" />
+	<iso_639_5_entry
+		id="sh92004590"
+		parents="sh85064193"
+		name="Mayoyao Ifugao dialect" />
+	<iso_639_5_entry
+		id="sh92004591"
+		parents="sh85100756"
+		name="Paranan language" />
+	<iso_639_5_entry
+		id="sh92004815"
+		parents="sh85135233"
+		name="Maru language" />
+	<iso_639_5_entry
+		id="sh92004816"
+		parents="sh85080100"
+		name="Moken language" />
+	<iso_639_5_entry
+		id="sh92004850"
+		parents="paa"
+		name="Bom language" />
+	<iso_639_5_entry
+		id="sh92004855"
+		parents="sh85048346"
+		name="Dedua language" />
+	<iso_639_5_entry
+		id="sh92004865"
+		parents="sh85083372"
+		name="Kara language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh92004867"
+		parents="sh85083372"
+		name="Mandak language" />
+	<iso_639_5_entry
+		id="sh92004868"
+		parents="sh85083372"
+		name="Mangap language" />
+	<iso_639_5_entry
+		id="sh92004869"
+		parents="sh85083372"
+		name="Mangseng language" />
+	<iso_639_5_entry
+		id="sh92004870"
+		parents="paa"
+		name="Mugil language" />
+	<iso_639_5_entry
+		id="sh92004872"
+		parents="paa"
+		name="Kamasau language" />
+	<iso_639_5_entry
+		id="sh92004873"
+		parents="sh85089892"
+		name="Kongara dialect" />
+	<iso_639_5_entry
+		id="sh92004875"
+		parents="sh85048346"
+		name="Nankina language" />
+	<iso_639_5_entry
+		id="sh92004882"
+		parents="paa"
+		name="Mufian language" />
+	<iso_639_5_entry
+		id="sh92004890"
+		parents="paa"
+		name="Sulka language" />
+	<iso_639_5_entry
+		id="sh92004893"
+		parents="sh85083372"
+		name="Sursurunga language" />
+	<iso_639_5_entry
+		id="sh92004895"
+		parents="paa"
+		name="Yuri language" />
+	<iso_639_5_entry
+		id="sh92004897"
+		parents="sh2003010425"
+		name="Banyjima language" />
+	<iso_639_5_entry
+		id="sh92004900"
+		parents="paa"
+		name="Baham language" />
+	<iso_639_5_entry
+		id="sh92004906"
+		parents="sh85135233"
+		name="Pyu language (Burma)" />
+	<iso_639_5_entry
+		id="sh92005005"
+		parents="sh85080100"
+		name="Wotu language" />
+	<iso_639_5_entry
+		id="sh92005014"
+		parents="sh85110213"
+		name="Rangdania dialect" />
+	<iso_639_5_entry
+		id="sh92005029"
+		parents="sh85132270"
+		name="Ukhrul dialect" />
+	<iso_639_5_entry
+		id="sh92005054"
+		parents="sh2013001154"
+		name="Agutaynen language" />
+	<iso_639_5_entry
+		id="sh92005083"
+		parents="sh85117010"
+		name="Ayta Anchi Sambal dialect" />
+	<iso_639_5_entry
+		id="sh92005116"
+		parents="paa"
+		name="Imbongu language" />
+	<iso_639_5_entry
+		id="sh92005119"
+		parents="paa"
+		name="Miyemu language" />
+	<iso_639_5_entry
+		id="sh92005134"
+		parents="sh85077471"
+		name="Hua Lisu dialect" />
+	<iso_639_5_entry
+		id="sh92005149"
+		parents="sh85089490"
+		name="Zeme language" />
+	<iso_639_5_entry
+		id="sh92005150"
+		parents="sh85035544"
+		name="Ngangikurunggurr language" />
+	<iso_639_5_entry
+		id="sh92005162"
+		parents="sh85080100"
+		name="Lom language" />
+	<iso_639_5_entry
+		id="sh92005189"
+		parents="paa"
+		name="Mek languages" />
+	<iso_639_5_entry
+		id="sh92005260"
+		parents="sh92005189"
+		name="Una language" />
+	<iso_639_5_entry
+		id="sh92005279"
+		parents="sh85126261"
+		name="Cheso dialect" />
+	<iso_639_5_entry
+		id="sh92005354"
+		parents="sh85135233"
+		name="Rawang language" />
+	<iso_639_5_entry
+		id="sh92005365"
+		parents="sh85089490"
+		name="Moshang language" />
+	<iso_639_5_entry
+		id="sh92005408"
+		parents="sh85135233"
+		name="Tsaiwa language" />
+	<iso_639_5_entry
+		id="sh92005614"
+		parents="sh85048346"
+		name="Rawa language" />
+	<iso_639_5_entry
+		id="sh92005781"
+		parents="sh85048346"
+		name="Ono language" />
+	<iso_639_5_entry
+		id="sh92005963"
+		parents="sh85135233"
+		name="Sulung language" />
+	<iso_639_5_entry
+		id="sh92006042"
+		parents="sh85071634"
+		name="Taungthu language" />
+	<iso_639_5_entry
+		id="sh92006053"
+		parents="sh85135233"
+		name="Kadu language" />
+	<iso_639_5_entry
+		id="sh93000923"
+		parents="tai"
+		name="Ya language" />
+	<iso_639_5_entry
+		id="sh93001550"
+		parents="sh85146252"
+		name="Mandjildjara dialect" />
+	<iso_639_5_entry
+		id="sh93001589"
+		parents="sh85083372"
+		name="Gapapaiwa language" />
+	<iso_639_5_entry
+		id="sh93001595"
+		parents="tai"
+		name="Lungming language" />
+	<iso_639_5_entry
+		id="sh93001679"
+		parents="paa"
+		name="Wambon language" />
+	<iso_639_5_entry
+		id="sh93002530"
+		parents="sh85089672"
+		name="Sabaot language" />
+	<iso_639_5_entry
+		id="sh93002705"
+		parents="sh85069794"
+		name="Banten dialect" />
+	<iso_639_5_entry
+		id="sh93002706"
+		parents="sh85080100"
+		name="Embaloh language" />
+	<iso_639_5_entry
+		id="sh93002719"
+		parents="sh85080066"
+		name="Sambas dialect" />
+	<iso_639_5_entry
+		id="sh93002726"
+		parents="sh85080066"
+		name="Serdang Malay dialect" />
+	<iso_639_5_entry
+		id="sh93002788"
+		parents="paa"
+		name="Tehit language" />
+	<iso_639_5_entry
+		id="sh93002789"
+		parents="sh87001847"
+		name="Uki dialect" />
+	<iso_639_5_entry
+		id="sh93002793"
+		parents="sh85080100"
+		name="Kahayan language" />
+	<iso_639_5_entry
+		id="sh93002855"
+		parents="sh85072053"
+		name="Akit dialect" />
+	<iso_639_5_entry
+		id="sh93002874"
+		parents="sh85080100"
+		name="Rembong language" />
+	<iso_639_5_entry
+		id="sh93003187"
+		parents="sh85135233"
+		name="Kiranti languages" />
+	<iso_639_5_entry
+		id="sh93003391"
+		parents="sh85080100"
+		name="Paku language" />
+	<iso_639_5_entry
+		id="sh93003394"
+		parents="sh85080100"
+		name="Lawangan language" />
+	<iso_639_5_entry
+		id="sh93003817"
+		parents="sh85080100"
+		name="Saluan language" />
+	<iso_639_5_entry
+		id="sh93004402"
+		parents="sh93003187"
+		name="Dumi language" />
+	<iso_639_5_entry
+		id="sh93004598"
+		parents="paa"
+		name="Kaure language" />
+	<iso_639_5_entry
+		id="sh93004599"
+		parents="paa"
+		name="Koiari language" />
+	<iso_639_5_entry
+		id="sh93004601"
+		parents="sh85080100"
+		name="Larike-Wakasihu language" />
+	<iso_639_5_entry
+		id="sh93004777"
+		parents="sh85040270"
+		name="Dayak Kantuk language" />
+	<iso_639_5_entry
+		id="sh93004782"
+		parents="sh85080100"
+		name="Moronene language" />
+	<iso_639_5_entry
+		id="sh93004804"
+		parents="sh85080100"
+		name="Ot Danum language" />
+	<iso_639_5_entry
+		id="sh93005100"
+		parents="sh85080100"
+		name="Jamee language" />
+	<iso_639_5_entry
+		id="sh93005866"
+		parents="sh85135224"
+		name="Shigatse dialect" />
+	<iso_639_5_entry
+		id="sh93006224"
+		parents="sh85074270"
+		name="Abung dialect" />
+	<iso_639_5_entry
+		id="sh93006225"
+		parents="sh85080100"
+		name="Bolongan language" />
+	<iso_639_5_entry
+		id="sh93006227"
+		parents="sh85080100"
+		name="Cia-cia language" />
+	<iso_639_5_entry
+		id="sh93006228"
+		parents="sh85130508"
+		name="Cirebon dialect" />
+	<iso_639_5_entry
+		id="sh93006230"
+		parents="sh85080100"
+		name="Ponosakan language" />
+	<iso_639_5_entry
+		id="sh93006284"
+		parents="sh85083372"
+		name="Lindrou language" />
+	<iso_639_5_entry
+		id="sh93006287"
+		parents="sh85083372"
+		name="Sio language" />
+	<iso_639_5_entry
+		id="sh93006295"
+		parents="sh85080100"
+		name="Dobel language" />
+	<iso_639_5_entry
+		id="sh93006297"
+		parents="sh85073386"
+		name="Ankave language" />
+	<iso_639_5_entry
+		id="sh93006298"
+		parents="sh85083372"
+		name="Irahutu language" />
+	<iso_639_5_entry
+		id="sh93006302"
+		parents="sh85083372"
+		name="Biliau language" />
+	<iso_639_5_entry
+		id="sh93006303"
+		parents="sh85083372"
+		name="Dawawa language" />
+	<iso_639_5_entry
+		id="sh93006306"
+		parents="sh85080100"
+		name="Nuaulu language" />
+	<iso_639_5_entry
+		id="sh93006308"
+		parents="sh85083372"
+		name="Kaulong language" />
+	<iso_639_5_entry
+		id="sh93006309"
+		parents="paa"
+		name="Gwedena language" />
+	<iso_639_5_entry
+		id="sh93006312"
+		parents="sh85048346"
+		name="Irumu language" />
+	<iso_639_5_entry
+		id="sh93006319"
+		parents="paa"
+		name="Meax language" />
+	<iso_639_5_entry
+		id="sh93006354"
+		parents="sh85083372"
+		name="Mekeo language" />
+	<iso_639_5_entry
+		id="sh93006356"
+		parents="sh85083372"
+		name="Nali language" />
+	<iso_639_5_entry
+		id="sh93006371"
+		parents="sh85083372"
+		name="Sinagoro language" />
+	<iso_639_5_entry
+		id="sh93006372"
+		parents="paa"
+		name="Sona language (Papua New Guinea)" />
+	<iso_639_5_entry
+		id="sh93006388"
+		parents="sh85048346"
+		name="Yau language" />
+	<iso_639_5_entry
+		id="sh93006393"
+		parents="paa"
+		name="Tani language" />
+	<iso_639_5_entry
+		id="sh93006448"
+		parents="paa"
+		name="Pay language" />
+	<iso_639_5_entry
+		id="sh93006465"
+		parents="sh85080100"
+		name="Tombonuwo language" />
+	<iso_639_5_entry
+		id="sh93006491"
+		parents="sh93006492"
+		name="Gope dialect" />
+	<iso_639_5_entry
+		id="sh93006492"
+		parents="sh85072600"
+		name="Northeastern Kiwai language" />
+	<iso_639_5_entry
+		id="sh93006548"
+		parents="sh85083372"
+		name="Ham language" />
+	<iso_639_5_entry
+		id="sh93006861"
+		parents="sh2003005565"
+		name="Wardaman language" />
+	<iso_639_5_entry
+		id="sh93006878"
+		parents="sh2003010425"
+		name="Watjari language" />
+	<iso_639_5_entry
+		id="sh93007234"
+		parents="sh85080100"
+		name="Alune language" />
+	<iso_639_5_entry
+		id="sh93007528"
+		parents="paa"
+		name="Ipili language" />
+	<iso_639_5_entry
+		id="sh93007567"
+		parents="sh85080100"
+		name="Basap language" />
+	<iso_639_5_entry
+		id="sh93007608"
+		parents="paa"
+		name="Wasi language" />
+	<iso_639_5_entry
+		id="sh93007629"
+		parents="sh85122195"
+		name="Komunku dialect" />
+	<iso_639_5_entry
+		id="sh93007849"
+		parents="sh85080100"
+		name="Balantak language" />
+	<iso_639_5_entry
+		id="sh93007899"
+		parents="sh85135233"
+		name="Bori language" />
+	<iso_639_5_entry
+		id="sh93008044"
+		parents="sh85080100"
+		name="Lamandau language" />
+	<iso_639_5_entry
+		id="sh93008437"
+		parents="sh85080100"
+		name="Kluet language" />
+	<iso_639_5_entry
+		id="sh93008535"
+		parents="paa"
+		name="Iha language" />
+	<iso_639_5_entry
+		id="sh93008789"
+		parents="sh85080100"
+		name="Tutong language" />
+	<iso_639_5_entry
+		id="sh93009065"
+		parents="sh85080100"
+		name="Bawo language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh93009159"
+		parents="sh2004010357"
+		name="Bayungu language" />
+	<iso_639_5_entry
+		id="sh93009160"
+		parents="sh2004010357"
+		name="Dhalandji language" />
+	<iso_639_5_entry
+		id="sh93009161"
+		parents="sh2003009018"
+		name="Kamilaroi language" />
+	<iso_639_5_entry
+		id="sh93009162"
+		parents="sh98005277"
+		name="Mangala language" />
+	<iso_639_5_entry
+		id="sh93009163"
+		parents="sh98005277"
+		name="Wariyangga language" />
+	<iso_639_5_entry
+		id="sh93009164"
+		parents="sh2003010425"
+		name="Yinggarda language" />
+	<iso_639_5_entry
+		id="sh93009491"
+		parents="sh91003032"
+		name="Lendu language" />
+	<iso_639_5_entry
+		id="sh93009696"
+		parents="sh85080100"
+		name="Letri lgona language" />
+	<iso_639_5_entry
+		id="sh94000048"
+		parents="sh85083372"
+		name="Gumasi language" />
+	<iso_639_5_entry
+		id="sh94000075"
+		parents="sh94005377"
+		name="Ngatik language" />
+	<iso_639_5_entry
+		id="sh94000809"
+		parents="sh85004830"
+		name="Carian language" />
+	<iso_639_5_entry
+		id="sh94001497"
+		parents="sh2003009018"
+		name="Kaytetye language" />
+	<iso_639_5_entry
+		id="sh94002692"
+		parents="sh85146252"
+		name="Kukatja language" />
+	<iso_639_5_entry
+		id="sh94004160"
+		parents="paa"
+		name="Amanab language" />
+	<iso_639_5_entry
+		id="sh94004161"
+		parents="paa"
+		name="Namia language" />
+	<iso_639_5_entry
+		id="sh94005217"
+		parents="sh85100756"
+		name="Karao language" />
+	<iso_639_5_entry
+		id="sh94005357"
+		parents="sh2003009018"
+		name="Muruwari language" />
+	<iso_639_5_entry
+		id="sh94005377"
+		parents="sh85084873"
+		name="Ponapeic languages" />
+	<iso_639_5_entry
+		id="sh94005378"
+		parents="sh94005377"
+		name="Pingelap language" />
+	<iso_639_5_entry
+		id="sh94005815"
+		parents="sh85135233"
+		name="Bugun language" />
+	<iso_639_5_entry
+		id="sh94005832"
+		parents="sh85135233"
+		name="Tutsa language" />
+	<iso_639_5_entry
+		id="sh94006579"
+		parents="paa"
+		name="Fataluku language" />
+	<iso_639_5_entry
+		id="sh94007785"
+		parents="sh85080100"
+		name="Ambai language" />
+	<iso_639_5_entry
+		id="sh95001594"
+		parents="sh85083372"
+		name="Tinrin language" />
+	<iso_639_5_entry
+		id="sh95001597"
+		parents="sh2003009018"
+		name="Barkindji language" />
+	<iso_639_5_entry
+		id="sh95002634"
+		parents="sh95002638"
+		name="Gayardilt language" />
+	<iso_639_5_entry
+		id="sh95002638"
+		parents="sh2003009018"
+		name="Tangic languages" />
+	<iso_639_5_entry
+		id="sh95002951"
+		parents="sh85091532"
+		name="Dolakha dialect" />
+	<iso_639_5_entry
+		id="sh95003311"
+		parents="sh2004004976"
+		name="Ma'ya language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh95003806"
+		parents="sh85080100"
+		name="Idaté language" />
+	<iso_639_5_entry
+		id="sh95003814"
+		parents="sh85080100"
+		name="Bengkulu language" />
+	<iso_639_5_entry
+		id="sh95003826"
+		parents="sh85080100"
+		name="Mukomuko language" />
+	<iso_639_5_entry
+		id="sh95003830"
+		parents="sh85080100"
+		name="Waropen language" />
+	<iso_639_5_entry
+		id="sh95004387"
+		parents="paa"
+		name="Kombai language" />
+	<iso_639_5_entry
+		id="sh95009944"
+		parents="sh85083372"
+		name="Loniu language" />
+	<iso_639_5_entry
+		id="sh95010211"
+		parents="sh85080100"
+		name="Pamona language" />
+	<iso_639_5_entry
+		id="sh95010794"
+		parents="sh85083372"
+		name="Cheke Holo language" />
+	<iso_639_5_entry
+		id="sh96000155"
+		parents="sh85135233"
+		name="Byangsi language" />
+	<iso_639_5_entry
+		id="sh96000785"
+		parents="sh85135233"
+		name="Rai language" />
+	<iso_639_5_entry
+		id="sh96001089"
+		parents="sh96001090"
+		name="Warrwa language" />
+	<iso_639_5_entry
+		id="sh96001090"
+		parents="aus"
+		name="Nyulnyulan languages" />
+	<iso_639_5_entry
+		id="sh96001509"
+		parents="sh85012311"
+		name="Angkola dialect" />
+	<iso_639_5_entry
+		id="sh96001668"
+		parents="sh85080100"
+		name="Tatanaʾ language" />
+	<iso_639_5_entry
+		id="sh96001688"
+		parents="sh93003187"
+		name="Chamling language" />
+	<iso_639_5_entry
+		id="sh96002574"
+		parents="sh85080100"
+		name="Galoli language" />
+	<iso_639_5_entry
+		id="sh96002952"
+		parents="sh85011364"
+		name="Proto-Baltic language" />
+	<iso_639_5_entry
+		id="sh96004176"
+		parents="sh85130410"
+		name="Anakalang dialect" />
+	<iso_639_5_entry
+		id="sh96004239"
+		parents="sh85035400"
+		name="Hunzib language" />
+	<iso_639_5_entry
+		id="sh96004352"
+		parents="sh2003009018"
+		name="Guugu Yimithirr language" />
+	<iso_639_5_entry
+		id="sh96004790"
+		parents="sh85117010"
+		name="Kakilingan Sambal dialect" />
+	<iso_639_5_entry
+		id="sh96005088"
+		parents="sh85080100"
+		name="Mekongga language" />
+	<iso_639_5_entry
+		id="sh96006530"
+		parents="sh85080100"
+		name="Mambai language" />
+	<iso_639_5_entry
+		id="sh96006955"
+		parents="paa"
+		name="Toror language" />
+	<iso_639_5_entry
+		id="sh96007749"
+		parents="sh2003009018"
+		name="Wangganguru language" />
+	<iso_639_5_entry
+		id="sh96007753"
+		parents="sh2003009018"
+		name="Arabana language" />
+	<iso_639_5_entry
+		id="sh96007771"
+		parents="dra"
+		name="Urali language" />
+	<iso_639_5_entry
+		id="sh96007786"
+		parents="sh2003009018"
+		name="Eastern Arrernte language" />
+	<iso_639_5_entry
+		id="sh96007790"
+		parents="sh2003010410"
+		name="Thayore language" />
+	<iso_639_5_entry
+		id="sh96007832"
+		parents="paa"
+		name="Kairi language" />
+	<iso_639_5_entry
+		id="sh96008986"
+		parents="sh85083372"
+		name="Nalik language" />
+	<iso_639_5_entry
+		id="sh96009858"
+		parents="sh2003010425"
+		name="Martuyhunira language" />
+	<iso_639_5_entry
+		id="sh96009998"
+		parents="paa"
+		name="Korowai language" />
+	<iso_639_5_entry
+		id="sh96010309"
+		parents="sh2003010425"
+		name="Nukunu language" />
+	<iso_639_5_entry
+		id="sh96010344"
+		parents="sh85083372"
+		name="Markham languages" />
+	<iso_639_5_entry
+		id="sh96010747"
+		parents="sh85080100"
+		name="Tolitoli language" />
+	<iso_639_5_entry
+		id="sh96012088"
+		parents="sh85080087"
+		name="Yerava dialect" />
+	<iso_639_5_entry
+		id="sh97000387"
+		parents="sh85083372"
+		name="Minaveha language" />
+	<iso_639_5_entry
+		id="sh97000390"
+		parents="sh85100756"
+		name="Batak language (Philippines)" />
+	<iso_639_5_entry
+		id="sh97000756"
+		parents="sh91003032"
+		name="Ngiti language" />
+	<iso_639_5_entry
+		id="sh97002646"
+		parents="sh85080606"
+		name="Obo Manobo language" />
+	<iso_639_5_entry
+		id="sh97002651"
+		parents="sh92005189"
+		name="Kosarek language" />
+	<iso_639_5_entry
+		id="sh97003086"
+		parents="sh85001214"
+		name="Chemgui dialect" />
+	<iso_639_5_entry
+		id="sh97003239"
+		parents="sh85135233"
+		name="Karko language" />
+	<iso_639_5_entry
+		id="sh97003750"
+		parents="sh85080100"
+		name="Bintauna language" />
+	<iso_639_5_entry
+		id="sh97003762"
+		parents="sh85080100"
+		name="Lolak language" />
+	<iso_639_5_entry
+		id="sh97003847"
+		parents="sh85080100"
+		name="Tidore language" />
+	<iso_639_5_entry
+		id="sh97004074"
+		parents="sh85083372"
+		name="Mouk language" />
+	<iso_639_5_entry
+		id="sh97004089"
+		parents="paa"
+		name="Inoke language" />
+	<iso_639_5_entry
+		id="sh97004142"
+		parents="sh93003187"
+		name="Bantawa language" />
+	<iso_639_5_entry
+		id="sh97004159"
+		parents="sh85054365"
+		name="Alemannic dialects" />
+	<iso_639_5_entry
+		id="sh97004970"
+		parents="sh85054242"
+		name="Ingilo dialect" />
+	<iso_639_5_entry
+		id="sh97005127"
+		parents="sh85080100"
+		name="Dayak Krio language" />
+	<iso_639_5_entry
+		id="sh97005129"
+		parents="sh85080100"
+		name="Tarangan language" />
+	<iso_639_5_entry
+		id="sh97005144"
+		parents="sh85014075"
+		name="Kolo dialect" />
+	<iso_639_5_entry
+		id="sh97005156"
+		parents="sh85080100"
+		name="Banda language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh97005256"
+		parents="sh2003009018"
+		name="Kurnai languages" />
+	<iso_639_5_entry
+		id="sh97005347"
+		parents="sh2003005579"
+		name="Gureng Gureng language" />
+	<iso_639_5_entry
+		id="sh97005387"
+		parents="aus"
+		name="Gubbi-Gubbi language" />
+	<iso_639_5_entry
+		id="sh97005388"
+		parents="aus"
+		name="Butchulla language" />
+	<iso_639_5_entry
+		id="sh97006122"
+		parents="sh85044985"
+		name="Mulgi dialect" />
+	<iso_639_5_entry
+		id="sh97006124"
+		parents="sh85044985,sh97006122"
+		name="Karksi dialect" />
+	<iso_639_5_entry
+		id="sh97006151"
+		parents="sh85080100"
+		name="Tonsea language" />
+	<iso_639_5_entry
+		id="sh97006158"
+		parents="paa"
+		name="Makuʾa language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh97006206"
+		parents="sh85080100"
+		name="Lematang language" />
+	<iso_639_5_entry
+		id="sh97007140"
+		parents="sh85067921"
+		name="Judeo-Tat language" />
+	<iso_639_5_entry
+		id="sh97007948"
+		parents="sh85135233"
+		name="Chantel language" />
+	<iso_639_5_entry
+		id="sh97008084"
+		parents="sh85012314"
+		name="Itbayat dialect" />
+	<iso_639_5_entry
+		id="sh97008843"
+		parents="sh85080100"
+		name="Banggai language" />
+	<iso_639_5_entry
+		id="sh97008870"
+		parents="paa"
+		name="Mai Brat language" />
+	<iso_639_5_entry
+		id="sh97008871"
+		parents="sh85074670"
+		name="Lule Sami dialect" />
+	<iso_639_5_entry
+		id="sh97008872"
+		parents="sh85100756"
+		name="Yogad language" />
+	<iso_639_5_entry
+		id="sh97008884"
+		parents="sh85100756"
+		name="Kayapa Kallahan language" />
+	<iso_639_5_entry
+		id="sh97008886"
+		parents="sh85100756"
+		name="Keley-i Kallahan language" />
+	<iso_639_5_entry
+		id="sh98000024"
+		parents="sh2003010425"
+		name="Martu Wangka language" />
+	<iso_639_5_entry
+		id="sh98000059"
+		parents="sh85080606"
+		name="Tagabawa Manobo language" />
+	<iso_639_5_entry
+		id="sh98000082"
+		parents="sh85100756"
+		name="Aklanon language" />
+	<iso_639_5_entry
+		id="sh98000812"
+		parents="sh85116985"
+		name="Central Sama language" />
+	<iso_639_5_entry
+		id="sh98000948"
+		parents="sh93003187"
+		name="Athpare language" />
+	<iso_639_5_entry
+		id="sh98001085"
+		parents="sh85135233"
+		name="Arakanese language" />
+	<iso_639_5_entry
+		id="sh98002281"
+		parents="sh95002638"
+		name="Lardil language" />
+	<iso_639_5_entry
+		id="sh98002387"
+		parents="sh85080100"
+		name="Sindang Kelingi language" />
+	<iso_639_5_entry
+		id="sh98003392"
+		parents="sh85134235"
+		name="So language (Uganda)" />
+	<iso_639_5_entry
+		id="sh98003739"
+		parents="sh85080100"
+		name="Bada language (Indonesia)" />
+	<iso_639_5_entry
+		id="sh98003899"
+		parents="sh85080100"
+		name="Ormu language" />
+	<iso_639_5_entry
+		id="sh98003903"
+		parents="sh85080100"
+		name="Donggo language" />
+	<iso_639_5_entry
+		id="sh98003912"
+		parents="sh85080100"
+		name="Tompembuni language" />
+	<iso_639_5_entry
+		id="sh98004642"
+		parents="sh85080100"
+		name="Pekal language" />
+	<iso_639_5_entry
+		id="sh98004672"
+		parents="sh85000189"
+		name="Pailibo dialect" />
+	<iso_639_5_entry
+		id="sh98004677"
+		parents="sh85055968"
+		name="Tilamuta dialect" />
+	<iso_639_5_entry
+		id="sh98004758"
+		parents="paa"
+		name="Kalabra language" />
+	<iso_639_5_entry
+		id="sh98004935"
+		parents="sh85011543"
+		name="Banjar Hulu dialect" />
+	<iso_639_5_entry
+		id="sh98005027"
+		parents="sh85083372"
+		name="Bukawa language" />
+	<iso_639_5_entry
+		id="sh98005029"
+		parents="paa"
+		name="Kamula language" />
+	<iso_639_5_entry
+		id="sh98005031"
+		parents="sh85083372"
+		name="Nehan language" />
+	<iso_639_5_entry
+		id="sh98005034"
+		parents="sh85083372"
+		name="Lote language" />
+	<iso_639_5_entry
+		id="sh98005277"
+		parents="sh2003010425"
+		name="Mantharda languages" />
+	<iso_639_5_entry
+		id="sh98005406"
+		parents="sh85117010"
+		name="Ayta Mag Indi dialect" />
+	<iso_639_5_entry
+		id="sh98006664"
+		parents="sh90000034"
+		name="Waigali language" />
+	<iso_639_5_entry
+		id="sh99000888"
+		parents="sh2003005565"
+		name="Wageman language" />
+	<iso_639_5_entry
+		id="sh99002901"
+		parents="sh85035400"
+		name="Bezhta language" />
+	<iso_639_5_entry
+		id="sh99002910"
+		parents="sh96010344"
+		name="Aribwatsa language" />
+	<iso_639_5_entry
+		id="sh99002916"
+		parents="sh96010344"
+		name="Musom language" />
+	<iso_639_5_entry
+		id="sh99002917"
+		parents="paa"
+		name="Kaki Ae language" />
+	<iso_639_5_entry
+		id="sh99004097"
+		parents="sh85080100"
+		name="Ratahan language" />
+	<iso_639_5_entry
+		id="sh99004228"
+		parents="paa"
+		name="Edopi language" />
+	<iso_639_5_entry
+		id="sh99004230"
+		parents="paa"
+		name="Abun language" />
+	<iso_639_5_entry
+		id="sh99004558"
+		parents="sh97004159"
+		name="Walser language" />
+	<iso_639_5_entry
+		id="sh99005124"
+		parents="sh85080100"
+		name="Kisar language" />
+	<iso_639_5_entry
+		id="sh99005126"
+		parents="sh85069794"
+		name="Tegal dialect" />
+	<iso_639_5_entry
+		id="sh99005127"
+		parents="paa"
+		name="Makasai language" />
+	<iso_639_5_entry
+		id="sh99005129"
+		parents="paa"
+		name="Western Dani language" />
+	<iso_639_5_entry
+		id="sh99005132"
+		parents="sh85080100"
+		name="Ranau language" />
+	<iso_639_5_entry
+		id="sh99005133"
+		parents="sh85080100"
+		name="Seruyan language" />
+	<iso_639_5_entry
+		id="sh99005134"
+		parents="sh85080100"
+		name="Bungku language" />
+	<iso_639_5_entry
+		id="sh99005274"
+		parents="sh85080100"
+		name="Manui language" />
+	<iso_639_5_entry
+		id="sh99005776"
+		parents="sh85083372"
+		name="Lou language" />
+	<iso_639_5_entry
+		id="sh99010327"
+		parents="sh85074670"
+		name="Skolt Sami dialect" />
+	<iso_639_5_entry
+		id="sh99013592"
+		parents="sh85092937"
+		name="Midob language" />
+	<iso_639_5_entry
+		id="sh99013640"
+		parents="sh2008007711"
+		name="Surmic languages" />
+	<iso_639_5_entry
+		id="sh99014661"
+		parents="paa"
+		name="Hatam language" />
+	<iso_639_5_entry
+		id="sit"
+		name="Sino-Tibetan languages" />
+	<iso_639_5_entry
+		id="ssa"
+		name="Nilo-Saharan languages" />
+	<iso_639_5_entry
+		id="tai"
+		name="Tai languages" />
+	<iso_639_5_entry
+		id="tut"
+		name="Altaic languages" />
+	<iso_639_5_entry
+		id="urj"
+		name="Uralic languages" />
+</iso_639_5_entries>

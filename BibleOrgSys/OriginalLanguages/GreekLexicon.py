@@ -34,12 +34,12 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2017-12-07' # by RJH
-shortProgramName = "GreekLexicon"
-programName = "Greek Lexicon format handler"
-programVersion = '0.17'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2017-12-07' # by RJH
+SHORT_PROGRAM_NAME = "GreekLexicon"
+PROGRAM_NAME = "Greek Lexicon format handler"
+PROGRAM_VERSION = '0.17'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -49,8 +49,10 @@ import re
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -63,7 +65,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 
 
@@ -132,10 +134,10 @@ class GreekStrongsFileConverter:
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
-        XMLFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        try: self.XMLTree = ElementTree().parse( XMLFilepath )
+        XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
+        try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
-            logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
+            logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
@@ -492,10 +494,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GreekLexicon.py

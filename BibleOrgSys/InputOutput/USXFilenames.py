@@ -28,12 +28,12 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-06' # by RJH
-shortProgramName = "USXBible"
-programName = "USX Bible filenames handler"
-programVersion = '0.54'
-programNameVersion = f'{programName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-06' # by RJH
+SHORT_PROGRAM_NAME = "USXBible"
+PROGRAM_NAME = "USX Bible filenames handler"
+PROGRAM_VERSION = '0.54'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -43,9 +43,10 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 # All of the following must be all UPPER CASE
@@ -72,10 +73,10 @@ class USXFilenames:
         self.digitsIndex, self.USXBookCodeIndex = 0, 3
 
         # Get the data tables that we need for proper checking
-        #self._USFMBooksCodes = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes()
+        #self._USFMBooksCodes = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes()
         #self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
-        #self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
+        #self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
         for possibleFilename in os.listdir( self.givenFolderName ):
@@ -108,7 +109,7 @@ class USXFilenames:
             #matched = False
             #print( repr(foundFileBit), foundLength, containsDigits, repr(foundExtBit) )
             if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                     #print( USXBookCode,USXDigits,BBB )
                     if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                         digitsIndex = foundFileBit.index( USXDigits )
@@ -203,7 +204,7 @@ class USXFilenames:
         """
         resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+            for USFMBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 if self.hyphenIndex is None:
                     filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
@@ -219,7 +220,7 @@ class USXFilenames:
                 filename += '.' + self.fileExtension
                 #print( "getDerivedFilenames: Filename is {!r}".format( filename ) )
                 resultList.append( (BBB,filename,) )
-        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getDerivedFilenameTuples
 
 
@@ -285,10 +286,10 @@ class USXFilenames:
                                     print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
-                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         #print( "resultList", len(resultList), resultList )
-        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getPossibleFilenameTuples
 
 
@@ -359,7 +360,7 @@ def demo() -> None:
             result = UFns.getDerivedFilenameTuples(); print( "\nPossible:", len(result), result )
             result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
-        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
+        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 # end of demo
 
 if __name__ == '__main__':
@@ -367,10 +368,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USXFilenames.py

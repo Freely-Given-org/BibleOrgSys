@@ -84,12 +84,12 @@ NOTE that MyBible can put different parts of the translation into different data
 
 from gettext import gettext as _
 
-lastModifiedDate = '2020-01-06' # by RJH
-shortProgramName = "MyBibleBible"
-programName = "MyBible Bible format handler"
-programVersion = '0.21'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-01-06' # by RJH
+SHORT_PROGRAM_NAME = "MyBibleBible"
+PROGRAM_NAME = "MyBible Bible format handler"
+PROGRAM_VERSION = '0.21'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -104,11 +104,12 @@ from pathlib import Path
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 
@@ -219,7 +220,7 @@ for bBBB,bStuff in BOOK_TABLE.items():
     #print( bBBB, bStuff )
     assert len(bStuff) == 6
     for someField in bStuff: assert someField # shouldn't be blank
-    if debuggingThisModule: assert BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber(bBBB)
+    if debuggingThisModule: assert BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(bBBB)
     bkColor, bkNumber, rusAbbrev, rusName, engAbbrev, engName = bStuff
     assert bkNumber not in BOOKNUMBER_TABLE
     BOOKNUMBER_TABLE[bkNumber] = (bBBB,bkColor,rusAbbrev,rusName,engAbbrev,engName)
@@ -238,7 +239,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -436,7 +437,7 @@ class MyBibleBible( Bible ):
                 bookColor, bookNumber, shortName, longName, isPresent = row
                 #print( bookColor, bookNumber, shortName, longName, isPresent )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
-                if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
+                if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
                     BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                     if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -461,7 +462,7 @@ class MyBibleBible( Bible ):
                     #print( bookColor, bookNumber, shortName, longName, isPresent )
                     if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                     longName = longName.strip() # Why do some have a \n at the end???
-                    if len(rows) == 66: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( j+1 )
+                    if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                     else:
                         BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                         if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -771,9 +772,9 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-    from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
-    from Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+    from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
     def adjustLine( BBB, C, V, originalLine ):
         """
@@ -1102,7 +1103,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
-        #nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        #nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None
@@ -1332,7 +1333,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     Used by demo() for multiprocessing, etc. so must be at the outer level.
     """
     #print( "tMSB", MyBBfolder )
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MyBible modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
@@ -1383,7 +1384,7 @@ def exportMyBB( eIndexString:str, eFolder ) -> None:
     """
     Used by demo() for multiprocessing, etc. so must be at the outer level.
     """
-    from UnknownBible import UnknownBible
+    from BibleOrgSys.UnknownBible import UnknownBible
     uB = UnknownBible( eFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
     if BibleOrgSysGlobals.verbosityLevel > 2:
@@ -1576,10 +1577,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MyBibleBible.py

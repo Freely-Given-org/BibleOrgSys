@@ -48,12 +48,12 @@ e.g.,
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-02-04' # by RJH
-shortProgramName = "e-SwordBible"
-programName = "e-Sword Bible format handler"
-programVersion = '0.40'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+SHORT_PROGRAM_NAME = "e-SwordBible"
+PROGRAM_NAME = "e-Sword Bible format handler"
+PROGRAM_VERSION = '0.40'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -64,10 +64,12 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-from Bible import Bible, BibleBook
-from Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
 
@@ -86,7 +88,7 @@ def exp( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
 # end of exp
 
@@ -368,7 +370,7 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -384,7 +386,7 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
                         print( "bits", bits )
                         print( "marker", marker )
                         print( "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                         bookObject.addLine( marker, bits[1] )
@@ -466,7 +468,7 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -482,7 +484,7 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
                         print( "bits", bits )
                         print( "marker", marker )
                         print( "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                         bookObject.addLine( marker, bits[1] )
@@ -743,7 +745,7 @@ class ESwordBible( Bible ):
                     #marker = bits[0][1:]
                     #if len(bits) == 1:
                         ##if bits[0] in ('\\p','\\b'):
-                        #if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                        #if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                             #bookObject.addLine( marker, '' )
                         #else:
@@ -759,7 +761,7 @@ class ESwordBible( Bible ):
                             #print( "bits", bits )
                             #print( "marker", marker )
                             #print( "leftovers", repr(leftovers) )
-                        #if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
+                        #if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             #if BibleOrgSysGlobals.debugFlag:
                                 #assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                             #bookObject.addLine( marker, bits[1] )
@@ -802,7 +804,7 @@ class ESwordBible( Bible ):
             BBBn, C, V, text = row # First three are integers, the last is a string
             #print( repr(BBBn), repr(C), repr(V), repr(text) )
             if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
-            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
+            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn )
             if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 logging.error( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -854,7 +856,7 @@ class ESwordBible( Bible ):
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
         #del rows
         #BBB1 = None
-        #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+        #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
 
         #testament = BBB = None
@@ -951,7 +953,7 @@ class ESwordBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
         del rows
         BBB1 = None
-        if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+        if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
 
         testament = BBB = None
@@ -1007,7 +1009,7 @@ class ESwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
 
         bookCount = 0
@@ -1015,7 +1017,7 @@ class ESwordBible( Bible ):
         continued = ourGlobals['haveParagraph'] = False
         haveLines = False
         while True:
-            self.cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
+            self.cursor.execute('select Scripture from BibleOrgSys.Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
             try:
                 row = self.cursor.fetchone()
                 line = row[0]
@@ -1068,7 +1070,7 @@ class ESwordBible( Bible ):
 
                     verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
-                    nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+                    nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
                     #thisBook.addLine( 'c', str(C) )
                 else: # next chapter only
@@ -1115,7 +1117,7 @@ class ESwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
 
         ourGlobals = {}
@@ -1185,9 +1187,9 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-    from Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
-    from Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+    from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
     def adjustLine( BBB, C, V, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
@@ -1491,7 +1493,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         bkData = self.books[BBB] if BBB in self.books else None
         #print( bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None
@@ -1680,7 +1682,7 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
     """
     Crudely demonstrate the e-Sword Bible class
     """
-    from Reference import VerseReferences
+    from BibleOrgSys.Reference import VerseReferences
     #BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/e-Sword modules/' ) # Must be the same as below
 
@@ -1834,10 +1836,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESwordBible.py

@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganisationalSystems
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module handling BibleOrganisationalSystems.
 
 BibleOrganisationalSystems class:
     __init__( self ) # We can't give this parameters because of the singleton
-    loadData( self, XMLFilepath=None )
+    loadData( self, XMLFileOrFilepath=None )
     __str__( self )
     __len__( self )
     getAvailableOrganisationalSystemNames( self, extended=False )
@@ -57,12 +57,12 @@ BibleOrganisationalSystem class:
 
 from gettext import gettext as _
 
-lastModifiedDate = '2019-09-19' # by RJH
-shortProgramName = "BibleOrganisationalSystems"
-programName = "Bible Organisation Systems handler"
-programVersion = '0.34'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
+PROGRAM_NAME = "Bible Organisation Systems handler"
+PROGRAM_VERSION = '0.34'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -71,15 +71,16 @@ import logging, os
 
 if __name__ == '__main__':
     import sys
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
-#from Misc.singleton import singleton
-from Reference.BibleOrganisationalSystemsConverter import BibleOrganisationalSystemsConverter, allowedTypes
-from Reference.BibleBookOrders import BibleBookOrderSystem
-from Reference.BiblePunctuationSystems import BiblePunctuationSystem
-from Reference.BibleVersificationSystems import BibleVersificationSystem
-from Reference.BibleBooksNames import BibleBooksNamesSystem
-from Reference.VerseReferences import SimpleVerseKey
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
+#from BibleOrgSys.Misc.singleton import singleton
+from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystem
+from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystem
+from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
+from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
 
@@ -98,29 +99,37 @@ class BibleOrganisationalSystems:
         self.__dataDict = self.__indexDict = self.__combinedIndexDict = None # We'll import into this in loadData
     # end of BibleOrganisationalSystems.__init__
 
-    def loadData( self, XMLFilepath=None ):
+    def loadData( self, XMLFileOrFilepath=None ):
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         result = None
         if not self.__dataDict or not self.__indexDict: # Don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            standardXMLFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleOrganisationalSystems.xml" )
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleOrganisationalSystems_Tables.pickle" )
-            if XMLFilepath is None \
-            and os.access( standardPickleFilepath, os.R_OK ) \
-            and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFilepath).st_mtime \
-            and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFilepath).st_ctime: # There's a newer pickle file
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-            else: # We have to load the XML (much slower)
-                if XMLFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
-                bosc = BibleOrganisationalSystemsConverter()
-                bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-                result = bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            if XMLFileOrFilepath is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleOrganisationalSystems.xml" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleOrganisationalSystems_Tables.pickle" )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # if os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+            # else: # We have to load the XML (much slower)
+            from BibleOrgSys.Reference.Converters.BibleOrganisationalSystemsConverter import BibleOrganisationalSystemsConverter, allowedTypes
+            if XMLFileOrFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+            bosc = BibleOrganisationalSystemsConverter()
+            bosc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            result = bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
         if result is not None:
             self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
-        return self
+        return self # So this command can be chained after the object creation
     # end of BibleOrganisationalSystems.loadData
 
 
@@ -468,8 +477,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         if self.containsBook( BBB ): return BBB
         # else
-        # temp .... needs a try/except
-        return BibleOrgSysGlobals.BibleBooksCodes.getPossibleAlternativeBooksCodes( BBB )[0]
+        # temp …. needs a try/except
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getPossibleAlternativeBooksCodes( BBB )[0]
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 
 
@@ -490,7 +499,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, BBB )
         except KeyError: # BBB doesn't exist in this BOS -- try an alternative
             # Next line will raise an error if no alternatives (coz returns None)
-            for altBBB in BibleOrgSysGlobals.BibleBooksCodes.getPossibleAlternativeBooksCodes( BBB ):
+            for altBBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getPossibleAlternativeBooksCodes( BBB ):
                 try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, altBBB ); break
                 except KeyError: continue # BBB doesn't exist in this BOS -- try an alternative
             if bookVersesList is not None:
@@ -629,10 +638,10 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleOrganisationalSystems.py

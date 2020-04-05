@@ -34,12 +34,12 @@ Module handling the OpenScriptures Hebrew lexicon.
 
 from gettext import gettext as _
 
-lastModifiedDate = '2017-12-09' # by RJH
-shortProgramName = "HebrewLexicon"
-programName = "Hebrew Lexicon format handler"
-programVersion = '0.19'
-programNameVersion = f'{shortProgramName} v{programVersion}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {lastModifiedDate}'
+LAST_MODIFIED_DATE = '2017-12-09' # by RJH
+SHORT_PROGRAM_NAME = "HebrewLexicon"
+PROGRAM_NAME = "Hebrew Lexicon format handler"
+PROGRAM_VERSION = '0.19'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -51,8 +51,10 @@ import re
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
-    sys.path.append( os.path.join(os.path.dirname(__file__), '../') ) # So we can run it from the above folder and still do these imports
-import BibleOrgSysGlobals
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
+from BibleOrgSys import BibleOrgSysGlobals
 
 
 
@@ -65,7 +67,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( shortProgramName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, errorBit )
 
 
@@ -130,10 +132,10 @@ class AugmentedStrongsIndexFileConverter:
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
-        XMLFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
-        try: self.XMLTree = ElementTree().parse( XMLFilepath )
+        XMLFileOrFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
+        try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
-            logging.critical( t("HebrewStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
+            logging.critical( t("HebrewStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
             logging.critical( exp("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
@@ -256,8 +258,8 @@ class LexicalIndexFileConverter:
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
-        XMLFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
-        self.XMLTree = ElementTree().parse( XMLFilepath )
+        XMLFileOrFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
+        self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -460,8 +462,8 @@ class HebrewStrongsFileConverter:
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
-        XMLFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
-        self.XMLTree = ElementTree().parse( XMLFilepath )
+        XMLFileOrFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
+        self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -648,8 +650,8 @@ class BrownDriverBriggsFileConverter:
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
-        XMLFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
-        self.XMLTree = ElementTree().parse( XMLFilepath )
+        XMLFileOrFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
+        self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -677,7 +679,7 @@ class BrownDriverBriggsFileConverter:
             if attrib == 'id':
                 partID = value
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {!r} part…".format( partID ) )
-            elif attrib == "title":
+            elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
                 lang = value
@@ -1376,10 +1378,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( programName, programVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( programName, programVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of HebrewLexicon.py
