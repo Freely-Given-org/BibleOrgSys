@@ -72,22 +72,6 @@ ISOLanguages = ISO_639_3_Languages().loadData()
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for OSIS XML Bible files or folders in the folder and in the next level down.
@@ -239,16 +223,16 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
     result = elementText
     while result.endswith('\n') or result.endswith('\r'): result = result[:-1] # Drop off trailing newlines (assumed to be irrelevant)
     if '  ' in result:
-        errorMsg = exp("clean: found multiple spaces in {!r}{}").format( result, info )
+        errorMsg = _("clean: found multiple spaces in {!r}{}").format( result, info )
         if debuggingThisModule: logging.warning( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
     if '\t' in result:
-        errorMsg = exp("clean: found tab in {!r}{}").format( result, info )
+        errorMsg = _("clean: found tab in {!r}{}").format( result, info )
         if debuggingThisModule: logging.warning( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
         result = result.replace( '\t', ' ' )
     if '\n' in result or '\r' in result:
-        errorMsg = exp("clean: found CR or LF characters in {!r}{}").format( result, info )
+        errorMsg = _("clean: found CR or LF characters in {!r}{}").format( result, info )
         if debuggingThisModule: logging.error( errorMsg )
         if loadErrors is not None: loadErrors.append( errorMsg )
         result = result.replace( '\r\n', ' ' ).replace( '\n', ' ' ).replace( '\r', ' ' )
@@ -457,8 +441,8 @@ class OSISXMLBible( Bible ):
 
         try: self.XMLTree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
-            loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
+            logging.critical( _("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
+            loadErrors.append( _("Loader parse error in xml file {}: {} {}").format( OSISFilepath, sys.exc_info()[0], err ) )
             return
         if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -3519,10 +3503,10 @@ def demo() -> None:
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
                         BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ),
-                        BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
-                        BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
-                        BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
-                        BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
+                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
+                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
+                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
+                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
                         'MadeUpFolder/',
                         ):
             if BibleOrgSysGlobals.verbosityLevel > 0:

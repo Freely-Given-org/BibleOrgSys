@@ -116,22 +116,6 @@ for count in theWordBookLines: total += count
 assert total == theWordTotalLines
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, errorBit )
-# end of exp
-
-
-
 def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
@@ -1265,7 +1249,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     with open( filepath, 'wt', encoding='utf-8' ) as myFile:
         try: myFile.write('\ufeff') # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
-            logging.critical( exp("totheWord: Unable to write BOM to file") )
+            logging.critical( _("totheWord: Unable to write BOM to file") )
         BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
         while True: # Write each Bible book in the KJV order
             writetWBook( myFile, BBB, mySettings )

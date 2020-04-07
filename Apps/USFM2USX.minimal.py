@@ -4,7 +4,7 @@
 #
 # Command-line app to export a USX (XML) Bible.
 #
-# Copyright (C) 2019 Robert Hunt
+# Copyright (C) 2019-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,7 +41,7 @@ from BibleOrgSys.UnknownBible import UnknownBible
 
 
 PROGRAM_NAME = "USFM to USX (minimal)"
-PROGRAM_VERSION = '0.02'
+PROGRAM_VERSION = '0.03'
 
 
 # You must specify where to find a Bible to read --
@@ -52,7 +52,7 @@ inputFolder = '/home/robert/Paratext8Projects/MBTV/'
 
 
 # Configure basic Bible Organisational System (BOS) set-up
-parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
 # Do the actual Bible load and export work that we want
@@ -60,7 +60,7 @@ unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking
 loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
 if loadedBible is not None:
     loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
-    print(f"\nOutput should be in {os.path.join( os.getcwd(), BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )} folder.")
+    print( f"\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )} folder." )
 
 # Do the BOS close-down stuff
 BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )

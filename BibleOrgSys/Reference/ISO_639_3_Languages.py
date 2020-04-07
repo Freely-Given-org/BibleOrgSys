@@ -85,7 +85,7 @@ class ISO_639_3_Languages:
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
                 standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3.xml" )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "iso_639_3_Languages_Tables.pickle" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3_Languages_Tables.pickle" )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime

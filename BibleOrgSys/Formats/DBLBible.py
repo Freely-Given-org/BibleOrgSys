@@ -1641,7 +1641,7 @@ def demo() -> None:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "DBL TestA3", result3 )
 
     if 00: # demo the file checking code with temp folder
-        resultB = DBLBibleFileCheck( BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'TempFiles/' ), autoLoadBooks=True )
+        resultB = DBLBibleFileCheck( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'TempFiles/' ), autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "DBL TestB", resultB )
 
     if 00: # specify testFolder containing a single module

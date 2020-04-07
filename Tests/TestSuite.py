@@ -27,6 +27,7 @@
 Suite testing BibleOrgSys.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Organisational System test suite"
 PROGRAM_VERSION = '0.13'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'

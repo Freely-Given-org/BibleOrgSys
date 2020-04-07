@@ -81,10 +81,10 @@ Contains functions:
 """
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
-SHORT_PROGRAM_NAME = "BOSGlobals"
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys Globals"
-PROGRAM_VERSION = '0.83'
+PROGRAM_VERSION = '0.84'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -162,17 +162,25 @@ if debuggingThisModule:
     #BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
 
 
+ALLOWED_ORGANISATIONAL_TYPES = ( 'edition', 'revision', 'translation', 'original', ) # NOTE: The order is important here
+
+
 ##########################################################################################################
 #
 # Readable folder paths (Writeable ones are further down)
 BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containing this file
 #print( f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
-BOS_DATA_FILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DataFiles/' ) # Relative path
+BOS_DATA_FILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DataFiles/' )
+BOS_DERIVED_DATA_FILES_FOLDERPATH = BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/' )
 
 BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
 #print( f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
-BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' ) # Relative path
-BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' ) # Relative path
+BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' )
+BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' )
+
+# Resources like original language lexicons should be based from this folder
+PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
+#print( f"PARALLEL_RESOURCES_BASE_FOLDERPATH = {PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
 
 
 ##########################################################################################################
@@ -225,19 +233,15 @@ if debugFlag and debuggingThisModule:
     for section in settingsData:
         print( f"  Settings.load: s.d main section = {section}" )
 
-# BOS_WRITEABLE_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH
-BOS_WRITEABLE_BASE_FOLDERPATH = Path( settingsData['Default']['OutputBaseFolder'] )
-# print( f"BOS_WRITEABLE_BASE_FOLDERPATH = {BOS_WRITEABLE_BASE_FOLDERPATH}")
+# BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH
+BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = Path( settingsData['Default']['OutputBaseFolder'] )
+# print( f"BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = {BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH}")
 
-DEFAULT_LOG_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' )
-DEFAULT_CACHE_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' )
-DEFAULT_OUTPUT_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' )
-DEFAULT_DERIVED_DATAFILES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DerivedDataFiles/' )
-DOWNLOADED_RESOURCES_FOLDERPATH = BOS_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' )
-
-# Resources like original language lexicons should be based from this folder
-PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
-#print( f"PARALLEL_RESOURCES_BASE_FOLDERPATH = {PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
+DEFAULT_WRITEABLE_LOG_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'Logs/' )
+DEFAULT_WRITEABLE_CACHE_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'ObjectCache/' )
+DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'OutputFiles/' )
+DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DerivedDataFiles/' )
+DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'DownloadedResources/' )
 
 
 ##########################################################################################################
@@ -288,7 +292,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
         print( f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderPath!r} )" )
 
     filename = SHORT_PROGRAM_NAMEParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
-    if folderPath is None: folderPath = DEFAULT_LOG_FOLDERPATH # relative path
+    if folderPath is None: folderPath = DEFAULT_WRITEABLE_LOG_FOLDERPATH
     filepath = Path( folderPath, filename )
 
     # Create the folderPath if necessary
@@ -349,7 +353,7 @@ def addLogfile( projectName:str, folderName:Optional[Path]=None ) -> Tuple[Path,
         print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
 
     filename = projectName + '_log.txt'
-    if folderName is None: folderName = DEFAULT_LOG_FOLDERPATH # relative path
+    if folderName is None: folderName = DEFAULT_WRITEABLE_LOG_FOLDERPATH
     filepath = Path( folderName, filename )
 
     # Create the folderName if necessary
@@ -1176,7 +1180,7 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
     """
     assert theObject is not None
     assert filename
-    if folderName is None: folderName = DEFAULT_CACHE_FOLDERPATH
+    if folderName is None: folderName = DEFAULT_WRITEABLE_CACHE_FOLDERPATH
     filepath = filename # default
     if folderName:
         if not os.access( folderName, os.R_OK ): # Make the folderName hierarchy if necessary
@@ -1223,7 +1227,7 @@ def unpickleObject( filename, folderName=None ):
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
     assert filename
-    if folderName is None: folderName = DEFAULT_CACHE_FOLDERPATH
+    if folderName is None: folderName = DEFAULT_WRITEABLE_CACHE_FOLDERPATH
     filepath = Path( folderName, filename )
     if verbosityLevel > 2: print( _("Loading object from pickle file {}…").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
@@ -1235,7 +1239,7 @@ def unpickleObject( filename, folderName=None ):
 #
 # Default program setup routine
 
-def setup( shortProgName:str, progVersion:str, lastModDate:str, loggingFolderPath=None ) -> ArgumentParser:
+def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolderPath=None ) -> ArgumentParser:
     """
     Does the initial set-up for our scripts / programs.
 
@@ -1342,11 +1346,50 @@ loadedUSFMMarkers:Optional[List[str]] = None
 USFMParagraphMarkers:Optional[List[str]] = None
 internal_SFMs_to_remove:Optional[List[str]] = None
 
-def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
+def preloadCommonData() -> None:
     """
-    Adds our standardOptions to the command line parser.
+    Preload common data structures (used by many modules)
+        This includes BibleBooksCode and USFMMarkers
     """
-    global commandLineArguments, maxProcesses
+    # Load Bible data sets that are globally useful
+    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
+    from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
+    loadedBibleBooksCodes = BibleBooksCodes().loadData()
+    assert loadedBibleBooksCodes # Why didn't this load ???
+    #from BibleOrgSys.Reference.USFM2Markers import USFM2Markers
+    #USFM2Markers = USFM2Markers().loadData()
+    #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
+    #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
+    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
+    #for marker in ( ):
+        #print( marker )
+        #USFM2ParagraphMarkers.remove( marker )
+    # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
+    #    'qm1', 'qm2', 'qm3', 'qm4']
+    # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
+    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
+    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
+    from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
+    loadedUSFMMarkers = USFM3Markers().loadData()
+    assert loadedUSFMMarkers # Why didn't this load ???
+    USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    assert USFMParagraphMarkers # Why didn't this work ???
+    USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
+    internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
+# end of BibleOrgSysGlobals.preloadCommonData
+
+
+def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
+    """
+    Add our standardOptions to the command line parser.
+    Determine multiprocessing strategy.
+
+    Then preloads common data structures.
+    """
+    global commandLineArguments
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
 
@@ -1378,6 +1421,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     if commandLineArguments.strict: setStrictCheckingFlag()
 
     # Determine multiprocessing strategy
+    global maxProcesses
     maxProcesses = os.cpu_count()
     if maxProcesses > 1:
         # Don't use 1-3 processes
@@ -1392,34 +1436,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
         maxProcesses = 1 # Limit to one process
         print( "commandLineArguments: {}".format( commandLineArguments ) )
 
-    # Load Bible data sets that are globally useful
-    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
-    from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
-    loadedBibleBooksCodes = BibleBooksCodes().loadData()
-    assert loadedBibleBooksCodes # Why didn't this load ???
-    #from BibleOrgSys.Reference.USFM2Markers import USFM2Markers
-    #USFM2Markers = USFM2Markers().loadData()
-    #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
-    #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
-    #for marker in ( ):
-        #print( marker )
-        #USFM2ParagraphMarkers.remove( marker )
-    # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
-    #    'qm1', 'qm2', 'qm3', 'qm4']
-    # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
-    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
-    #print( len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
-    from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
-    loadedUSFMMarkers = USFM3Markers().loadData()
-    assert loadedUSFMMarkers # Why didn't this load ???
-    USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
-    assert USFMParagraphMarkers # Why didn't this work ???
-    USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
-    internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
+    preloadCommonData()
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 

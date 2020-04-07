@@ -228,7 +228,7 @@ class ISO_639_3_LanguagesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -254,7 +254,7 @@ class ISO_639_3_LanguagesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}…".format( filepath ) )
@@ -283,7 +283,7 @@ class ISO_639_3_LanguagesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}…".format( filepath ) )
@@ -345,7 +345,7 @@ class ISO_639_3_LanguagesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'

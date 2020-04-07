@@ -229,22 +229,6 @@ assert len(BOOKNUMBER_TABLE) == len(BOOK_TABLE)
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for MyBible Bible files or folders in the folder and in the next level down.
@@ -384,7 +368,7 @@ class MyBibleBible( Bible ):
         Load the metadata from the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("preload()") )
+            print( _("preload()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -491,7 +475,7 @@ class MyBibleBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBooks()") )
+            print( _("loadBooks()") )
         assert self.preloadDone
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
@@ -515,7 +499,7 @@ class MyBibleBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBook( {} )").format( BBB ) )
+            print( _("loadBook( {} )").format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:
@@ -538,7 +522,7 @@ class MyBibleBible( Bible ):
         Load the requested Bible book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("__loadBibleBook( {} )").format( BBB ) )
+            print( "__loadBibleBook( {} )".format( BBB ) )
 
         lastC = None
         def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
@@ -549,7 +533,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("importVerseLine( {!r}, {} {}:{}, {!r}, … )").format( name, BBB, C, V, originalLine ) )
+                #print( "importVerseLine( {!r}, {} {}:{}, {!r}, … )".format( name, BBB, C, V, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -578,7 +562,7 @@ class MyBibleBible( Bible ):
 
             # Check for left-overs
             if '<' in line or '>' in line: # or '{' in line or '}' in line: RSTI has braces
-                print( exp("importVerseLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+                print( _("importVerseLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
                 if debuggingThisModule: halt
 
             # Ok, use the adjusted info
@@ -650,7 +634,7 @@ class MyBibleBible( Bible ):
         Load the requested Bible book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("__loadBibleCommentaryBook( {} )").format( BBB ) )
+            print( _("__loadBibleCommentaryBook( {} )").format( BBB ) )
 
         lastC = None
         def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
@@ -661,7 +645,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, … )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
+                #print( _("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, … )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -681,7 +665,7 @@ class MyBibleBible( Bible ):
             # Check for left-overs
             if '<' in line or '>' in line or '=' in line or '{' in line or '}' in line:
                 if '<a ' not in line:
-                    print( exp("importCommentaryLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+                    print( _("importCommentaryLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
                     if debuggingThisModule:
                         halt
 

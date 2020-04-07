@@ -28,10 +28,10 @@ Module handling USFM3Markers.xml and to export to JSON, C, and Python data table
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "USFM3MarkersConverter"
 PROGRAM_NAME = "USFM3 Markers converter"
-PROGRAM_VERSION = '0.05'
+PROGRAM_VERSION = '0.06'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -298,7 +298,7 @@ class USFM3MarkersConverter:
             if  printed not in ( 'Yes', 'No' ): logging.error( _("Unexpected {!r} printed field for marker {!r}").format( printed, marker ) )
             printedFlag = printed == 'Yes'
             closed = element.find('closed').text
-            if  closed not in ( 'No', 'Always', 'Optional' ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
+            if  closed not in ( 'No', 'Always', 'Self', 'Optional' ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
             occursIn = element.find('occursIn').text
             if  occursIn not in ( 'Header', 'Introduction', 'Numbering', 'Text', 'Canonical Text', 'Poetry', 'Text, Poetry', 'Acrostic verse', 'Table row', 'Footnote', 'Cross-reference', 'Front and back matter' ):
                 logging.error( _("Unexpected {!r} occursIn field for marker {!r}").format( occursIn, marker ) )
@@ -376,7 +376,7 @@ class USFM3MarkersConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -426,7 +426,7 @@ class USFM3MarkersConverter:
         self.importDataToPython()
         assert self.__DataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -467,7 +467,7 @@ class USFM3MarkersConverter:
         self.importDataToPython()
         assert self.__DataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
@@ -531,7 +531,7 @@ class USFM3MarkersConverter:
         assert self.__DataDicts
 
         raise Exception( "C export not written yet, sorry." )
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file

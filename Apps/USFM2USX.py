@@ -116,7 +116,7 @@ def main():
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
 
-        defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
+        defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 print( f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )

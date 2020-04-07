@@ -27,6 +27,7 @@
 Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Books Codes tests"
 PROGRAM_VERSION = '0.72'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,7 +49,10 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
     """ Unit tests for the _BibleBooksCodesConverter object. """
 
     def setUp( self ):
-        # Create the BibleBooksCodesConvertor object
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
+        # Create the BibleBooksCodesConverter object
         self.bbcsc = BibleBooksCodesConverter.BibleBooksCodesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_1010_str( self ):
@@ -107,6 +111,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksCodes object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBooksCodes object
         self.bbc = BibleBooksCodes.BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
 

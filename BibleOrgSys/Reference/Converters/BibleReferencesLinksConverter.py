@@ -28,10 +28,10 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
 PROGRAM_NAME = "Bible References Links converter"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -52,22 +52,6 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 #from BibleReferences import BibleSingleReference, BibleReferenceList
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey, FlexibleVersesKey
-
-
-
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
 
 
 
@@ -273,7 +257,7 @@ class BibleReferencesLinksConverter:
         if self.titleString: result += ('\n' if result else '') + ' '*indent + _("Title: {}").format( self.titleString )
         if self.PROGRAM_VERSION: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.PROGRAM_VERSION )
         if self.dateString: result += ('\n' if result else '') + ' '*indent + _("Date: {}").format( self.dateString )
-        if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self._XMLtree) )
+        if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self._XMLtree) )
         return result
     # end of BibleReferencesLinksConverter.__str__
 
@@ -473,7 +457,7 @@ class BibleReferencesLinksConverter:
         assert self.__DataDict
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -497,10 +481,10 @@ class BibleReferencesLinksConverter:
         assert self.__DataDict
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
-            indexFilepath = os.path.join( folder, self._filenameBase + "_Tables.index.pickle" )
-            dataFilepath = os.path.join( folder, self._filenameBase + "_Tables.data.pickle" )
+            indexFilepath = os.path.join( folder, self._filenameBase + '_Tables.index.pickle' )
+            dataFilepath = os.path.join( folder, self._filenameBase + '_Tables.data.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( dataFilepath ) )
         index = {}
         filePosition = 0
@@ -545,7 +529,7 @@ class BibleReferencesLinksConverter:
         halt
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -581,7 +565,7 @@ class BibleReferencesLinksConverter:
         assert self.__DataDict
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -666,7 +650,7 @@ class BibleReferencesLinksConverter:
         halt
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'

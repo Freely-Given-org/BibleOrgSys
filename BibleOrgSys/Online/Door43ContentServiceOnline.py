@@ -67,7 +67,7 @@ from BibleOrgSys.Formats.USFMBible import USFMBible
 URL_BASE = 'https://git.door43.org/api/' # API endpoint
 DCS_API_VERSION = '1'
 URL_FULL_BASE = f'{URL_BASE}/v{DCS_API_VERSION}/'
-DEFAULT_DOWNLOAD_FOLDERPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/' )
+DEFAULT_DOWNLOAD_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/' )
 
 
 

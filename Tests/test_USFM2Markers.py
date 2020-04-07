@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# USFMMarkersTests.py
+# USFM2MarkersTests.py
 #
 # Module testing USFM2Markers.py
 #
@@ -26,7 +26,7 @@
 Module testing USFM2Markers.py.
 """
 
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "USFM2 Markers tests"
 PROGRAM_VERSION = '0.62'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -44,12 +44,15 @@ from BibleOrgSys.Reference.Converters import USFM2MarkersConverter
 from BibleOrgSys.Reference import USFM2Markers
 
 
-class USFMMarkersConverterTests( unittest.TestCase ):
-    """ Unit tests for the _USFMMarkersConverter object. """
+class USFM2MarkersConverterTests( unittest.TestCase ):
+    """ Unit tests for the _USFM2MarkersConverter object. """
 
     def setUp( self ):
-        # Create the USFMMarkersConvertor object
-        self.UMc = USFM2MarkersConverter.USFMMarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
+        # Create the USFM2MarkersConverter object
+        self.UMc = USFM2MarkersConverter.USFM2MarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_1010_str( self ):
         """ Test the __str__ function. """
@@ -95,15 +98,18 @@ class USFMMarkersConverterTests( unittest.TestCase ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.UMc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
-# end of USFMMarkersConverterTests class
+# end of USFM2MarkersConverterTests class
 
 
-class USFMMarkersTests( unittest.TestCase ):
-    """ Unit tests for the USFMMarkers object. """
+class USFM2MarkersTests( unittest.TestCase ):
+    """ Unit tests for the USFM2Markers object. """
 
     def setUp( self ):
-        # Create the USFMMarkers object
-        self.UMs = USFM2Markers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
+        # Create the USFM2Markers object
+        self.UMs = USFM2Markers.USFM2Markers().loadData() # Doesn't reload the XML unnecessarily :)
 
     def test_2010_str( self ):
         """ Test the __str__ function. """
@@ -546,7 +552,7 @@ class USFMMarkersTests( unittest.TestCase ):
         self.assertEqual( self.UMs.getMarkerListFromText('This \\bk book\\bk* is good'), \
                                 [('bk',5,' ','\\bk ',['bk'],1,'book'), ('bk',13,'*','\\bk*',[],None,' is good')] )
     #end of test_2210_getMarkerListFromText
-# end of USFMMarkersTests class
+# end of USFM2MarkersTests class
 
 
 if __name__ == '__main__':
@@ -560,4 +566,4 @@ if __name__ == '__main__':
     if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
-# end of USFMMarkersTests.py
+# end of USFM2MarkersTests.py

@@ -38,8 +38,8 @@ Contains functions:
     toPickledBible( self, outputFolderpath:Optional[Path]=None )
     toBOSJSONBible( self, outputFolderpath:Optional[Path]=None )
     makeLists( outputFolderpath:Optional[Path]=None )
-    toBOSBCV( self, outputFolderpath:Optional[Path]=None ) -- one file per verse using our internal Bible format
-    toPseudoUSFM( outputFolderpath:Optional[Path]=None ) -- this is our internal Bible format -- exportable for debugging purposes
+    toBOSBCV( self, outputFolderpath:Optional[Path]=None ) — one file per verse using our internal Bible format
+    toPseudoUSFM( outputFolderpath:Optional[Path]=None ) — this is our internal Bible format — exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM2( outputFolderpath:Optional[Path]=None. removeVerseBridges=False )
     toUSFM3( outputFolderpath:Optional[Path]=None. removeVerseBridges=False )
@@ -68,7 +68,7 @@ Contains functions:
     toODF( outputFolderpath:Optional[Path]=None ) for LibreOffice/OpenOffice exports
     toTeX( outputFolderpath:Optional[Path]=None ) and thence to PDF
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        (doAllExports supports multiprocessing -- it shares the exports out amongst available processes)
+        (doAllExports supports multiprocessing — it shares the exports out amongst available processes)
 
 Note that not all exports export all books.
     Some formats only handle subsets of books (or markers/fields),
@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-02-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -119,7 +119,7 @@ from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
 
-logger = logging.getLogger(SHORT_PROGRAM_NAME)
+logger = logging.getLogger( SHORT_PROGRAM_NAME )
 
 
 
@@ -130,7 +130,7 @@ def setDefaultControlFolderpath( newFolderName:Path ) -> None:
     """
     global defaultControlFolderpath
     if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( "defaultControlFolderpath changed from {} to {}".format( defaultControlFolderpath, newFolderName ) )
+        print( f"defaultControlFolderpath changed from {defaultControlFolderpath} to {newFolderName}" )
 
     defaultControlFolderpath = newFolderName
 # end of BibleWriter.setDefaultControlFolderpath
@@ -206,7 +206,7 @@ class BibleWriter( InternalBible ):
         """
         if BibleOrgSysGlobals.debugFlag: print( "toPickleObject( {}, {} )".format( self.abbreviation, outputFolderpath ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickleObject…" )
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         result = self.pickle( folder=outputFolderpath )
@@ -214,10 +214,10 @@ class BibleWriter( InternalBible ):
         if result: # now create a zipped version
             filename = self.getAName( abbrevFirst=True )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert filename
-            filename = BibleOrgSysGlobals.makeSafeFilename( filename+'.pickle' ) # Same as in InternalBible.pickle()
+            filename = BibleOrgSysGlobals.makeSafeFilename( f'{filename}.pickle' ) # Same as in InternalBible.pickle()
             filepath = Path( outputFolderpath ).joinpath( filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} pickle file…".format( filename ) )
-            zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Zipping {filename} pickle file…" )
+            zf = zipfile.ZipFile( f'{filepath}.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
 
@@ -245,7 +245,7 @@ class BibleWriter( InternalBible ):
 
         Note: This can add up to a couple of GB if discovery data and everything else is included!
 
-        We don't include all fields -- these files are intended to be read-only only,
+        We don't include all fields — these files are intended to be read-only only,
             i.e., not a full editable version.
         """
         from BibleOrgSys.Formats.PickledBible import createPickledBible
@@ -254,7 +254,7 @@ class BibleWriter( InternalBible ):
             print( "toPickledBible( {}, {}, {}, {} )".format( outputFolderpath, metadataDict, dataLevel, zipOnly ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPickledBible" )
 
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         return createPickledBible( self, outputFolderpath, metadataDict, dataLevel, zipOnly )
@@ -275,7 +275,7 @@ class BibleWriter( InternalBible ):
         from BibleOrgSys.Formats.JSONBible import createBOSJSONBible
         if BibleOrgSysGlobals.debugFlag: print( "toBOSJSONBible( {}, {}, {} )".format( outputFolderpath, sourceURL, licenceString ) )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSJSONBible" )
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_JSONBible_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_JSONBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         if sourceURL is None: sourceURL = "Source: (unknown)"
@@ -332,7 +332,7 @@ class BibleWriter( InternalBible ):
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in self.__dict__: self.discover()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Lists/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Lists/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         # Create separate sub-folders
@@ -450,7 +450,7 @@ class BibleWriter( InternalBible ):
             #for entry in bookObject._processedLines:
                 #marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
                 #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    #continue # Just ignore added markers -- not needed here
+                    #continue # Just ignore added markers — not needed here
 
                 ## Keep track of where we are for more helpful error messages
                 #if marker=='c' and text: C, V = text.split()[0], '0'
@@ -497,7 +497,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_BCV_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_BCV_Export/' )
         if os.access( outputFolderpath, os.F_OK ): # We need to delete it
             shutil.rmtree( outputFolderpath, ignore_errors=True )
         os.makedirs( outputFolderpath ) # Make the empty folder
@@ -530,7 +530,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PseudoUSFM_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PseudoUSFM_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         NUM_INDENT_SPACES = 3
@@ -617,7 +617,7 @@ class BibleWriter( InternalBible ):
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolderpath:
-            outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_' + ('Reexport/' if self.objectTypeString in ('USFM2','PTX7')
+            outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_' + ('Reexport/' if self.objectTypeString in ('USFM2','PTX7')
                                                 else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
@@ -645,7 +645,7 @@ class BibleWriter( InternalBible ):
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if internalBibleBookData.contains( 'id', 1 ) is None:
-                bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
+                bookUSFM += '\\id {} — BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -663,9 +663,9 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #bookUSFM += '\\id {} -- BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
+                    #bookUSFM += '\\id {} — BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -705,7 +705,7 @@ class BibleWriter( InternalBible ):
                     bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
                     adjValue = fullText
-                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
                     if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
@@ -784,7 +784,7 @@ class BibleWriter( InternalBible ):
         includeEmptyVersesFlag = True
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_' + ('Reexport/' if self.objectTypeString=='USFM3' else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_' + ('Reexport/' if self.objectTypeString=='USFM3' else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -811,7 +811,7 @@ class BibleWriter( InternalBible ):
             bookUSFM = ''
             # Prepend any important missing (header/title) fields
             if internalBibleBookData.contains( 'id', 1 ) is None:
-                bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
+                bookUSFM += '\\id {} — BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 bookUSFM += '\n\\usfm 3.0'
                 addedUSFMfield = True
                 if internalBibleBookData.contains( 'h', 8 ) is None:
@@ -831,9 +831,9 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #bookUSFM += '\\id {} -- BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
+                    #bookUSFM += '\\id {} — BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
@@ -877,7 +877,7 @@ class BibleWriter( InternalBible ):
                     bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
                     adjValue = fullText
-                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
                     if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
@@ -953,7 +953,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_ESFM_' + ('Reexport/' if self.objectTypeString=="ESFM" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_ESFM_' + ('Reexport/' if self.objectTypeString=="ESFM" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -980,7 +980,7 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if 'id' not in initialMarkers:
                     #print( "Write ID" )
-                    myFile.write( '\\id {} -- BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), PROGRAM_VERSION ) )
+                    myFile.write( '\\id {} — BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), PROGRAM_VERSION ) )
                 if 'ide' not in initialMarkers:
                     #print( "Write IDE" )
                     myFile.write( '\\ide UTF-8\n' )
@@ -1054,7 +1054,7 @@ class BibleWriter( InternalBible ):
                             ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
                         else: # not a continuation marker
                             adjValue = value
-                            #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                            #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
                             if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
                                 #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
                                 if ESFMLine[-1] != ' ':
@@ -1107,7 +1107,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PlainText_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PlainText_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         outputFolder2 = os.path.join( outputFolderpath, 'Without_ByteOrderMarker' )
         if not os.access( outputFolder2, os.F_OK ): os.makedirs( outputFolder2 ) # Make the empty folder if there wasn't already one there
@@ -1211,7 +1211,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_VersePerLine_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_VersePerLine_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers = set()
@@ -1254,7 +1254,7 @@ class BibleWriter( InternalBible ):
                     for entry in internalBibleBookData:
                         marker, text = entry.getMarker(), entry.getCleanText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                            continue # Just ignore added markers -- not needed here
+                            continue # Just ignore added markers — not needed here
                         if marker in ('c#','vp#',):
                             ignoredMarkers.add( marker )
                             continue
@@ -1331,7 +1331,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Markdown_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Markdown_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers = set()
@@ -1495,11 +1495,11 @@ class BibleWriter( InternalBible ):
                             else:
                                 logger.error( "formatMarkdownVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
                                 xrefText += txt
-                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                    else: # there's no USFM markers at all in the xref — presumably a caller and then straight text
                         if MDxref.startswith('+ ') or MDxref.startswith('- '):
                             caller = MDxref[0]
                             xrefText = MDxref[2:].strip()
-                        else: # don't really know what it is -- assume it's all just text
+                        else: # don't really know what it is — assume it's all just text
                             xrefText = MDxref.strip()
 
                     xrefMD = '[xr{}]({})'.format( xrefIndex, xrefText )
@@ -1877,11 +1877,11 @@ class BibleWriter( InternalBible ):
                         else:
                             logger.error( "formatHTMLVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
                             xrefText += txt
-                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                else: # there's no USFM markers at all in the xref — presumably a caller and then straight text
                     if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
                         caller = HTML5xref[0]
                         xrefText = HTML5xref[2:].strip()
-                    else: # don't really know what it is -- assume it's all just text
+                    else: # don't really know what it is — assume it's all just text
                         xrefText = HTML5xref.strip()
 
                 xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
@@ -2026,7 +2026,7 @@ class BibleWriter( InternalBible ):
             #assert self.name
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_HTML5_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_HTML5_Export/' )
         WEBoutputFolder = os.path.join( outputFolderpath, 'Website/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( WEBoutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -2282,7 +2282,7 @@ class BibleWriter( InternalBible ):
                 #if BBB=='MRK': print( "writeHTML5Book", marker, text )
                 #print( "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -2341,7 +2341,7 @@ class BibleWriter( InternalBible ):
                     V = '0'
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
-                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
+                    # What should we put in here — we don't need/want to display it, but it's a place to jump to
                     writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','CS'+text)] )
                 elif marker == 'cp': # ignore this for now… XXXXXXXXXXXXXXXXXXXXXXXXX
                     ignoredMarkers.add( marker )
@@ -2578,7 +2578,7 @@ class BibleWriter( InternalBible ):
         paragraphDelimiter = '='
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_BDText_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_BDText_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -2635,7 +2635,7 @@ class BibleWriter( InternalBible ):
             internalBibleBookData = bookObject._processedLines
             #print( "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
 
-            # TODO: This code is HORRIFIC -- rewrite!!!
+            # TODO: This code is HORRIFIC — rewrite!!!
             bookText, bookIndexDict, bookIndexList = '', {}, []
             inField = None
             C, V = 'I', '-1' # So first/id line starts at I:0
@@ -2645,7 +2645,7 @@ class BibleWriter( InternalBible ):
             currentText = savedText = currentParagraphMarker = ''
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
-                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers -- not needed here
+                if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers — not needed here
                 #print( f"{C}:{V} {pseudoMarker}={cleanText}" )
                 if pseudoMarker in USFM_PRECHAPTER_MARKERS \
                 or C == 'I': # This second part also copes with misuse of
@@ -3257,7 +3257,7 @@ class BibleWriter( InternalBible ):
                 #print( " toBD: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
                 #print( "   sectionBCV", sectionBCV )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('usfm','v='):
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -3372,10 +3372,10 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<section class="chapterSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
-                    elif C=='1': # Must be the end of the introduction -- so close that section
+                    elif C=='1': # Must be the end of the introduction — so close that section
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
-                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
+                    # What should we put in here — we don't need/want to display it, but it's a place to jump to
                     # NOTE: If we include the next line, it usually goes at the end of a section where it's no use
                     if overallChapterLabel is not None: # a general chapter label for this book
                         thisHTML += '<p class="chapterLabel" id="{}">{} {}</p>'.format( 'CT'+C, overallChapterLabel, C )
@@ -3715,7 +3715,7 @@ class BibleWriter( InternalBible ):
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if 'discoveryResults' not in self.__dict__: self.discover()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_BibleDoor_' + ('Reexport/' if self.objectTypeString=='BibleDoor' else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_BibleDoor_' + ('Reexport/' if self.objectTypeString=='BibleDoor' else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', 'To_XXX_controls.txt', controlDict )
         #assert controlDict and isinstance( controlDict, dict )
@@ -3744,7 +3744,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_EasyWorshipBible_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_EasyWorshipBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         return createEasyWorshipBible( self, outputFolderpath )
@@ -3763,9 +3763,9 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         #if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
-        filesFolder = os.path.join( outputFolderpath, 'USXFiles/' )
+        filesFolder = os.path.join( outputFolderpath, 'USX2Files/' )
         if not os.access( filesFolder, os.F_OK ): os.makedirs( filesFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
@@ -4126,7 +4126,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -4146,7 +4146,7 @@ class BibleWriter( InternalBible ):
                         logger.warning( "toUSX2XML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
                         #halt
                     if adjText[0:3] != USXAbbrev:
-                        logger.error( "toUSX2XML: Book {}{} might have incorrect code on id line -- we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
+                        logger.error( "toUSX2XML: Book {}{} might have incorrect code on id line — we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                         #halt
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX2(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
@@ -4165,7 +4165,7 @@ class BibleWriter( InternalBible ):
                         logger.warning( "toUSX2XML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logger.warning( "toUSX2XML: Missing text for c~" ); continue
-                    # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
+                    # TODO: We haven't stripped out character fields from within the text — not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
@@ -4187,7 +4187,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('v~','p~',):
                     if not adjText: logger.warning( "toUSX2XML: Missing text for {}".format( marker ) ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
+                    # TODO: We haven't stripped out character fields from within the verse — not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif getMarkerContentType == 'N': # N = never, e.g., b, nb
@@ -4210,7 +4210,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if getMarkerContentType != 'A':
-                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
+                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer — should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4233,7 +4233,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format…") )
-        #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
+        #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
         validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
@@ -4306,9 +4306,9 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX3_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX3_Export/' )
         #if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
-        filesFolder = os.path.join( outputFolderpath, 'USXFiles/' )
+        filesFolder = os.path.join( outputFolderpath, 'USX3Files/' )
         if not os.access( filesFolder, os.F_OK ): os.makedirs( filesFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
@@ -4665,7 +4665,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -4684,7 +4684,7 @@ class BibleWriter( InternalBible ):
                     if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
                         logger.warning( "toUSX3XML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
                     if adjText[0:3] != USXAbbrev:
-                        logger.error( "toUSX3XML: Book {}{} might have incorrect code on id line -- we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
+                        logger.error( "toUSX3XML: Book {}{} might have incorrect code on id line — we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX3(adjText), [('code',USXAbbrev),('style',marker)] )
                     else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
@@ -4702,7 +4702,7 @@ class BibleWriter( InternalBible ):
                         logger.warning( "toUSX3XML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logger.warning( "toUSX3XML: Missing text for c~" ); continue
-                    # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
+                    # TODO: We haven't stripped out character fields from within the text — not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
@@ -4724,7 +4724,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('v~','p~',):
                     if not adjText: logger.warning( "toUSX3XML: Missing text for {}".format( marker ) ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
+                    # TODO: We haven't stripped out character fields from within the verse — not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
                 elif getMarkerContentType == 'N': # N = never, e.g., b, nb
@@ -4747,7 +4747,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if getMarkerContentType != 'A':
-                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
+                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer — should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4770,7 +4770,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USX format…") )
-        #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
+        #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
         validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
@@ -4843,7 +4843,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFX_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFX_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USFX_controls.txt"
@@ -5134,7 +5134,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -5153,7 +5153,7 @@ class BibleWriter( InternalBible ):
                     if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
                         logger.warning( "toUSFXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
                     if adjText[0:3] != USFXAbbrev:
-                        logger.error( "toUSFXXML: Book {}{} might be incorrect -- we got: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText[0:3] ) )
+                        logger.error( "toUSFXXML: Book {}{} might be incorrect — we got: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'id', handleInternalTextMarkersForUSFX(adjText)+xtra, ('code',USFXAbbrev) )
                     elif not text: logger.error( "toUSFXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
@@ -5170,7 +5170,7 @@ class BibleWriter( InternalBible ):
                         logger.warning( "toUSFXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logger.warning( "toUSFXXML: Missing text for c~" ); continue
-                    # TODO: We haven't stripped out character fields from within the text -- not sure how USFX handles them yet
+                    # TODO: We haven't stripped out character fields from within the text — not sure how USFX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
@@ -5191,7 +5191,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('v~','p~',):
                     if not adjText: logger.warning( "toUSFXXML: Missing text for {}".format( marker ) ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
+                    # TODO: We haven't stripped out character fields from within the verse — not sure how USFX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif getMarkerContentType == 'N': # N = never, e.g., b, nb
@@ -5214,7 +5214,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if getMarkerContentType != 'A':
-                        logger.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
+                        logger.debug( "BibleWriter.toUSFXXML: ToProgrammer — should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
@@ -5235,14 +5235,14 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to USFX XML format…") )
-        #USFXOutputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( "USFX output/' )
+        #USFXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USFX output/' )
         #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
 
         try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['usfxOutputFilename'] )
         except KeyError: filename = 'Bible.usfx'
         xw = MLWriter( filename, outputFolderpath )
         #xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( USFXNumber+USFXAbbrev+"_usfx.xml" ), outputFolderpath )
-        xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
+        xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' — one output file went from None/Header=4.7MB to All=5.7MB
         xw.spaceBeforeSelfcloseTag = True # Try to imitate Haiola output as closely as possible
         #xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Haiola output as closely as possible
         xw.start()
@@ -5314,8 +5314,8 @@ class BibleWriter( InternalBible ):
                     #assert vernacularName not in abbreviationList
                     if vernacularName in abbreviationList:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
-                        logger.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
+                            print( "BibleWriter._writeSwordLocale: ToProgrammer — vernacular name IS in abbreviationList — what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
+                        logger.debug( "BibleWriter._writeSwordLocale: ToProgrammer — vernacular name IS in abbreviationList — what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
                     SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                     abbreviationList.append( vernacularName )
                     if ' ' in vernacularName:
@@ -5381,7 +5381,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_OSIS_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_OSIS_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
@@ -5412,7 +5412,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        # Let's write a Sword locale while we're at it -- might be useful if we make a Sword module from this OSIS file
+        # Let's write a Sword locale while we're at it — might be useful if we make a Sword module from this OSIS file
         try: xlg = controlDict['xmlLanguage']
         except KeyError: xlg = 'eng'
         try: ln = controlDict['LanguageName']
@@ -5529,7 +5529,7 @@ class BibleWriter( InternalBible ):
 
                     \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                         gives
-                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire — invalid OSIS — which then needs to be converted)
                     <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
                     \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
                     """
@@ -5553,7 +5553,7 @@ class BibleWriter( InternalBible ):
                                 if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                                 adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
                                 selfReference = adjToken
-                            else: # j > 1 -- this xo field may possibly only contain a letter suffix
+                            else: # j > 1 — this xo field may possibly only contain a letter suffix
                                 if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
                                     adjToken = selfReference
                                 else: # Could be another complete reference
@@ -5619,8 +5619,8 @@ class BibleWriter( InternalBible ):
                                     logger.error( _("toOSIS: Footnote at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
                         elif lcToken.startswith('ft ') or lcToken.startswith('fr* '): # footnote text follows
                             OSISfootnote += token[3:]
-                        elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
-                            OSISfootnote += '<catchWord>{}</catchWord>'.format(token[3:]) # Note that the trailing space goes in the catchword here -- seems messy
+                        elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows — NOTE: We also assume here that the next marker closes the fq field
+                            OSISfootnote += '<catchWord>{}</catchWord>'.format(token[3:]) # Note that the trailing space goes in the catchword here — seems messy
                         elif lcToken in ('fr*','fr* ','ft*','ft* ','fq*','fq* ','fqa*','fqa* ',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
@@ -5806,7 +5806,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -5980,7 +5980,7 @@ class BibleWriter( InternalBible ):
                     if text:
                         adjustedText = processXRefsAndFootnotes( text, extras )
                         writerObject.writeLineOpenClose( 'l', checkOSISText(adjustedText), ('level',qLevel), noTextCheck=True )
-                    else: # No text -- this q1 applies to the next marker
+                    else: # No text — this q1 applies to the next marker
                         writerObject.writeLineOpen( 'l', ('level',qLevel) )
                         haveOpenL = True
                 elif marker=='m': # Margin/Flush-left paragraph
@@ -6038,7 +6038,7 @@ class BibleWriter( InternalBible ):
                 try: fn = controlDict['osisOutputFilename'].replace( '_Bible', "_Book-{}".format(BBB) )
                 except KeyError: fn = 'Book-{}.osis'.format( BBB )
                 xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( fn ), outputFolderpath )
-                xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
+                xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' — one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
                 xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
                 try: xlg = controlDict['xmlLanguage']
@@ -6067,7 +6067,7 @@ class BibleWriter( InternalBible ):
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OSIS XML format…") )
             filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['osisOutputFilename'] )
             xw = MLWriter( filename, outputFolderpath )
-            xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
+            xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' — one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
             xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
             xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible" ), ('xml:lang',controlDict['xmlLanguage']), ('osisIDWork',controlDict['osisIDWork'])] )
@@ -6124,7 +6124,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Zefania_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Zefania_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Zefania_controls.txt"
@@ -6298,7 +6298,7 @@ class BibleWriter( InternalBible ):
 
                     \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                         gives
-                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire — invalid OSIS — which then needs to be converted)
                     <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
                     \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
                     """
@@ -6321,7 +6321,7 @@ class BibleWriter( InternalBible ):
                                 if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                                 adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
                                 selfReference = adjToken
-                            else: # j > 1 -- this xo field may possibly only contain a letter suffix
+                            else: # j > 1 — this xo field may possibly only contain a letter suffix
                                 if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
                                     adjToken = selfReference
                                 else: # Could be another complete reference
@@ -6401,12 +6401,12 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('ft ') or lcToken.startswith('fr* '): # footnote text follows
                             if not ZefFootnote: ZefFootnote = '<NOTE>'
                             ZefFootnote += token[3:]
-                        elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
+                        elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows — NOTE: We also assume here that the next marker closes the fq field
                             if not ZefFootnote: ZefFootnote = '<NOTE>'
-                            ZefFootnote += '<STYLE fs="italic">{}</STYLE>'.format(token[3:]) # Note that the trailing space goes in the catchword here -- seems messy
-                        elif lcToken.startswith('fk '): # footnote keyword(s) follows -- NOTE: We also assume here that the next marker closes the fq field
+                            ZefFootnote += '<STYLE fs="italic">{}</STYLE>'.format(token[3:]) # Note that the trailing space goes in the catchword here — seems messy
+                        elif lcToken.startswith('fk '): # footnote keyword(s) follows — NOTE: We also assume here that the next marker closes the fq field
                             if not ZefFootnote: ZefFootnote = '<NOTE>'
-                            ZefFootnote += '<STYLE fs="bold">{}</STYLE>'.format(token[3:]) # Note that the trailing space goes in the catchword here -- seems messy
+                            ZefFootnote += '<STYLE fs="bold">{}</STYLE>'.format(token[3:]) # Note that the trailing space goes in the catchword here — seems messy
                         elif lcToken in ('fr*','fr* ', 'ft*','ft* ', 'fq*','fq* ', 'fqa*','fqa* ', 'fk*','fk* ',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
@@ -6472,7 +6472,7 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -6619,7 +6619,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Haggai_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Haggai_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Haggai_controls.txt"
@@ -6673,7 +6673,7 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -6722,13 +6722,13 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert text or extras
                     #print( "Text {!r}".format( text ) )
                     if not text: logger.warning( "toHaggaiXML: Missing text for v~" ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
+                    # TODO: We haven't stripped out character fields from within the verse — not sure how Haggai handles them yet
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
                     writerObject.writeLineOpenClose ( 'VERSE', text, ('vnumber',verseNumberString) )
                 elif marker == 'p~':
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert text or extras
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
+                    # TODO: We haven't stripped out character fields from within the verse — not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
                 else:
                     if text:
@@ -6816,7 +6816,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_OpenSong_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_OpenSong_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OpenSong_controls.txt"
@@ -6839,7 +6839,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Sword_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Sword_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
@@ -7039,7 +7039,7 @@ class BibleWriter( InternalBible ):
 
                     \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                         gives
-                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire — invalid OSIS — which then needs to be converted)
                     <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
                     \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
                     """
@@ -7109,8 +7109,8 @@ class BibleWriter( InternalBible ):
                                     logger.error( _("toSwordModule: Footnote at {} {}:{} seems to contain the wrong self-reference {!r}").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
-                        elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
-                            OSISfootnote += '<catchWord>{}</catchWord>'.format(token[3:]) # Note that the trailing space goes in the catchword here -- seems messy
+                        elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows — NOTE: We also assume here that the next marker closes the fq field
+                            OSISfootnote += '<catchWord>{}</catchWord>'.format(token[3:]) # Note that the trailing space goes in the catchword here — seems messy
                         elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
@@ -7135,7 +7135,7 @@ class BibleWriter( InternalBible ):
                 while '\\f ' in verse and '\\f*' in verse: # process footnotes
                     ix1 = verse.index('\\f ')
                     ix2 = verse.find('\\f*')
-#                    ix2 = verse.find('\\f* ') # Note the extra space here at the end -- doesn't always work if there's two footnotes within one verse!!!
+#                    ix2 = verse.find('\\f* ') # Note the extra space here at the end — doesn't always work if there's two footnotes within one verse!!!
 #                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
 #                        ix2 = verse.index('\\f*')
 #                        ix2b = ix2 + 3 # Where the footnote ends
@@ -7270,7 +7270,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -7288,7 +7288,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkSwordText(text), ('canonical',"false") )
                 elif marker in ('is1','is2','is3','is4', 'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', ):
-                    if haveOpenIntro: # already -- assume it's a second one
+                    if haveOpenIntro: # already — assume it's a second one
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"introduction")] )
                         haveOpenIntro = False
@@ -7465,7 +7465,7 @@ class BibleWriter( InternalBible ):
                     if text:
                         adjustedText = processXRefsAndFootnotes( text, extras )
                         writerObject.writeLineOpenClose( 'l', checkSwordText(adjustedText), ('level',qLevel), noTextCheck=True )
-                    else: # No text -- this q1 applies to the next marker
+                    else: # No text — this q1 applies to the next marker
                         writerObject.writeLineOpen( 'l', ('level',qLevel) )
                         haveOpenL = True
                 elif marker=='m': # Margin/Flush-left paragraph
@@ -7572,7 +7572,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_theWord_' + ('Reexport/' if self.objectTypeString=="theWord" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_theWord_' + ('Reexport/' if self.objectTypeString=="theWord" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -7601,7 +7601,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_MySword_' + ('Reexport/' if self.objectTypeString=="MySword" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_MySword_' + ('Reexport/' if self.objectTypeString=="MySword" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -7630,7 +7630,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=="e-Sword" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-Sword_' + ('Reexport/' if self.objectTypeString=="e-Sword" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -7660,7 +7660,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_MyBible_' + ('Reexport/' if self.objectTypeString=="MyBible" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_MyBible_' + ('Reexport/' if self.objectTypeString=="MyBible" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -7695,7 +7695,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_SwordSearcher_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_SwordSearcher_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
@@ -7726,7 +7726,7 @@ class BibleWriter( InternalBible ):
             for entry in internalBibleBookData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -7819,7 +7819,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_DrupalBible_' + ('Reexport/' if self.objectTypeString=="DrupalBible" else 'Export/') )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_DrupalBible_' + ('Reexport/' if self.objectTypeString=="DrupalBible" else 'Export/') )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
@@ -7892,7 +7892,7 @@ class BibleWriter( InternalBible ):
             """
             try: bookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
             except AttributeError:
-                logger.warning( "writeDrupalBibleBook: " + _("don't know how to encode {} -- ignored").format( BBB ) )
+                logger.warning( "writeDrupalBibleBook: " + _("don't know how to encode {} — ignored").format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
@@ -7901,7 +7901,7 @@ class BibleWriter( InternalBible ):
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -8013,7 +8013,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PhotoBible_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PhotoBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers, unhandledMarkers = set(), set()
@@ -8045,7 +8045,7 @@ class BibleWriter( InternalBible ):
         if maxLinesManualSetting: maxLines = int( maxLinesManualSetting )
         assert 20 <= maxLineCharacters <= 40
         assert 10 <= maxLines <= 20
-        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
+        maxBooknameLetters = 12 # For the header line — the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "toPhotoBible -> {}x{} pixel JPEG frames".format( pixelWidth, pixelHeight ) )
@@ -8067,7 +8067,7 @@ class BibleWriter( InternalBible ):
         topLineColor = 'opaque'
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = 'indigo', 'red1', 'royalBlue'
         #defaultVerseNumberFontcolor = 'DarkOrange1'
-        namingFormat = 'Short' # 'Short' or 'Long' -- affects folder and filenames
+        namingFormat = 'Short' # 'Short' or 'Long' — affects folder and filenames
         colorVerseNumbersFlag = False
         #digitSpace = chr(8199) # '\u2007'
         verseDigitSubstitutions = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', }
@@ -8435,7 +8435,7 @@ class BibleWriter( InternalBible ):
                 marker, cleanText = entry.getMarker(), entry.getCleanText() # Clean text completely ignores formatting and footnotes, cross-references, etc.
                 #print( BBB, C, V, marker, repr(cleanText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -8544,7 +8544,7 @@ class BibleWriter( InternalBible ):
                             #print( repr(loadFolder), repr(root), repr(dirs), repr(files) )
                             #print( repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
                             #print( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
-                            #  Save in the archive without the path --
+                            #  Save in the archive without the path —
                             #   parameters are filename to compress, archive name (relative path) to save as
                             zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
                             #zf.write( filepath, filename ) # Save in the archive without the path
@@ -8555,7 +8555,7 @@ class BibleWriter( InternalBible ):
             loadFolder = os.path.join( outputFolderpath, 'NT/' )
             for root, dirs, files in os.walk( loadFolder ):
                 for filename in files:
-                    if '40-Mat' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path --
+                    if '40-Mat' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path —
                         #   parameters are filename to compress, archive name (relative path) to save as
                         zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
             zf.close()
@@ -8583,7 +8583,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_ODF_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_ODF_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         os.chmod( outputFolderpath, 0o777 ) # Allow all users to write to this folder (ServiceManager might run as a different user)
 
@@ -9464,11 +9464,11 @@ class BibleWriter( InternalBible ):
                             xrefNote.insertString( noteCursor, txt,  False )
                         else:
                             logger.error( "formatODFVerseText.processCrossReference didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
-                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                else: # there's no USFM markers at all in the xref —  presumably a caller and then straight text
                     if rawXRef.startswith('+ ') or rawXRef.startswith('- '):
                         caller = rawXRef[0]
                         xrefText = rawXRef[2:].strip()
-                    else: # don't really know what it is -- assume it's all just text
+                    else: # don't really know what it is — assume it's all just text
                         xrefText = rawXRef.strip()
                     noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
                     xrefNote.insertString( noteCursor, xrefText,  False )
@@ -9656,7 +9656,7 @@ class BibleWriter( InternalBible ):
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                    continue # Just ignore added markers -- not needed here
+                    continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -9669,7 +9669,7 @@ class BibleWriter( InternalBible ):
                     if C == '-1' and runningHeaderField:
                         runningHeaderField.setPropertyValue( 'Content', headerField )
                     C, V = adjText, '0'
-                    if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
+                    if C == '1': # It's the beginning of the actual Bible text — make a new double-column section
                         #document.storeAsURL( 'file://{}'.format( filepath ), () ) # Save a preliminary copy of the file
 
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
@@ -9695,7 +9695,7 @@ class BibleWriter( InternalBible ):
 
                         textCursor = columnCursor # So that future inserts go in here
                         startingNewParagraphFlag = firstEverParagraphFlag = True
-                    # Put in our running header -- WHY DOESN'T THIS WORK PROPERLY IN LIBREOFFICE???
+                    # Put in our running header — WHY DOESN'T THIS WORK PROPERLY IN LIBREOFFICE???
                     #runningHeaderField.setPropertyValue( "Content", "{} {}".format( headerField, C ) )
                 elif marker == 'c#':
                     if not inTextParagraph: # Not all translations have paragraph markers
@@ -9776,7 +9776,7 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                     textCursor.setPropertyValue( 'ParaStyleName', 'Blank Line Paragraph' if marker=='b' else 'Introduction Blank Line Paragraph' )
-                elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
+                elif marker == 'nb': # no-break with previous paragraph — I don't think we have to do anything here
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not adjText and not extras
                     ignoredMarkers.add( marker )
                 elif marker in ('cp',): # We can safely ignore these markers for the ODF export
@@ -9915,7 +9915,7 @@ class BibleWriter( InternalBible ):
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_TeX_Export/' )
+        if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_TeX_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers, unhandledMarkers = set(), set()
@@ -9952,7 +9952,7 @@ class BibleWriter( InternalBible ):
 
         def writeTeXHeader( writer ):
             """
-            Write the XeTeX header data -- the file can be processed with xelatex
+            Write the XeTeX header data — the file can be processed with xelatex
                 I had to run "sudo apt-get install fonts-linuxlibertine" first.
             """
             for line in (
@@ -10014,7 +10014,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
                 text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
 
-            # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
+            # Handle regular character formatting — this will cause TeX to fail if closing markers are not matched
             for charMarker in ALL_CHAR_MARKERS:
                 fullCharMarker = '\\' + charMarker + ' '
                 if fullCharMarker in text:
@@ -10100,7 +10100,7 @@ class BibleWriter( InternalBible ):
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
-                            continue # Just ignore added markers -- not needed here
+                            continue # Just ignore added markers — not needed here
                         if marker in USFM_PRECHAPTER_MARKERS:
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                                 assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -10258,7 +10258,7 @@ class BibleWriter( InternalBible ):
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
         if givenOutputFolderName == None:
-            givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+            givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
             if not os.access( givenOutputFolderName, os.F_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
@@ -10407,9 +10407,9 @@ class BibleWriter( InternalBible ):
                     #USX2ExportResult, USX3ExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     #swExportResult, tWExportResult, MySwExportResult, ESwExportResult, MyBExportResult, SwSExportResult, DrExportResult, \
                         #= results
-            # With safety timeout -- more complex
+            # With safety timeout — more complex
             # timeoutFactors are average seconds per book
-            timeoutFactor = 6 # Quicker exports -- 2 minutes for 68 books -- factor of 5 would allow almost 6 minutes
+            timeoutFactor = 6 # Quicker exports — 2 minutes for 68 books — factor of 5 would allow almost 6 minutes
             if wantPhotoBible: timeoutFactor +=  40 # 30 minutes for 68 books (Feb2018) = 27
             #if wantODFs: timeoutFactor = max( timeoutFactor, 100 ) # Over a minute for longer books with LO v5.4 on my system
             if wantPDFs: timeoutFactor += 12 # seems about 2 minutes for 68 books
@@ -10718,7 +10718,7 @@ def demo() -> None:
                     #result = UB.toBibleDoor(); print( f"{result[0]} {result[1]!r}\n{result[2]}" ); halt
                     doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
-                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
+                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
@@ -10745,7 +10745,7 @@ def demo() -> None:
             else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
 
-    if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
+    if 1: # Test reading and writing a USFM Bible (with MOST exports — unless debugging)
         testData = ( # name, abbreviation, folder for USFM files
                 #("CustomTest", 'Custom', '../'),
                 #("USFMTest1", 'USFM1', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/'),
@@ -10782,7 +10782,7 @@ def demo() -> None:
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
-                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
+                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
@@ -10846,7 +10846,7 @@ def demo() -> None:
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = thisBible.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
-                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
+                        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
@@ -10891,7 +10891,7 @@ def demo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                    outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX_Reexport/' )
+                    outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX_Reexport/' )
                     fN = USXFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolderpath ) # Derived
@@ -10935,7 +10935,7 @@ def demo() -> None:
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the supplied and the exported theWord modules
-                    outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_theWord_Export/' )
+                    outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_theWord_Export/' )
                     if os.path.exists( mainFolderpath.joinpath( name + '.nt' ) ): ext = '.nt'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ont' ) ): ext = '.ont'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ot' ) ): ext = '.ot'

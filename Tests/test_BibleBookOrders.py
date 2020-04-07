@@ -27,6 +27,7 @@
 Module testing BibleBookOrdersConverter.py and BibleBookOrders.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Book Orders tests"
 PROGRAM_VERSION = '0.85'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,7 +49,10 @@ class BibleBookOrdersConverterTests( unittest.TestCase ):
     """ Unit tests for the _BibleBookOrdersConverter object. """
 
     def setUp( self ):
-        # Create the BibleBookOrdersConvertor object
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
+        # Create the BibleBookOrdersConverter object
         self.bbosc = BibleBookOrdersConverter.BibleBookOrdersConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
     def test_1005_str( self ):
@@ -96,6 +100,9 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
     """ Unit tests for the BibleBookOrderSystems object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBookOrderSystems object
         self.bboss = BibleBookOrders.BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
@@ -135,8 +142,8 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         results = self.bboss.getBookOrderSystem( "EuropeanBible" )
         self.assertTrue( isinstance( results, tuple ) )
         self.assertEqual( len(results), 3 ) # The dictionaries
-        self.assertTrue( isinstance( results[0], OrderedDict ) )
-        self.assertTrue( isinstance( results[1], OrderedDict ) )
+        self.assertTrue( isinstance( results[0], dict ) )
+        self.assertTrue( isinstance( results[1], dict ) )
         self.assertTrue( isinstance( results[2], list ) )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
@@ -188,6 +195,9 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
     """ Unit tests for the BibleBookOrderSystem object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create a BibleBookOrderSystem object
         self.systemName = "EuropeanBible"
         self.bbos = BibleBookOrders.BibleBookOrderSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)

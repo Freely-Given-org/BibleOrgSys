@@ -110,7 +110,7 @@ class BibleVersificationSystems:
         if not self.__DataDict: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             picklesGood = False
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleVersificationSystems_Tables.pickle" )
+            standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleVersificationSystems_Tables.pickle" )
             if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
                 standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookOrders/' )
                 pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
@@ -489,7 +489,7 @@ class BibleVersificationSystems:
                 #print( "  Matches {!r} system".format( versificationSystemCode ) )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
-            if BibleOrgSysGlobals.commandLineArguments.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
+            if BibleOrgSysGlobals.debugFlag and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
             allErrors += ("\n" if allErrors else "") + theseErrors
 
         if badOVList:
@@ -502,14 +502,14 @@ class BibleVersificationSystems:
         if systemMatchCount == 1: # What we hope for
             if badOVList: print( "  " + _("{} roughly matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
             else: print( "  " + _("{} matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+            if BibleOrgSysGlobals.debugFlag: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} versification systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(versificationSchemeToCheck) ) )
-            toPrint = allErrors if BibleOrgSysGlobals.commandLineArguments.debug else errorSummary
+            toPrint = allErrors if BibleOrgSysGlobals.debugFlag else errorSummary
             if toPrint: print( toPrint )
         else: # Multiple matches
             print( "  " + _("{} matched {} versification system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedVersificationSystemCodes, len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+            if BibleOrgSysGlobals.debugFlag: print( errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleVersificationSystem_"+thisSystemName + '.xml' )
@@ -532,7 +532,7 @@ class BibleVersificationSystems:
                                 if oc == c: # It's this chapter
                                     omittedVerseString += (',' if omittedVerseString else '') + str(ov)
                         if omittedVerseString:
-                            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.commandLineArguments.debug: print( '   ', BBB, c+':'+omittedVerseString )
+                            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.debugFlag: print( '   ', BBB, c+':'+omittedVerseString )
                             myFile.write( '    <numVerses chapter="{}" omittedVerses="{}">{}</numVerses>\n'.format( c, omittedVerseString, numV ) )
                         else:
                             myFile.write( '    <numVerses chapter="{}">{}</numVerses>\n'.format( c, numV ) )

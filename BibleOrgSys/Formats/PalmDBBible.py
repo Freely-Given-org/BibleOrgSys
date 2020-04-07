@@ -65,22 +65,6 @@ filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for PDB Bible files or folders in the folder and in the next level down.
@@ -227,7 +211,7 @@ class PalmDBBible( Bible ):
             """
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
-                    print( exp("readRecord( {}, {} )").format( recordNumber, thisFile ) )
+                    print( _("readRecord( {}, {} )").format( recordNumber, thisFile ) )
                 assert recordNumber < len(mainDBIndex)
             dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
             #recordLength = 99999 if recordNumber==len(mainDBIndex)-1 else (mainDBIndex[recordNumber+1][0] - dataOffset)
@@ -252,21 +236,21 @@ class PalmDBBible( Bible ):
             Returns the string.
             """
             #if BibleOrgSysGlobals.debugFlag:
-                #print( exp("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
+                #print( _("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
             if len(binary) < numBytes: halt # Too few bytes provided
             binary = binary[:numBytes]
             if debuggingThisModule:
                 for someInt in binary:
                     #print( repr(someInt) )
                     if someInt == 0xe2:
-                        print( exp("getBinaryString( {}={}, {} ) found e2").format( hexlify(binary), binary, numBytes ) )
+                        print( _("getBinaryString( {}={}, {} ) found e2").format( hexlify(binary), binary, numBytes ) )
             result = ''
             errorFlag = False
             for j, value in enumerate( binary ):
                 if j>=numBytes or value==0: break
                 if value > 0x7F:
                     if debuggingThisModule:
-                        print( exp("getBinaryString( {}={}, {} ) found non-ascii").format( hexlify(binary), binary, numBytes ) )
+                        print( _("getBinaryString( {}={}, {} ) found non-ascii").format( hexlify(binary), binary, numBytes ) )
                         print( "{} Got non-ASCII character {:02x}->{!r}".format( j, value, chr(value) ) )
                     errorFlag = True
                 result += chr( value )
@@ -307,7 +291,7 @@ class PalmDBBible( Bible ):
             Used for reading the PalmDB header information from the file.
             """
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("getFileString( {}, {} )").format( thisFile, numBytes ) )
+                #print( _("getFileString( {}, {} )").format( thisFile, numBytes ) )
             return getBinaryString( thisFile.read( numBytes ), numBytes )
         # end of getFileString
 
@@ -318,7 +302,7 @@ class PalmDBBible( Bible ):
             """
             nonlocal words
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( exp("loadWordlists()") )
+                print( _("loadWordlists()") )
 
             # Now read the word index info
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading word index info…" )
@@ -425,7 +409,7 @@ class PalmDBBible( Bible ):
             """
             nonlocal remainder14count, remainder14bits
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( exp("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
+                #print( _("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
             if binary16: next16, = struct.unpack( ">H", binary16 )
             else:
                 if debuggingThisModule: print( "Added error zero bits (should only be at the end of a book)" )
@@ -483,7 +467,7 @@ class PalmDBBible( Bible ):
             nonlocal hadP
             if BibleOrgSysGlobals.debugFlag:
                 if debuggingThisModule:
-                    print( exp("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
+                    print( _("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
                 assert verseText
                 if 'SQ' in verseText or 'AAA' in verseText or 'XXX' in verseText or 'WWW' in verseText:
                     print( "What's this here for:", repr(verseText) )

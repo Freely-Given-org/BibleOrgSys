@@ -5,7 +5,7 @@
 #
 # Module handling BibleBookOrderSystems
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BibleBookOrder systems.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-09-19' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrders"
 PROGRAM_NAME = "Bible Book Order Systems handler"
-PROGRAM_VERSION = '0.90'
+PROGRAM_VERSION = '0.91'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -49,22 +49,6 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
-
-
-
-#def exp( messageString ):
-    #"""
-    #Expands the message string in debug mode.
-    #Prepends the module name to a error or warning message string
-        #if we are in debug mode.
-    #Returns the new string.
-    #"""
-    #try: nameBit, errorBit = messageString.split( ': ', 1 )
-    #except ValueError: nameBit, errorBit = '', messageString
-    #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        #nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    #return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-## end of exp
 
 
 
@@ -87,39 +71,58 @@ class BibleBookOrderSystems:
     # end of BibleBookOrderSystems.__init__
 
 
-    def loadData( self, XMLFolder=None ):
+    def loadData( self, XMLFileOrFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            picklesGood = False
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBookOrders_Tables.pickle' )
-            if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
-                standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookOrders/' )
-                pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
-                picklesGood = True
-                for filename in os.listdir( standardXMLFolder ):
-                    filepart, extension = os.path.splitext( filename )
-                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
-                    if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
-                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
-                            picklesGood = False; break
-            if picklesGood:
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-                    self.__DataLists = pickle.load( pickleFile )
-            else: # We have to load the XML (much slower)
-                from BibleOrgSys.Reference.Converters.BibleBookOrdersConverter import BibleBookOrdersConverter
-                if XMLFolder is not None: logging.warning( _("Bible book orders are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
-                bboc = BibleBookOrdersConverter()
-                bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-                self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        assert len(self.__DataDicts) == len(self.__DataLists)
-        if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:
-            print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
-        return self
+            if XMLFileOrFilepath is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBookOrders.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBookOrders_Tables.pickle' )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # if os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading pickle file {standardPickleFilepath}…" )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        self.__DataLists = pickle.load( pickleFile )
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBookOrders pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBookOrders_Tables.json' )
+                if os.access( standardJsonFilepath, os.R_OK ) \
+                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    import json
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"NOT TESTED -- CODE MAY NEED ADJUSTING -- Loading json file {standardJsonFilepath}…" )
+                    with open( standardJsonFilepath, 'rb') as JsonFile:
+                        self.__DataDicts = json.load( JsonFile )
+                        self.__DataLists = json.load( JsonFile )
+                    # # NOTE: We have to convert str referenceNumber keys back to ints
+                    # self.__DataDicts['referenceNumberDict'] = { int(key):value \
+                    #             for key,value in self.__DataDicts['referenceNumberDict'].items() }
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBookOrders JSON file can't be loaded!" )
+            # else: # We have to load the XML (much slower)
+            from BibleOrgSys.Reference.Converters.BibleBookOrdersConverter import BibleBookOrdersConverter
+            if XMLFileOrFilepath is not None:
+                logging.warning( _("Bible book orders are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+            bboc = BibleBookOrdersConverter()
+            bboc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            assert len(self.__DataDicts) == len(self.__DataLists)
+            if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:
+                print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
+        return self # So this command can be chained after the object creation
     # end of BibleBookOrderSystems.loadData
 
 
@@ -194,7 +197,8 @@ class BibleBookOrderSystems:
         assert self.__DataLists
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
+            if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): 
+                logging.error( f"Invalid '{BBB}' book code" )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
@@ -238,13 +242,13 @@ class BibleBookOrderSystems:
         systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
             print("  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+            if BibleOrgSysGlobals.debugFlag: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            print( allErrors if BibleOrgSysGlobals.commandLineArguments.debug or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
+            print( allErrors if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
         else: # Multiple matches
             print( "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+            if BibleOrgSysGlobals.debugFlag: print( errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/', "BibleBookOrder_"+thisSystemName + '.xml' )

@@ -82,22 +82,6 @@ BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for MySword Bible files or folders in the folder and in the next level down.
@@ -237,7 +221,7 @@ class MySwordBible( Bible ):
         Load the metadata from the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("preload()") )
+            print( _("preload()") )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -275,7 +259,7 @@ class MySwordBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("load()") )
+            print( _("load()") )
         assert self.preloadDone
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
@@ -380,7 +364,7 @@ class MySwordBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBook( {} )").format( BBB ) )
+            print( _("loadBook( {} )").format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:

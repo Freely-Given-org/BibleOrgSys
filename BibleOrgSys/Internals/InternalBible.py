@@ -1492,7 +1492,7 @@ class InternalBible:
             print( "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName == None:
-            givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
+            givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
             if not os.access( givenOutputFolderName, os.F_OK ):
                 if 1 or BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
@@ -2808,7 +2808,7 @@ class InternalBible:
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
         import json
-        outputFolderPath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
+        outputFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
         try: os.makedirs( outputFolderPath )
         except FileExistsError: pass
         for dataObject, objectName in ( 

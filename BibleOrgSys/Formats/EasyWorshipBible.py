@@ -5,7 +5,7 @@
 #
 # Module handling EasyWorship Bible files
 #
-# Copyright (C) 2015-2019 Robert Hunt
+# Copyright (C) 2015-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ Seems that some non-UTF8 versions can't be read yet. :(
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "EasyWorshipBible"
 PROGRAM_NAME = "EasyWorship Bible format handler"
-PROGRAM_VERSION = '0.13'
+PROGRAM_VERSION = '0.14'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -56,6 +56,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
@@ -165,7 +166,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
 
     if not BibleObject.doneSetupGeneric: BibleObject.__setupWriter()
-    if not outputFolder: outputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_EasyWorshipBible_Export/' )
+    if not outputFolder: outputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_EasyWorshipBible_Export/' )
     if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
     # Set-up their Bible reference system

@@ -1209,7 +1209,7 @@ def demo() -> None:
 
 
     #if 0: # individual modules in the output folder
-        #testFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-SwordExport/' )
+        #testFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-SwordExport/' )
         #names = ("Matigsalug",)
         #for j, name in enumerate( names):
             #indexString = 'E' + str( j+1 )

@@ -60,22 +60,6 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT'
 METADATA_FILENAME = 'Metadata.txt'
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for BCV Bible files or folders in the folder and in the next level down.
@@ -94,10 +78,10 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( exp("BCVBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( "BCVBibleFileCheck: Given {!r} folder is unreadable".format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( exp("BCVBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( "BCVBibleFileCheck: Given {!r} path is not a folder".format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -128,7 +112,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                     print( "BCVBibleFileCheck: Suprised to find folder:", folderName )
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("BCVBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "BCVBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( givenFolderName )
             if autoLoad: bcvB.preload()
@@ -167,7 +151,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         print( "BCVBibleFileCheckSuprised to find folder:", folderName )
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("BCVBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "BCVBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( foundProjects[0] )
             if autoLoad: bcvB.preload()
@@ -204,7 +188,7 @@ class BCVBible( Bible ):
         Loads the Metadata file if it can be found.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("preload() from {}").format( self.sourceFolder ) )
+            print( _("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -212,7 +196,7 @@ class BCVBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( exp("BCVBible.preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( _("BCVBible.preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -223,7 +207,7 @@ class BCVBible( Bible ):
             if unexpectedFolders:
                 logging.info( _("BCVBible.preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( exp("BCVBible.preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( _("BCVBible.preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         #if self.metadataFilepath is None: # it might have been loaded first
@@ -251,7 +235,7 @@ class BCVBible( Bible ):
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("Loading metadata from {!r}").format( metadataFilepath ) )
+            print( "Loading metadata from {!r}".format( metadataFilepath ) )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -280,10 +264,10 @@ class BCVBible( Bible ):
                         self.suppliedMetadata['BCV'][fieldName] = line[len(fieldName)+3:]
                         processed = True
                         break
-                if not processed: print( exp("ERROR: Unexpected {!r} line in metadata file").format( line ) )
+                if not processed: print( _("ERROR: Unexpected {!r} line in metadata file").format( line ) )
         #print( 'SD', self.suppliedMetadata['BCV'] ); halt
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + exp("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
+            print( "  " + _("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 for key in sorted(self.suppliedMetadata['BCV']):
                     print( "    {}: {}".format( key, self.suppliedMetadata['BCV'][key] ) )
@@ -304,7 +288,7 @@ class BCVBible( Bible ):
             if isinstance( self.givenBookList, list ):
                 # del self.suppliedMetadata['BCV']['BookList']
                 pass
-            else: print( exp("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
+            else: print( _("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
             #bl = self.suppliedMetadata['BCV']['BookList']
             #if bl[0]=='[' and bl[-1]==']':
                 #for something in bl[1:-1].split( ',' ):
@@ -312,9 +296,9 @@ class BCVBible( Bible ):
                     #if something[0]=="'" and something[-1]=="'": something = something[1:-1]
                     #if something in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         #self.givenBookList.append( something )
-                    #else: print( exp("ERROR: Unexpected {!r} booklist entry in metadata file").format( something ) )
+                    #else: print( "ERROR: Unexpected {!r} booklist entry in metadata file".format( something ) )
                 #del self.suppliedMetadata['BCV']['BookList']
-            #else: print( exp("ERROR: Unexpected {!r} format in metadata file").format( bl ) )
+            #else: print( "ERROR: Unexpected {!r} format in metadata file".format( bl ) )
 
         if self.suppliedMetadata['BCV']:
             self.applySuppliedMetadata( 'BCV' ) # Copy some to self.settingsDict
@@ -354,12 +338,12 @@ class BCVBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( exp("loadBookMP( {} )").format( BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("loadBookMP( {} )").format( BBB ) )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                print( '  ' + exp("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                print( '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
             bcvBB = BCVBibleBook( self, BBB )
             bcvBB.load( self.sourceFolder )
             bcvBB.validateMarkers()
@@ -373,14 +357,14 @@ class BCVBible( Bible ):
         """
         Load all the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( exp("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading {} from {}…".format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( exp("Loading {} BCV books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    print( "Loading {} BCV books using {} processes…".format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -425,7 +409,7 @@ class BCVBibleBook( BibleBook ):
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-            print( '  ' + exp("Loading {} metadata from {!r}…").format( self.BBB, metadataFilepath ) )
+            print( '  ' + "Loading {} metadata from {!r}…".format( self.BBB, metadataFilepath ) )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         self.givenCVList = None
@@ -434,7 +418,7 @@ class BCVBibleBook( BibleBook ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( exp("loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
+                    logging.info( "loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -449,10 +433,10 @@ class BCVBibleBook( BibleBook ):
                         settingsDict[fieldName] = line[len(fieldName)+3:]
                         processed = True
                         break
-                if not processed: print( exp("ERROR: Unexpected {!r} line in metadata file").format( line ) )
+                if not processed: print( "ERROR: Unexpected {!r} line in metadata file".format( line ) )
         #print( 'SD', settingsDict )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + exp("Got {} metadata entries:").format( len(settingsDict) ) )
+            print( "  " + "Got {} metadata entries:".format( len(settingsDict) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:
                 for key in sorted(settingsDict):
                     print( "    {}: {}".format( key, settingsDict[key] ) )
@@ -467,7 +451,7 @@ class BCVBibleBook( BibleBook ):
             if CVL and CVL[0]=='[' and CVL[-1]==']': self.givenCVList = eval( CVL )
             #print( 'x1', repr(self.givenCVList) )
             if isinstance( self.givenCVList, list ): del settingsDict['CVList']
-            else: print( exp("ERROR: Unexpected {!r} format in metadata file").format( CVL ) )
+            else: print( "ERROR: Unexpected {!r} format in metadata file".format( CVL ) )
 
         if settingsDict:
             self.settingsDict = settingsDict
@@ -543,7 +527,7 @@ class BCVBibleBook( BibleBook ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( exp("loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}").format( metadataFilepath ) )
+                        logging.info( "loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     #print( CV, "line", line )

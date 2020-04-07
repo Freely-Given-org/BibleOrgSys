@@ -255,10 +255,10 @@ class HaggaiXMLBible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
-            #loadErrors.append( exp("Loader parse error in xml file {}: {} {}").format( self.givenName, sys.exc_info()[0], err ) )
+            logging.critical( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
+            #loadErrors.append( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
             #self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( self.givenName, err ) )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.XMLTree.tag == HaggaiXMLBible.treeTag:

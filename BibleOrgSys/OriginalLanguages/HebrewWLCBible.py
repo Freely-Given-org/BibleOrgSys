@@ -5,7 +5,7 @@
 #
 # Module handling Open Scriptures Hebrew WLC.
 #
-# Copyright (C) 2011-2018 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling the Hebrew WLC OSIS files from Open Scriptures.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2018-12-23' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
-PROGRAM_VERSION = '0.24'
+PROGRAM_VERSION = '0.25'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -56,11 +56,11 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 DEFAULT_OSIS_WLC_FILEPATH = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/' )
-DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'WLC' + ZIPPED_PICKLE_FILENAME_END )
+DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'WLC' + ZIPPED_PICKLE_FILENAME_END )
 
-DEFAULT_GLOSSING_DICT_FILEPATH = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'WLCHebrewGlosses.pickle' )
-DEFAULT_GLOSSING_EXPORT_FILEPATH = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/WLCHebrewGlosses.txt' )
-DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/WLCHebrewGenericGlossesReversed.txt' )
+DEFAULT_GLOSSING_DICT_FILEPATH = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ManuallyEditedFiles/', 'WLCHebrewGlosses.pickle' )
+DEFAULT_GLOSSING_EXPORT_FILEPATH = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'WLCHebrewGlosses.txt' )
+DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'WLCHebrewGenericGlossesReversed.txt' )
 
 ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
@@ -488,7 +488,7 @@ class HebrewWLCBibleAddon():
                         newDict[word] = (genericGloss,genericReferencesList,specificReferencesDict)
                     else:
                         print( "  Ignored '{}' line at {} ({} bits)".format( line, lineCount, len(bits) ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loaded {} entries.".format( len(newDict) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( f"  Loaded {len(newDict):,} entries." )
             if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
                 if len(newDict) != self.loadedGlossEntryCount: print( "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
                 self.glossingDict = newDict # Replace the dictionary with the upgraded one
@@ -508,7 +508,7 @@ class HebrewWLCBibleAddon():
         #print( "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Exporting glossing dictionary ({} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
+            print( _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
         with open( glossingDictExportFilepath, 'wt' ) as exportFile:
@@ -525,7 +525,7 @@ class HebrewWLCBibleAddon():
 
         if self.glossingDict:
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Exporting reverse glossing dictionary ({} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+                print( _("Exporting reverse glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
             BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
             doneGlosses = []
             with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
@@ -668,7 +668,7 @@ class HebrewWLCBibleAddon():
                                 numRefsAdded += 1
                 V = V + 1
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "  {} new references added ({} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
+            print( "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
     # end of HebrewWLCBibleAddon.updateGenericGlossingReferences
 # end of HebrewWLCBibleAddon class
 

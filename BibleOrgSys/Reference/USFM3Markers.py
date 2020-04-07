@@ -35,10 +35,10 @@ Contains the singleton class: USFM3Markers
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.06'
+PROGRAM_VERSION = '0.07'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -58,7 +58,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 
 
 # STATIC USFM TABLES
-OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','h', 'toc1','toc2','toc3', 'cl¤', 'rem' )
+OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','usfm','ide', 'sts','h', 'toc1','toc2','toc3', 'cl¤', 'rem' )
 # NOTE: the following sets include unnumbered markers, e.g., q, as well as q1
 USFM_ALL_TITLE_MARKERS = ( 'mt','mt1','mt2','mt3','mt4', 'mte','mte1','mte2','mte3','mte4',
                       'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4' )
@@ -296,7 +296,7 @@ class USFM3Markers:
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
                 standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'USFM3Markers.xml' )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "USFM3Markers_Tables.pickle" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "USFM3Markers_Tables.pickle" )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -311,6 +311,8 @@ class USFM3Markers:
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "USFM3Markers pickle file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.USFM3MarkersConverter import USFM3MarkersConverter
             if XMLFileOrFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )

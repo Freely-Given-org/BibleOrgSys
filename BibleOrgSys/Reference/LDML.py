@@ -84,22 +84,6 @@ DRAFT_VALUES = ( 'provisional', 'contributed', 'unconfirmed', 'approved',
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def getFlagFromAttribute( attributeName, attributeValue ):
     """
     Get a 'true' or 'false' string and convert to True/False.
@@ -149,7 +133,7 @@ class LDMLFile:
         LDML = Locale Data Markup Language (see http://unicode.org/reports/tr35/tr35-4.html)
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( exp("load()") )
+            print( _("load()") )
 
         SIL_URN_Prefix = '{urn://www.sil.org/ldml/0.1}'
         lenSILURNPrefix = len( SIL_URN_Prefix )

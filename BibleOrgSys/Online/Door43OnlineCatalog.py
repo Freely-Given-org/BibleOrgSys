@@ -425,7 +425,7 @@ class Door43CatalogBible( USFMBible ):
 
         # See if files already exist and are current (so don't download again)
         alreadyDownloadedFlag = False
-        unzippedFolderPath = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH.joinpath(
+        unzippedFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath(
                                 'Door43Catalog/', f"{resourceDict['language']}_{resourceDict['title']}/" )
         if os.path.isdir( unzippedFolderPath ):
             #print( f"Issued: {resourceDict['issued']}" )

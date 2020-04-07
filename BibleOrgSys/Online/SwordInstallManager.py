@@ -88,22 +88,6 @@ DEFAULT_SWORD_CONF_ENCODING = 'iso-8859-1'
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 IMPORTANT_SWORD_CONF_FIELD_NAMES = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Direction', 'Version',
             'History', 'Description',
             'TextSource', 'Source', 'LCSH', 'ShortPromo', 'Promo', 'Obsoletes', 'GlossaryFrom', 'GlossaryTo',
@@ -153,7 +137,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
         and saves the results in the given confDict.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( exp("processConfLines( {}, … )").format( abbreviation ) )
+        print( _("processConfLines( {}, … )").format( abbreviation ) )
 
     lastLine, lineCount, continuationFlag, result = None, 0, False, []
     for line in openFile:
@@ -219,7 +203,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                         logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( abbreviation, fieldName, fieldContents ) )
                     else: # We have multiple different entries for this field name
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( exp("processConfLines found inconsistency"), abbreviation, fieldName, repr(fieldContents) )
+                            print( _("processConfLines found inconsistency"), abbreviation, fieldName, repr(fieldContents) )
                             print( "  existing entry is", repr(confDict[fieldName]) )
                             assert fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING or fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES
                         #if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING: # Try to handle these duplicate entries
@@ -249,7 +233,7 @@ class SwordInstallManager():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.__init__()") )
+            print( _("SwordInstallManager.__init__()") )
 
         self.userDisclaimerConfirmed = False
 
@@ -271,7 +255,7 @@ class SwordInstallManager():
         Clear our list of available sources.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.clearSources()") )
+            print( _("SwordInstallManager.clearSources()") )
 
         self.downloadSources = {}
         self.currentRepoName = None
@@ -289,7 +273,7 @@ class SwordInstallManager():
             4/ Site folders (starts with '/' )
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
+            print( _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
             assert repoType in ( 'FTP', )
 
         self.downloadSources[repoName] = (repoType,repoSite,repoFolderpath)
@@ -304,7 +288,7 @@ class SwordInstallManager():
         This function can be overriden (esp. if you have a GUI).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.isUserDisclaimerConfirmed()") )
+            print( _("SwordInstallManager.isUserDisclaimerConfirmed()") )
 
         prompt1 = _("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
                     "components, it also uses a systematic method for accessing sites which gives packet " \
@@ -329,7 +313,7 @@ class SwordInstallManager():
         Use this if you don't want to override isUserDisclaimerConfirmed().
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
+            print( _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
             assert flag in (True, False)
 
         self.userDisclaimerConfirmed = flag
@@ -344,7 +328,7 @@ class SwordInstallManager():
             (which may need to be cleared to prevent obsolete entries being held).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
+            print( _("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -470,7 +454,7 @@ class SwordInstallManager():
             (which is cleared first).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.refreshRemoteSource()") )
+            print( _("SwordInstallManager.refreshRemoteSource()") )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -500,7 +484,7 @@ class SwordInstallManager():
             and parse the information into self.availableModules.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
+            print( _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
 
         # Read the conf file
         confDict = {}
@@ -517,7 +501,7 @@ class SwordInstallManager():
         Install the requested module from the remote repository.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("SwordInstallManager.installModule( {} )").format( moduleName ) )
+            print( _("SwordInstallManager.installModule( {} )").format( moduleName ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )

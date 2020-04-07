@@ -138,7 +138,7 @@ class AugmentedStrongsIndexFileConverter:
             logging.critical( t("HebrewStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
+            logging.critical( _("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
             raise ParseError
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all

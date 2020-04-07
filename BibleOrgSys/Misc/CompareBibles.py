@@ -182,29 +182,13 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLET
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def loadWordCompares( folder, filename ):
     """
     Returns two dicts (longest entries first)
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("loadWordCompares( {}, {} )").format( folder, filename ) )
+            print( _("loadWordCompares( {}, {} )").format( folder, filename ) )
 
     dict12, dict21 = {}, {} # Not worried about sorting yet
 
@@ -285,7 +269,7 @@ def checkBookPedantic( bookObject,
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("checkBookPedantic( {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
+            print( _("checkBookPedantic( {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
                     .format( bookObject, compareQuotes, comparePunctuation, compareDigits,
                                         illegalCleanTextOnlyStrings, matchingPairs,
                                         breakOnOne, bookObject.BBB ) )
@@ -427,7 +411,7 @@ def compareBooksPedantic( book1, book2,
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
+            print( _("compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
                     .format( book1, book2, compareQuotes, comparePunctuation, compareDigits,
                                         illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
@@ -660,7 +644,7 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("segmentizeLine( {!r} )").format( line ) )
+            print( _("segmentizeLine( {!r} )").format( line ) )
 
     if segmentEndPunctuation:
         for segmentEndChar in segmentEndPunctuation:
@@ -721,7 +705,7 @@ def segmentizeBooks( book1, book2 ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
+            print( _("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
         assert book1.BBB == book2.BBB
         assert book1.workName != book2.workName
 
@@ -905,7 +889,7 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("analyzeWords( … )") )
+            print( _("analyzeWords( … )") )
         assert isinstance( segmentList, list )
         #print( "\ndict12", dict12 )
         #print( "\ndict21", dict21 )
@@ -951,7 +935,7 @@ def analyzeBibles( Bible1, Bible2 ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( exp("analyzeBibles( {}, {} )").format( Bible1, Bible2 ) )
+            print( _("analyzeBibles( {}, {} )").format( Bible1, Bible2 ) )
         assert isinstance( Bible1, Bible )
         assert isinstance( Bible2, Bible )
         assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
@@ -967,10 +951,10 @@ def analyzeBibles( Bible1, Bible2 ):
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running segmentizeBooks on both Bibles…") )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running segmentizeBooks on both Bibles…") )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( exp("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+            print( _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -981,7 +965,7 @@ def analyzeBibles( Bible1, Bible2 ):
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Comparing {}…").format( BBB ) )
             bSegmentList[BBB], bResults[BBB] = segmentizeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
             print( BBB, bSegmentList[BBB] )
             print( BBB, bResults[BBB] )
@@ -1009,7 +993,7 @@ def compareBibles( Bible1, Bible2,
         in order to try to determine what are the normal standards.
     """
     if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule: print( exp("compareBibles( {}, {} )").format( Bible1, Bible2 ) )
+        if debuggingThisModule: print( _("compareBibles( {}, {} )").format( Bible1, Bible2 ) )
         assert isinstance( Bible1, Bible )
         assert isinstance( Bible2, Bible )
         assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
@@ -1021,11 +1005,11 @@ def compareBibles( Bible1, Bible2,
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( exp("Running compareBooksPedantic on both Bibles…") )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running compareBooksPedantic on both Bibles…") )
     bResults = {}
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( exp("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+            print( _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1036,7 +1020,7 @@ def compareBibles( Bible1, Bible2,
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + exp("Comparing {}…").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Comparing {}…").format( BBB ) )
             bResults[BBB] = compareBooksPedantic( Bible1[BBB], Bible2[BBB], compareQuotes=compareQuotes,
                                                 comparePunctuation=comparePunctuation, compareDigits=compareDigits,
                                                 illegalCleanTextOnlyStrings1=illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2=illegalCleanTextOnlyStrings2,

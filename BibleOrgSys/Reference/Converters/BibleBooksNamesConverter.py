@@ -383,7 +383,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -438,7 +438,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         raise Exception( "Python export not working properly yet" )
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -493,7 +493,7 @@ class BibleBooksNamesConverter:
         self.importDataToPython()
         assert self.__BookNamesSystemsDict
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
@@ -540,7 +540,7 @@ class BibleBooksNamesConverter:
         self.importDataToPython()
         assert self.__BookNamesSystemsDict
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.h' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.h' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 

@@ -28,7 +28,7 @@ Module for creating and manipulating USX filenames.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-01-06' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
 PROGRAM_VERSION = '0.54'
@@ -38,6 +38,7 @@ programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIF
 debuggingThisModule = False
 
 
+from typing import List, Tuple
 import os
 import logging
 
@@ -183,16 +184,17 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
+        # print( f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )" )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
+                logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
                 removeBBB, removeFilename = existingBBB, existingFilename
             if existingFilename == filename:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
+                logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
                 removeBBB, removeFilename = existingBBB, existingFilename
-        if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
-        else: givenList.append( (BBB,filename,) )
+        if removeFilename: givenList.remove( (removeBBB,removeFilename) )
+        else: givenList.append( (BBB,filename) )
     # end of USXFilenames.doListAppend
 
 
@@ -253,31 +255,32 @@ class USXFilenames:
     # end of USXFilenames.getConfirmedFilenameTuples
 
 
-    def getPossibleFilenameTuples( self, strictCheck:bool=False ):
+    def getPossibleFilenameTuples( self, strictCheck:bool=False ) -> List[Tuple[str,str]]:
         """
         Return a list of filenames just derived from the list of files in the folder,
                 i.e., look only externally at the filenames.
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
         #print( "getPossibleFilenameTuples()" )
-        #print( "self.fileList", len(self.fileList), self.fileList )
+        # print( "self.fileList", len(self.fileList), self.fileList )
+
         resultList = []
         for possibleFilename in self.fileList:
-            print( len(resultList), possibleFilename )
+            # print( len(resultList), possibleFilename )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
-                #if BBB[0]=='E': print( USFMBookCode,USFMDigits,BBB )
                 ignore = False
                 for ending in filenameEndingsToIgnore:
                     if pFUpper.endswith( ending): ignore=True; break
                 if ignore: continue
-                if USFMBookCode.upper() in pFUpperProper:
+                checkString = pFUpperProper[3:] if self.pattern == 'dddBBB' else pFUpperProper
+                # Otherwise 051COL.usx gets confused between 1Co and Col
+                if USFMBookCode.upper() in checkString:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                             firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
-                            #print( "firstLinesGPFT", firstLines )
                             if not firstLines or len(firstLines)<3:
                                 continue
                             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
@@ -288,7 +291,7 @@ class USXFilenames:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        #print( "resultList", len(resultList), resultList )
+        # print( "final resultList", len(resultList), resultList )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getPossibleFilenameTuples
 

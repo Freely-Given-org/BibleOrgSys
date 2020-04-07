@@ -27,6 +27,7 @@
 Module testing BibleVersificationSystemsConverter.py and BibleVersificationSystems.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Versification Systems tests"
 PROGRAM_VERSION = '0.48'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,6 +49,9 @@ class BibleVersificationSystemsConverterTests(unittest.TestCase):
     """ Unit tests for the BibleVersificationSystemsConverter object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleVersificationSystemsConverter object
         self.bvssc = BibleVersificationSystemsConverter.BibleVersificationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
@@ -97,6 +101,9 @@ class BibleVersificationSystemsTests(unittest.TestCase):
     """ Unit tests for the BibleVersificationSystems object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleVersificationSystems object
         self.bvss = BibleVersificationSystems.BibleVersificationSystems().loadData( os.path.join( sourceFolder, "DataFiles/VersificationSystems/" ) ) # Doesn't reload the XML unnecessarily :)
 
@@ -158,6 +165,9 @@ class BibleVersificationSystemTests(unittest.TestCase):
     """ Unit tests for the BibleVersificationSystem object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create a BibleVersificationSystem object
         self.systemName = "KJV"
         self.bvs = BibleVersificationSystems.BibleVersificationSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)

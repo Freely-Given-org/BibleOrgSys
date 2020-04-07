@@ -140,7 +140,7 @@ class GreekStrongsFileConverter:
             logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
             raise FileNotFoundError
         except ParseError as err:
-            logging.critical( exp("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
+            logging.critical( _("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
             raise ParseError
         if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 

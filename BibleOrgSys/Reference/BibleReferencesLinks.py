@@ -75,8 +75,8 @@ class BibleReferencesLinks:
         """ Loads the index file (if not done already). """
         if not self.__Index: # We need to load it once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
-            standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleReferencesLinks_Tables.index.pickle' )
-            self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleReferencesLinks_Tables.data.pickle' )
+            standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
+            self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -194,7 +194,7 @@ class BibleReferencesLinks:
         #if not self.__DataList: # We need to load them once -- don't do this unnecessarily
             ## See if we can load from the pickle file (faster than loading from the XML)
             #standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleReferencesLinks.xml" )
-            #standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleReferencesLinks_Tables.pickle" )
+            #standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleReferencesLinks_Tables.pickle" )
             ##print( os.access( standardPickleFilepath, os.R_OK ) )
             ##print( os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
             ##print( os.stat(standardPickleFilepath).st_ctime )

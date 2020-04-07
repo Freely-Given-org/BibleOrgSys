@@ -302,7 +302,7 @@ class BibleStylesheet():
         from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( exp("validate"), USFMMarker, styleData )
+                print( _("validate"), USFMMarker, styleData )
             if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check

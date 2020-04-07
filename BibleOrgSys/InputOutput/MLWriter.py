@@ -575,7 +575,7 @@ def demo() -> None:
     if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
 
     if 1: # Demo the writer object with XML
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
         outputFilename = 'test.xml'
         if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
         #schema = "http://someURL.net/myOwn.xsd"
@@ -608,7 +608,7 @@ def demo() -> None:
 
     if 1: # Demo the writer object with HTML5
         import datetime
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
         outputFilename = 'test.html'
         if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
         schema = ""

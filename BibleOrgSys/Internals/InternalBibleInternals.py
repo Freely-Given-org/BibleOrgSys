@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,7 +66,7 @@ Some notes about internal formats:
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-12-12' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.78'
@@ -117,7 +117,7 @@ BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS +
 
 BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' )
 
-BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
+BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list' )
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)

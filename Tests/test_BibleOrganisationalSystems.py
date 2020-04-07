@@ -27,6 +27,7 @@
 Module testing BibleOrganisationalSystemsConverter.py and BibleOrganisationalSystems.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Organizational Systems tests"
 PROGRAM_VERSION = '0.48'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,6 +49,9 @@ class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystemsConverter object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystemsConverter object
         self.bossc = BibleOrganisationalSystemsConverter.BibleOrganisationalSystemsConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
@@ -97,6 +101,9 @@ class BibleOrganisationalSystemsTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystems object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystems object
         self.boss = BibleOrganisationalSystems.BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
@@ -166,6 +173,9 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystem object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create a BibleOrganisationalSystem object
         self.systemName = 'KJV-1638'
         self.bos = BibleOrganisationalSystems.BibleOrganisationalSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)

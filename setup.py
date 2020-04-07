@@ -5,8 +5,8 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
-VERSION = '0.0.6'
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH -- when setup.py was modified below
+VERSION = '0.0.7'
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH — when setup.py was modified below
 
 INCLUDE_DATA_SOURCE_FILES = False
 INCLUDE_DERIVED_DATA_PICKLE_FILES = True
@@ -109,19 +109,19 @@ if INCLUDE_DERIVED_DATA_PICKLE_FILES:
                 'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.pickle',
                 'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.pickle',
                 ]
-if INCLUDE_DERIVED_DATA_JSON_FILES:
-    package_data_list += [
-                'DataFiles/DerivedFiles/iso_639_3_Languages_Tables.json',
-                'DataFiles/DerivedFiles/USFM2Markers_Tables.json',
-                'DataFiles/DerivedFiles/USFM3Markers_Tables.json',
+# if INCLUDE_DERIVED_DATA_JSON_FILES:
+#     package_data_list += [
+#                 'DataFiles/DerivedFiles/iso_639_3_Languages_Tables.json',
+#                 'DataFiles/DerivedFiles/USFM2Markers_Tables.json',
+#                 'DataFiles/DerivedFiles/USFM3Markers_Tables.json',
 
-                'DataFiles/DerivedFiles/BibleBooksCodes_Tables.json',
-                'DataFiles/DerivedFiles/BibleBooksNames_Tables.json',
-                'DataFiles/DerivedFiles/BibleBookOrders_Tables.json',
-                'DataFiles/DerivedFiles/BiblePunctuationSystems_Tables.json',
-                'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.json',
-                'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.json',
-                ]
+#                 'DataFiles/DerivedFiles/BibleBooksCodes_Tables.json',
+#                 'DataFiles/DerivedFiles/BibleBooksNames_Tables.json',
+#                 'DataFiles/DerivedFiles/BibleBookOrders_Tables.json',
+#                 'DataFiles/DerivedFiles/BiblePunctuationSystems_Tables.json',
+#                 'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.json',
+#                 'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.json',
+#                 ]
 
 
 setup(
@@ -155,7 +155,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description="Bible Organisational System",
+    description="Bible Organisational System — load, check, and/or export Bible files/folders",
     license='GPLv3',
 
     # This is an optional longer description of your project that represents
@@ -167,6 +167,8 @@ setup(
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
     long_description="""
+Bible Organisational System / BibleOrgSys / BOS
+
 A system for importing and extracting various book/chapter/verse (BCV) texts,
 including Bibles of course, but also other related BCV materials like Bible commentaries.
 

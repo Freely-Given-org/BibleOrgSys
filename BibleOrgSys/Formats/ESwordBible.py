@@ -78,22 +78,6 @@ BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBLX',) # Must be UPPERCASE here
 
 
 
-def exp( messageString ):
-    """
-    Expands the message string in debug mode.
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit+': ' if nameBit else '', errorBit )
-# end of exp
-
-
-
 def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for e-Sword Bible files or folders in the folder and in the next level down.
@@ -794,7 +778,7 @@ class ESwordBible( Bible ):
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("checkForExtraMaterial( …, … )") )
+            print( _("checkForExtraMaterial( …, … )") )
 
         if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
@@ -818,7 +802,7 @@ class ESwordBible( Bible ):
         Load Bible details out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("preload()") )
+            print( "preload()" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -913,7 +897,7 @@ class ESwordBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("load()") )
+            print( _("load()") )
         if not self.preloaded: self.preload()
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
@@ -1097,7 +1081,7 @@ class ESwordBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( exp("loadBook( {} )").format( BBB ) )
+            print( _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
@@ -1768,7 +1752,7 @@ def demo() -> None:
 
 
     if 1: # individual modules in the output folder
-        testFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-SwordExport/' )
+        testFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-SwordExport/' )
         names = ('Matigsalug',)
         for j, name in enumerate( names, start=1 ):
             indexString = 'D' + str( j )

@@ -27,6 +27,7 @@
 Module testing BibleReferences.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible References tests"
 PROGRAM_VERSION = '0.25'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -49,6 +50,9 @@ class BibleReferencesTests( unittest.TestCase ):
     """ Unit tests for the BibleReferences object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystems objects
         self.BOS = BibleOrganisationalSystems.BibleOrganisationalSystem( "RSV" )
 

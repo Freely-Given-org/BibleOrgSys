@@ -48,6 +48,9 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesConverter object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBooksNamesConverter object
         self.bbnsc = BibleBooksNamesConverter.BibleBooksNamesConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
@@ -97,6 +100,9 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesSystems object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBooksNamesSystems object
         self.bbnss = BibleBooksNames.BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
@@ -192,6 +198,9 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesSystem object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create a BibleBooksNamesSystem object
         self.systemName = "eng_traditional"
         sampleBookList = ['GEN','EXO','LEV','NUM','DEU','JOS','JDG','SA1','SA2','KI1','KI2','ZEC','MAL']

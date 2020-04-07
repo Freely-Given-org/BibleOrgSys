@@ -3007,10 +3007,10 @@ def demo() -> None:
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
                             BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ),
-                            BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
-                            BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
-                            BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
-                            BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
                             'MadeUpFolder/',
                             ):
             if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -3120,7 +3120,7 @@ def demo() -> None:
                     from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                     readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
                     from ProcessLoadedBible import makeSettingsPage
-                    outputFolderPath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
+                    outputFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
                     if not os.path.exists( outputFolderPath ):
                             os.makedirs( outputFolderPath, 0o755 )
                     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderPath )

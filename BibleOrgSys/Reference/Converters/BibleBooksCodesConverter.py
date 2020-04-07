@@ -621,9 +621,9 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH \
+            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH \
                             if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
-                            else BibleOrgSysGlobals.DEFAULT_CACHE_FOLDERPATH
+                            else BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -656,9 +656,9 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH \
+            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH \
                             if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
-                            else BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+                            else BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -707,7 +707,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -780,7 +780,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'

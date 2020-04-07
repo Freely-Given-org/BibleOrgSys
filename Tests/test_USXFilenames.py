@@ -47,6 +47,9 @@ class USXFilenamesTests1( unittest.TestCase ):
     """ Unit tests for the USXFilenames object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         testFolder = 'Tests/DataFilesForTests/USXTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
@@ -134,6 +137,9 @@ class USXFilenamesTests2( unittest.TestCase ):
     """ Unit tests for the USXFilenames object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         testFolder = 'Tests/DataFilesForTests/USXTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
@@ -158,8 +164,7 @@ class USXFilenamesTests2( unittest.TestCase ):
 
     def test_020_getPossibleFilenameTuples( self ):
         """ Test the getPossibleFilenameTuples function. """
-        results = self.UFns.getPossibleFilenameTuples()
-        print("results", len(results), results)
+        results = self.UFns.getPossibleFilenameTuples( strictCheck=False )
         self.assertTrue( isinstance( results, list ) )
         self.assertEqual( len(results), 66 )
         self.assertFalse( None in results )

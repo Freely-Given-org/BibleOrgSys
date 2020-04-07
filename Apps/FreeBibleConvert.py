@@ -62,7 +62,7 @@ BIBLES_FOLDERPATH = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpa
 INPUT_FILEPATH = os.path.join( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/FBVNT2.1.1.txt' )
 
 # Subfolder USFM/ gets added to OUTPUT_FOLDERPATH for writing the individual USFM files
-OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'FreeBibleConversion/' )
+OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'FreeBibleConversion/' )
 #OUTPUT_FOLDERPATH = os.path.join( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/' )
 
 

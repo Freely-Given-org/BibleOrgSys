@@ -27,6 +27,7 @@
 Module testing ISO_639_3_Languages.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "ISO-639-3 language code tests"
 PROGRAM_VERSION = '0.85'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,6 +49,9 @@ class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
     """ Unit tests for the _ISO_639_3_LanguagesConverter object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the ISO_639_3_LanguagesConverter object
         self.isoLgC = ISO_639_3_LanguagesConverter.ISO_639_3_LanguagesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
@@ -92,6 +96,9 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
     badCodes = ('abaa','Eng','qwq','zzz','17','123',)
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the ISO_639_3_Languages object
         self.isoLgs = ISO_639_3_Languages.ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
 

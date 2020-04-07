@@ -360,7 +360,7 @@ class USFM2MarkersConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
@@ -410,7 +410,7 @@ class USFM2MarkersConverter:
         self.importDataToPython()
         assert self.__DataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -451,7 +451,7 @@ class USFM2MarkersConverter:
         self.importDataToPython()
         assert self.__DataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
@@ -515,7 +515,7 @@ class USFM2MarkersConverter:
         assert self.__DataDicts
 
         raise Exception( "C export not written yet, sorry." )
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file

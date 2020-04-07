@@ -28,10 +28,10 @@ Module handling BibleOrganisationalSystems.xml to produce C and Python data tabl
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystemsConverter"
 PROGRAM_NAME = "Bible Organisation Systems converter"
-PROGRAM_VERSION = '0.26'
+PROGRAM_VERSION = '0.27'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
@@ -51,9 +51,6 @@ from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystems
 from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystems
 from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystems
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
-
-
-allowedTypes = ( 'edition', 'revision', 'translation', 'original', ) # NOTE: The order is important here
 
 
 
@@ -279,7 +276,8 @@ class BibleOrganisationalSystemsConverter:
             bits['referenceAbbreviation'] = referenceAbbreviation
             myType = element.get( 'type' )
             bits['type'] = myType
-            if myType not in allowedTypes: logging.error( _("Unrecognized {!r} type for {!r} (expected one of {})").format(myType,referenceAbbreviation,allowedTypes) )
+            if myType not in BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES: 
+                logging.error( _("Unrecognized {!r} type for {!r} (expected one of {})").format(myType,referenceAbbreviation, BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES) )
             languageCode = element.find('languageCode').text
             if self._ISOLanguages and not self._ISOLanguages.isValidLanguageCode( languageCode ): # Check that we have a valid language code
                 if languageCode != '???':
@@ -377,10 +375,11 @@ class BibleOrganisationalSystemsConverter:
         assert self.__dataDicts
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: 
+            print( f"Exporting BibleOrganisationalSystems to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__dataDicts, myFile )
     # end of pickle
@@ -403,7 +402,7 @@ class BibleOrganisationalSystemsConverter:
         self.importDataToPython()
         assert self.__dataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
 
         dataDict, indexDict, combinedIndexDict = self.importDataToPython()
@@ -433,7 +432,7 @@ class BibleOrganisationalSystemsConverter:
         self.importDataToPython()
         assert self.__dataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
@@ -481,7 +480,7 @@ class BibleOrganisationalSystemsConverter:
         self.importDataToPython()
         assert self.__dataDicts
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.h' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.h' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
 
         dataDict, indexDict, combinedIndexDict = self.importDataToPython()

@@ -5,7 +5,7 @@
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2017-12-09' # by RJH
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrderSystemsConverter"
 PROGRAM_NAME = "Bible Book Order Systems converter"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -323,10 +323,10 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath:
-            folder = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH
+            folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -349,7 +349,7 @@ class BibleBookOrdersConverter:
         self.importDataToPython()
         assert self.__DataDicts and self.__DataLists
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
 
         # Split into two dictionaries
@@ -387,7 +387,7 @@ class BibleBookOrdersConverter:
         self.importDataToPython()
         assert self.__DataDicts and self.__DataLists
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
+        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
@@ -444,7 +444,7 @@ class BibleBookOrdersConverter:
         self.importDataToPython()
         assert self.__DataDicts and self.__DataLists
 
-        if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' )
+        if not filepath: filepath = str( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' ) )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
@@ -519,13 +519,13 @@ class BibleBookOrdersConverter:
         #if systemMatchCount:
             #if systemMatchCount == 1: # What we hope for
                 #print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.debugFlag: print( errorSummary )
             #else:
                 #print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.commandLineArguments.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.debugFlag: print( errorSummary )
         #else:
             #print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            #print( allErrors if BibleOrgSysGlobals.commandLineArguments.debug else errorSummary )
+            #print( allErrors if BibleOrgSysGlobals.debugFlag else errorSummary )
 
         #if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             #outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleBookOrder_"+systemName + '.xml' )

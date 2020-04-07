@@ -27,6 +27,7 @@
 Module testing BiblePunctuationSystemsConverter.py and BiblePunctuationSystems.py.
 """
 
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Punctuation Systems tests"
 PROGRAM_VERSION = '0.42'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -48,7 +49,10 @@ class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
     """ Unit tests for the _BiblePunctuationSystemsConverter object. """
 
     def setUp( self ):
-        # Create the BiblePunctuationSystemsConvertor object
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
+        # Create the BiblePunctuationSystemsConverter object
         self.bpssc = BiblePunctuationSystemsConverter.BiblePunctuationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
     def test_1005_str( self ):
@@ -96,6 +100,9 @@ class BiblePunctuationSystemsTests( unittest.TestCase ):
     """ Unit tests for the BiblePunctuationSystems object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create the BiblePunctuationSystems object
         self.bpss = BiblePunctuationSystems.BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
@@ -150,6 +157,9 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
     """ Unit tests for the BiblePunctuationSystem object. """
 
     def setUp( self ):
+        parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+        # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+        BibleOrgSysGlobals.preloadCommonData()
         # Create a BiblePunctuationSystem object
         self.systemName = "English"
         self.bps = BiblePunctuationSystems.BiblePunctuationSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)

@@ -57,10 +57,10 @@ BibleOrganisationalSystem class:
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
 PROGRAM_NAME = "Bible Organisation Systems handler"
-PROGRAM_VERSION = '0.34'
+PROGRAM_VERSION = '0.35'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -106,7 +106,7 @@ class BibleOrganisationalSystems:
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
                 standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BibleOrganisationalSystems.xml" )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleOrganisationalSystems_Tables.pickle" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleOrganisationalSystems_Tables.pickle" )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -120,9 +120,10 @@ class BibleOrganisationalSystems:
                     if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
                     return self # So this command can be chained after the object creation
             # else: # We have to load the XML (much slower)
-            from BibleOrgSys.Reference.Converters.BibleOrganisationalSystemsConverter import BibleOrganisationalSystemsConverter, allowedTypes
+            from BibleOrgSys.Reference.Converters.BibleOrganisationalSystemsConverter import BibleOrganisationalSystemsConverter
             if XMLFileOrFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
             bosc = BibleOrganisationalSystemsConverter()
             bosc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
@@ -144,10 +145,10 @@ class BibleOrganisationalSystems:
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__dataDict) )
         if BibleOrgSysGlobals.verbosityLevel > 1: # Do a bit of extra analysis
             counters = {}
-            for possibleType in allowedTypes: counters[possibleType] = 0
+            for possibleType in BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES: counters[possibleType] = 0
             for systemName, data in self.__dataDict.items():
                 counters[data["type"]] += 1
-            for possibleType in allowedTypes:
+            for possibleType in BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES:
                 if counters[possibleType]: result += "    {} {}(s)".format( counters[possibleType], possibleType )
         return result
     # end of BibleOrganisationalSystems.__str__
@@ -202,7 +203,7 @@ class BibleOrganisationalSystems:
                 return self.__dataDict[ index[0] ]
             # else it's an ambiguous name that has multiple matches
             #print( 'here' )
-            for possibleType in allowedTypes: # Steps through in priority order
+            for possibleType in BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES: # Steps through in priority order
                 #print( possibleType )
                 x = systemName + '_' + possibleType
                 if x in self.__dataDict: return self.__dataDict[x]
@@ -235,7 +236,7 @@ class BibleOrganisationalSystems:
                 #print( "\nindexDict", self.__indexDict )
                 #print( "\ncombinedIndexDict", self.__combinedIndexDict )
                 assert isinstance( trySystemNames, list ) # Maybe this can also be a string???
-                for possibleType in reversed( allowedTypes ):
+                for possibleType in reversed( BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES ):
                     #print( 'possibleType', possibleType )
                     for trySystemName in trySystemNames:
                         if trySystemName == systemName: # Avoid infinite recursion
@@ -267,8 +268,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             """ Gets a value for the system. """
             def getMoreBasicTypes():
                 """ Returns a list of more basic (original) types. """
-                ix = allowedTypes.index( self.__dataDict["type"] )
-                return allowedTypes[ix+1:]
+                ix = BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES.index( self.__dataDict["type"] )
+                return BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES[ix+1:]
             # end of getMoreBasicTypes
 
             #print( "q0", valueName )
@@ -374,8 +375,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
     def getMoreBasicTypes( self ):
         """ Returns a list of more basic (original) types. """
-        ix = allowedTypes.index( self.__dataDict["type"] )
-        return allowedTypes[ix+1:]
+        ix = BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES.index( self.__dataDict["type"] )
+        return BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES[ix+1:]
     # end of BibleOrganisationalSystem.getMoreBasicTypes
 
 

@@ -226,7 +226,7 @@ class BibleBooksNamesSystems:
         if not self.__DataDicts: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             picklesGood = False
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', "BibleBooksNames_Tables.pickle" )
+            standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleBooksNames_Tables.pickle" )
             if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
                 standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BookNames/" )
                 pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]

@@ -200,7 +200,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
 
     if BibleOrgSysGlobals.debugFlag: print( "createPickledBible( {}, {}, {}, {} )".format( outputFolder, metadataDict, dataLevel, zipOnly ) )
     #if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running createPickledBible" )
-    #if not outputFolder: outputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
+    #if not outputFolder: outputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
     #if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
     if metadataDict is None: metadataDict = {}
@@ -753,8 +753,8 @@ def demo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest2/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest3/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
-                    BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' ),
-                    BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Reexport/' ),
+                    BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' ),
+                    BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Reexport/' ),
                     'MadeUpFakeFolder/',
                     )
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -779,7 +779,7 @@ def demo() -> None:
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 
-    resourcesFolder = BibleOrgSysGlobals.DOWNLOADED_RESOURCES_FOLDERPATH
+    resourcesFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH
     if 1: # demo the file checking code with zip files
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
@@ -807,8 +807,8 @@ def demo() -> None:
                         ("Test1", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/') ),
                         ("Test2", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest2/') ),
                         ("Test3", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest3/') ),
-                        ("Exported1", 'utf-8', BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/') ),
-                        ("Exported2", 'utf-8', BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Reexport/') ),
+                        ("Exported1", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/') ),
+                        ("Exported2", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Reexport/') ),
                         ) ):
             if os.access( testFolder, os.R_OK ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nPickle Bible C{}/".format( j+1 ) )
@@ -861,7 +861,7 @@ def demo() -> None:
 
 
     if 1: # Load a zipped version
-        pFilepath = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/MBTV'+ZIPPED_PICKLE_FILENAME_END )
+        pFilepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/MBTV'+ZIPPED_PICKLE_FILENAME_END )
         if os.access( pFilepath, os.R_OK ):
             pBible = PickledBible( pFilepath )
             if BibleOrgSysGlobals.verbosityLevel > 0: print( "D1:", pBible )
@@ -873,7 +873,7 @@ def demo() -> None:
 
 
     if 1: # demo the file checking code with zip files
-        testResourcesFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_DistributableResources/' )
+        testResourcesFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_DistributableResources/' )
         j = 1
         for testFolder in ( resourcesFolder, testResourcesFolder ):
             if os.path.exists( testFolder ):
@@ -896,7 +896,7 @@ def demo() -> None:
 
 
     if 1: # demo the file checking code with zip files
-        testResourcesFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_PrivateResources/' )
+        testResourcesFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_PrivateResources/' )
         j = 1
         for testFolder in ( resourcesFolder, testResourcesFolder ):
             if os.path.exists( testFolder ):

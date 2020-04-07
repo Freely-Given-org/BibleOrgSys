@@ -71,7 +71,7 @@ from BibleOrgSys.InputOutput import SFMFile
 
 testFolder = 'Tests/DataFilesForTests/'
 testFile = 'Songs.sfm'
-outputFolder = BibleOrgSysGlobals.DEFAULT_OUTPUT_FOLDERPATH
+outputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
 
 
 def main():

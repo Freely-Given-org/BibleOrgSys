@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.83'
@@ -79,22 +79,7 @@ class BibleBooksCodes:
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
                 standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' )
-                standardJsonFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBooksCodes_Tables.json' )
-                if os.access( standardJsonFilepath, os.R_OK ) \
-                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
-                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
-                    import json
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( f"Loading json file {standardJsonFilepath}…" )
-                    with open( standardJsonFilepath, 'rb') as JsonFile:
-                        self.__DataDicts = json.load( JsonFile )
-                    # NOTE: We have to convert str referenceNumber keys back to ints
-                    self.__DataDicts['referenceNumberDict'] = { int(key):value \
-                                for key,value in self.__DataDicts['referenceNumberDict'].items() }
-                    return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    print( "BibleBooksCodes JSON file can't be loaded!" )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'DerivedFiles/', 'BibleBooksCodes_Tables.pickle' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.pickle' )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -111,7 +96,22 @@ class BibleBooksCodes:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
-                    print( "BibleBooksCodes Pickle file can't be loaded!" )
+                    print( "BibleBooksCodes pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.json' )
+                if os.access( standardJsonFilepath, os.R_OK ) \
+                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    import json
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading json file {standardJsonFilepath}…" )
+                    with open( standardJsonFilepath, 'rb') as JsonFile:
+                        self.__DataDicts = json.load( JsonFile )
+                    # NOTE: We have to convert str referenceNumber keys back to ints
+                    self.__DataDicts['referenceNumberDict'] = { int(key):value \
+                                for key,value in self.__DataDicts['referenceNumberDict'].items() }
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBooksCodes JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBooksCodesConverter import BibleBooksCodesConverter
             if XMLFileOrFilepath is not None:
