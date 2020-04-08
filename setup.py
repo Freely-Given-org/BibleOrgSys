@@ -5,7 +5,7 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
-VERSION = '0.0.7'
+VERSION = '0.0.9'
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH — when setup.py was modified below
 
 INCLUDE_DATA_SOURCE_FILES = False
@@ -167,9 +167,9 @@ setup(
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
     long_description="""
-Bible Organisational System / BibleOrgSys / BOS
+**Bible Organisational System** / **BibleOrgSys** / **BOS**
 
-A system for importing and extracting various book/chapter/verse (BCV) texts,
+A library of modules for importing and extracting various book/chapter/verse (BCV) texts,
 including Bibles of course, but also other related BCV materials like Bible commentaries.
 
 NOTE: This packaging is still being tested following massive restructuring,
@@ -177,15 +177,12 @@ and is not necessarily fully functional until it is marked as v0.1.0 or higher.
 We also have hopes to improve documentation before v0.2.0.
 
 A future package of apps that use the BOS is also planned for release.
-After that point, we also hope to release a Snap version.
+After that point, we also hope to release Docker and Snap versions.
 
 This software has been developed in small chunks of spare time since 2010
 (so it's not necessarily well-thought out, and definitely not polished).
 However, it has been tested on hundreds of Bible filesets,
-including USFM, OSIS, USX, USFX, and other import formats.
-
-No attempt at all has been made at memory or speed optimisations
-and this is not planned until after the release of v1.0.0.
+including USFM, OSIS, USX, USFX, and many other import formats.
 
 This software forms the basis of the online Bible Drop Box service
 hosted at http://Freely-Given.org/Software/BibleDropBox/.
@@ -193,6 +190,89 @@ hosted at http://Freely-Given.org/Software/BibleDropBox/.
 This package will not reach v1.0.0 until versification mapping is added.
 
 The API will not become fixed/stable until the v1.0.0 release.
+
+No attempt at all has been made at memory or speed optimisations
+and this is not planned until after the release of v1.0.0.
+
+Here is a simple **USFM to USX converter** using BibleOrgSys:
+
+```
+#!/usr/bin/env python3
+#
+# USFM2USX.py (minimal version)
+#
+# Command-line app to export a USX (XML) Bible.
+#
+# Copyright (C) 2019-2020 Robert Hunt
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
+# License: See gpl-3.0.txt
+#
+'''
+A short command-line app as part of BOS (Bible Organisational System) demos.
+This app inputs any known type of Bible file(s) from disk
+    and then exports a USX version in the (default) OutputFiles folder
+        (inside the BibleOrgSys folder in your home folder).
+
+Note that this app can be run from using the command:
+        USFM2USX.py path/to/fileOrFolder
+
+You can discover the available command line parameters with
+        USFM2USX.py --help
+
+This app also demonstrates how little code is required to use the BOS
+    to load a Bible (in any of a large range of formats — see UnknownBible.py)
+    and then to export it in your desired format (see options in BibleWriter.py).
+'''
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.UnknownBible import UnknownBible
+
+PROGRAM_NAME = "USFM to USX (minimal)"
+PROGRAM_VERSION = '0.04'
+
+# Configure basic Bible Organisational System (BOS) set-up
+parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
+parser.add_argument( "inputFolderpath", help="path/to/folder of USFM files" )
+BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
+
+# Do the actual Bible load and export work that we want
+unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputFolderpath )
+loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
+if not isinstance( loadedBible, str ): # i.e., not an error message
+    loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
+    print( f"\\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )}/ folder." )
+
+# Do the BOS close-down stuff
+BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
+```
+
+A short command-line app as part of BOS (Bible Organisational System) demos.
+This app inputs any known type of Bible file(s)
+    and then exports a USX version in the (default) OutputFiles folder
+        (inside the BibleOrgSys folder in your home folder).
+
+This app can be run using the command:
+        `USFM2USX.py`
+
+You can discover the version with
+        `USFM2USX.py --version`
+
+You can discover the available command line parameters with
+        `USFM2USX.py --help`
+
+    e.g., for verbose mode
+        `USFM2USX.py --verbose path/to/fileOrFolder`
+    or using the abbreviated option
+        `USFM2USX.py -v path/to/fileOrFolder`
+
+This app also demonstrates how little actual code is required to use the BOS
+    to load a Bible (in any of a large range of formats — see UnknownBible.py)
+    and then to export it in your desired format (see options in BibleWriter.py).
+
+The BOS is developed and well-tested on Linux (Ubuntu) but also runs on Windows (although not so well tested).
+
+See https://ubsicap.github.io/usfm/ for more information about USFM.
+
+See https://ubsicap.github.io/usx/ for more information about USX.
 """,
 #    long_description=long_description,
 

@@ -6,7 +6,7 @@
 # Module writing out InternalBibles in various formats.
 #
 # Copyright (C) 2010-2020 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-07' # by RJH
+LAST_MODIFIED_DATE = '2020-04-08' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -4040,7 +4040,7 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logger.warning( _("toUSX2XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        print( ALL_CHAR_MARKERS )
+                                        print( "toUSX2XML ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag \
                                         or BibleOrgSysGlobals.strictCheckingFlag:
                                             halt
@@ -4210,7 +4210,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if getMarkerContentType != 'A':
-                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer — should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
+                        logger.error( "BibleWriter.toUSX2XML: ToProgrammer — markerContentType should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -4298,9 +4298,13 @@ class BibleWriter( InternalBible ):
     def toUSX3XML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
-            converts the USFM information to UTF-8 USX XML files.
+            converts the USFM information to UTF-8 USX 3.0 XML files.
+
+        See https://ubsicap.github.io/usx/ for more information.
 
         If a schema is given (either a path or URL), the XML output files are validated.
+
+        TODO: Actually implement USX 3 spec, haha.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toUSX3XML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
@@ -4582,7 +4586,7 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSX3XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logger.warning( _("toUSX3XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        print( "ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
+                                        print( "toUSX3XML ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
@@ -4659,7 +4663,7 @@ class BibleWriter( InternalBible ):
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
-            xw.writeLineOpen( 'usx', (('version','2.6') if version>=2 else None ) )
+            xw.writeLineOpen( 'usx', (('version','3.0') if version>=3 else None ) )
             haveOpenPara = paraJustOpened = False
             gotVP = None
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
@@ -4747,7 +4751,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if getMarkerContentType != 'A':
-                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer — should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
+                        logger.error( "BibleWriter.toUSX3XML: ToProgrammer — markerContentType should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -8401,6 +8405,9 @@ class BibleWriter( InternalBible ):
         # This is the main code of toPhotoBible
         # Write the JPG files in the appropriate folders
         for BBB,bookObject in self.books.items(): # BBB is our three-character book code
+            if BibleOrgSysGlobals.verbosityLevel > 1: # More than usual coz this is slower than most exports
+                print( "  " + _("toPhotoBible: processing {} {}…").format( self.abbreviation, BBB ) )
+
             internalBibleBookData = bookObject._processedLines
 
             # Find a suitable bookname
@@ -10230,13 +10237,14 @@ class BibleWriter( InternalBible ):
 
         TODO: Could be a function rather than a method (self is not used).
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doExportHelper( {} )".format( ff ) )
+        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
+            print( f"BibleWriter.doExportHelper( {ff} )…" )
         function, folder = ff
         if function is None: return None # Some exports are not always requested
 
         try: result = function( folder )
         except Exception as err: # Got to catch and report the exceptions here
-            print( "BibleWriter.doExportHelper: Unexpected error in {} using {}:".format( function, folder ), sys.exc_info()[0], err)
+            print( f"BibleWriter.doExportHelper: Unexpected error in {function} using {folder}:", sys.exc_info()[0], err)
             result = False
         return result
     # end of BibleWriter.doExportHelper

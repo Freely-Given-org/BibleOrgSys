@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # GetKJVVerseNumber.py
@@ -6,7 +6,7 @@
 # App to convert between Bible references and absolute verse numbers.
 #
 # Copyright (C) 2015-2018 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify

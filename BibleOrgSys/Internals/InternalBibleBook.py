@@ -6,7 +6,7 @@
 # Module handling the internal markers for individual Bible books
 #
 # Copyright (C) 2010-2020 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-03-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-08' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -2558,7 +2558,7 @@ class InternalBibleBook:
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker[1:] ) ) \
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp#',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp#','v=') and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( lineLocationSpace + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )

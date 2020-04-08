@@ -6,7 +6,7 @@
 # Module handling BibleReferencesLinks.xml to produce C and Python data tables
 #
 # Copyright (C) 2015-2020 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2020-04-08' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
 PROGRAM_NAME = "Bible References Links converter"
 PROGRAM_VERSION = '0.41'
@@ -438,8 +438,8 @@ class BibleReferencesLinksConverter:
             numRefs = len( entryList )
             if numRefs > mostReferences: mostReferences, mostVerseRef = numRefs, verseRef
             totalReferences += numRefs
-        print( "  {} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
-        print( "  {} total links for all references".format( totalReferences ) )
+        print( "  {:,} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
+        print( "  {:,} total links for all references".format( totalReferences ) )
 
         return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython

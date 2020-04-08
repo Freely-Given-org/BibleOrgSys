@@ -6,7 +6,7 @@
 # Module handling BibleBooksNames
 #
 # Copyright (C) 2010-2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -597,7 +597,7 @@ if __name__ == '__main__':
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
-    parser.add_argument("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
+    parser.add_argument("-p", "--expandDemo", action='store_true', dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()

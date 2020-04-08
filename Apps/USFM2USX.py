@@ -1,12 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # USFM2USX.py
 #
 # Command-line app to export a USX (XML) Bible.
 #
-# Copyright (C) 2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Copyright (C) 2019-2020 Robert Hunt
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -24,16 +24,18 @@
 
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
-This app inputs any known type of Bible file(s) [set inputFolder below]
+This app inputs any known type of Bible file(s)
     and then exports a USX version in the (default) OutputFiles folder
-        (inside the folder where you installed the BOS).
+        (inside the BibleOrgSys folder in your home folder).
+    See https://ubsicap.github.io/usfm/ for more information about USFM.
+    See https://ubsicap.github.io/usx/ for more information about USX.
 
 Of course, you must already have Python3 installed on your system.
     (Probably installed by default on most modern Linux systems.)
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/USFM2USX.py
+        Apps/USFM2USX.py path/to/fileOrFolder
 
 You can discover the version with
         Apps/USFM2USX.py --version
@@ -42,47 +44,35 @@ You can discover the available command line parameters with
         Apps/USFM2USX.py --help
 
     e.g., for verbose mode
-        Apps/USFM2USX.py --verbose
+        Apps/USFM2USX.py --verbose path/to/fileOrFolder
     or
-        Apps/USFM2USX.py -v
+        Apps/USFM2USX.py -v path/to/fileOrFolder
 
 This app also demonstrates how little actual code is required to use the BOS
-    to load a Bible (in any of a large range of formats -- see UnknownBible.py)
+    to load a Bible (in any of a large range of formats — see UnknownBible.py)
     and then to export it in your desired format (see options in BibleWriter.py).
 There is also a minimum version of this same app (Apps/USFM2USX.minimal.py)
     which really shows how few lines are required to use the BOS for Bible conversions.
 
-The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
+The BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
 """
 
-# You must specify where to find a Bible to read --
-#   this can be either a relative path (like my example where ../ means go to the folder above)
-#   or an absolute path (which would start with / or maybe ~/ in Linux).
-# Normally this is the only line in the program that you would need to change.
-defaultInputFolder = '/home/robert/Paratext8Projects/MBTV/'
-defaultInputFolder = 'Tests/DataFilesForTests/USFM2AllMarkersProject/'
-# defaultInputFolder = 'Tests/DataFilesForTests/USFM3AllMarkersProject/'
-defaultInputFolder = 'Tests/DataFilesForTests/zTemp/'
-
-
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-01-29' # by RJH
+LAST_MODIFIED_DATE = '2020-04-08' # by RJH
 SHORT_PROGRAM_NAME = "USFM2USX"
 PROGRAM_NAME = "USFM to USX"
-PROGRAM_VERSION = '0.02'
+PROGRAM_VERSION = '0.03'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
-import os, shutil
 
-# Allow the system to find the BOS even when the app is down in its own folder
-if __name__ == '__main__':
-    import sys
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+import os
+import shutil
+
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.Bible import Bible
 from BibleOrgSys.UnknownBible import UnknownBible
 
 
@@ -100,20 +90,18 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    inputFileOrFolder = defaultInputFolder
-
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( programNameVersion )
-        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {inputFileOrFolder!r} …" )
+        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputFolderpath!r} …" )
 
     # Try to detect and read/load the Bible file(s)
-    unknownBible = UnknownBible( inputFileOrFolder ) # Tell it the folder to start looking in
+    unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputFolderpath ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
     if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
     if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
-    if loadedBible is not None:
+    if isinstance( loadedBible, Bible ):
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
 
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
@@ -132,7 +120,7 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
-        print(f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder} folder.")
+        print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder} folder." )
 # end of main
 
 if __name__ == '__main__':
@@ -141,6 +129,7 @@ if __name__ == '__main__':
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
+    parser.add_argument( "inputFolderpath", help="path/to/folder of USFM files" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()

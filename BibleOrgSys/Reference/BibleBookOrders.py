@@ -6,7 +6,7 @@
 # Module handling BibleBookOrderSystems
 #
 # Copyright (C) 2010-2020 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -71,10 +71,10 @@ class BibleBookOrderSystems:
     # end of BibleBookOrderSystems.__init__
 
 
-    def loadData( self, XMLFileOrFilepath=None ):
+    def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
-            if XMLFileOrFilepath is None:
+            if XMLFolder is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
                 standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBookOrders.xml' )
                 standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBookOrders_Tables.pickle' )
@@ -114,10 +114,10 @@ class BibleBookOrderSystems:
                     print( "BibleBookOrders JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBookOrdersConverter import BibleBookOrdersConverter
-            if XMLFileOrFilepath is not None:
-                logging.warning( _("Bible book orders are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+            if XMLFolder is not None:
+                logging.warning( _("Bible book orders are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
             bboc = BibleBookOrdersConverter()
-            bboc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            bboc.loadAndValidate( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
             assert len(self.__DataDicts) == len(self.__DataLists)
             if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:

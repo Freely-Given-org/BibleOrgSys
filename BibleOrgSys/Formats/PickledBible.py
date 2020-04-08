@@ -6,7 +6,7 @@
 # Module handling a set of pickled Bible books (intended for fast loading)
 #
 # Copyright (C) 2018-2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify

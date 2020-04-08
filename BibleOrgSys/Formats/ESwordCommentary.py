@@ -6,7 +6,7 @@
 # Module handling "e-Sword" Bible commentary module files
 #
 # Copyright (C) 2013-2018 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify

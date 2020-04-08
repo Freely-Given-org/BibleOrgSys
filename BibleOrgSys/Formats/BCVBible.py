@@ -6,7 +6,7 @@
 # Module handling Bibles where each verse is stored in a separate file.
 #
 # Copyright (C) 2014-2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
