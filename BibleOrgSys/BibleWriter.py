@@ -2034,7 +2034,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
 
         # Copy across our css style files
@@ -3771,7 +3771,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             rncFilepath = 'ExternalSchemas/DerivedFiles/usx_2.6.rng'
@@ -4318,7 +4318,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             rncFilepath = 'ExternalSchemas/DerivedFiles/usx_3.0.rng'
@@ -4853,7 +4853,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_USFX_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             xsdFilepath = 'ExternalSchemas/usfx.xsd'
@@ -5391,7 +5391,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             xsdFilepath = 'ExternalSchemas/osisCore.2.1.1.xsd'
@@ -6134,7 +6134,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_Zefania_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             xsdFilepath = 'ExternalSchemas/zef2014.xsd'
@@ -6629,7 +6629,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_Haggai_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
         if not validationSchema: # We'll use our copy
             xsdFilepath = 'ExternalSchemas/haggai_20130620.xsd'
@@ -6826,7 +6826,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_OpenSong_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
 
         return createOpenSongXML( self, outputFolderpath, controlDict, validationSchema )
@@ -6849,7 +6849,7 @@ class BibleWriter( InternalBible ):
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
             except FileNotFoundError:
-                logger.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
+                logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
 
         import struct

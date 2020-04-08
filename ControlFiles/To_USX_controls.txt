@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 USXLanguage = en
 USXPublisher = __PUBLISHER__
-USXRights = Copyright (C) 2014 __NAME__
+USXRights = Copyright (C) 2020 __NAME__
 USXContributors =
 USXSource = __NAME__
 USXCoverage = People around the world
