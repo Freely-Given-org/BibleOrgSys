@@ -50,7 +50,7 @@ To use the InternalBibleBook class,
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-08' # by RJH
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -3040,13 +3040,11 @@ class InternalBibleBook:
                     logging.info( "Adjusting percentageProgress from {} back to 100%".format( bkDict['percentageProgress'] ) )
                     bkDict['percentageProgress'] = 100
 
-            #print( self.BBB, bkDict )
             if bkDict['seemsFinished']:
-                #print( self.BBB )
-                #print( bkDict['percentageProgress'] )
-                #print( bkDict['havePopulatedCVmarkers'] )
-                #print( bkDict['haveVerseText'] )
-                assert bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText']
+                if bkDict['percentageProgress']!=100 or not bkDict['havePopulatedCVmarkers'] or not bkDict['haveVerseText']:
+                    print( f"toProgrammer: InternalBibleBook._discover {self.abbreviation} {self.BBB} seems finished but percentageProgress={bkDict['percentageProgress']}, havePopulatedCVmarkers={bkDict['havePopulatedCVmarkers']}, haveVerseText={bkDict['haveVerseText']}!" )
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    assert bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText']
             if not bkDict['haveVerseText']: assert bkDict['percentageProgress']==0 and not bkDict['seemsFinished']
             bkDict['notStarted'] = not bkDict['haveVerseText']
             bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
