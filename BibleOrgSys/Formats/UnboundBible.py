@@ -484,14 +484,12 @@ def demo() -> None:
 
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
-    freeze_support() # Multiprocessing support for frozen Windows executables
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 

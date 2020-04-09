@@ -169,7 +169,7 @@ setup(
     long_description="""
 **Bible Organisational System** / **BibleOrgSys** / **BOS**
 
-A library of modules for importing and extracting various book/chapter/verse (BCV) texts,
+A library of modules for importing and processing various book/chapter/verse (BCV) texts,
 including Bibles of course, but also other related BCV materials like Bible commentaries.
 
 NOTE: This packaging is still being tested following massive restructuring,

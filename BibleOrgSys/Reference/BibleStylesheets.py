@@ -555,8 +555,8 @@ def demo() -> None:
 # end of demo
 
 if __name__ == '__main__':
-    import multiprocessing
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )

@@ -65,7 +65,7 @@ BibleVersificationSystem class:
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-07' # by RJH
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
 PROGRAM_VERSION = '0.61'
@@ -141,9 +141,9 @@ class BibleVersificationSystems:
                         print( f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDict = json.load( JsonFile )
-                    # NOTE: We have to convert str referenceNumber keys back to ints
-                    self.__DataDict['referenceNumberDict'] = { int(key):value \
-                                for key,value in self.__DataDict['referenceNumberDict'].items() }
+                    # # NOTE: We have to convert str referenceNumber keys back to ints
+                    # self.__DataDict['referenceNumberDict'] = { int(key):value \
+                    #             for key,value in self.__DataDict['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
                     print( "BibleVersificationSystems JSON file can't be loaded!" )
@@ -1009,6 +1009,9 @@ def demo() -> None:
 
 
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
