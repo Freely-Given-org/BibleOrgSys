@@ -3042,7 +3042,7 @@ class InternalBibleBook:
 
             if bkDict['seemsFinished']:
                 if bkDict['percentageProgress']!=100 or not bkDict['havePopulatedCVmarkers'] or not bkDict['haveVerseText']:
-                    print( f"toProgrammer: InternalBibleBook._discover {self.abbreviation} {self.BBB} seems finished but percentageProgress={bkDict['percentageProgress']}, havePopulatedCVmarkers={bkDict['havePopulatedCVmarkers']}, haveVerseText={bkDict['haveVerseText']}!" )
+                    print( f"toProgrammer: InternalBibleBook._discover {self.workName} {self.BBB} seems finished but percentageProgress={bkDict['percentageProgress']}, havePopulatedCVmarkers={bkDict['havePopulatedCVmarkers']}, haveVerseText={bkDict['haveVerseText']}!" )
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText']
             if not bkDict['haveVerseText']: assert bkDict['percentageProgress']==0 and not bkDict['seemsFinished']
