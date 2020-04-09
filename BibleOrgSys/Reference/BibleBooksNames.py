@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,17 +28,18 @@ Module handling BibleBooksNames.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-09-19' # by RJH
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
 
-import logging, os
+import os
+import logging
 
 if __name__ == '__main__':
     import sys
@@ -224,34 +225,80 @@ class BibleBooksNamesSystems:
         Loads the XML data file and imports it to dictionary format (if not done already).
         """
         if not self.__DataDicts: # Don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            picklesGood = False
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleBooksNames_Tables.pickle" )
-            if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
-                standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BookNames/" )
-                pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
-                picklesGood = True
-                for filename in os.listdir( standardXMLFolder ):
-                    filepart, extension = os.path.splitext( filename )
-                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
-                    if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKSNAMES_"):
-                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
-                            picklesGood = False; break
-            if picklesGood:
-                import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-                    #self.__ExpandedDicts = pickle.load( pickleFile )
-            else: # We have to load the XML (much slower)
-                from BibleOrgSys.Reference.Converters.BibleBooksNamesConverter import BibleBooksNamesConverter
-                if XMLFolder is not None:
-                    logging.warning( _("Bible books names are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
-                bbnsc = BibleBooksNamesConverter()
-                bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-                self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        return self
+            if XMLFolder is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.pickle' )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # if os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading pickle file {standardPickleFilepath}…" )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        # self.__ExpandedDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBooksNames pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.json' )
+                if os.access( standardJsonFilepath, os.R_OK ) \
+                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    import json
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        print( f"Loading json file {standardJsonFilepath}…" )
+                    with open( standardJsonFilepath, 'rb') as JsonFile:
+                        self.__DataDicts = json.load( JsonFile )
+                        # self.__ExpandedDicts = json.load( JsonFile )
+                    # # NOTE: We have to convert str referenceNumber keys back to ints
+                    # self.__DataDict['referenceNumberDict'] = { int(key):value \
+                    #             for key,value in self.__DataDict['referenceNumberDict'].items() }
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    print( "BibleBooksNames JSON file can't be loaded!" )
+            # else: # We have to load the XML (much slower)
+            from BibleOrgSys.Reference.Converters.BibleBooksNamesConverter import BibleBooksNamesConverter
+            if XMLFolder is not None:
+                logging.warning( _("Bible books name systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
+            bbnsc = BibleBooksNamesConverter( XMLFolder )
+            bbnsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        return self # So this command can be chained after the object creation
+        #     # See if we can load from the pickle file (faster than loading from the XML)
+        #     picklesGood = False
+        #     standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleBooksNames_Tables.pickle" )
+        #     if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
+        #         standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BookNames/" )
+        #         pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
+        #         picklesGood = True
+        #         for filename in os.listdir( standardXMLFolder ):
+        #             filepart, extension = os.path.splitext( filename )
+        #             XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
+        #             if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKSNAMES_"):
+        #                 if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+        #                 or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
+        #                     picklesGood = False; break
+        #     if picklesGood:
+        #         import pickle
+        #         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         with open( standardPickleFilepath, 'rb') as pickleFile:
+        #             self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+        #             #self.__ExpandedDicts = pickle.load( pickleFile )
+        #     else: # We have to load the XML (much slower)
+        #         from BibleOrgSys.Reference.Converters.BibleBooksNamesConverter import BibleBooksNamesConverter
+        #         if XMLFolder is not None:
+        #             logging.warning( _("Bible books names are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
+        #         bbnsc = BibleBooksNamesConverter()
+        #         bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+        #         self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        # return self
     # end of BibleBooksNamesSystems.loadData
 
     def __str__( self ):
@@ -593,7 +640,9 @@ def demo() -> None:
 # end of demo
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
