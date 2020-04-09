@@ -35,7 +35,7 @@ Of course, you must already have Python3 installed on your system.
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/USFM2USX.py path/to/fileOrFolder
+        Apps/USFM2USX.py path/to/BibleFileOrFolder
 
 You can discover the version with
         Apps/USFM2USX.py --version
@@ -44,9 +44,9 @@ You can discover the available command line parameters with
         Apps/USFM2USX.py --help
 
     e.g., for verbose mode
-        Apps/USFM2USX.py --verbose path/to/fileOrFolder
+        Apps/USFM2USX.py --verbose path/to/BibleFileOrFolder
     or
-        Apps/USFM2USX.py -v path/to/fileOrFolder
+        Apps/USFM2USX.py -v path/to/BibleFileOrFolder
 
 This app also demonstrates how little actual code is required to use the BOS
     to load a Bible (in any of a large range of formats — see UnknownBible.py)
@@ -92,10 +92,10 @@ def main():
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( programNameVersion )
-        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputFolderpath!r} …" )
+        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
-    unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputFolderpath ) # Tell it the folder to start looking in
+    unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
     if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
     if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
@@ -120,7 +120,7 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
-        print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder} folder." )
+        print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
 # end of main
 
 if __name__ == '__main__':
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
-    parser.add_argument( "inputFolderpath", help="path/to/folder of USFM files" )
+    parser.add_argument( "inputBibleFileOrFolder", help="path/to/BibleFileOrFolder" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
