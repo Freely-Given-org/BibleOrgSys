@@ -953,7 +953,7 @@ def analyzeBibles( Bible1, Bible2 ):
 
     vPrint( 'Info', _("Running segmentizeBooks on both Bibles…") )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vprint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+        vPrint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1007,7 +1007,7 @@ def compareBibles( Bible1, Bible2,
     vPrint( 'Info', _("Running compareBooksPedantic on both Bibles…") )
     bResults = {}
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vprint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+        vPrint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1077,7 +1077,7 @@ def demo():
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
-        vprint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
             print( ' ', result )
 
     if 1: # Test the whole Bibles
@@ -1087,7 +1087,7 @@ def demo():
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         totalCount = resultsBooksCount = 0
-        vprint( 'Quiet', "\nComparing the entire Bibles gave:" )
+        vPrint( 'Quiet', "\nComparing the entire Bibles gave:" )
             for BBB,bookResults in results.items():
                 if bookResults:
                     resultsBooksCount += 1
@@ -1102,12 +1102,12 @@ def demo():
         vPrint( 'Quiet', "\nAnalyzing one book only…" )
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
-        vprint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
             #print( ' 1s', len(segmentResult), segmentResult )
             print( ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
-        vprint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
             print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
             for (C,V,marker),resultString in awResult:
                 resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
@@ -1131,7 +1131,7 @@ def demo():
                     resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
                     print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
                 print( "  {:,} results in {}".format( len(awResult), BBB ) )
-        vprint( 'Quiet', "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
+        vPrint( 'Quiet', "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
 # end of demo
 
 

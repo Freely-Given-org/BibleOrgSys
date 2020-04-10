@@ -507,7 +507,7 @@ class HebrewWLCBibleAddon():
         """
         #print( "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
-        vprint( 'Normal', _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
+        vPrint( 'Normal', _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
         with open( glossingDictExportFilepath, 'wt' ) as exportFile:
@@ -661,7 +661,7 @@ class HebrewWLCBibleAddon():
                                 self.addNewGenericGlossingReference( normalizedHebrewWord, fullRefTuple )
                                 numRefsAdded += 1
                 V = V + 1
-        vprint( 'Quiet', "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
+        vPrint( 'Quiet', "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
     # end of HebrewWLCBibleAddon.updateGenericGlossingReferences
 # end of HebrewWLCBibleAddon class
 
@@ -727,7 +727,7 @@ def demo() -> None:
         #print( testFile )
         wlc = OSISHebrewWLCBible( testFile )
         wlc.load() # Load and process the XML book
-        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
+        vPrint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
@@ -756,7 +756,7 @@ def demo() -> None:
         #print( testFolder )
         wlc = OSISHebrewWLCBible( testFolder )
         wlc.loadBooks() # Load and process the XML files
-        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
+        vPrint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
@@ -798,7 +798,7 @@ def demo() -> None:
         #print( testFolder )
         wlc = OSISHebrewWLCBible( testFolder )
         #wlc.load() # Load and process the XML
-        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
+        vPrint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )

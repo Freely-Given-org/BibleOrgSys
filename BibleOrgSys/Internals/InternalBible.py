@@ -1410,7 +1410,7 @@ class InternalBible:
         Creates an index for each book of the Bible.
         """
         # Get our recommendations for added units -- only load this once per Bible
-        vprint( 'Normal', _("makeSectionIndex for {} Bible…").format( self.name ) )
+        vPrint( 'Normal', _("makeSectionIndex for {} Bible…").format( self.name ) )
         if 'discoveryResults' not in self.__dict__: self.discover()
 
         self.sectionIndex = {}
@@ -1485,7 +1485,7 @@ class InternalBible:
 
         Returns a dictionary of result flags.
         """
-        vprint( 'Normal', "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+        vPrint( 'Normal', "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )

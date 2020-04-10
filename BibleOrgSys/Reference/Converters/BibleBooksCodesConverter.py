@@ -627,7 +627,7 @@ class BibleBooksCodesConverter:
                             else BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.pickle' )
-        vprint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of BibleBooksCodesConverter.pickle

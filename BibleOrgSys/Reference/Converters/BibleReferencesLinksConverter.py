@@ -332,7 +332,7 @@ class BibleReferencesLinksConverter:
 
             rawRefLinkList.append( (sourceReference,sourceComponent,actualRawLinksList,) )
 
-        vprint( 'Normal', "  {} raw links loaded (with {} actual raw link entries)".format( len(rawRefLinkList), actualLinkCount ) )
+        vPrint( 'Normal', "  {} raw links loaded (with {} actual raw link entries)".format( len(rawRefLinkList), actualLinkCount ) )
 
 
         myRefLinkList = []
@@ -385,7 +385,7 @@ class BibleReferencesLinksConverter:
 
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
-        vprint( 'Normal', "  {:,} links processed (with {:,} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
+        vPrint( 'Normal', "  {:,} links processed (with {:,} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
         #print( myRefLinkList ); halt
         self.__DataList = myRefLinkList
 

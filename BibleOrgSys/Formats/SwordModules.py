@@ -1917,7 +1917,7 @@ class SwordBibleModule( SwordModule, Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
 
-        vprint( 'Normal', "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
+        vPrint( 'Normal', "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
 
         SwordModule.loadBooks( self, inMemoryFlag=False ) # Load the Sword module index
         if self.store: # we loaded something
@@ -1980,7 +1980,7 @@ class SwordBibleModule( SwordModule, Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
 
-        vprint( 'Normal', "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+        vPrint( 'Normal', "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
 
         SwordModule.loadBook( self, BBB ) # Load the Sword module index
         if self.store: # we loaded something
@@ -2483,7 +2483,7 @@ def demo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vprint( 'Quiet', swMC )
+        vPrint( 'Quiet', swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
@@ -2506,7 +2506,7 @@ def demo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vprint( 'Quiet', swMC )
+        vPrint( 'Quiet', swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
@@ -2526,7 +2526,7 @@ def demo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vprint( 'Quiet', swMC )
+        vPrint( 'Quiet', swMC )
 
         if 1:
             swM = SwordModule( swMC )
@@ -2552,7 +2552,7 @@ def demo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vprint( 'Quiet', swMC )
+        vPrint( 'Quiet', swMC )
 
         swBM = SwordBibleModule( swMC )
         if not swBM.SwordModuleConfiguration.locked:

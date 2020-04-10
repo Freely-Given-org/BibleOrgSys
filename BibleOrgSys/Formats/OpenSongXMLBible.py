@@ -342,10 +342,10 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
     vPrint( 'Info', "  " + _("WARNING: Ignored createOpenSongXML markers were {}").format( ignoredMarkers ) )
     if unhandledMarkers:
         logging.warning( "createOpenSongXML: Unhandled markers were {}".format( unhandledMarkers ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled toOpenSong markers were {}").format( unhandledMarkers ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled toOpenSong markers were {}").format( unhandledMarkers ) )
     if unhandledBooks:
         logging.warning( "createOpenSongXML: Unhandled books were {}".format( unhandledBooks ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled createOpenSongXML books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled createOpenSongXML books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
     filepath = os.path.join( outputFolder, filename )

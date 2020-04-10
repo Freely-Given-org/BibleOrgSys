@@ -282,7 +282,7 @@ class USFXXMLBible( Bible ):
         """
         Load the XML data file -- we should already know the filepath.
         """
-        vprint( 'Normal', _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
+        vPrint( 'Normal', _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
 
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError:

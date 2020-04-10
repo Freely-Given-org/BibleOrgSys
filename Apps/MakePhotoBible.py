@@ -115,7 +115,7 @@ def main():
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        vprint( 'Quiet', "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
+        vPrint( 'Quiet', "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)

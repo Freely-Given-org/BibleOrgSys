@@ -153,7 +153,7 @@ class DCSBibles:
             print( "DCSBibles.fetchAllBibles()…" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
-        vprint( 'Normal', f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
+        vPrint( 'Normal', f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.BibleList = []
@@ -484,7 +484,7 @@ def demo() -> None:
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vprint( 'Quiet', "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']

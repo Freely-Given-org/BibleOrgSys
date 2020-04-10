@@ -808,7 +808,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vprint( 'Quiet', "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             if BBB!='PSA' or V not in ('1','5',): print( "Stopped at", moduleName, BBB, C, V ); halt
     #if V == '3': halt
@@ -984,7 +984,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vprint( 'Quiet', "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -1099,7 +1099,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vprint( 'Quiet', "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -1153,7 +1153,7 @@ class SwordInterface():
     def __init__( self ):
         """
         """
-        vprint( 'Normal', f"SwordResources.SwordInterface is using '{SwordType}'." )
+        vPrint( 'Normal', f"SwordResources.SwordInterface is using '{SwordType}'." )
         if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -1789,7 +1789,7 @@ def demo() -> None:
     # 'zVerse', 'zVerse_createModule', 'zVerse_swigregister']
 
     if SwordType == 'CrosswireLibrary':
-        vprint( 'Quiet', "Sword Version string", Sword.SWORD_VERSION_STR )
+        vPrint( 'Quiet', "Sword Version string", Sword.SWORD_VERSION_STR )
         # Gives: Sword Version string 1.8.900
         #if BibleOrgSysGlobals.verbosityLevel > 0:
             #print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
@@ -1858,12 +1858,12 @@ def demo() -> None:
     # end of Find
 
     if 0: # Install manager
-        vprint( 'Quiet', "\nINSTALL MANAGER" )
+        vPrint( 'Quiet', "\nINSTALL MANAGER" )
         im = Sword.InstallMgr() # FAILS
-        vprint( 'Quiet', "\ndir im", im, dir(im) )
+        vPrint( 'Quiet', "\ndir im", im, dir(im) )
 
     if 0: # Locale manager
-        vprint( 'Quiet', "\nLOCALE MANAGER" )
+        vPrint( 'Quiet', "\nLOCALE MANAGER" )
         lm = Sword.LocaleMgr()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "dir lm", lm, dir(lm) )
@@ -1872,13 +1872,13 @@ def demo() -> None:
             print( "locale {}".format( lm.getLocale( "en" ) ) ) # Needs a string parameter but why does it return None?
 
     if 0: # try filters
-        vprint( 'Quiet', "\nFILTER MANAGER" )
+        vPrint( 'Quiet', "\nFILTER MANAGER" )
         fm = Sword.SWFilterMgr()
-        vprint( 'Quiet', "\ndir filters", dir(fm) )
+        vPrint( 'Quiet', "\ndir filters", dir(fm) )
 
     if SwordType == 'CrosswireLibrary':
         # Get a list of available module names and types
-        vprint( 'Quiet', "\n{} modules are installed.".format( len(library.getModules()) ) )
+        vPrint( 'Quiet', "\n{} modules are installed.".format( len(library.getModules()) ) )
         for j,moduleBuffer in enumerate(library.getModules()):
             moduleID = moduleBuffer.getRawData()
             module = library.getModule( moduleID )
@@ -1891,23 +1891,23 @@ def demo() -> None:
         # Try some modules
         mod1 = library.getModule( 'KJV' )
         assert mod1 is not None
-        vprint( 'Quiet', "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
+        vPrint( 'Quiet', "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
         mod2 = library.getModule( 'ASV' )
         assert mod2 is not None
-        vprint( 'Quiet', "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
+        vPrint( 'Quiet', "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
         mod3 = library.getModule( 'WEB' )
         assert mod3 is not None
-        vprint( 'Quiet', "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
+        vPrint( 'Quiet', "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
         # abbott = library.getModule( 'Abbott' )
         # assert abbott is not None
         # if BibleOrgSysGlobals.verbosityLevel > 0:
         #     print( "\nabbott {} ({}) {!r}".format( abbott.getName(), abbott.getType(), abbott.getDescription() ) )
         strongsGreek = library.getModule( 'StrongsGreek' )
         assert strongsGreek is not None
-        vprint( 'Quiet', "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
+        vPrint( 'Quiet', "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
         strongsHebrew = library.getModule( 'StrongsHebrew' )
         assert strongsHebrew is not None
-        vprint( 'Quiet', "\nSH {} ({}) {!r}\n\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
+        vPrint( 'Quiet', "\nSH {} ({}) {!r}\n\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
 
         # Try a sword key
         sk = Sword.SWKey( "H0430" )
@@ -1976,7 +1976,7 @@ def demo() -> None:
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
-        vprint( 'Quiet', "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
+        vPrint( 'Quiet', "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
         def getGenBookTOC( tk, parent ):
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
@@ -1998,7 +1998,7 @@ def demo() -> None:
     #Find( "getGlobal" ) # should be lots
 
     if 1: # Test the SwordInterface (using Sword code)
-        vprint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
+        vPrint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
         si = SwordInterface()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )
@@ -2009,7 +2009,7 @@ def demo() -> None:
     if 1 and __name__=='__main__' and SwordType=='CrosswireLibrary': # Test the SwordInterface again (using our code)
         # Don't switch SwordType unless this is the main module, coz it messes up the demo tests
         setSwordType( 'OurCode' )
-        vprint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
+        vPrint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
         si = SwordInterface()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )

@@ -1295,13 +1295,13 @@ def createTheWordModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.totheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "totheWord: Unhandled books were {}".format( unhandledBooks ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
     vPrint( 'Info', "  Zipping {} theWord file…".format( filename ) )

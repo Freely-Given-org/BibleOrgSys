@@ -109,7 +109,7 @@ def main():
             vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
                 shutil.rmtree( defaultOutputFolder )
 
-        vprint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: starting export…" )
+        vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)

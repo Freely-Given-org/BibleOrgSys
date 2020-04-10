@@ -258,7 +258,7 @@ class Door43CatalogResources:
             self.catalogDict[catalogEntry['identifier']] = catalogEntry
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "\n    catalogDict", len(self.catalogDict), self.catalogDict )
-        vprint( 'Normal', f"    Downloaded {len(self.catalogDict)} Door43 catalogs" )
+        vPrint( 'Normal', f"    Downloaded {len(self.catalogDict)} Door43 catalogs" )
         vPrint( 'Info', f"      {list(self.catalogDict.keys())}" )
 
         assert isinstance( catalog['languages'], list )
@@ -276,7 +276,7 @@ class Door43CatalogResources:
             #assert isinstance( something, dict )
             #print( f'\n{something}' )
 
-        vprint( 'Normal', f"    Downloaded {len(self.languageDict)} Door43 languages" )
+        vPrint( 'Normal', f"    Downloaded {len(self.languageDict)} Door43 languages" )
         vPrint( 'Info', f"      {list(self.languageDict.keys())}" )
 
         self.resourceList, self.BibleList = [], [] # By Bible, we mean USFM resources (with BCV structuring)
@@ -298,7 +298,7 @@ class Door43CatalogResources:
                     if 'application/zip;' in formatString and 'usfm' in formatString:
                         self.BibleList.append( resourceTuple )
                         break
-        vprint( 'Normal', f"    Found {len(self.resourceList)} Door43 resources (of which {len(self.BibleList)} are USFM)" )
+        vPrint( 'Normal', f"    Found {len(self.resourceList)} Door43 resources (of which {len(self.BibleList)} are USFM)" )
         #assert len(self.resourceList) == self.totalEntryCount
     # end of Door43CatalogResources.fetchCatalog
 

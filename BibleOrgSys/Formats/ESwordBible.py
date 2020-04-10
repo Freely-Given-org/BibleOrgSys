@@ -1640,13 +1640,13 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.toESword: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled toESword markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled toESword markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "toESword: Unhandled books were {}".format( unhandledBooks ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled toESword books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled toESword books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
     vPrint( 'Info', "  Zipping {} e-Sword file…".format( filename ) )

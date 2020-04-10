@@ -636,13 +636,13 @@ def createMySwordModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.createMySwordModule: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "createMySwordModule: Unhandled books were {}".format( unhandledBooks ) )
-        vprint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
 
     # Now create the gzipped file
     vPrint( 'Info', "  Compressing {} MySword file…".format( filename ) )

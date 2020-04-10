@@ -275,7 +275,7 @@ class USXXMLBible( Bible ):
         """
         Load the books.
         """
-        vprint( 'Normal', _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
+        vPrint( 'Normal', _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
 
         if not self.preloadDone: self.preload()
 

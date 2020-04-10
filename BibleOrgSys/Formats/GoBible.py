@@ -377,7 +377,7 @@ class GoBible( Bible ):
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(n)
                     logging.error( f"GoBible.preload unable to discover book code from '{self.bookNames[n]}'->{BBB1} or '{self.filenameBases[n]}'->{BBB2}: assuming {BBB}" )
                 self.bookList.append( BBB )
-        vprint( 'Quiet', "GoBible.preload: {} book details preloaded".format( numBooks ) )
+        vPrint( 'Quiet', "GoBible.preload: {} book details preloaded".format( numBooks ) )
         if len(self.bookList) != numBooks:
             logging.critical( f"GoBible.preload could only discover book codes for {len(self.bookList)}/{numBooks} books" )
 

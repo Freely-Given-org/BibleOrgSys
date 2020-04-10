@@ -354,7 +354,7 @@ class SwordBible( Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("SwordBible.loadBooks()") )
 
-        vprint( 'Normal', _("\nLoading {} module…").format( self.moduleName ) )
+        vPrint( 'Normal', _("\nLoading {} module…").format( self.moduleName ) )
 
         self.SwordInterface.loadBooks( self, self.moduleName )
 

@@ -8537,7 +8537,7 @@ class BibleWriter( InternalBible ):
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        vprint( 'Normal', "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H:%M') ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -10207,7 +10207,7 @@ class BibleWriter( InternalBible ):
         Returns a dictionary of result flags.
         """
         allWord = _("all") if wantPhotoBible and wantODFs and wantPDFs else _("most")
-        vprint( 'Normal', "BibleWriterV{}.doAllExports: ".format(PROGRAM_VERSION) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', "BibleWriterV{}.doAllExports: ".format(PROGRAM_VERSION) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 

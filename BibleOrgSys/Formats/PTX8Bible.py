@@ -2880,7 +2880,7 @@ class PTX8Bible( Bible ):
         """
         Load all the books.
         """
-        vprint( 'Normal', "Loading {} from {}…".format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', "Loading {} from {}…".format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 

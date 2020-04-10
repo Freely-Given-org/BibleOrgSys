@@ -365,7 +365,7 @@ class SwordInstallManager():
             #print( "Delete2", repoConfFolder )
             shutil.rmtree( repoConfFolder )
 
-        vprint( 'Normal', _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
+        vPrint( 'Normal', _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
 
         # Download the config files
         ftp = ftplib.FTP( repoSite )
@@ -463,7 +463,7 @@ class SwordInstallManager():
             logging.critical( _("User security disclaimer not yet confirmed.") )
             return False
 
-        vprint( 'Normal', _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
+        vPrint( 'Normal', _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
 
         saveRepo = self.currentRepoName # Remember this
         self.availableModules = {}
@@ -549,7 +549,7 @@ class SwordInstallManager():
             assert repoFolderpath[0] == '/'
             assert repoFolderpath[-1] == '/'
 
-        vprint( 'Normal', _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
+        vPrint( 'Normal', _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
 
         # Download the files we need
         ftp = ftplib.FTP( repoSite )

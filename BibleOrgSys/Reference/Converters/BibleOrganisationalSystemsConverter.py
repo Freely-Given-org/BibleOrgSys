@@ -522,7 +522,7 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bosc = BibleOrganisationalSystemsConverter().loadAndValidate()
-        vprint( 'Normal', bosc ) # Just print a summary
+        vPrint( 'Normal', bosc ) # Just print a summary
 # end of demo
 
 if __name__ == '__main__':

@@ -731,17 +731,17 @@ def demo() -> None:
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        vprint( 'Quiet', "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        vprint( 'Quiet', "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vprint( 'Quiet', "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vPrint( 'Quiet', "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        vPrint( 'Quiet', "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vPrint( 'Quiet', "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # demo the file checking code
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        vprint( 'Quiet', "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        vprint( 'Quiet', "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vprint( 'Quiet', "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vPrint( 'Quiet', "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        vPrint( 'Quiet', "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vPrint( 'Quiet', "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     if 1:
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )

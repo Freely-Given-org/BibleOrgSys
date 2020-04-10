@@ -440,7 +440,7 @@ class EasyWorshipBible( Bible ):
             if char8 < 0x20: break
             nString += chr( char8 )
         #if BibleOrgSysGlobals.debugFlag or debuggingThisModule: print( 'nString', repr(nString), index )
-        vprint( 'Normal', "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
+        vPrint( 'Normal', "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
         self.name = nString
         #assert self.name # Not there for amp and gkm
         moduleNameBlockb = fileBytes[index+j:index+56]

@@ -595,13 +595,13 @@ def demo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # Demo the BibleOrganisationalSystems object
-        vprint( 'Normal', "\nTesting load of ALL Bible organisational systems…" )
+        vPrint( 'Normal', "\nTesting load of ALL Bible organisational systems…" )
         boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        vprint( 'Normal', boss ) # Just print a summary
-        vprint( 'Normal', _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
+        vPrint( 'Normal', boss ) # Just print a summary
+        vPrint( 'Normal', _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
 
     if 1: # Demo a BibleOrganisationalSystem object -- this is the one most likely to be wanted by a user
-        vprint( 'Normal', "\nTesting varying Bible organisational systems…" )
+        vPrint( 'Normal', "\nTesting varying Bible organisational systems…" )
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
             vPrint( 'Normal', "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganisationalSystem( testString )
@@ -617,7 +617,7 @@ def demo() -> None:
 
     if 1:
         version = 'KJV-1769_edition'
-        vprint( 'Normal', "\nTesting absolute verse numbers for", version )
+        vPrint( 'Normal', "\nTesting absolute verse numbers for", version )
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
             vPrint( 'Normal', ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
