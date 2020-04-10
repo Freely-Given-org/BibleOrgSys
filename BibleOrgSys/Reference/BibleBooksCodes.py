@@ -49,6 +49,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -678,7 +679,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)

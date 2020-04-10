@@ -5,8 +5,8 @@ See:
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
-VERSION = '0.0.9'
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH — when setup.py was modified below
+VERSION = '0.0.10'
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH — when setup.py was modified below
 
 INCLUDE_DATA_SOURCE_FILES = False
 INCLUDE_DERIVED_DATA_PICKLE_FILES = True
@@ -184,7 +184,7 @@ This software has been developed in small chunks of spare time since 2010
 However, it has been tested on hundreds of Bible filesets,
 including USFM, OSIS, USX, USFX, and many other import formats.
 
-This software forms the basis of the online Bible Drop Box service
+This library forms the basis of the online Bible Drop Box service
 hosted at http://Freely-Given.org/Software/BibleDropBox/.
 
 This package will not reach v1.0.0 until versification mapping is added.
@@ -214,28 +214,37 @@ This app inputs any known type of Bible file(s) from disk
         (inside the BibleOrgSys folder in your home folder).
 
 Note that this app can be run from using the command:
-        USFM2USX.py path/to/fileOrFolder
+        USFM2USX.py path/to/BibleFileOrFolder
+
+You can discover the version with
+        `USFM2USX.py --version`
 
 You can discover the available command line parameters with
         USFM2USX.py --help
+
+    e.g., for verbose mode
+        USFM2USX.py --verbose path/to/BibleFileOrFolder
+    or using the abbreviated option
+        USFM2USX.py -v path/to/BibleFileOrFolder
 
 This app also demonstrates how little code is required to use the BOS
     to load a Bible (in any of a large range of formats — see UnknownBible.py)
     and then to export it in your desired format (see options in BibleWriter.py).
 '''
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.UnknownBible import UnknownBible
 
 PROGRAM_NAME = "USFM to USX (minimal)"
-PROGRAM_VERSION = '0.04'
+PROGRAM_VERSION = '0.05'
 
 # Configure basic Bible Organisational System (BOS) set-up
 parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
-parser.add_argument( "inputFolderpath", help="path/to/folder of USFM files" )
+parser.add_argument( "inputBibleFileOrFolder", help="path/to/BibleFileOrFolder" )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
 # Do the actual Bible load and export work that we want
-unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputFolderpath )
+unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder )
 loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
 if not isinstance( loadedBible, str ): # i.e., not an error message
     loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
@@ -244,29 +253,6 @@ if not isinstance( loadedBible, str ): # i.e., not an error message
 # Do the BOS close-down stuff
 BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 ```
-
-A short command-line app as part of BOS (Bible Organisational System) demos.
-This app inputs any known type of Bible file(s)
-    and then exports a USX version in the (default) OutputFiles folder
-        (inside the BibleOrgSys folder in your home folder).
-
-This app can be run using the command:
-        `USFM2USX.py`
-
-You can discover the version with
-        `USFM2USX.py --version`
-
-You can discover the available command line parameters with
-        `USFM2USX.py --help`
-
-    e.g., for verbose mode
-        `USFM2USX.py --verbose path/to/fileOrFolder`
-    or using the abbreviated option
-        `USFM2USX.py -v path/to/fileOrFolder`
-
-This app also demonstrates how little actual code is required to use the BOS
-    to load a Bible (in any of a large range of formats — see UnknownBible.py)
-    and then to export it in your desired format (see options in BibleWriter.py).
 
 The BOS is developed and well-tested on Linux (Ubuntu) but also runs on Windows (although not so well tested).
 

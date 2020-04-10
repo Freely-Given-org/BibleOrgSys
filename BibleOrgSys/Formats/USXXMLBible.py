@@ -48,6 +48,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 #from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
@@ -67,7 +68,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if autoLoad is true and exactly one USX Bible is found,
         returns the loaded USXXMLBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "USXXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -80,7 +81,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " USXXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " USXXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -93,17 +94,17 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     # See if there's an USXBible project here in this given folder
     numFound = 0
     UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
+    vPrint( 'Info', UFns )
     #filenameTuples = UFns.getPossibleFilenameTuples( strictCheck=True )
     #print( 'P', len(filenameTuples) )
     filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
     #print( 'C', len(filenameTuples) )
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
+    vPrint( 'Verbose', "Confirmed:", len(filenameTuples), filenameTuples )
     if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck got", numFound, givenFolderName )
+        vPrint( 'Info', "USXXMLBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload() # Determine the filenames
@@ -119,7 +120,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("USXXMLBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -128,10 +129,10 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
 
         # See if there's an USX Bible with standard Paratext style filenames here in this folder
         UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
+        vPrint( 'Info', UFns )
         #filenameTuples = UFns.getPossibleFilenameTuples()
         filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
+        vPrint( 'Verbose', "Confirmed:", len(filenameTuples), filenameTuples )
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
             print( "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
@@ -139,7 +140,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USXXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "USXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USXXMLBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload() # Determine the filenames
@@ -274,8 +275,7 @@ class USXXMLBible( Bible ):
         """
         Load the books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
+        vprint( 'Normal', _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
 
         if not self.preloadDone: self.preload()
 
@@ -288,7 +288,7 @@ class USXXMLBible( Bible ):
             else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.givenFolderName ) )
         if foundFolders: logging.info( "USXXMLBible.loadBooks: Surprised to see subfolders in {!r}: {}".format( self.givenFolderName, foundFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.loadBooks: Couldn't find any files in {!r}".format( self.givenFolderName ) )
+            vPrint( 'Quiet', "USXXMLBible.loadBooks: Couldn't find any files in {!r}".format( self.givenFolderName ) )
             return # No use continuing
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -299,9 +299,8 @@ class USXXMLBible( Bible ):
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
             #print( "parameters", parameters )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Loading {} {} books using {} processes…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
-                print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+            vPrint( 'Normal', _("Loading {} {} books using {} processes…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._loadBookMP, parameters ) # have the pool do our loads
@@ -331,8 +330,7 @@ class USXXMLBible( Bible ):
                 #self.stashBook( UBB )
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "USXXMLBible.loadBooks: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
+            vPrint( 'Info', "USXXMLBible.loadBooks: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
             #for thisFilename in foundFiles:
                 ## Look for BBB in the ID line (which should be the first line in a USX file)
                 #isUSX = False
@@ -342,9 +340,9 @@ class USXXMLBible( Bible ):
                         #for line in possibleUSXFile:
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
+                                #vPrint( 'Info', "Have possible USX ID {!r}".format( USXId ) )
                                 #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
-                                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
+                                #vPrint( 'Info', "BBB is {!r}".format( BBB ) )
                                 #isUSX = True
                             #break # We only look at the first line
                 #except UnicodeDecodeError: isUSX = False
@@ -377,7 +375,7 @@ def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testData = (
                 ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
@@ -390,23 +388,21 @@ def demo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j, (name, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
+            vPrint( 'Quiet', "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
             result1 = USXXMLBibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}a".format( j+1 ), result1 )
+            vPrint( 'Normal', "USX TestA{}a".format( j+1 ), result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}b (autoLoad)".format( j+1 ), result2 )
+            vPrint( 'Normal', "USX TestA{}b (autoLoad)".format( j+1 ), result2 )
             result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USX TestA{}c (autoLoadBooks)".format( j+1 ), result3 )
+            vPrint( 'Normal', "USX TestA{}c (autoLoadBooks)".format( j+1 ), result3 )
 
     if 1:
         for j, (name, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
+            vPrint( 'Quiet', "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
+                vPrint( 'Quiet', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UBErrors = UB.getErrors()
@@ -419,7 +415,7 @@ def demo() -> None:
             else: print( "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
-        #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+        #    vPrint( 'Quiet', "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
         #       pass
 
     if 1:
@@ -434,10 +430,10 @@ def demo() -> None:
                     print( "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
             elif os.path.isdir( somepath ):
                 abbreviation = something
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
+                vPrint( 'Quiet', "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
                 loadedBible = USXXMLBible( somepath, givenName=abbreviation+' Bible' )
                 loadedBible.loadBooks() # Load and process the USX XML books
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( loadedBible ) # Just print a summary
+                vPrint( 'Quiet', loadedBible ) # Just print a summary
 # end of demo
 
 if __name__ == '__main__':

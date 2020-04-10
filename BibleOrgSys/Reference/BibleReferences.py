@@ -101,6 +101,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
@@ -1353,7 +1354,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
     def containsReference( self, BBB, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
-        #if BibleOrgSysGlobals.verbosityLevel > 3: print( "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
+        #vPrint( 'Verbose', "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert BBB and len(BBB)==3
         assert C
         if not C.isdigit(): print( "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
@@ -1911,7 +1912,7 @@ def demo() -> None:
     """
     Demonstrate parsing some Bible reference strings.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     ourBOS = BibleOrganisationalSystem( 'RSV' )
     printProcessingMessages = True

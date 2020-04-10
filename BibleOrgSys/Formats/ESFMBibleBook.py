@@ -47,6 +47,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import BibleBook
@@ -431,7 +432,7 @@ class ESFMBibleBook( BibleBook ):
 
 
         # Main code for ESFMBibleBook.load
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Info', "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -478,7 +479,7 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -490,7 +491,7 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker (ESFM doesn't allow custom markers)
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
@@ -541,27 +542,26 @@ def demo() -> None:
     """
     Demonstrate reading and processing some ESFM Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', _("Loading {} from {}…").format( BBB, filename ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is {!r}".format( EBB.getField( 'id' ) ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Header is {!r}".format( EBB.getField( 'h' ) ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( EBB )
+        vPrint( 'Normal', "  ID is {!r}".format( EBB.getField( 'id' ) ) )
+        vPrint( 'Normal', "  Header is {!r}".format( EBB.getField( 'h' ) ) )
+        vPrint( 'Normal', "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        #vPrint( 'Quiet', EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( EBBVersification )
+        vPrint( 'Info', EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( UBBAddedUnits )
+        vPrint( 'Info', UBBAddedUnits )
         discoveryDict = EBB._discover()
         #print( "discoveryDict", discoveryDict )
         EBB.check()
         EBErrors = EBB.getErrors()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( EBErrors )
+        vPrint( 'Info', EBErrors )
     # end of demoFile
 
 
@@ -582,7 +582,7 @@ def demo() -> None:
         name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

@@ -67,6 +67,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleReferences import BibleSingleReference
 
@@ -84,8 +85,7 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     ourBibleOrganisationalSystem = BibleOrganisationalSystem( "GENERIC-KJV-66-ENG" )
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()

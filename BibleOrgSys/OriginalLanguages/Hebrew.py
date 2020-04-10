@@ -5,7 +5,7 @@
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2018 Robert Hunt
+# Copyright (C) 2011-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling Hebrew language particularities.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2018-02-23' # by RJH
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
-PROGRAM_VERSION = '0.08'
+PROGRAM_VERSION = '0.09'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -41,11 +41,12 @@ debuggingThisModule = False
 import unicodedata
 
 if __name__ == '__main__':
-    import sys
+    import os, sys
     aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 # Consonants
@@ -473,7 +474,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demonstrate the Hebrew class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"

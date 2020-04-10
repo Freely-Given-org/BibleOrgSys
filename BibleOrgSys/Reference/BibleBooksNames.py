@@ -48,6 +48,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -112,7 +113,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     assert divisionsNamesDict and booknameLeadersDict and bookNamesDict
     assert bookList
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)…").format( systemName, len(bookList) ) )
+    vPrint( 'Info', _("  Expanding {} input abbreviations (for {} books)…").format( systemName, len(bookList) ) )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -287,7 +288,7 @@ class BibleBooksNamesSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #             #self.__ExpandedDicts = pickle.load( pickleFile )
@@ -604,7 +605,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']

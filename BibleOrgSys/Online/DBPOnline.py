@@ -5,7 +5,7 @@
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -64,10 +64,10 @@ More details are available from https://www.digitalbibleplatform.com/docs.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-12-20' # by RJH
+LAST_MODIFIED_DATE = '2020-04-09' # by RJH
 SHORT_PROGRAM_NAME = "DigitalBiblePlatform"
 PROGRAM_NAME = "Digital Bible Platform online handler"
-PROGRAM_VERSION = '0.22'
+PROGRAM_VERSION = '0.23'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -86,14 +86,21 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Online.GenericOnlineBible import GenericOnlineBible
 
 
 URL_BASE = 'http://dbt.io/'
-DBP_VERSION = '2' # 2.13.1 as at Dec 2019
+DBP_VERSION = '2' # 2.13.1 as at Dec 2019 & Apr 2020
 KEY_FILENAME = 'DBPKey.txt'
-KEY_SEARCH_FILEPATHS = ( BibleOrgSysGlobals.findHomeFolderPath(), Path( KEY_FILENAME ), BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( KEY_FILENAME ) )
+KEY_SEARCH_FOLDERPATHS = (
+                    BibleOrgSysGlobals.BOS_SETTINGS_FOLDERPATH,
+                    BibleOrgSysGlobals.BOS_HOME_FOLDERPATH,
+                    BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH,
+                    BibleOrgSysGlobals.findHomeFolderPath(),
+                    Path( '.' ), 
+                    )
 
 
 
@@ -104,12 +111,14 @@ def getSecurityKey():
 
     Returns the contents of the file.
     """
-    for keyPath in KEY_SEARCH_FILEPATHS:
-        if keyPath.is_file():
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("getSecurityKey: found key file in {!r}").format( keyPath ) )
-            with open( keyPath, 'rt' ) as keyFile:
+    for folderpath in KEY_SEARCH_FOLDERPATHS:
+        vPrint( 'Info', f"Searching for DBP key file in {folderpath} …" )
+        keyFilepath = folderpath.joinpath( KEY_FILENAME )
+        if keyFilepath.is_file():
+            vPrint( 'Info', f"getSecurityKey: found key file in {keyFilepath}" )
+            with open( keyFilepath, 'rt' ) as keyFile:
                 return keyFile.read() # Our personal key
-    raise FileNotFoundError( _("Cannot find key file {!r}").format( KEY_FILENAME ) )
+    raise FileNotFoundError( f"Cannot find key file {KEY_FILENAME}" )
 # end of getSecurityKey
 
 
@@ -222,8 +231,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "DBPBibles.fetchAllLanguages()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("Downloading list of available languages from FCBH…") )
+        vPrint( 'Info', _("Downloading list of available languages from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
@@ -256,8 +264,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "DBPBibles.fetchAllVersions()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("Downloading list of available versions from FCBH…") )
+        vPrint( 'Info', _("Downloading list of available versions from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
@@ -322,7 +329,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "DBPBibles.fetchAllVolumes()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Downloading list of available volumes from FCBH…") )
+        vPrint( 'Info', _("Downloading list of available volumes from FCBH…") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.volumeList = self.getOnlineData( 'library/volume' ) # Get an alphabetically ordered list of dictionaries -- one for each volume
@@ -356,8 +363,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "DBPBibles.fetchAllTextVolumes()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("Creating list of available text volumes from FCBH…") )
+        vPrint( 'Info', _("Creating list of available text volumes from FCBH…") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -385,7 +391,7 @@ class DBPBibles:
                             self.volumeNameDict[ourName].append( j )
                         else: self.volumeNameDict[ourName] = [j]
                     #else: print( j, repr(volume['language_name']), repr(volume['volume_name']) )
-                    elif BibleOrgSysGlobals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
+                    elvPrint( 'Info', "No web delivery in", repr(ourName), "only", volume['delivery'] )
                 elif volume['media'] not in ('audio','video'): print( "No text in", ourName, volume['media'] )
         if BibleOrgSysGlobals.debugFlag: print( "  volumeNameDict", len(self.volumeNameDict)) #, self.volumeNameDict )
         return self.volumeNameDict
@@ -417,8 +423,7 @@ class DBPBibles:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "DBPBibles.fetchAllEnglishTextVolumes()" )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("Creating list of available English text volumes from FCBH…") )
+        vPrint( 'Info', _("Creating list of available English text volumes from FCBH…") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -437,7 +442,7 @@ class DBPBibles:
                             self.EnglishVolumeNameDict[ourName] = volume['dam_id'][:6] # Just remember the 6-character damRoot
                             #if ourName in self.EnglishVolumeNameDict: self.EnglishVolumeNameDict[ourName].append( j )
                             #else: self.EnglishVolumeNameDict[ourName] = [j]
-                        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
+                        elvPrint( 'Info', "No web delivery in", repr(ourName), "only", volume['delivery'] )
                     elif volume['media'] not in ('audio','video'): print( "No text in", ourName, volume['media'] )
         if BibleOrgSysGlobals.debugFlag: print( "EnglishVolumeNameDict", len(self.EnglishVolumeNameDict))#, self.EnglishVolumeNameDict )
         return self.EnglishVolumeNameDict
@@ -515,7 +520,7 @@ class DBPBible( GenericOnlineBible ):
             if 'Version' in result: self.onlineVersion = result['Version']
         else:
             logging.critical( "DBPBible.__init__: Digital Bible Platform appears to be offline" )
-            raise ConnectionError # What should this really be?
+            raise ConnectionError( "Digital Bible Platform appears to be offline" ) # What should this really be?
 
         #self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
@@ -570,7 +575,7 @@ class DBPBible( GenericOnlineBible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("DBPBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
+        vPrint( 'Info', "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #print( "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
@@ -634,7 +639,7 @@ def demo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # Test the DBPBibles class
         print()

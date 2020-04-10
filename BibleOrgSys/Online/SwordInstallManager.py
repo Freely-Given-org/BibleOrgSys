@@ -59,6 +59,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 #from BibleOrgSys.Misc.singleton import singleton
 #from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 #from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
@@ -364,8 +365,7 @@ class SwordInstallManager():
             #print( "Delete2", repoConfFolder )
             shutil.rmtree( repoConfFolder )
 
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
+        vprint( 'Normal', _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
 
         # Download the config files
         ftp = ftplib.FTP( repoSite )
@@ -463,8 +463,7 @@ class SwordInstallManager():
             logging.critical( _("User security disclaimer not yet confirmed.") )
             return False
 
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
+        vprint( 'Normal', _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
 
         saveRepo = self.currentRepoName # Remember this
         self.availableModules = {}
@@ -550,8 +549,7 @@ class SwordInstallManager():
             assert repoFolderpath[0] == '/'
             assert repoFolderpath[-1] == '/'
 
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
+        vprint( 'Normal', _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
 
         # Download the files we need
         ftp = ftplib.FTP( repoSite )
@@ -593,7 +591,8 @@ def demo() -> None:
     Sword Manager demo
     """
     from BibleOrgSys.Formats import SwordModules
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     im = SwordInstallManager()
     if 0 and __name__ == '__main__': im.isUserDisclaimerConfirmed()
@@ -601,7 +600,7 @@ def demo() -> None:
 
     if 1: # try refreshing one repository
         getRepoName = 'NET Bible'
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        vPrint( 'Quiet', "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
@@ -613,7 +612,7 @@ def demo() -> None:
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'NETfree'
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+            vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
             if im.installModule( getModuleName ):
                 confData = im.availableModules[getModuleName]
@@ -625,13 +624,13 @@ def demo() -> None:
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+                vPrint( 'Verbose', swM )
                 if not swM.SwordModuleConfiguration.locked: swM.test()
 
 
     if 0: # try refreshing one repository
         getRepoName = 'eBible'
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        vPrint( 'Quiet', "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
@@ -643,7 +642,7 @@ def demo() -> None:
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'engWEBBE2015eb'
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+            vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
             if im.installModule( getModuleName ):
                 swMC = SwordModules.SwordModuleConfiguration( getModuleName, im.currentInstallFolderpath )
@@ -652,12 +651,12 @@ def demo() -> None:
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+                vPrint( 'Verbose', swM )
                 if not swM.SwordModuleConfiguration.locked: swM.test()
 
 
     if 0: # try refreshing all repositories
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Refresh all repositories…" )
+        vPrint( 'Quiet', "\nDemo: Refresh all repositories…" )
         im.refreshAllRemoteSources()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
@@ -666,7 +665,7 @@ def demo() -> None:
 
     if 0: # try installing another module
         getModuleName = 'JPS'
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nDemo: Install {}…".format( getModuleName ) )
+        vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
         im.currentRepoName = 'CrossWire Main'
         im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
         if im.installModule( getModuleName ): # See if we can read it
@@ -679,7 +678,7 @@ def demo() -> None:
 
             swM = SwordModules.SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=True )
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( swM )
+            vPrint( 'Verbose', swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
 # end of demo

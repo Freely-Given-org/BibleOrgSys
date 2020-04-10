@@ -67,6 +67,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -90,7 +91,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
     if autoLoad is true and exactly one USFX Bible is found,
         returns the loaded USFXXMLBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck( {}, {}, {}, {} )".format( sourceFolder, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "USFXXMLBibleFileCheck( {}, {}, {}, {} )".format( sourceFolder, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert sourceFolder and isinstance( sourceFolder, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -103,7 +104,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " USFXXMLBibleFileCheck: Looking for files in given {}".format( sourceFolder ) )
+    vPrint( 'Verbose', " USFXXMLBibleFileCheck: Looking for files in given {}".format( sourceFolder ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( sourceFolder ):
         somepath = os.path.join( sourceFolder, something )
@@ -132,14 +133,14 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck got", numFound, sourceFolder, lastFilenameFound )
+        vPrint( 'Info', "USFXXMLBibleFileCheck got", numFound, sourceFolder, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = USFXXMLBible( sourceFolder, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
@@ -152,7 +153,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( sourceFolder, thisFolderName+'/' )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USFXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    USFXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( sourceFolder, thisFolderName, something )
@@ -175,7 +176,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                     continue
@@ -183,7 +184,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "USFXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = USFXXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -252,7 +253,7 @@ class USFXXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         if foundFolders: logging.info( "USFXXMLBible: Surprised to see subfolders in {!r}: {}".format( self.sourceFolder, foundFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USFXXMLBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
+            vPrint( 'Quiet', "USFXXMLBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
             return # No use continuing
 
         #print( self.sourceFolder, foundFolders, len(foundFiles), foundFiles )
@@ -262,18 +263,18 @@ class USFXXMLBible( Bible ):
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if '<usfx ' not in firstLines[0] and '<usfx ' not in firstLines[1]:
                 continue
             lastFilenameFound = thisFilename
             numFound += 1
         if numFound:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXXMLBible got", numFound, sourceFolder, lastFilenameFound )
+            vPrint( 'Info', "USFXXMLBible got", numFound, sourceFolder, lastFilenameFound )
             if numFound == 1:
                 self.sourceFilename = lastFilenameFound
                 self.sourceFilepath = os.path.join( self.sourceFolder, self.sourceFilename )
-        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+        elvPrint( 'Info', "    Looked hopeful but no actual files found" )
     # end of USFXXMLBible.__init_
 
 
@@ -281,8 +282,7 @@ class USFXXMLBible( Bible ):
         """
         Load the XML data file -- we should already know the filepath.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
+        vprint( 'Normal', _("USFXXMLBible.load: Loading {!r} from {!r}…").format( self.name, self.sourceFilepath ) )
 
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError:
@@ -336,8 +336,7 @@ class USFXXMLBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "USFXXMLBible.load: Didn't find any regularly named USFX files in {!r}".format( self.sourceFolder ) )
+            vPrint( 'Info', "USFXXMLBible.load: Didn't find any regularly named USFX files in {!r}".format( self.sourceFolder ) )
             #foundFiles = []
             #for something in os.listdir( self.sourceFolder ):
                 #somepath = os.path.join( self.sourceFolder, something )
@@ -358,9 +357,9 @@ class USFXXMLBible( Bible ):
                     #for line in possibleUSXFile:
                         #if line.startswith( '\\id ' ):
                             #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
+                            #vPrint( 'Info', "Have possible USFX ID {!r}".format( USXId ) )
                             #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
-                            #if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
+                            #vPrint( 'Info', "BBB is {!r}".format( BBB ) )
                             #isUSFX = True
                         #break # We only look at the first line
                 #if isUSFX:
@@ -387,8 +386,7 @@ class USFXXMLBible( Bible ):
         """
         Load the book container from the XML data file.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        vPrint( 'Verbose', _("USFXXMLBible.loadBook: Loading {} from {}…").format( self.name, self.sourceFolder ) )
         assert bookElement.tag == 'book'
         mainLocation = self.name + " USFX book"
 
@@ -402,8 +400,7 @@ class USFXXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bookCode )
         mainLocation = "{} USFX {} book".format( self.name, BBB )
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )
+        vPrint( 'Info', _("USFXXMLBible.loadBook: Loading {} from {}…").format( BBB, self.name ) )
         BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, mainLocation, '4f6h' )
         BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, mainLocation, '1wk8' )
 
@@ -560,13 +557,13 @@ class USFXXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'kj24' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'js91' )
                 #self.thisBook.addLine( 'b', '' )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Ignoring 've' field", BBB, C, V )
+                vPrint( 'Info', "Ignoring 've' field", BBB, C, V )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             elif element.tag == 'periph':
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ws29' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'wj24' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'ws91' )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Ignoring 'periph' field", BBB, C, V )
+                vPrint( 'Info', "Ignoring 'periph' field", BBB, C, V )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             else:
                 logging.critical( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
@@ -605,7 +602,7 @@ class USFXXMLBible( Bible ):
             pTag += level
         if style:
             #print( repr(pTag), repr(pText), repr(style) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Ignoring {!r} style".format( style ) )
+            vPrint( 'Info', "Ignoring {!r} style".format( style ) )
 
         self.thisBook.addLine( pTag, '' if pText is None else pText )
 
@@ -996,27 +993,22 @@ def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
-        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
-            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/' )
         resultA1 = USFXXMLBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
+        vPrint( 'Quiet', "TestA1", resultA1 )
         resultA2 = USFXXMLBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA2", resultA2 )
+        vPrint( 'Quiet', "TestA2", resultA2 )
         resultA3 = USFXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA3", resultA3 )
+        vPrint( 'Quiet', "TestA3", resultA3 )
 
         #testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         #resultB1 = USFXXMLBibleFileCheck( testSubfolder )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB1", resultB1 )
+        #vPrint( 'Quiet', "TestB1", resultB1 )
         #resultB2 = USFXXMLBibleFileCheck( testSubfolder, autoLoad=True, autoLoadBooks=True )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB2", resultB2 )
+        #vPrint( 'Quiet', "TestB2", resultB2 )
 
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
@@ -1034,7 +1026,7 @@ def demo() -> None:
             if os.access( testFolder, os.R_OK ):
                 UsfxB = USFXXMLBible( testFolder, name )
                 UsfxB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfxB )
+                vPrint( 'Quiet', UsfxB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getErrors()

@@ -48,6 +48,7 @@ if __name__ == '__main__':
     import re
 import logging # Append the containing folder to the path to search for the BOS
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
 
 
@@ -134,7 +135,7 @@ class GenericOnlineBible:
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #print( _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
+        #vPrint( 'Info', "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         ##print( "Request string is", repr(requestString) )
         #try: responseJSON = urllib.request.urlopen( requestString )
@@ -205,7 +206,7 @@ def demo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 

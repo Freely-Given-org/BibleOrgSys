@@ -48,6 +48,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
@@ -77,7 +78,7 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
+            vPrint( 'Info', "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -205,7 +206,7 @@ class BibleReferencesLinks:
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                #vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -298,7 +299,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)

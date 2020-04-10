@@ -49,6 +49,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.OriginalLanguages import Hebrew
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBible
@@ -458,8 +459,7 @@ class HebrewWLCBibleAddon():
         elif self.glossingDict and not overrideFlag:
             print( _("Import disallowed because you have already loaded the glossing dictionary") )
         else:
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Importing glossing dictionary from '{}'…".format( glossingDictImportFilepath ) )
+            vPrint( 'Normal', "Importing glossing dictionary from '{}'…".format( glossingDictImportFilepath ) )
             lineCount = 0
             newDict = {}
             with open( glossingDictImportFilepath, 'r' ) as importFile:
@@ -488,7 +488,7 @@ class HebrewWLCBibleAddon():
                         newDict[word] = (genericGloss,genericReferencesList,specificReferencesDict)
                     else:
                         print( "  Ignored '{}' line at {} ({} bits)".format( line, lineCount, len(bits) ) )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( f"  Loaded {len(newDict):,} entries." )
+            vPrint( 'Normal', f"  Loaded {len(newDict):,} entries." )
             if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
                 if len(newDict) != self.loadedGlossEntryCount: print( "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
                 self.glossingDict = newDict # Replace the dictionary with the upgraded one
@@ -507,8 +507,7 @@ class HebrewWLCBibleAddon():
         """
         #print( "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None: glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
+        vprint( 'Normal', _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, 5 )
         with open( glossingDictExportFilepath, 'wt' ) as exportFile:
@@ -524,8 +523,7 @@ class HebrewWLCBibleAddon():
                 exportFile.write( '{}  {}  {}  {}\n'.format( genericReferencesList, specificReferencesDict, genericGloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
 
         if self.glossingDict:
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Exporting reverse glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+            vPrint( 'Normal', _("Exporting reverse glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
             BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
             doneGlosses = []
             with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
@@ -541,8 +539,7 @@ class HebrewWLCBibleAddon():
         """
         Check a new gloss and add it to the glossing dictionary.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
+        vPrint( 'Info', "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -574,8 +571,7 @@ class HebrewWLCBibleAddon():
 
         There must already be an entry for this Hebrew word (with a generic gloss).
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
+        vPrint( 'Info', "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -588,8 +584,7 @@ class HebrewWLCBibleAddon():
         assert ' ' not in specificGloss
 
         if ref in specificReferencesDict: # it must be an update
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Updating specific gloss for {!r} at {} from {!r} to {!r}").format( normalizedHebrewWord, ref, specificReferencesDict[ref], specificGloss ) )
+            vPrint( 'Normal', _("Updating specific gloss for {!r} at {} from {!r} to {!r}").format( normalizedHebrewWord, ref, specificReferencesDict[ref], specificGloss ) )
             specificReferencesDict[ref] = specificGloss
         else: # it's a new entry
             specificReferencesDict[ref] = specificGloss
@@ -602,8 +597,7 @@ class HebrewWLCBibleAddon():
         """
         Add a new ref to the glossing dictionary if it's not already there.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        vPrint( 'Info', "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
@@ -625,7 +619,7 @@ class HebrewWLCBibleAddon():
             and update the reference fields.
         """
         from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Updating references for WLC generic glosses…") )
+        vPrint( 'Normal', _("Updating references for WLC generic glosses…") )
 
         self.loadBooks()
         numRefsAdded = 0
@@ -667,8 +661,7 @@ class HebrewWLCBibleAddon():
                                 self.addNewGenericGlossingReference( normalizedHebrewWord, fullRefTuple )
                                 numRefsAdded += 1
                 V = V + 1
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
+        vprint( 'Quiet', "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
     # end of HebrewWLCBibleAddon.updateGenericGlossingReferences
 # end of HebrewWLCBibleAddon class
 
@@ -722,7 +715,7 @@ def demo() -> None:
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
     from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demonstrate the Hebrew WLC class
     standardTestReferences = ('GEN', '1', '1'), ('SA1','1','1'), ('DAN', '1', '5')
@@ -730,77 +723,61 @@ def demo() -> None:
     if 1: # Test one book
         #testFile = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/Ruth.xml' ) # Hebrew Ruth
         testFile = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'morphhb/wlc/Dan.xml' ) # Hebrew Daniel
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nA/ Demonstrating the Hebrew WLC class (one book only)…" )
+        vPrint( 'Quiet', "\nA/ Demonstrating the Hebrew WLC class (one book only)…" )
         #print( testFile )
         wlc = OSISHebrewWLCBible( testFile )
         wlc.load() # Load and process the XML book
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( wlc ) # Just print a summary
-            print()
+        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             verseDataList = wlc.getVerseDataList( testKey )
             if verseDataList is not None: assert isinstance( verseDataList, InternalBibleEntryList )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( testKey )
-                print( "VDL", verseDataList )
-                print()
+            vPrint( 'Normal', testKey )
+            vPrint( 'Normal', "VDL", str(verseDataList)+'\n' )
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without morpheme breaks" )
-                print( verseText )
+            vPrint( 'Normal', "Without morpheme breaks" )
+            vPrint( 'Normal', verseText )
             verseText = wlc.removeCantillationMarks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without cantillation marks" )
-                print( verseText )
+            vPrint( 'Normal', "Without cantillation marks" )
+            vPrint( 'Normal', verseText )
             consonantalVerseText = wlc.removeVowelPointing()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without vowel pointing" )
-                print( consonantalVerseText )
-                print()
+            vPrint( 'Normal', "Without vowel pointing" )
+            vPrint( 'Normal', str(consonantalVerseText)+'\n' )
 
     if 1: # Load all books and test
         testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nB/ Demonstrating the Hebrew WLC class (whole Bible)…" )
+        vPrint( 'Quiet', "\nB/ Demonstrating the Hebrew WLC class (whole Bible)…" )
         #print( testFolder )
         wlc = OSISHebrewWLCBible( testFolder )
         wlc.loadBooks() # Load and process the XML files
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( wlc ) # Just print a summary
-            print()
+        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
             verseDataList = wlc.getVerseDataList( testKey )
             if verseDataList is not None: assert isinstance( verseDataList, InternalBibleEntryList )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( testKey )
-                print( "VDL", verseDataList )
-                print()
+            vPrint( 'Normal', testKey )
+            vPrint( 'Normal', f"VDL {verseDataList}\n" )
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without morpheme breaks" )
-                print( verseText )
+            vPrint( 'Normal', "Without morpheme breaks" )
+            vPrint( 'Normal', verseText )
             verseText = wlc.removeCantillationMarks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without cantillation marks" )
-                print( verseText )
+            vPrint( 'Normal', "Without cantillation marks" )
+            vPrint( 'Normal', verseText )
             consonantalVerseText = wlc.removeVowelPointing()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without vowel pointing" )
-                print( consonantalVerseText )
-                print()
+            vPrint( 'Normal', "Without vowel pointing" )
+            vPrint( 'Normal', str(consonantalVerseText)+'\n' )
             # Check code for expanding morphological abbreviations
             if verseDataList is not None:
                 for verseDataEntry in verseDataList:
@@ -817,41 +794,33 @@ def demo() -> None:
 
     if 1: # Load books as we test
         testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nC/ Demonstrating the Hebrew WLC class (load on the go)…" )
+        vPrint( 'Quiet', "\nC/ Demonstrating the Hebrew WLC class (load on the go)…" )
         #print( testFolder )
         wlc = OSISHebrewWLCBible( testFolder )
         #wlc.load() # Load and process the XML
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( wlc ) # Just print a summary
-            print()
+        vprint( 'Quiet', str(wlc)+'\n' ) # Just print a summary
 
         for testReference in standardTestReferences:
             testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( testKey )
-                print( "VD", wlc.getVerseDataList( testKey ) )
-                print()
+            vPrint( 'Normal', testKey )
+            vPrint( 'Normal', f"VD {wlc.getVerseDataList( testKey )}\n" )
             verseText = wlc.getVerseText( testKey )
             wlc.currentText = verseText
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 #print( "These all display left-to-right in the terminal unfortunately  :-(" )
                 print( verseText )
             verseText = wlc.removeMorphemeBreaks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without morpheme breaks" )
-                print( verseText )
+            vPrint( 'Normal', "Without morpheme breaks" )
+            vPrint( 'Normal', verseText )
             verseText = wlc.removeCantillationMarks()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without cantillation marks" )
-                print( verseText )
+            vPrint( 'Normal', "Without cantillation marks" )
+            vPrint( 'Normal', verseText )
             consonantalVerseText = wlc.removeVowelPointing()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "Without vowel pointing" )
-                print( consonantalVerseText )
-                print()
+            vPrint( 'Normal', "Without vowel pointing" )
+            vPrint( 'Normal', str(consonantalVerseText)+'\n' )
 
     if 1: # Test some of the glossing functions
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nD/ Demonstrating the Hebrew WLC glossing functions…" )
+        vPrint( 'Quiet', "\nD/ Demonstrating the Hebrew WLC glossing functions…" )
         wlc = OSISHebrewWLCBible( DEFAULT_OSIS_WLC_FILEPATH )
         wlc.loadGlossingDict()
         wlc.exportGlossingDictionary()
@@ -860,14 +829,14 @@ def demo() -> None:
         wlc.importGlossingDictionary( overrideFlag=True )
 
     if 1: # Test some of the glossing functions
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nE/ Adding new references to glossing dict…" )
+        vPrint( 'Quiet', "\nE/ Adding new references to glossing dict…" )
         wlc = OSISHebrewWLCBible()
         wlc.loadGlossingDict()
         wlc.updateGenericGlossingReferences()
         wlc.saveAnyChangedGlosses( exportAlso = True )
 
     if 1: # Test some of the glossing functions
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
+        vPrint( 'Quiet', "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
             logging.critical( "HebrewWLCBible.demoF: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
         else:
@@ -879,7 +848,7 @@ def demo() -> None:
             wlc.importGlossingDictionary( overrideFlag=True )
 
     if 1: # Test some of the glossing functions
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nG/ Adding new references to glossing dict…" )
+        vPrint( 'Quiet', "\nG/ Adding new references to glossing dict…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
             logging.critical( "HebrewWLCBible.demoG: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
         else:
@@ -898,7 +867,7 @@ if __name__ == '__main__':
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     if 0: # Update the glossing dictionary from the text file
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUpdating Hebrew WLC glossing dictionary from text file…" )
+        vPrint( 'Quiet', "\nUpdating Hebrew WLC glossing dictionary from text file…" )
         wlc = OSISHebrewWLCBible( DEFAULT_OSIS_WLC_FILEPATH )
         wlc.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
         wlc.importGlossingDictionary() # That we've edited in a text editor

@@ -19,7 +19,7 @@ Of course, you must already have Python3 installed on your system.
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/USFM2USX.minimal.py path/to/fileOrFolder
+        Apps/USFM2USX.minimal.py path/to/BibleFileOrFolder
 
 You can discover the available command line parameters with
         Apps/USFM2USX.minimal.py --help
@@ -29,20 +29,21 @@ This app also demonstrates how little code is required to use the BOS
     and then to export it in your desired format (see options in BibleWriter.py).
 """
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.UnknownBible import UnknownBible
 
 
 PROGRAM_NAME = "USFM to USX (minimal)"
-PROGRAM_VERSION = '0.04'
+PROGRAM_VERSION = '0.05'
 
 
 # Configure basic Bible Organisational System (BOS) set-up
 parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
-parser.add_argument( "inputFolderpath", help="path/to/folder of USFM files" )
+parser.add_argument( "inputBibleFileOrFolder", help="path/to/BibleFileOrFolder" )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
 # Do the actual Bible load and export work that we want
-unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputFolderpath )
+unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder )
 loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
 if not isinstance( loadedBible, str ): # i.e., not an error message
     loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)

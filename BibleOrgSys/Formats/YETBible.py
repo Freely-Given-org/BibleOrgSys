@@ -87,6 +87,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -106,7 +107,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if autoLoad is true and exactly one YET Bible is found,
         returns the loaded YETBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -119,7 +120,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " YETBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " YETBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -141,12 +142,12 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "YETBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = YETBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".yet"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -161,7 +162,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("YETBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -178,13 +179,13 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        vPrint( 'Verbose', "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "YETBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = YETBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
@@ -226,7 +227,7 @@ class YETBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
 
         def decodeVerse( encodedVerseString ):
             """
@@ -442,11 +443,11 @@ def testYB( TUBfilename ):
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/YET modules/' ) # Must be the same as below
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class…") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
+    vPrint( 'Normal', _("Demonstrating the YET Bible class…") )
+    vPrint( 'Quiet', "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     yb = YETBible( TUBfolder, TUBfilename )
     yb.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( yb ) # Just print a summary
+    vPrint( 'Normal', yb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag: yb.check()
     if BibleOrgSysGlobals.commandLineArguments.export: yb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -464,7 +465,7 @@ def testYB( TUBfilename ):
             verseText = yb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+        vPrint( 'Normal', reference, shortText, verseText )
 # end of testYB
 
 
@@ -472,25 +473,24 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/YET modules/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = YETBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA1", result1 )
+        vPrint( 'Normal', "YET TestA1", result1 )
         result2 = YETBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA2", result2 )
+        vPrint( 'Normal', "YET TestA2", result2 )
         result3 = YETBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestA3", result3 )
+        vPrint( 'Normal', "YET TestA3", result3 )
 
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = YETBibleFileCheck( testSubfolder )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestB1", result3 )
+        #vPrint( 'Normal', "YET TestB1", result3 )
         #result4 = YETBibleFileCheck( testSubfolder, autoLoad=True )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "YET TestB2", result4 )
+        #vPrint( 'Normal', "YET TestB2", result4 )
 
 
     if 1: # specified modules
@@ -499,7 +499,7 @@ def demo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testYB( testFilename )
@@ -513,7 +513,7 @@ def demo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -522,7 +522,7 @@ def demo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
 # end of demo

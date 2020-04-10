@@ -41,6 +41,7 @@ BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
 if BOSTopFolderpath not in sys.path:
     sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput import USFMFilenames
 
 
@@ -412,7 +413,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    vPrint( 'Normal', programNameVersion )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

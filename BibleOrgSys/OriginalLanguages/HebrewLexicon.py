@@ -55,6 +55,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -130,7 +131,7 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Info', _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
@@ -256,7 +257,7 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Info', _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
@@ -460,7 +461,7 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Info', _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
@@ -490,7 +491,7 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry…".format( entryID ) )
+                vPrint( 'Info', "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
@@ -648,7 +649,7 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Info', _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
@@ -678,7 +679,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {!r} part…".format( partID ) )
+                vPrint( 'Info', "Validating {!r} part…".format( partID ) )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
@@ -707,7 +708,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {!r} section…".format( sectionID ) )
+                vPrint( 'Info', "Validating {!r} section…".format( sectionID ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -733,7 +734,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {!r} entry…".format( entryID ) )
+                vPrint( 'Info', "Validating {!r} entry…".format( entryID ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
@@ -1288,13 +1289,13 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
 
 
     if 1: # demonstrate the Hebrew Lexicon converter classes
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', "\nDemonstrating the converter classes…" )
 
         print()
         hix = AugmentedStrongsIndexFileConverter()
@@ -1324,7 +1325,7 @@ def demo() -> None:
 
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon Index class…" )
+        vPrint( 'Normal', "\nDemonstrating the Hebrew Lexicon Index class…" )
         hix = HebrewLexiconIndex( testFolder ) # Load and process the XML
         print( hix ) # Just print a summary
         print()
@@ -1338,7 +1339,7 @@ def demo() -> None:
 
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the simple Hebrew Lexicon class…" )
+        vPrint( 'Normal', "\nDemonstrating the simple Hebrew Lexicon class…" )
         hl = HebrewLexiconSimple( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()
@@ -1354,7 +1355,7 @@ def demo() -> None:
             print( " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class…" )
+        vPrint( 'Normal', "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()

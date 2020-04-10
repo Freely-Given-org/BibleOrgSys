@@ -55,6 +55,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -75,7 +76,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
     if autoLoad is true and exactly one Online Bible is found,
         returns the loaded PierceOnlineBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "PierceOnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -88,7 +89,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " PierceOnlineBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " PierceOnlineBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -103,7 +104,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
     if foundFileCount >= len(compulsoryFiles):
         numFound = 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck got", numFound, givenFolderName )
+        vPrint( 'Info', "PierceOnlineBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             oB = PierceOnlineBible( givenFolderName )
             if autoLoadBooks: oB.load() # Load and process the file
@@ -120,7 +121,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("PierceOnlineBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    PierceOnlineBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    PierceOnlineBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -132,7 +133,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
             foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PierceOnlineBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "PierceOnlineBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = PierceOnlineBible( foundProjects[0] )
@@ -182,14 +183,14 @@ class PierceOnlineBible( Bible ):
         """
         Load the compressed data file and import book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("\nLoading from {}…").format( self.sourceFolder ) )
+        vPrint( 'Normal', _("\nLoading from {}…").format( self.sourceFolder ) )
 
 
         def loadPierceOnlineBibleMetadata():
             """
             Version.Ext contains lines of text.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading metadata from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading metadata from {}…").format( self.sourceFolder ) )
 
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['Online'] = {}
@@ -217,8 +218,7 @@ class PierceOnlineBible( Bible ):
             if self.encoding is None and lines:
                 self.encoding = encoding
 
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {} metadata lines read".format( len(lines) ) ) # 16 expected
+            vPrint( 'Info', "    {} metadata lines read".format( len(lines) ) ) # 16 expected
 
             self.suppliedMetadata['Online']['Abbreviation'] = lines[0]
             self.suppliedMetadata['Online']['VersificationScheme'] = lines[1]
@@ -285,16 +285,16 @@ class PierceOnlineBible( Bible ):
                   S Said See So Some Son T That The Their Them Then There These They This To Told Up Us
                   Was We Went Were What When Who Will With Would You Your
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading main version data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading main version data from {}…").format( self.sourceFolder ) )
             filename = 'Version.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading version from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading version from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 versionBytes = myFile.read()
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} version bytes read".format( len(versionBytes) ) )
+            vPrint( 'Info', "    {:,} version bytes read".format( len(versionBytes) ) )
             #print( "vB {} {}".format( len(versionBytes), versionBytes ) )
 
             key, size = versionBytes[0], versionBytes[1]
@@ -455,16 +455,16 @@ class PierceOnlineBible( Bible ):
                     elshaddaizites
             Counters for these sequences are in XrefNdx.Dat.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading dictionary characters from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading dictionary characters from {}…").format( self.sourceFolder ) )
             filename = 'Tokens.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading token characters from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading token characters from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 tokenBytes = myFile.read()
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} token bytes read".format( len(tokenBytes) ) )
+            vPrint( 'Info', "    {:,} token bytes read".format( len(tokenBytes) ) )
             #print( "vB {} {}".format( len(tokenBytes), hexlify(tokenBytes[:40]) ) )
             assert tokenBytes[0] == 32
             assert tokenBytes[1] in (0,32)
@@ -486,8 +486,7 @@ class PierceOnlineBible( Bible ):
                 #self.tokenBytes.append( token )
                 tokenChar = chr( token )
                 self.tokenString += tokenChar
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {:,} {}-bit token characters loaded".format( len(self.tokenString), self.characterBitSize ) )
+            vPrint( 'Info', "    {:,} {}-bit token characters loaded".format( len(self.tokenString), self.characterBitSize ) )
         # end of load.loadTokenCharacters
 
 
@@ -496,17 +495,17 @@ class PierceOnlineBible( Bible ):
             Seems to have a header and then 972 3+32-byte or 3+48-byte (CEV) entry lines.
                 972 * 32 = 31,104 = 31,102 verses in KJV + 2 blank at end.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading verse index info from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading verse index info from {}…").format( self.sourceFolder ) )
             filename = 'TextNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading verse text index from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading verse text index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 textIndexBytes = myFile.read()
             numTextIndexBytes = len(textIndexBytes)
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} text index bytes read".format( numTextIndexBytes ) )
+            vPrint( 'Info', "    {:,} text index bytes read".format( numTextIndexBytes ) )
             #print( "tIB {} {}".format( len(textIndexBytes), hexlify(textIndexBytes[:99]) ) )
             assert numTextIndexBytes in (34055,49623,) # Divisible by 35 or 51 = 973
 
@@ -576,8 +575,7 @@ class PierceOnlineBible( Bible ):
             assert index == numTextIndexBytes
 
             numTextIndexEntries = len(self.textIndex)
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {:,} text-index entries loaded from {} lines".format( numTextIndexEntries, count ) )
+            vPrint( 'Info', "    {:,} text-index entries loaded from {} lines".format( numTextIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
                 assert numTextIndexEntries == 31102 or self.abbreviation in ( 'Darby','Wey', 'Williams',) # Darby has 31,099 (3 less)
                 print( "    Final accumulated total was {:,} (should equal length of Text.Dat)".format( total + iE ) )
@@ -595,19 +593,18 @@ class PierceOnlineBible( Bible ):
                 05..7F is an index to the common words in Version.Dat
                 80..FF means use the next byte as well as an index to the dictionary.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("  Loading verse text data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading verse text data from {}…").format( self.sourceFolder ) )
             filename = 'Text.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
 
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading text from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.textBytes = myFile.read()
             numTextBytes = len(self.textBytes)
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} text bytes read".format( numTextBytes ) )
+            vPrint( 'Info', "    {:,} text bytes read".format( numTextBytes ) )
             if BibleOrgSysGlobals.debugFlag: assert numTextBytes == self.textIndex[-1]
         # end of load.loadBibleText
 
@@ -625,13 +622,13 @@ class PierceOnlineBible( Bible ):
                 Years Yes Yet Young Yourself Zedekiah Zion
             Doesn't include the capitalized words from Version.Dat.
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading textOpt data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading textOpt data from {}…").format( self.sourceFolder ) )
             filename = 'TextOpt.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading text opts from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading text opts from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 optBytes = myFile.read()
             if BibleOrgSysGlobals.debugFlag: print( "    {:,} optBytes bytes read".format( len(optBytes) ) )
@@ -741,17 +738,17 @@ class PierceOnlineBible( Bible ):
                 a count (3..226)
                 a not always increasing pointer (0..640.567) to Xref.Dat
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference index data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading cross-reference index data from {}…").format( self.sourceFolder ) )
             filename = 'XrefNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref index from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading xref index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} xref index bytes read".format( numXrefIndexBytes ) )
+            vPrint( 'Info', "    {:,} xref index bytes read".format( numXrefIndexBytes ) )
             #print( "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
 
             #header = xrefIndexBytes[0:35]
@@ -804,8 +801,7 @@ class PierceOnlineBible( Bible ):
                 count += 1
             assert index == numXrefIndexBytes
             numXrefIndexEntries = len(self.xrefIndex)
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {:,} xref index duples loaded from {} double lines".format( numXrefIndexEntries, count ) )
+            vPrint( 'Info', "    {:,} xref index duples loaded from {} double lines".format( numXrefIndexEntries, count ) )
             #print( self.xrefIndex )
             assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
             assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
@@ -827,7 +823,7 @@ class PierceOnlineBible( Bible ):
 
             Strongs printed numbers are Hebrew 1..8,674 plus Greek 1..5,624 = total = 14,298
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading Strongs index data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading Strongs index data from {}…").format( self.sourceFolder ) )
             filename = 'XrefNdxs.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
@@ -837,12 +833,11 @@ class PierceOnlineBible( Bible ):
                 try: del self.StrongsIndex
                 except AttributeError: pass
                 return False
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading Strongs reference index from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading Strongs reference index from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {:,} Strongs index bytes read".format( numXrefIndexBytes ) )
+            vPrint( 'Info', "    {:,} Strongs index bytes read".format( numXrefIndexBytes ) )
             #print( "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
 
             #header = xrefIndexBytes[0:35]
@@ -886,8 +881,7 @@ class PierceOnlineBible( Bible ):
                 count += 1
             assert index == numXrefIndexBytes
             numStrongsIndexEntries = len(self.StrongsIndex)
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "    {:,} Strongs index entries loaded from {} lines".format( numStrongsIndexEntries, count ) )
+            vPrint( 'Info', "    {:,} Strongs index entries loaded from {} lines".format( numStrongsIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
                 #print( self.StrongsIndex )
                 assert count == 277
@@ -901,17 +895,17 @@ class PierceOnlineBible( Bible ):
             """
             0.6-1.1MB
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading cross-reference data from {}…").format( self.sourceFolder ) )
+            vPrint( 'Normal', _("  Loading cross-reference data from {}…").format( self.sourceFolder ) )
             filename = 'Xref.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading xref data from {} {}…").format( self.sourceFolder, filename ) )
+            vPrint( 'Info', _("  Loading xref data from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.xrefBytes = myFile.read()
             numXrefBytes = len(self.xrefBytes)
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    {:,} xref bytes read".format( numXrefBytes ) )
+            vPrint( 'Info', "    {:,} xref bytes read".format( numXrefBytes ) )
             if BibleOrgSysGlobals.debugFlag:
                 if 'StrongsIndex' in self.__dict__: assert numXrefBytes == self.StrongsIndex[-1]
                 else: # Not all versions have Strongs
@@ -933,7 +927,7 @@ class PierceOnlineBible( Bible ):
         def createDictionary():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Creating dictionary…") )
+            vPrint( 'Normal', _("  Creating dictionary…") )
             self.dictionary = {}
 
             # Put the short common words into the dictionary
@@ -1146,7 +1140,7 @@ class PierceOnlineBible( Bible ):
         def loadBooks():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( 'Loading books…' )
+            vPrint( 'Normal', 'Loading books…' )
 
             bookCount = 0
             currentBBB = None
@@ -1155,7 +1149,7 @@ class PierceOnlineBible( Bible ):
                 BBB, C, V = BCVRef
                 if BBB != currentBBB:
                     if currentBBB is not None: # Save the last book
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                        vPrint( 'Verbose', "Saving", BBB, bookCount+1 )
                         self.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}…'.format( BBB ) )
@@ -1175,7 +1169,7 @@ class PierceOnlineBible( Bible ):
                     logging.warning( "No verse information for {} {} {}:{}".format( self.abbreviation, BBB, C, V ) )
 
             if currentBBB is not None: # Save the very last book
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                vPrint( 'Verbose', "Saving", BBB, bookCount+1 )
                 self.stashBook( thisBook )
         # end of load.loadBooks
 
@@ -1183,8 +1177,7 @@ class PierceOnlineBible( Bible ):
         def test():
             """
             """
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( '\nDEBUG TEST:' )
+            vPrint( 'Normal', '\nDEBUG TEST:' )
 
             if 1:
                 for n in ( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 123, 23144, 23145, 23146, 31101, ):
@@ -1272,11 +1265,11 @@ def testOB( TOBfilename ):
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' )
 
     TOBfolder = os.path.join( testFolder, TOBfilename+'/' )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Online Bible class…") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TOBfolder, TOBfilename ) )
+    vPrint( 'Normal', _("Demonstrating the Online Bible class…") )
+    vPrint( 'Quiet', "  Test folder is {!r} {!r}".format( TOBfolder, TOBfilename ) )
     olb = PierceOnlineBible( TOBfolder )
     olb.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( olb ) # Just print a summary
+    vPrint( 'Normal', olb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         olb.check()
         #print( UsfmB.books['GEN']._processedLines[0:40] )
@@ -1311,32 +1304,31 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PierceOnlineBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA1", result1 )
+        vPrint( 'Normal', "Online TestA1", result1 )
         result2 = PierceOnlineBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA2", result2 )
+        vPrint( 'Normal', "Online TestA2", result2 )
         result3 = PierceOnlineBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestA3", result3 )
+        vPrint( 'Normal', "Online TestA3", result3 )
 
         testSubfolder = os.path.join( testFolder, 'AV/' )
         result3 = PierceOnlineBibleFileCheck( testSubfolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB1", result3 )
+        vPrint( 'Normal', "Online TestB1", result3 )
         result4 = PierceOnlineBibleFileCheck( testSubfolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB2", result4 )
+        vPrint( 'Normal', "Online TestB2", result4 )
         result5 = PierceOnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Online TestB3", result5 )
+        vPrint( 'Normal', "Online TestB3", result5 )
 
 
     if 0: # specified module
         singleModule = 'AV'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOnline C/ Trying {}".format( singleModule ) )
+        vPrint( 'Normal', "\nOnline C/ Trying {}".format( singleModule ) )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testOB( singleModule )
@@ -1346,7 +1338,7 @@ def demo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOnline D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', "\nOnline D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testOB( testFilename )
@@ -1360,7 +1352,7 @@ def demo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1369,7 +1361,7 @@ def demo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOnline E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', "\nOnline E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testOB( someFolder )
 # end of demo

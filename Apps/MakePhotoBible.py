@@ -85,6 +85,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.UnknownBible import UnknownBible
 
 
@@ -102,21 +103,19 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersion )
-        print( "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
+        vprint( 'Quiet', "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -124,7 +123,7 @@ def main():
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
+        vPrint( 'Info', "  Result was: {}".format( result ) )
         print(f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 

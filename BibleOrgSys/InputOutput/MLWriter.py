@@ -56,6 +56,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
@@ -531,8 +532,7 @@ class MLWriter:
             a result code (0=success)
             and two strings containing the program output and error output.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
+        vPrint( 'Info', "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
 
         assert self._status == 'Closed'
 
@@ -557,11 +557,11 @@ class MLWriter:
                     checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+                vPrint( 'Info', "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
                 if returnCode == 5: # schema error
                     logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
-            elif BibleOrgSysGlobals.verbosityLevel > 3: print( "  xmllint validated the xml file {}.".format( self._filename ) )
+            elvPrint( 'Verbose', "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
 # end of MLWriter class
@@ -572,7 +572,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # Demo the writer object with XML
         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH

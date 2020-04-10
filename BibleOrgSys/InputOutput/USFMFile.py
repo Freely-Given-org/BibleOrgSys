@@ -54,6 +54,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a line
@@ -203,11 +204,11 @@ def demo() -> None:
     """
     Demonstrate reading and processing some UTF-8 USFM files.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', "Using {} as test file…".format( filepath ) )
 
     linesDB = USFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

@@ -47,6 +47,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
@@ -120,11 +121,11 @@ class XMLFile():
         """
         errorString = None
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
         try:
             self.XMLTree = ElementTree().parse( self.sourceFilepath )
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
+            vPrint( 'Info', "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:
             errorString = sys.exc_info()[1]
@@ -157,11 +158,11 @@ class XMLFile():
             checkProgramErrorOutputString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
 
         if checkProcess.returncode != 0:
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \
+            vPrint( 'Normal', "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \
                             .format( self.sourceFilepath, checkProcess.returncode, xmllintError[checkProcess.returncode] ) )
             self.validatedWithLint = False
         else:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
+            vPrint( 'Info', "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
             self.validatedWithLint = True
 
         if BibleOrgSysGlobals.debugFlag: print( "cPOS  = {!r}".format( checkProgramOutputString ) )
@@ -180,7 +181,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     AutoProcessesFolder = "../../"
     osisSchemaHTTP = 'http://ebible.org/osisCore.2.1.1.xsd'
@@ -190,7 +191,7 @@ def demo() -> None:
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n  Test filepath is {!r}".format( testFilepath ) )
+            #vPrint( 'Quiet', "\n  Test filepath is {!r}".format( testFilepath ) )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )
@@ -211,17 +212,17 @@ def demo() -> None:
             "Vietnamese Bible.xmm", )
         bad = ( "EPS99", )
         allOfThem = good + nonEnglish + bad
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
+        vPrint( 'Normal', "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
         testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
+        vPrint( 'Normal', "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)…" )
+        vPrint( 'Normal', "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)…" )
         doTest( testFolder, testNames, schema=osisSchemaFile )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
+        vPrint( 'Normal', "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
         doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
 # end of demo
 

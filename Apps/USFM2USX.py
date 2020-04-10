@@ -72,6 +72,7 @@ import os
 import shutil
 
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.UnknownBible import UnknownBible
 
@@ -90,15 +91,14 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersion )
-        print( f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if isinstance( loadedBible, Bible ):
@@ -106,12 +106,10 @@ def main():
 
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
+            vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
                 shutil.rmtree( defaultOutputFolder )
 
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( f"\n{SHORT_PROGRAM_NAME}: starting export…" )
+        vprint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
@@ -119,7 +117,7 @@ def main():
         #result = loadedBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( f"  Result was: {result}" )
+        vPrint( 'Info', f"  Result was: {result}" )
         print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
 # end of main
 

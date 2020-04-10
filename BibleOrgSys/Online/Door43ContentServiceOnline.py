@@ -60,6 +60,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
@@ -152,8 +153,7 @@ class DCSBibles:
             print( "DCSBibles.fetchAllBibles()…" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
+        vprint( 'Normal', f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.BibleList = []
@@ -473,25 +473,22 @@ def demo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion, end='\n\n' )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Test the DCSBibles class (also used later)
     if BibleOrgSysGlobals.verbosityLevel > 0: print("\n\nA/ DCSBibles class test…")
     dcsBibles = DCSBibles()
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( dcsBibles, end='\n\n' )
+    vPrint( 'Quiet', dcsBibles, end='\n\n' )
     #dcsBibles.load() # takes a minute
     #print( dcsBibles )
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vprint( 'Quiet', "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
+            vPrint( 'Normal', f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
 
 
     testRefs = ( ('GEN','1','1'), ('GEN','2','2'), ('JER','33','3'), ('MAL','4','6'),
@@ -502,8 +499,7 @@ def demo() -> None:
             dcsBible1 = DCSBible( searchResult, downloadAllBooks=downloadAllBooks )
             try: dcsBible1.preload()
             except FileNotFoundError: assert downloadAllBooks == False
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( dcsBible1, end='\n\n' )
+            vPrint( 'Normal', dcsBible1, end='\n\n' )
             for testRef in testRefs:
                 verseKey = SimpleVerseKey( *testRef )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -522,7 +518,7 @@ def demo() -> None:
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( f"Found {len(searchResult)} 'en_ult' repos!" )
+                vPrint( 'Quiet', f"Found {len(searchResult)} 'en_ult' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )
@@ -540,7 +536,7 @@ def demo() -> None:
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( f"Found {len(searchResult)} 'en_ust' repos!" )
+                vPrint( 'Quiet', f"Found {len(searchResult)} 'en_ust' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )

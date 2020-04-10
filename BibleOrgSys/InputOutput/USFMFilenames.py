@@ -48,6 +48,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -215,7 +216,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Pattern is {!r}".format( self.pattern ) )
+                            vPrint( 'Info', "Pattern is {!r}".format( self.pattern ) )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -223,7 +224,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "More generic pattern is {!r}".format( self.pattern ) )
+                                vPrint( 'Info', "More generic pattern is {!r}".format( self.pattern ) )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -515,7 +516,7 @@ class USFMFilenames:
         resultListInt = self.getPossibleFilenameTuplesInt()
         if len(resultListInt) > len(resultList):
             resultString, resultList = 'Internal', resultListInt
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
+        vPrint( 'Info', "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
 
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             #if BibleOrgSysGlobals.debugFlag: print( "  getMaximumPossibleFilenameTuples doing strictCheck…" )
@@ -595,7 +596,7 @@ class USFMFilenames:
 
 def demo() -> None:
     """ Demonstrate finding files in some USFM Bible folders. """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),

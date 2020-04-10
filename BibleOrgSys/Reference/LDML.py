@@ -75,6 +75,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -3575,8 +3576,7 @@ class LDMLFile:
 
 
         # Main code for LDMLFile.load()
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( "    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {}…".format( self.filepath ) )
+        vPrint( 'Verbose', "    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {}…".format( self.filepath ) )
 
         LDMLData = {}
 
@@ -3823,7 +3823,7 @@ class LDMLFile:
             logging.critical( _("Unrecognised PTX8 {} language settings tag: {}").format( self.languageCode, languageTree.tag ) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
-        if BibleOrgSysGlobals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             print( "\n\nLDML data for {} ({}):".format( self.languageCode, len(LDMLData) ) )
             for key in LDMLData:
                 #print( "\n      {}: ({}) {}".format( key, len(LDMLData[key]), LDMLData[key] ) )
@@ -3842,7 +3842,7 @@ def demo() -> None:
     """
     Demonstrate reading and checking some LDML files.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     mainTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/SIL_NRSI/sldr/sldr/' )
     if 1: # test load all SIL LDML files (cloned from GitHub)
@@ -3864,13 +3864,13 @@ def demo() -> None:
                         if os.access( somepath2, os.R_OK ):
                             thisLDMLfile = LDMLFile( somepath, something2 )
                             LDMLdict = thisLDMLfile.load()
-                            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Loaded {} and got:\n  {}".format( something2, LDMLdict ) )
+                            vPrint( 'Normal', "  Loaded {} and got:\n  {}".format( something2, LDMLdict ) )
                             #if BibleOrgSysGlobals.strictCheckingFlag: thisLDMLfile.check()
                         else: print( "Sorry, test file '{}' is not readable on this computer.".format( somepath2 ) )
-        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
+        #vPrint( 'Normal', "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
         #thisLDMLfile = LDMLFile( testFolder )
         #thisLDMLfile.load()
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "thisLDMLfile )
+        #vPrint( 'Quiet', "thisLDMLfile )
 
 
 if __name__ == '__main__':

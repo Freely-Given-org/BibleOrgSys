@@ -71,6 +71,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Formats.theWordBible import handleRTFLine
@@ -94,7 +95,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one MySword Bible is found,
         returns the loaded MySwordBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "MySwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert autoLoad in (True,False,)
@@ -108,7 +109,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " MySwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " MySwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -135,7 +136,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "MySwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             MySwB = MySwordBible( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: MySwB.preload()
@@ -152,7 +153,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("MySwordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    MySwordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    MySwordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -174,7 +175,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "MySwordBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "MySwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             MySwB = MySwordBible( foundProjects[0][0], foundProjects[0][1] )
@@ -223,7 +224,7 @@ class MySwordBible( Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("preload()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Preloading {}…").format( self.sourceFilepath ) )
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -262,7 +263,7 @@ class MySwordBible( Bible ):
             print( _("load()") )
         assert self.preloadDone
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
 
 
         if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
@@ -326,7 +327,7 @@ class MySwordBible( Bible ):
                 C += 1
                 if C > numC: # Save this book now
                     if haveLines:
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  MySword saving", BBB, bookCount+1 )
+                        vPrint( 'Verbose', "  MySword saving", BBB, bookCount+1 )
                         self.stashBook( thisBook )
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
@@ -443,7 +444,7 @@ class MySwordBible( Bible ):
                     V = 1
                 else: # Save this book now
                     if haveLines:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MySword saving", BBB )
+                        vPrint( 'Info', "  MySword saving", BBB )
                         self.stashBook( thisBook )
                     #else: print( "Not saving", BBB )
                     break
@@ -551,7 +552,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
         booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
     extension = '.bbl.mybible'
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MySword format…") )
+    vPrint( 'Info', _("  Exporting to MySword format…") )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -565,7 +566,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( '  createMySwordModule: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', '  createMySwordModule: ' + _("Writing {!r}…").format( filepath ) )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -635,18 +636,16 @@ def createMySwordModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.createMySwordModule: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "createMySwordModule: Unhandled books were {}".format( unhandledBooks ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
 
     # Now create the gzipped file
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Compressing {} MySword file…".format( filename ) )
+    vPrint( 'Info', "  Compressing {} MySword file…".format( filename ) )
     tar = tarfile.open( filepath+'.gz', 'w:gz' )
     tar.add( filepath )
     tar.close()
@@ -667,12 +666,12 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MySword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class {}…").format( indexString) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
+    vPrint( 'Normal', _("Demonstrating the MySword Bible class {}…").format( indexString) )
+    vPrint( 'Quiet', "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
     MySwB.preload()
     #MySwB.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( MySwB ) # Just print a summary
+    vPrint( 'Normal', MySwB ) # Just print a summary
     #print( MySwB.suppliedMetadata['MySword'] )
     if MySwB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MySwB.check()
@@ -688,16 +687,16 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
             #print( svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), MySwB.getVerseText( svk )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+                vPrint( 'Normal', reference, shortText, verseText )
             except KeyError:
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
+                vPrint( 'Normal', reference, "not found!!!" )
 
         if 0: # Now export the Bible and compare the round trip
             MySwB.createMySwordModule()
             #doaResults = MySwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/BOS_MySword_Reexport/"
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported MySword files…" )
+                vPrint( 'Normal', "\nComparing original and re-exported MySword files…" )
                 result = BibleOrgSysGlobals.fileCompare( MySwBfilename, MySwBfilename, MySwBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
                     if not result: halt
@@ -708,17 +707,16 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MySwordTest/' )
         result1 = MySwordBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
+        vPrint( 'Normal', "TestA1", result1 )
         result2 = MySwordBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+        vPrint( 'Normal', "TestA2", result2 )
         result3 = MySwordBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
+        vPrint( 'Normal', "TestA3", result3 )
 
 
     if 1: # individual modules in the test folder
@@ -729,7 +727,7 @@ def demo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'B' + str( j+1 )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', "\nMySw {}/ Trying {}".format( indexString, fullname ) )
                 testMySwB( indexString, testFolder, fullname )
 
 
@@ -741,7 +739,7 @@ def demo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'C' + str( j+1 )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', "\nMySw {}/ Trying {}".format( indexString, fullname ) )
                 testMySwB( indexString, testFolder, fullname )
 
 
@@ -756,7 +754,7 @@ def demo() -> None:
                     foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -766,7 +764,7 @@ def demo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'D' + str( j+1 )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -780,7 +778,7 @@ def demo() -> None:
             elif os.path.isfile( somepath ) and somepath.endswith('.mybible'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -790,7 +788,7 @@ def demo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', "\nMySw {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp

@@ -48,6 +48,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 # All of the following must be all UPPER CASE
@@ -247,7 +248,7 @@ class USXFilenames:
                     if not firstLines or len(firstLines)<3: continue
                     if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                     and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                        vPrint( 'Verbose', "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                         continue # so it doesn't get added
                 resultList.append( (BBB, possibleFilename,) )
@@ -350,7 +351,7 @@ def demo() -> None:
     """ 
     Demonstrate finding files in some USX Bible folders. 
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),

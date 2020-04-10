@@ -66,6 +66,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput import SFMFile
 
 
@@ -78,15 +79,15 @@ def main():
     """
     Reorder songs by title (\s line in song record -- assumed to always be the second line in the record).
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "Loading songs from {}…".format( songsInputFilepath ) )
+    vPrint( 'Quiet', "Loading songs from {}…".format( songsInputFilepath ) )
     songs = SFMFile.SFMRecords()
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs loaded".format( len(songs.records) ) )
+    vPrint( 'Normal', "  {} songs loaded".format( len(songs.records) ) )
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( songs )
 
     # Extract the information out of the file that we want to use for sorting
@@ -101,7 +102,7 @@ def main():
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "Writing reordered songs to {}…".format( songsOutputFilepath ) )
+    vPrint( 'Quiet', "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             if debuggingThisModule: print( "keyPair", keyPair )
@@ -111,9 +112,9 @@ def main():
                 if debuggingThisModule: print( "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} songs written".format( k+1 ) )
+    vPrint( 'Normal', "  {} songs written".format( k+1 ) )
 
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} finished.".format( programNameVersion ) )
+    vPrint( 'Quiet', "{} finished.".format( programNameVersion ) )
 #end of main
 
 if __name__ == '__main__':

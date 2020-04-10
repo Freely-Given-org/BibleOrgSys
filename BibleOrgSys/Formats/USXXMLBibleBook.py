@@ -46,6 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import BibleBook
 
 
@@ -423,8 +424,8 @@ class USXXMLBibleBook( BibleBook ):
 
         # Main code for load()
         #lastMarker = None
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Loading {} from {}…").format( filename, folder ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Verbose', "  " + _("Loading {} from {}…").format( filename, folder ) )
+        elvPrint( 'Info', "  " + _("Loading {}…").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
@@ -653,7 +654,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def getShortVersion( someString ):
         maxLen = 140
@@ -667,8 +668,8 @@ def demo() -> None:
     name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning USX  {} from {}…").format( name, testFolder ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
+        vPrint( 'Normal', _("Scanning USX  {} from {}…").format( name, testFolder ) )
+        vPrint( 'Normal', _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -679,21 +680,21 @@ def demo() -> None:
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading USX {} from {}…").format( BBB, filename ) )
+                vPrint( 'Normal', _("Loading USX {} from {}…").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Header is {!r}".format( UxBB.getField( 'h' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBB )
+                vPrint( 'Info', "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
+                vPrint( 'Info', "  Header is {!r}".format( UxBB.getField( 'h' ) ) )
+                vPrint( 'Info', "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
+                vPrint( 'Info', UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification()
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBVersification )
+                vPrint( 'Info', UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBAddedUnits )
+                vPrint( 'Info', UxBBAddedUnits )
                 UxBB.check()
                 UxBBErrors = UxBB.getErrors()
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBErrors )
+                vPrint( 'Info', UxBBErrors )
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
@@ -703,13 +704,13 @@ def demo() -> None:
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
+                        vPrint( 'Info', _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is {!r}".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( UBB )
+                        vPrint( 'Info', UBB )
                         UBB.validateMarkers()
 
                         # Now compare the USX and USFM projects
@@ -759,7 +760,7 @@ def demo() -> None:
                             print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
                 else: print( "Sorry, USFM test folder {!r} doesn't exist on this computer.".format( testFolder2 ) )
-            elif BibleOrgSysGlobals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", BBB )
+            elvPrint( 'Info', "*** Skipped USX/USFM compare on {}", BBB )
     else: print( "Sorry, USX test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

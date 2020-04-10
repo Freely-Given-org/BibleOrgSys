@@ -55,6 +55,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
@@ -420,8 +421,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif divType in ( 'x-license', 'x-trademark', ): replacement = '\\NL**\\rem '
         elif divType.startswith( 'x-' ): replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
         else:
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( 'filterOSISVerseLine CS456 matched:', repr(match.group(0)) )
+            vPrint( 'Quiet', 'filterOSISVerseLine CS456 matched:', repr(match.group(0)) )
             if BibleOrgSysGlobals.debugFlag or debuggingThisModule: halt
             replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
         #print( 'replacement', repr(replacement) )
@@ -658,8 +658,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         elif '"underline"' in attributes: marker = 'em' # We don't have an underline marker
         elif '"x-superscript"' in attributes: marker = 'ord' # We don't have a superscript marker
         else:
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( 'FX353 Matched:', repr(match.group(0)) )
+            vPrint( 'Quiet', 'FX353 Matched:', repr(match.group(0)) )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule: halt
             marker = attributes
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
@@ -809,8 +808,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vprint( 'Quiet', "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             if BBB!='PSA' or V not in ('1','5',): print( "Stopped at", moduleName, BBB, C, V ); halt
     #if V == '3': halt
@@ -986,8 +984,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vprint( 'Quiet', "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -1102,8 +1099,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vprint( 'Quiet', "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -1157,8 +1153,7 @@ class SwordInterface():
     def __init__( self ):
         """
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( f"SwordResources.SwordInterface is using '{SwordType}'." )
+        vprint( 'Normal', f"SwordResources.SwordInterface is using '{SwordType}'." )
         if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -1306,7 +1301,7 @@ class SwordInterface():
             elif encoding == Sword.ENC_UTF16: BibleObject.encoding = 'utf-16'
             elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
-            if BibleOrgSysGlobals.verbosityLevel > 3:
+            if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( 'Description: {!r}'.format( module.getDescription() ) )
                 print( 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
                 print( 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
@@ -1386,7 +1381,7 @@ class SwordInterface():
                         return
 
             if haveText: # Save the book
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", moduleAbbreviation, currentBBB, bookCount )
+                vPrint( 'Verbose', "Saving", moduleAbbreviation, currentBBB, bookCount )
                 BibleObject.stashBook( thisBook )
 
 
@@ -1417,7 +1412,7 @@ class SwordInterface():
             elif encoding == Sword.ENC_UTF16: BibleObject.encoding = 'utf-16'
             elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
-            if BibleOrgSysGlobals.verbosityLevel > 3:
+            if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( 'Description: {!r}'.format( module.getDescription() ) )
                 print( 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
                 print( 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
@@ -1486,7 +1481,7 @@ class SwordInterface():
                 # Start a new book if necessary
                 if BBB != currentBBB:
                     if currentBBB is not None and haveText: # Save the previous book
-                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", currentBBB, bookCount )
+                        vPrint( 'Verbose', "Saving", currentBBB, bookCount )
                         BibleObject.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
@@ -1512,7 +1507,7 @@ class SwordInterface():
                         return
 
             if currentBBB is not None and haveText: # Save the very last book
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", moduleAbbreviation, currentBBB, bookCount )
+                vPrint( 'Verbose', "Saving", moduleAbbreviation, currentBBB, bookCount )
                 BibleObject.stashBook( thisBook )
 
 
@@ -1721,13 +1716,8 @@ def demo() -> None:
     """
     Sword Resources
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
-        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
-            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( " using", SwordType )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    vPrint( 'Normal', " using", SwordType )
 
     #print( "\ndir Sword", dir(Sword) )
     # Gives: dir Sword ['AttributeListMap', 'AttributeListMap_swigregister', 'AttributeTypeListMap',
@@ -1799,8 +1789,7 @@ def demo() -> None:
     # 'zVerse', 'zVerse_createModule', 'zVerse_swigregister']
 
     if SwordType == 'CrosswireLibrary':
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "Sword Version string", Sword.SWORD_VERSION_STR )
+        vprint( 'Quiet', "Sword Version string", Sword.SWORD_VERSION_STR )
         # Gives: Sword Version string 1.8.900
         #if BibleOrgSysGlobals.verbosityLevel > 0:
             #print( "\ndir Sword.SWVersion()", dir(Sword.SWVersion()) )
@@ -1869,15 +1858,12 @@ def demo() -> None:
     # end of Find
 
     if 0: # Install manager
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nINSTALL MANAGER" )
+        vprint( 'Quiet', "\nINSTALL MANAGER" )
         im = Sword.InstallMgr() # FAILS
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\ndir im", im, dir(im) )
+        vprint( 'Quiet', "\ndir im", im, dir(im) )
 
     if 0: # Locale manager
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nLOCALE MANAGER" )
+        vprint( 'Quiet', "\nLOCALE MANAGER" )
         lm = Sword.LocaleMgr()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "dir lm", lm, dir(lm) )
@@ -1886,16 +1872,13 @@ def demo() -> None:
             print( "locale {}".format( lm.getLocale( "en" ) ) ) # Needs a string parameter but why does it return None?
 
     if 0: # try filters
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nFILTER MANAGER" )
+        vprint( 'Quiet', "\nFILTER MANAGER" )
         fm = Sword.SWFilterMgr()
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\ndir filters", dir(fm) )
+        vprint( 'Quiet', "\ndir filters", dir(fm) )
 
     if SwordType == 'CrosswireLibrary':
         # Get a list of available module names and types
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{} modules are installed.".format( len(library.getModules()) ) )
+        vprint( 'Quiet', "\n{} modules are installed.".format( len(library.getModules()) ) )
         for j,moduleBuffer in enumerate(library.getModules()):
             moduleID = moduleBuffer.getRawData()
             module = library.getModule( moduleID )
@@ -1908,29 +1891,23 @@ def demo() -> None:
         # Try some modules
         mod1 = library.getModule( 'KJV' )
         assert mod1 is not None
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
+        vprint( 'Quiet', "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
         mod2 = library.getModule( 'ASV' )
         assert mod2 is not None
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
+        vprint( 'Quiet', "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
         mod3 = library.getModule( 'WEB' )
         assert mod3 is not None
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
+        vprint( 'Quiet', "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
         # abbott = library.getModule( 'Abbott' )
         # assert abbott is not None
         # if BibleOrgSysGlobals.verbosityLevel > 0:
         #     print( "\nabbott {} ({}) {!r}".format( abbott.getName(), abbott.getType(), abbott.getDescription() ) )
         strongsGreek = library.getModule( 'StrongsGreek' )
         assert strongsGreek is not None
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
+        vprint( 'Quiet', "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
         strongsHebrew = library.getModule( 'StrongsHebrew' )
         assert strongsHebrew is not None
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nSH {} ({}) {!r}\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
-            print()
+        vprint( 'Quiet', "\nSH {} ({}) {!r}\n\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
 
         # Try a sword key
         sk = Sword.SWKey( "H0430" )
@@ -1948,8 +1925,7 @@ def demo() -> None:
 
         if 0: # Set a filter HOW DO WE DO THIS???
             rFs = mod1.getRenderFilters()
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( mod1.getRenderFilters() )
+            vPrint( 'Quiet', mod1.getRenderFilters() )
             mod1.setRenderFilter()
 
         try: print( "\n{} {}: {}".format( mod1.getName(), "Jonny 1:1", mod1.renderText( Sword.VerseKey("Jn 1:1") ) ) )
@@ -2000,8 +1976,7 @@ def demo() -> None:
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
+        vprint( 'Quiet', "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
         def getGenBookTOC( tk, parent ):
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
@@ -2023,8 +1998,7 @@ def demo() -> None:
     #Find( "getGlobal" ) # should be lots
 
     if 1: # Test the SwordInterface (using Sword code)
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n\nTesting SwordInterface using", SwordType )
+        vprint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
         si = SwordInterface()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )
@@ -2035,8 +2009,7 @@ def demo() -> None:
     if 1 and __name__=='__main__' and SwordType=='CrosswireLibrary': # Test the SwordInterface again (using our code)
         # Don't switch SwordType unless this is the main module, coz it messes up the demo tests
         setSwordType( 'OurCode' )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n\nTesting SwordInterface using", SwordType )
+        vprint( 'Quiet', "\n\nTesting SwordInterface using", SwordType )
         si = SwordInterface()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "SwordInterface getAvailableModuleCodes", si.getAvailableModuleCodes() )

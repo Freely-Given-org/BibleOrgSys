@@ -76,6 +76,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
@@ -126,10 +127,8 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
     import re
     #debuggingThisModule = True
 
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
-    if BibleOrgSysGlobals.verbosityLevel > 3:
-        print( f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
+    vPrint( 'Info', f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
+    vPrint( 'Verbose', f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
@@ -1983,8 +1982,7 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
+        vPrint( 'Info', "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
         if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._rawLines # or else the book was totally blank
@@ -2448,7 +2446,7 @@ class InternalBibleBook:
             assert not self._indexedCVFlag
         if self._indexedCVFlag: return # Can only do it once
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._CVIndex = InternalBibleCVIndex( self.workName, self.BBB )
         self._CVIndex.makeCVIndex( self._processedLines )
 
@@ -2487,7 +2485,7 @@ class InternalBibleBook:
             assert not self._indexedSectionsFlag
         if self._indexedSectionsFlag: return # Can only do it once
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._SectionIndex = InternalBibleSectionIndex( self, self.containerBibleObject )
         self._SectionIndex.makeSectionIndex()
 
@@ -3086,7 +3084,7 @@ class InternalBibleBook:
                 verseNumberStr = '0'
             elif marker == 'cp':
                 cpChapterText = text.split( None, 1 )[0]
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "In {}, chapter text went from {!r} to {!r} with cp marker".format( self.BBB, chapterNumberStr, cpChapterText ) )
+                vPrint( 'Info', "In {}, chapter text went from {!r} to {!r} with cp marker".format( self.BBB, chapterNumberStr, cpChapterText ) )
                 chapterNumberStr = cpChapterText
                 if len(chapterNumberStr)>2 and chapterNumberStr[0]=='(' and chapterNumberStr[-1]==')': chapterNumberStr = chapterNumberStr[1:-1] # Remove parenthesis -- NOT SURE IF WE REALLY WANT TO DO THIS OR NOT ???
                 verseNumberStr = '0'
@@ -4818,7 +4816,7 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
+        vPrint( 'Info', '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
@@ -4862,7 +4860,7 @@ class InternalBibleBook:
         if verseLines: print( f"verseLines = {verseLines}" )
         assert not verseLines
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata…") )
+        vPrint( 'Info', "  " + _("Writing BCV book metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )
@@ -4877,7 +4875,7 @@ def demo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     print( "Since this is only designed to be a base class, it can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
@@ -4887,7 +4885,7 @@ def demo() -> None:
     IBB.objectNameString = 'Dummy test Internal Bible Book object'
     IBB.objectTypeString = 'DUMMY'
     IBB.sourceFilepath = 'Nowhere'
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( IBB )
+    vPrint( 'Quiet', IBB )
 # end of demo
 
 

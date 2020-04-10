@@ -89,6 +89,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
@@ -320,8 +321,7 @@ class InternalBibleCVIndex:
 
 
         # Main code of InternalBibleCVIndex.makeCVIndex
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
+        vPrint( 'Verbose', "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
@@ -355,7 +355,7 @@ class InternalBibleCVIndex:
                         #for char in strV:
                             #if char.isdigit(): digitV += char
                             #else: # the first non-digit in the verse "number"
-                                #if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                #vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 #break # ignore the rest
                         ##assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         #saveCV, saveJ = (strC,digitV,), revertToJ
@@ -418,7 +418,7 @@ class InternalBibleCVIndex:
                     for char in strV:
                         if char.isdigit(): digitV += char
                         else: # the first non-digit in the verse "number"
-                            if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                            vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                             break # ignore the rest
                     #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                     saveCV, saveJ = (strC,digitV,), revertToJ
@@ -1026,8 +1026,7 @@ class InternalBibleSectionIndex:
 
 
         # Main code of InternalBibleSectionIndex.makeSectionIndex
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( "    " + _("Indexing {} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
+        vPrint( 'Verbose', "    " + _("Indexing {} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
@@ -1062,7 +1061,7 @@ class InternalBibleSectionIndex:
                         ##for char in strV:
                             ##if char.isdigit(): digitV += char
                             ##else: # the first non-digit in the verse "number"
-                                ##if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                ##vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 ##break # ignore the rest
                         ###assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         ##saveCV, saveJ = (strC,digitV,), revertToJ
@@ -1458,20 +1457,20 @@ def demo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print()
     ICVE = InternalBibleCVIndexEntry( 0, 1, ['abc'] )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( f"ICVE={ICVE}" )
+    vPrint( 'Quiet', f"ICVE={ICVE}" )
     ISE = InternalBibleSectionIndexEntry( '1', '1', '1', '5', 0, 1, 's1', 'Section Name', ['abc'] )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( f"ISE={ISE}" )
+    vPrint( 'Quiet', f"ISE={ISE}" )
 
     #IBB = InternalBibleIndexes( 'GEN' )
     ## The following fields would normally be filled in a by "load" routine in the derived class
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #if BibleOrgSysGlobals.verbosityLevel > 0: print( IBB )
+    #vPrint( 'Quiet', IBB )
 
     global debuggingThisModule
     if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
@@ -1483,11 +1482,11 @@ def demo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( f"\nInternalBibleIndexes B{j+1}/ {abbrev} from {testFolder}…" )
+            vPrint( 'Quiet', f"\nInternalBibleIndexes B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
+                vPrint( 'Quiet', ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #debuggingThisModule = True # Just for the index creation
                 if 0:

@@ -58,6 +58,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -93,12 +94,10 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("No occurrences of {!r} found to replace").format( this ) )
+        vPrint( 'Info', _("No occurrences of {!r} found to replace").format( this ) )
         return text
 
-    if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( _("Replacing {:,} occurrence{} of {!r} with {!r}").format( count, '' if count==1 else 's', this, that ) )
+    vPrint( 'Normal', _("Replacing {:,} occurrence{} of {!r} with {!r}").format( count, '' if count==1 else 's', this, that ) )
     if loop:
         newText = text
         while this in newText:
@@ -119,11 +118,9 @@ def noisyRegExReplaceAll( text:str, this:str, that:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("No occurrences of regex {!r} found to replace").format( this ) )
+        vPrint( 'Info', _("No occurrences of regex {!r} found to replace").format( this ) )
         return text
-    if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( _("Replacing {:,} occurrence{} of regex {!r} with {!r}").format( count1, '' if count1==1 else 's', this, that ) )
+    vPrint( 'Normal', _("Replacing {:,} occurrence{} of regex {!r} with {!r}").format( count1, '' if count1==1 else 's', this, that ) )
 
     newText, count2 = re.subn( regex, that, text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 0:
@@ -142,11 +139,9 @@ def noisyDeleteAll( text:str, this:str ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("No occurrences of {!r} found to delete").format( this ) )
+        vPrint( 'Info', _("No occurrences of {!r} found to delete").format( this ) )
         return text
-    if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( _("Deleting {:,} occurrence{} of {!r}").format( count, '' if count==1 else 's', this ) )
+    vPrint( 'Normal', _("Deleting {:,} occurrence{} of {!r}").format( count, '' if count==1 else 's', this ) )
     newText = text.replace( this, '' )
 
     count2 = newText.count( this )
@@ -163,11 +158,9 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("No occurrences of regex {!r} found to delete").format( this ) )
+        vPrint( 'Info', _("No occurrences of regex {!r} found to delete").format( this ) )
         return text
-    if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( _("Deleting {:,} occurrence{} of regex {!r}").format( count1, '' if count1==1 else 's', this ) )
+    vPrint( 'Normal', _("Deleting {:,} occurrence{} of regex {!r}").format( count1, '' if count1==1 else 's', this ) )
 
     newText, count2 = re.subn( regex, '', text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -185,7 +178,7 @@ def demo() -> None:
     """
     Demo program to handle command line parameters and then run some short test/demo functions.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     sampleText = """This is just a sample text that we can use to demonstrate NoisyReplaceFunctions.py.
 

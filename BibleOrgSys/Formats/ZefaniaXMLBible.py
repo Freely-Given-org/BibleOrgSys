@@ -83,6 +83,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
@@ -106,7 +107,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
     if autoLoad is true and exactly one Zefania Bible is found,
         returns the loaded ZefaniaXMLBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "ZefaniaXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -119,7 +120,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " ZefaniaXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " ZefaniaXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -148,7 +149,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<XMLBIBLE' ) \
             and not firstLines[1].startswith( '<!--Nice Viewer' ) \
@@ -161,7 +162,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "ZefaniaXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
@@ -174,7 +175,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    ZefaniaXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    ZefaniaXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -197,7 +198,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<XMLBIBLE' ) \
                 and not firstLines[1].startswith( '<!--Nice Viewer' ) \
@@ -211,7 +212,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "ZefaniaXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -273,7 +274,7 @@ class ZefaniaXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -459,7 +460,7 @@ class ZefaniaXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book…") )
+        vPrint( 'Verbose', _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -480,7 +481,7 @@ class ZefaniaXMLBible( Bible ):
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Info', _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Zefania XML Bible Book object'
             thisBook.objectTypeString = 'Zefania'
@@ -492,7 +493,7 @@ class ZefaniaXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.chapterTag, element.tag ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
+            vPrint( 'Info', "  Saving {} into results…".format( BBB ) )
             self.stashBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
@@ -504,7 +505,7 @@ class ZefaniaXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter…") )
+        vPrint( 'Verbose', _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -556,7 +557,7 @@ class ZefaniaXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse…") )
+        vPrint( 'Verbose', _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
@@ -725,29 +726,22 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
-        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
-            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
-            print( "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-            print( "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vprint( 'Quiet', "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        vprint( 'Quiet', "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vprint( 'Quiet', "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
     if 1: # demo the file checking code
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/Zefania modules/' )
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
-            print( "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
-            print( "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vprint( 'Quiet', "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        vprint( 'Quiet', "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vprint( 'Quiet', "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
     if 1:
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
@@ -763,12 +757,11 @@ def demo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ C{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', "\nZ C{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
+            vPrint( 'Quiet', "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( zb ) # Just print a summary
+            vPrint( 'Quiet', zb ) # Just print a summary
             #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
@@ -799,12 +792,11 @@ def demo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ D{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', "\nZ D{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
+            vPrint( 'Quiet', "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( zb ) # Just print a summary
+            vPrint( 'Quiet', zb ) # Just print a summary
                 #print( zb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences

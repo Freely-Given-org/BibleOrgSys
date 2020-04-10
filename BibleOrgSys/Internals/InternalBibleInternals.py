@@ -88,6 +88,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 #from BibleReferences import BibleAnchorReference
@@ -824,7 +825,7 @@ def demo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     print( "Since these are only helper classes, they can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
@@ -834,7 +835,7 @@ def demo() -> None:
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #if BibleOrgSysGlobals.verbosityLevel > 0: print( IBB )
+    #vPrint( 'Quiet', IBB )
 
     global debuggingThisModule
     if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
@@ -846,12 +847,12 @@ def demo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+            vPrint( 'Quiet', f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
                 UB.discover() # Why does this only help if -1 flag is enabled???
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( ' ', UB )
+                vPrint( 'Quiet', ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #debuggingThisModule = True
                 for BBB,bookObject in UB.books.items():

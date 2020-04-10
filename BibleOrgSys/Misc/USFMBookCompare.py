@@ -58,6 +58,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
@@ -66,10 +67,9 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' ):
     """
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nUSFMBookCompare() for USFM Bible books" )
-    if BibleOrgSysGlobals.verbosityLevel > 3:
-        print( "  comparing {}".format( filepath1 ) )
-        print( "        and {}".format( filepath2 ) )
+    vPrint( 'Info', "\nUSFMBookCompare() for USFM Bible books" )
+    vPrint( 'Verbose', "  comparing {}".format( filepath1 ) )
+    vPrint( 'Verbose', "        and {}".format( filepath2 ) )
 
 
     # Set up empty results dictionaries
@@ -288,8 +288,7 @@ def demo():
     """
     Demonstration program to show off USFM Bible book comparison.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( '{} Demo'.format( ProgNameVersion ) )
-    #if BibleOrgSysGlobals.print( BibleOrgSysGlobals.commandLineArguments )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
     fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
@@ -320,8 +319,7 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
-    #if BibleOrgSysGlobals.print( BibleOrgSysGlobals.commandLineArguments )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     fp1, fp2 = BibleOrgSysGlobals.commandLineArguments.file1, BibleOrgSysGlobals.commandLineArguments.file2
     allOkay = True

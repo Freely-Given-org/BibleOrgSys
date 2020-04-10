@@ -46,6 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput import SFMFile
 
@@ -315,7 +316,7 @@ class BibleStylesheet():
     def importParatextStylesheet( self, folder, filename:str, encoding:str='utf-8' ) -> None:
         """
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet…".format( filename ) )
+        vPrint( 'Normal', "Importing {} Paratext stylesheet…".format( filename ) )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
         self.filepath = PTSS.filepath
@@ -499,7 +500,7 @@ def demo() -> None:
     """
     Short program to demonstrate/test the above class(es).
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # Try the default one
         print( "\nTrying default Bible stylesheet…" )

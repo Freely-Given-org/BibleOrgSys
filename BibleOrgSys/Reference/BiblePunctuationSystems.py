@@ -43,6 +43,7 @@ if __name__ == '__main__':
     import sys
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 #@singleton # Can only ever have one instance
@@ -79,7 +80,7 @@ class BiblePunctuationSystems:
                             picklesGood = False; break
             if picklesGood:
                 import pickle
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -181,7 +182,7 @@ class BiblePunctuationSystems:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -266,7 +267,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)

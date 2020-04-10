@@ -49,6 +49,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 # BibleOrgSys imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
 
@@ -91,15 +92,12 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         # if bookID == 'FRT':
 
         filepath = os.path.join( folderpath, 'FBV_{}.usfm'.format( bookID ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "Writing {}…".format( filepath ) )
+    vPrint( 'Info', "Writing {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
             bookFile.write( splitText )
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
+    vPrint( 'Verbose', "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
         writtenCount += 1
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "{} books written to {}".format( writtenCount, folderpath ) )
+    vPrint( 'Quiet', "{} books written to {}".format( writtenCount, folderpath ) )
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
@@ -107,7 +105,7 @@ def demo() -> None:
     """
     Demo program to handle command line parameters and run a few functions.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     sampleText = "This is a lot of nonsense"
     sampleText = noisyReplaceAll( sampleText, ' lot ', ' great, pig pile ' )
@@ -123,14 +121,12 @@ def main():
     Main program to handle command line parameters
         and then convert the FBV text file.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "Loading {}…".format( INPUT_FILEPATH ) )
+    vPrint( 'Quiet', "Loading {}…".format( INPUT_FILEPATH ) )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
-    if BibleOrgSysGlobals.verbosityLevel > 1:
-        print( "  Loaded {:,} characters ({:,} lines)".format( len(originalText), originalText.count('\n') ) )
+    vPrint( 'Normal', "  Loaded {:,} characters ({:,} lines)".format( len(originalText), originalText.count('\n') ) )
 
     # Preparation by inserting some lines at the beginning
     entireText = '\\id FRT -- {}\n'.format( ID_LINE )
@@ -222,7 +218,7 @@ def main():
     entireText = noisyReplaceAll( entireText, ' \n', '\n', loop=True )
 
     # Adjust book IDs, and insert h,toc1,toc2,toc3,mt1
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Adjusting book names and IDs…" )
+    vPrint( 'Info', "Adjusting book names and IDs…" )
     for name,abbrev,bookID in ( ('Matthew','Mat','MAT'), ('Mark','Mrk','MRK'), ('Luke','Luk','LUK'), ('John','Jhn','JHN'), ('Acts','Act','ACT'),
                         ('Romans','Rom','ROM'), ('First Corinthians','1 Cor','1CO'), ('Second Corinthians','2 Cor','2CO'),
                         ('Galatians','Gal','GAL'), ('Ephesians','Eph','EPH'), ('Philippians','Php','PHP'), ('Colossians','Col','COL'),
@@ -242,7 +238,7 @@ def main():
                                 )
 
     # Check again
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "Final checks before writing files…" )
+    vPrint( 'Normal', "Final checks before writing files…" )
     noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
     noisyFind( entireText, "'''", logging.critical )
     noisyFind( entireText, "''", logging.critical )
@@ -257,8 +253,7 @@ def main():
         if not os.path.exists( OUTPUT_FOLDERPATH):
             os.makedirs( OUTPUT_FOLDERPATH )
         filepath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Writing temp file {}…".format( filepath ) )
+        vprint( 'Normal', "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 

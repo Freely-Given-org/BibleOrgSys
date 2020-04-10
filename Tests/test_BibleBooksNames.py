@@ -40,6 +40,7 @@ BOSTopFolderpath = os.path.dirname( os.path.dirname( __file__ ) )
 if BOSTopFolderpath not in sys.path:
     sys.path.insert( 0, BOSTopFolderpath ) # So we can run it from the above folder and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.Converters import BibleBooksNamesConverter
 from BibleOrgSys.Reference import BibleBooksNames
 
@@ -280,7 +281,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    vPrint( 'Normal', programNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksNamesTests.py

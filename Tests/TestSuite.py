@@ -44,6 +44,7 @@ sys.path.insert( 0, sourceFolder )
 if __name__ == '__main__':
     sys.path.insert( 0, os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) # So we can run it from the above folder and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys import BibleBooksCodesTests
 from BibleOrgSys import BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
@@ -57,7 +58,7 @@ import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+vPrint( 'Normal', programNameVersion )
 
 
 # Create the test suite

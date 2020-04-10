@@ -77,6 +77,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
@@ -100,7 +101,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, 
     if autoLoad is true and exactly one Haggai Bible is found,
         returns the loaded HaggaiXMLBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "HaggaiXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -113,7 +114,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, 
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -142,13 +143,13 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, 
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if 'haggai_' not in firstLines[1]: continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = HaggaiXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
@@ -161,7 +162,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, 
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -184,14 +185,14 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, 
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = HaggaiXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -252,7 +253,7 @@ class HaggaiXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
             logging.critical( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
@@ -450,7 +451,7 @@ class HaggaiXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book…") )
+        vPrint( 'Verbose', _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -471,7 +472,7 @@ class HaggaiXMLBible( Bible ):
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Info', _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Haggai XML Bible Book object'
             thisBook.objectTypeString = 'Haggai'
@@ -489,7 +490,7 @@ class HaggaiXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.chapterTag, element.tag ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results…".format( BBB ) )
+            vPrint( 'Info', "  Saving {} into results…".format( BBB ) )
             self.stashBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
@@ -501,7 +502,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter…") )
+        vPrint( 'Verbose', _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -550,7 +551,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML paragraph…") )
+        vPrint( 'Verbose', _("Validating XML paragraph…") )
 
         location = "paragraph in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
@@ -591,7 +592,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse…") )
+        vPrint( 'Verbose', _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
@@ -717,7 +718,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'HaggaiTest/' )
@@ -734,10 +735,10 @@ def demo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', "\nH B{}/ {}".format( count, something ) )
                     hB = HaggaiXMLBible( testFolder, something )
                     hB.load()
-                    if BibleOrgSysGlobals.verbosityLevel > 0: print( hB )
+                    vPrint( 'Quiet', hB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         hB.check()
                         #UBErrors = UB.getErrors()

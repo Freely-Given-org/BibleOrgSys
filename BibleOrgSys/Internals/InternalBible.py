@@ -80,6 +80,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
@@ -506,8 +507,8 @@ class InternalBible:
 
         # Loads the metadata into self.suppliedMetadata
         logging.info( "Loading supplied project metadata…" )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata…" )
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
+        vPrint( 'Normal', "Loading supplied project metadata…" )
+        #vPrint( 'Info', "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
         self.suppliedMetadata['File'] = {}
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt', encoding='utf-8' ) as mdFile:
@@ -541,8 +542,8 @@ class InternalBible:
                     if not continuedFlag:
                         logging.warning( _("loadMetadataTextFile: Metadata lines result in a blank entry for {!r}").format( fieldName ) )
                         saveMetadataField( fieldName, fieldContents )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
+            vPrint( 'Normal', "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
+        vPrint( 'Info', "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
 
         # Now move the information into our settingsDict
         self.applySuppliedMetadata( 'File' )
@@ -944,8 +945,7 @@ class InternalBible:
             filename = self.objectTypeString
         if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
-        if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("pickle: Saving {} to {}…") \
+        vPrint( 'Info', _("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
         try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folder )
         except TypeError: # Could be a yet undebugged SWIG error
@@ -1173,18 +1173,17 @@ class InternalBible:
         #import pickle
         #folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
         #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing from {}…").format( filepath ) )
+        #vPrint( 'Verbose', _("Importing from {}…").format( filepath ) )
         #with open( filepath, 'rb' ) as pickleFile:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running discover on {}…").format( self.name ) )
+        vPrint( 'Info', _("Running discover on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
         if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
         and BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
-                print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+            vPrint( 'Normal', _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
@@ -1194,7 +1193,7 @@ class InternalBible:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for BBB in self.books: # Do individual book prechecks
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Prechecking {}…").format( BBB ) )
+                vPrint( 'Verbose', "  " + _("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
 
         if self.objectTypeString == 'PTX8':
@@ -1211,7 +1210,7 @@ class InternalBible:
         Assuming that the individual discoveryResults have been collected for each book,
             puts them all together.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "InternalBible:__aggregateDiscoveryResults()" )
+        vPrint( 'Info', "InternalBible:__aggregateDiscoveryResults()" )
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
@@ -1411,19 +1410,17 @@ class InternalBible:
         Creates an index for each book of the Bible.
         """
         # Get our recommendations for added units -- only load this once per Bible
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( _("makeSectionIndex for {} Bible…").format( self.name ) )
+        vprint( 'Normal', _("makeSectionIndex for {} Bible…").format( self.name ) )
         if 'discoveryResults' not in self.__dict__: self.discover()
 
         self.sectionIndex = {}
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running makeSectionIndex on {}…").format( self.name ) )
+        vPrint( 'Info', _("Running makeSectionIndex on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( _("Making section index for {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
-                print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+            vPrint( 'Normal', _("Making section index for {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._makeSectionIndexMP, [BBB for BBB in self.books] ) # have the pool do our loads
@@ -1433,7 +1430,7 @@ class InternalBible:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for BBB in self.books: # Do individual book prechecks
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + _("Making section index for {}…").format( BBB ) )
+                vPrint( 'Verbose', "  " + _("Making section index for {}…").format( BBB ) )
                 self.sectionIndex[BBB] = self.books[BBB]._makeSectionIndex()
     # end of InternalBible.makeSectionIndex()
 
@@ -1458,7 +1455,7 @@ class InternalBible:
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing from {}…").format( pickleFilepath ) )
+        vPrint( 'Verbose', _("Importing from {}…").format( pickleFilepath ) )
         try:
             with open( pickleFilepath, 'rb' ) as pickleFile:
                 typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -1467,11 +1464,11 @@ class InternalBible:
                 typicalAddedUnitData = None
 
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Running checks on {}…").format( self.name ) )
+        vPrint( 'Info', _("Running checks on {}…").format( self.name ) )
         if givenBookList is None:
             givenBookList = self.books # this is a dict
         for BBB in givenBookList: # Do individual book checks
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Checking {}…").format( BBB ) )
+            vPrint( 'Info', "  " + _("Checking {}…").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -1488,8 +1485,7 @@ class InternalBible:
 
         Returns a dictionary of result flags.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+        vprint( 'Normal', "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
@@ -1721,7 +1717,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag:
             print( "makeErrorHTML( {!r}, {!r}, {!r} )".format( givenOutputFolder, titlePrefix, webPageTemplate ) )
         #logging.info( "Doing Bible checks…" )
-        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks…" )
+        #vPrint( 'Info', "Doing Bible checks…" )
 
         errorDictionary = self.getErrors( givenBookList )
         if givenBookList is None: givenBookList = self.books # this is a dict
@@ -2490,7 +2486,7 @@ class InternalBible:
             bookObject.writeBOSBCVFiles( bookFolderPath )
 
         # Write the Bible metadata
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata…") )
+        vPrint( 'Info', "  " + _("Writing BCV metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
         if self.name: metadataLines += 'Name = {}\n'.format( self.name )
@@ -2951,17 +2947,12 @@ def demo() -> None:
     """
     A very basic test/demo of the InternalBible class.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersionDate if BibleOrgSysGlobals.verbosityLevel > 1 else programNameVersion )
-        if __name__ == '__main__' and BibleOrgSysGlobals.verbosityLevel > 1:
-            latestPythonModificationDate = BibleOrgSysGlobals.getLatestPythonModificationDate()
-            if latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     IB = InternalBible()
     IB.objectNameString = 'Dummy test Internal Bible object'
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( IB )
+    vPrint( 'Quiet', IB )
 
     # But we'll load a USFM Bible so we can test some other functions
     from BibleOrgSys.UnknownBible import UnknownBible
@@ -2969,13 +2960,13 @@ def demo() -> None:
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' )
     uB = UnknownBible( testFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( "IB Test", result )
+    vPrint( 'Normal', "IB Test", result )
     if isinstance( result, Bible ):
         iB = result
         if BibleOrgSysGlobals.strictCheckingFlag:
             iB.check()
             IBErrors = iB.getErrors()
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( IBErrors )
+            vPrint( 'Info', IBErrors )
         iB.doExtensiveChecks()
 
         if 0:

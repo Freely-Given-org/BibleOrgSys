@@ -108,6 +108,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -241,7 +242,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one MyBible Bible is found,
         returns the loaded MyBibleBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "MyBibleBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert autoLoad in (True,False,)
@@ -255,7 +256,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " MyBibleBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " MyBibleBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -282,7 +283,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "MyBibleBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             MyBB = MyBibleBible( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: MyBB.preload()
@@ -299,7 +300,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("MyBibleBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    MyBibleBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    MyBibleBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -321,7 +322,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "MyBibleBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "MyBibleBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             MyBB = MyBibleBible( foundProjects[0][0], foundProjects[0][1] )
@@ -370,7 +371,7 @@ class MyBibleBible( Bible ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( _("preload()") )
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Preloading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Preloading {}…").format( self.sourceFilepath ) )
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -429,8 +430,7 @@ class MyBibleBible( Bible ):
                 assert BBB
                 self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
                                                 'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "  Loaded book info ({}) from BOOKS_ALL table".format( len(rows) ) )
+            vPrint( 'Normal', "  Loaded book info ({}) from BOOKS_ALL table".format( len(rows) ) )
             loadedBookInfo = True
         except sqlite3.OperationalError: pass # Table is not in older module versions
 
@@ -478,7 +478,7 @@ class MyBibleBible( Bible ):
             print( _("loadBooks()") )
         assert self.preloadDone
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
 
         for BBB in self.suppliedMetadata['MyBible']['BookInfo']:
             #print( 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
@@ -619,7 +619,7 @@ class MyBibleBible( Bible ):
             importVerseLine( self.name, BBB, C, V, line, thisBook ) # handle any formatting and save the line
 
         if haveLines:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleBook saving", BBB )
+            vPrint( 'Info', "  MyBible loadBibleBook saving", BBB )
             self.stashBook( thisBook )
         #else: print( "Not saving", BBB )
 
@@ -737,7 +737,7 @@ class MyBibleBible( Bible ):
             importCommentaryLine( self.name, BBB, C, V, footnoteMarker, line, thisBook ) # handle any formatting and save the line
 
         if haveLines:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  MyBible loadBibleCommentaryBook saving", BBB )
+            vPrint( 'Info', "  MyBible loadBibleCommentaryBook saving", BBB )
             self.stashBook( thisBook )
         #else: print( "Not saving", BBB )
 
@@ -1172,7 +1172,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         #testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
         #booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to MyBible format…") )
+    vPrint( 'Info', _("  Exporting to MyBible format…") )
     if BibleOrgSysGlobals.alreadyMultiprocessing:
         logging.warning( "writeMyBibleBook() can fail with multiprocessing if output filenames happen to coincide" )
     mySettings = {}
@@ -1197,7 +1197,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( '  writeMyBibleBook: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', '  writeMyBibleBook: ' + _("Writing {!r}…").format( filepath ) )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -1287,18 +1287,16 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.toMyBible: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled toMyBible markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled toMyBible markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "toMyBible: Unhandled books were {}".format( unhandledBooks ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled toMyBible books were {}").format( unhandledBooks ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled toMyBible books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} MyBible file…".format( filename ) )
+    vPrint( 'Info', "  Zipping {} MyBible file…".format( filename ) )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -1321,12 +1319,12 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/MyBible modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MyBible Bible class {}…").format( indexString) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder/filename are {!r} {!r}".format( MyBBfolder, MyBBfilename ) )
+    vPrint( 'Normal', _("Demonstrating the MyBible Bible class {}…").format( indexString) )
+    vPrint( 'Quiet', "  Test folder/filename are {!r} {!r}".format( MyBBfolder, MyBBfilename ) )
     MyBB = MyBibleBible( MyBBfolder, MyBBfilename )
     MyBB.preload()
     #MyBB.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( MyBB ) # Just print a summary
+    vPrint( 'Normal', MyBB ) # Just print a summary
     #print( MyBB.suppliedMetadata['MyBible'] )
     if MyBB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MyBB.check()
@@ -1343,9 +1341,9 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             try:
                 shortText = svk.getShortText()
                 verseText = MyBB.getVerseText( svk )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( '    {}\t{!r}'.format( shortText, verseText ) )
+                vPrint( 'Normal', '    {}\t{!r}'.format( shortText, verseText ) )
             except KeyError:
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( '  testMyBB', reference, "not found!!!" )
+                vPrint( 'Normal', '  testMyBB', reference, "not found!!!" )
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: raise
 
         #MyBB.loadBooks()
@@ -1357,7 +1355,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             #doaResults = MyBB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/BOS_MyBible_Reexport/"
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported MyBible files…" )
+                vPrint( 'Normal', "\nComparing original and re-exported MyBible files…" )
                 result = BibleOrgSysGlobals.fileCompare( MyBBfilename, MyBBfilename, MyBBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
                     if not result: halt
@@ -1371,9 +1369,8 @@ def exportMyBB( eIndexString:str, eFolder ) -> None:
     from BibleOrgSys.UnknownBible import UnknownBible
     uB = UnknownBible( eFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  {} result is: {}".format( eIndexString, result ) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+    vPrint( 'Info', "  {} result is: {}".format( eIndexString, result ) )
+    vPrint( 'Quiet', uB )
     if isinstance( result, Bible ) and result.books:
         result.toMyBible()
         #try: result.toMyBible()
@@ -1391,7 +1388,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
 
@@ -1399,11 +1396,11 @@ def demo() -> None:
     if 1: # A: demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' )
         result1 = MyBibleBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
+        vPrint( 'Normal', "TestA1", result1 )
         result2 = MyBibleBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+        vPrint( 'Normal', "TestA2", result2 )
         result3 = MyBibleBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
+        vPrint( 'Normal', "TestA3", result3 )
 
 
     if 1: # B: individual modules in the test folder
@@ -1414,7 +1411,7 @@ def demo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'B{j}'
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
                 testMyBB( indexString, testFolder, fullname )
 
 
@@ -1426,7 +1423,7 @@ def demo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'C{j}'
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
                 testMyBB( indexString, testFolder, fullname )
 
 
@@ -1446,7 +1443,7 @@ def demo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nD: Trying all {} discovered modules…".format( len(foundFiles) ) )
+            vPrint( 'Normal', "\nD: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1456,7 +1453,7 @@ def demo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'D{j}'
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1477,7 +1474,7 @@ def demo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
+            vPrint( 'Normal', "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
             parameters = [(f'E{j}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles),start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1487,7 +1484,7 @@ def demo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'E{j}'
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1531,7 +1528,7 @@ def demo() -> None:
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
+            vPrint( 'Normal', "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
             parameters = [(f'F{j}',testFolder) for j,testFolder in enumerate(testFolders,start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1541,12 +1538,12 @@ def demo() -> None:
         else: # Just single threaded
             for j, testFolder in enumerate( testFolders, start=1 ):
                 indexString = f'F{j}'
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\ntoMyBible {}/ Export MyBible module for {}…".format( indexString, testFolder ) )
+                vPrint( 'Quiet', "\ntoMyBible {}/ Export MyBible module for {}…".format( indexString, testFolder ) )
                 exportMyBB( indexString, testFolder )
                 #uB = UnknownBible( testFolder )
                 #result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-                #if BibleOrgSysGlobals.verbosityLevel > 2: print( "  {} result is: {}".format( indexString, result ) )
-                #if BibleOrgSysGlobals.verbosityLevel > 0: print( uB )
+                #vPrint( 'Info', "  {} result is: {}".format( indexString, result ) )
+                #vPrint( 'Quiet', uB )
                 #try: result.toMyBible()
                 #except AttributeError:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()

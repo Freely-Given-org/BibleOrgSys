@@ -85,6 +85,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -171,7 +172,7 @@ class BibleVersificationSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #     else: # We have to load the XML (much slower)
@@ -560,12 +561,12 @@ class BibleVersificationSystems:
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleVersificationSystem_"+thisSystemName + '.xml' )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}…").format( len(versificationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', _("Writing {} books to {}…").format( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
                 for BBB in omittedVersesToCheck.keys():
                     totalOmittedVerses += len( omittedVersesToCheck[BBB] )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Have {} omitted verses for {} books").format( totalOmittedVerses, len(omittedVersesToCheck) ) )
+                vPrint( 'Info', _("  Have {} omitted verses for {} books").format( totalOmittedVerses, len(omittedVersesToCheck) ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
@@ -964,7 +965,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the BibleVersificationSystems object
     bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)

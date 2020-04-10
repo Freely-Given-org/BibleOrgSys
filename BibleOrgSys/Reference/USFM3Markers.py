@@ -55,6 +55,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 # STATIC USFM TABLES
@@ -307,7 +308,7 @@ class USFM3Markers:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -758,7 +759,7 @@ def demo() -> None:
     """
     Demonstration program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the USFM3Markers object
     um = USFM3Markers().loadData() # Doesn't reload the XML unnecessarily :)
@@ -789,10 +790,9 @@ def demo() -> None:
         print( _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
             print( '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
-                print( '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
-                print( '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
+            vPrint( 'Info', '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
+            vPrint( 'Info', '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
+            vPrint( 'Info', '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
     for text in ('This is a bit of plain text',
                  '\\v 1 This is some \\it italicised\\it* text.',
                  '\\v 2 This \\it is\\it* \\bd more\\bd* complicated.\\f + \\fr 2 \\ft footnote.\\f*',

@@ -71,6 +71,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
@@ -86,12 +87,11 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( programNameVersion, end='\n\n' )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( door43CatalogResources )
+    vPrint( 'Info', door43CatalogResources )
     door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 2:
         print()
@@ -101,19 +101,19 @@ def main():
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.preload()
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible, end='\n\n' )
+        vPrint( 'Quiet', Door43CatalogUGNTBible, end='\n\n' )
 
     # Download the ULT = unfoldingWord Literal Text
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogULTBible )
+        #vPrint( 'Quiet', Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogULTBible, end='\n\n' )
+        vPrint( 'Quiet', Door43CatalogULTBible, end='\n\n' )
 
     # Go through the UGNT verse by verse
     #   and do some comparisions with the matching ULT verses
@@ -149,8 +149,7 @@ def main():
                         print( f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
                         print( f"                              {text1}" )
                     count2 += 1
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
+    vPrint( 'Quiet', f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
 if __name__ == '__main__':

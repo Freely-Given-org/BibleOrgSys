@@ -69,6 +69,9 @@ Contains functions:
     setup( PROGRAM_NAME, PROGRAM_VERSION, loggingFolder=None )
 
     setVerbosity( verbosityLevelParameter )
+    vPrint( level:str, printString:str )
+    introduceProgram( name:str, programNameVersion:str, lastModifiedDate:str ) -> None:
+
     setDebugFlag( newValue=True )
     setStrictCheckingFlag( newValue=True )
 
@@ -81,10 +84,10 @@ Contains functions:
 """
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2020-04-10' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys Globals"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -1315,10 +1318,44 @@ def setVerbosity( verbosityLevelParameter ):
     if debugFlag:
         print( '  Verbosity =', verbosityString )
         print( '  VerbosityLevel =', verbosityLevel )
-# end of BibleOrgSysGlobals.setVerbosity
+# end of BibleOrgSysGlobals.setVerbosity function
 
 
-def setDebugFlag( newValue=True ):
+LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
+                    'Normal':2, 'N':2,
+                    'Informative':3, 'Info':3, 'I':3,
+                    'Verbose':4, 'V':4 }
+def vPrint( level:Union[int,str], *args, **kwargs ) -> None:
+    """
+    Only print the given string, if the verbosity level is correct.
+    """
+    if isinstance( level, str ):
+        try: level = LEVEL_NAME_DICT[level]
+        except KeyError: level = 4 # default to verbose
+    if verbosityLevel < level: return
+
+    print( *args, **kwargs )
+# end of BibleOrgSysGlobals.vPrint function
+
+
+def introduceProgram( name:str, programNameVersion:str, lastModifiedDate:str ) -> None:
+    """
+    Introduces the program name and version
+        and maybe some modification dates if more verbose.
+    """
+    if verbosityLevel > 2:
+        print( f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}' )
+        if name == '__main__':
+            latestPythonModificationDate = getLatestPythonModificationDate()
+            if verbosityLevel > 3 \
+            or latestPythonModificationDate != LAST_MODIFIED_DATE:
+                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+    elif verbosityLevel > 0:
+        print( programNameVersion )
+# end of BibleOrgSysGlobals.introduceProgram function
+
+
+def setDebugFlag( newValue=True ) -> None:
     """
     Set the debug flag.
     """
@@ -1489,12 +1526,7 @@ def demo() -> None:
     Demo program to handle command line parameters
         and then demonstrate some basic functions.
     """
-    if verbosityLevel>0:
-        print( programNameVersionDate if verbosityLevel > 1 else programNameVersion )
-        if __name__ == '__main__' and verbosityLevel > 1:
-            latestPythonModificationDate = getLatestPythonModificationDate()
-            if latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+    introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function

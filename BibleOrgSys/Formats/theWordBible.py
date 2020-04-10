@@ -70,6 +70,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
@@ -128,7 +129,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one theWord Bible is found,
         returns the loaded theWordBible object.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -141,7 +142,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " theWordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " theWordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -168,7 +169,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', "theWordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             twB = theWordBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: twB.load() # Load and process the file
@@ -184,7 +185,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("theWordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    theWordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', "    theWordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -206,7 +207,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "theWordBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', "theWordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             twB = theWordBible( foundProjects[0][0], foundProjects[0][1] )
@@ -824,7 +825,7 @@ class theWordBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS
         if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -895,7 +896,7 @@ class theWordBible( Bible ):
                                 C += 1
                                 if C > numC: # Save this book now
                                     if hadText:
-                                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                                        vPrint( 'Verbose', "Saving", BBB, bookCount+1 )
                                         self.stashBook( thisBook )
                                     else: logging.warning( "theWordBible.load: Didn't save {} because it was blank".format( BBB ) )
 
@@ -1232,7 +1233,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
         testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
         booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to theWord format…") )
+    vPrint( 'Info', _("  Exporting to theWord format…") )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -1245,7 +1246,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     else: filename = 'export'
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
     with open( filepath, 'wt', encoding='utf-8' ) as myFile:
         try: myFile.write('\ufeff') # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
@@ -1272,7 +1273,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
             if field: # Copy non-blank matches
                 myFile.write( "{}={}\n".format( keyName, field ) )
                 written.append( keyName )
-            elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.totheWord: ignored {!r} setting ({})".format( keyName, field ) )
+            elvPrint( 'Info', "BibleWriter.totheWord: ignored {!r} setting ({})".format( keyName, field ) )
         # Now do some adaptions
         keyName = 'short.title'
         if self.abbreviation and keyName not in written:
@@ -1294,18 +1295,16 @@ def createTheWordModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.totheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "totheWord: Unhandled books were {}".format( unhandledBooks ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
+        vprint( 'Normal', "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping {} theWord file…".format( filename ) )
+    vPrint( 'Info', "  Zipping {} theWord file…".format( filename ) )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -1325,11 +1324,11 @@ def testtWB( indexString, twBfolder, twBfilename ):
     #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class {}…").format( indexString) )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( twBfolder, twBfilename ) )
+    vPrint( 'Normal', _("Demonstrating the theWord Bible class {}…").format( indexString) )
+    vPrint( 'Quiet', "  Test folder is {!r} {!r}".format( twBfolder, twBfilename ) )
     tWb = theWordBible( twBfolder, twBfilename )
     tWb.load() # Load and process the file
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( tWb ) # Just print a summary
+    vPrint( 'Normal', tWb ) # Just print a summary
     if tWb is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: tWb.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -1344,16 +1343,16 @@ def testtWB( indexString, twBfolder, twBfilename ):
             #print( svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
+                vPrint( 'Normal', reference, shortText, verseText )
             except KeyError:
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, "not found!!!" )
+                vPrint( 'Normal', reference, "not found!!!" )
 
         # Now export the Bible and compare the round trip
         tWb.totheWord()
         #doaResults = tWb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_theWord_Reexport/"
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files…" )
+            vPrint( 'Normal', "\nComparing original and re-exported theWord files…" )
             result = BibleOrgSysGlobals.fileCompare( twBfilename, twBfilename, twBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
@@ -1364,8 +1363,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the functions
         #print( theWordGetBBBCV( 1532 ) )
@@ -1379,11 +1377,11 @@ def demo() -> None:
         #testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
+        vPrint( 'Normal', "TestA1", result1 )
         result2 = theWordBibleFileCheck( testFolder, autoLoad=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
+        vPrint( 'Normal', "TestA2", result2 )
         result3 = theWordBibleFileCheck( testFolder, autoLoadBooks=True )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA3", result3 )
+        vPrint( 'Normal', "TestA3", result3 )
 
 
     if 1: # all discovered modules in the round-trip folder
@@ -1398,7 +1396,7 @@ def demo() -> None:
                         foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1408,7 +1406,7 @@ def demo() -> None:
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'C{}'.format( j+1 )
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', "\ntW C{}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one……temp
@@ -1424,7 +1422,7 @@ def demo() -> None:
                 elif os.path.isfile( somepath ): foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1435,7 +1433,7 @@ def demo() -> None:
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'D{}'.format( j+1 )
                     #if 'web' not in someFile: continue # Just try this module
-                    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\ntW {}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one…temp

@@ -51,6 +51,7 @@ if __name__ == '__main__':
     if aboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
@@ -219,22 +220,22 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(PROGRAM_NAME, PROGRAM_VERSION ) )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest Bible…" )
+    vPrint( 'Quiet', "\nTest Bible…" )
     B = Bible()
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( B )
+    vPrint( 'Quiet', B )
 
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nTest USFM Bible…" )
+        #vPrint( 'Quiet', "\nTest USFM Bible…" )
         #from BibleOrgSys.Formats.USFMBible import USFMBible
         #name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()
-            #if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
+            #vPrint( 'Quiet', UB )
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
             #UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )

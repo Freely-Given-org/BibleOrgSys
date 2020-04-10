@@ -50,6 +50,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveAboveFolderPath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 
@@ -91,13 +92,13 @@ class BibleBookOrdersConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book order systems from {}…").format( self.__XMLFolder ) )
+            vPrint( 'Info', _("Loading book order systems from {}…").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}…").format( bookOrderSystemCode, filename ) )
+                    vPrint( 'Verbose', _("  Loading{} book order system from {}…").format( bookOrderSystemCode, filename ) )
                     self._XMLSystems[bookOrderSystemCode] = {}
                     self._XMLSystems[bookOrderSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert self._XMLSystems[bookOrderSystemCode]['tree'] # Fail here if we didn't load anything at all
@@ -326,7 +327,7 @@ class BibleBookOrdersConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( f"Exporting to {filepath}…" )
+        vPrint( 'Normal', f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -350,7 +351,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -388,7 +389,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -447,7 +448,7 @@ class BibleBookOrdersConverter:
         if not filepath: filepath = str( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' ) )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Normal', _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
@@ -543,7 +544,7 @@ def demo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if BibleOrgSysGlobals.commandLineArguments.export:
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML

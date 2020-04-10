@@ -47,6 +47,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
 class TextFile:
@@ -142,7 +143,7 @@ def demo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    if BibleOrgSysGlobals.verbosityLevel>0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     #tf = TextFile( 'TextFile.py' ) # Read myself!
     #tf.replace( "TextFile", "ABRACADABRA" )

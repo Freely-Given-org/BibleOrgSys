@@ -52,6 +52,7 @@ if __name__ == '__main__':
     if aboveAboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
@@ -111,9 +112,9 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     # See if there's an USFM2Bible project here in this given folder
     numFound = 0
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
+    vPrint( 'Info', UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
+    vPrint( 'Verbose', "  Maximum:", len(filenameTuples), filenameTuples )
     # Check they are USFM2 (not 3)
     #saveFilenameTuples = filenameTuples.copy()
     badIndexList = []
@@ -134,14 +135,14 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     if filenameTuples:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
+            vPrint( 'Info', "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
             if not discountSSF:
                 # if there's an SSF, we won't accept it as a USFM2 Bible, because it should be opened as a PTX7 Bible
                 numFound += 1
         else: numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("USFM2BibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        vPrint( 'Info', _("USFM2BibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFM2Bible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
@@ -153,7 +154,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
     # Look one level down
     # Find all the files and folders in this folder
-    if BibleOrgSysGlobals.verbosityLevel > 3: print( " USFM2BibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', " USFM2BibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -187,7 +188,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
             logging.warning( _("USFM2BibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         #if 0:
-            #if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USFM2BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+            #vPrint( 'Verbose', "    USFM2BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
             #foundSubfolders, foundSubfiles = [], []
             #for something in os.listdir( tryFolderName ):
                 #somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -213,9 +214,9 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
         # See if there's an USFM2 Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( UFns )
+        vPrint( 'Info', UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-        if BibleOrgSysGlobals.verbosityLevel > 3: print( "  Maximum:", len(filenameTuples), filenameTuples )
+        vPrint( 'Verbose', "  Maximum:", len(filenameTuples), filenameTuples )
         # Check they are USFM2 (not 3)
         #saveFilenameTuples = filenameTuples.copy()
         badIndexList = []
@@ -238,7 +239,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         if filenameTuples:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
+                vPrint( 'Info', "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
                 if not discountSSF:
                     # if there's an SSF, we won't accept it as a USFM2 Bible, because it should be opened as a PTX7 Bible
@@ -248,7 +249,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 foundProjects.append( tryFolderName )
                 numFound += 1
     if numFound:
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("USFM2BibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        vPrint( 'Info', _("USFM2BibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFM2Bible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
@@ -496,8 +497,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
 
     for BBB,(filepath,fileText) in filesToSave.items():
         if optionsDict['doBackups']:
-            if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "Making backup copy of {} file: {}…".format( BBB, filepath ) )
+            vPrint( 'Info', "Making backup copy of {} file: {}…".format( BBB, filepath ) )
             BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=5 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
@@ -564,7 +564,7 @@ class USFM2Bible( Bible ):
             if unexpectedFolders:
                 logging.info( _("USFM2 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( _("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', _("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -641,8 +641,7 @@ class USFM2Bible( Bible ):
 
         Returns the book info.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 3:
-            print( _("loadBookMP( {} )").format( BBB_Filename_duple ) )
+        vPrint( 'Verbose', _("loadBookMP( {} )").format( BBB_Filename_duple ) )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
@@ -667,7 +666,7 @@ class USFM2Bible( Bible ):
         """
         Load all the Bible books.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
+        vPrint( 'Normal', _("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -708,8 +707,7 @@ def demo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
-
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j,testFolder in enumerate( (
@@ -726,14 +724,13 @@ def demo() -> None:
                             BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
                             'MadeUpFolder/',
                             ) ):
-            if BibleOrgSysGlobals.verbosityLevel > 0:
-                print( "\nUSFM2 A{} testfolder is: {}".format( j+1, testFolder ) )
+            vPrint( 'Quiet', "\nUSFM2 A{} testfolder is: {}".format( j+1, testFolder ) )
             result1 = USFM2BibleFileCheck( testFolder )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM2 TestAa", result1 )
+            vPrint( 'Normal', "USFM2 TestAa", result1 )
             result2 = USFM2BibleFileCheck( testFolder, autoLoad=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM2 TestAb", result2 )
+            vPrint( 'Normal', "USFM2 TestAb", result2 )
             result3 = USFM2BibleFileCheck( testFolder, autoLoadBooks=True )
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "USFM2 TestAc", result3 )
+            vPrint( 'Normal', "USFM2 TestAc", result3 )
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
@@ -758,7 +755,7 @@ def demo() -> None:
                         ("Exported3", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/') ),
                         ) ):
             if os.access( testFolder, os.R_OK ):
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM2 B{}/".format( j+1 ) )
+                vPrint( 'Quiet', "\nUSFM2 B{}/".format( j+1 ) )
                 UsfmB = USFM2Bible( testFolder, name, encoding=encoding )
                 UsfmB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -766,7 +763,7 @@ def demo() -> None:
                     print( "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
                     print( "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
                     print( "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfmB )
+                vPrint( 'Quiet', UsfmB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     UsfmB.check()
                     #print( UsfmB.books['GEN']._processedLines[0:40] )
@@ -777,7 +774,7 @@ def demo() -> None:
                     ##UsfmB.toDrupalBible()
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
-                    if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
+                    vPrint( 'Quiet', "newObj is", newObj )
                 if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
                     from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
@@ -854,10 +851,10 @@ def demo() -> None:
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
                     name, encoding, testFolder = title, 'utf-8', somepath
                     if os.access( testFolder, os.R_OK ):
-                        if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUSFM2 C{}/".format( count ) )
+                        vPrint( 'Quiet', "\nUSFM2 C{}/".format( count ) )
                         UsfmB = USFM2Bible( testFolder, name, encoding=encoding )
                         UsfmB.load()
-                        if BibleOrgSysGlobals.verbosityLevel > 0: print( UsfmB )
+                        vPrint( 'Quiet', UsfmB )
                         if BibleOrgSysGlobals.strictCheckingFlag:
                             UsfmB.check()
                             UsfmBErrors = UsfmB.getErrors()
